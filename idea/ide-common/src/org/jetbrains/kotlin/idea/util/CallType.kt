@@ -56,8 +56,9 @@ sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: Descript
 
     object SAFE : CallType<KtExpression>(DescriptorKindFilter.ALL)
 
-    object SUPER_MEMBERS :
-        CallType<KtSuperExpression>(DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions exclude AbstractMembersExclude)
+    object SUPER_MEMBERS : CallType<KtSuperExpression>(
+        DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions exclude AbstractMembersExclude
+    )
 
     object INFIX : CallType<KtExpression>(DescriptorKindFilter.FUNCTIONS exclude NonInfixExclude)
 
@@ -69,13 +70,17 @@ sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: Descript
 
     object PACKAGE_DIRECTIVE : CallType<KtExpression?>(DescriptorKindFilter.PACKAGES)
 
-    object TYPE :
-        CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry)
+    object TYPE : CallType<KtExpression?>(
+        DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK)
+                exclude DescriptorKindExclude.EnumEntry
+    )
 
     object DELEGATE : CallType<KtExpression?>(DescriptorKindFilter.FUNCTIONS exclude NonOperatorExclude)
 
-    object ANNOTATION :
-        CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude)
+    object ANNOTATION : CallType<KtExpression?>(
+        DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK)
+                exclude NonAnnotationClassifierExclude
+    )
 
     private object NonInfixExclude : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor) =
@@ -127,19 +132,22 @@ sealed class CallTypeAndReceiver<TReceiver : KtElement?, out TCallType : CallTyp
     object DEFAULT : CallTypeAndReceiver<Nothing?, CallType.DEFAULT>(CallType.DEFAULT, null)
     class DOT(receiver: KtExpression) : CallTypeAndReceiver<KtExpression, CallType.DOT>(CallType.DOT, receiver)
     class SAFE(receiver: KtExpression) : CallTypeAndReceiver<KtExpression, CallType.SAFE>(CallType.SAFE, receiver)
-    class SUPER_MEMBERS(receiver: KtSuperExpression) :
-        CallTypeAndReceiver<KtSuperExpression, CallType.SUPER_MEMBERS>(CallType.SUPER_MEMBERS, receiver)
+    class SUPER_MEMBERS(receiver: KtSuperExpression) : CallTypeAndReceiver<KtSuperExpression, CallType.SUPER_MEMBERS>(
+        CallType.SUPER_MEMBERS,
+        receiver
+    )
 
     class INFIX(receiver: KtExpression) : CallTypeAndReceiver<KtExpression, CallType.INFIX>(CallType.INFIX, receiver)
     class OPERATOR(receiver: KtExpression) : CallTypeAndReceiver<KtExpression, CallType.OPERATOR>(CallType.OPERATOR, receiver)
-    class CALLABLE_REFERENCE(receiver: KtExpression?) :
-        CallTypeAndReceiver<KtExpression?, CallType.CALLABLE_REFERENCE>(CallType.CALLABLE_REFERENCE, receiver)
+    class CALLABLE_REFERENCE(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.CALLABLE_REFERENCE>(
+        CallType.CALLABLE_REFERENCE, receiver
+    )
 
-    class IMPORT_DIRECTIVE(receiver: KtExpression?) :
-        CallTypeAndReceiver<KtExpression?, CallType.IMPORT_DIRECTIVE>(CallType.IMPORT_DIRECTIVE, receiver)
+    class IMPORT_DIRECTIVE(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.IMPORT_DIRECTIVE>(
+        CallType.IMPORT_DIRECTIVE, receiver
+    )
 
-    class PACKAGE_DIRECTIVE(receiver: KtExpression?) :
-        CallTypeAndReceiver<KtExpression?, CallType.PACKAGE_DIRECTIVE>(CallType.PACKAGE_DIRECTIVE, receiver)
+    class PACKAGE_DIRECTIVE(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.PACKAGE_DIRECTIVE>(CallType.PACKAGE_DIRECTIVE, receiver)
 
     class TYPE(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.TYPE>(CallType.TYPE, receiver)
     class DELEGATE(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.DELEGATE>(CallType.DELEGATE, receiver)
