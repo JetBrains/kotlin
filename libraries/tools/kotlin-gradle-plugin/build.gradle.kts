@@ -46,8 +46,8 @@ dependencies {
     compileOnly(project(":kotlin-annotation-processing-gradle"))
     compileOnly(project(":kotlin-scripting-compiler-impl"))
 
-    compile("com.google.code.gson:gson:2.8.5")
-
+    compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+    
     compileOnly("com.android.tools.build:gradle:2.0.0")
     compileOnly("com.android.tools.build:gradle-core:2.0.0")
     compileOnly("com.android.tools.build:builder:2.0.0")
@@ -66,8 +66,7 @@ dependencies {
     runtime(project(":kotlin-reflect"))
 
     jarContents(compileOnly(intellijDep()) {
-        includeJars("serviceMessages", "gson-2.8.5")
-        includeJars("asm-all", rootProject = rootProject)
+        includeJars("asm-all", "serviceMessages", "gson", rootProject = rootProject)
     })
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
