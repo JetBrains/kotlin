@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 import org.jetbrains.org.objectweb.asm.*
 
 const val metadataDescriptor: String = "Lkotlin/Metadata;"
+
 class ClassAbiExtractor(private val writer: ClassWriter) : ClassVisitor(Opcodes.API_VERSION, writer) {
 
     override fun visitMethod(

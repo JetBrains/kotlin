@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
 import java.io.*
 import java.util.*
+
 open class ClasspathSnapshot protected constructor(
     private val cacheDir: File,
     private val classpath: Iterable<File>,
@@ -146,7 +147,7 @@ open class ClasspathSnapshot protected constructor(
 
         val allImpacted = mutableSetOf<String>()
         var current = changedClasses
-        while(current.isNotEmpty()) {
+        while (current.isNotEmpty()) {
             val newRound = mutableSetOf<String>()
             for (klass in current) {
                 if (allImpacted.add(klass)) {
