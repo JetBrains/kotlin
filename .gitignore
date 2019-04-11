@@ -39,6 +39,7 @@ build/
 .idea/artifacts/ideaPlugin.xml
 .idea/artifacts/kotlin_jps_plugin_jar.xml
 .idea/artifacts/kotlin_daemon_client_jar.xml
+.idea/artifacts/kotlin_imports_dumper_compiler_plugin_jar.xml
 kotlin-ultimate/
 node_modules/
 .rpt2_cache/

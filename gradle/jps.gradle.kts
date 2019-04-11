@@ -58,6 +58,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     ideArtifacts {
                         generateIdeArtifacts(rootProject, this@ideArtifacts)
 
+                        kotlinImportsDumperCompilerPluginJar()
+
                         kotlinDaemonClientJar()
 
                         kotlinJpsPluginJar()
@@ -164,6 +166,19 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
+val jarArtifactProjects = listOf(
+    "kotlin-compiler-client-embeddable",
+    "kotlin-compiler",
+    "kotlin-daemon-client",
+    "kotlin-imports-dumper-compiler-plugin",
+    "kotlin-jps-plugin",
+    "kotlin-main-kts",
+    "kotlin-reflect"
+)
+
+fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinImportsDumperCompilerPluginJar() =
+    jarFromProject(project(":kotlin-imports-dumper-compiler-plugin"))
+
 fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinDaemonClientJar() =
     jarFromProject(project(":kotlin-daemon-client"))
 
@@ -214,8 +229,8 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project
                 file("${project.buildDir}/tmp/jar/MANIFEST.MF")
             }
             
-            if (project.sourceSets.names.contains("main")) {
-               moduleOutput(moduleName(project.path)) 
+            if (project.sourceSets.names.contains("main")) { 
+                moduleOutput(moduleName(project.path))
             }
 
             jarContentsFromEmbeddedConfiguration(project)
@@ -224,16 +239,6 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project
         }
     }
 }
-
-val jarArtifactProjects = listOf(
-    "kotlin-compiler-client-embeddable",
-    "kotlin-compiler",
-    "kotlin-daemon-client",
-    "kotlin-imports-dumper-compiler-plugin",
-    "kotlin-jps-plugin",
-    "kotlin-main-kts",
-    "kotlin-reflect"
-)
 
 fun moduleName(projectPath: String) = rootProject.name + projectPath.replace(':', '.') + ".main"
 
