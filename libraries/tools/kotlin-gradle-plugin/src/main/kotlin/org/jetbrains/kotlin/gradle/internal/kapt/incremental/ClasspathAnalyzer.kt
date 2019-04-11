@@ -42,7 +42,7 @@ private fun visitDirectory(directory: File): ClasspathEntryData {
     directory.walk().filter {
         it.extension == "class" && !it.relativeTo(directory).toString().toLowerCase().startsWith("meta-inf")
     }.forEach {
-        val internalName = it.relativeTo(directory).toString().dropLast(".class".length)
+        val internalName = it.relativeTo(directory).invariantSeparatorsPath.dropLast(".class".length)
         analyzeInputStream(it.inputStream(), internalName, entryData)
     }
 
