@@ -152,7 +152,8 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
             Replacement("java.lang.Math.sqrt", "kotlin.math.sqrt"),
             Replacement("java.lang.Math.tan", "kotlin.math.tan"),
             Replacement("java.lang.Math.tanh", "kotlin.math.tanh"),
-            Replacement("java.lang.Math.copySign", "kotlin.math.withSign", toExtensionFunction = true)
+            Replacement("java.lang.Math.copySign", "kotlin.math.withSign", toExtensionFunction = true),
+            Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", toExtensionFunction = true)
         ).groupBy { it.javaMethodShortName }
     }
 }
