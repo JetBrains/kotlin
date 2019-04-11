@@ -140,27 +140,6 @@ fun Project.publish(body: Upload.() -> Unit = {}): Upload {
     }
 }
 
-fun Project.ideaPlugin(subdir: String = "lib", body: AbstractCopyTask.() -> Unit): Copy {
-    val thisProject = this
-    val pluginTask = task<Copy>("ideaPlugin") {
-        body()
-        into(File(rootProject.extra["ideaPluginDir"].toString(), subdir).path)
-        rename("-${java.util.regex.Pattern.quote(thisProject.version.toString())}", "")
-    }
-
-    task("idea-plugin") {
-        dependsOn(pluginTask)
-    }
-
-    return pluginTask
-}
-
-fun Project.ideaPlugin(subdir: String = "lib"): Copy = ideaPlugin(subdir) {
-    runtimeJarTaskIfExists()?.let {
-        from(it)
-    }
-}
-
 fun Project.dist(
     targetDir: File? = null,
     targetName: String? = null,

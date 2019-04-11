@@ -1,3 +1,5 @@
+import java.util.regex.Pattern.quote
+
 description = "Kotlin IDEA plugin"
 
 plugins {
@@ -140,12 +142,19 @@ val jar = runtimeJar {
     archiveName = "kotlin-plugin.jar"
 }
 
-ideaPlugin {
-    duplicatesStrategy = DuplicatesStrategy.FAIL // Investigation is required if we have multiple jars with same name
+val ideaPluginDir: File by rootProject.extra
+tasks.register<Copy>("ideaPlugin") {
     dependsOn(":dist")
+
+    into(File(ideaPluginDir, "lib"))
+
+    duplicatesStrategy = DuplicatesStrategy.FAIL // Investigation is required if we have multiple jars with same name
+
     from(jar)
     from(libraries)
     from(jpsPlugin) {
         into("jps")
     }
+
+    rename(quote("-$version"), "")
 }
