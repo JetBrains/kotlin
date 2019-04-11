@@ -66,10 +66,11 @@ internal val createSymbolTablePhase = konanUnitPhase(
 
 internal val objCExportPhase = konanUnitPhase(
         op = {
-            objCExport = ObjCExport(this)
+            objCExport = ObjCExport(this, symbolTable!!)
         },
         name = "ObjCExport",
-        description = "Objective-C header generation"
+        description = "Objective-C header generation",
+        prerequisite = setOf(createSymbolTablePhase)
 )
 
 internal val buildCExportsPhase = konanUnitPhase(

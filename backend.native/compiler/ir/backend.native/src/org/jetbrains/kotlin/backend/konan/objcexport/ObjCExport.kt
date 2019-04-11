@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
@@ -36,10 +37,11 @@ internal class ObjCExportedInterface(
         val mapper: ObjCExportMapper
 )
 
-internal class ObjCExport(val context: Context) {
+internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     private val target get() = context.config.target
 
     private val exportedInterface = produceInterface()
+    private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
 
     private fun produceInterface(): ObjCExportedInterface? {
         if (target.family != Family.IOS && target.family != Family.OSX) return null
@@ -85,11 +87,7 @@ internal class ObjCExport(val context: Context) {
         if (exportedInterface != null) {
             produceFrameworkSpecific(exportedInterface.headerLines)
 
-            objCCodeGenerator.generate(
-                    generatedClasses = exportedInterface.generatedClasses,
-                    categoryMembers = exportedInterface.categoryMembers,
-                    topLevel = exportedInterface.topLevel
-            )
+            objCCodeGenerator.generate(codeSpec!!)
 
             exportedInterface.generateWorkaroundForSwiftSR10177()
         }
