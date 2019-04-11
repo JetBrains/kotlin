@@ -196,7 +196,11 @@ class AddFunctionToSupertypeFix private constructor(
         ): FunctionDescriptor {
             // TODO: support for generics.
 
-            val modality = if (typeDescriptor.kind == ClassKind.INTERFACE) Modality.ABSTRACT else typeDescriptor.modality
+            val modality = if (typeDescriptor.kind == ClassKind.INTERFACE || typeDescriptor.modality == Modality.SEALED) {
+                Modality.ABSTRACT
+            } else {
+                typeDescriptor.modality
+            }
 
             return functionDescriptor.copy(
                 typeDescriptor,
