@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuto
 import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
 
-abstract class KotlinTestTask : AbstractTestTask() {
+abstract class KotlinTest : AbstractTestTask() {
     @Input
     @Optional
     var targetName: String? = null

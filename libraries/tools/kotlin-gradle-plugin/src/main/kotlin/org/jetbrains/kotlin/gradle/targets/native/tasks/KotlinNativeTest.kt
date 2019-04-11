@@ -14,11 +14,10 @@ import org.gradle.process.internal.DefaultProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
-import org.jetbrains.kotlin.gradle.testing.TestsGrouping
+import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import java.io.File
 
-open class KotlinNativeTestTask : KotlinTestTask() {
+open class KotlinNativeTest : KotlinTest() {
     @Suppress("LeakingThis")
     @Internal
     val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)

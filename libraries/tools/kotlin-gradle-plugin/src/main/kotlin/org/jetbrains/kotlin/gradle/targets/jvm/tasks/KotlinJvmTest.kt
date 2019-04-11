@@ -10,7 +10,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.Test
 
-open class KotlinJvmTestTask : Test() {
+open class KotlinJvmTest : Test() {
     @Input
     @Optional
     var targetName: String? = null

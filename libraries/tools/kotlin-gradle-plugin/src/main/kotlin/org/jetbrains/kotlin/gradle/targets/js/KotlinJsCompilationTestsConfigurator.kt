@@ -3,8 +3,7 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
@@ -41,7 +40,7 @@ internal class KotlinJsCompilationTestsConfigurator(
         // apply plugin (cannot do it lazy)
         val nodeJs = NodeJsPlugin[target.project]
 
-        registerTask(project, testTaskName, KotlinNodeJsTestTask::class.java) { testJs ->
+        registerTask(project, testTaskName, KotlinJsTest::class.java) { testJs ->
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
             testJs.dependsOn(compileTestKotlin2Js, nodeJs.nodeJsSetupTask)

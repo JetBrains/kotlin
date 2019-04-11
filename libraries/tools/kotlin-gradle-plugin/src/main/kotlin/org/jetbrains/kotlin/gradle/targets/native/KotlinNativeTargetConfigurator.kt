@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTestTask
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
@@ -129,7 +129,7 @@ open class KotlinNativeTargetConfigurator(
         val taskName = binary.runTaskName ?: return
 
         if (binary.isDefaultTestExecutable) {
-            tasks.create(taskName, KotlinNativeTestTask::class.java).apply {
+            tasks.create(taskName, KotlinNativeTest::class.java).apply {
                 tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(this)
 
                 group = LifecycleBasePlugin.VERIFICATION_GROUP
