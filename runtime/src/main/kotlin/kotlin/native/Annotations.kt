@@ -45,7 +45,7 @@ public annotation class RetainForTarget(val target: String)
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
