@@ -1,0 +1,10 @@
+@kotlin.Metadata
+public final class Foo {
+    public method <init>(): void
+    private final method getExtProp(p0: java.lang.Object): java.lang.String
+}
+
+@kotlin.Metadata
+public final class InlineReifiedPropertyKt {
+    private final static method getExtProp(p0: java.lang.Object): java.lang.String
+}

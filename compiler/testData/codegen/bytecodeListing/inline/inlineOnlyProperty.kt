@@ -1,4 +1,3 @@
-
 // WITH_RUNTIME
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
@@ -14,11 +13,7 @@ inline var prop2: String
     set(value) {}
 
 
-inline val <reified Z> Z.extProp: String
-    get() = "123"
-
 class Foo {
-
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     @kotlin.internal.InlineOnly
     inline var prop: String
@@ -30,9 +25,4 @@ class Foo {
         @kotlin.internal.InlineOnly
         get() = "12"
         set(value) {}
-
-
-    inline val <reified Z> Z.extProp: String
-        get() = "123"
-
 }
