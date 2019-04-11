@@ -536,6 +536,19 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
+    @Test
+    fun testProductionOnTestFlag() {
+        configureByFiles()
+        importProject(true)
+
+        checkProjectStructure(false, false, false ) {
+            module("project.javaModule.test") {
+                moduleDependency("project.mppModule.jvmTest", DependencyScope.TEST, true)
+                moduleDependency("project.mppModule.jvmMain", DependencyScope.TEST, false)
+            }
+        }
+    }
+
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,

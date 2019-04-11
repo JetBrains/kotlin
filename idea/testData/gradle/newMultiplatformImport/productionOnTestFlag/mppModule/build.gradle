@@ -1,0 +1,7 @@
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+    jvm()
+
+}
+println("mppModule")

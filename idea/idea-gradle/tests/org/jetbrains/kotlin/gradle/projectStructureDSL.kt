@@ -10,6 +10,7 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
@@ -147,7 +148,7 @@ class ModuleInfo(
         expectedDependencyNames += libraryEntry.presentableName
     }
 
-    fun moduleDependency(moduleName: String, scope: DependencyScope) {
+    fun moduleDependency(moduleName: String, scope: DependencyScope, productionOnTest: Boolean? = null) {
         val moduleEntry = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().singleOrNull { it.moduleName == moduleName }
         if (moduleEntry == null) {
             val allModules = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().map { it.moduleName }.joinToString(", ")
@@ -155,6 +156,7 @@ class ModuleInfo(
             return
         }
         checkDependencyScope(moduleEntry, scope)
+        checkProductionOnTest(moduleEntry, productionOnTest)
         expectedDependencyNames += moduleEntry.presentableName
     }
 
@@ -240,6 +242,23 @@ class ModuleInfo(
                 "Module '${module.name}': Dependency '${library.presentableName}': expected scope '$scope' but found '$actualScope'"
             )
         }
+    }
+
+    private fun checkProductionOnTest(library: ExportableOrderEntry, productionOnTest: Boolean?) {
+        if (productionOnTest == null) return
+        val actualFlag = (library as? ModuleOrderEntryImpl)?.isProductionOnTestDependency
+        if (actualFlag == null) {
+            projectInfo.messageCollector.report(
+                "Module '${module.name}': Dependency '${library.presentableName}' has no productionOnTest property"
+            )
+        } else {
+            if (actualFlag != productionOnTest) {
+                projectInfo.messageCollector.report(
+                    "Module '${module.name}': Dependency '${library.presentableName}': expected productionOnTest '$productionOnTest' but found '$actualFlag'"
+                )
+            }
+        }
+
     }
 }
 

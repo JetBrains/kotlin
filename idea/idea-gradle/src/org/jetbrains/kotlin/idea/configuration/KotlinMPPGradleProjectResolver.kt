@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
-import org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver.Companion.isNotSupported
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
@@ -361,7 +360,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     for (sourceSet in compilation.sourceSets) {
                         if (sourceSet.fullName() == compilation.fullName()) continue
                         val targetDataNode = getSiblingKotlinModuleData(sourceSet, gradleModule, ideModule, resolverCtx) ?: continue
-                        addDependency(dataNode, targetDataNode)
+                        addDependency(dataNode, targetDataNode, sourceSet.isTestModule)
                     }
                 }
             }
@@ -421,7 +420,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 if (sourceSet.platform == KotlinPlatform.ANDROID) continue
                 for (dependeeSourceSet in dependeeSourceSets) {
                     val toDataNode = getSiblingKotlinModuleData(dependeeSourceSet, gradleModule, ideModule, resolverCtx) ?: continue
-                    addDependency(fromDataNode, toDataNode)
+                    addDependency(fromDataNode, toDataNode, dependeeSourceSet.isTestModule)
                 }
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))) {
                     val mergedDependencies = LinkedHashSet<KotlinDependency>().apply {
@@ -454,12 +453,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 .filterNotNull()
         }
 
-        private fun addDependency(fromModule: DataNode<*>, toModule: DataNode<*>) {
+        private fun addDependency(fromModule: DataNode<*>, toModule: DataNode<*>, dependOnTestModule: Boolean) {
             val fromData = fromModule.data as? ModuleData ?: return
             val toData = toModule.data as? ModuleData ?: return
             val moduleDependencyData = ModuleDependencyData(fromData, toData).also {
                 it.scope = DependencyScope.COMPILE
                 it.isExported = false
+                it.isProductionOnTestDependency = dependOnTestModule
             }
             fromModule.createChild(ProjectKeys.MODULE_DEPENDENCY, moduleDependencyData)
         }
@@ -567,6 +567,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 sourceSet.name = compilation.fullName()
                 sourceSet.targetCompatibility = compilationData.targetCompatibility
                 sourceSet.dependencies += compilation.dependencies
+                //TODO after applying patch to IDEA core uncomment the following line:
+                // sourceSet.isTest = compilation.sourceSets.filter { isTestModule }.isNotEmpty()
+                // It will allow to get rid of hacks with guessing module type in DataServices and obtain properly set productionOnTest flags
                 val sourcesWithTypes = SmartList<kotlin.Pair<IExternalSystemSourceType, ExternalSourceDirectorySet>>()
                 if (effectiveClassesDir != null) {
                     sourcesWithTypes += compilation.sourceType to DefaultExternalSourceDirectorySet().also { dirSet ->
