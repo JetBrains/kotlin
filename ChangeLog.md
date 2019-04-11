@@ -414,5 +414,12 @@
 - [`KT-29302`](https://youtrack.jetbrains.com/issue/KT-29302) Java classes doesn't resolve Kotlin classes when kapt.use.worker.api = true
 - [`KT-30163`](https://youtrack.jetbrains.com/issue/KT-30163) Kapt: Javadoc in Java source model mangled (leading asterisks are preserved)
 
+### Docs & Examples
+
+- [`KT-30091`](https://youtrack.jetbrains.com/issue/KT-30091) KClass documentation incorrectly shows all members available on all platforms
+- [`KT-30100`](https://youtrack.jetbrains.com/issue/KT-30100) Clarify Map.toSortedMap docs
+- [`KT-30418`](https://youtrack.jetbrains.com/issue/KT-30418) Documentation for floor() and ceil() functions is misleading
+- [`KT-29373`](https://youtrack.jetbrains.com/issue/KT-29373) MutableSet.add documentation is confusing
+
 ## Previous releases
 This release also includes the fixes and improvements from the [previous releases](https://github.com/JetBrains/kotlin/releases/tag/v1.3.21).
