@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -38,7 +37,6 @@ fun ConeKotlinType.render(): String {
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.render()}!"
-        is ConeKotlinErrorType -> "error: $reason"
         is ConeClassErrorType -> "class error: $reason"
         is ConeCapturedType -> "captured type: lowerType = ${lowerType?.render()}"
         is ConeClassLikeType -> {
@@ -540,6 +538,10 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         println("}")
     }
 
+    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression) {
+        print("\$subj\$")
+    }
+
     override fun visitTryExpression(tryExpression: FirTryExpression) {
         tryExpression.annotations.renderAnnotations()
         print("try")
@@ -604,7 +606,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             when (expression) {
                 is FirExpressionStub -> "STUB"
                 is FirUnitExpression -> "Unit"
-                is FirWhenSubjectExpression -> "\$subj\$"
                 is FirElseIfTrueCondition -> "else"
                 else -> "??? ${expression.javaClass}"
             }

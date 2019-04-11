@@ -272,6 +272,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformExpression(whenExpression, data)
     }
 
+    open fun transformWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformExpression(whenSubjectExpression, data)
+    }
+
     open fun transformWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(wrappedArgumentExpression, data)
     }
@@ -742,6 +746,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): CompositeTransformResult<FirElement> {
         return transformWhenExpression(whenExpression, data)
+    }
+
+    final override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformWhenSubjectExpression(whenSubjectExpression, data)
     }
 
     final override fun visitWhileLoop(whileLoop: FirWhileLoop, data: D): CompositeTransformResult<FirElement> {

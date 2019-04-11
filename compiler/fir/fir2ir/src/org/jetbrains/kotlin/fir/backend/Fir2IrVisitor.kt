@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
@@ -793,12 +792,6 @@ internal class Fir2IrVisitor(
     private fun FirExpression.toIrExpression(): IrExpression {
         return when (this) {
             is FirBlock -> convertToIrExpressionOrBlock()
-            is FirWhenSubjectExpression -> {
-                val lastSubjectVariable = subjectVariableStack.last()
-                convertWithOffsets { startOffset, endOffset ->
-                    IrGetValueImpl(startOffset, endOffset, lastSubjectVariable.type, lastSubjectVariable.symbol)
-                }
-            }
             is FirUnitExpression -> convertWithOffsets { startOffset, endOffset ->
                 IrGetObjectValueImpl(
                     startOffset, endOffset, unitType,
@@ -909,6 +902,13 @@ internal class Fir2IrVisitor(
             } else {
                 IrBranchImpl(startOffset, endOffset, condition.toIrExpression(), irResult)
             }
+        }
+    }
+
+    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Any?): IrElement {
+        val lastSubjectVariable = subjectVariableStack.last()
+        return whenSubjectExpression.convertWithOffsets { startOffset, endOffset ->
+            IrGetValueImpl(startOffset, endOffset, lastSubjectVariable.type, lastSubjectVariable.symbol)
         }
     }
 
