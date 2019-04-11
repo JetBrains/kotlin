@@ -143,7 +143,7 @@ val jar = runtimeJar {
 }
 
 val ideaPluginDir: File by rootProject.extra
-tasks.register<Copy>("ideaPlugin") {
+tasks.register<Sync>("ideaPlugin") {
     dependsOn(":dist")
 
     into(File(ideaPluginDir, "lib"))
