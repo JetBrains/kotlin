@@ -7178,6 +7178,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Io extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIo() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("print.kt")
+            public void testPrint() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io/print.kt");
+            }
+
+            @TestMetadata("println.kt")
+            public void testPrintln() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io/println.kt");
+            }
+
+            @TestMetadata("println_2.kt")
+            public void testPrintln_2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io/println_2.kt");
+            }
+
+            @TestMetadata("println_3.kt")
+            public void testPrintln_3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io/println_3.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -7362,26 +7395,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             public void testExit() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system/exit.kt");
             }
-
-            @TestMetadata("print.kt")
-            public void testPrint() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system/print.kt");
-            }
-
-            @TestMetadata("println.kt")
-            public void testPrintln() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system/println.kt");
-            }
-
-            @TestMetadata("println_2.kt")
-            public void testPrintln_2() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system/println_2.kt");
-            }
-
-            @TestMetadata("println_3.kt")
-            public void testPrintln_3() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system/println_3.kt");
-            }
         }
 
         @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString")
@@ -7394,6 +7407,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
             public void testAllFilesPresentInToString() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("byteToString.kt")
+            public void testByteToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/byteToString.kt");
+            }
+
+            @TestMetadata("charToString.kt")
+            public void testCharToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/charToString.kt");
+            }
+
+            @TestMetadata("doubleToString.kt")
+            public void testDoubleToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/doubleToString.kt");
+            }
+
+            @TestMetadata("floatToString.kt")
+            public void testFloatToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/floatToString.kt");
             }
 
             @TestMetadata("incorrectDescriptor.kt")
@@ -7409,6 +7442,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("intToString2.kt")
             public void testIntToString2() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/intToString2.kt");
+            }
+
+            @TestMetadata("longToString.kt")
+            public void testLongToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/longToString.kt");
+            }
+
+            @TestMetadata("longToString2.kt")
+            public void testLongToString2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/longToString2.kt");
             }
 
             @TestMetadata("replaceIntToString.kt")
@@ -7429,6 +7472,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("replaceToStringWithRadix.kt")
             public void testReplaceToStringWithRadix() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/replaceToStringWithRadix.kt");
+            }
+
+            @TestMetadata("shortToString.kt")
+            public void testShortToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/shortToString.kt");
             }
         }
     }

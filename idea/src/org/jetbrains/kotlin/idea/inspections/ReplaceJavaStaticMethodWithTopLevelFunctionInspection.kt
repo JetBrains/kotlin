@@ -39,10 +39,12 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
         val callee = call.calleeExpression ?: return
         val dotQualified = call.getStrictParentOfType<KtDotQualifiedExpression>() ?: return
         val calleeText = callee.text
-        val replacements = replacements[calleeText] ?: return
-        val replacement = replacements.first()
+        val replacements = REPLACEMENTS[calleeText]?.let { list ->
+            val callDescriptor = call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL)) ?: return
+            list.filter { callDescriptor.isCalling(FqName(it.javaMethodFqName)) }
+        } ?: return
 
-        if (call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL))?.isCalling(FqName(replacement.javaMethodFqName)) != true) return
+        val replacement = replacements.firstOrNull() ?: return
         if (replacement.toExtensionFunction && call.valueArguments.isEmpty()) return
         holder.registerProblem(
             dotQualified,
@@ -112,15 +114,23 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
         val javaMethodShortName = javaMethodFqName.shortName()
 
         val kotlinFunctionShortName = kotlinFunctionFqName.shortName()
-
-        override fun toString(): String = kotlinFunctionFqName
     }
 
     companion object {
-        private val replacements = listOf(
+        private val JAVA_PRIMITIVES = listOf("Integer", "Long", "Byte", "Character", "Short", "Double", "Float").map {
+            Replacement("java.lang.$it.toString", "kotlin.text.toString", toExtensionFunction = true)
+        }
+
+        private val JAVA_IO = listOf(
             Replacement("java.io.PrintStream.print", "kotlin.io.print"),
-            Replacement("java.io.PrintStream.println", "kotlin.io.println"),
-            Replacement("java.lang.System.exit", "kotlin.system.exitProcess"),
+            Replacement("java.io.PrintStream.println", "kotlin.io.println")
+        )
+
+        private val JAVA_SYSTEM = listOf(
+            Replacement("java.lang.System.exit", "kotlin.system.exitProcess")
+        )
+
+        private val JAVA_MATH = listOf(
             Replacement("java.lang.Math.abs", "kotlin.math.abs"),
             Replacement("java.lang.Math.acos", "kotlin.math.acos"),
             Replacement("java.lang.Math.asin", "kotlin.math.asin"),
@@ -152,9 +162,11 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
             Replacement("java.lang.Math.sqrt", "kotlin.math.sqrt"),
             Replacement("java.lang.Math.tan", "kotlin.math.tan"),
             Replacement("java.lang.Math.tanh", "kotlin.math.tanh"),
-            Replacement("java.lang.Math.copySign", "kotlin.math.withSign", toExtensionFunction = true),
-            Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", toExtensionFunction = true),
-            Replacement("java.lang.Integer.toString", "kotlin.text.toString", toExtensionFunction = true)
-        ).groupBy { it.javaMethodShortName }
+            Replacement("java.lang.Math.copySign", "kotlin.math.withSign", toExtensionFunction = true)
+        )
+
+        private val JAVA_ARRAYS = listOf(Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", toExtensionFunction = true))
+
+        private val REPLACEMENTS = (JAVA_MATH + JAVA_SYSTEM + JAVA_IO + JAVA_PRIMITIVES + JAVA_ARRAYS).groupBy { it.javaMethodShortName }
     }
 }
