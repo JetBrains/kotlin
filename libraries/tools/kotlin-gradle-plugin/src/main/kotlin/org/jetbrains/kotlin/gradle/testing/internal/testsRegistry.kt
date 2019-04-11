@@ -10,10 +10,8 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.TaskHolder
-import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTestTask
 import org.jetbrains.kotlin.gradle.tasks.AggregateTestReport
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 
 private val Project.allTestsTask: TaskHolder<AggregateTestReport>
     get() = locateOrRegisterTask("allTests") { aggregate ->

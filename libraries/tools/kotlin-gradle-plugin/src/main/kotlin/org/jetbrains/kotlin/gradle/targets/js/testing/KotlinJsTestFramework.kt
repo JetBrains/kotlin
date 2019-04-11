@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestTask
 
 interface KotlinJsTestFramework {
     fun createTestExecutionSpec(
-        task: KotlinNodeJsTestTask,
+        task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>
     ): TCServiceMessagesTestExecutionSpec

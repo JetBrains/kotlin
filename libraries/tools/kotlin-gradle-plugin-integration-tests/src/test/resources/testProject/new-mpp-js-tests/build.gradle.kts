@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestTask
-
 plugins {
     kotlin("multiplatform").version("<pluginMarkerVersion>")
 }
@@ -25,18 +23,4 @@ kotlin {
 
     js("server")
     js("client")
-}
-
-tasks {
-    "jsCommonTest"(KotlinNodeJsTestTask::class) {
-        ignoreFailures = true
-    }
-
-    "clientTest"(KotlinNodeJsTestTask::class) {
-        ignoreFailures = true
-    }
-
-    "serverTest"(KotlinNodeJsTestTask::class) {
-        ignoreFailures = true
-    }
 }

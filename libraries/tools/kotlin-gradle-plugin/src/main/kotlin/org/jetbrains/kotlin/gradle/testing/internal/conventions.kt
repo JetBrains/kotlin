@@ -10,7 +10,7 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.testing.TestTaskReports
 import org.gradle.testing.base.plugins.TestingBasePlugin
-import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import java.io.File
 
 @Suppress("UnstableApiUsage")
@@ -22,7 +22,7 @@ internal val Project.reportsDir: File
 internal val Project.testReportsDir: File
     get() = reportsDir.resolve(TestingBasePlugin.TESTS_DIR_NAME)
 
-internal fun KotlinTestTask.configureConventions() {
+internal fun KotlinTest.configureConventions() {
     reports.configureConventions(project, name)
     conventionMapping.map("binResultsDir") { project.testResultsDir.resolve("$name/binary") }
 }
