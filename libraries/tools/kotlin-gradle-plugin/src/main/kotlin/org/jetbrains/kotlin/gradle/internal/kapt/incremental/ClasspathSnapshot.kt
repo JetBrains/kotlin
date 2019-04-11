@@ -97,9 +97,7 @@ open class ClasspathSnapshot protected constructor(
 
         // We do not compute structural data for unchanged files of the current snapshot for performance reasons.
         // That is why we reuse the previous snapshot as that one contains all unchanged entries.
-        previousData.filter { !computedClasspathData.containsKey(it.key) }.forEach {
-            computedClasspathData[it.key] = it.value
-        }
+        previousData.filterTo(computedClasspathData) { (key, _) -> key !in computedClasspathData }
 
         val allImpactedClasses = findAllImpacted(changedClasses)
 
