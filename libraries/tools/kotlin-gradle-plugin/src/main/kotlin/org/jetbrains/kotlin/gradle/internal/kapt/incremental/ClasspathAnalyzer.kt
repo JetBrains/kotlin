@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
-import com.google.common.hash.Hashing
 import org.gradle.api.artifacts.transform.ArtifactTransform
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.*
+import java.security.MessageDigest
 import java.util.zip.ZipFile
 
 const val CLASS_STRUCTURE_ARTIFACT_TYPE = "class-structure"
@@ -75,8 +75,9 @@ private fun analyzeInputStream(input: InputStream, internalName: String, entryDa
     )
 
     val bytes = abiExtractor.getBytes()
-    val hashBytes = Hashing.murmur3_128().hashBytes(bytes)
-    entryData.classAbiHash[internalName] = hashBytes.asBytes()
+    val digest = MessageDigest.getInstance("MD5").digest(bytes)
+
+    entryData.classAbiHash[internalName] = digest
     entryData.classDependencies[internalName] =
         ClassDependencies(typeDependenciesExtractor.getAbiTypes(), typeDependenciesExtractor.getPrivateTypes())
 }
