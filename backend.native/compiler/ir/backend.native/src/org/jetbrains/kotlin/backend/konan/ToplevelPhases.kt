@@ -162,7 +162,7 @@ internal val irGeneratorPluginsPhase = konanUnitPhase(
 // That requires some design and implementation work.
 internal val copyDefaultValuesToActualPhase = konanUnitPhase(
         op = {
-            irModule!!.files.forEach(ExpectToActualDefaultValueCopier(this)::lower)
+            ExpectToActualDefaultValueCopier(irModule!!).process()
         },
         name = "CopyDefaultValuesToActual",
         description = "Copy default values from expect to actual declarations"

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
+import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -42,9 +42,16 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
     }
 }
 
-internal class ExpectToActualDefaultValueCopier(val context: Context) : FileLoweringPass {
+internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFragment) {
 
-    override fun lower(irFile: IrFile) {
+    // Note: local declarations aren't required here; TODO: use more lightweight index.
+    private val moduleIndex = ModuleIndex(irModule)
+
+    fun process() {
+        irModule.files.forEach { this.process(it) }
+    }
+
+    private fun process(irFile: IrFile) {
         // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
         irFile.declarations.forEach {
             if (it.descriptor.isExpectMember) {
@@ -84,10 +91,10 @@ internal class ExpectToActualDefaultValueCopier(val context: Context) : FileLowe
     }
 
     private inline fun <reified T: IrFunction> T.findActualForExpected(): T =
-            context.ir.symbols.symbolTable.referenceFunction(descriptor.findActualForExpect()).owner as T
+            moduleIndex.functions[descriptor.findActualForExpect()] as T
 
     private fun IrClass.findActualForExpected(): IrClass =
-            context.ir.symbols.symbolTable.referenceClass(descriptor.findActualForExpect()).owner
+            moduleIndex.classes[descriptor.findActualForExpect()]!!
 
     private inline fun <reified T : MemberDescriptor> T.findActualForExpect() = with(ExpectedActualResolver) {
         val descriptor = this@findActualForExpect
@@ -135,7 +142,7 @@ internal class ExpectToActualDefaultValueCopier(val context: Context) : FileLowe
                         property.setter -> actualPropertyDescriptor.setter!!
                         else -> error("Unexpected accessor of $symbol ${symbol.descriptor}")
                     }
-                    context.ir.symbols.symbolTable.referenceFunction(accessorDescriptor) as IrSimpleFunctionSymbol
+                    moduleIndex.functions[accessorDescriptor]!!.symbol as IrSimpleFunctionSymbol
                 }
 
                 else -> super.getReferencedSimpleFunction(symbol)
