@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         KotlinTargetConfigurator<KotlinJsCompilation>(true, true, kotlinPluginVersion) {
@@ -25,7 +27,7 @@ class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
 
         platformTarget.compilations.all {
             it.compileKotlinTask.kotlinOptions {
-                moduleKind = "commonjs"
+                moduleKind = "umd"
                 sourceMap = true
                 sourceMapEmbedSources = null
             }
@@ -34,7 +36,7 @@ class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
         val project = target.project
-        val npmProject = NpmProject[project]
+        val npmProject = NpmProjectLayout[project]
 
         target.compilations.all { compilation ->
             if (isTestCompilation(compilation)) {
