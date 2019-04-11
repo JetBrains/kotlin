@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.FirAssignment
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
@@ -28,6 +29,11 @@ abstract class FirAbstractAssignment(
         set(value) {
             calleeReference = value
         }
+
+    override fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirAssignment {
+        rValue = rValue.transformSingle(transformer, data)
+        return this
+    }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         rValue = rValue.transformSingle(transformer, data)
