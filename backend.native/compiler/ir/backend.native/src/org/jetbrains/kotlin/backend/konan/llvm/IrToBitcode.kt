@@ -295,7 +295,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun appendCAdapters() {
-        CAdapterGenerator(context, codegen).generateBindings()
+        context.cAdapterGenerator.generateBindings(codegen)
     }
 
     //-------------------------------------------------------------------------//

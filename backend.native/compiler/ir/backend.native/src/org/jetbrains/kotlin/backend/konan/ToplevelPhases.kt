@@ -72,6 +72,19 @@ internal val objCExportPhase = konanUnitPhase(
         description = "Objective-C header generation"
 )
 
+internal val buildCExportsPhase = konanUnitPhase(
+        op = {
+            if (this.isNativeLibrary) {
+                this.cAdapterGenerator = CAdapterGenerator(this).also {
+                    it.buildExports(this.symbolTable!!)
+                }
+            }
+        },
+        name = "BuildCExports",
+        description = "Build C exports",
+        prerequisite = setOf(createSymbolTablePhase)
+)
+
 internal val psiToIrPhase = konanUnitPhase(
         op = {
             // Translate AST to high level IR.
@@ -303,6 +316,7 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
         lower = frontendPhase then
                 createSymbolTablePhase then
                 objCExportPhase then
+                buildCExportsPhase then
                 psiToIrPhase then
                 destroySymbolTablePhase then
                 irGeneratorPluginsPhase then

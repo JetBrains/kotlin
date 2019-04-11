@@ -18,6 +18,11 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.name.FqName
@@ -204,8 +209,9 @@ private class ExportedElement(val kind: ElementKind,
         when {
             isFunction -> {
                 val function = declaration as FunctionDescriptor
+                val irFunction = irSymbol.owner as IrFunction
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
-                val llvmFunction = owner.codegen.llvmFunction(context.ir.getFromCurrentModule(function))
+                val llvmFunction = owner.codegen.llvmFunction(irFunction)
                 // If function is virtual, we need to resolve receiver properly.
                 val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) && !function.isExtension &&
                         function.isOverridable) {
@@ -214,7 +220,7 @@ private class ExportedElement(val kind: ElementKind,
                         val receiver = param(0)
                         val numParams = LLVMCountParams(llvmFunction)
                         val args = (0..numParams - 1).map { index -> param(index) }
-                        val callee = lookupVirtualImpl(receiver, context.ir.getFromCurrentModule(function))
+                        val callee = lookupVirtualImpl(receiver, irFunction)
                         val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                         ret(result)
                     }
@@ -224,19 +230,19 @@ private class ExportedElement(val kind: ElementKind,
                 LLVMSetLinkage(bridge, LLVMLinkage.LLVMExternalLinkage)
             }
             isClass -> {
-                val classDescriptor = declaration as ClassDescriptor
+                val irClass = irSymbol.owner as IrClass
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 // Produce type getter.
                 val getTypeFunction = LLVMAddFunction(context.llvmModule, "${cname}_type", owner.kGetTypeFuncType)!!
                 val builder = LLVMCreateBuilder()!!
                 val bb = LLVMAppendBasicBlock(getTypeFunction, "")!!
                 LLVMPositionBuilderAtEnd(builder, bb)
-                LLVMBuildRet(builder, context.ir.getFromCurrentModule(classDescriptor).typeInfoPtr.llvm)
+                LLVMBuildRet(builder, irClass.typeInfoPtr.llvm)
                 LLVMDisposeBuilder(builder)
                 // Produce instance getter if needed.
                 if (isSingletonObject) {
                     generateFunction(owner.codegen, owner.kGetObjectFuncType, "${cname}_instance") {
-                        val value = getObjectValue(context.ir.get(classDescriptor), ExceptionHandler.Caller, null)
+                        val value = getObjectValue(irClass, ExceptionHandler.Caller, null)
                         ret(value)
                     }
                 }
@@ -245,7 +251,7 @@ private class ExportedElement(val kind: ElementKind,
                 // Produce entry getter.
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 generateFunction(owner.codegen, owner.kGetObjectFuncType, cname) {
-                    val irEnumEntry = context.ir.getEnumEntryFromCurrentModule(declaration as ClassDescriptor)
+                    val irEnumEntry = irSymbol.owner as IrEnumEntry
                     val value = getEnumEntry(irEnumEntry, ExceptionHandler.Caller)
                     ret(value)
                 }
@@ -268,6 +274,13 @@ private class ExportedElement(val kind: ElementKind,
     val isClass = declaration is ClassDescriptor && declaration.kind != ClassKind.ENUM_ENTRY
     val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY
     val isSingletonObject = declaration is ClassDescriptor && DescriptorUtils.isObject(declaration)
+
+    private val irSymbol = when {
+        isFunction -> owner.symbolTable.referenceFunction(declaration as FunctionDescriptor)
+        isClass -> owner.symbolTable.referenceClass(declaration as ClassDescriptor)
+        isEnumEntry -> owner.symbolTable.referenceEnumEntry(declaration as ClassDescriptor)
+        else -> error("unexpected $kind element: $declaration")
+    }
 
     fun KotlinType.includeToSignature() = !this.isUnit()
 
@@ -493,13 +506,18 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
             getPackage(it).fragments.filter { it.module == this }
         }
 
-internal class CAdapterGenerator(
-        val context: Context, internal val codegen: CodeGenerator) : DeclarationDescriptorVisitor<Boolean, Void?> {
+internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVisitor<Boolean, Void?> {
 
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = context.config.moduleId
     private lateinit var outputStreamWriter: PrintWriter
     private val paramNamesRecorded = mutableMapOf<String, Int>()
+
+    private var codegenOrNull: CodeGenerator? = null
+    internal val codegen get() = codegenOrNull!!
+
+    private var symbolTableOrNull: SymbolTable? = null
+    internal val symbolTable get() = symbolTableOrNull!!
 
     internal fun paramsToUniqueNames(params: List<ParameterDescriptor>): Map<ParameterDescriptor, String> {
         paramNamesRecorded.clear()
@@ -641,7 +659,25 @@ internal class CAdapterGenerator(
 
     private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
 
-    fun generateBindings() {
+    fun buildExports(symbolTable: SymbolTable) {
+        this.symbolTableOrNull = symbolTable
+        try {
+            buildExports()
+        } finally {
+            this.symbolTableOrNull = null
+        }
+    }
+
+    fun generateBindings(codegen: CodeGenerator) {
+        this.codegenOrNull = codegen
+        try {
+            generateBindings()
+        } finally {
+            this.codegenOrNull = null
+        }
+    }
+
+    private fun buildExports() {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
         moduleDescriptors += context.moduleDescriptor
         moduleDescriptors += context.getExportedDependencies()
@@ -660,7 +696,9 @@ internal class CAdapterGenerator(
         ).forEach {
             TypeUtils.getClassDescriptor(it)!!.accept(this@CAdapterGenerator, null)
         }
+    }
 
+    private fun generateBindings() {
         val top = scopes.pop()
         assert(scopes.isEmpty() && top.kind == ScopeKind.TOP)
 
@@ -1012,9 +1050,9 @@ internal class CAdapterGenerator(
     private var functionIndex = 0
     fun nextFunctionIndex() = functionIndex++
 
-    internal val kGetTypeFuncType =
+    internal val kGetTypeFuncType get() =
             LLVMFunctionType(codegen.kTypeInfoPtr, null, 0, 0)!!
     // Abstraction leak for slot :(.
-    internal val kGetObjectFuncType =
+    internal val kGetObjectFuncType get() =
             LLVMFunctionType(codegen.kObjHeaderPtr, cValuesOf(codegen.kObjHeaderPtrPtr), 1, 0)!!
 }

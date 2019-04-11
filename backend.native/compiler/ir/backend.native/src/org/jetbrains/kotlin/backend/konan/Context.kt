@@ -203,6 +203,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     lateinit var objCExport: ObjCExport
 
+    lateinit var cAdapterGenerator: CAdapterGenerator
+
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns
     }
