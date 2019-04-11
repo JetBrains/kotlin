@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
@@ -78,30 +75,26 @@ class TypeTranslator(
         val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor
             ?: throw AssertionError("No descriptor for type $approximatedType")
 
-        return when (ktTypeDescriptor) {
-            is TypeParameterDescriptor ->
-                IrSimpleTypeImpl(
-                    approximatedType,
-                    resolveTypeParameter(ktTypeDescriptor),
-                    approximatedType.isMarkedNullable,
-                    emptyList(),
-                    translateTypeAnnotations(approximatedType.annotations),
-                    variance
-                )
+        return IrSimpleTypeBuilder().apply {
+            kotlinType = approximatedType
+            hasQuestionMark = approximatedType.isMarkedNullable
+            this.variance = variance
+            when (ktTypeDescriptor) {
+                is TypeParameterDescriptor -> {
+                    classifier = resolveTypeParameter(ktTypeDescriptor)
+                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                }
 
-            is ClassDescriptor ->
-                IrSimpleTypeImpl(
-                    approximatedType,
-                    symbolTable.referenceClass(ktTypeDescriptor),
-                    approximatedType.isMarkedNullable,
-                    translateTypeArguments(approximatedType.arguments),
-                    translateTypeAnnotations(approximatedType.annotations),
-                    variance
-                )
+                is ClassDescriptor -> {
+                    classifier = symbolTable.referenceClass(ktTypeDescriptor)
+                    arguments = translateTypeArguments(approximatedType.arguments)
+                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                }
 
-            else ->
-                throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
-        }
+                else ->
+                    throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
+            }
+        }.buildTypeProjection()
     }
 
     private inner class LegacyTypeApproximation {

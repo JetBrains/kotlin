@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -153,27 +154,22 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
             val substitutedType = typeArguments?.get(type.classifier)
             if (substitutedType != null) {
                 substitutedType as IrSimpleType
-                return IrSimpleTypeImpl(
-                        kotlinType      = null,
-                        classifier      = substitutedType.classifier,
-                        hasQuestionMark = type.hasQuestionMark or substitutedType.isMarkedNullable(),
-                        arguments       = substitutedType.arguments,
-                        annotations     = substitutedType.annotations
-                )
+                return substitutedType.buildSimpleType {
+                    kotlinType = null
+                    hasQuestionMark = type.hasQuestionMark or substitutedType.isMarkedNullable()
+                }
             }
 
-            return IrSimpleTypeImpl(
-                    kotlinType      = null,
-                    classifier      = symbolRemapper.getReferencedClassifier(type.classifier),
-                    hasQuestionMark = type.hasQuestionMark,
-                    arguments       = remapTypeArguments(type.arguments),
-                    annotations     = type.annotations.map { it.transform(copier, null) as IrCall }
-            )
+            return type.buildSimpleType {
+                kotlinType = null
+                classifier = symbolRemapper.getReferencedClassifier(type.classifier)
+                arguments = remapTypeArguments(type.arguments)
+                annotations = type.annotations.map { it.transform(copier, null) as IrCall }
+            }
         }
     }
 
-    private class SymbolRemapperImpl(descriptorsRemapper: DescriptorsRemapper)
-        : DeepCopySymbolRemapper(descriptorsRemapper) {
+    private class SymbolRemapperImpl(descriptorsRemapper: DescriptorsRemapper) : DeepCopySymbolRemapper(descriptorsRemapper) {
 
         var typeArguments: Map<IrTypeParameterSymbol, IrType?>? = null
             set(value) {
@@ -192,9 +188,6 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
     }
 
     private val symbolRemapper = SymbolRemapperImpl(DescriptorsToIrRemapper())
-    private val copier = DeepCopyIrTreeWithSymbols(
-            symbolRemapper,
-            InlinerTypeRemapper(symbolRemapper, typeArguments),
-            InlinerSymbolRenamer()
-    )
+    private val copier =
+        DeepCopyIrTreeWithSymbols(symbolRemapper, InlinerTypeRemapper(symbolRemapper, typeArguments), InlinerSymbolRenamer())
 }
