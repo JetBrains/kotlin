@@ -3,12 +3,10 @@ public final class Foo {
     public method <init>(): void
     public final method bar(): void
     private final method baz(): void
-    private final @kotlin.internal.InlineOnly method foo(): void
 }
 
 @kotlin.Metadata
-public final class InlineOnlyKt {
+public final class InlineReifiedKt {
     public final static method bar(): void
     private final static method baz(): void
-    private final static @kotlin.internal.InlineOnly method foo(): void
 }

@@ -88,26 +88,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/immutableCollection.kt");
     }
 
-    @TestMetadata("inlineOnly.kt")
-    public void testInlineOnly() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/inlineOnly.kt");
-    }
-
-    @TestMetadata("InlineOnlyMultifile.kt")
-    public void testInlineOnlyMultifile() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/InlineOnlyMultifile.kt");
-    }
-
-    @TestMetadata("inlineOnlyProperty.kt")
-    public void testInlineOnlyProperty() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/inlineOnlyProperty.kt");
-    }
-
-    @TestMetadata("InlineOnlyPropertyMultifile.kt")
-    public void testInlineOnlyPropertyMultifile() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/InlineOnlyPropertyMultifile.kt");
-    }
-
     @TestMetadata("jvmOverloadsAndParametersAnnotations.kt")
     public void testJvmOverloadsAndParametersAnnotations() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/jvmOverloadsAndParametersAnnotations.kt");
@@ -289,6 +269,46 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
 
         public void testAllFilesPresentInInline() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("inlineOnly.kt")
+        public void testInlineOnly() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/inlineOnly.kt");
+        }
+
+        @TestMetadata("InlineOnlyMultifile.kt")
+        public void testInlineOnlyMultifile() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/InlineOnlyMultifile.kt");
+        }
+
+        @TestMetadata("inlineOnlyProperty.kt")
+        public void testInlineOnlyProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/inlineOnlyProperty.kt");
+        }
+
+        @TestMetadata("InlineOnlyPropertyMultifile.kt")
+        public void testInlineOnlyPropertyMultifile() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/InlineOnlyPropertyMultifile.kt");
+        }
+
+        @TestMetadata("inlineReified.kt")
+        public void testInlineReified() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/inlineReified.kt");
+        }
+
+        @TestMetadata("InlineReifiedMultifile.kt")
+        public void testInlineReifiedMultifile() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/InlineReifiedMultifile.kt");
+        }
+
+        @TestMetadata("inlineReifiedProperty.kt")
+        public void testInlineReifiedProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/inlineReifiedProperty.kt");
+        }
+
+        @TestMetadata("InlineReifiedPropertyMultifile.kt")
+        public void testInlineReifiedPropertyMultifile() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/InlineReifiedPropertyMultifile.kt");
         }
 
         @TestMetadata("simpleNamed.kt")
