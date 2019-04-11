@@ -34,7 +34,7 @@ class B {
 // EXIST:  sealed class
 // EXIST:  sealed class AfterClasses_LangLevel11
 // EXIST:  data class
-// EXIST:  data class AfterClasses_LangLevel11
+// EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" AfterClasses_LangLevel11(...)", "attributes":"bold" }
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external

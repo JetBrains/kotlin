@@ -38,7 +38,7 @@ sourceSets {
     }
     coroutinesExperimentalMigrationTest {
         kotlin {
-            if(!System.properties.'idea.active') {
+            if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
                 srcDir '../coroutines-experimental/jvm/test'
             }
         }

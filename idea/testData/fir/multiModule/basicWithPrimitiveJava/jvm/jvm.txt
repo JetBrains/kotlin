@@ -1,11 +1,13 @@
 FILE: jvm.kt
     public final class A : R|Some| {
-        public constructor(): super<R|Some|>()
+        public constructor(): R|A| {
+            super<R|Some|>()
+        }
 
         public final fun test(): R|kotlin/Unit| {
             lval res1: R|kotlin/Boolean| = R|/Some.foo|(Int(1))
             lval res2: R|kotlin/Boolean| = R|/Some.foo|(<Unresolved name: unaryMinus>#(Int(1)))
-            lval res3: R|kotlin/Array<ft<java/lang/String, java/lang/String?>>| = R|/Some.bar|(<Unresolved name: intArrayOf>#(Int(0), Int(2), <Unresolved name: unaryMinus>#(Int(2))))
+            lval res3: R|kotlin/Array<ft<java/lang/String, java/lang/String?>>| = R|/Some.bar|(R|kotlin/intArrayOf|(Int(0), Int(2), <Unresolved name: unaryMinus>#(Int(2))))
         }
 
     }

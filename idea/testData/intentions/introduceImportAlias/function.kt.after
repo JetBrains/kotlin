@@ -14,7 +14,7 @@ class Outer {
 
 class Test() {
     fun test() {
-        val i = foo1()
+        val i = foo<caret>1()
     }
 
     fun test2() {

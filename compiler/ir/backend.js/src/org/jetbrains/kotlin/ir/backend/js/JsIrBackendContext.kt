@@ -7,22 +7,22 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceKey
 import org.jetbrains.kotlin.ir.backend.js.lower.ConstructorPair
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
@@ -43,12 +43,11 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 
 class JsIrBackendContext(
-    val module: ModuleDescriptorImpl,
+    val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
-    override val configuration: CompilerConfiguration,
-    val phaseConfig: PhaseConfig
+    override val configuration: CompilerConfiguration
 ) : CommonBackendContext {
 
     override val builtIns = module.builtIns
@@ -59,7 +58,7 @@ class JsIrBackendContext(
     val packageLevelJsModules = mutableListOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclaration>()
 
-    val internalPackageFragmentDescriptor = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
+    val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
     val implicitDeclarationFile by lazy {
         IrFileImpl(object : SourceManager.FileEntry {
             override val name = "<implicitDeclarations>"
@@ -83,8 +82,18 @@ class JsIrBackendContext(
         }
     }
 
-    override val sharedVariablesManager =
-        JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
+    private var testContainerField: IrSimpleFunction? = null
+
+    val hasTests get() = testContainerField != null
+
+    val testContainer
+        get() = testContainerField ?: JsIrBuilder.buildFunction("test fun", irBuiltIns.unitType, implicitDeclarationFile).apply {
+            body = JsIrBuilder.buildBlockBody(emptyList())
+            testContainerField = this
+            implicitDeclarationFile.declarations += this
+        }
+
+    override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
     override val declarationFactory = JsDeclarationFactory()
 
     companion object {
@@ -226,10 +235,9 @@ class JsIrBackendContext(
     val newThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
 
     val throwISEymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
-    val throwNPESymbol = ir.symbols.ThrowNullPointerException
-    val throwCCESymbol = ir.symbols.ThrowTypeCastException
-    val throwNWBESymbol = ir.symbols.ThrowNoWhenBranchMatchedException
-    val throwUPAESymbol = ir.symbols.ThrowUninitializedPropertyAccessException
+
+    val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
+    val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
 
     val coroutineImplLabelPropertyGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("state")!!.owner }
     val coroutineImplLabelPropertySetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("state")!!.owner }

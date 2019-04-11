@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.types.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -45,12 +46,28 @@ class IrSimpleTypeImpl(
                 other.classifier, other.hasQuestionMark, other.arguments, other.annotations, variance
             )
 
+    override fun equals(other: Any?): Boolean =
+        other is IrSimpleTypeImpl &&
+                FqNameEqualityChecker.areEqual(classifier, other.classifier) &&
+                hasQuestionMark == other.hasQuestionMark &&
+                arguments == other.arguments &&
+                variance == other.variance
+
+    override fun hashCode(): Int =
+        ((FqNameEqualityChecker.getHashCode(classifier) * 31 + hasQuestionMark.hashCode()) * 31 +
+                arguments.hashCode()) * 31 + variance.hashCode()
 }
 
 class IrTypeProjectionImpl internal constructor(
     override val type: IrType,
     override val variance: Variance
-) : IrTypeProjection
+) : IrTypeProjection {
+    override fun equals(other: Any?): Boolean =
+        other is IrTypeProjectionImpl && type == other.type && variance == other.variance
+
+    override fun hashCode(): Int =
+        type.hashCode() * 31 + variance.hashCode()
+}
 
 fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
     when {

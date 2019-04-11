@@ -13,6 +13,7 @@ Compile bytecode for a
        field    = arity: int = 1 (sp = Lambda.!EXT!)
      field    = completion: kotlin.coroutines.Continuation = {kotlin.coroutines.jvm.internal.RunSuspend@uniqueID} (sp = BaseContinuationImpl.!EXT!)
        field    = result: kotlin.Result = null (sp = RunSuspend.!EXT!)
+   local    = $result: java.lang.Object = null (sp = null)
    local    = a: int = 5 (sp = suspendContinuation.kt, 4)
 Disconnected from the target VM
 

@@ -15,7 +15,11 @@ object StandardClassIds {
     private fun String.baseId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
 
     val Nothing = "Nothing".baseId()
+    val Unit = "Unit".baseId()
     val Any = "Any".baseId()
+    val Enum = "Enum".baseId()
+    val Annotation = "Annotation".baseId()
+    val Array = "Array".baseId()
 
     val Boolean = "Boolean".baseId()
     val Char = "Char".baseId()
@@ -30,4 +34,5 @@ object StandardClassIds {
     val Float = "Float".baseId()
     val Double = "Double".baseId()
 
+    fun byName(name: String) = name.baseId()
 }

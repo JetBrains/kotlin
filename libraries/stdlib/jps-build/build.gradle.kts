@@ -4,10 +4,6 @@ import java.util.regex.Pattern
 
 description = "Stdlib configuration for JPS build (to be interpreted during IDEA project import)"
 
-repositories {
-    maven(bootstrapKotlinRepo!!.replace("artifacts/content/maven/", "artifacts/content/internal/repo"))
-}
-
 val distLib by configurations.creating
 val distCommon by configurations.creating
 val distRoot by configurations.creating

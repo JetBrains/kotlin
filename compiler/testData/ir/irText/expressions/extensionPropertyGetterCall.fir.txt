@@ -1,0 +1,11 @@
+FILE fqName:<root> fileName:/extensionPropertyGetterCall.kt
+  PROPERTY name:okext visibility:public modality:FINAL [val]
+    FUN name:<get-okext> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:okext visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-okext> (): kotlin.String declared in <root>'
+          CONST String type=kotlin.String value="OK"
+  FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test5 (): kotlin.String declared in <root>'
+        CALL 'public final fun <get-okext> (): kotlin.String declared in <root>' type=kotlin.String origin=null

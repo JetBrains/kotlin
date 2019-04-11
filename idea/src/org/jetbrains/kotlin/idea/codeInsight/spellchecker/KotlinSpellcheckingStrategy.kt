@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.*
 
 class KotlinSpellcheckingStrategy : SpellcheckingStrategy() {
     private val plainTextTokenizer = TokenizerBase<KtLiteralStringTemplateEntry>(PlainTextSplitter.getInstance())
-    private val emptyTokenizer = SpellcheckingStrategy.EMPTY_TOKENIZER
+    private val emptyTokenizer = EMPTY_TOKENIZER
 
     override fun getTokenizer(element: PsiElement?): Tokenizer<out PsiElement?> {
         return when (element) {

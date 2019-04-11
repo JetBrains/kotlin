@@ -83,7 +83,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
 
     protected abstract fun doTest(wholeFile: File, testFiles: List<TestFile>)
 
-    protected fun generateIrModule(ignoreErrors: Boolean = false): IrModuleFragment {
+    protected open fun generateIrModule(ignoreErrors: Boolean = false): IrModuleFragment {
         assert(myFiles != null) { "myFiles not initialized" }
         assert(myEnvironment != null) { "myEnvironment not initialized" }
         return doGenerateIrModule(Psi2IrTranslator(myEnvironment.configuration.languageVersionSettings, Psi2IrConfiguration(ignoreErrors)))

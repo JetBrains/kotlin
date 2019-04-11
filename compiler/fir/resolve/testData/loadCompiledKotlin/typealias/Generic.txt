@@ -1,0 +1,11 @@
+public final fun test1(x: R|test/L<kotlin/String>|): R|kotlin/Unit|
+
+public final fun test2(x: R|test/LL<kotlin/String>|): R|kotlin/Unit|
+
+public final fun test3(x: R|test/LLL<kotlin/String>|): R|kotlin/Unit|
+
+public final fun test4(x: R|test/L<kotlin/collections/List<kotlin/String>>|): R|kotlin/Unit|
+
+public final fun test5(x: R|test/LL<kotlin/collections/List<kotlin/String>>|): R|kotlin/Unit|
+
+public final fun test6(x: R|test/LLL<kotlin/collections/List<kotlin/String>>|): R|kotlin/Unit|

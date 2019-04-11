@@ -152,46 +152,51 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         }
     }
 
-    @TestMetadata("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda")
+    @TestMetadata("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DestructuringInSuspendLambda extends AbstractCheckLocalVariablesTableTest {
+    public static class ParametersInSuspendLambda extends AbstractCheckLocalVariablesTableTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
 
-        public void testAllFilesPresentInDestructuringInSuspendLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        public void testAllFilesPresentInParametersInSuspendLambda() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
         @TestMetadata("dataClass.kt")
         public void testDataClass() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/dataClass.kt");
+            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/dataClass.kt");
         }
 
         @TestMetadata("extensionComponents.kt")
         public void testExtensionComponents() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/extensionComponents.kt");
+            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/extensionComponents.kt");
         }
 
         @TestMetadata("generic.kt")
         public void testGeneric() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/generic.kt");
+            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/generic.kt");
         }
 
         @TestMetadata("inline.kt")
         public void testInline() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/inline.kt");
+            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/inline.kt");
         }
 
         @TestMetadata("otherParameters.kt")
         public void testOtherParameters() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/otherParameters.kt");
+            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/otherParameters.kt");
+        }
+
+        @TestMetadata("parameters.kt")
+        public void testParameters() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/parameters.kt");
         }
 
         @TestMetadata("underscoreNames.kt")
         public void testUnderscoreNames() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/underscoreNames.kt");
+            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/underscoreNames.kt");
         }
     }
 }

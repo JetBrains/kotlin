@@ -1,0 +1,4 @@
+public open class PropertyArrayTypes<T> : R|kotlin/Any| {
+    public constructor(): R|test/PropertyArrayTypes<T>|
+
+}

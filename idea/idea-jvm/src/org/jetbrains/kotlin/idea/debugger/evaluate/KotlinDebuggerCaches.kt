@@ -95,10 +95,14 @@ class KotlinDebuggerCaches(project: Project) {
 
         fun compileCodeFragmentCacheAware(
             codeFragment: KtCodeFragment,
-            sourcePosition: SourcePosition,
+            sourcePosition: SourcePosition?,
             compileCode: () -> CompiledDataDescriptor,
             force: Boolean = false
         ): Pair<CompiledDataDescriptor, Boolean> {
+            if (sourcePosition == null) {
+                return Pair(compileCode(), false)
+            }
+
             val evaluateExpressionCache = getInstance(codeFragment.project)
 
             val text = "${codeFragment.importsToString()}\n${codeFragment.text}"

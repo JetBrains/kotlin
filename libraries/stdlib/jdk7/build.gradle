@@ -12,11 +12,6 @@ pill {
     importAsLibrary = true
 }
 
-dependencies {
-    compile project(':kotlin-stdlib')
-    testCompile project(':kotlin-test:kotlin-test-junit')
-}
-
 sourceSets {
     main {
         kotlin {
@@ -26,11 +21,16 @@ sourceSets {
     test {
         kotlin {
             srcDir 'test'
-            if(!System.properties.'idea.active') {
+            if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
                 srcDir '../jvm/test'
                 srcDir '../common/test'
                 srcDir '../test'
             }
+        }
+    }
+    noJdk7Test {
+        kotlin {
+            srcDir 'testNoJdk7'
         }
     }
     java9 {
@@ -38,6 +38,15 @@ sourceSets {
             srcDir 'java9'
         }
     }
+}
+
+configurations {
+    noJdk7TestCompile.extendsFrom(testCompile)
+}
+
+dependencies {
+    compile project(':kotlin-stdlib')
+    testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
 jar {
@@ -101,9 +110,20 @@ task testJdk6Tests(type: Test) {
         testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
         classpath = files(
                 testClassesDirs,
-                configurations.testCompile
+                sourceSets.test.compileClasspath
         )
     }
 }
 
-check.dependsOn testJdk6Tests
+task testNoJdk7(type: Test, dependsOn: noJdk7TestClasses) {
+    group = "verification"
+
+    executable = "$JDK_17/bin/java"
+
+    testClassesDirs = sourceSets.noJdk7Test.output.classesDirs
+    classpath = sourceSets.noJdk7Test.runtimeClasspath
+}
+
+
+check.dependsOn testJdk6Tests, testNoJdk7
+

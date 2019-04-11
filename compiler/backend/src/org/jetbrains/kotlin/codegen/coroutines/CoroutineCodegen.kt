@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -38,11 +35,13 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 abstract class AbstractCoroutineCodegen(
     outerExpressionCodegen: ExpressionCodegen,
@@ -63,7 +62,7 @@ abstract class AbstractCoroutineCodegen(
         if (languageVersionSettings.isReleaseCoroutines())
             createImplMethod(
                 INVOKE_SUSPEND_METHOD_NAME,
-                "result" to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
+                SUSPEND_CALL_RESULT_NAME to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
             )
         else
             createImplMethod(
@@ -175,6 +174,8 @@ class CoroutineCodegenForLambda private constructor(
     private val createCoroutineDescriptor by lazy {
         if (generateErasedCreate) getErasedCreateFunction() else getCreateFunction()
     }
+
+    private val endLabel = Label()
 
     private fun getCreateFunction(): SimpleFunctionDescriptor = SimpleFunctionDescriptorImpl.create(
         funDescriptor.containingDeclaration,
@@ -425,12 +426,21 @@ class CoroutineCodegenForLambda private constructor(
 
             val newIndex = myFrameMap.enter(parameter, mappedType)
             v.store(newIndex, mappedType)
+
+            val name =
+                if (parameter is ReceiverParameterDescriptor)
+                    AsmUtil.getNameForReceiverParameter(originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings)
+                else
+                    (getNameForDestructuredParameterOrNull(parameter as ValueParameterDescriptor) ?: parameter.name.asString())
+            val label = Label()
+            v.mark(label)
+            v.visitLocalVariable(name, mappedType.descriptor, null, label, endLabel, newIndex)
         }
 
-        initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters)
+        initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters, endLabel)
     }
 
-    private fun allFunctionParameters() =
+    private fun allFunctionParameters(): List<ParameterDescriptor> =
         originalSuspendFunctionDescriptor.extensionReceiverParameter.let(::listOfNotNull) +
                 originalSuspendFunctionDescriptor.valueParameters
 
@@ -452,21 +462,24 @@ class CoroutineCodegenForLambda private constructor(
             object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
 
                 override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
-                    if (forInline) return super.wrapMethodVisitor(mv, access, name, desc)
+                    val addEndLabelMethodVisitor = AddEndLabelMethodVisitor(mv, access, name, desc, endLabel)
+                    if (forInline) return super.wrapMethodVisitor(addEndLabelMethodVisitor, access, name, desc)
                     return CoroutineTransformerMethodVisitor(
-                        mv, access, name, desc, null, null,
+                        addEndLabelMethodVisitor, access, name, desc, null, null,
                         obtainClassBuilderForCoroutineState = { v },
                         element = element,
                         diagnostics = state.diagnostics,
                         shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                         containingClassInternalName = v.thisName,
                         isForNamedFunction = false,
-                        languageVersionSettings = languageVersionSettings,
-                        sourceFile = element.containingFile.name
+                        languageVersionSettings = languageVersionSettings
                     )
                 }
 
                 override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                    if (element is KtFunctionLiteral) {
+                        recordCallLabelForLambdaArgument(element, state.bindingTrace)
+                    }
                     codegen.initializeCoroutineParameters()
                     super.doGenerateBody(codegen, signature)
                 }
@@ -500,6 +513,22 @@ class CoroutineCodegenForLambda private constructor(
                 expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_LAMBDA, originalSuspendLambdaDescriptor] == true
             )
         }
+    }
+}
+
+private class AddEndLabelMethodVisitor(
+    delegate: MethodVisitor,
+    access: Int,
+    name: String,
+    desc: String,
+    private val endLabel: Label
+): TransformationMethodVisitor(delegate, access, name, desc, null, null) {
+    override fun performTransformations(methodNode: MethodNode) {
+        methodNode.instructions.add(
+            withInstructionAdapter {
+                mark(endLabel)
+            }
+        )
     }
 }
 

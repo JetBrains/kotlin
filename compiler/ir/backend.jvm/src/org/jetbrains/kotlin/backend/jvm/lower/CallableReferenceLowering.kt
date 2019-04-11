@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
+import org.jetbrains.kotlin.backend.jvm.codegen.isInlineParameter
 import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -57,6 +59,12 @@ import org.jetbrains.org.objectweb.asm.Type
 //Hack implementation to support CR java types in lower
 class CrIrType(val type: Type) : IrType {
     override val annotations = emptyList()
+
+    override fun equals(other: Any?): Boolean =
+        other is CrIrType && type == other.type
+
+    override fun hashCode(): Int =
+        type.hashCode()
 }
 
 internal val callableReferencePhase = makeIrFilePhase(
@@ -77,7 +85,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
 
             override fun visitCall(expression: IrCall): IrExpression {
                 val callee = expression.symbol.owner
-                if (callee.isInlineFunction(context)) {
+                if (callee.isInlineFunctionCall(context)) {
                     //TODO: more wise filtering
                     callee.valueParameters.forEach { valueParameter ->
                         if (valueParameter.isInlineParameter()) {
@@ -103,7 +111,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                         context.irBuiltIns.anyClass.typeWith(),
                         (0 until argumentsCount).map { i -> expression.getValueArgument(i)!! }
                     )
-                    val invokeFun = context.getIrClass(FqName("kotlin.jvm.functions.FunctionN")).owner.declarations.single {
+                    val invokeFun = context.ir.symbols.functionN.owner.declarations.single {
                         it is IrSimpleFunction && it.name.asString() == "invoke"
                     } as IrSimpleFunction
 
@@ -154,10 +162,6 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
         val functionReferenceConstructor: IrConstructor
     )
 
-    private val continuationClass = context.getIrClass(FqName("kotlin.coroutines.experimental.Continuation")).owner
-
-    //private val getContinuationSymbol = context.ir.symbols.getContinuation
-
     private inner class FunctionReferenceBuilder(
         val referenceParent: IrDeclarationParent,
         val irFunctionReference: IrFunctionReference
@@ -193,9 +197,9 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             useVararg = (numberOfParameters > MAX_ARGCOUNT_WITHOUT_VARARG)
 
             val functionClassSymbol = if (useVararg)
-                context.getIrClass(FqName("kotlin.jvm.functions.FunctionN"))
+                context.ir.symbols.functionN
             else
-                context.getIrClass(FqName("kotlin.jvm.functions.Function$numberOfParameters"))
+                context.ir.symbols.getJvmFunctionClass(numberOfParameters)
             val functionClass = functionClassSymbol.owner
             val functionParameterTypes = unboundCalleeParameters.map { it.type }
             val functionClassTypeParameters = if (useVararg)
@@ -211,9 +215,11 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
 
             var suspendFunctionClass: IrClass? = null
             val lastParameterType = unboundCalleeParameters.lastOrNull()?.type
-            if ((lastParameterType as? IrSimpleType)?.classifier == continuationClass) {
+            if (lastParameterType is IrSimpleType &&
+                lastParameterType.classOrNull?.owner?.fqNameWhenAvailable?.asString() == "kotlin.coroutines.experimental.Continuation"
+            ) {
                 // If the last parameter is Continuation<> inherit from SuspendFunction.
-                suspendFunctionClass = context.getIrClass(FqName("kotlin.Suspendfunction${numberOfParameters - 1}")).owner
+                suspendFunctionClass = context.getTopLevelClass(FqName("kotlin.coroutines.SuspendFunction${numberOfParameters - 1}")).owner
                 val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
                         (lastParameterType.arguments.single() as IrTypeProjection).type
                 functionReferenceClassSuperTypes += IrSimpleTypeImpl(
@@ -254,7 +260,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 val getSignatureMethod =
                     createGetSignatureMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getSignature"}!!)
                 val getNameMethod =
-                    createGetNameMethod(functionReferenceOrLambda.owner.properties.find { it.name.asString() == "name" }!!)
+                    createGetNameMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getName" }!!)
                 val getOwnerMethod =
                     createGetOwnerMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getOwner" }!!)
 
@@ -474,19 +480,18 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 }
             }
 
-        private fun createGetNameMethod(superNameProperty: IrProperty): IrSimpleFunction {
-            val superGetter = superNameProperty.getter!!
-            return buildFun {
+        private fun createGetNameMethod(superFunction: IrSimpleFunction): IrSimpleFunction =
+            buildFun {
                 setSourceRange(irFunctionReference)
                 origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
                 name = Name.identifier("getName")
-                returnType = superGetter.returnType
-                visibility = superGetter.visibility
-                modality = superGetter.modality
+                returnType = superFunction.returnType
+                visibility = superFunction.visibility
+                modality = superFunction.modality
             }.apply {
                 val function = this
                 parent = functionReferenceClass
-                overriddenSymbols.add(superGetter.symbol)
+                overriddenSymbols.add(superFunction.symbol)
                 dispatchReceiverParameter = functionReferenceClass.thisReceiver?.copyTo(function)
 
                 val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
@@ -496,7 +501,6 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                     )
                 }
             }
-        }
 
         private fun createGetOwnerMethod(superFunction: IrSimpleFunction): IrSimpleFunction =
             buildFun {
@@ -544,16 +548,15 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 else -> state.typeMapper.mapOwner(callee.descriptor)
             }
 
-            val clazz = globalContext.getIrClass(FqName("java.lang.Class")).owner
+            val clazz = globalContext.ir.symbols.javaLangClass
             val clazzRef = IrClassReferenceImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                clazz.defaultType,
-                clazz.symbol,
+                clazz.typeWith(),
+                clazz,
                 CrIrType(type)
             )
 
-            val reflectionClass = globalContext.getIrClass(FqName("kotlin.jvm.internal.Reflection"))
             return if (isContainerPackage) {
                 // Note that this name is not used in reflection. There should be the name of the referenced declaration's module instead,
                 // but there's no nice API to obtain that name here yet
@@ -562,15 +565,12 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                     -1, -1, globalContext.irBuiltIns.stringType,
                     state.moduleName
                 )
-                val functionSymbol = reflectionClass.functions.find { it.owner.name.asString() == "getOrCreateKotlinPackage" }!!
-                irCall(functionSymbol, functionSymbol.owner.returnType).apply {
+                irCall(globalContext.ir.symbols.getOrCreateKotlinPackage).apply {
                     putValueArgument(0, clazzRef)
                     putValueArgument(1, module)
                 }
             } else {
-                val functionSymbol = reflectionClass.functions.filter { it.owner.name.asString() == "getOrCreateKotlinClass" }
-                    .single { it.owner.valueParameters.size == 1 }
-                irCall(functionSymbol, functionSymbol.owner.returnType).apply {
+                irCall(globalContext.ir.symbols.getOrCreateKotlinClass).apply {
                     putValueArgument(0, clazzRef)
                 }
             }
@@ -591,22 +591,6 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
 }
 
 // TODO: Move to IrUtils
-
-private fun IrFunction.isInlineFunction(context: JvmBackendContext) =
-    (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) &&
-            (isInline || isArrayConstructorWithLambda())
-
-private fun IrFunction.isArrayConstructorWithLambda() =
-    valueParameters.size == 2 &&
-            this is IrConstructor &&
-            parentAsClass.let {
-                it.getPackageFragment()?.fqName?.asString() == "kotlin" &&
-                        it.name.asString().endsWith("Array")
-            }
-
-private fun IrValueParameter.isInlineParameter() =
-    !isNoinline && !type.isNullable() && type.isFunctionOrKFunction()
-
 private fun IrType.substitute(substitutionMap: Map<IrTypeParameter, IrType>): IrType {
     if (this !is IrSimpleType) return this
 

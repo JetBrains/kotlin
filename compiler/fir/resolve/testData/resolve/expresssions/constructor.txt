@@ -1,6 +1,8 @@
 FILE: constructor.kt
     public final class C : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
 
         public final fun create(): R|C| {
             ^create R|/C.C|()

@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.js.backend.ast.JsDeclarationScope
-import org.jetbrains.kotlin.js.backend.ast.JsEmpty
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
-import org.jetbrains.kotlin.js.backend.ast.JsVars
+import org.jetbrains.kotlin.js.backend.ast.*
 
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
 

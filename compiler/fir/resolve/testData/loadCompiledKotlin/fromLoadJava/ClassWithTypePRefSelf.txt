@@ -1,0 +1,4 @@
+public final class ClassWithTypePRefSelf<P> : R|kotlin/Any| {
+    public constructor(): R|test/ClassWithTypePRefSelf<P>|
+
+}

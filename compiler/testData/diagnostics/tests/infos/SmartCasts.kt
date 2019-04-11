@@ -183,7 +183,7 @@ fun returnFunctionLiteral(a: Any?): Function0<Int> {
 }
 
 fun returnFunctionLiteralExpressionBody(a: Any?): Function0<Int> =
-        if (a is Int) { -> <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;DEBUG_INFO_SMARTCAST!>a<!> }
+        if (a is Int) { -> <!DEBUG_INFO_SMARTCAST!>a<!> }
         else { -> 1 }
 
 

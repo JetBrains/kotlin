@@ -1,0 +1,4 @@
+public final class Juice<T> : R|kotlin/Any| {
+    public constructor(): R|test/Juice<T>|
+
+}

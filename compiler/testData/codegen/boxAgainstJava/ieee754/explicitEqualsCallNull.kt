@@ -1,5 +1,4 @@
 // !LANGUAGE: -ThrowNpeOnExplicitEqualsForBoxedNull
-// IGNORE_BACKEND: JVM_IR
 // FILE: JavaClass.java
 
 public class JavaClass {

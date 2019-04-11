@@ -1,0 +1,12 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(): R|test/Anno|
+
+}
+
+public abstract interface Trait : R|kotlin/Any| {
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/Trait.Companion|
+
+    }
+
+}

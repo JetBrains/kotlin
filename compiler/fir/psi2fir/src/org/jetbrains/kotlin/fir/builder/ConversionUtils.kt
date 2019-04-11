@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun String.parseCharacter(): Char? {
     // Strip the quotes
@@ -158,11 +160,6 @@ internal fun IElementType.toFirOperation(): FirOperation =
         KtTokens.EXCLEQ -> FirOperation.NOT_EQ
         KtTokens.EQEQEQ -> FirOperation.IDENTITY
         KtTokens.EXCLEQEQEQ -> FirOperation.NOT_IDENTITY
-        KtTokens.ANDAND -> FirOperation.AND
-        KtTokens.OROR -> FirOperation.OR
-        KtTokens.IN_KEYWORD -> FirOperation.IN
-        KtTokens.NOT_IN -> FirOperation.NOT_IN
-        KtTokens.RANGE -> FirOperation.RANGE
 
         KtTokens.EQ -> FirOperation.ASSIGN
         KtTokens.PLUSEQ -> FirOperation.PLUS_ASSIGN
@@ -188,19 +185,157 @@ internal fun FirExpression.generateNotNullOrOther(
     ).apply {
         branches += FirWhenBranchImpl(
             session, psi,
-            FirOperatorCallImpl(session, psi, FirOperation.NOT_EQ).apply {
+            FirOperatorCallImpl(session, psi, FirOperation.EQ).apply {
                 arguments += subjectExpression
                 arguments += FirConstExpressionImpl(session, psi, IrConstKind.Null, null)
             },
-            FirSingleExpressionBlock(
-                session,
-                generateAccessExpression(session, psi, subjectName)
-            )
+            FirSingleExpressionBlock(session, other)
         )
         branches += FirWhenBranchImpl(
             session, other.psi, FirElseIfTrueCondition(session, psi),
-            FirSingleExpressionBlock(session, other)
+            FirSingleExpressionBlock(session, generateAccessExpression(session, psi, subjectName))
         )
+    }
+}
+
+internal fun FirExpression.generateLazyLogicalOperation(
+    session: FirSession, other: FirExpression, isAnd: Boolean, basePsi: KtElement
+): FirWhenExpression {
+    val terminalExpression = FirConstExpressionImpl(session, psi, IrConstKind.Boolean, !isAnd)
+    val terminalBlock = FirSingleExpressionBlock(session, terminalExpression)
+    val otherBlock = FirSingleExpressionBlock(session, other)
+    return FirWhenExpressionImpl(session, basePsi).apply {
+        branches += FirWhenBranchImpl(
+            session, psi, this@generateLazyLogicalOperation,
+            if (isAnd) otherBlock else terminalBlock
+        )
+        branches += FirWhenBranchImpl(
+            session, other.psi, FirElseIfTrueCondition(session, psi),
+            if (isAnd) terminalBlock else otherBlock
+        )
+        typeRef = FirImplicitBooleanTypeRef(session, basePsi)
+    }
+}
+
+internal fun KtWhenCondition.toFirWhenCondition(
+    session: FirSession,
+    convert: KtExpression?.(String) -> FirExpression,
+    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
+): FirExpression {
+    val firSubjectExpression = FirWhenSubjectExpression(session, this)
+    return when (this) {
+        is KtWhenConditionWithExpression -> {
+            FirOperatorCallImpl(
+                session,
+                expression,
+                FirOperation.EQ
+            ).apply {
+                arguments += firSubjectExpression
+                arguments += expression.convert("No expression in condition with expression")
+            }
+        }
+        is KtWhenConditionInRange -> {
+            val firRange = rangeExpression.convert("No range in condition with range")
+            firRange.generateContainsOperation(session, firSubjectExpression, isNegated, rangeExpression, operationReference)
+        }
+        is KtWhenConditionIsPattern -> {
+            FirTypeOperatorCallImpl(
+                session, typeReference, if (isNegated) FirOperation.NOT_IS else FirOperation.IS,
+                typeReference.toFirOrErrorTypeRef()
+            ).apply {
+                arguments += firSubjectExpression
+            }
+        }
+        else -> {
+            FirErrorExpressionImpl(session, this, "Unsupported when condition: ${this.javaClass}")
+        }
+    }
+}
+
+internal fun Array<KtWhenCondition>.toFirWhenCondition(
+    session: FirSession,
+    basePsi: KtElement,
+    convert: KtExpression?.(String) -> FirExpression,
+    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
+): FirExpression {
+    var firCondition: FirExpression? = null
+    for (condition in this) {
+        val firConditionElement = condition.toFirWhenCondition(session, convert, toFirOrErrorTypeRef)
+        firCondition = when (firCondition) {
+            null -> firConditionElement
+            else -> firCondition.generateLazyLogicalOperation(
+                session, firConditionElement, false, basePsi
+            )
+        }
+    }
+    return firCondition!!
+}
+
+internal fun Array<KtStringTemplateEntry>.toInterpolatingCall(
+    session: FirSession,
+    base: KtStringTemplateExpression,
+    convert: KtExpression?.(String) -> FirExpression
+): FirExpression {
+    val sb = StringBuilder()
+    var hasExpressions = false
+    var result: FirExpression? = null
+    var callCreated = false
+    for (entry in this) {
+        val nextArgument = when (entry) {
+            is KtLiteralStringTemplateEntry -> {
+                sb.append(entry.text)
+                FirConstExpressionImpl(session, entry, IrConstKind.String, entry.text)
+            }
+            is KtEscapeStringTemplateEntry -> {
+                sb.append(entry.unescapedValue)
+                FirConstExpressionImpl(session, entry, IrConstKind.String, entry.unescapedValue)
+            }
+            is KtStringTemplateEntryWithExpression -> {
+                val innerExpression = entry.expression
+                hasExpressions = true
+                innerExpression.convert("Incorrect template argument")
+            }
+            else -> {
+                hasExpressions = true
+                FirErrorExpressionImpl(
+                    session, entry, "Incorrect template entry: ${entry.text}"
+                )
+            }
+        }
+        result = when {
+            result == null -> nextArgument
+            callCreated && result is FirFunctionCallImpl -> result.apply {
+                arguments += nextArgument
+            }
+            else -> {
+                callCreated = true
+                FirFunctionCallImpl(session, base).apply {
+                    calleeReference = FirSimpleNamedReference(session, base, OperatorNameConventions.PLUS)
+                    explicitReceiver = result
+                    arguments += nextArgument
+                }
+            }
+        }
+    }
+    return if (hasExpressions) result!! else FirConstExpressionImpl(session, base, IrConstKind.String, sb.toString())
+}
+
+internal fun FirExpression.generateContainsOperation(
+    session: FirSession,
+    argument: FirExpression,
+    inverted: Boolean,
+    base: KtExpression?,
+    operationReference: KtOperationReferenceExpression
+): FirFunctionCall {
+    val containsCall = FirFunctionCallImpl(session, base).apply {
+        calleeReference = FirSimpleNamedReference(session, operationReference, OperatorNameConventions.CONTAINS)
+        explicitReceiver = this@generateContainsOperation
+        arguments += argument
+    }
+    if (!inverted) return containsCall
+    return FirFunctionCallImpl(session, base).apply {
+        calleeReference = FirSimpleNamedReference(session, operationReference, OperatorNameConventions.NOT)
+        explicitReceiver = containsCall
     }
 }
 
@@ -279,9 +414,7 @@ internal fun generateDestructuringBlock(
             statements += FirVariableImpl(
                 session, entry, entry.nameAsSafeName,
                 entry.typeReference.toFirOrImplicitTypeRef(), isVar,
-                FirComponentCallImpl(session, entry, index + 1).apply {
-                    arguments += generateAccessExpression(session, entry, container.name)
-                },
+                FirComponentCallImpl(session, entry, index + 1, generateAccessExpression(session, entry, container.name)),
                 FirVariableSymbol(entry.nameAsSafeName) // TODO?
             ).apply {
                 entry.extractAnnotationsTo(this)
@@ -345,9 +478,21 @@ internal fun KtExpression?.generateAssignment(
     }
     if (this is KtArrayAccessExpression) {
         val arrayExpression = this.arrayExpression
-        val arraySet = FirArraySetCallImpl(session, psi, value, operation).apply {
-            for (indexExpression in indexExpressions) {
-                indexes += indexExpression.convert()
+        val firArrayExpression = arrayExpression?.convert() ?: FirErrorExpressionImpl(session, arrayExpression, "No array expression")
+        val arraySet = if (operation != FirOperation.ASSIGN) {
+            FirArraySetCallImpl(session, psi, value, operation).apply {
+                for (indexExpression in indexExpressions) {
+                    indexes += indexExpression.convert()
+                }
+            }
+        } else {
+            return FirFunctionCallImpl(session, psi).apply {
+                calleeReference = FirSimpleNamedReference(session, psi, OperatorNameConventions.SET)
+                explicitReceiver = firArrayExpression
+                for (indexExpression in indexExpressions) {
+                    arguments += indexExpression.convert()
+                }
+                arguments += value
             }
         }
         if (arrayExpression is KtSimpleNameExpression) {
@@ -357,10 +502,7 @@ internal fun KtExpression?.generateAssignment(
         }
         return FirBlockImpl(session, arrayExpression).apply {
             val name = Name.special("<array-set>")
-            statements += generateTemporaryVariable(
-                session, this@generateAssignment, name,
-                arrayExpression?.convert() ?: FirErrorExpressionImpl(session, arrayExpression, "No array expression")
-            )
+            statements += generateTemporaryVariable(session, this@generateAssignment, name, firArrayExpression)
             statements += arraySet.apply { lValue = FirSimpleNamedReference(session, arrayExpression, name) }
         }
     }

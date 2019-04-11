@@ -2300,9 +2300,19 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/resolve"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("ambiguityWhenNoApplicableCallableReferenceCandidate.kt")
+                public void testAmbiguityWhenNoApplicableCallableReferenceCandidate() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/ambiguityWhenNoApplicableCallableReferenceCandidate.kt");
+                }
+
                 @TestMetadata("ambiguousWithVararg.kt")
                 public void testAmbiguousWithVararg() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/ambiguousWithVararg.kt");
+                }
+
+                @TestMetadata("applicableCallableReferenceFromDistantScope.kt")
+                public void testApplicableCallableReferenceFromDistantScope() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/applicableCallableReferenceFromDistantScope.kt");
                 }
 
                 @TestMetadata("byArgType.kt")
@@ -2320,9 +2330,34 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/byValType.kt");
                 }
 
+                @TestMetadata("chooseCallableReferenceDependingOnInferredReceiver.kt")
+                public void testChooseCallableReferenceDependingOnInferredReceiver() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/chooseCallableReferenceDependingOnInferredReceiver.kt");
+                }
+
+                @TestMetadata("chooseOuterCallBySingleCallableReference.kt")
+                public void testChooseOuterCallBySingleCallableReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/chooseOuterCallBySingleCallableReference.kt");
+                }
+
+                @TestMetadata("commonSupertypeFromReturnTypesOfCallableReference.kt")
+                public void testCommonSupertypeFromReturnTypesOfCallableReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/commonSupertypeFromReturnTypesOfCallableReference.kt");
+                }
+
                 @TestMetadata("constructor.kt")
                 public void testConstructor() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/constructor.kt");
+                }
+
+                @TestMetadata("eagerAndPostponedCallableReferences.kt")
+                public void testEagerAndPostponedCallableReferences() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/eagerAndPostponedCallableReferences.kt");
+                }
+
+                @TestMetadata("eagerResolveOfSingleCallableReference.kt")
+                public void testEagerResolveOfSingleCallableReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/eagerResolveOfSingleCallableReference.kt");
                 }
 
                 @TestMetadata("innerClassConstructorOnOuterClassInstance.kt")
@@ -2375,6 +2410,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/moreSpecificSimple.kt");
                 }
 
+                @TestMetadata("multipleOutersAndMultipleCallableReferences.kt")
+                public void testMultipleOutersAndMultipleCallableReferences() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/multipleOutersAndMultipleCallableReferences.kt");
+                }
+
                 @TestMetadata("noFakeDescriptorForObject.kt")
                 public void testNoFakeDescriptorForObject() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/noFakeDescriptorForObject.kt");
@@ -2393,6 +2433,21 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("overloadsMember.kt")
                 public void testOverloadsMember() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/overloadsMember.kt");
+                }
+
+                @TestMetadata("postponedResolveOfManyCallableReference.kt")
+                public void testPostponedResolveOfManyCallableReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/postponedResolveOfManyCallableReference.kt");
+                }
+
+                @TestMetadata("resolveCallableReferencesAfterAllSimpleArguments.kt")
+                public void testResolveCallableReferencesAfterAllSimpleArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/resolveCallableReferencesAfterAllSimpleArguments.kt");
+                }
+
+                @TestMetadata("resolveEqualsOperatorWithAnyExpectedType.kt")
+                public void testResolveEqualsOperatorWithAnyExpectedType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/resolveEqualsOperatorWithAnyExpectedType.kt");
                 }
 
                 @TestMetadata("valVsFun.kt")
@@ -13386,6 +13441,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/multiplatform/enum/enumEntryWithBody.kt");
                 }
 
+                @TestMetadata("javaEnum.kt")
+                public void testJavaEnum() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/enum/javaEnum.kt");
+                }
+
                 @TestMetadata("simpleEnum.kt")
                 public void testSimpleEnum() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/enum/simpleEnum.kt");
@@ -13941,6 +14001,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt244.kt");
             }
 
+            @TestMetadata("kt30734.kt")
+            public void testKt30734() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt30734.kt");
+            }
+
             @TestMetadata("kt362.kt")
             public void testKt362() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt362.kt");
@@ -14120,6 +14185,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("intValuesOutOfRange.kt")
             public void testIntValuesOutOfRange() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/intValuesOutOfRange.kt");
+            }
+
+            @TestMetadata("numberAsUnionAndIntersection.kt")
+            public void testNumberAsUnionAndIntersection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/numberAsUnionAndIntersection.kt");
             }
 
             @TestMetadata("numbersInSimpleConstraints.kt")

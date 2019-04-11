@@ -11,49 +11,66 @@ export default [
         output: {
             file: 'lib/kotlin-test-nodejs-runner.js',
             format: 'cjs',
-            banner: '#!/usr/bin/env node'
+            banner: '#!/usr/bin/env node',
+            sourcemap: true
         },
         plugins: [
             nodeResolve({
-                jsnext: true,
-                main: true
-            }),
+                            jsnext: true,
+                            main: true
+                        }),
             commonjs(),
             typescript({
-                tsconfig: "tsconfig.json"
-            }),
+                           tsconfig: "tsconfig.json"
+                       }),
             uglify({
-                sourcemap: true,
-                compress: {
-                    // hoist_funs: true,
-                    // hoist_vars: true,
-                    toplevel: true,
-                    unsafe: true,
-                    dead_code: true,
-                    global_defs: {
-                        DEBUG: false,
-                        VERSION: pckg.version,
-                        BIN: Object.keys(pckg.bin)[0],
-                        DESCRIPTION: pckg.description
-                    }
-                },
-                mangle: {
-                    properties: {
-                        keep_quoted: true,
-                        reserved: [
-                            "argv", "hrtime",
-                            "kotlin_test", "kotlin", "setAdapter", "setAssertHook_4duqou$",
-                            "suite", "test",
-                            "stack"
-                        ]
-                    },
-                    toplevel: true,
-                },
-                // output: {
-                //     beautify: true
-                // }
-            }),
-            // sourceMaps()
+                       sourcemap: true,
+                       compress: {
+                           // hoist_funs: true,
+                           // hoist_vars: true,
+                           toplevel: true,
+                           unsafe: true,
+                           dead_code: true,
+                           global_defs: {
+                               DEBUG: false,
+                               VERSION: pckg.version,
+                               BIN: Object.keys(pckg.bin)[0],
+                               DESCRIPTION: pckg.description
+                           }
+                       },
+                       mangle: {
+                           properties: {
+                               keep_quoted: true,
+                               reserved: [
+                                   "argv", "hrtime",
+                                   "kotlin_test", "kotlin", "setAdapter", "setAssertHook_4duqou$",
+                                   "suite", "test",
+                                   "stack"
+                               ]
+                           },
+                           toplevel: true,
+                       }
+                   })
+        ]
+    },
+    {
+        input: './nodejs-source-map-support.js',
+        external: ['path', 'fs', 'module'],
+        output: {
+            file: 'lib/kotlin-nodejs-source-map-support.js',
+            format: 'cjs',
+            sourcemap: true
+        },
+        plugins: [
+            nodeResolve({
+                            jsnext: true,
+                            main: true
+                        }),
+            commonjs(),
+            uglify({
+                       compress: true,
+                       sourcemap: true
+                   })
         ]
     }
 ]

@@ -55,7 +55,7 @@ class FoldInitializerAndIfToElvisIntention :
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val newElvis = FoldInitializerAndIfToElvisIntention.applyTo(element)
+        val newElvis = applyTo(element)
         editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
     }
 

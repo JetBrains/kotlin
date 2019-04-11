@@ -90,7 +90,7 @@ class FirClassSubstitutionScope(
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
         useSiteScope.processFunctionsByName(name) process@{ original ->
 
-            val function = fakeOverrides.getOrPut(original) { createFakeOverride(original, name) }
+            val function = fakeOverrides.getOrPut(original) { createFakeOverride(original) }
             processor(function as ConeFunctionSymbol)
         }
 
@@ -104,10 +104,7 @@ class FirClassSubstitutionScope(
 
     private val typeCalculator by lazy { ReturnTypeCalculatorWithJump(session) }
 
-    private fun createFakeOverride(
-        original: ConeFunctionSymbol,
-        name: Name
-    ): FirFunctionSymbol {
+    private fun createFakeOverride(original: ConeFunctionSymbol): FirFunctionSymbol {
 
         val member = original.firUnsafe<FirFunction>()
         if (member is FirConstructor) return original as FirFunctionSymbol // TODO: substitution for constructors
@@ -123,32 +120,45 @@ class FirClassSubstitutionScope(
             it.returnTypeRef.coneTypeUnsafe().substitute()
         }
 
-        val symbol = FirFunctionSymbol(original.callableId, true)
-        with(member) {
-            // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
-            // As second alternative, we can invent some light-weight kind of FirRegularClass
-            FirMemberFunctionImpl(
-                this@FirClassSubstitutionScope.session,
-                psi,
-                symbol,
-                name,
-                member.receiverTypeRef?.withReplacedConeType(this@FirClassSubstitutionScope.session, newReceiverType),
-                member.returnTypeRef.withReplacedConeType(this@FirClassSubstitutionScope.session, newReturnType)
-            ).apply {
-                status = member.status as FirDeclarationStatusImpl
-                valueParameters += member.valueParameters.zip(newParameterTypes) { valueParameter, newType ->
-                    with(valueParameter) {
-                        FirValueParameterImpl(
-                            this@FirClassSubstitutionScope.session, psi,
-                            name, this.returnTypeRef.withReplacedConeType(this@FirClassSubstitutionScope.session, newType),
-                            defaultValue, isCrossinline, isNoinline, isVararg,
-                            FirVariableSymbol(valueParameter.symbol.callableId)
-                        )
+        return createFakeOverride(session, member, original as FirFunctionSymbol, newReceiverType, newReturnType, newParameterTypes)
+    }
+
+    companion object {
+        fun createFakeOverride(
+            session: FirSession,
+            baseFunction: FirNamedFunction,
+            baseSymbol: FirFunctionSymbol,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null,
+            newParameterTypes: List<ConeKotlinType?>? = null
+        ): FirFunctionSymbol {
+            val symbol = FirFunctionSymbol(baseSymbol.callableId, true, baseSymbol)
+            with(baseFunction) {
+                // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
+                // As second alternative, we can invent some light-weight kind of FirRegularClass
+                FirMemberFunctionImpl(
+                    session,
+                    psi, symbol, name,
+                    baseFunction.receiverTypeRef?.withReplacedConeType(session, newReceiverType),
+                    baseFunction.returnTypeRef.withReplacedConeType(session, newReturnType)
+                ).apply {
+                    status = baseFunction.status as FirDeclarationStatusImpl
+                    valueParameters += baseFunction.valueParameters.zip(
+                        newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
+                    ) { valueParameter, newType ->
+                        with(valueParameter) {
+                            FirValueParameterImpl(
+                                session, psi,
+                                name, this.returnTypeRef.withReplacedConeType(session, newType),
+                                defaultValue, isCrossinline, isNoinline, isVararg,
+                                FirVariableSymbol(valueParameter.symbol.callableId)
+                            )
+                        }
                     }
                 }
             }
+            return symbol
         }
-        return symbol
     }
 }
 

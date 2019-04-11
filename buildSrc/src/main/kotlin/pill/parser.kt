@@ -376,7 +376,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
             return configurations
         }
 
-        nextDependency@ for (dependencyInfo in collectConfigurations().collectDependencies()) {
+        for (dependencyInfo in collectConfigurations().collectDependencies()) {
             val scope = dependencyInfo.scope
 
             if (dependencyInfo is DependencyInfo.CustomDependencyInfo) {
@@ -387,43 +387,51 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
                 continue
             }
 
-            val dependency = (dependencyInfo as DependencyInfo.ResolvedDependencyInfo).dependency
-
-            for (mapper in dependencyMappers) {
-                if (dependency.configuration in mapper.configurations && mapper.predicate(dependency)) {
-                    val mappedDependency = mapper.mapping(dependency)
-
-                    if (mappedDependency != null) {
-                        val mainDependency = mappedDependency.main
-                        if (mainDependency != null) {
-                            mainRoots += POrderRoot(mainDependency, scope)
-                        }
-
-                        for (deferredDep in mappedDependency.deferred) {
-                            deferredRoots += POrderRoot(deferredDep, scope)
-                        }
-                    }
-
-                    continue@nextDependency
-                }
-            }
-
-            mainRoots += if (dependency.isModuleDependency && scope != Scope.TEST) {
-                POrderRoot(PDependency.Module(dependency.moduleName + ".src"), scope)
-            } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {
-                POrderRoot(
-                    PDependency.Module(dependency.moduleName + ".test"),
-                    scope,
-                    isProductionOnTestDependency = true
-                )
-            } else {
-                val classes = dependency.moduleArtifacts.map { it.file }
-                val library = PLibrary(dependency.moduleName, classes)
-                POrderRoot(PDependency.ModuleLibrary(library), scope)
-            }
+            dependencyInfo.processResolvedDependency(mainRoots, deferredRoots, dependencyMappers)
         }
 
         return removeDuplicates(mainRoots + deferredRoots)
+    }
+}
+
+fun DependencyInfo.processResolvedDependency(
+    mainConsumer: MutableList<POrderRoot>,
+    deferredConsumer: MutableList<POrderRoot>,
+    dependencyMappers: List<DependencyMapper>
+) {
+    val dependency = (this as? DependencyInfo.ResolvedDependencyInfo)?.dependency ?: return
+
+    for (mapper in dependencyMappers) {
+        if (dependency.configuration in mapper.configurations && mapper.predicate(dependency)) {
+            val mappedDependency = mapper.mapping(dependency)
+
+            if (mappedDependency != null) {
+                val mainDependency = mappedDependency.main
+                if (mainDependency != null) {
+                    mainConsumer += POrderRoot(mainDependency, scope)
+                }
+
+                for (deferredDep in mappedDependency.deferred) {
+                    deferredConsumer += POrderRoot(deferredDep, scope)
+                }
+            }
+
+            return
+        }
+    }
+
+    mainConsumer += if (dependency.isModuleDependency && scope != Scope.TEST) {
+        POrderRoot(PDependency.Module(dependency.moduleName + ".src"), scope)
+    } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {
+        POrderRoot(
+            PDependency.Module(dependency.moduleName + ".test"),
+            scope,
+            isProductionOnTestDependency = true
+        )
+    } else {
+        val classes = dependency.moduleArtifacts.map { it.file }
+        val library = PLibrary(dependency.moduleName, classes)
+        POrderRoot(PDependency.ModuleLibrary(library), scope)
     }
 }
 

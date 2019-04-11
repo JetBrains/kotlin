@@ -1,0 +1,17 @@
+public final class C : R|kotlin/Any| {
+    public constructor(): R|test/C|
+
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/C.Companion|
+
+    }
+
+}
+
+public abstract interface I : R|kotlin/Any| {
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/I.Companion|
+
+    }
+
+}

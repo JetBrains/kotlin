@@ -293,6 +293,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/multifile/ByteArray.kt");
         }
 
+        @TestMetadata("importFromObject.kt")
+        public void testImportFromObject() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/multifile/importFromObject.kt");
+        }
+
         @TestMetadata("NestedSuperType.kt")
         public void testNestedSuperType() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/multifile/NestedSuperType.kt");

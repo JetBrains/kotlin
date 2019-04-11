@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -98,13 +99,13 @@ internal fun JavaType?.toConeKotlinTypeWithNullability(session: FirSession, isNu
                 null -> "Unit"
                 else -> javaName.capitalize()
             }
-            val classId = ClassId(FqName("kotlin"), FqName(kotlinPrimitiveName), false)
+            val classId = StandardClassIds.byName(kotlinPrimitiveName)
             classId.toConeKotlinType(emptyArray(), isNullable)
         }
         is JavaArrayType -> {
             val componentType = componentType
             if (componentType !is JavaPrimitiveType) {
-                val classId = ClassId(FqName("kotlin"), FqName("Array"), false)
+                val classId = StandardClassIds.Array
                 val argumentType = ConeFlexibleType(
                     componentType.toConeKotlinTypeWithNullability(session, isNullable = false),
                     componentType.toConeKotlinTypeWithNullability(session, isNullable = true)
@@ -112,16 +113,16 @@ internal fun JavaType?.toConeKotlinTypeWithNullability(session: FirSession, isNu
                 classId.toConeKotlinType(arrayOf(argumentType), isNullable)
             } else {
                 val javaComponentName = componentType.type?.typeName?.asString()?.capitalize() ?: error("Array of voids")
-                val classId = ClassId(FqName("kotlin"), FqName(javaComponentName + "Array"), false)
+                val classId = StandardClassIds.byName(javaComponentName + "Array")
                 classId.toConeKotlinType(emptyArray(), isNullable)
             }
         }
         is JavaWildcardType -> bound?.toNotNullConeKotlinType(session) ?: run {
-            val classId = ClassId(FqName("kotlin"), FqName("Any"), false)
+            val classId = StandardClassIds.Any
             classId.toConeKotlinType(emptyArray(), isNullable)
         }
         null -> {
-            val classId = ClassId(FqName("kotlin"), FqName("Any"), false)
+            val classId = StandardClassIds.Any
             classId.toConeKotlinType(emptyArray(), isNullable)
         }
         else -> error("Strange JavaType: ${this::class.java}")
@@ -237,8 +238,8 @@ private fun JavaAnnotationArgument.toFirExpression(session: FirSession): FirExpr
                 val classId = this@toFirExpression.enumClassId
                 val entryName = this@toFirExpression.entryName
                 val calleeReference = if (classId != null && entryName != null) {
-                    val callableSymbol = session.service<FirSymbolProvider>().getCallableSymbols(
-                        CallableId(classId.packageFqName, classId.relativeClassName, entryName)
+                    val callableSymbol = session.service<FirSymbolProvider>().getClassDeclaredCallableSymbols(
+                        classId, entryName
                     ).firstOrNull()
                     callableSymbol?.let {
                         FirResolvedCallableReferenceImpl(session, null, entryName, it)

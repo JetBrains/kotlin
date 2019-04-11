@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,7 +35,9 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import kotlin.properties.Delegates
 
-abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
+interface FunctionalArgument
+
+abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgument, ReturnLabelOwner {
 
     abstract val isBoundCallableReference: Boolean
 
@@ -77,6 +79,8 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
     }
 }
 
+class NonInlineableArgumentForInlineableParameterCalledInSuspend(val isSuspend: Boolean) : FunctionalArgument
+object NonInlineableArgumentForInlineableSuspendParameter : FunctionalArgument
 
 class DefaultLambda(
     override val lambdaClassType: Type,
@@ -99,7 +103,7 @@ class DefaultLambda(
     override lateinit var capturedVars: List<CapturedParamDesc>
         private set
 
-    override fun isMyLabel(name: String): Boolean = false
+    override fun isReturnFromMe(labelName: String): Boolean = false
 
     var originalBoundReceiverType: Type? = null
         private set
@@ -297,8 +301,8 @@ class PsiExpressionLambda(
         }
     }
 
-    override fun isMyLabel(name: String): Boolean {
-        return labels.contains(name)
+    override fun isReturnFromMe(labelName: String): Boolean {
+        return labels.contains(labelName)
     }
 
     val isPropertyReference: Boolean

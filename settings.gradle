@@ -32,6 +32,7 @@ include ":kotlin-build-common",
         ":compiler:fir:tree",
         ":compiler:fir:tree:visitors-generator",
         ":compiler:fir:psi2fir",
+        ":compiler:fir:fir2ir",
         ":compiler:fir:resolve",
         ":compiler:fir:java",
         ":compiler:frontend",
@@ -44,6 +45,8 @@ include ":kotlin-build-common",
         ":compiler:ir.psi2ir",
         ":compiler:ir.ir2cfg",
         ":compiler:ir.backend.common",
+        ":compiler:ir.serialization.common",
+        ":compiler:ir.serialization.js",
         ":compiler:backend.js",
         ":compiler:backend.jvm",
         ":compiler:backend-common",
@@ -73,7 +76,6 @@ include ":kotlin-build-common",
         ":core:descriptors.runtime",
         ":core:metadata",
         ":core:metadata.jvm",
-        ":core:builtins",
         ":core:util.runtime",
         ":dependencies:android-sdk",
         ":idea:fir-view",
@@ -95,6 +97,8 @@ include ":kotlin-build-common",
         ":idea-runner",
         ":idea:eval4j",
         ":j2k",
+        ":nj2k",
+        ":nj2k:nj2k-services",
         ":plugins:lint",
         ":plugins:kapt3-idea",
         ":plugins:android-extensions-compiler",
@@ -130,7 +134,6 @@ include ":kotlin-build-common",
         ":prepare:formatter",
         ":prepare:ide-lazy-resolver",
         ":prepare:idea-plugin",
-        ":android-lint",
         ":kotlin-compiler",
         ":kotlin-compiler-embeddable",
         ":kotlin-compiler-client-embeddable",
@@ -219,8 +222,9 @@ if (isTeamcityBuild || includeUltimate) {
     )
 }
 
-def isJpsBuild = hasProperty("jpsBuild") && jpsBuild == 'true'
-if (isJpsBuild) {
+def flags = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
+
+if (flags.inJpsBuildIdeaSync) {
     include ":kotlin-stdlib:jps-build"
     project(":kotlin-stdlib:jps-build").projectDir = "$rootDir/libraries/stdlib/jps-build" as File
 } else {
@@ -228,7 +232,8 @@ if (isJpsBuild) {
     include ":kotlin-idl2k"
     project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
     
-    include ":kotlin-stdlib-common",
+    include ":core:builtins",
+            ":kotlin-stdlib-common",
             ":kotlin-stdlib",
             ":kotlin-stdlib-js",
             ":kotlin-stdlib-jdk7",
@@ -286,6 +291,8 @@ project(':compiler:ir.ir2cfg').projectDir = "$rootDir/compiler/ir/ir.ir2cfg" as 
 project(':compiler:ir.backend.common').projectDir = "$rootDir/compiler/ir/backend.common" as File
 project(':compiler:backend.js').projectDir = "$rootDir/compiler/ir/backend.js" as File
 project(':compiler:backend.jvm').projectDir = "$rootDir/compiler/ir/backend.jvm" as File
+project(':compiler:ir.serialization.common').projectDir = "$rootDir/compiler/ir/serialization.common" as File
+project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/serialization.js" as File
 project(':kotlin-native:kotlin-native-utils').projectDir = "$rootDir/konan/utils" as File
 project(':kotlin-native:kotlin-native-library-reader').projectDir = "$rootDir/konan/library-reader" as File
 project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
@@ -294,7 +301,6 @@ project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/a
 project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
 project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
 project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
-project(':android-lint').projectDir = "$rootDir/prepare/android-lint" as File
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File
 project(':allopen-ide-plugin').projectDir = "$rootDir/plugins/allopen/allopen-ide" as File
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg/noarg-cli" as File

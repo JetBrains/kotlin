@@ -95,12 +95,7 @@ public class IntrinsicMethods {
         for (PrimitiveType type : PrimitiveType.values()) {
             FqName typeFqName = type.getTypeFqName();
             Type asmPrimitiveType = AsmTypes.valueTypeForPrimitive(type);
-            if (asmPrimitiveType == Type.FLOAT_TYPE || asmPrimitiveType == Type.DOUBLE_TYPE) {
-                declareIntrinsicFunction(typeFqName, "equals", 1, new TotalOrderEquals(asmPrimitiveType));
-            }
-            else {
-                declareIntrinsicFunction(typeFqName, "equals", 1, EQUALS);
-            }
+            declareIntrinsicFunction(typeFqName, "equals", 1, EQUALS);
             declareIntrinsicFunction(typeFqName, "hashCode", 0, HASH_CODE);
             declareIntrinsicFunction(typeFqName, "toString", 0, TO_STRING);
 

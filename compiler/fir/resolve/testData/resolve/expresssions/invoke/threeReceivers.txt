@@ -1,6 +1,8 @@
 FILE: threeReceivers.kt
     public final class Bar : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
 
         public final fun R|FooBar|.invoke(): R|Bar| {
             ^invoke this#
@@ -8,15 +10,21 @@ FILE: threeReceivers.kt
 
     }
     public final class Buz : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Buz| {
+            super<R|kotlin/Any|>()
+        }
 
     }
     public final class FooBar : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|FooBar| {
+            super<R|kotlin/Any|>()
+        }
 
     }
     public final class Foo : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val R|Buz|.foobar: R|Bar|
             public get(): R|Bar| {
@@ -24,7 +32,7 @@ FILE: threeReceivers.kt
             }
 
         public final fun R|FooBar|.chk(buz: R|Buz|): R|kotlin/Unit| {
-            R|<local>/buz|.R|/Foo.foobar|.R|/Bar.invoke|()
+            R|<local>/buz|.<Unresolved name: foobar>#()
         }
 
     }

@@ -46,6 +46,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
             runTest("idea/testData/scratch/klass.kts");
         }
 
+        @TestMetadata("libraryDepWithKotlinTest.kts")
+        public void testLibraryDepWithKotlinTest() throws Exception {
+            runTest("idea/testData/scratch/libraryDepWithKotlinTest.kts");
+        }
+
         @TestMetadata("simple.kts")
         public void testSimple() throws Exception {
             runTest("idea/testData/scratch/simple.kts");
@@ -127,6 +132,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         @TestMetadata("klass.kts")
         public void testKlass() throws Exception {
             runTest("idea/testData/scratch/klass.kts");
+        }
+
+        @TestMetadata("libraryDepWithKotlinTest.kts")
+        public void testLibraryDepWithKotlinTest() throws Exception {
+            runTest("idea/testData/scratch/libraryDepWithKotlinTest.kts");
         }
 
         @TestMetadata("simple.kts")

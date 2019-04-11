@@ -35,13 +35,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
 
 publish()
 
-val jar = runtimeJar {}
+runtimeJar()
 sourcesJar()
 javadocJar()
 
 dist()
-
-ideaPlugin()
 
 projectTest {
     workingDir = rootDir

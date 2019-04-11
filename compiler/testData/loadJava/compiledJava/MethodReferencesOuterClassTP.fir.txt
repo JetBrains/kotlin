@@ -1,2 +1,2 @@
-<P> public final class MethodReferencesOuterClassTP : R|java/lang/Object| {
+public final class MethodReferencesOuterClassTP<P> : R|java/lang/Object| {
 }

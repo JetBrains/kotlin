@@ -7,40 +7,39 @@ package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
+import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
+import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
+import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
-import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
 class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider {
-    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
-        // TODO
-        return emptyList()
-    }
-
     private class BuiltInsPackageFragment(stream: InputStream, val fqName: FqName, val session: FirSession) {
         lateinit var version: BuiltInsBinaryVersion
 
@@ -64,60 +63,44 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
         val classDataFinder = ProtoBasedClassDataFinder(packageProto, nameResolver, version) { SourceElement.NO_SOURCE }
 
-
-        val lookup = mutableMapOf<ClassId, ConeClassLikeSymbol>()
-
-        private fun createTypeParameterSymbol(name: Name): FirTypeParameterSymbol {
-            val firSymbol = FirTypeParameterSymbol()
-            FirTypeParameterImpl(session, null, firSymbol, name, variance = Variance.INVARIANT, isReified = false)
-            return firSymbol
+        private val memberDeserializer by lazy {
+            FirDeserializationContext.createForPackage(fqName, packageProto.`package`, nameResolver, session).memberDeserializer
         }
 
-        fun getClassLikeSymbolByFqName(classId: ClassId, provider: FirSymbolProvider): ConeClassLikeSymbol? {
+        val lookup = mutableMapOf<ClassId, FirClassSymbol>()
 
+        fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? =
+            findAndDeserializeClass(classId)
+
+        private fun findAndDeserializeClass(
+            classId: ClassId,
+            parentContext: FirDeserializationContext? = null
+        ): FirClassSymbol? {
             if (classId !in classDataFinder.allClassIds) return null
             return lookup.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
                 val classData = classDataFinder.findClassData(classId)!!
                 val classProto = classData.classProto
-                val flags = classProto.flags
-                val kind = Flags.CLASS_KIND.get(flags)
-                FirClassImpl(
-                    session, null, symbol, classId.shortClassName,
-                    ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-                    ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
-                    Flags.IS_EXPECT_CLASS.get(flags), false,
-                    ProtoEnumFlags.classKind(kind),
-                    Flags.IS_INNER.get(flags),
-                    kind == ProtoBuf.Class.Kind.COMPANION_OBJECT,
-                    Flags.IS_DATA.get(classProto.flags),
-                    Flags.IS_INLINE_CLASS.get(classProto.flags)
-                ).apply {
-                    for (typeParameter in classProto.typeParameterList) {
-                        typeParameters += createTypeParameterSymbol(classData.nameResolver.getName(typeParameter.name)).fir
-                    }
-                    //addAnnotationsFrom(classProto) ? TODO
 
-                    val typeTable = TypeTable(classData.classProto.typeTable)
-                    val typeDeserializer = FirTypeDeserializer(
-                        classData.nameResolver,
-                        typeTable,
-                        provider,
-                        classData.classProto.typeParameterList,
-                        null
-                    )
-
-
-                    val superTypesDeserialized = classProto.supertypes(typeTable).map { supertypeProto ->
-                        typeDeserializer.classLikeType(supertypeProto)
-                    }// TODO: + c.components.additionalClassPartsProvider.getSupertypes(this@DeserializedClassDescriptor)
-
-                    superTypesDeserialized.mapNotNullTo(superTypeRefs) {
-                        if (it == null) return@mapNotNullTo null
-                        FirResolvedTypeRefImpl(this@BuiltInsPackageFragment.session, null, it, false, emptyList())
-                    }
-                    // TODO: declarations (probably should be done later)
-                }
+                deserializeClassToSymbol(
+                    classId, classProto, symbol, nameResolver, session,
+                    parentContext,
+                    this::findAndDeserializeClass
+                )
             }
+        }
+
+        fun getTopLevelCallableSymbols(name: Name): List<ConeCallableSymbol> {
+            return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
+                memberDeserializer.loadFunction(it).symbol
+            }
+        }
+
+        fun getAllCallableNames(): Set<Name> {
+            return packageProto.`package`.functionList.mapTo(mutableSetOf()) { nameResolver.getName(it.name) }
+        }
+
+        fun getAllClassNames(): Set<Name> {
+            return classDataFinder.allClassIds.mapTo(mutableSetOf()) { it.shortClassName }
         }
     }
 
@@ -144,7 +127,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
         return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
-            it.getClassLikeSymbolByFqName(classId, this)
+            it.getClassLikeSymbolByFqName(classId)
         } ?: with(classId) {
             val className = relativeClassName.asString()
             val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(packageFqName, className) ?: return@with null
@@ -170,5 +153,43 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
                 }
             }
         }
+    }
+
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
+        return allPackageFragments[packageFqName]?.flatMap {
+            it.getTopLevelCallableSymbols(name)
+        } ?: emptyList()
+    }
+
+    override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? =
+        findRegularClass(classId)?.let(::FirClassDeclaredMemberScope)
+
+    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
+        return allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {
+            it.getAllCallableNames()
+        } ?: emptySet()
+    }
+
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
+        return allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {
+            it.getAllClassNames()
+        } ?: emptySet()
+    }
+
+    override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> {
+        return getClassDeclarations(classId).filterIsInstance<FirCallableMemberDeclaration>().mapTo(mutableSetOf()) { it.name }
+    }
+
+    private fun getClassDeclarations(classId: ClassId): List<FirDeclaration> {
+        return findRegularClass(classId)?.declarations ?: emptyList()
+    }
+
+
+    private fun findRegularClass(classId: ClassId): FirRegularClass? =
+        @Suppress("UNCHECKED_CAST")
+        (getClassLikeSymbolByFqName(classId) as? FirBasedSymbol<FirRegularClass>)?.fir
+
+    override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
+        return getClassDeclarations(classId).filterIsInstance<FirRegularClass>().mapTo(mutableSetOf()) { it.name }
     }
 }

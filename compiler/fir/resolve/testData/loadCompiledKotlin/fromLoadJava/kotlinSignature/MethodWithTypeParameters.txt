@@ -1,0 +1,6 @@
+public open class MethodWithTypeParameters : R|kotlin/Any| {
+    public open fun <A, B> foo(a: R|A|, b: R|kotlin/collections/List<B>|, c: R|kotlin/collections/MutableList<in kotlin/String>|): R|kotlin/Unit|
+
+    public constructor(): R|test/MethodWithTypeParameters|
+
+}

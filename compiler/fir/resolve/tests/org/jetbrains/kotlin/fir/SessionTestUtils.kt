@@ -5,24 +5,28 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 
-fun createSession(project: Project, sourceScope: GlobalSearchScope): FirSession {
+fun createSession(environment: KotlinCoreEnvironment, sourceScope: GlobalSearchScope): FirSession {
     val moduleInfo = FirTestModuleInfo()
+    val project = environment.project
     val provider = FirProjectSessionProvider(project)
     return FirJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
-        createSessionForDependencies(provider, moduleInfo, sourceScope)
+        createSessionForDependencies(provider, moduleInfo, sourceScope, environment)
     }
 }
 
 private fun createSessionForDependencies(
-    provider: FirProjectSessionProvider, moduleInfo: FirTestModuleInfo, sourceScope: GlobalSearchScope
+    provider: FirProjectSessionProvider,
+    moduleInfo: FirTestModuleInfo,
+    sourceScope: GlobalSearchScope,
+    environment: KotlinCoreEnvironment
 ) {
     val dependenciesInfo = FirTestModuleInfo()
     moduleInfo.dependencies.add(dependenciesInfo)
-    FirLibrarySession(dependenciesInfo, provider, GlobalSearchScope.notScope(sourceScope))
+    FirLibrarySession.create(dependenciesInfo, provider, GlobalSearchScope.notScope(sourceScope), environment)
 }

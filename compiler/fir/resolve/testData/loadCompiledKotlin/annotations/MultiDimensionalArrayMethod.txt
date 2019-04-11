@@ -1,0 +1,9 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(s: R|kotlin/String|): R|test/Anno|
+
+}
+
+public abstract interface T : R|kotlin/Any| {
+    public abstract fun foo(): R|kotlin/Array<kotlin/Array<kotlin/Array<test/T>>>|
+
+}

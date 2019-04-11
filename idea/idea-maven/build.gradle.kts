@@ -76,11 +76,6 @@ projectTest {
     workingDir = rootDir
 }
 
-
 if (Ide.IJ()) {
-    runtimeJar {
-        archiveName = "maven-ide.jar"
-    }
-
-    ideaPlugin()
+    runtimeJar()
 }

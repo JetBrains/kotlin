@@ -21,7 +21,7 @@ dependencies {
 
     testCompile(projectTests(":compiler:tests-common"))
 
-    embeddedComponents("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", kotlinxSerializationVersion) { isTransitive = false }
+    embedded("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", kotlinxSerializationVersion) { isTransitive = false }
 }
 
 sourceSets {
@@ -34,8 +34,6 @@ projectTest {
     dependsOn(":dist")
 }
 
-runtimeJar {
-    fromEmbeddedComponents()
-}
+runtimeJar()
 
 dist()

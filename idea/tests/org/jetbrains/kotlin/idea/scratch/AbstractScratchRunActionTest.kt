@@ -12,7 +12,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiDocumentManager
@@ -22,6 +21,7 @@ import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
 import java.util.*
@@ -171,11 +172,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
 
-    override fun getProjectDescriptor():  com.intellij.testFramework.LightProjectDescriptor {
-        val testName = StringUtil.toLowerCase(getTestName(false))
+    override fun getProjectDescriptor(): com.intellij.testFramework.LightProjectDescriptor {
+        val testName = getTestName(false)
 
         return when {
-            testName.endsWith("NoRuntime") -> KotlinLightProjectDescriptor.INSTANCE
+            testName.endsWith("WithKotlinTest") -> INSTANCE_WITH_KOTLIN_TEST
+            testName.endsWith("NoRuntime") -> INSTANCE_WITHOUT_RUNTIME
             else -> KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
         }
     }
@@ -195,6 +197,21 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
             runWriteAction { file.delete(this) }
+        }
+    }
+
+    companion object {
+        private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
+            arrayListOf(
+                ForTestCompileRuntime.runtimeJarForTests(),
+                PathUtil.kotlinPathsForDistDirectory.kotlinTestPath
+            )
+        ) {
+            override fun getSdk() = PluginTestCaseBase.fullJdk()
+        }
+
+        private val INSTANCE_WITHOUT_RUNTIME = object : KotlinLightProjectDescriptor() {
+            override fun getSdk() = PluginTestCaseBase.fullJdk()
         }
     }
 }

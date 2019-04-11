@@ -393,13 +393,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public CodegenContext findParentContextWithDescriptor(DeclarationDescriptor descriptor) {
         CodegenContext c = this;
         while (c != null) {
-            if (!c.shouldSkipThisContextInHierarchy() && c.getContextDescriptor() == descriptor) break;
+            if (!c.isShadowedByParentContext() && c.getContextDescriptor() == descriptor) break;
             c = c.getParentContext();
         }
         return c;
     }
 
-    private boolean shouldSkipThisContextInHierarchy() {
+    private boolean isShadowedByParentContext() {
         return getContextKind() == OwnerKind.ERASED_INLINE_CLASS;
     }
 

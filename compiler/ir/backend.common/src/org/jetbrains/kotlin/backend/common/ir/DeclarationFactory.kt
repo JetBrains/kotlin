@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface DeclarationFactory {
-    object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
+    object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS", isSynthetic = true)
 
-    fun getFieldForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField
+    fun getFieldForEnumEntry(enumEntry: IrEnumEntry, entryType: IrType): IrField
     fun getOuterThisField(innerClass: IrClass): IrField
     fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor
     fun getFieldForObjectInstance(singleton: IrClass): IrField

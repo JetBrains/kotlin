@@ -249,11 +249,12 @@ fun IrBuilderWithScope.irCallOp(
     callee: IrFunctionSymbol,
     type: IrType,
     dispatchReceiver: IrExpression,
-    argument: IrExpression
+    argument: IrExpression? = null
 ): IrCall =
     irCall(callee, type).apply {
         this.dispatchReceiver = dispatchReceiver
-        putValueArgument(0, argument)
+        if (argument != null)
+            putValueArgument(0, argument)
     }
 
 fun IrBuilderWithScope.typeOperator(
@@ -279,6 +280,12 @@ fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: IrType) =
 fun IrBuilderWithScope.irInt(value: Int) =
     IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)
 
+fun IrBuilderWithScope.irLong(value: Long) =
+    IrConstImpl.long(startOffset, endOffset, context.irBuiltIns.longType, value)
+
+fun IrBuilderWithScope.irChar(value: Char) =
+    IrConstImpl.char(startOffset, endOffset, context.irBuiltIns.charType, value)
+
 fun IrBuilderWithScope.irString(value: String) =
     IrConstImpl.string(startOffset, endOffset, context.irBuiltIns.stringType, value)
 
@@ -295,3 +302,42 @@ fun IrBuilderWithScope.irSetField(receiver: IrExpression, irField: IrField, valu
         value = value,
         type = context.irBuiltIns.unitType
     )
+
+inline fun IrBuilderWithScope.irBlock(
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset,
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
+    body: IrBlockBuilder.() -> Unit
+): IrExpression =
+    IrBlockBuilder(
+        context, scope,
+        startOffset,
+        endOffset,
+        origin, resultType
+    ).block(body)
+
+inline fun IrBuilderWithScope.irComposite(
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset,
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
+    body: IrBlockBuilder.() -> Unit
+): IrExpression =
+    IrBlockBuilder(
+        context, scope,
+        startOffset,
+        endOffset,
+        origin, resultType, true
+    ).block(body)
+
+inline fun IrBuilderWithScope.irBlockBody(
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset,
+    body: IrBlockBodyBuilder.() -> Unit
+): IrBlockBody =
+    IrBlockBodyBuilder(
+        context, scope,
+        startOffset,
+        endOffset
+    ).blockBody(body)

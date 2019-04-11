@@ -11,3 +11,4 @@ suspend fun foo1(l: Long) {
 // VARIABLE : NAME=l TYPE=J INDEX=0
 // VARIABLE : NAME=$completion TYPE=Lkotlin/coroutines/Continuation; INDEX=2
 // VARIABLE : NAME=$continuation TYPE=Lkotlin/coroutines/Continuation; INDEX=4
+// VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=3

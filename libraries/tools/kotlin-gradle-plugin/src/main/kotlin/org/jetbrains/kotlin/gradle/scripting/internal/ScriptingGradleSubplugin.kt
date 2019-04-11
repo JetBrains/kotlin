@@ -16,6 +16,8 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
@@ -51,11 +53,15 @@ class ScriptingGradleSubplugin : Plugin<Project> {
 
                     if (task !is KaptGenerateStubsTask) {
 
-                        val discoveryClasspathConfigurationName = getDiscoveryClasspathConfigurationName(task.sourceSetName)
-                        project.configurations.findByName(discoveryClasspathConfigurationName)?.let { _ ->
-                            configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName)
+                        try {
+                            val discoveryClasspathConfigurationName = getDiscoveryClasspathConfigurationName(task.sourceSetName)
+                            project.configurations.findByName(discoveryClasspathConfigurationName)?.let { _ ->
+                                configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName)
+                            }
+                                ?: project.logger.warn("kotlin scripting plugin: $project.${task.name} - configuration not found: $discoveryClasspathConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
+                        } catch (e: IllegalStateException) {
+                            project.logger.warn("kotlin scripting plugin: applied in the non-supported environment (error received: ${e.message})")
                         }
-                            ?: project.logger.warn("kotlin scripting plugin: $project.${task.name} - configuration not found: $discoveryClasspathConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
                     }
                 }
                 if (useLazyTaskConfiguration) {
@@ -64,7 +70,10 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                     project.tasks.withType(KotlinCompile::class.java, configureAction)
                 }
             } else {
-                project.logger.warn("kotlin scripting plugin: applied to a non-JVM project $project, $MISCONFIGURATION_MESSAGE_SUFFIX")
+                // TODO: implement support for discovery in MPP project: use KotlinSourceSet directly and do not rely on java convevtion sourcesets
+                if (project.multiplatformExtensionOrNull == null) {
+                    project.logger.warn("kotlin scripting plugin: applied to a non-JVM project $project, $MISCONFIGURATION_MESSAGE_SUFFIX")
+                }
             }
         }
     }
@@ -204,7 +213,7 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     }
 
     override fun isApplicable(project: Project, task: AbstractCompile) =
-        ScriptingGradleSubplugin.isEnabled(project)
+        task is KotlinJvmCompile && ScriptingGradleSubplugin.isEnabled(project)
 
     override fun apply(
         project: Project,

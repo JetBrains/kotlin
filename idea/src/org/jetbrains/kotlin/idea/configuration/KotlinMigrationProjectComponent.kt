@@ -44,7 +44,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
     init {
         val connection = project.messageBus.connect()
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
-            KotlinMigrationProjectComponent.getInstanceIfNotDisposed(project)?.onImportFinished()
+            getInstanceIfNotDisposed(project)?.onImportFinished()
         })
     }
 
@@ -165,8 +165,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
 
             val changedFiles = ChangeListManager.getInstance(project).affectedPaths
             for (changedFile in changedFiles) {
-                val extension = changedFile.extension
-                when (extension) {
+                when (changedFile.extension) {
                     "gradle" -> return true
                     "properties" -> return true
                     "kts" -> return true

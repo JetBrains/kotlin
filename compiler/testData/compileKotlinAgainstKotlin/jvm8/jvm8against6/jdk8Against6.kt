@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // SKIP_JDK6
 // FILE: A.kt
 import java.util.*

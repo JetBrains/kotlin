@@ -45,6 +45,3 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-
-
-ideaPlugin()

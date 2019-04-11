@@ -7,42 +7,50 @@ package org.jetbrains.kotlin.codegen.inline.coroutines
 
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
+import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
+import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.coroutines.getLastParameterIndex
-import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodName
 import org.jetbrains.kotlin.codegen.coroutines.replaceFakeContinuationsWithRealOnes
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
+import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
+import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
+import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
+import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
+
+const val NOINLINE_CALL_MARKER = "NOINLINE_CALL_MARKER"
 
 class CoroutineTransformer(
     private val inliningContext: InliningContext,
     private val classBuilder: ClassBuilder,
-    private val sourceFile: String?,
     private val methods: List<MethodNode>,
-    private val superClassName: String
+    private val superClassName: String,
+    private val capturedParams: List<CapturedParamInfo>
 ) {
     private val state = inliningContext.state
 
     fun shouldTransform(node: MethodNode): Boolean {
+        // Never generate state-machine for objects, which are going to be retransformed
+        // See innerObjectRetransformation.kt
+        if (inliningContext.callSiteInfo.isInlineOrInsideInline) return false
         if (isContinuationNotLambda()) return false
-        val crossinlineParam = crossinlineLambda() ?: return false
+        val crossinlineParam = crossinlineLambda()
         if (inliningContext.isInliningLambda && !inliningContext.isContinuation) return false
         return when {
             isSuspendFunction(node) -> true
             isSuspendLambda(node) -> {
                 if (isStateMachine(node)) return false
                 val functionDescriptor =
-                    crossinlineParam.invokeMethodDescriptor.containingDeclaration as? FunctionDescriptor ?: return true
+                    crossinlineParam?.invokeMethodDescriptor?.containingDeclaration as? FunctionDescriptor ?: return true
                 !functionDescriptor.isInline
             }
             else -> false
@@ -63,9 +71,11 @@ class CoroutineTransformer(
     private fun isSuspendLambda(node: MethodNode) = isResumeImpl(node)
 
     fun newMethod(node: MethodNode): DeferredMethodVisitor {
-        val element = crossinlineLambda()?.functionWithBodyOrCallableReference.sure {
-            "crossinline lambda should have element"
-        }
+        // Find ANY element to report error about suspension point in monitor on.
+        val element = crossinlineLambda()?.functionWithBodyOrCallableReference
+            ?: inliningContext.root.sourceCompilerForInline.callElement as? KtElement
+            ?: error("crossinline lambda should have element")
+
         return when {
             isResumeImpl(node) -> {
                 assert(!isStateMachine(node)) {
@@ -91,24 +101,18 @@ class CoroutineTransformer(
                 ArrayUtil.toStringArray(node.exceptions)
             )
         ) {
-            CoroutineTransformerMethodVisitor(
-                classBuilder.newMethod(
-                    JvmDeclarationOrigin.NO_ORIGIN,
-                    node.access,
-                    node.name,
-                    node.desc,
-                    node.signature,
-                    ArrayUtil.toStringArray(node.exceptions)
-                ), node.access, node.name, node.desc, null, null,
-                obtainClassBuilderForCoroutineState = { classBuilder },
-                element = element,
-                diagnostics = state.diagnostics,
-                languageVersionSettings = state.languageVersionSettings,
-                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                containingClassInternalName = classBuilder.thisName,
-                isForNamedFunction = false,
-                sourceFile = sourceFile ?: "",
-                isCrossinlineLambda = inliningContext.isContinuation
+            surroundNoinlineCallsWithMarkersIfNeeded(
+                node,
+                CoroutineTransformerMethodVisitor(
+                    createNewMethodFrom(node), node.access, node.name, node.desc, null, null,
+                    obtainClassBuilderForCoroutineState = { classBuilder },
+                    element = element,
+                    diagnostics = state.diagnostics,
+                    languageVersionSettings = state.languageVersionSettings,
+                    shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
+                    containingClassInternalName = classBuilder.thisName,
+                    isForNamedFunction = false
+                )
             )
         }
     }
@@ -122,23 +126,46 @@ class CoroutineTransformer(
                 ArrayUtil.toStringArray(node.exceptions)
             )
         ) {
-            CoroutineTransformerMethodVisitor(
-                classBuilder.newMethod(
-                    JvmDeclarationOrigin.NO_ORIGIN, node.access, node.name, node.desc, node.signature,
-                    ArrayUtil.toStringArray(node.exceptions)
-                ), node.access, node.name, node.desc, null, null,
-                obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
-                element = element,
-                diagnostics = state.diagnostics,
-                languageVersionSettings = state.languageVersionSettings,
-                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                containingClassInternalName = classBuilder.thisName,
-                isForNamedFunction = true,
-                needDispatchReceiver = true,
-                internalNameForDispatchReceiver = classBuilder.thisName,
-                sourceFile = sourceFile ?: ""
+            surroundNoinlineCallsWithMarkersIfNeeded(
+                node,
+                CoroutineTransformerMethodVisitor(
+                    createNewMethodFrom(node), node.access, node.name, node.desc, null, null,
+                    obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
+                    element = element,
+                    diagnostics = state.diagnostics,
+                    languageVersionSettings = state.languageVersionSettings,
+                    shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
+                    containingClassInternalName = classBuilder.thisName,
+                    isForNamedFunction = true,
+                    needDispatchReceiver = true,
+                    internalNameForDispatchReceiver = classBuilder.thisName
+                )
             )
         }
+    }
+
+    private fun surroundNoinlineCallsWithMarkersIfNeeded(node: MethodNode, delegate: MethodVisitor): MethodVisitor =
+        if (capturedParams.any { (it.functionalArgument as? NonInlineableArgumentForInlineableParameterCalledInSuspend)?.isSuspend == true })
+            SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
+                delegate,
+                node.access,
+                node.name,
+                node.desc,
+                classBuilder.thisName,
+                capturedParams
+            )
+        else
+            delegate
+
+    private fun createNewMethodFrom(node: MethodNode): MethodVisitor {
+        return classBuilder.newMethod(
+            JvmDeclarationOrigin.NO_ORIGIN,
+            node.access,
+            node.name,
+            node.desc,
+            node.signature,
+            ArrayUtil.toStringArray(node.exceptions)
+        )
     }
 
     fun replaceFakesWithReals(node: MethodNode) {
@@ -165,3 +192,67 @@ class CoroutineTransformer(
         }
     }
 }
+
+private class SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
+    delegate: MethodVisitor,
+    access: Int,
+    name: String,
+    desc: String,
+    val thisName: String,
+    val capturedParams: List<CapturedParamInfo>
+) : TransformationMethodVisitor(delegate, access, name, desc, null, null) {
+    override fun performTransformations(methodNode: MethodNode) {
+        fun AbstractInsnNode.index() = methodNode.instructions.indexOf(this)
+
+        val sourceFrames = MethodTransformer.analyze(thisName, methodNode, SourceInterpreter())
+
+        val noinlineInvokes = arrayListOf<Pair<AbstractInsnNode, AbstractInsnNode>>()
+
+        for (insn in methodNode.instructions.asSequence()) {
+            if (insn.opcode != Opcodes.INVOKEINTERFACE) continue
+            insn as MethodInsnNode
+            if (!isInvokeOnLambda(insn.owner, insn.name)) continue
+            val frame = sourceFrames[insn.index()]
+            val receiver = findReceiverOfInvoke(frame, insn).takeIf { it?.isNoinlineSuspendLambda(insn) == true } as? FieldInsnNode ?: continue
+            val aload = receiver.findPreviousOrNull { it.opcode != Opcodes.GETFIELD } ?: error("GETFIELD cannot be the first instruction")
+            assert(aload.opcode == Opcodes.ALOAD) { "Before GETFIELD there shall be ALOAD" }
+            noinlineInvokes.add(insn to aload)
+        }
+
+        surroundInvokesWithSuspendMarkers(methodNode, noinlineInvokes)
+    }
+
+    private fun AbstractInsnNode.isNoinlineSuspendLambda(invoke: MethodInsnNode): Boolean {
+        if (opcode != Opcodes.GETFIELD) return false
+        this as FieldInsnNode
+        if (owner != thisName || desc != "L${invoke.owner};") return false
+        val functionalArgument = capturedParams.find { it.newFieldName == name }?.functionalArgument ?: return false
+        return functionalArgument is NonInlineableArgumentForInlineableParameterCalledInSuspend && functionalArgument.isSuspend
+    }
+}
+
+fun surroundInvokesWithSuspendMarkers(
+    methodNode: MethodNode,
+    noinlineInvokes: List<Pair<AbstractInsnNode, AbstractInsnNode>>
+) {
+    for ((invoke, aload) in noinlineInvokes) {
+        // Generate inline markers for stack transformation. It is required for local variables spilling.
+        methodNode.instructions.insertBefore(aload, withInstructionAdapter {
+            addInlineMarker(this, isStartNotEnd = true)
+        })
+        methodNode.instructions.insertBefore(invoke, withInstructionAdapter {
+            addSuspendMarker(this, isStartNotEnd = true)
+        })
+        methodNode.instructions.insert(invoke, withInstructionAdapter {
+            addSuspendMarker(this, isStartNotEnd = false)
+            addInlineMarker(this, isStartNotEnd = false)
+        })
+    }
+}
+
+// TODO: What to do if suddenly there are not exactly one receiver?
+fun findReceiverOfInvoke(frame: Frame<SourceValue>, insn: MethodInsnNode): AbstractInsnNode? =
+    frame.getStack(frame.stackSize - insn.owner.removePrefix(NUMBERED_FUNCTION_PREFIX).toInt() - 1)?.insns?.singleOrNull()
+
+fun AbstractInsnNode.isNoinlineCallMarker(): Boolean =
+    opcode == Opcodes.INVOKESTATIC && cast<MethodInsnNode>().let { it.owner == NOINLINE_CALL_MARKER && it.name == NOINLINE_CALL_MARKER }

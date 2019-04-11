@@ -1,12 +1,14 @@
-@file:Suppress("unused") // usages in build scripts are not tracked properly
+@file:Suppress("unused")
 
+// usages in build scripts are not tracked properly
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.AbstractCopyTask
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
@@ -73,15 +75,16 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
 
 fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
 
-val Project.useBootstrapStdlib: Boolean get() =
-    findProperty("jpsBuild")?.toString() == "true"
-
 fun Project.kotlinStdlib(suffix: String? = null): Any {
-    return if (useBootstrapStdlib)
+    return if (kotlinBuildProperties.useBootstrapStdlib)
         kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion)
     else
         dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"))
 }
+
+fun Project.kotlinBuiltins(): Any =
+    if (kotlinBuildProperties.useBootstrapStdlib) "org.jetbrains.kotlin:builtins:$bootstrapKotlinVersion"
+    else dependencies.project(":core:builtins")
 
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
@@ -118,7 +121,6 @@ private fun String.toMaybeVersionedJarRegex(): Regex {
     return Regex(if (hasJarExtension) escaped else "$escaped(-\\d.*)?\\.jar") // TODO: consider more precise version part of the regex
 }
 
-
 fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = File(this.property("JDK_18") as String)): File? =
     paths.map { File(jdkHome, it) }.firstOrNull { it.exists() }.also {
         if (it == null)
@@ -132,22 +134,5 @@ val compilerManifestClassPath
     get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar trove4j.jar"
 
 object EmbeddedComponents {
-    val CONFIGURATION_NAME = "embeddedComponents"
-}
-
-fun AbstractCopyTask.fromEmbeddedComponents() {
-    val embeddedComponents = project.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
-    if (this is ShadowJar) {
-        from(embeddedComponents)
-    } else {
-        dependsOn(embeddedComponents)
-        from {
-            embeddedComponents.map { file ->
-                if (file.isDirectory)
-                    project.files(file)
-                else
-                    project.zipTree(file)
-            }
-        }
-    }
+    val CONFIGURATION_NAME = "embedded"
 }

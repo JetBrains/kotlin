@@ -57,7 +57,7 @@ class FirJavaClass(
 
     private fun buildJavaUseSiteScope(regularClass: FirRegularClass, useSiteSession: FirSession): JavaClassUseSiteScope {
         val superTypeEnhancementScope = FirCompositeScope(mutableListOf())
-        val declaredScope = FirClassDeclaredMemberScope(regularClass, useSiteSession)
+        val declaredScope = FirClassDeclaredMemberScope(regularClass)
         lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
             .mapNotNullTo(superTypeEnhancementScope.scopes) { useSiteSuperType ->
                 if (useSiteSuperType is ConeClassErrorType) return@mapNotNullTo null

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
@@ -50,7 +49,8 @@ class SimpleCandidateFactory(
     val callComponents: KotlinCallComponents,
     val scopeTower: ImplicitScopeTower,
     val kotlinCall: KotlinCall,
-    val resolutionCallbacks: KotlinResolutionCallbacks
+    val resolutionCallbacks: KotlinResolutionCallbacks,
+    val callableReferenceResolver: CallableReferenceResolver
 ) : CandidateFactory<KotlinResolutionCandidate> {
     val inferenceSession: InferenceSession = resolutionCallbacks.inferenceSession
 
@@ -135,6 +135,7 @@ class SimpleCandidateFactory(
         if (ErrorUtils.isError(descriptor)) {
             return KotlinResolutionCandidate(
                 callComponents,
+                callableReferenceResolver,
                 scopeTower,
                 baseSystem,
                 resolvedKtCall,
@@ -143,7 +144,9 @@ class SimpleCandidateFactory(
             )
         }
 
-        val candidate = KotlinResolutionCandidate(callComponents, scopeTower, baseSystem, resolvedKtCall, knownSubstitutor)
+        val candidate = KotlinResolutionCandidate(
+            callComponents, callableReferenceResolver, scopeTower, baseSystem, resolvedKtCall, knownSubstitutor
+        )
 
         initialDiagnostics.forEach(candidate::addDiagnostic)
 
@@ -210,6 +213,7 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CheckReceivers,
         CheckArgumentsInParenthesis,
         CheckExternalArgument,
+        EagerResolveOfCallableReferences,
         PostponedVariablesInitializerResolutionPart
     ),
     INVOKE(*FUNCTION.resolutionSequence.toTypedArray()),

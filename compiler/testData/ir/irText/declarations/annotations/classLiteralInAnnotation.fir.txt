@@ -1,0 +1,99 @@
+FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
+  CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> (klass:kotlin.reflect.KClass<*>) returnType:<root>.A [primary]
+      VALUE_PARAMETER name:klass index:0 type:kotlin.reflect.KClass<*>
+    PROPERTY name:klass visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:klass type:kotlin.reflect.KClass<*> visibility:public [final]
+        EXPRESSION_BODY
+          GET_VAR 'klass: kotlin.reflect.KClass<*> declared in <root>.A.<init>' type=kotlin.reflect.KClass<*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-klass> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.reflect.KClass<*>
+        correspondingProperty: PROPERTY name:klass visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-klass> (): kotlin.reflect.KClass<*> declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:klass type:kotlin.reflect.KClass<*> visibility:public [final] ' type=kotlin.reflect.KClass<*> origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-klass>' type=<root>.A origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+  FUN name:test2 visibility:public modality:FINAL <T> () returnType:IrErrorType [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test2 <T> (): IrErrorType [inline] declared in <root>'
+        BLOCK type=<root>.test2.<no name provided> origin=OBJECT_LITERAL
+          CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+            annotations:
+              CALL 'public constructor <init> (klass: kotlin.reflect.KClass<*>) [primary] declared in <root>.A' type=<root>.A origin=null
+                klass: GET_CLASS type=IrErrorType
+                  ERROR_CALL 'Unresolved reference: <Unresolved name: T>#' type=IrErrorType
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test2.<no name provided>
+            CONSTRUCTOR visibility:private <> () returnType:IrErrorType [primary]
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
+          CALL 'private constructor <init> () [primary] declared in <root>.test2.<no name provided>' type=<root>.test2.<no name provided> origin=null
+  PROPERTY name:test3 visibility:public modality:FINAL [var]
+    FUN name:<get-test3> visibility:public modality:FINAL <> () returnType:IrErrorType
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>'
+          BLOCK type=<root>.<get-test3>.<no name provided> origin=OBJECT_LITERAL
+            CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+              annotations:
+                CALL 'public constructor <init> (klass: kotlin.reflect.KClass<*>) [primary] declared in <root>.A' type=<root>.A origin=null
+                  klass: GET_CLASS type=IrErrorType
+                    ERROR_CALL 'Unresolved reference: <Unresolved name: T>#' type=IrErrorType
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<get-test3>.<no name provided>
+              CONSTRUCTOR visibility:private <> () returnType:IrErrorType [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
+            CALL 'private constructor <init> () [primary] declared in <root>.<get-test3>.<no name provided>' type=<root>.<get-test3>.<no name provided> origin=null
+    FUN name:<set-test3> visibility:public modality:FINAL <> (v:IrErrorType) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:v index:0 type:IrErrorType
+      BLOCK_BODY
+        BLOCK type=<root>.<set-test3>.<no name provided> origin=OBJECT_LITERAL
+          CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+            annotations:
+              CALL 'public constructor <init> (klass: kotlin.reflect.KClass<*>) [primary] declared in <root>.A' type=<root>.A origin=null
+                klass: GET_CLASS type=IrErrorType
+                  ERROR_CALL 'Unresolved reference: <Unresolved name: T>#' type=IrErrorType
+            $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<set-test3>.<no name provided>
+            CONSTRUCTOR visibility:private <> () returnType:IrErrorType [primary]
+              BLOCK_BODY
+                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
+          CALL 'private constructor <init> () [primary] declared in <root>.<set-test3>.<no name provided>' type=<root>.<set-test3>.<no name provided> origin=null

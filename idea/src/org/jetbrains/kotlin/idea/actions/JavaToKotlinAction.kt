@@ -44,14 +44,14 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
+import org.jetbrains.kotlin.j2k.FilesResult
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import java.io.File
@@ -110,12 +110,18 @@ class JavaToKotlinAction : AnAction() {
             enableExternalCodeProcessing: Boolean = true,
             askExternalCodeProcessing: Boolean = true
         ): List<KtFile> {
-            var converterResult: JavaToKotlinConverter.FilesResult? = null
+            var converterResult: FilesResult? = null
             fun convert() {
-                val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
+                val converter =
+                    JavaToKotlinConverterFactory.createJavaToKotlinConverter(
+                        project,
+                        ConverterSettings.defaultSettings,
+                        IdeaJavaToKotlinServices
+                    )
                 converterResult = converter.filesToKotlin(
-                    javaFiles, J2kPostProcessor(formatCode = true),
-                    ProgressManager.getInstance().progressIndicatorNullable!!
+                    javaFiles,
+                    JavaToKotlinConverterFactory.createPostProcessor(formatCode = true),
+                    progress = ProgressManager.getInstance().progressIndicatorNullable!!
                 )
             }
 
@@ -203,14 +209,14 @@ class JavaToKotlinAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        if (isRunningInCidrIde) {
-            e.presentation.isEnabledAndVisible = false
-        } else {
-            val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
-            val project = e.project ?: return
+        e.presentation.isEnabledAndVisible = isEnabled(e)
+    }
 
-            e.presentation.isEnabled = isAnyJavaFileSelected(project, virtualFiles)
-        }
+    private fun isEnabled(e: AnActionEvent): Boolean {
+        if (isRunningInCidrIde) return false
+        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return false
+        val project = e.project ?: return false
+        return isAnyJavaFileSelected(project, virtualFiles)
     }
 
     private fun isAnyJavaFileSelected(project: Project, files: Array<VirtualFile>): Boolean {

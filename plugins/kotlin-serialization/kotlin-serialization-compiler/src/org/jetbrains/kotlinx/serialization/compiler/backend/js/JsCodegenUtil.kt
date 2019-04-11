@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
@@ -148,7 +146,7 @@ internal fun SerializerJsTranslator.serializerInstance(
     if (serializerClass.kind == ClassKind.OBJECT) {
         return context.serializerObjectGetter(serializerClass)
     } else {
-        var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
+        var args = if (serializerClass.isSerializerWhichRequiersKClass())
             listOf(ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!))
         else kType.arguments.map {
             val argSer = findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())

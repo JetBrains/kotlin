@@ -53,9 +53,8 @@ class CheckIrElementVisitor(
         if (!config.checkTypes)
             return
 
-        // TODO: compare IR types instead.
-        if (expectedType.isEqualTo(type)) {
-            reportError(this, "unexpected expression.type: expected $expectedType, got ${type.render()}")
+        if (type != expectedType) {
+            reportError(this, "unexpected expression.type: expected ${expectedType.render()}, got ${type.render()}")
         }
     }
 

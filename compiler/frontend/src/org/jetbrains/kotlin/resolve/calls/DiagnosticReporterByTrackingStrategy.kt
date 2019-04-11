@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DiagnosticReporterByTrackingStrategy(
@@ -49,6 +51,10 @@ class DiagnosticReporterByTrackingStrategy(
             )
             InstantiationOfAbstractClass::class.java -> tracingStrategy.instantiationOfAbstractClass(trace)
             AbstractSuperCall::class.java -> tracingStrategy.abstractSuperCall(trace)
+            NonApplicableCallForBuilderInferenceDiagnostic::class.java -> {
+                val reportOn = (diagnostic as NonApplicableCallForBuilderInferenceDiagnostic).kotlinCall
+                trace.reportDiagnosticOnce(Errors.NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE.on(reportOn.psiKotlinCall.psiCall.callElement))
+            }
         }
     }
 
@@ -207,19 +213,19 @@ class DiagnosticReporterByTrackingStrategy(
                     val expression = it.psiExpression ?: return
                     val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
                     if (reportConstantTypeMismatch(constraintError, deparenthesized)) return
-                    trace.report(Errors.TYPE_MISMATCH.on(deparenthesized, constraintError.upperType, constraintError.lowerType))
+                    trace.report(Errors.TYPE_MISMATCH.on(deparenthesized, constraintError.upperKotlinType, constraintError.lowerKotlinType))
                 }
 
                 (position as? ExpectedTypeConstraintPosition)?.let {
                     val call = it.topLevelCall.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>()
                     reportIfNonNull(call) {
-                        trace.report(Errors.TYPE_MISMATCH.on(it, constraintError.upperType, constraintError.lowerType))
+                        trace.report(Errors.TYPE_MISMATCH.on(it, constraintError.upperKotlinType, constraintError.lowerKotlinType))
                     }
                 }
 
                 (position as? ExplicitTypeParameterConstraintPosition)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
-                    trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, constraintError.upperType, constraintError.lowerType))
+                    trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, constraintError.upperKotlinType, constraintError.lowerKotlinType))
                 }
             }
             CapturedTypeFromSubtyping::class.java -> {
@@ -242,10 +248,14 @@ class DiagnosticReporterByTrackingStrategy(
             val module = context.scope.ownerDescriptor.module
             val constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, trace, context.expectedType)
             val hasConstantTypeError = CompileTimeConstantChecker(context, module, true)
-                .checkConstantExpressionType(constantValue, expression, constraintError.upperType)
+                .checkConstantExpressionType(constantValue, expression, constraintError.upperKotlinType)
             if (hasConstantTypeError) return true
         }
         return false
     }
 
 }
+
+
+val NewConstraintError.upperKotlinType get() = upperType as KotlinType
+val NewConstraintError.lowerKotlinType get() = lowerType as KotlinType

@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import java.util.*
+
 enum class FirOperation(val operator: String = "???") {
     // Binary
-    RANGE(".."),
     EQ("=="),
     NOT_EQ("!="),
     IDENTITY("==="),
@@ -16,10 +17,6 @@ enum class FirOperation(val operator: String = "???") {
     GT(">"),
     LT_EQ("<="),
     GT_EQ(">="),
-    AND("&&"),
-    OR("||"),
-    IN("in"),
-    NOT_IN("!in"),
 
     ASSIGN("="),
     PLUS_ASSIGN("+="),
@@ -39,6 +36,12 @@ enum class FirOperation(val operator: String = "???") {
     OTHER;
 
     companion object {
-        val ASSIGNMENTS = setOf(ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN)
+        val ASSIGNMENTS: Set<FirOperation> = EnumSet.of(ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN)
+
+        val BOOLEANS: Set<FirOperation> = EnumSet.of(
+            EQ, NOT_EQ, IDENTITY, NOT_IDENTITY, LT, GT, LT_EQ, GT_EQ, IS, NOT_IS
+        )
+
+        val COMPARISONS: Set<FirOperation> = EnumSet.of(LT, GT, LT_EQ, GT_EQ)
     }
 }

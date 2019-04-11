@@ -1,0 +1,11 @@
+FILE fqName:<root> fileName:/extensionLambda.kt
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test1 (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
+          BLOCK type=IrErrorType origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test1'
+                  ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+            FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test1' type=IrErrorType origin=LAMBDA

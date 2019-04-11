@@ -52,7 +52,7 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
                 is KtTypeAlias ->
                     typeAliases.put(declaration.nameAsName.safeNameForLazyResolve(), declaration)
                 is KtClassOrObject ->
-                    classesAndObjects.put(declaration.nameAsName.safeNameForLazyResolve(), KtClassInfoUtil.createClassLikeInfo(declaration))
+                    classesAndObjects.put(declaration.nameAsName.safeNameForLazyResolve(), KtClassInfoUtil.createClassOrObjectInfo(declaration))
                 is KtScript ->
                     scripts.put(KtScriptInfo(declaration).script.nameAsName, KtScriptInfo(declaration))
                 is KtDestructuringDeclaration -> {

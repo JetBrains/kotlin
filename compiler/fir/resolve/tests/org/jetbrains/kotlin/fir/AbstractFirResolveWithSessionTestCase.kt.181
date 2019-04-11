@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -16,4 +17,16 @@ import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 
 abstract class AbstractFirResolveWithSessionTestCase : KotlinTestWithEnvironment() {
 
+    override fun setUp() {
+        super.setUp()
+
+        prepareProjectExtensions(project)
+    }
+
+    protected fun prepareProjectExtensions(project: Project) {
+        // No relevant API in 181
+        // Extensions.getArea(project)
+        //    .getExtensionPoint(PsiElementFinder.EP_NAME)
+        //    .unregisterExtension(JavaElementFinder::class.java)
+    }
 }

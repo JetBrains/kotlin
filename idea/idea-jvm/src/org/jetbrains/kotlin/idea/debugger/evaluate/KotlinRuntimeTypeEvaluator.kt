@@ -66,7 +66,7 @@ abstract class KotlinRuntimeTypeEvaluator(
             val codeFragment = KtPsiFactory(myElement.project).createExpressionCodeFragment(
                 myElement.text, myElement.containingFile.context
             )
-            KotlinEvaluationBuilder.build(codeFragment, ContextUtil.getSourcePosition(evaluationContext))
+            KotlinEvaluatorBuilder.build(codeFragment, ContextUtil.getSourcePosition(evaluationContext))
         }
 
         val value = evaluator.evaluate(evaluationContext)

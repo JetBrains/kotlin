@@ -23,12 +23,16 @@ const val KLIB_MANIFEST_FILE_NAME = "manifest"
 const val KONAN_STDLIB_NAME = "stdlib"
 
 const val KLIB_DIR_NAME = "klib"
+const val KONAN_COMMON_LIBS_DIR_NAME = "common"
+const val KONAN_PLATFORM_LIBS_DIR_NAME = "platform"
+
+const val KONAN_SOURCES_DIR_NAME = "sources"
 
 val KONAN_COMMON_LIBS_PATH: Path
-    get() = Paths.get(KLIB_DIR_NAME, "common")
+    get() = Paths.get(KLIB_DIR_NAME, KONAN_COMMON_LIBS_DIR_NAME)
 
 val KONAN_ALL_PLATFORM_LIBS_PATH: Path
-    get() = Paths.get(KLIB_DIR_NAME, "platform")
+    get() = Paths.get(KLIB_DIR_NAME, KONAN_PLATFORM_LIBS_DIR_NAME)
 
 fun konanCommonLibraryPath(libraryName: String): Path = KONAN_COMMON_LIBS_PATH.resolve(libraryName)
 

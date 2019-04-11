@@ -29,10 +29,10 @@ dependencies {
     compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
-    embeddedComponents(project(":compiler:daemon-common")) { isTransitive = false }
-    embeddedComponents(commonDep("net.rubygrapefruit", "native-platform"))
+    embedded(project(":compiler:daemon-common")) { isTransitive = false }
+    embedded(commonDep("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
-        embeddedComponents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+        embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
     }
 }
 
@@ -47,7 +47,6 @@ noDefaultJar()
 
 runtimeJar(task<ShadowJar>("shadowJar")) {
     from(mainSourceSet.output)
-    fromEmbeddedComponents()
 }
 
 sourcesJar()
@@ -55,5 +54,3 @@ sourcesJar()
 javadocJar()
 
 dist()
-
-ideaPlugin()

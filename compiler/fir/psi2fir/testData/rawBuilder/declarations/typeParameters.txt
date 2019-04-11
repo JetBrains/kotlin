@@ -1,5 +1,5 @@
 FILE: typeParameters.kt
-    <out T : Any> public? final? interface List {
+    public? final? interface List<out T : Any> : kotlin/Any {
         public? final? operator fun get(index: Int): T
 
         public? final? infix fun concat(other: List<T>): List<T>
@@ -7,12 +7,16 @@ FILE: typeParameters.kt
     }
     public? final typealias StringList = List<out String>
     public? final typealias AnyList = List<*>
-    <out T : Any> public? abstract class AbstractList : List<T>, kotlin/Any {
-        public? constructor(): super<kotlin/Any>()
+    public? abstract class AbstractList<out T : Any> : List<T> {
+        public? constructor<out T : Any>(): R|AbstractList<T>| {
+            super<kotlin/Any>()
+        }
 
     }
     public? final? class SomeList : AbstractList<Int> {
-        public? constructor(): super<AbstractList<Int>>()
+        public? constructor(): R|SomeList| {
+            super<AbstractList<Int>>()
+        }
 
         public? open? override fun get(index: Int): Int {
             ^get Int(42)

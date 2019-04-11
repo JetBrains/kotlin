@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.codegen.inline
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.LabelResolver
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -83,7 +86,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected val invocationParamBuilder = ParametersBuilder.newBuilder()
 
-    protected val expressionMap = linkedMapOf<Int, LambdaInfo>()
+    protected val expressionMap = linkedMapOf<Int, FunctionalArgument>()
 
     var activeLambda: LambdaInfo? = null
         protected set
@@ -234,7 +237,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 extractDefaultLambdaOffsetAndDescriptor(jvmSignature, functionDescriptor)
             )
             for (lambda in defaultLambdas) {
-                invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).lambda = lambda
+                invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).functionalArgument = lambda
                 val prev = expressionMap.put(lambda.offset, lambda)
                 assert(prev == null) { "Lambda with offset ${lambda.offset} already exists: $prev" }
             }
@@ -272,13 +275,13 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         //hack to keep linenumber info, otherwise jdi will skip begin of linenumber chain
         adapter.visitInsn(Opcodes.NOP)
 
-        val result = inliner.doInline(adapter, remapper, true, LabelOwner.SKIP_ALL)
+        val result = inliner.doInline(adapter, remapper, true, ReturnLabelOwner.SKIP_ALL)
         result.reifiedTypeParametersUsages.mergeAll(reificationResult)
 
         val labels = sourceCompiler.getContextLabels()
 
-        val infos = MethodInliner.processReturns(adapter, LabelOwner { labels.contains(it) }, true, null)
-        sourceCompiler.generateAndInsertFinallyBlocks(
+        val infos = MethodInliner.processReturns(adapter, ReturnLabelOwner { labels.contains(it) }, true, null)
+        generateAndInsertFinallyBlocks(
             adapter, infos, (remapper.remap(parameters.argsSizeOnStack + 1).value as StackValue.Local).index
         )
         if (!sourceCompiler.isFinallyMarkerRequired()) {
@@ -298,6 +301,71 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         return result
     }
 
+    fun generateAndInsertFinallyBlocks(
+        intoNode: MethodNode,
+        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
+        offsetForFinallyLocalVar: Int
+    ) {
+        if (!sourceCompiler.hasFinallyBlocks()) return
+
+        val extensionPoints = HashMap<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks>()
+        for (insertPoint in insertPoints) {
+            extensionPoints.put(insertPoint.beforeIns, insertPoint)
+        }
+
+        val processor = DefaultProcessor(intoNode, offsetForFinallyLocalVar)
+
+        var curFinallyDepth = 0
+        var curInstr: AbstractInsnNode? = intoNode.instructions.first
+        while (curInstr != null) {
+            processor.processInstruction(curInstr, true)
+            if (isFinallyStart(curInstr)) {
+                //TODO depth index calc could be more precise
+                curFinallyDepth = getConstant(curInstr.previous)
+            }
+
+            val extension = extensionPoints[curInstr]
+            if (extension != null) {
+                val start = Label()
+
+                val finallyNode = createEmptyMethodNode()
+                finallyNode.visitLabel(start)
+
+                val finallyCodegen =
+                    sourceCompiler.createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode, curFinallyDepth)
+
+                val frameMap = finallyCodegen.frameMap
+                val mark = frameMap.mark()
+                var marker = -1
+                val intervals = processor.localVarsMetaInfo.currentIntervals
+                for (interval in intervals) {
+                    marker = Math.max(interval.node.index + 1, marker)
+                }
+                while (frameMap.currentSize < Math.max(processor.nextFreeLocalIndex, offsetForFinallyLocalVar + marker)) {
+                    frameMap.enterTemp(Type.INT_TYPE)
+                }
+
+                sourceCompiler.generateFinallyBlocksIfNeeded(finallyCodegen, extension.returnType, extension.finallyIntervalEnd.label)
+
+                //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
+                insertNodeBefore(finallyNode, intoNode, curInstr)
+
+                val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
+                processor.tryBlocksMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
+
+                //processor.getLocalVarsMetaInfo().splitAndRemoveIntervalsFromCurrents(splitBy);
+
+                mark.dropTo()
+            }
+
+            curInstr = curInstr.next
+        }
+
+        processor.substituteTryBlockNodes(intoNode)
+
+        //processor.substituteLocalVarTable(intoNode);
+    }
+
     protected abstract fun generateAssertFieldIfNeeded(info: RootInliningContext)
 
     private fun isInlinedToInlineFunInKotlinRuntime(): Boolean {
@@ -310,7 +378,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     private fun generateClosuresBodies() {
         for (info in expressionMap.values) {
-            info.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+            if (info is LambdaInfo) {
+                info.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+            }
         }
     }
 
@@ -337,9 +407,15 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             if (capturedParamIndex >= 0) {
                 val capturedParamInfoInLambda = activeLambda!!.capturedVars[capturedParamIndex]
                 info = invocationParamBuilder.addCapturedParam(capturedParamInfoInLambda, capturedParamInfoInLambda.fieldName, false)
-                info.setRemapValue(remappedValue)
+                info.remapValue = remappedValue
             } else {
                 info = invocationParamBuilder.addNextValueParameter(jvmType, false, remappedValue, parameterIndex)
+                info.functionalArgument = when (kind) {
+                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND ->
+                        NonInlineableArgumentForInlineableParameterCalledInSuspend(kotlinType?.isSuspendFunctionTypeOrSubtype == true)
+                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER -> NonInlineableArgumentForInlineableSuspendParameter
+                    else -> null
+                }
             }
 
             recordParameterValueInLocalVal(
@@ -357,7 +433,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     ): Function0<Unit>? {
         val index = IntArray(infos.size) { i ->
             if (!infos[i].isSkippedOrRemapped) {
-                codegen.frameMap.enterTemp(infos[i].getType())
+                codegen.frameMap.enterTemp(infos[i].type)
             } else -1
         }
 
@@ -371,7 +447,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                         local.store(StackValue.onStack(type), codegen.v)
                     }
                     if (info is CapturedParamInfo) {
-                        info.setRemapValue(local)
+                        info.remapValue = local
                         info.isSynthetic = true
                     }
                 }
@@ -395,8 +471,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     private fun putClosureParametersOnStack() {
         for (next in expressionMap.values) {
             //closure parameters for bounded callable references are generated inplace
-            if (next is ExpressionLambda && next.isBoundCallableReference) continue
-            putClosureParametersOnStack(next, null)
+            if (next is LambdaInfo) {
+                if (next is ExpressionLambda && next.isBoundCallableReference) continue
+                putClosureParametersOnStack(next, null)
+            }
         }
     }
 
@@ -730,9 +808,20 @@ class PsiInlineCodegen(
             }
         } else {
             val value = codegen.gen(argumentExpression)
-            putValueIfNeeded(parameterType, value, ValueKind.GENERAL, parameterIndex)
+            val kind = when {
+                isCallSiteIsSuspend(valueParameterDescriptor) -> ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND
+                isInlineSuspendParameter(valueParameterDescriptor) -> ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
+                else -> ValueKind.GENERAL
+            }
+            putValueIfNeeded(parameterType, value, kind, parameterIndex)
         }
     }
+
+    private fun isInlineSuspendParameter(descriptor: ValueParameterDescriptor): Boolean =
+        functionDescriptor.isInline && !descriptor.isNoinline && descriptor.type.isSuspendFunctionTypeOrSubtype
+
+    private fun isCallSiteIsSuspend(descriptor: ValueParameterDescriptor): Boolean =
+        state.bindingContext[CodegenBinding.CALL_SITE_IS_SUSPEND_FOR_CROSSINLINE_LAMBDA, descriptor] == true
 
     private fun rememberClosure(expression: KtExpression, type: Type, parameter: ValueParameterDescriptor): LambdaInfo {
         val ktLambda = KtPsiUtil.deparenthesize(expression)
@@ -743,7 +832,7 @@ class PsiInlineCodegen(
             parameter.isCrossinline, getBoundCallableReferenceReceiver(expression) != null
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
-            closureInfo.lambda = lambda
+            closureInfo.functionalArgument = lambda
             expressionMap.put(closureInfo.index, lambda)
         }
     }

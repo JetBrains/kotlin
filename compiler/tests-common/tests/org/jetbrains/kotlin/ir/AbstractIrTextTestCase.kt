@@ -32,12 +32,18 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.util.regex.Pattern
 
 abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
+        val irModule = buildFragmentAndTestIt(wholeFile, testFiles)
+        doTestIrModuleDependencies(wholeFile, irModule)
+    }
+
+    protected fun buildFragmentAndTestIt(wholeFile: File, testFiles: List<TestFile>): IrModuleFragment {
         val dir = wholeFile.parentFile
         val ignoreErrors = shouldIgnoreErrors(wholeFile)
         val irModule = generateIrModule(ignoreErrors)
@@ -47,7 +53,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             doTestIrFileAgainstExpectations(dir, testFile, irFile)
         }
 
-        doTestIrModuleDependencies(wholeFile, irModule)
+        return irModule
     }
 
     private fun doTestIrModuleDependencies(wholeFile: File, irModule: IrModuleFragment) {
@@ -59,11 +65,19 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             myEnvironment.configuration.languageVersionSettings
         )
 
+        val path = wholeFile.path
+        val replacedPath = path.replace(".kt", "__")
+        val externalFilePaths = wholeFile.parentFile.listFiles().mapNotNullTo(mutableListOf()) {
+            if (it.path.startsWith(replacedPath)) it.path else null
+        }
         for (externalClassFqn in parseDumpExternalClasses(wholeText)) {
             val classDump = stubGenerator.generateExternalClass(irModule.descriptor, externalClassFqn).dump()
-            val expectedFile = File(wholeFile.path.replace(".kt", "__$externalClassFqn.txt"))
+            val expectedFilePath = path.replace(".kt", "__$externalClassFqn.txt")
+            val expectedFile = File(expectedFilePath)
+            externalFilePaths -= expectedFilePath
             KotlinTestUtils.assertEqualsToFile(expectedFile, classDump)
         }
+        KtUsefulTestCase.assertEmpty("The following external dump files were not built: $externalFilePaths", externalFilePaths)
     }
 
     private fun DeclarationStubGenerator.generateExternalClass(descriptor: ModuleDescriptor, externalClassFqn: String): IrClass {
@@ -285,6 +299,29 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
     internal class IrTreeFileLabel(val expectedTextFile: File, val lineNumber: Int)
 
+    protected open fun getExpectedTextFileName(testFile: TestFile, name: String = testFile.name): String = name.replace(".kt", ".txt")
+
+    private fun parseExpectations(dir: File, testFile: TestFile): Expectations {
+        val regexps =
+            testFile.content.matchLinesWith(EXPECTED_OCCURRENCES_PATTERN) {
+                RegexpInText(it.groupValues[1], it.groupValues[2].trim())
+            }
+
+        var treeFiles =
+            testFile.content.matchLinesWith(IR_FILE_TXT_PATTERN) {
+                val fileName = it.groupValues[1].trim()
+                val file = createExpectedTextFile(testFile, dir, getExpectedTextFileName(testFile, fileName))
+                IrTreeFileLabel(file, 0)
+            }
+
+        if (treeFiles.isEmpty()) {
+            val file = createExpectedTextFile(testFile, dir, getExpectedTextFileName(testFile))
+            treeFiles = listOf(IrTreeFileLabel(file, 0))
+        }
+
+        return Expectations(regexps, treeFiles)
+    }
+
     companion object {
         private val EXPECTED_OCCURRENCES_PATTERN = Regex("""^\s*//\s*(\d+)\s*(.*)$""")
         private val IR_FILE_TXT_PATTERN = Regex("""// IR_FILE: (.*)$""")
@@ -294,34 +331,13 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         private val EXTERNAL_FILE_PATTERN = Regex("""// EXTERNAL_FILE""")
 
         private inline fun <T> String.matchLinesWith(regex: Regex, ifMatched: (MatchResult) -> T): List<T> =
-            split("\n").mapNotNull { regex.matchEntire(it)?.let(ifMatched) }
+            lines().mapNotNull { regex.matchEntire(it)?.let(ifMatched) }
 
         internal fun parseDumpExternalClasses(text: String) =
             text.matchLinesWith(DUMP_EXTERNAL_CLASS) { it.groupValues[1] }
 
         internal fun TestFile.isExternalFile() =
             EXTERNAL_FILE_PATTERN.containsMatchIn(content)
-
-        internal fun parseExpectations(dir: File, testFile: TestFile): Expectations {
-            val regexps =
-                testFile.content.matchLinesWith(EXPECTED_OCCURRENCES_PATTERN) {
-                    RegexpInText(it.groupValues[1], it.groupValues[2].trim())
-                }
-
-            var treeFiles =
-                testFile.content.matchLinesWith(IR_FILE_TXT_PATTERN) {
-                    val fileName = it.groupValues[1].trim()
-                    val file = createExpectedTextFile(testFile, dir, fileName)
-                    IrTreeFileLabel(file, 0)
-                }
-
-            if (treeFiles.isEmpty()) {
-                val file = createExpectedTextFile(testFile, dir, testFile.name.replace(".kt", ".txt"))
-                treeFiles = listOf(IrTreeFileLabel(file, 0))
-            }
-
-            return Expectations(regexps, treeFiles)
-        }
     }
 
 }

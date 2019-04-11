@@ -5,69 +5,48 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.tasks
 
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
-import org.gradle.api.tasks.*
-import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
-import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
+import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
 import org.jetbrains.kotlin.gradle.testing.TestsGrouping
-import org.jetbrains.kotlin.gradle.utils.injected
 import java.io.File
-import javax.inject.Inject
 
-open class KotlinNodeJsTestTask : AbstractTestTask() {
+open class KotlinNodeJsTestTask : KotlinTestTask() {
     @Input
     var ignoredTestSuites: IgnoredTestSuites =
         IgnoredTestSuites.showWithContents
 
-    @Input
-    var testsGrouping: TestsGrouping =
-        TestsGrouping.root
-
-    @Input
-    @Optional
-    var targetName: String? = null
-
-    @Input
-    var excludes = mutableSetOf<String>()
-
     @InputDirectory
-    var nodeModulesDir: File? = null
+    lateinit var nodeModulesDir: File
 
     @Input
     @SkipWhenEmpty
     var nodeModulesToLoad: Set<String> = setOf()
 
-    @InputFile
-    lateinit var testRuntimeNodeModule: File
-
-    @Suppress("UnstableApiUsage")
-    private val filterExt: DefaultTestFilter
-        get() = filter as DefaultTestFilter
-
-    init {
-        filterExt.isFailOnNoMatchingTests = false
-    }
-
-    @get:Inject
-    open val fileResolver: FileResolver
-        get() = injected
+    @Input
+    lateinit var testRuntimeNodeModules: Collection<String>
 
     @Suppress("LeakingThis")
     @Internal
     val nodeJsProcessOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
 
+    @Suppress("unused")
     val nodeJsExecutable: String
         @Input get() = nodeJsProcessOptions.executable
 
+    @Suppress("unused")
     val nodeJsWorkingDirCanonicalPath: String
         @Input get() = nodeJsProcessOptions.workingDir.canonicalPath
+
+    @Input
+    var debug: Boolean = false
 
     fun nodeJs(options: ProcessForkOptions.() -> Unit) {
         options(nodeJsProcessOptions)
@@ -77,7 +56,13 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
         val extendedForkOptions = DefaultProcessForkOptions(fileResolver)
         nodeJsProcessOptions.copyTo(extendedForkOptions)
 
-        extendedForkOptions.environment.addPath("NODE_PATH", nodeModulesDir!!.canonicalPath)
+        extendedForkOptions.environment.addPath("NODE_PATH", nodeModulesDir.canonicalPath)
+
+        val nodeJsArgs = mutableListOf<String>()
+
+        if (debug) {
+            nodeJsArgs.add("--inspect-brk")
+        }
 
         val cliArgs = KotlinNodeJsTestRunnerCliArgs(
             nodeModulesToLoad.toList(),
@@ -98,19 +83,16 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
 
         return TCServiceMessagesTestExecutionSpec(
             extendedForkOptions,
-            listOf(testRuntimeNodeModule.absolutePath) + cliArgs.toList(),
+            nodeJsArgs +
+                    testRuntimeNodeModules
+                        .map { nodeModulesDir.resolve(it) }
+                        .filter { it.exists() }
+                        .map { it.absolutePath } +
+                    cliArgs.toList(),
+            true,
             clientSettings
         )
     }
-
-    @get:Inject
-    open val execHandleFactory: ExecHandleFactory
-        get() = injected
-
-    override fun createTestExecuter() = TCServiceMessagesTestExecutor(
-        execHandleFactory,
-        buildOperationExecutor
-    )
 }
 
 data class KotlinNodeJsTestRunnerCliArgs(

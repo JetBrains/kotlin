@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: JavaInterface.java
 
 interface JavaInterface {

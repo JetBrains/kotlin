@@ -4,19 +4,20 @@ import jetbrains.buildServer.messages.serviceMessages.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.junit.Test
 
-class Complex: TCServiceMessagesClientTest() {
+class Complex : TCServiceMessagesClientTest() {
     @Test
     fun testComplexJs() {
         nameOfRootSuiteToReplace = "js"
 
-        assertEvents("""
+        assertEvents(
+            """
 STARTED SUITE root // root
   STARTED SUITE js // root.js
     STARTED SUITE MyTest // root.js.MyTest
       STARTED TEST displayName: myTest1, classDisplayName: MyTest, className: my.company.product.MyTest, name: myTest1 // root.js.MyTest.my.company.product.MyTest.myTest1
       COMPLETED SUCCESS // root.js.MyTest.my.company.product.MyTest.myTest1
       STARTED TEST displayName: myTest2, classDisplayName: MyTest, className: my.company.product.MyTest, name: myTest2 // root.js.MyTest.my.company.product.MyTest.myTest2
-        FAILURE testFailed // root.js.MyTest.my.company.product.MyTest.myTest2
+        FAILURE null // root.js.MyTest.my.company.product.MyTest.myTest2
       COMPLETED FAILURE // root.js.MyTest.my.company.product.MyTest.myTest2
       STARTED TEST displayName: myTest3, classDisplayName: MyTest, className: my.company.product.MyTest, name: myTest3 // root.js.MyTest.my.company.product.MyTest.myTest3
       COMPLETED SKIPPED // root.js.MyTest.my.company.product.MyTest.myTest3
@@ -24,7 +25,7 @@ STARTED SUITE root // root
         STARTED TEST displayName: myTest4, classDisplayName: MyTestNested, className: my.company.product.MyTest.MyTestNested, name: myTest4 // root.js.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest4
         COMPLETED SUCCESS // root.js.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest4
         STARTED TEST displayName: myTest5, classDisplayName: MyTestNested, className: my.company.product.MyTest.MyTestNested, name: myTest5 // root.js.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest5
-          FAILURE testFailed // root.js.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest5
+          FAILURE null // root.js.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest5
         COMPLETED FAILURE // root.js.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest5
         STARTED TEST displayName: myTest6, classDisplayName: MyTestNested, className: my.company.product.MyTest.MyTestNested, name: myTest6 // root.js.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest6
         COMPLETED SKIPPED // root.js.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest6
@@ -32,7 +33,7 @@ STARTED SUITE root // root
           STARTED TEST displayName: myTest7, classDisplayName: MyTestNestedNested, className: my.company.product.MyTest.MyTestNestedNested, name: myTest7 // root.js.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest7
           COMPLETED SUCCESS // root.js.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest7
           STARTED TEST displayName: myTest8, classDisplayName: MyTestNestedNested, className: my.company.product.MyTest.MyTestNestedNested, name: myTest8 // root.js.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest8
-            FAILURE testFailed // root.js.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest8
+            FAILURE null // root.js.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest8
           COMPLETED FAILURE // root.js.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest8
           STARTED TEST displayName: myTest9, classDisplayName: MyTestNestedNested, className: my.company.product.MyTest.MyTestNestedNested, name: myTest9 // root.js.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest9
           COMPLETED SKIPPED // root.js.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest9
@@ -43,7 +44,7 @@ STARTED SUITE root // root
       STARTED TEST displayName: myTest10, classDisplayName: MyTest2, className: my.company.product.MyTest2, name: myTest10 // root.js.MyTest2.my.company.product.MyTest2.myTest10
       COMPLETED SUCCESS // root.js.MyTest2.my.company.product.MyTest2.myTest10
       STARTED TEST displayName: myTest11, classDisplayName: MyTest2, className: my.company.product.MyTest2, name: myTest11 // root.js.MyTest2.my.company.product.MyTest2.myTest11
-        FAILURE testFailed // root.js.MyTest2.my.company.product.MyTest2.myTest11
+        FAILURE null // root.js.MyTest2.my.company.product.MyTest2.myTest11
       COMPLETED FAILURE // root.js.MyTest2.my.company.product.MyTest2.myTest11
       STARTED TEST displayName: myTest12, classDisplayName: MyTest2, className: my.company.product.MyTest2, name: myTest12 // root.js.MyTest2.my.company.product.MyTest2.myTest12
       COMPLETED SKIPPED // root.js.MyTest2.my.company.product.MyTest2.myTest12
@@ -66,7 +67,8 @@ STARTED SUITE root // root
     COMPLETED FAILURE // root.js.MyTest2
   COMPLETED FAILURE // root.js
 COMPLETED FAILURE // root
-        """) {
+        """
+        ) {
             serviceMessage(TestSuiteStarted(""))
             complexFixture()
             serviceMessage(TestSuiteFinished(""))
@@ -77,14 +79,15 @@ COMPLETED FAILURE // root
     fun testComplexIos() {
         nameOfRootSuiteToAppend = "ios"
 
-        assertEvents("""
+        assertEvents(
+            """
 STARTED SUITE root // root
   STARTED SUITE ios // root.ios
     STARTED SUITE MyTest // root.ios.MyTest
       STARTED TEST displayName: myTest1, classDisplayName: MyTest, className: my.company.product.MyTest, name: myTest1 // root.ios.MyTest.my.company.product.MyTest.myTest1
       COMPLETED SUCCESS // root.ios.MyTest.my.company.product.MyTest.myTest1
       STARTED TEST displayName: myTest2, classDisplayName: MyTest, className: my.company.product.MyTest, name: myTest2 // root.ios.MyTest.my.company.product.MyTest.myTest2
-        FAILURE testFailed // root.ios.MyTest.my.company.product.MyTest.myTest2
+        FAILURE null // root.ios.MyTest.my.company.product.MyTest.myTest2
       COMPLETED FAILURE // root.ios.MyTest.my.company.product.MyTest.myTest2
       STARTED TEST displayName: myTest3, classDisplayName: MyTest, className: my.company.product.MyTest, name: myTest3 // root.ios.MyTest.my.company.product.MyTest.myTest3
       COMPLETED SKIPPED // root.ios.MyTest.my.company.product.MyTest.myTest3
@@ -92,7 +95,7 @@ STARTED SUITE root // root
         STARTED TEST displayName: myTest4, classDisplayName: MyTestNested, className: my.company.product.MyTest.MyTestNested, name: myTest4 // root.ios.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest4
         COMPLETED SUCCESS // root.ios.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest4
         STARTED TEST displayName: myTest5, classDisplayName: MyTestNested, className: my.company.product.MyTest.MyTestNested, name: myTest5 // root.ios.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest5
-          FAILURE testFailed // root.ios.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest5
+          FAILURE null // root.ios.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest5
         COMPLETED FAILURE // root.ios.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest5
         STARTED TEST displayName: myTest6, classDisplayName: MyTestNested, className: my.company.product.MyTest.MyTestNested, name: myTest6 // root.ios.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest6
         COMPLETED SKIPPED // root.ios.MyTest.MyTestNested.my.company.product.MyTest.MyTestNested.myTest6
@@ -100,7 +103,7 @@ STARTED SUITE root // root
           STARTED TEST displayName: myTest7, classDisplayName: MyTestNestedNested, className: my.company.product.MyTest.MyTestNestedNested, name: myTest7 // root.ios.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest7
           COMPLETED SUCCESS // root.ios.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest7
           STARTED TEST displayName: myTest8, classDisplayName: MyTestNestedNested, className: my.company.product.MyTest.MyTestNestedNested, name: myTest8 // root.ios.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest8
-            FAILURE testFailed // root.ios.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest8
+            FAILURE null // root.ios.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest8
           COMPLETED FAILURE // root.ios.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest8
           STARTED TEST displayName: myTest9, classDisplayName: MyTestNestedNested, className: my.company.product.MyTest.MyTestNestedNested, name: myTest9 // root.ios.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest9
           COMPLETED SKIPPED // root.ios.MyTest.MyTestNested.MyTestNestedNested.my.company.product.MyTest.MyTestNestedNested.myTest9
@@ -111,7 +114,7 @@ STARTED SUITE root // root
       STARTED TEST displayName: myTest10, classDisplayName: MyTest2, className: my.company.product.MyTest2, name: myTest10 // root.ios.MyTest2.my.company.product.MyTest2.myTest10
       COMPLETED SUCCESS // root.ios.MyTest2.my.company.product.MyTest2.myTest10
       STARTED TEST displayName: myTest11, classDisplayName: MyTest2, className: my.company.product.MyTest2, name: myTest11 // root.ios.MyTest2.my.company.product.MyTest2.myTest11
-        FAILURE testFailed // root.ios.MyTest2.my.company.product.MyTest2.myTest11
+        FAILURE null // root.ios.MyTest2.my.company.product.MyTest2.myTest11
       COMPLETED FAILURE // root.ios.MyTest2.my.company.product.MyTest2.myTest11
       STARTED TEST displayName: myTest12, classDisplayName: MyTest2, className: my.company.product.MyTest2, name: myTest12 // root.ios.MyTest2.my.company.product.MyTest2.myTest12
       COMPLETED SKIPPED // root.ios.MyTest2.my.company.product.MyTest2.myTest12
@@ -134,7 +137,8 @@ STARTED SUITE root // root
     COMPLETED FAILURE // root.ios.MyTest2
   COMPLETED FAILURE // root.ios
 COMPLETED FAILURE // root
-        """) {
+        """
+        ) {
             complexFixture()
         }
     }

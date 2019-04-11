@@ -26,6 +26,6 @@ class KotlinDocCommentSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement) = e is KDoc
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
-        return ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, e.textRange)
+        return expandToWholeLine(editorText, e.textRange)
     }
 }

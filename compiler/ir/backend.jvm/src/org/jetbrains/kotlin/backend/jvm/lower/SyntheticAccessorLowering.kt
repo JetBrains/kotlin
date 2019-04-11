@@ -111,9 +111,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.addValueParameter(
-                Name.identifier("marker"),
-                context.ir.symbols.defaultConstructorMarker.owner.defaultType,
-                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                "marker", context.ir.symbols.defaultConstructorMarker.owner.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             )
 
             accessor.body = IrExpressionBodyImpl(
@@ -177,9 +175,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
 
             if (!fieldSymbol.owner.isStatic) {
                 accessor.addValueParameter(
-                    Name.identifier("\$this"),
-                    (fieldSymbol.owner.parent as IrClass).defaultType,
-                    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    "\$this", fieldSymbol.owner.parentAsClass.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
@@ -215,13 +211,11 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
 
             if (!fieldSymbol.owner.isStatic) {
                 accessor.addValueParameter(
-                    Name.identifier("\$this"),
-                    (fieldSymbol.owner.parent as IrClass).defaultType,
-                    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    "\$this", fieldSymbol.owner.parentAsClass.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
-            accessor.addValueParameter(Name.identifier("value"), fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.addValueParameter("value", fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
 
             accessor.body = createAccessorBodyForSetter(fieldSymbol.owner, accessor)
         }.symbol

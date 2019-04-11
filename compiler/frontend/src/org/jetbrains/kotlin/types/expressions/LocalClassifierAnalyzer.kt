@@ -169,7 +169,7 @@ class LocalClassDescriptorHolder(
                 },
                 containingDeclaration,
                 classOrObject.nameAsSafeName,
-                KtClassInfoUtil.createClassLikeInfo(classOrObject),
+                KtClassInfoUtil.createClassOrObjectInfo(classOrObject),
                 classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
             )
             writableScope?.addClassifierDescriptor(classDescriptor!!)

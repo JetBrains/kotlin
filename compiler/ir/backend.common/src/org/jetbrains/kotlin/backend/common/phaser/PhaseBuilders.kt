@@ -12,25 +12,36 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 // Phase composition.
+private class CompositePhase<Context : CommonBackendContext, Input, Output>(
+    val phases: List<CompilerPhase<Context, Any?, Any?>>
+) : CompilerPhase<Context, Input, Output> {
+
+    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
+        var currentState = phaserState as PhaserState<Any?>
+        var result = phases.first().invoke(phaseConfig, currentState, context, input)
+        for ((previous, next) in phases.zip(phases.drop(1))) {
+            if (next !is SameTypeCompilerPhase<*, *>) {
+                // Discard `stickyPostcoditions`, they are useless since data type is changing.
+                currentState = currentState.changeType()
+            }
+            currentState.stickyPostconditions.addAll(previous.stickyPostconditions)
+            result = next.invoke(phaseConfig, currentState, context, result)
+        }
+        return result as Output
+    }
+
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AnyNamedPhase>> =
+        phases.flatMap { it.getNamedSubphases(startDepth) }
+
+    override val stickyPostconditions get() = phases.last().stickyPostconditions
+}
+
 infix fun <Context : CommonBackendContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.then(
     other: CompilerPhase<Context, Mid, Output>
-) = object : CompilerPhase<Context, Input, Output> {
-    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
-        this@then.invoke(phaseConfig, phaserState, context, input).let { mid ->
-            val newPhaserState = if (other is SameTypeCompilerPhase<*, *>)
-                // Keep `stickyPostconditions`.
-                phaserState as PhaserState<Mid>
-            else
-                // Discard `stickyPostcoditions`, they are useless since data type is changing.
-                phaserState.changeType()
-            newPhaserState.stickyPostconditions.addAll(this@then.stickyPostconditions)
-            other.invoke(phaseConfig, newPhaserState, context, mid)
-        }
-
-    override fun getNamedSubphases(startDepth: Int) =
-        this@then.getNamedSubphases(startDepth) + other.getNamedSubphases(startDepth)
-
-    override val stickyPostconditions get() = other.stickyPostconditions
+): CompilerPhase<Context, Input, Output> {
+    val unsafeThis = this as CompilerPhase<Context, Any?, Any?>
+    val unsafeOther = other as CompilerPhase<Context, Any?, Any?>
+    return CompositePhase(if (this is CompositePhase<Context, *, *>) phases + unsafeOther else listOf(unsafeThis, unsafeOther))
 }
 
 fun <Context : CommonBackendContext> namedIrModulePhase(

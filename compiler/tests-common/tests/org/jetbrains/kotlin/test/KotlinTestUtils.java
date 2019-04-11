@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -90,6 +90,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.openapi.application.PathManager.PROPERTY_CONFIG_PATH;
+import static com.intellij.openapi.application.PathManager.PROPERTY_SYSTEM_PATH;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 
 public class KotlinTestUtils {
@@ -111,6 +113,19 @@ public class KotlinTestUtils {
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
     private static final List<File> filesToDelete = new ArrayList<>();
+
+    // It's important that this is not created per test, but rather per process.
+    public static final String IDEA_SYSTEM_PATH;
+
+    static {
+        try {
+            IDEA_SYSTEM_PATH = tmpDirForReusableFolder("idea-system").getPath();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     /**
      * Syntax:
@@ -413,9 +428,7 @@ public class KotlinTestUtils {
 
     @NotNull
     public static File tmpDirForTest(@NotNull String testClassName, @NotNull String testName) throws IOException {
-        File answer = normalizeFile(FileUtil.createTempDirectory(testClassName, testName));
-        deleteOnShutdown(answer);
-        return answer;
+        return normalizeFile(FileUtil.createTempDirectory(testClassName, testName, false));
     }
 
     @NotNull
@@ -425,10 +438,12 @@ public class KotlinTestUtils {
 
     @NotNull
     public static File tmpDir(String name) throws IOException {
-        // We should use this form. otherwise directory will be deleted on each test.
-        File answer = normalizeFile(FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, ""));
-        deleteOnShutdown(answer);
-        return answer;
+        return normalizeFile(FileUtil.createTempDirectory(name, "", false));
+    }
+
+    @NotNull
+    public static File tmpDirForReusableFolder(String name) throws IOException {
+        return normalizeFile(FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "", true));
     }
 
     private static File normalizeFile(File file) throws IOException {
@@ -807,12 +822,15 @@ public class KotlinTestUtils {
                     !isDirectiveDefined(expectedText, "!LANGUAGE: -ReleaseCoroutines");
 
             boolean checkStateMachine = isDirectiveDefined(expectedText, "CHECK_STATE_MACHINE");
+            boolean checkTailCallOptimization = isDirectiveDefined(expectedText, "CHECK_TAIL_CALL_OPTIMIZATION");
 
-            testFiles.add(factory.createFile(supportModule,
-                                             "CoroutineUtil.kt",
-                                             CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines, checkStateMachine),
-                                             directives
-            ));
+            testFiles.add(
+                    factory.createFile(
+                            supportModule,
+                            "CoroutineUtil.kt",
+                            CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines, checkStateMachine, checkTailCallOptimization),
+                            directives
+                    ));
         }
 
         return testFiles;
@@ -1290,5 +1308,10 @@ public class KotlinTestUtils {
         }
         // Several extension if name contains another dot
         return name.indexOf('.', firstDotIndex + 1) != -1;
+    }
+
+    public static void setIdeaSystemPathProperties() {
+        System.setProperty(PROPERTY_SYSTEM_PATH, IDEA_SYSTEM_PATH);
+        System.setProperty(PROPERTY_CONFIG_PATH, IDEA_SYSTEM_PATH + "/config");
     }
 }

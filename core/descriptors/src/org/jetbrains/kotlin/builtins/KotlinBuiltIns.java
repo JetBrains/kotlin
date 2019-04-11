@@ -253,6 +253,7 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe kPropertyFqName = reflect("KProperty");
         public final FqNameUnsafe kMutablePropertyFqName = reflect("KMutableProperty");
         public final ClassId kProperty = ClassId.topLevel(kPropertyFqName.toSafe());
+        public final FqNameUnsafe kDeclarationContainer = reflect("KDeclarationContainer");
 
         public final FqName uByteFqName = fqName("UByte");
         public final FqName uShortFqName = fqName("UShort");
@@ -490,6 +491,51 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getKClass() {
         return getBuiltInClassByFqName(FQ_NAMES.kClass.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKDeclarationContainer() {
+        return getBuiltInClassByFqName(FQ_NAMES.kDeclarationContainer.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKCallable() {
+        return getBuiltInClassByFqName(FQ_NAMES.kCallable.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKProperty() {
+        return getBuiltInClassByFqName(FQ_NAMES.kPropertyFqName.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKProperty0() {
+        return getBuiltInClassByFqName(FQ_NAMES.kProperty0.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKProperty1() {
+        return getBuiltInClassByFqName(FQ_NAMES.kProperty1.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKProperty2() {
+        return getBuiltInClassByFqName(FQ_NAMES.kProperty2.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKMutableProperty0() {
+        return getBuiltInClassByFqName(FQ_NAMES.kMutableProperty0.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKMutableProperty1() {
+        return getBuiltInClassByFqName(FQ_NAMES.kMutableProperty1.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKMutableProperty2() {
+        return getBuiltInClassByFqName(FQ_NAMES.kMutableProperty2.toSafe());
     }
 
     @NotNull

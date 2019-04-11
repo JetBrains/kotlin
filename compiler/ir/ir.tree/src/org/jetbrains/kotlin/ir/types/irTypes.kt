@@ -44,6 +44,9 @@ val IrType.classifierOrFail: IrClassifierSymbol
 val IrType.classifierOrNull: IrClassifierSymbol?
     get() = safeAs<IrSimpleType>()?.classifier
 
+val IrType.classOrNull: IrClassSymbol?
+    get() = classifierOrNull as? IrClassSymbol
+
 fun IrType.makeNotNull() =
     if (this is IrSimpleType && this.hasQuestionMark) {
         IrSimpleTypeImpl(
@@ -82,7 +85,7 @@ fun IrType.toKotlinType(): KotlinType {
 }
 
 fun IrType.getClass(): IrClass? =
-    (this.classifierOrNull as? IrClassSymbol)?.owner
+    classOrNull?.owner
 
 fun IrClassSymbol.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArgument>): IrSimpleType =
     IrSimpleTypeImpl(
@@ -107,11 +110,6 @@ private fun makeKotlinType(
     return classifier.descriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
 }
 
-fun ClassifierDescriptor.toIrType(hasQuestionMark: Boolean = false, symbolTable: SymbolTable? = null): IrType {
-    val symbol = getSymbol(symbolTable)
-    return IrSimpleTypeImpl(defaultType, symbol, hasQuestionMark, listOf(), listOf())
-}
-
 val IrTypeParameter.defaultType: IrType
     get() = IrSimpleTypeImpl(
         symbol,
@@ -131,28 +129,3 @@ fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
     )
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
-
-fun KotlinType.toIrType(symbolTable: SymbolTable? = null): IrType? {
-    if (isDynamic()) return IrDynamicTypeImpl(null, listOf(), Variance.INVARIANT)
-
-    val symbol = constructor.declarationDescriptor?.getSymbol(symbolTable) ?: return null
-
-    val arguments = this.arguments.map { projection ->
-        when (projection) {
-            is TypeProjectionImpl -> IrTypeProjectionImpl(projection.type.toIrType(symbolTable)!!, projection.projectionKind)
-            is StarProjectionImpl -> IrStarProjectionImpl
-            else -> error(projection)
-        }
-    }
-
-    // TODO
-    val annotations = listOf()
-    return IrSimpleTypeImpl(null, symbol, isMarkedNullable, arguments, annotations)
-}
-
-// TODO: this function creates unbound symbol which is the great source of problems
-private fun ClassifierDescriptor.getSymbol(symbolTable: SymbolTable?): IrClassifierSymbol = when (this) {
-    is ClassDescriptor -> symbolTable?.referenceClass(this) ?: IrClassSymbolImpl(this)
-    is TypeParameterDescriptor -> symbolTable?.referenceTypeParameter(this) ?: IrTypeParameterSymbolImpl(this)
-    else -> TODO()
-}

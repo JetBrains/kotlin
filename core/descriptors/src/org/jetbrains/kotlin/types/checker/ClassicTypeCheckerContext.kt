@@ -24,13 +24,9 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 open class ClassicTypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val allowedTypeVariable: Boolean = true) : ClassicTypeSystemContext, AbstractTypeCheckerContext() {
-    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
-        @Suppress("UNCHECKED_CAST")
-        return org.jetbrains.kotlin.types.checker.intersectTypes(types as List<UnwrappedType>)
-    }
 
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return super.prepareType(transformToNewType((type as KotlinType).unwrap()))
+        return transformToNewType((type as KotlinType).unwrap())
     }
 
     override val isErrorTypeEqualsToAnything: Boolean
@@ -54,22 +50,26 @@ open class ClassicTypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val
     }
 
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
-        require(type is SimpleType, type::errorMessage)
+        return classicSubstitutionSupertypePolicy(type)
+    }
 
-        val substitutor = TypeConstructorSubstitution.create(type).buildSubstitutor()
+    override val KotlinTypeMarker.isAllowedTypeVariable: Boolean get() = this is UnwrappedType && allowedTypeVariable && constructor is NewTypeVariableConstructor
 
-        return object : SupertypesPolicy.DoCustomTransform() {
-            override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
-                return substitutor.safeSubstitute(
-                    type.lowerBoundIfFlexible() as KotlinType,
-                    Variance.INVARIANT
-                ).asSimpleType()!!
+    companion object {
+        fun ClassicTypeSystemContext.classicSubstitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
+            require(type is SimpleType, type::errorMessage)
+            val substitutor = TypeConstructorSubstitution.create(type).buildSubstitutor()
+
+            return object : SupertypesPolicy.DoCustomTransform() {
+                override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
+                    return substitutor.safeSubstitute(
+                        type.lowerBoundIfFlexible() as KotlinType,
+                        Variance.INVARIANT
+                    ).asSimpleType()!!
+                }
             }
         }
     }
-
-
-    override val KotlinTypeMarker.isAllowedTypeVariable: Boolean get() = this is UnwrappedType && allowedTypeVariable && constructor is NewTypeVariableConstructor
 }
 
 private fun Any.errorMessage(): String {

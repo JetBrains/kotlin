@@ -77,8 +77,7 @@ class DeprecatedSymbolUsageInWholeProjectFix(
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val (nameExpression, replacement, descriptor) =
-                    DeprecatedSymbolUsageFixBase.extractDataFromDiagnostic(diagnostic) ?: return null
+            val (nameExpression, replacement, descriptor) = extractDataFromDiagnostic(diagnostic) ?: return null
             val descriptorName = RENDERER.render(descriptor)
             return DeprecatedSymbolUsageInWholeProjectFix(
                 nameExpression,

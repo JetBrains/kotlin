@@ -255,7 +255,10 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createPropertyGetter(expression: KtExpression): KtPropertyAccessor {
-        val property = createProperty("val x get() = 1")
+        val property = if (expression is KtBlockExpression)
+            createProperty("val x get() {\nreturn 1\n}")
+        else
+            createProperty("val x get() = 1")
         val getter = property.getter!!
         val bodyExpression = getter.bodyExpression!!
 

@@ -142,7 +142,7 @@ fun Converter.convertToKotlinAnalogIdentifier(classQualifiedName: String?, mutab
     return Identifier.withNoPrototype(kotlinClassName.substringAfterLast('.'))
 }
 
-private val toKotlinTypesMap: Map<String, String> = mapOf(
+val toKotlinTypesMap: Map<String, String> = mapOf(
         CommonClassNames.JAVA_LANG_OBJECT to KotlinBuiltIns.FQ_NAMES.any.asString(),
         CommonClassNames.JAVA_LANG_BYTE to KotlinBuiltIns.FQ_NAMES._byte.asString(),
         CommonClassNames.JAVA_LANG_CHARACTER to KotlinBuiltIns.FQ_NAMES._char.asString(),

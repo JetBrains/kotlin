@@ -2,7 +2,9 @@ FILE: explicitReceiver.kt
     public final fun x(): R|kotlin/Unit| {
     }
     public final class Foo : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val x: R|Foo| = R|/Foo.Foo|()
             public get(): R|Foo|
@@ -11,8 +13,8 @@ FILE: explicitReceiver.kt
             ^invoke this#
         }
 
-        public final fun bar(): R|Foo| {
-            ^bar R|/Foo.x|.R|/Foo.invoke|()
+        public final fun bar(): R|kotlin/Unit| {
+            ^bar R|/x|()
         }
 
     }

@@ -20,6 +20,24 @@ open class Kapt3Android32IT : Kapt3AndroidIT() {
         get() = GradleVersionRequired.AtLeast("4.6")
 }
 
+open class Kapt3Android33IT : Kapt3AndroidIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_3_2
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("5.2")
+
+    @Test
+    fun testAndroidxNavigationSafeArgs() = with(Project("androidx-navigation-safe-args", directoryPrefix = "kapt2")) {
+        // KT-30735
+        build("assembleDebug") {
+            assertSuccessful()
+            assertFileExists("build/generated/source/navigation-args/debug/test/androidx/navigation/StartFragmentDirections.java")
+            assertFileExists("build/tmp/kotlin-classes/debug/test/androidx/navigation/StartFragmentKt.class")
+        }
+    }
+}
+
 class Kapt3Android31IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_1_0

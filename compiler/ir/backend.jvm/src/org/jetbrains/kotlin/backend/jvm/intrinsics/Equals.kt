@@ -7,76 +7,57 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
 import org.jetbrains.kotlin.types.typeUtil.upperBoundedByPrimitiveNumberOrNullableType
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class Equals(val operator: IElementType) : IntrinsicMethod(), ComparisonIntrinsic {
-
-    private fun argumentTypes(
-        expression: IrMemberAccessExpression,
-        context: JvmBackendContext
-    ): Pair<Type, Type> {
-        val receiverAndArgs = expression.receiverAndArgs().apply {
-            assert(size == 2) { "Equals expects 2 arguments, but ${joinToString()}" }
-        }
-
-        var leftType = context.state.typeMapper.mapType(receiverAndArgs.first().type.toKotlinType())
-        var rightType = context.state.typeMapper.mapType(receiverAndArgs.last().type.toKotlinType())
-
-        if (isPrimitive(leftType) != isPrimitive(rightType)) {
-            leftType = boxType(leftType)
-            rightType = boxType(rightType)
-        }
-        return Pair(leftType, rightType)
+class Equals(val operator: IElementType) : IntrinsicMethod() {
+    private class BooleanNullCheck(val value: PromisedValue) : BooleanValue(value.mv) {
+        override fun jumpIfFalse(target: Label) = value.materialize().also { mv.ifnonnull(target) }
+        override fun jumpIfTrue(target: Label) = value.materialize().also { mv.ifnull(target) }
     }
 
-    override fun genStackValue(
-        expression: IrMemberAccessExpression,
-        context: JvmBackendContext
-    ): StackValue {
-        val (leftType, rightType) = argumentTypes(expression, context)
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        val (a, b) = expression.receiverAndArgs()
+        if (a.isNullConst() || b.isNullConst()) {
+            return BooleanNullCheck(if (a.isNullConst()) b.accept(codegen, data) else a.accept(codegen, data))
+        }
+
+        val leftType = with(codegen) { a.asmType }
+        val rightType = with(codegen) { b.asmType }
         val opToken = expression.origin
-        return if (opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ) {
-            // TODO: always casting to the type of the left operand in case of primitives looks wrong
-            val operandType = if (isPrimitive(leftType)) leftType else OBJECT_TYPE
-            StackValue.cmp(operator, operandType, StackValue.onStack(leftType), StackValue.onStack(rightType))
-        } else {
-            genEqualsForExpressionsOnStack(operator, StackValue.onStack(leftType), StackValue.onStack(rightType))
+        val useEquals = opToken !== IrStatementOrigin.EQEQEQ && opToken !== IrStatementOrigin.EXCLEQEQ &&
+                // `==` is `equals` for objects and floating-point numbers. In the latter case, the difference
+                // is that `equals` is a total order (-0 < +0 and NaN == NaN) and `===` is IEEE754-compliant.
+                (!isPrimitive(leftType) || leftType != rightType || leftType == Type.FLOAT_TYPE || leftType == Type.DOUBLE_TYPE)
+        val operandType = if (!isPrimitive(leftType) || useEquals) AsmTypes.OBJECT_TYPE else leftType
+        val aValue = a.accept(codegen, data).coerce(operandType).materialized
+        val bValue = b.accept(codegen, data).coerce(operandType).materialized
+        if (useEquals) {
+            AsmUtil.genAreEqualCall(codegen.mv)
+            return MaterialValue(codegen.mv, Type.BOOLEAN_TYPE)
         }
-    }
-
-    override fun toCallable(
-        expression: IrMemberAccessExpression,
-        signature: JvmMethodSignature,
-        context: JvmBackendContext
-    ): IrIntrinsicFunction {
-        var (leftType, rightType) = argumentTypes(expression, context)
-
-        return object : IrIntrinsicFunction(expression, signature, context, listOf(leftType, rightType)) {
-            override fun genInvokeInstruction(v: InstructionAdapter) {
-                val value = genStackValue(expression, context)
-                value.put(Type.BOOLEAN_TYPE, v)
-            }
-        }
+        return BooleanComparison(operator, aValue, bValue)
     }
 }
 
 
 class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
-
     private val boxedOperandType = AsmUtil.boxType(operandType)
 
     override fun toCallable(
@@ -127,19 +108,4 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
                 Ieee754AreEqual(boxedOperandType, boxedOperandType)
         }
     }
-}
-
-class TotalOrderEquals(operandType: Type) : IntrinsicMethod() {
-    private val boxedType = AsmUtil.boxType(operandType)
-
-    override fun toCallable(
-        expression: IrMemberAccessExpression,
-        signature: JvmMethodSignature,
-        context: JvmBackendContext
-    ): IrIntrinsicFunction =
-        object : IrIntrinsicFunction(expression, signature, context, listOf(boxedType, boxedType)) {
-            override fun genInvokeInstruction(v: InstructionAdapter) {
-                v.invokevirtual(boxedType.internalName, "equals", Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false)
-            }
-        }
 }

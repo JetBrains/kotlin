@@ -221,7 +221,7 @@ class CoroutineInferenceSupport(
         if (!resultingCall.isReallySuccess()) return
 
         val resultingDescriptor = resultingCall.resultingDescriptor
-        if (!isGoodCall(resultingDescriptor)) {
+        if (!isApplicableCallForBuilderInference(resultingDescriptor, languageVersionSettings)) {
             inferenceData.badCallHappened()
         }
 
@@ -248,32 +248,6 @@ class CoroutineInferenceSupport(
                 )
             }
         }
-    }
-
-    private fun KotlinType.containsTypeTemplate() = contains { it is TypeTemplate }
-
-    private fun isGoodCall(resultingDescriptor: CallableDescriptor): Boolean {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.ExperimentalBuilderInference)) {
-            return isGoodCallForOldCoroutines(resultingDescriptor)
-        }
-
-        if (resultingDescriptor.isExtension && !resultingDescriptor.hasBuilderInferenceAnnotation()) {
-            return resultingDescriptor.extensionReceiverParameter?.type?.containsTypeTemplate() == false
-        }
-
-        val returnType = resultingDescriptor.returnType ?: return false
-        return !returnType.containsTypeTemplate()
-    }
-
-    private fun isGoodCallForOldCoroutines(resultingDescriptor: CallableDescriptor): Boolean {
-        val returnType = resultingDescriptor.returnType ?: return false
-        if (returnType.containsTypeTemplate()) return false
-
-        if (resultingDescriptor !is FunctionDescriptor || resultingDescriptor.isSuspend) return true
-
-        if (resultingDescriptor.valueParameters.any { it.type.containsTypeTemplate() }) return false
-
-        return true
     }
 
     private class CoroutineTypeCheckerContext(
@@ -318,6 +292,32 @@ class CoroutineInferenceSupport(
 
         return expressionTypingServices.getTypeInfo(expression, context)
     }
+}
+
+private fun KotlinType.containsTypeTemplate() = contains { it is TypeTemplate || it is StubType }
+
+fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean {
+    if (!languageVersionSettings.supportsFeature(LanguageFeature.ExperimentalBuilderInference)) {
+        return isGoodCallForOldCoroutines(descriptor)
+    }
+
+    if (descriptor.isExtension && !descriptor.hasBuilderInferenceAnnotation()) {
+        return descriptor.extensionReceiverParameter?.type?.containsTypeTemplate() == false
+    }
+
+    val returnType = descriptor.returnType ?: return false
+    return !returnType.containsTypeTemplate()
+}
+
+private fun isGoodCallForOldCoroutines(resultingDescriptor: CallableDescriptor): Boolean {
+    val returnType = resultingDescriptor.returnType ?: return false
+    if (returnType.containsTypeTemplate()) return false
+
+    if (resultingDescriptor !is FunctionDescriptor || resultingDescriptor.isSuspend) return true
+
+    if (resultingDescriptor.valueParameters.any { it.type.containsTypeTemplate() }) return false
+
+    return true
 }
 
 fun isCoroutineCallWithAdditionalInference(

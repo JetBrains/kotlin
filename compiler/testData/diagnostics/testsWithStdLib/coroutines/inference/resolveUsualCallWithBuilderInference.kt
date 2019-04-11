@@ -25,12 +25,12 @@ val member = build {
     add(42)
 }
 
-val memberWithoutAnn = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>wrongBuild<!> {
+val memberWithoutAnn = <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>wrongBuild<!> {
     add(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!>)
 }
 
 val extension = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
-    extensionAdd("foo")
+    <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>extensionAdd("foo")<!>
 }
 
 val safeExtension = build {

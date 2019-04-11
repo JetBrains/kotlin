@@ -1,0 +1,24 @@
+FILE fqName:<root> fileName:/localFun.kt
+  FUN name:outer visibility:public modality:FINAL <TT> () returnType:kotlin.Unit
+    TYPE_PARAMETER name:TT index:0 variance: superTypes:[]
+    BLOCK_BODY
+      FUN name:test1 visibility:local modality:FINAL <T> (i:kotlin.Int, j:T of <root>.outer.test1) returnType:kotlin.Unit
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+        VALUE_PARAMETER name:i index:0 type:kotlin.Int
+        VALUE_PARAMETER name:j index:1 type:T of <root>.outer.test1
+        BLOCK_BODY
+      FUN name:test2 visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit
+        VALUE_PARAMETER name:i index:0 type:kotlin.Int
+          EXPRESSION_BODY
+            CONST Int type=kotlin.Int value=0
+        VALUE_PARAMETER name:j index:1 type:kotlin.String
+          EXPRESSION_BODY
+            CONST String type=kotlin.String value=""
+        BLOCK_BODY
+      FUN name:test3 visibility:local modality:FINAL <> (args:kotlin.String) returnType:kotlin.Unit
+        VALUE_PARAMETER name:args index:0 type:kotlin.String
+        BLOCK_BODY
+      FUN name:textExt1 visibility:local modality:FINAL <> (i:kotlin.Int, j:TT of <root>.outer) returnType:kotlin.Unit
+        VALUE_PARAMETER name:i index:0 type:kotlin.Int
+        VALUE_PARAMETER name:j index:1 type:TT of <root>.outer
+        BLOCK_BODY

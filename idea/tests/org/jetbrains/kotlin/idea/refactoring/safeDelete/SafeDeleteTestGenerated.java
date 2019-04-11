@@ -190,6 +190,11 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
             runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/nestedObject2.kt");
         }
 
+        @TestMetadata("nestedObject3.kt")
+        public void testNestedObject3() throws Exception {
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/nestedObject3.kt");
+        }
+
         @TestMetadata("noUsages.kt")
         public void testNoUsages() throws Exception {
             runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/noUsages.kt");

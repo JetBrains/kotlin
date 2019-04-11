@@ -1,0 +1,61 @@
+FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C
+    CONSTRUCTOR visibility:public <> () returnType:test.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  PROPERTY name:p visibility:public modality:FINAL [var]
+    FUN name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Int declared in test'
+          CONST Int type=kotlin.Int value=42
+    FUN name:<set-p> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int
+      BLOCK_BODY
+  FUN name:inc visibility:public modality:FINAL <> () returnType:kotlin.Int?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun inc (): kotlin.Int? declared in test'
+        CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+  FUN name:get visibility:public modality:FINAL <> (index:kotlin.Int) returnType:kotlin.Int
+    VALUE_PARAMETER name:index index:0 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun get (index: kotlin.Int): kotlin.Int declared in test'
+        CONST Int type=kotlin.Int value=42
+  FUN name:set visibility:public modality:FINAL <> (index:kotlin.Int, value:kotlin.Int) returnType:kotlin.Unit
+    VALUE_PARAMETER name:index index:0 type:kotlin.Int
+    VALUE_PARAMETER name:value index:1 type:kotlin.Int
+    BLOCK_BODY
+  FUN name:testProperty visibility:public modality:FINAL <> (nc:test.C?) returnType:kotlin.Unit
+    VALUE_PARAMETER name:nc index:0 type:test.C?
+    BLOCK_BODY
+      VAR name:<unary> type:kotlin.Int [val]
+        CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int origin=null
+      ERROR_CALL 'Unresolved reference: R|test/p|' type=IrErrorType
+      GET_VAR 'val <unary>: kotlin.Int [val] declared in test.testProperty' type=kotlin.Int origin=null
+  FUN name:testArrayAccess visibility:public modality:FINAL <> (nc:test.C?) returnType:kotlin.Unit
+    VALUE_PARAMETER name:nc index:0 type:test.C?
+    BLOCK_BODY
+      VAR name:<unary> type:kotlin.Int [val]
+        CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in test' type=kotlin.Int origin=null
+          index: CONST Int type=kotlin.Int value=0
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in test' type=kotlin.Unit origin=null
+        index: CONST Int type=kotlin.Int value=0
+        value: ERROR_CALL 'Cannot bind 1 arguments to inc call with 0 parameters' type=kotlin.Int?
+          GET_VAR 'val <unary>: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
+      GET_VAR 'val <unary>: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null

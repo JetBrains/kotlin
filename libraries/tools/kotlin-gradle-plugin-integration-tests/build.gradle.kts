@@ -51,12 +51,15 @@ projectTest {
     dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
     dependsOn(
         ":kotlin-allopen:install",
+        ":kotlin-allopen:plugin-marker:install",
         ":kotlin-noarg:install",
+        ":kotlin-allopen:plugin-marker:install",
         ":kotlin-sam-with-receiver:install",
         ":kotlin-android-extensions:install",
         ":kotlin-build-common:install",
         ":kotlin-compiler-embeddable:install",
         ":kotlin-gradle-plugin:install",
+        ":kotlin-gradle-plugin:plugin-marker:install",
         ":kotlin-reflect:install",
         ":kotlin-annotation-processing-gradle:install",
         ":kotlin-test:kotlin-test-jvm:install",
@@ -65,7 +68,8 @@ projectTest {
         ":examples:annotation-processor-example:install",
         ":kotlin-scripting-common:install",
         ":kotlin-scripting-jvm:install",
-        ":kotlin-scripting-compiler-embeddable:install"
+        ":kotlin-scripting-compiler-embeddable:install",
+        ":kotlin-test-nodejs-runner:install"
     )
     exclude(jpsIncrementalTestsClass)
 }
@@ -121,6 +125,8 @@ tasks.withType<Test> {
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
+    systemProperty("jdk10Home", rootProject.extra["JDK_10"] as String)
+    systemProperty("jdk11Home", rootProject.extra["JDK_11"] as String)
 
     val mavenLocalRepo = System.getProperty("maven.repo.local")
     if (mavenLocalRepo != null) {

@@ -66,10 +66,10 @@ repositories {
     if (androidStudioRelease != null) {
         ivy {
             if (cacheRedirectorEnabled) {
-                artifactPattern("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$androidStudioOs.zip")
+                artifactPattern("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$androidStudioOs.[ext]")
             }
 
-            artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$androidStudioOs.zip")
+            artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$androidStudioOs.[ext]")
             metadataSources {
                 artifact()
             }
@@ -123,7 +123,12 @@ val androidDxRepoModuleDir = File(repoDir, "$androidDxModuleName/$androidDxRevis
 
 dependencies {
     if (androidStudioRelease != null) {
-        androidStudio("google:android-studio-ide:$androidStudioBuild")
+        val extension = if (androidStudioOs == "linux" && androidStudioRelease.startsWith("3.5"))
+            "tar.gz"
+        else
+            "zip"
+
+        androidStudio("google:android-studio-ide:$androidStudioBuild@$extension")
     } else {
         if (installIntellijCommunity) {
             intellij("com.jetbrains.intellij.idea:ideaIC:$intellijVersion")
@@ -326,7 +331,13 @@ fun buildIvyRepositoryTask(
 
             logger.info("Unpacking ${file.name} into ${artifactsDirectory.absolutePath}")
             copy {
-                from(zipTree(file).matching {
+                val fileTree = when (extension) {
+                    "tar.gz" -> tarTree(file)
+                    "zip" -> zipTree(file)
+                    else -> error("Unsupported artifact extension: $extension")
+                }
+
+                from(fileTree.matching {
                     exclude("**/plugins/Kotlin/**")
                 })
 

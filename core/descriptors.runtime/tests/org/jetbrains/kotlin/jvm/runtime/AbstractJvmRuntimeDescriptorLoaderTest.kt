@@ -78,7 +78,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
 
         val classLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeAndReflectJarClassLoader())
 
-        val actual = createReflectedPackageView(classLoader, KotlinTestUtils.TEST_MODULE_NAME)
+        val actual = createReflectedPackageView(classLoader)
 
         val comparatorConfiguration = Configuration(
             /* checkPrimaryConstructors = */ fileName.endsWith(".kt"),
@@ -135,9 +135,8 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         }
     }
 
-    private fun createReflectedPackageView(classLoader: URLClassLoader, moduleName: String): SyntheticPackageViewForTest {
+    private fun createReflectedPackageView(classLoader: URLClassLoader): SyntheticPackageViewForTest {
         val moduleData = RuntimeModuleData.create(classLoader)
-        moduleData.packagePartProvider.registerModule(moduleName)
         val module = moduleData.module
 
         val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())
@@ -153,10 +152,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             val header = binaryClass?.classHeader
 
             if (header?.kind == KotlinClassHeader.Kind.FILE_FACADE || header?.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
-                val packageView = module.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
-                if (!packageScopes.contains(packageView.memberScope)) {
-                    packageScopes.add(packageView.memberScope)
-                }
+                packageScopes.add(moduleData.packagePartScopeCache.getPackagePartScope(binaryClass))
             } else if (header == null || header.kind == KotlinClassHeader.Kind.CLASS) {
                 // Either a normal Kotlin class or a Java class
                 val classId = klass.classId

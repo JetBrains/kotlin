@@ -15,6 +15,7 @@ evaluationDependsOn(":prepare:idea-plugin")
 val intellijUltimateEnabled : Boolean by rootProject.extra
 
 val springClasspath by configurations.creating
+val ideaPlugin by configurations.creating
 
 dependencies {
     if (intellijUltimateEnabled) {
@@ -22,7 +23,7 @@ dependencies {
     }
 
     compileOnly(project(":kotlin-reflect-api"))
-    compile(kotlinStdlib())
+    compile(kotlinStdlib("jdk8"))
     compile(project(":core:descriptors")) { isTransitive = false }
     compile(project(":compiler:psi")) { isTransitive = false }
     compile(project(":core:descriptors.jvm")) { isTransitive = false }
@@ -138,6 +139,8 @@ dependencies {
     springClasspath(commonDep("org.springframework", "spring-context"))
     springClasspath(commonDep("org.springframework", "spring-tx"))
     springClasspath(commonDep("org.springframework", "spring-web"))
+
+    ideaPlugin(project(":prepare:idea-plugin", configuration = "runtimeJar"))
 }
 
 val preparedResources = File(buildDir, "prepResources")
@@ -175,14 +178,15 @@ val preparePluginXml by task<Copy> {
     }
 }
 
-val communityPluginProject = ":prepare:idea-plugin"
-
-val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
+val jar = runtimeJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(preparePluginXml)
-    dependsOn("$communityPluginProject:shadowJar")
-    val communityPluginJar = project(communityPluginProject).configurations["runtimeJar"].artifacts.files.singleFile
-    from(zipTree(communityPluginJar), { exclude("META-INF/plugin.xml") })
+    dependsOn(ideaPlugin)
+    
+    from(provider { zipTree(ideaPlugin.singleFile) }) { 
+        exclude("META-INF/plugin.xml") 
+    }
+    
     from(preparedResources, { include("META-INF/plugin.xml") })
     from(mainSourceSet.output)
     archiveName = "kotlin-plugin.jar"

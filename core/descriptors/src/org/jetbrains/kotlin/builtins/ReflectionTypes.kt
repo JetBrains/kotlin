@@ -152,11 +152,14 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         }
 
         fun isNumberedKFunctionOrKSuspendFunction(type: KotlinType): Boolean {
+            return isNumberedKFunction(type) || isNumberedKSuspendFunction(type)
+        }
+
+        fun isNumberedKFunction(type: KotlinType): Boolean {
             val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
             val shortName = descriptor.name.asString()
 
-            return (shortName.length > K_FUNCTION_PREFIX.length && shortName.startsWith(K_FUNCTION_PREFIX) ||
-                    isNumberedKSuspendFunction(type)) &&
+            return (shortName.length > K_FUNCTION_PREFIX.length && shortName.startsWith(K_FUNCTION_PREFIX)) &&
                     DescriptorUtils.getFqName(descriptor).parent().toSafe() == KOTLIN_REFLECT_FQ_NAME
         }
 

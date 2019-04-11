@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParenthesesIfPossible
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.*
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialSta
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -52,20 +52,29 @@ import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
 
 interface J2kPostProcessing {
-    fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)?
+    fun createAction(element: KtElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? =
+        createAction(element, diagnostics)
+
+    fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? =
+        createAction(element, diagnostics, null)
 
     val writeActionNeeded: Boolean
 }
 
-object J2KPostProcessingRegistrar {
+interface J2KPostProcessingRegistrar {
+    val processings: Collection<J2kPostProcessing>
+    fun priority(processing: J2kPostProcessing): Int
+}
+
+object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
     private val _processings = ArrayList<J2kPostProcessing>()
 
-    val processings: Collection<J2kPostProcessing>
+    override val processings: Collection<J2kPostProcessing>
         get() = _processings
 
     private val processingsToPriorityMap = HashMap<J2kPostProcessing, Int>()
 
-    fun priority(processing: J2kPostProcessing): Int = processingsToPriorityMap[processing]!!
+    override fun priority(processing: J2kPostProcessing): Int = processingsToPriorityMap[processing]!!
 
     init {
         _processings.add(RemoveExplicitTypeArgumentsProcessing())
@@ -100,6 +109,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention())
         registerInspectionBasedProcessing(JavaMapForEachInspection())
 
+
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
             val expression = RemoveUselessCastFix.invoke(element)
 
@@ -119,9 +129,9 @@ object J2KPostProcessingRegistrar {
         }
 
         registerDiagnosticBasedProcessingFactory(
-                Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
+            Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
         ) {
-            element: KtSimpleNameExpression, _: Diagnostic ->
+                element: KtSimpleNameExpression, _: Diagnostic ->
             val property = element.mainReference.resolve() as? KtProperty
             if (property == null) {
                 null
@@ -148,8 +158,8 @@ object J2KPostProcessingRegistrar {
     }
 
     private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
-            intention: TIntention,
-            noinline additionalChecker: (TElement) -> Boolean = { true }
+        intention: TIntention,
+        noinline additionalChecker: (TElement) -> Boolean = { true }
     ) {
         _processings.add(object : J2kPostProcessing {
             // Intention can either need or not need write action
@@ -171,10 +181,10 @@ object J2KPostProcessingRegistrar {
 
     private inline fun
             <reified TElement : KtElement,
-            TInspection: AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
+                    TInspection: AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
 
-            inspection: TInspection,
-            acceptInformationLevel: Boolean = false
+        inspection: TInspection,
+        acceptInformationLevel: Boolean = false
     ) {
         _processings.add(object : J2kPostProcessing {
             // Inspection can either need or not need write action
@@ -199,15 +209,15 @@ object J2KPostProcessingRegistrar {
     }
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessing(
-            vararg diagnosticFactory: DiagnosticFactory<*>,
-            crossinline fix: (TElement, Diagnostic) -> Unit
+        vararg diagnosticFactory: DiagnosticFactory<*>,
+        crossinline fix: (TElement, Diagnostic) -> Unit
     ) {
         registerDiagnosticBasedProcessingFactory(*diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
     }
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessingFactory(
-            vararg diagnosticFactory: DiagnosticFactory<*>,
-            crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
+        vararg diagnosticFactory: DiagnosticFactory<*>,
+        crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
     ) {
         _processings.add(object : J2kPostProcessing {
             // ???
@@ -283,7 +293,7 @@ object J2KPostProcessingRegistrar {
 
             return {
                 RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
-                        .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
+                    .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
             }
         }
     }
@@ -334,7 +344,7 @@ object J2KPostProcessingRegistrar {
                 element.operationToken != KtTokens.PLUS ||
                 diagnostics.forElement(element.operationReference).none {
                     it.factory == Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
-                    || it.factory  == Errors.NONE_APPLICABLE
+                            || it.factory  == Errors.NONE_APPLICABLE
                 })
                 return null
 

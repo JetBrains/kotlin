@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.serialization.fqNameSafe
-import org.jetbrains.kotlin.backend.common.serialization.hasAnnotation
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -194,7 +192,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
                 symbol = irReturnableBlockSymbol,
                 origin = if (isCoroutineIntrinsicCall) CoroutineIntrinsicLambdaOrigin else null,
                 statements = statements,
-                sourceFileSymbol = sourceFile.symbol
+                inlineFunctionSymbol = callee.symbol
             ).apply {
                 transformChildrenVoid(object : IrElementTransformerVoid() {
                     override fun visitReturn(expression: IrReturn): IrExpression {

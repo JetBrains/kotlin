@@ -5,12 +5,14 @@ FILE: arrayAccess.kt
         ^foo Int(1)
     }
     public? final? class Wrapper : kotlin/Any {
-        public? constructor(v: IntArray): super<kotlin/Any>()
+        public? constructor(v: IntArray): R|Wrapper| {
+            super<kotlin/Any>()
+        }
 
-        public? final? val v: IntArray
+        public? final? val v: IntArray = R|<local>/v|
             public? get(): IntArray
 
     }
     public? final? fun test(a: IntArray, w: Wrapper): <implicit> {
-        ^test plus#(plus#(plus#(a#[Int(0)], a#[p#]), a#[foo#()]), w#.v#[Int(0)])
+        ^test a#.get#(Int(0)).plus#(a#.get#(p#)).plus#(a#.get#(foo#())).plus#(w#.v#.get#(Int(0)))
     }

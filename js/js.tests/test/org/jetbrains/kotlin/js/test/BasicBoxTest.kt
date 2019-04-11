@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
+import org.jetbrains.kotlin.js.test.interop.ScriptEngineNashorn
+import org.jetbrains.kotlin.js.test.interop.ScriptEngineV8Lazy
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.metadata.DebugProtoBuf
@@ -63,6 +65,7 @@ import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.*
+import java.lang.Boolean.getBoolean
 import java.nio.charset.Charset
 import java.util.regex.Pattern
 
@@ -84,9 +87,11 @@ abstract class BasicBoxTest(
     protected open fun getOutputPostfixFile(testFilePath: String): File? = null
 
     protected open val runMinifierByDefault: Boolean = false
-    protected open val skipMinification = System.getProperty("kotlin.js.skipMinificationTest", "false")!!.toBoolean()
+    protected open val skipMinification = getBoolean("kotlin.js.skipMinificationTest")
 
     protected open val incrementalCompilationChecksEnabled = true
+
+    protected open val testChecker get() = if (runTestInNashorn) NashornJsTestChecker else V8JsTestChecker
 
     fun doTest(filePath: String) {
         doTest(filePath, "OK", MainCallParameters.noCall())
@@ -104,11 +109,7 @@ abstract class BasicBoxTest(
             fileContent = fileContent.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
 
-        val runtimeType =
-            if (KJS_WITH_FULL_RUNTIME.matcher(fileContent).find())
-                JsIrTestRuntime.FULL
-            else
-                JsIrTestRuntime.DEFAULT
+        val needsFullIrRuntime = KJS_WITH_FULL_RUNTIME.matcher(fileContent).find()
 
         val actualMainCallParameters = if (CALL_MAIN_PATTERN.matcher(fileContent).find()) MainCallParameters.mainWithArguments(listOf("testArg")) else mainCallParameters
 
@@ -144,7 +145,7 @@ abstract class BasicBoxTest(
                     file.parent, module, outputFileName, dependencies, allDependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
                     outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction,
-                    runtimeType, isMainModule
+                    needsFullIrRuntime, isMainModule
                 )
 
                 when {
@@ -201,7 +202,7 @@ abstract class BasicBoxTest(
             }
 
             if (!dontRunGeneratedCode) {
-                runGeneratedCode(allJsFiles, mainModuleName, testPackage, testFunction, expectedResult, withModuleSystem, runtimeType)
+                runGeneratedCode(allJsFiles, mainModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
             }
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
@@ -259,10 +260,9 @@ abstract class BasicBoxTest(
         testPackage: String?,
         testFunction: String,
         expectedResult: String,
-        withModuleSystem: Boolean,
-        runtime: JsIrTestRuntime
+        withModuleSystem: Boolean
     ) {
-        NashornJsTestChecker.check(jsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+        testChecker.check(jsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
     }
 
     protected open fun performAdditionalChecks(generatedJsFiles: List<String>, outputPrefixFile: File?, outputPostfixFile: File?) {}
@@ -328,7 +328,7 @@ abstract class BasicBoxTest(
         mainCallParameters: MainCallParameters,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime,
+        needsFullIrRuntime: Boolean,
         isMainModule: Boolean
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
@@ -351,13 +351,13 @@ abstract class BasicBoxTest(
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime, isMainModule
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
                 sourceDirs, module, kotlinFiles, dependencies, allDependencies, friends, multiModule, remap,
-                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, runtime
+                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, needsFullIrRuntime
             )
         }
     }
@@ -378,7 +378,7 @@ abstract class BasicBoxTest(
         incrementalData: IncrementalData,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime
+        needsFullIrRuntime: Boolean
     ) {
         val sourceToTranslationUnit = hashMapOf<File, TranslationUnit>()
         for (testFile in kotlinFiles) {
@@ -400,7 +400,7 @@ abstract class BasicBoxTest(
 
         translateFiles(
             translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime, false
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -465,7 +465,7 @@ abstract class BasicBoxTest(
         remap: Boolean,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime,
+        needsFullIrRuntime: Boolean,
         isMainModule: Boolean
     ) {
         val translator = K2JSTranslator(config, false)
@@ -685,7 +685,7 @@ abstract class BasicBoxTest(
         val result = engineForMinifier.runAndRestoreContext {
             runList.forEach(this::loadFile)
             overrideAsserter()
-            eval<String>(NashornJsTestChecker.SETUP_KOTLIN_OUTPUT)
+            eval<String>(SETUP_KOTLIN_OUTPUT)
             runTestFunction(testModuleName, testPackage, testFunction, withModuleSystem)
         }
         TestCase.assertEquals(expectedResult, result)
@@ -825,13 +825,15 @@ abstract class BasicBoxTest(
         private val CALL_MAIN_PATTERN = Pattern.compile("^// *CALL_MAIN *$", Pattern.MULTILINE)
         private val KJS_WITH_FULL_RUNTIME = Pattern.compile("^// *KJS_WITH_FULL_RUNTIME *\$", Pattern.MULTILINE)
 
+        @JvmStatic
+        protected val runTestInNashorn = getBoolean("kotlin.js.useNashorn")
+
         val TEST_MODULE = "JS_TESTS"
         private val DEFAULT_MODULE = "main"
         private val TEST_FUNCTION = "box"
         private val OLD_MODULE_SUFFIX = "-old"
 
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
-
-        private val engineForMinifier = createScriptEngine()
+        private val engineForMinifier = if (runTestInNashorn) ScriptEngineNashorn() else ScriptEngineV8Lazy()
     }
 }

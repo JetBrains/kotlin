@@ -2,7 +2,7 @@ package test
 
 public fun useEnum(): kotlin.String!
 
-public abstract enum class AbstractEnum : kotlin.Enum<test.AbstractEnum!> {
+public final enum class AbstractEnum : kotlin.Enum<test.AbstractEnum!> {
     enum entry ONE
 
     private constructor AbstractEnum()

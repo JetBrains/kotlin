@@ -1,4 +1,6 @@
-import org.gradle.jvm.tasks.Jar
+tasks.withType<Test> {
+    maxParallelForks = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1)
+}
 
 plugins {
     kotlin("jvm")
@@ -37,6 +39,7 @@ dependencies {
     compile(project(":j2k"))
     compile(project(":idea:formatter"))
     compile(project(":idea:fir-view"))
+    compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:java"))
     compile(project(":idea:idea-core"))
@@ -98,6 +101,7 @@ dependencies {
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":plugins:lint")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))
+    testRuntime(project(":nj2k:nj2k-services")) { isTransitive = false }
 
     (rootProject.extra["compilerModules"] as Array<String>).forEach {
         testRuntime(project(it))
@@ -126,7 +130,9 @@ dependencies {
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
 
-    if (System.getProperty("idea.active") != null) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
+    if (project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
+    }
 }
 sourceSets {
     "main" {

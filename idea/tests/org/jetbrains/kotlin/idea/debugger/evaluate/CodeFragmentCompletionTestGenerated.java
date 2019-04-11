@@ -74,6 +74,11 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
         runTest("idea/idea-completion/testData/basic/codeFragments/privatesInSecondPressCompletion.kt");
     }
 
+    @TestMetadata("syntheticFieldProperties.kt")
+    public void testSyntheticFieldProperties() throws Exception {
+        runTest("idea/idea-completion/testData/basic/codeFragments/syntheticFieldProperties.kt");
+    }
+
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
         runTest("idea/idea-completion/testData/basic/codeFragments/topLevel.kt");

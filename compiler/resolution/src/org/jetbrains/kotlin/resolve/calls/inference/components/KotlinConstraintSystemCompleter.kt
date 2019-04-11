@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -25,19 +27,19 @@ class KotlinConstraintSystemCompleter(
     }
 
     interface Context : VariableFixationFinder.Context, ResultTypeResolver.Context {
-        override val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>
+        override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
 
-        override val postponedTypeVariables: List<NewTypeVariable>
+        override val postponedTypeVariables: List<TypeVariableMarker>
 
         // type can be proper if it not contains not fixed type variables
-        fun canBeProper(type: UnwrappedType): Boolean
+        fun canBeProper(type: KotlinTypeMarker): Boolean
 
-        fun containsOnlyFixedOrPostponedVariables(type: UnwrappedType): Boolean
+        fun containsOnlyFixedOrPostponedVariables(type: KotlinTypeMarker): Boolean
 
         // mutable operations
         fun addError(error: KotlinCallDiagnostic)
 
-        fun fixVariable(variable: NewTypeVariable, resultType: UnwrappedType)
+        fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker)
     }
 
     fun runCompletion(
@@ -75,7 +77,7 @@ class KotlinConstraintSystemCompleter(
                 ) ?: break
 
             if (shouldForceCallableReferenceOrLambdaResolution(completionMode, variableForFixation)) {
-                if (forcePostponedAtomResolution<ResolvedCallableReferenceAtom>(topLevelAtoms, analyze)) continue
+                if (forcePostponedAtomResolution<PostponedCallableReferenceAtom>(topLevelAtoms, analyze)) continue
                 if (forcePostponedAtomResolution<LambdaWithTypeVariableAsExpectedTypeAtom>(topLevelAtoms, analyze)) continue
             }
 
@@ -157,7 +159,7 @@ class KotlinConstraintSystemCompleter(
         c: Context,
         collectVariablesFromContext: Boolean,
         topLevelAtoms: List<ResolvedAtom>
-    ): List<TypeConstructor> {
+    ): List<TypeConstructorMarker> {
         if (collectVariablesFromContext) return c.notFixedTypeVariables.keys.toList()
 
         fun ResolvedAtom.process(to: LinkedHashSet<TypeConstructor>) {

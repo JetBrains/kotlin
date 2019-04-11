@@ -1,10 +1,10 @@
+// WITH_RUNTIME
 // FILE: J.java
 
 public class J {}
 
 // FILE: 1.kt
 
-import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
 fun box(): String {

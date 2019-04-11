@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.konan.library.lite
 
-import java.nio.file.Path
+import java.io.File
 
 data class LiteKonanLibrary(
-    val path: Path,
+    val path: File,
+    val sourcePaths: Collection<File>,
     val name: String,
     val platform: String?,
     internal val compilerVersion: String

@@ -13,10 +13,10 @@ data class CompiledDataDescriptor(
     val parameters: List<CodeFragmentParameter.Dumb>,
     val crossingBounds: Set<CodeFragmentParameter.Dumb>,
     val mainMethodSignature: CodeFragmentCompiler.MethodSignature,
-    val sourcePosition: SourcePosition
+    val sourcePosition: SourcePosition?
 ) {
     companion object {
-        fun from(result: CodeFragmentCompiler.CompilationResult, sourcePosition: SourcePosition): CompiledDataDescriptor {
+        fun from(result: CodeFragmentCompiler.CompilationResult, sourcePosition: SourcePosition?): CompiledDataDescriptor {
             val localFunctionSuffixes = result.localFunctionSuffixes
 
             val dumbParameters = ArrayList<CodeFragmentParameter.Dumb>(result.parameterInfo.parameters.size)

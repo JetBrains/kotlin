@@ -200,10 +200,6 @@ abstract class FirVisitor<out R, in D> {
         return visitCall(annotationCall, data)
     }
 
-    open fun visitArrayGetCall(arrayGetCall: FirArrayGetCall, data: D): R {
-        return visitCall(arrayGetCall, data)
-    }
-
     open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): R {
         return visitCall(arrayOfCall, data)
     }
@@ -212,16 +208,16 @@ abstract class FirVisitor<out R, in D> {
         return visitCall(arraySetCall, data)
     }
 
-    open fun visitComponentCall(componentCall: FirComponentCall, data: D): R {
-        return visitCall(componentCall, data)
-    }
-
     open fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): R {
         return visitCall(delegatedConstructorCall, data)
     }
 
     open fun visitFunctionCall(functionCall: FirFunctionCall, data: D): R {
         return visitCall(functionCall, data)
+    }
+
+    open fun visitComponentCall(componentCall: FirComponentCall, data: D): R {
+        return visitFunctionCall(componentCall, data)
     }
 
     open fun visitGetClassCall(getClassCall: FirGetClassCall, data: D): R {

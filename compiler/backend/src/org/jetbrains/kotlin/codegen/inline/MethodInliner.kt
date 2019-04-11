@@ -9,16 +9,14 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
-import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
+import org.jetbrains.kotlin.codegen.inline.coroutines.*
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
-import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
+import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -67,9 +65,9 @@ class MethodInliner(
         adapter: MethodVisitor,
         remapper: LocalVarRemapper,
         remapReturn: Boolean,
-        labelOwner: LabelOwner
+        returnLabelOwner: ReturnLabelOwner
     ): InlineResult {
-        return doInline(adapter, remapper, remapReturn, labelOwner, 0)
+        return doInline(adapter, remapper, remapReturn, returnLabelOwner, 0)
     }
 
     private fun recordTransformation(info: TransformationInfo) {
@@ -83,11 +81,11 @@ class MethodInliner(
         adapter: MethodVisitor,
         remapper: LocalVarRemapper,
         remapReturn: Boolean,
-        labelOwner: LabelOwner,
+        returnLabelOwner: ReturnLabelOwner,
         finallyDeepShift: Int
     ): InlineResult {
         //analyze body
-        var transformedNode = markPlacesForInlineAndRemoveInlinable(node, labelOwner, finallyDeepShift)
+        var transformedNode = markPlacesForInlineAndRemoveInlinable(node, returnLabelOwner, finallyDeepShift)
         if (inliningContext.isInliningLambda && isDefaultLambdaWithReification(inliningContext.lambdaInfo!!)) {
             //TODO maybe move reification in one place
             inliningContext.root.inlineMethodReifier.reifyInstructions(transformedNode)
@@ -130,7 +128,7 @@ class MethodInliner(
             )
         }
 
-        processReturns(resultNode, labelOwner, remapReturn, end)
+        processReturns(resultNode, returnLabelOwner, remapReturn, end)
         //flush transformed node to output
         resultNode.accept(SkipMaxAndEndVisitor(adapter))
 
@@ -217,9 +215,12 @@ class MethodInliner(
                 if (/*INLINE_RUNTIME.equals(owner) &&*/ isInvokeOnLambda(owner, name)) { //TODO add method
                     assert(!currentInvokes.isEmpty())
                     val invokeCall = currentInvokes.remove()
-                    val info = invokeCall.lambdaInfo
+                    val info = invokeCall.functionalArgument
 
-                    if (info == null) {
+                    if (info !is LambdaInfo) {
+                        if (info == NonInlineableArgumentForInlineableSuspendParameter) {
+                            super.visitMethodInsn(Opcodes.INVOKESTATIC, NOINLINE_CALL_MARKER, NOINLINE_CALL_MARKER, "()V", false)
+                        }
                         //noninlinable lambda
                         super.visitMethodInsn(opcode, owner, name, desc, itf)
                         return
@@ -263,7 +264,7 @@ class MethodInliner(
                         listOf(*info.invokeMethod.argumentTypes), valueParameters, invokeParameters, valueParamShift, this, coroutineDesc
                     )
 
-                    if (invokeCall.lambdaInfo.invokeMethodDescriptor.valueParameters.isEmpty()) {
+                    if (info.invokeMethodDescriptor.valueParameters.isEmpty()) {
                         // There won't be no parameters processing and line call can be left without actual instructions.
                         // Note: if function is called on the line with other instructions like 1 + foo(), 'nop' will still be generated.
                         visitInsn(Opcodes.NOP)
@@ -366,6 +367,8 @@ class MethodInliner(
                     ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))
                 ) {
                     //we shouldn't process here content of inlining lambda it should be reified at external level except default lambdas
+                } else if (owner == NOINLINE_CALL_MARKER && name == NOINLINE_CALL_MARKER) {
+                    // do not generate multiple markers on single invoke
                 } else {
                     super.visitMethodInsn(opcode, owner, name, desc, itf)
                 }
@@ -386,7 +389,21 @@ class MethodInliner(
 
         node.accept(lambdaInliner)
 
-        return resultNode
+        return surroundInvokesWithSuspendMarkersIfNeeded(resultNode)
+    }
+
+    private fun surroundInvokesWithSuspendMarkersIfNeeded(node: MethodNode): MethodNode {
+        val markers = node.instructions.asSequence().filter { it.isNoinlineCallMarker() }.toList()
+        if (markers.isEmpty()) return node
+        val invokes = markers.map { it.next as MethodInsnNode }
+        node.instructions.removeAll(markers)
+
+        val sourceFrames = MethodTransformer.analyze(inlineCallSiteInfo.ownerClassName, node, SourceInterpreter())
+        val toSurround = invokes.mapNotNull { insn ->
+            findReceiverOfInvoke(sourceFrames[node.instructions.indexOf(insn)], insn)?.let { insn to it }
+        }
+        surroundInvokesWithSuspendMarkers(node, toSurround)
+        return node
     }
 
     private fun isDefaultLambdaWithReification(lambdaInfo: LambdaInfo) =
@@ -447,7 +464,7 @@ class MethodInliner(
             override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
                 if (DEFAULT_LAMBDA_FAKE_CALL == owner) {
                     val index = name.substringAfter(DEFAULT_LAMBDA_FAKE_CALL).toInt()
-                    val lambda = getLambdaIfExists(index) as DefaultLambda
+                    val lambda = getFunctionalArgumentIfExists(index) as DefaultLambda
                     lambda.parameterOffsetsInDefault.zip(lambda.capturedVars).asReversed().forEach { (_, captured) ->
                         val originalBoundReceiverType = lambda.originalBoundReceiverType
                         if (lambda.isBoundCallableReference && AsmUtil.isPrimitive(originalBoundReceiverType)) {
@@ -470,7 +487,7 @@ class MethodInliner(
             ) {
                 if (isInliningLambda || GENERATE_DEBUG_INFO) {
                     val varSuffix = if (inliningContext.isRoot && !isFakeLocalVariableForInline(name)) INLINE_FUN_VAR_SUFFIX else ""
-                    val varName = if (!varSuffix.isEmpty() && name == "this") name + "_" else name
+                    val varName = if (!varSuffix.isEmpty() && name == AsmUtil.THIS) AsmUtil.INLINE_DECLARATION_SITE_THIS else name
                     super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index))
                 }
             }
@@ -485,11 +502,11 @@ class MethodInliner(
     }
 
     private fun markPlacesForInlineAndRemoveInlinable(
-        node: MethodNode, labelOwner: LabelOwner, finallyDeepShift: Int
+        node: MethodNode, returnLabelOwner: ReturnLabelOwner, finallyDeepShift: Int
     ): MethodNode {
         val processingNode = prepareNode(node, finallyDeepShift)
 
-        preprocessNodeBeforeInline(processingNode, labelOwner)
+        preprocessNodeBeforeInline(processingNode, returnLabelOwner)
 
         replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode)
 
@@ -522,22 +539,23 @@ class MethodInliner(
                         val firstParameterIndex = frame.stackSize - paramCount
                         if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
                             val sourceValue = frame.getStack(firstParameterIndex)
-                            val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, true, instructions, sources, toDelete)
-                            invokeCalls.add(InvokeCall(lambdaInfo, currentFinallyDeep))
+                            val functionalArgument =
+                                getFunctionalArgumentIfExistsAndMarkInstructions(sourceValue, true, instructions, sources, toDelete)
+                            invokeCalls.add(InvokeCall(functionalArgument, currentFinallyDeep))
                         } else if (isSamWrapperConstructorCall(owner, name)) {
                             recordTransformation(SamWrapperTransformationInfo(owner, inliningContext, isAlreadyRegenerated(owner)))
                         } else if (isAnonymousConstructorCall(owner, name)) {
-                            val lambdaMapping = HashMap<Int, LambdaInfo>()
+                            val functionalArgumentMapping = HashMap<Int, FunctionalArgument>()
 
                             var offset = 0
                             var capturesAnonymousObjectThatMustBeRegenerated = false
                             for (i in 0 until paramCount) {
                                 val sourceValue = frame.getStack(firstParameterIndex + i)
-                                val lambdaInfo = getLambdaIfExistsAndMarkInstructions(
+                                val functionalArgument = getFunctionalArgumentIfExistsAndMarkInstructions(
                                     sourceValue, false, instructions, sources, toDelete
                                 )
-                                if (lambdaInfo != null) {
-                                    lambdaMapping.put(offset, lambdaInfo)
+                                if (functionalArgument != null) {
+                                    functionalArgumentMapping.put(offset, functionalArgument)
                                 } else if (i < argTypes.size && isAnonymousClassThatMustBeRegenerated(argTypes[i])) {
                                     capturesAnonymousObjectThatMustBeRegenerated = true
                                 }
@@ -547,7 +565,7 @@ class MethodInliner(
 
                             recordTransformation(
                                 buildConstructorInvocation(
-                                    owner, cur.desc, lambdaMapping, awaitClassReification, capturesAnonymousObjectThatMustBeRegenerated
+                                    owner, cur.desc, functionalArgumentMapping, awaitClassReification, capturesAnonymousObjectThatMustBeRegenerated
                                 )
                             )
                             awaitClassReification = false
@@ -595,14 +613,16 @@ class MethodInliner(
                         }
                     }
 
-                    cur.opcode == Opcodes.POP -> getLambdaIfExistsAndMarkInstructions(
+                    cur.opcode == Opcodes.POP -> getFunctionalArgumentIfExistsAndMarkInstructions(
                         frame.top()!!,
                         true,
                         instructions,
                         sources,
                         toDelete
                     )?.let {
-                        toDelete.add(cur)
+                        if (it is LambdaInfo) {
+                            toDelete.add(cur)
+                        }
                     }
 
                     cur.opcode == Opcodes.PUTFIELD -> {
@@ -620,8 +640,8 @@ class MethodInliner(
                         ) {
                             val stackTransformations = mutableSetOf<AbstractInsnNode>()
                             val lambdaInfo =
-                                getLambdaIfExistsAndMarkInstructions(frame.peek(1)!!, false, instructions, sources, stackTransformations)
-                            if (lambdaInfo != null && stackTransformations.all { it is VarInsnNode }) {
+                                getFunctionalArgumentIfExistsAndMarkInstructions(frame.peek(1)!!, false, instructions, sources, stackTransformations)
+                            if (lambdaInfo is LambdaInfo && stackTransformations.all { it is VarInsnNode }) {
                                 assert(lambdaInfo.lambdaClassType.internalName == nodeRemapper.originalLambdaInternalName) {
                                     "Wrong bytecode template for contract template: ${lambdaInfo.lambdaClassType.internalName} != ${nodeRemapper.originalLambdaInternalName}"
                                 }
@@ -766,7 +786,7 @@ class MethodInliner(
         return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == languageVersionSettings.continuationAsmType() }
     }
 
-    private fun preprocessNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {
+    private fun preprocessNodeBeforeInline(node: MethodNode, returnLabelOwner: ReturnLabelOwner) {
         try {
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
         } catch (e: Throwable) {
@@ -793,7 +813,7 @@ class MethodInliner(
             // TODO extract isLocalReturn / isNonLocalReturn, see processReturns
             val labelName = getMarkedReturnLabelOrNull(insnNode)
             if (labelName != null) {
-                if (!labelOwner.isMyLabel(labelName)) continue
+                if (!returnLabelOwner.isReturnFromMe(labelName)) continue
                 insertBeforeInsn = insnNode.previous
             }
 
@@ -812,7 +832,7 @@ class MethodInliner(
     private fun buildConstructorInvocation(
         anonymousType: String,
         desc: String,
-        lambdaMapping: Map<Int, LambdaInfo>,
+        lambdaMapping: Map<Int, FunctionalArgument>,
         needReification: Boolean,
         capturesAnonymousObjectThatMustBeRegenerated: Boolean
     ): AnonymousObjectTransformationInfo {
@@ -845,20 +865,20 @@ class MethodInliner(
         return inliningContext.typeRemapper.hasNoAdditionalMapping(owner)
     }
 
-    internal fun getLambdaIfExists(insnNode: AbstractInsnNode): LambdaInfo? {
+    internal fun getFunctionalArgumentIfExists(insnNode: AbstractInsnNode): FunctionalArgument? {
         return when {
             insnNode.opcode == Opcodes.ALOAD ->
-                getLambdaIfExists((insnNode as VarInsnNode).`var`)
+                getFunctionalArgumentIfExists((insnNode as VarInsnNode).`var`)
             insnNode is FieldInsnNode && insnNode.name.startsWith(CAPTURED_FIELD_FOLD_PREFIX) ->
-                findCapturedField(insnNode, nodeRemapper).lambda
+                findCapturedField(insnNode, nodeRemapper).functionalArgument
             else ->
                 null
         }
     }
 
-    private fun getLambdaIfExists(varIndex: Int): LambdaInfo? {
+    private fun getFunctionalArgumentIfExists(varIndex: Int): FunctionalArgument? {
         if (varIndex < parameters.argsSizeOnStack) {
-            return parameters.getParameterByDeclarationSlot(varIndex).lambda
+            return parameters.getParameterByDeclarationSlot(varIndex).functionalArgument
         }
         return null
     }
@@ -1140,7 +1160,7 @@ class MethodInliner(
         //process local and global returns (local substituted with goto end-label global kept unchanged)
         @JvmStatic
         fun processReturns(
-            node: MethodNode, labelOwner: LabelOwner, remapReturn: Boolean, endLabel: Label?
+            node: MethodNode, returnLabelOwner: ReturnLabelOwner, remapReturn: Boolean, endLabel: Label?
         ): List<PointForExternalFinallyBlocks> {
             if (!remapReturn) {
                 return emptyList()
@@ -1154,7 +1174,7 @@ class MethodInliner(
                     val labelName = getMarkedReturnLabelOrNull(insnNode)
 
                     if (labelName != null) {
-                        isLocalReturn = labelOwner.isMyLabel(labelName)
+                        isLocalReturn = returnLabelOwner.isReturnFromMe(labelName)
                         //remove global return flag
                         if (isLocalReturn) {
                             instructions.remove(insnNode.previous)

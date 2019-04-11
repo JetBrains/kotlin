@@ -31,7 +31,7 @@ import java.awt.datatransfer.DataFlavor
 import java.io.Serializable
 
 class KotlinReferenceTransferableData(
-        val data: Array<KotlinReferenceData>
+    val data: Array<KotlinReferenceData>
 ) : TextBlockTransferableData, Cloneable, Serializable {
 
     override fun getFlavor() = KotlinReferenceData.dataFlavor
@@ -56,15 +56,15 @@ class KotlinReferenceTransferableData(
         return i
     }
 
-    public override fun clone() = KotlinReferenceTransferableData(Array(data.size, {  data[it].clone() }))
+    public override fun clone() = KotlinReferenceTransferableData(Array(data.size) { data[it].clone() })
 }
 
 class KotlinReferenceData(
-        var startOffset: Int,
-        var endOffset: Int,
-        val fqName: String,
-        val isQualifiable: Boolean,
-        val kind: KotlinReferenceData.Kind
+    var startOffset: Int,
+    var endOffset: Int,
+    val fqName: String,
+    val isQualifiable: Boolean,
+    val kind: Kind
 ) : Cloneable, Serializable {
 
     enum class Kind {
@@ -87,8 +87,7 @@ class KotlinReferenceData(
     public override fun clone(): KotlinReferenceData {
         try {
             return super.clone() as KotlinReferenceData
-        }
-        catch (e: CloneNotSupportedException) {
+        } catch (e: CloneNotSupportedException) {
             throw RuntimeException()
         }
     }
@@ -97,14 +96,14 @@ class KotlinReferenceData(
         val dataFlavor: DataFlavor? by lazy {
             try {
                 val dataClass = KotlinReferenceData::class.java
-                DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + dataClass.name,
-                           "KotlinReferenceData",
-                           dataClass.classLoader)
-            }
-            catch (e: NoClassDefFoundError) {
+                DataFlavor(
+                    DataFlavor.javaJVMLocalObjectMimeType + ";class=" + dataClass.name,
+                    "KotlinReferenceData",
+                    dataClass.classLoader
+                )
+            } catch (e: NoClassDefFoundError) {
                 null
-            }
-            catch (e: IllegalArgumentException) {
+            } catch (e: IllegalArgumentException) {
                 null
             }
         }

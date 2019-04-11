@@ -379,7 +379,7 @@ private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, reso
     generateSamConversionForValueArgumentsIfRequired(call, resolvedCall.resultingDescriptor)
 }
 
-private fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: CallBuilder, originalDescriptor: CallableDescriptor) {
+fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: CallBuilder, originalDescriptor: CallableDescriptor) {
     val underlyingDescriptor = context.extensions.samConversion.getOriginalForSamAdapter(originalDescriptor) ?: return
 
     val originalValueParameters = originalDescriptor.valueParameters

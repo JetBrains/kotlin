@@ -168,7 +168,7 @@ class DuplicateInfo(
 )
 
 fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
-    fun processWeakMatch(match: UnificationResult.WeaklyMatched, newControlFlow: ControlFlow): Boolean {
+    fun processWeakMatch(match: WeaklyMatched, newControlFlow: ControlFlow): Boolean {
         val valueCount = controlFlow.outputValues.size
 
         val weakMatches = HashMap(match.weakMatches)
@@ -234,7 +234,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
 
             controlFlow?.let {
                 DuplicateInfo(range, it, unifierParameters.map { param ->
-                    match.substitution[param]!!.text!!
+                    match.substitution.getValue(param).text!!
                 })
             }
         }
@@ -254,14 +254,13 @@ private fun makeCall(
 ) {
     fun insertCall(anchor: PsiElement, wrappedCall: KtExpression): KtExpression? {
         val firstExpression = rangeToReplace.elements.firstOrNull { it is KtExpression } as? KtExpression
-        if (firstExpression?.isLambdaOutsideParentheses() ?: false) {
-            val functionLiteralArgument = firstExpression?.getStrictParentOfType<KtLambdaArgument>()!!
+        if (firstExpression?.isLambdaOutsideParentheses() == true) {
+            val functionLiteralArgument = firstExpression.getStrictParentOfType<KtLambdaArgument>()!!
             return functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
         }
 
         if (anchor is KtOperationReferenceExpression) {
-            val operationExpression = anchor.parent as? KtOperationExpression ?: return null
-            val newNameExpression = when (operationExpression) {
+            val newNameExpression = when (val operationExpression = anchor.parent as? KtOperationExpression ?: return null) {
                 is KtUnaryExpression -> OperatorToFunctionIntention.convert(operationExpression).second
                 is KtBinaryExpression -> {
                     InfixCallToOrdinaryIntention.convert(operationExpression).getCalleeExpressionIfAny()
@@ -353,7 +352,7 @@ private fun makeCall(
 
     fun wrapCall(outputValue: OutputValue, callText: String): List<PsiElement> {
         return when (outputValue) {
-            is OutputValue.ExpressionValue -> {
+            is ExpressionValue -> {
                 val exprText = if (outputValue.callSiteReturn) {
                     val firstReturn = outputValue.originalExpressions.asSequence().filterIsInstance<KtReturnExpression>().firstOrNull()
                     val label = firstReturn?.getTargetLabel()?.text ?: ""
@@ -397,7 +396,7 @@ private fun makeCall(
 
     controlFlow.outputValues
         .filter { it != defaultValue }
-        .flatMap { wrapCall(it, unboxingExpressions[it]!!) }
+        .flatMap { wrapCall(it, unboxingExpressions.getValue(it)) }
         .withIndex()
         .forEach {
             val (i, e) = it
@@ -412,7 +411,7 @@ private fun makeCall(
         if (!inlinableCall) {
             block.addBefore(newLine, anchorInBlock)
         }
-        insertCall(anchor, wrapCall(it, unboxingExpressions[it]!!).first() as KtExpression)?.removeTemplateEntryBracesIfPossible()
+        insertCall(anchor, wrapCall(it, unboxingExpressions.getValue(it)).first() as KtExpression)?.removeTemplateEntryBracesIfPossible()
     }
 
     if (anchor.isValid) {
@@ -533,7 +532,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
             }
             val originalRef = resolveResult.originalRefExpr
             val newRef = descriptor.replacementMap[originalRef]
-                .fold(currentRef as KtElement) { currentRef, replacement -> replacement(descriptor, currentRef) }
+                .fold(currentRef as KtElement) { ref, replacement -> replacement(descriptor, ref) }
             (newRef as? KtSimpleNameExpression)?.resolveResult = resolveResult
         }
 
@@ -608,7 +607,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                 }
             } else {
                 (targetContainer.addAfter(declaration, anchor) as KtNamedDeclaration).apply {
-                    if (!(targetContainer is KtClassBody && (targetContainer.parent as? KtClass)?.isEnum() ?: false)) {
+                    if (!(targetContainer is KtClassBody && (targetContainer.parent as? KtClass)?.isEnum() == true)) {
                         targetContainer.addAfter(emptyLines, anchor)
                     }
                 }

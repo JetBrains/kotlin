@@ -1,11 +1,13 @@
 FILE: lambda.kt
     public? final? data class Tuple : kotlin/Any {
-        public? constructor(x: Int, y: Int): super<kotlin/Any>()
+        public? constructor(x: Int, y: Int): R|Tuple| {
+            super<kotlin/Any>()
+        }
 
-        public? final? val x: Int
+        public? final? val x: Int = R|<local>/x|
             public? get(): Int
 
-        public? final? val y: Int
+        public? final? val y: Int = R|<local>/y|
             public? get(): Int
 
     }
@@ -17,16 +19,16 @@ FILE: lambda.kt
             ^  {
                 lval x: <implicit> = t#.x#
                 lval y: <implicit> = t#.y#
-                plus#(x#, y#)
+                x#.plus#(y#)
             }
 
         }
 
         use#(use@fun <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> {
             ^  {
-                lval x: <implicit> = component1(<destruct>#)
-                lval y: <implicit> = component2(<destruct>#)
-                plus#(x#, y#)
+                lval x: <implicit> = <destruct>#.component1()
+                lval y: <implicit> = <destruct>#.component2()
+                x#.plus#(y#)
             }
 
         }
@@ -81,3 +83,19 @@ FILE: lambda.kt
         }
         )
     }
+    public? final? val simple: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
+        ^  {
+            Unit
+        }
+
+    }
+
+        public? get(): <implicit>
+    public? final? val another: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
+        ^  {
+            Int(42)
+        }
+
+    }
+
+        public? get(): <implicit>

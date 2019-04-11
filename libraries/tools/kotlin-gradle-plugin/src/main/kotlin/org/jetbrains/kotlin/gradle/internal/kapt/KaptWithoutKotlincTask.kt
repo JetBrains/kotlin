@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.utils.PathUtil
-import java.io.*
+import java.io.File
+import java.io.Serializable
+import java.net.URL
 import java.net.URLClassLoader
 import javax.inject.Inject
 
@@ -103,7 +105,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
                 "none" -> IsolationMode.NONE
                 else -> IsolationMode.NONE
             }
-            config.params(optionsForWorker, findToolsJar(), kaptClasspath)
+            config.params(optionsForWorker, findToolsJar()?.toURI()?.toURL()?.toString().orEmpty(), kaptClasspath)
             if (project.findProperty("kapt.workers.log.classloading") == "true") {
                 // for tests
                 config.forkOptions.jvmArgs("-verbose:class")
@@ -115,7 +117,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
 
 private class KaptExecution @Inject constructor(
     val optionsForWorker: KaptOptionsForWorker,
-    val toolsJar: File?,
+    val toolsJarURLSpec: String,
     val kaptClasspath: List<File>
 ) : Runnable {
     private companion object {
@@ -130,8 +132,8 @@ private class KaptExecution @Inject constructor(
         val kaptClasspathUrls = kaptClasspath.map { it.toURI().toURL() }.toTypedArray()
         val rootClassLoader = findRootClassLoader()
 
-        val classLoaderWithToolsJar = cachedClassLoaderWithToolsJar ?: if (toolsJar != null && !javacIsAlreadyHere()) {
-            URLClassLoader(arrayOf(toolsJar.toURI().toURL()), rootClassLoader)
+        val classLoaderWithToolsJar = cachedClassLoaderWithToolsJar ?: if (!toolsJarURLSpec.isEmpty() && !javacIsAlreadyHere()) {
+            URLClassLoader(arrayOf(URL(toolsJarURLSpec)), rootClassLoader)
         } else {
             rootClassLoader
         }

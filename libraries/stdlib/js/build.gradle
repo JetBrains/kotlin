@@ -51,7 +51,7 @@ sourceSets {
     }
 
     experimental {
-        if(!System.properties.'idea.active')
+        if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir experimentalSrcDir
         }

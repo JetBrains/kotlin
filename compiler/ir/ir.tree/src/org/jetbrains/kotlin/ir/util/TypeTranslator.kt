@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -25,11 +26,12 @@ import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 class TypeTranslator(
     private val symbolTable: ReferenceSymbolTable,
     val languageVersionSettings: LanguageVersionSettings,
+    builtIns: KotlinBuiltIns,
     private val typeParametersResolver: TypeParametersResolver = ScopedTypeParametersResolver(),
     private val enterTableScope: Boolean = false
 ) {
 
-    private val typeApproximatorForNI = TypeApproximator()
+    private val typeApproximatorForNI = TypeApproximator(builtIns)
     lateinit var constantValueGenerator: ConstantValueGenerator
 
     fun enterScope(irElement: IrTypeParametersContainer) {
@@ -124,7 +126,11 @@ class TypeTranslator(
             if (ktType.constructor.isDenotable) return ktType
 
             return if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-                typeApproximatorForNI.approximateDeclarationType(ktType, local = false, languageVersionSettings = languageVersionSettings)
+                typeApproximatorForNI.approximateDeclarationType(
+                    ktType,
+                    local = false,
+                    languageVersionSettings = languageVersionSettings
+                )
             else
                 approximateCapturedTypes(ktType).upper
         }

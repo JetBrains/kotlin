@@ -1,0 +1,6 @@
+public open class ExtraUpperBound : R|kotlin/Any| {
+    public open fun <A> foo(): R|kotlin/String|?
+
+    public constructor(): R|test/ExtraUpperBound|
+
+}

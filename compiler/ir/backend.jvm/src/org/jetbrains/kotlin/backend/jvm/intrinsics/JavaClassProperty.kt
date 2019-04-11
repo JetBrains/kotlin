@@ -16,41 +16,29 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
-import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.boxType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 object JavaClassProperty : IntrinsicMethod() {
-
-    override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        return object: IrIntrinsicFunction(expression, signature, context) {
-
-            override fun invoke(v: InstructionAdapter, codegen: org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen, data: BlockInfo): StackValue {
-                val value = codegen.gen(expression.extensionReceiver!!, data)
-                val type = value.type
-                when {
-                    type == Type.VOID_TYPE -> {
-                        StackValue.unit().put(v)
-                        v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
-                    }
-                    isPrimitive(type) -> {
-                        AsmUtil.pop(v, type)
-                        v.getstatic(boxType(type).internalName, "TYPE", "Ljava/lang/Class;")
-                    }
-                    else -> v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
-                }
-
-                return with(codegen) {
-                    expression.onStack
-                }
-            }
+    fun invokeWith(value: PromisedValue) {
+        if (value.type == Type.VOID_TYPE) {
+            return invokeWith(value.coerce(AsmTypes.UNIT_TYPE))
         }
+        if (isPrimitive(value.type)) {
+            value.discard()
+            value.mv.getstatic(boxType(value.type).internalName, "TYPE", "Ljava/lang/Class;")
+        } else {
+            value.materialize()
+            value.mv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
+        }
+    }
+
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        invokeWith(expression.extensionReceiver!!.accept(codegen, data))
+        return with(codegen) { expression.onStack }
     }
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -55,7 +56,17 @@ class IrLazyConstructor(
         TypeTranslator
     )
 
-    override val typeParameters: MutableList<IrTypeParameter> = arrayListOf()
+    override val typeParameters: MutableList<IrTypeParameter> by lazy {
+        typeTranslator.buildWithScope(this) {
+            stubGenerator.symbolTable.withScope(descriptor) {
+                val classTypeParametersCount = descriptor.constructedClass.original.declaredTypeParameters.size
+                val allConstructorTypeParameters = descriptor.typeParameters
+                allConstructorTypeParameters.subList(classTypeParametersCount, allConstructorTypeParameters.size).mapTo(ArrayList()) {
+                    stubGenerator.generateOrGetTypeParameterStub(it)
+                }
+            }
+        }
+    }
 
     init {
         symbol.bind(this)

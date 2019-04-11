@@ -1,0 +1,59 @@
+FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
+  CLASS ANNOTATION_CLASS name:TestAnn modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAnn
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.TestAnn [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.String
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final]
+        EXPRESSION_BODY
+          GET_VAR 'x: kotlin.String declared in <root>.TestAnn.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnn) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestAnn
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.TestAnn'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final] ' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.TestAnn declared in <root>.TestAnn.<get-x>' type=<root>.TestAnn origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  PROPERTY name:testVal visibility:public modality:FINAL [val]
+    annotations:
+      CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
+        x: CONST String type=kotlin.String value="testVal.field"
+    FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public [final,static]
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value="a val"
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVal> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:testVal visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testVal> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null
+  PROPERTY name:testVar visibility:public modality:FINAL [var]
+    annotations:
+      CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
+        x: CONST String type=kotlin.String value="testVar.field"
+    FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public [static]
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value="a var"
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVar> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:testVar visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testVar> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public [static] ' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testVar> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:testVar visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public [static] ' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.String declared in <root>.<set-testVar>' type=kotlin.String origin=null

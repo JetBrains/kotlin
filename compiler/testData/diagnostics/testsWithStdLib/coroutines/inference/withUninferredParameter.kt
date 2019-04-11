@@ -8,7 +8,7 @@ class GenericController<T> {
 
 fun <S> generate(g: suspend GenericController<S>.(S) -> Unit): S = TODO()
 
-val <!NI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test1<!> = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val <!NI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test1<!> = <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!>)
 }
 

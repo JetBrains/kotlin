@@ -1,6 +1,8 @@
 FILE: annotated.kt
-    @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : kotlin/Any {
-        public? constructor(): super<kotlin/Any>()
+    @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : kotlin/Annotation {
+        public? constructor(): R|Ann| {
+            super<kotlin/Annotation>()
+        }
 
     }
     public? final? fun foo(arg: Int): Int {
@@ -23,11 +25,13 @@ FILE: annotated.kt
         ^foo Int(42)
     }
     public? final? data class Two : kotlin/Any {
-        public? constructor(x: Int, y: Int): super<kotlin/Any>()
+        public? constructor(x: Int, y: Int): R|Two| {
+            super<kotlin/Any>()
+        }
 
     }
     public? final? fun bar(two: Two): kotlin/Unit {
         lval <destruct>: <implicit> = two#
-        @Ann() lval x: <implicit> = component1(<destruct>#)
-        @Ann() lval y: <implicit> = component2(<destruct>#)
+        @Ann() lval x: <implicit> = <destruct>#.component1()
+        @Ann() lval y: <implicit> = <destruct>#.component2()
     }

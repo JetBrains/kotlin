@@ -111,7 +111,7 @@ class ResolvedLambdaAtom(
     override val outputType: UnwrappedType get() = returnType
 }
 
-class ResolvedCallableReferenceAtom(
+abstract class ResolvedCallableReferenceAtom(
     override val atom: CallableReferenceKotlinCallArgument,
     val expectedType: UnwrappedType?
 ) : PostponedResolvedAtom() {
@@ -125,6 +125,23 @@ class ResolvedCallableReferenceAtom(
         this.candidate = candidate
         setAnalyzedResults(subResolvedAtoms)
     }
+
+}
+
+class EagerCallableReferenceAtom(
+    atom: CallableReferenceKotlinCallArgument,
+    expectedType: UnwrappedType?
+) : ResolvedCallableReferenceAtom(atom, expectedType) {
+
+    override val inputTypes: Collection<UnwrappedType> get() = emptyList()
+    override val outputType: UnwrappedType? get() = null
+
+    fun transformToPostponed(): PostponedCallableReferenceAtom = PostponedCallableReferenceAtom(this)
+}
+
+class PostponedCallableReferenceAtom(
+    eagerCallableReferenceAtom: EagerCallableReferenceAtom
+) : ResolvedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType) {
 
     override val inputTypes: Collection<UnwrappedType>
         get() = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType)?.inputTypes ?: listOfNotNull(expectedType)

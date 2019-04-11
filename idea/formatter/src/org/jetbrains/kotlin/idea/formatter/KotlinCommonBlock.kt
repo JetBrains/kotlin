@@ -244,7 +244,7 @@ abstract class KotlinCommonBlock(
         if (childParent != null) {
             val parentType = childParent.elementType
 
-            if (parentType === KtNodeTypes.VALUE_PARAMETER_LIST || parentType === KtNodeTypes.VALUE_ARGUMENT_LIST) {
+            if (parentType === VALUE_PARAMETER_LIST || parentType === KtNodeTypes.VALUE_ARGUMENT_LIST) {
                 val prev = getPrevWithoutWhitespace(child)
                 if (childType === RPAR && (prev == null || prev.elementType !== TokenType.ERROR_ELEMENT)) {
                     return Indent.getNoneIndent()
@@ -305,18 +305,18 @@ abstract class KotlinCommonBlock(
                 null
             )
 
-            KtNodeTypes.TRY -> ChildAttributes(Indent.getNoneIndent(), null)
+            TRY -> ChildAttributes(Indent.getNoneIndent(), null)
 
             in QUALIFIED_EXPRESSIONS -> ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null)
 
-            KtNodeTypes.VALUE_PARAMETER_LIST, KtNodeTypes.VALUE_ARGUMENT_LIST -> {
+            VALUE_PARAMETER_LIST, KtNodeTypes.VALUE_ARGUMENT_LIST -> {
                 val subBlocks = getSubBlocks()
                 if (newChildIndex != 1 && newChildIndex != 0 && newChildIndex < subBlocks.size) {
                     val block = subBlocks[newChildIndex]
                     ChildAttributes(block.indent, block.alignment)
                 } else {
                     val indent =
-                        if ((type == KtNodeTypes.VALUE_PARAMETER_LIST && !settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS) ||
+                        if ((type == VALUE_PARAMETER_LIST && !settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS) ||
                             (type == KtNodeTypes.VALUE_ARGUMENT_LIST && !settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_ARGUMENT_LISTS)
                         ) {
                             Indent.getNormalIndent()
@@ -329,13 +329,20 @@ abstract class KotlinCommonBlock(
 
             DOC_COMMENT -> ChildAttributes(Indent.getSpaceIndent(KDOC_COMMENT_INDENT), null)
 
-            KtNodeTypes.PARENTHESIZED -> getSuperChildAttributes(newChildIndex)
+            PARENTHESIZED -> getSuperChildAttributes(newChildIndex)
 
             else -> {
                 val blocks = getSubBlocks()
                 if (newChildIndex != 0) {
                     val isIncomplete = if (newChildIndex < blocks.size) blocks[newChildIndex - 1].isIncomplete else isIncompleteInSuper()
                     if (isIncomplete) {
+                        if (blocks.size == newChildIndex && !settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES) {
+                            val lastInParent = blocks.last()
+                            if (lastInParent is ASTBlock && lastInParent.node?.elementType in ALL_ASSIGNMENTS) {
+                                return ChildAttributes(Indent.getNormalIndent(), null)
+                            }
+                        }
+
                         return getSuperChildAttributes(newChildIndex)
                     }
                 }
@@ -355,7 +362,7 @@ abstract class KotlinCommonBlock(
         val kotlinCustomSettings = settings.kotlinCustomSettings
         val parentType = node.elementType
         return when {
-            parentType === KtNodeTypes.VALUE_PARAMETER_LIST ->
+            parentType === VALUE_PARAMETER_LIST ->
                 getAlignmentForChildInParenthesis(
                     kotlinCommonSettings.ALIGN_MULTILINE_PARAMETERS, KtNodeTypes.VALUE_PARAMETER, COMMA,
                     kotlinCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR
@@ -379,7 +386,7 @@ abstract class KotlinCommonBlock(
             parentType === KtNodeTypes.SUPER_TYPE_LIST ->
                 createAlignmentStrategy(kotlinCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())
 
-            parentType === KtNodeTypes.PARENTHESIZED ->
+            parentType === PARENTHESIZED ->
                 object : CommonAlignmentStrategy() {
                     private var bracketsAlignment: Alignment? =
                         if (kotlinCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION) Alignment.createAlignment() else null
@@ -513,7 +520,7 @@ abstract class KotlinCommonBlock(
                 return getWrappingStrategyForItemList(wrapSetting, KtNodeTypes.VALUE_ARGUMENT)
             }
 
-            elementType === KtNodeTypes.VALUE_PARAMETER_LIST -> {
+            elementType === VALUE_PARAMETER_LIST -> {
                 if (parentElementType === KtNodeTypes.FUN ||
                     parentElementType === KtNodeTypes.PRIMARY_CONSTRUCTOR ||
                     parentElementType === KtNodeTypes.SECONDARY_CONSTRUCTOR) {
@@ -802,7 +809,7 @@ private val INDENT_RULES = arrayOf(
         .set(Indent.getContinuationWithoutFirstIndent(false)),
 
     strategy("Parenthesized expression")
-        .within(KtNodeTypes.PARENTHESIZED)
+        .within(PARENTHESIZED)
         .set(Indent.getContinuationWithoutFirstIndent(false)),
 
     strategy("Opening parenthesis for conditions")
@@ -840,7 +847,7 @@ private val INDENT_RULES = arrayOf(
         .set(Indent.getNormalIndent()),
 
     strategy("Parameter list")
-        .within(KtNodeTypes.VALUE_PARAMETER_LIST)
+        .within(VALUE_PARAMETER_LIST)
         .forElement { it.elementType == KtNodeTypes.VALUE_PARAMETER && it.psi.prevSibling != null }
         .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_PARAMETER_LISTS, indentFirst = true),
 

@@ -1,0 +1,4 @@
+public final class Ramification : R|kotlin/Any| {
+    public constructor(): R|test/Ramification|
+
+}

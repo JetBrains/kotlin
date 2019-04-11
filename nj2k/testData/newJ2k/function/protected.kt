@@ -1,0 +1,1 @@
+protected fun test() {}

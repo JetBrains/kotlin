@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import java.util.*
 
@@ -95,39 +96,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJvmImport() {
-        createProjectSubFile(
-            "build.gradle", """
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-            }
-
-            compileKotlin {
-                kotlinOptions.jvmTarget = "1.7"
-                kotlinOptions.freeCompilerArgs = ["-Xsingle-module", "-Xdump-declarations-to", "tmp"]
-            }
-
-            compileTestKotlin {
-                kotlinOptions.jvmTarget = "1.6"
-                kotlinOptions.apiVersion = "1.0"
-                kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -158,56 +127,26 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         assertAllModulesConfigured()
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to JavaSourceRootType.SOURCE,
+                "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                "file:///src/main/resources" to JavaResourceRootType.RESOURCE
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
-                getSourceRootInfos("project_test")
+            listOf(
+                "file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE
+            ),
+            getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testJvmImportWithPlugin() {
-        createProjectSubFile(
-                "build.gradle", """
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
-
-plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.1.3"
-}
-
-version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.3"
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-        """
-        )
+        configureByFiles()
         importProject()
 
         assertAllModulesConfigured()
@@ -215,47 +154,7 @@ compileTestKotlin {
 
     @Test
     fun testJvmImport_1_1_2() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-dev'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-5")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            repositories {
-                mavenCentral()
-                maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-5"
-            }
-
-            compileKotlin {
-                kotlinOptions.jvmTarget = "1.7"
-                kotlinOptions.freeCompilerArgs = ["-Xsingle-module", "-Xdump-declarations-to", "tmp"]
-            }
-
-            compileTestKotlin {
-                kotlinOptions.jvmTarget = "1.6"
-                kotlinOptions.apiVersion = "1.0"
-                kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -280,70 +179,26 @@ compileTestKotlin {
         }
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to JavaSourceRootType.SOURCE,
+                "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                "file:///src/main/resources" to JavaResourceRootType.RESOURCE
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
-                getSourceRootInfos("project_test")
+            listOf(
+                "file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE
+            ),
+            getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testJvmImportWithCustomSourceSets() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            sourceSets {
-                myMain {
-                    kotlin {
-                        srcDir 'src'
-                    }
-                }
-                myTest {
-                    kotlin {
-                        srcDir 'test'
-                    }
-                }
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-            }
-
-            compileMyMainKotlin {
-                kotlinOptions.jvmTarget = "1.7"
-                kotlinOptions.freeCompilerArgs = ["-Xsingle-module", "-Xdump-declarations-to", "tmp"]
-            }
-
-            compileMyTestKotlin {
-                kotlinOptions.jvmTarget = "1.6"
-                kotlinOptions.apiVersion = "1.0"
-                kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings("project_myMain")) {
@@ -370,73 +225,26 @@ compileTestKotlin {
         assertAllModulesConfigured()
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to JavaSourceRootType.SOURCE,
+                "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                "file:///src/main/resources" to JavaResourceRootType.RESOURCE
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
-                getSourceRootInfos("project_test")
+            listOf(
+                "file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE
+            ),
+            getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testJvmImportWithCustomSourceSets_1_1_2() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-5")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            repositories {
-                mavenCentral()
-                maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-            }
-
-            sourceSets {
-                myMain {
-                    kotlin {
-                        srcDir 'src'
-                    }
-                }
-                myTest {
-                    kotlin {
-                        srcDir 'test'
-                    }
-                }
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-5"
-            }
-
-            compileMyMainKotlin {
-                kotlinOptions.jvmTarget = "1.7"
-                kotlinOptions.freeCompilerArgs = ["-Xsingle-module", "-Xdump-declarations-to", "tmp"]
-            }
-
-            compileMyTestKotlin {
-                kotlinOptions.jvmTarget = "1.6"
-                kotlinOptions.apiVersion = "1.0"
-                kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings("project_myMain")) {
@@ -461,52 +269,26 @@ compileTestKotlin {
         }
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to JavaSourceRootType.SOURCE,
+                "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                "file:///src/main/resources" to JavaResourceRootType.RESOURCE
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
-                getSourceRootInfos("project_test")
+            listOf(
+                "file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE
+            ),
+            getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testCoroutineImportByOptions() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-            }
-
-            kotlin {
-                experimental {
-                    coroutines 'enable'
-                }
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -516,32 +298,7 @@ compileTestKotlin {
 
     @Test
     fun testCoroutineImportByProperties() {
-        createProjectSubFile("gradle.properties", "kotlin.coroutines=enable")
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -551,45 +308,7 @@ compileTestKotlin {
 
     @Test
     fun testJsImport() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin2js'
-
-            repositories {
-                mavenCentral()
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
-            }
-
-            compileKotlin2Js {
-                kotlinOptions.sourceMap = true
-                kotlinOptions.freeCompilerArgs = ["-module-kind", "plain", "-main", "callMain"]
-            }
-
-            compileTestKotlin2Js {
-                kotlinOptions.apiVersion = "1.0"
-                kotlinOptions.freeCompilerArgs = ["-module-kind", "umd", "-main", "callTest"]
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -632,15 +351,19 @@ compileTestKotlin {
         assertSameKotlinSdks("project_main", "project_test")
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to SourceKotlinRootType,
-                       "file:///src/main/kotlin" to SourceKotlinRootType,
-                       "file:///src/main/resources" to ResourceKotlinRootType),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to SourceKotlinRootType,
+                "file:///src/main/kotlin" to SourceKotlinRootType,
+                "file:///src/main/resources" to ResourceKotlinRootType
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-            listOf("file:///src/test/java" to TestSourceKotlinRootType,
-                       "file:///src/test/kotlin" to TestSourceKotlinRootType,
-                       "file:///src/test/resources" to TestResourceKotlinRootType),
+            listOf(
+                "file:///src/test/java" to TestSourceKotlinRootType,
+                "file:///src/test/kotlin" to TestSourceKotlinRootType,
+                "file:///src/test/resources" to TestResourceKotlinRootType
+            ),
             getSourceRootInfos("project_test")
         )
 
@@ -649,35 +372,7 @@ compileTestKotlin {
 
     @Test
     fun testJsImportTransitive() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin2js'
-
-            repositories {
-                mavenCentral()
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-test-js:1.1.0"
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -696,69 +391,26 @@ compileTestKotlin {
         assertAllModulesConfigured()
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to SourceKotlinRootType,
-                       "file:///src/main/kotlin" to SourceKotlinRootType,
-                       "file:///src/main/resources" to ResourceKotlinRootType),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to SourceKotlinRootType,
+                "file:///src/main/kotlin" to SourceKotlinRootType,
+                "file:///src/main/resources" to ResourceKotlinRootType
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-            listOf("file:///src/test/java" to TestSourceKotlinRootType,
-                       "file:///src/test/kotlin" to TestSourceKotlinRootType,
-                       "file:///src/test/resources" to TestResourceKotlinRootType),
+            listOf(
+                "file:///src/test/java" to TestSourceKotlinRootType,
+                "file:///src/test/kotlin" to TestSourceKotlinRootType,
+                "file:///src/test/resources" to TestResourceKotlinRootType
+            ),
             getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testJsImportWithCustomSourceSets() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin2js'
-
-            sourceSets {
-                myMain {
-                    kotlin {
-                        srcDir 'src'
-                    }
-                }
-                myTest {
-                    kotlin {
-                        srcDir 'test'
-                    }
-                }
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
-            }
-
-            compileMyMainKotlin2Js {
-                kotlinOptions.sourceMap = true
-                kotlinOptions.freeCompilerArgs = ["-module-kind", "plain", "-main", "callMain"]
-            }
-
-            compileMyTestKotlin2Js {
-                kotlinOptions.apiVersion = "1.0"
-                kotlinOptions.freeCompilerArgs = ["-module-kind", "umd", "-main", "callTest"]
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings("project_myMain")) {
@@ -792,46 +444,26 @@ compileTestKotlin {
         assertAllModulesConfigured()
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to SourceKotlinRootType,
-                       "file:///src/main/kotlin" to SourceKotlinRootType,
-                       "file:///src/main/resources" to ResourceKotlinRootType),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to SourceKotlinRootType,
+                "file:///src/main/kotlin" to SourceKotlinRootType,
+                "file:///src/main/resources" to ResourceKotlinRootType
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-            listOf("file:///src/test/java" to TestSourceKotlinRootType,
-                       "file:///src/test/kotlin" to TestSourceKotlinRootType,
-                       "file:///src/test/resources" to TestResourceKotlinRootType),
+            listOf(
+                "file:///src/test/java" to TestSourceKotlinRootType,
+                "file:///src/test/kotlin" to TestSourceKotlinRootType,
+                "file:///src/test/resources" to TestResourceKotlinRootType
+            ),
             getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testDetectOldJsStdlib() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.6")
-                }
-            }
-
-            apply plugin: 'kotlin2js'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-js-library:1.0.6"
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -841,27 +473,7 @@ compileTestKotlin {
 
     @Test
     fun testJvmImportByPlatformPlugin() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin-platform-jvm'
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -871,48 +483,26 @@ compileTestKotlin {
         }
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to JavaSourceRootType.SOURCE,
+                "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                "file:///src/main/resources" to JavaResourceRootType.RESOURCE
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
-                getSourceRootInfos("project_test")
+            listOf(
+                "file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE
+            ),
+            getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testJsImportByPlatformPlugin() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin-platform-js'
-
-            repositories {
-                mavenCentral()
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
-                compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -927,51 +517,26 @@ compileTestKotlin {
         assertEquals(CommonLibraryKind, libraries.single { it.name?.contains("kotlin-stdlib-common") == true }.kind)
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to SourceKotlinRootType,
-                       "file:///src/main/kotlin" to SourceKotlinRootType,
-                       "file:///src/main/resources" to ResourceKotlinRootType),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to SourceKotlinRootType,
+                "file:///src/main/kotlin" to SourceKotlinRootType,
+                "file:///src/main/resources" to ResourceKotlinRootType
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-            listOf("file:///src/test/java" to TestSourceKotlinRootType,
-                       "file:///src/test/kotlin" to TestSourceKotlinRootType,
-                       "file:///src/test/resources" to TestResourceKotlinRootType),
+            listOf(
+                "file:///src/test/java" to TestSourceKotlinRootType,
+                "file:///src/test/kotlin" to TestSourceKotlinRootType,
+                "file:///src/test/resources" to TestResourceKotlinRootType
+            ),
             getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testCommonImportByPlatformPlugin() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin-platform-common'
-
-            repositories {
-                mavenCentral()
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
-            }
-
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -985,50 +550,26 @@ compileTestKotlin {
         assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to SourceKotlinRootType,
-                       "file:///src/main/kotlin" to SourceKotlinRootType,
-                       "file:///src/main/resources" to ResourceKotlinRootType),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to SourceKotlinRootType,
+                "file:///src/main/kotlin" to SourceKotlinRootType,
+                "file:///src/main/resources" to ResourceKotlinRootType
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-            listOf("file:///src/test/java" to TestSourceKotlinRootType,
-                       "file:///src/test/kotlin" to TestSourceKotlinRootType,
-                       "file:///src/test/resources" to TestResourceKotlinRootType),
+            listOf(
+                "file:///src/test/java" to TestSourceKotlinRootType,
+                "file:///src/test/kotlin" to TestSourceKotlinRootType,
+                "file:///src/test/resources" to TestResourceKotlinRootType
+            ),
             getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testCommonImportByPlatformPlugin_SingleModule() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    jcenter()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin-platform-common'
-
-            repositories {
-                    mavenCentral()
-                    jcenter()
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
-            }
-
-        """
-        )
+        configureByFiles()
         importProjectUsingSingeModulePerGradleProject()
 
         with(facetSettings("project")) {
@@ -1042,39 +583,21 @@ compileTestKotlin {
         assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
 
         Assert.assertEquals(
-            listOf("file:///src/main/java" to SourceKotlinRootType,
-                       "file:///src/main/kotlin" to SourceKotlinRootType,
-                       "file:///src/test/java" to TestSourceKotlinRootType,
-                       "file:///src/test/kotlin" to TestSourceKotlinRootType,
-                       "file:///src/main/resources" to ResourceKotlinRootType,
-                       "file:///src/test/resources" to TestResourceKotlinRootType),
+            listOf(
+                "file:///src/main/java" to SourceKotlinRootType,
+                "file:///src/main/kotlin" to SourceKotlinRootType,
+                "file:///src/test/java" to TestSourceKotlinRootType,
+                "file:///src/test/kotlin" to TestSourceKotlinRootType,
+                "file:///src/main/resources" to ResourceKotlinRootType,
+                "file:///src/test/resources" to TestResourceKotlinRootType
+            ),
             getSourceRootInfos("project")
         )
     }
 
     @Test
     fun testJvmImportByKotlinPlugin() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -1084,42 +607,26 @@ compileTestKotlin {
         }
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
-                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to JavaSourceRootType.SOURCE,
+                "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                "file:///src/main/resources" to JavaResourceRootType.RESOURCE
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
-                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
-                getSourceRootInfos("project_test")
+            listOf(
+                "file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE
+            ),
+            getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testJsImportByKotlin2JsPlugin() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin2js'
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -1129,46 +636,26 @@ compileTestKotlin {
         }
 
         Assert.assertEquals(
-                listOf("file:///src/main/java" to SourceKotlinRootType,
-                       "file:///src/main/kotlin" to SourceKotlinRootType,
-                       "file:///src/main/resources" to ResourceKotlinRootType),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/java" to SourceKotlinRootType,
+                "file:///src/main/kotlin" to SourceKotlinRootType,
+                "file:///src/main/resources" to ResourceKotlinRootType
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-            listOf("file:///src/test/java" to TestSourceKotlinRootType,
-                       "file:///src/test/kotlin" to TestSourceKotlinRootType,
-                       "file:///src/test/resources" to TestResourceKotlinRootType),
+            listOf(
+                "file:///src/test/java" to TestSourceKotlinRootType,
+                "file:///src/test/kotlin" to TestSourceKotlinRootType,
+                "file:///src/test/resources" to TestResourceKotlinRootType
+            ),
             getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testArgumentEscaping() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin-platform-jvm'
-
-            compileKotlin {
-                kotlinOptions.freeCompilerArgs = ["-module", "module with spaces"]
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -1181,26 +668,7 @@ compileTestKotlin {
 
     @Test
     fun testNoPluginsInAdditionalArgs() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.10")
-                    classpath("org.jetbrains.kotlin:kotlin-allopen:1.2.10")
-                }
-            }
-
-            apply plugin: 'kotlin'
-            apply plugin: "kotlin-spring"
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -1224,31 +692,7 @@ compileTestKotlin {
 
     @Test
     fun testNoArgInvokeInitializers() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.10")
-                    classpath("org.jetbrains.kotlin:kotlin-noarg:1.2.10")
-                }
-            }
-
-            apply plugin: 'kotlin'
-            apply plugin: "kotlin-noarg"
-
-            noArg {
-                invokeInitializers = true
-                annotation("NoArg")
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -1268,129 +712,7 @@ compileTestKotlin {
 
     @Test
     fun testAndroidGradleJsDetection() {
-        createProjectSubFile(
-            "android-module/build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    jcenter()
-                }
-                dependencies {
-                    classpath "com.android.tools.build:gradle:2.3.0"
-                }
-            }
-
-            apply plugin: 'com.android.application'
-
-            android {
-                compileSdkVersion 26
-                buildToolsVersion "23.0.1"
-
-                defaultConfig {
-                    minSdkVersion 11
-                    targetSdkVersion 23
-                    versionCode 1002003
-                    versionName version
-                }
-
-                dataBinding {
-                    enabled = true
-                }
-
-                compileOptions {
-                    sourceCompatibility JavaVersion.VERSION_1_7
-                    targetCompatibility JavaVersion.VERSION_1_7
-                }
-
-                buildTypes {
-                    debug {
-                        applicationIdSuffix ".debug"
-                        versionNameSuffix "-debug"
-                    }
-                    release {
-                        minifyEnabled true
-                        shrinkResources true
-                    }
-                }
-            }
-        """
-        )
-        createProjectSubFile(
-            "android-module/src/main/AndroidManifest.xml", """
-            <manifest xmlns:android="https://schemas.android.com/apk/res/android"
-                      xmlns:tools="https://schemas.android.com/tools"
-                      package="my.test.project" >
-            </manifest>
-        """
-        )
-        createProjectSubFile(
-            "js-module/build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-dev'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40")
-                }
-            }
-
-            apply plugin: 'kotlin2js'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
-            }
-        """
-        )
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenLocal()
-                    maven {
-                        url='https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                    jcenter()
-                }
-                dependencies {
-                    classpath "com.android.tools.build:gradle:2.3.0"
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                }
-            }
-
-            ext {
-                androidBuildToolsVersion = '23.0.1'
-            }
-
-            allprojects {
-                repositories {
-                    mavenLocal()
-                    maven {
-                        url='https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                    jcenter()
-                }
-            }
-        """
-        )
-        createProjectSubFile(
-            "settings.gradle", """
-            rootProject.name = "android-js-test"
-            include ':android-module'
-            include ':js-module'
-        """
-        )
+        configureByFiles()
         createProjectSubFile(
             "local.properties", """
             sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
@@ -1414,75 +736,10 @@ compileTestKotlin {
 
     @Test
     fun testKotlinAndroidPluginDetection() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    jcenter()
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "com.android.tools.build:gradle:2.3.0"
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50"
-                }
-            }
-
-            apply plugin: 'com.android.application'
-            apply plugin: 'kotlin-android'
-
-            android {
-                compileSdkVersion 26
-                buildToolsVersion "23.0.1"
-
-                defaultConfig {
-                    minSdkVersion 11
-                    targetSdkVersion 23
-                    versionCode 1002003
-                    versionName version
-                }
-
-                dataBinding {
-                    enabled = true
-                }
-
-                compileOptions {
-                    sourceCompatibility JavaVersion.VERSION_1_7
-                    targetCompatibility JavaVersion.VERSION_1_7
-                }
-
-                buildTypes {
-                    debug {
-                        applicationIdSuffix ".debug"
-                        versionNameSuffix "-debug"
-                    }
-                    release {
-                        minifyEnabled true
-                        shrinkResources true
-                    }
-                }
-            }
-
-            tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-                kotlinOptions {
-                    freeCompilerArgs = ['-progressive']
-                }
-            }
-        """
-        )
+        configureByFiles()
         createProjectSubFile(
             "local.properties", """
             sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
-        """
-        )
-        createProjectSubFile(
-            "src/main/AndroidManifest.xml", """
-            <manifest xmlns:android="https://schemas.android.com/apk/res/android"
-                      xmlns:tools="https://schemas.android.com/tools"
-                      package="my.test.project" >
-            </manifest>
         """
         )
         importProject()
@@ -1493,62 +750,8 @@ compileTestKotlin {
 
     @Test
     fun testNoFacetInModuleWithoutKotlinPlugin() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'gr01'
-            version '1.0-SNAPSHOT'
+        configureByFiles()
 
-            apply plugin: 'java'
-            apply plugin: 'kotlin'
-
-            sourceCompatibility = 1.8
-
-            repositories {
-                mavenCentral()
-            }
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.1"
-                }
-            }
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.1"
-            }
-        """
-        )
-        createProjectSubFile(
-            "settings.gradle", """
-            rootProject.name = 'gr01'
-            include 'm1'
-        """
-        )
-        createProjectSubFile(
-            "m1/build.gradle", """
-            group 'gr01'
-            version '1.0-SNAPSHOT'
-
-            apply plugin: 'java'
-
-            sourceCompatibility = 1.8
-
-            repositories {
-                mavenCentral()
-            }
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-            }
-            dependencies {
-                testCompile group: 'junit', name: 'junit', version: '4.11'
-            }
-        """
-        )
         importProject()
 
         Assert.assertNotNull(KotlinFacet.get(getModule("gr01_main")))
@@ -1559,36 +762,7 @@ compileTestKotlin {
 
     @Test
     fun testClasspathWithDependenciesImport() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-                compile "org.apache.logging.log4j:log4j-core:2.7"
-            }
-
-            compileKotlin {
-                kotlinOptions.freeCompilerArgs += ["-cp", "tmp.jar"]
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -1598,32 +772,7 @@ compileTestKotlin {
 
     @Test
     fun testDependenciesClasspathImport() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-                compile "org.apache.logging.log4j:log4j-core:2.7"
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -1641,36 +790,7 @@ compileTestKotlin {
         }.execute()
 
         try {
-            createProjectSubFile(
-                "build.gradle", """
-                group 'Again'
-                version '1.0-SNAPSHOT'
-
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                    }
-                }
-
-                apply plugin: 'kotlin'
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-                    compile "org.apache.logging.log4j:log4j-core:2.7"
-                }
-
-                compileKotlin {
-                    kotlinOptions.jdkHome = "my/path/to/jdk"
-                }
-            """
-            )
+            configureByFiles()
             importProject()
 
             val moduleSDK = ModuleRootManager.getInstance(getModule("project_main")).sdk!!
@@ -1689,106 +809,7 @@ compileTestKotlin {
 
     @Test
     fun testImplementsDependency() {
-        createProjectSubFile(
-            "build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-common'
-
-                repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
-                }
-
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "settings.gradle",
-            """
-                    rootProject.name = 'MultiTest'
-                    include 'MultiTest-jvm', 'MultiTest-js'
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "MultiTest-js/build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-js'
-
-                repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
-                    implement project(":")
-                }
-
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "MultiTest-jvm/build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-jvm'
-
-                repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-                    implement project(":")
-                }
-
-                """.trimIndent()
-        )
-
+        configureByFiles()
         importProject()
 
         Assert.assertEquals(listOf("MultiTest_main"), facetSettings("MultiTest-jvm_main").implementedModuleNames)
@@ -1799,144 +820,7 @@ compileTestKotlin {
 
     @Test
     fun testImplementsDependencyWithCustomSourceSets() {
-        createProjectSubFile(
-            "build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-common'
-
-                sourceSets {
-                    myMain {
-                        kotlin {
-                            srcDir 'src'
-                        }
-                    }
-                    myTest {
-                        kotlin {
-                            srcDir 'test'
-                        }
-                    }
-                }
-
-                repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
-                }
-
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "settings.gradle",
-            """
-                    rootProject.name = 'MultiTest'
-                    include 'MultiTest-jvm', 'MultiTest-js'
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "MultiTest-js/build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-js'
-
-                sourceSets {
-                    myMain {
-                        kotlin {
-                            srcDir 'src'
-                        }
-                    }
-                    myTest {
-                        kotlin {
-                            srcDir 'test'
-                        }
-                    }
-                }
-
-                repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
-                    implement project(":")
-                }
-
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "MultiTest-jvm/build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-jvm'
-
-                sourceSets {
-                    myMain {
-                        kotlin {
-                            srcDir 'src'
-                        }
-                    }
-                    myTest {
-                        kotlin {
-                            srcDir 'test'
-                        }
-                    }
-                }
-
-                repositories {
-                        mavenCentral()
-                        maven {
-                            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                        }
-                    }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-                    implement project(":")
-                }
-
-                """.trimIndent()
-        )
+        configureByFiles()
 
         importProject()
 
@@ -1948,33 +832,7 @@ compileTestKotlin {
 
     @Test
     fun testAPIVersionExceedingLanguageVersion() {
-        createProjectSubFile(
-            "build.gradle", """
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-            }
-
-            compileKotlin {
-                kotlinOptions.languageVersion = "1.1"
-                kotlinOptions.apiVersion = "1.2"
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -1992,28 +850,7 @@ compileTestKotlin {
             apiVersion = "1.0"
         }
 
-        createProjectSubFile(
-            "build.gradle", """
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -2026,57 +863,7 @@ compileTestKotlin {
 
     @Test
     fun testCommonArgumentsImport() {
-        createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40")
-                }
-            }
-
-            apply plugin: 'kotlin-platform-common'
-
-            repositories {
-                mavenCentral()
-                maven {
-                    url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2'
-                }
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.40"
-            }
-
-            compileKotlinCommon{
-                kotlinOptions {
-                    languageVersion = 1.1
-                    apiVersion = 1.0
-                    freeCompilerArgs += ["-cp", "my/classpath"]
-                    freeCompilerArgs += ["-d", "my/destination"]
-                }
-            }
-
-            compileTestKotlinCommon{
-                kotlinOptions {
-                    languageVersion = 1.1
-                    apiVersion = 1.0
-                    freeCompilerArgs += ["-cp", "my/test/classpath"]
-                    freeCompilerArgs += ["-d", "my/test/destination"]
-                }
-            }
-
-        """
-        )
+        configureByFiles()
         importProject()
 
         with(facetSettings) {
@@ -2106,47 +893,24 @@ compileTestKotlin {
         assertSameKotlinSdks("project_main", "project_test")
 
         Assert.assertEquals(
-                listOf("file:///src/main/kotlin" to SourceKotlinRootType,
-                       "file:///src/main/resources" to ResourceKotlinRootType),
-                getSourceRootInfos("project_main")
+            listOf(
+                "file:///src/main/kotlin" to SourceKotlinRootType,
+                "file:///src/main/resources" to ResourceKotlinRootType
+            ),
+            getSourceRootInfos("project_main")
         )
         Assert.assertEquals(
-            listOf("file:///src/test/kotlin" to TestSourceKotlinRootType,
-                       "file:///src/test/resources" to TestResourceKotlinRootType),
+            listOf(
+                "file:///src/test/kotlin" to TestSourceKotlinRootType,
+                "file:///src/test/resources" to TestResourceKotlinRootType
+            ),
             getSourceRootInfos("project_test")
         )
     }
 
     @Test
     fun testInternalArgumentsFacetImporting() {
-        createProjectSubFile(
-            "build.gradle", """
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            repositories {
-                mavenCentral()
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
-            }
-
-            compileKotlin {
-                kotlinOptions.freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
-                kotlinOptions.languageVersion = "1.2"
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         // Version is indeed 1.2
@@ -2165,31 +929,8 @@ compileTestKotlin {
     }
 
     @Test
-    fun testStableModuleNameWhileUsingGradle_JS() {
-        createProjectSubFile(
-            "build.gradle", """
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50")
-                }
-            }
-
-            apply plugin: 'kotlin2js'
-
-            repositories {
-                mavenCentral()
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
-            }
-
-        """
-        )
+    fun testStableModuleNameWhileUsingGradleJS() {
+        configureByFiles()
         importProject()
 
         checkStableModuleName("project_main", "project", JsPlatform, isProduction = true)
@@ -2200,34 +941,8 @@ compileTestKotlin {
     }
 
     @Test
-    fun testStableModuleNameWhileUsingGradle_JVM() {
-        createProjectSubFile(
-            "build.gradle", """
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            repositories {
-                mavenCentral()
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
-            }
-
-            compileKotlin {
-                kotlinOptions.languageVersion = "1.2"
-            }
-        """
-        )
+    fun testStableModuleNameWhileUsingGradleJVM() {
+        configureByFiles()
         importProject()
 
         checkStableModuleName("project_main", "project", JvmPlatform, isProduction = true)
@@ -2238,35 +953,7 @@ compileTestKotlin {
 
     @Test
     fun testNoFriendPathsAreShown() {
-        createProjectSubFile(
-            "build.gradle", """
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'https://dl.bintray.com/kotlin/kotlin-dev'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.70-eap-4")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            repositories {
-                mavenCentral()
-                maven {
-                    url 'https://dl.bintray.com/kotlin/kotlin-dev'
-                }
-            }
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.70-eap-4"
-            }
-        """
-        )
+        configureByFiles()
         importProject()
 
         Assert.assertEquals(
@@ -2279,100 +966,7 @@ compileTestKotlin {
 
     @Test
     fun testSharedLanguageVersion() {
-        createProjectSubFile(
-            "build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.60")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-common'
-
-                repositories {
-                        mavenCentral()
-                    }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.60"
-                }
-
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "settings.gradle",
-            """
-                    rootProject.name = 'MultiTest'
-                    include 'MultiTest-jvm', 'MultiTest-js'
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "MultiTest-js/build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.60")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-js'
-
-                sourceSets {
-                    myMain {
-                        kotlin {
-                            srcDir 'src'
-                        }
-                    }
-                    myTest {
-                        kotlin {
-                            srcDir 'test'
-                        }
-                    }
-                }
-
-                repositories {
-                        mavenCentral()
-                    }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.2.60"
-                    implement project(":")
-                }
-
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "MultiTest-jvm/build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.60")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-jvm'
-
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.60"
-                    implement project(":")
-                }
-
-                """.trimIndent()
-        )
+        configureByFiles()
 
         val holder = KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
 
@@ -2385,105 +979,7 @@ compileTestKotlin {
 
     @Test
     fun testNonSharedLanguageVersion() {
-        createProjectSubFile(
-            "build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.60")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-common'
-
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.60"
-                }
-
-                compileKotlinCommon {
-                    kotlinOptions.languageVersion = "1.1"
-                }
-
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "settings.gradle",
-            """
-                    rootProject.name = 'MultiTest'
-                    include 'MultiTest-jvm', 'MultiTest-js'
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "MultiTest-js/build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.60")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-js'
-
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.2.60"
-                    implement project(":")
-                }
-
-                """.trimIndent()
-        )
-        createProjectSubFile(
-            "MultiTest-jvm/build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenCentral()
-                    }
-                    dependencies {
-                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.60")
-                    }
-                }
-
-                apply plugin: 'kotlin-platform-jvm'
-
-                sourceSets {
-                    myMain {
-                        kotlin {
-                            srcDir 'src'
-                        }
-                    }
-                    myTest {
-                        kotlin {
-                            srcDir 'test'
-                        }
-                    }
-                }
-
-                repositories {
-                        mavenCentral()
-                    }
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.60"
-                    implement project(":")
-                }
-
-                """.trimIndent()
-        )
-
+        configureByFiles()
         val holder = KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
 
         holder.update { languageVersion = "1.1" }
@@ -2491,6 +987,17 @@ compileTestKotlin {
         importProject()
 
         TestCase.assertEquals("1.1", holder.settings.languageVersion)
+    }
+
+    @Ignore //TODO enable this test after the Kotlin gradle plugin with required fixes is released
+    @Test
+    fun testImportCompilerArgumentsWithInvalidDependencies() {
+        configureByFiles()
+        importProject()
+        with(facetSettings("project_main")) {
+            Assert.assertEquals("1.8", (mergedCompilerArguments as K2JVMCompilerArguments).jvmTarget)
+        }
+
     }
 
     private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
@@ -2512,5 +1019,9 @@ compileTestKotlin {
                 Assert.assertNull("Configurator $configurator tells that ${moduleGroup.baseModule} can be configured", configurator)
             }
         }
+    }
+
+    override fun testDataDirName(): String {
+        return "gradleFacetImportTest"
     }
 }

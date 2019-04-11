@@ -1,0 +1,36 @@
+FILE fqName:<root> fileName:/kt24804.kt
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Boolean [inline]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Boolean [inline] declared in <root>'
+        CONST Boolean type=kotlin.Boolean value=false
+  FUN name:run visibility:public modality:FINAL <> (x:kotlin.Boolean, y:kotlin.Boolean) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.Boolean
+    VALUE_PARAMETER name:y index:1 type:kotlin.Boolean
+    BLOCK_BODY
+      VAR name:z type:kotlin.Int [var]
+        CONST Int type=kotlin.Int value=10
+      DO_WHILE label=l2 origin=DO_WHILE_LOOP
+        body: BLOCK type=kotlin.String origin=null
+          ERROR_CALL 'Unresolved reference: R|<local>/z|' type=IrErrorType
+          WHEN type=kotlin.String origin=IF
+            BRANCH
+              if: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/String' type=kotlin.Boolean
+              then: RETURN type=kotlin.Nothing from='public final fun run (x: kotlin.Boolean, y: kotlin.Boolean): kotlin.String declared in <root>'
+                CONST String type=kotlin.String value="NOT_OK"
+          WHEN type=kotlin.String origin=IF
+            BRANCH
+              if: GET_VAR 'x: kotlin.Boolean declared in <root>.run' type=kotlin.Boolean origin=null
+              then: ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind label l1 to a loop)] ' type=kotlin.Nothing
+          WHEN type=kotlin.String origin=IF
+            BRANCH
+              if: GET_VAR 'y: kotlin.Boolean declared in <root>.run' type=kotlin.Boolean origin=null
+              then: CONTINUE label=l2 loop.label=l2
+        condition: CALL 'public final fun foo (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
+      RETURN type=kotlin.Nothing from='public final fun run (x: kotlin.Boolean, y: kotlin.Boolean): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun run (x: kotlin.Boolean, y: kotlin.Boolean): kotlin.String declared in <root>' type=kotlin.String origin=null
+          x: CONST Boolean type=kotlin.Boolean value=true
+          y: CONST Boolean type=kotlin.Boolean value=true

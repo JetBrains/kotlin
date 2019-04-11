@@ -11,6 +11,8 @@ import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
 
 class TypedHandlerTest : LightCodeInsightTestCase() {
     private val dollar = '$'
@@ -810,6 +812,51 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         )
     }
 
+    fun testEnterInFunctionWithExpressionBody() {
+        doTypeTest(
+            '\n',
+            """
+            |fun test() =<caret>
+            """,
+            """
+            |fun test() =
+            |    <caret>
+            """,
+            ENABLE_KOTLIN_OFFICIAL_CODE_STYLE
+        )
+    }
+
+    fun testEnterInMultiDeclaration() {
+        doTypeTest(
+            '\n',
+            """
+            |fun test() {
+            |    val (a, b) =<caret>
+            |}
+            """,
+            """
+            |fun test() {
+            |    val (a, b) =
+            |        <caret>
+            |}
+            """,
+            ENABLE_KOTLIN_OFFICIAL_CODE_STYLE
+        )
+    }
+
+    fun testEnterInVariableDeclaration() {
+        doTypeTest(
+            '\n',
+            """
+            |val test =<caret>
+            """,
+            """
+            |val test =
+            |    <caret>
+            """,
+            ENABLE_KOTLIN_OFFICIAL_CODE_STYLE
+        )
+    }
 
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
@@ -869,5 +916,12 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
 
     private fun doLtGtTest(initText: String) {
         doLtGtTest(initText, true)
+    }
+
+    companion object {
+        private val ENABLE_KOTLIN_OFFICIAL_CODE_STYLE: () -> Unit = {
+            val settings = ktCodeStyleSettings(LightPlatformTestCase.getProject())?.all ?: error("No Settings")
+            KotlinStyleGuideCodeStyle.apply(settings)
+        }
     }
 }

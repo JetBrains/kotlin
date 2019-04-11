@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-class RemoveNullableFix(element: KtNullableType,
-                        private val typeOfError: RemoveNullableFix.NullableKind) : KotlinQuickFixAction<KtNullableType>(element) {
+class RemoveNullableFix(
+    element: KtNullableType,
+    private val typeOfError: NullableKind
+) : KotlinQuickFixAction<KtNullableType>(element) {
     enum class NullableKind(val message: String) {
         REDUNDANT("Remove redundant '?'"),
         SUPERTYPE("Remove '?'"),

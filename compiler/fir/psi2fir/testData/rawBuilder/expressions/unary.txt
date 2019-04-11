@@ -35,9 +35,11 @@ FILE: unary.kt
 
     }
     public? final? class X : kotlin/Any {
-        public? constructor(i: Int): super<kotlin/Any>()
+        public? constructor(i: Int): R|X| {
+            super<kotlin/Any>()
+        }
 
-        public? final? val i: Int
+        public? final? val i: Int = R|<local>/i|
             public? get(): Int
 
     }
@@ -58,39 +60,39 @@ FILE: unary.kt
     }
     public? final? fun test3(arr: Array<Int>): kotlin/Unit {
         lval x1: <implicit> =  {
-            lval <unary>: <implicit> = arr#[Int(0)]
-            arr#[Int(0)] = inc#(<unary>#)
+            lval <unary>: <implicit> = arr#.get#(Int(0))
+            arr#.set#(Int(0), inc#(<unary>#))
             <unary>#
         }
 
         lval x2: <implicit> =  {
-            lval <unary>: <implicit> = arr#[Int(1)]
+            lval <unary>: <implicit> = arr#.get#(Int(1))
             lval <unary-result>: <implicit> = inc#(<unary>#)
-            arr#[Int(1)] = <unary-result>#
+            arr#.set#(Int(1), <unary-result>#)
             <unary-result>#
         }
 
     }
     public? final? class Y : kotlin/Any {
-        public? constructor(arr: Array<Int>): super<kotlin/Any>()
+        public? constructor(arr: Array<Int>): R|Y| {
+            super<kotlin/Any>()
+        }
 
-        public? final? val arr: Array<Int>
+        public? final? val arr: Array<Int> = R|<local>/arr|
             public? get(): Array<Int>
 
     }
     public? final? fun test4(y: Y): kotlin/Unit {
         lval x1: <implicit> =  {
-            lval <unary>: <implicit> = y#.arr#[Int(0)]
-            lval <array-set>: <implicit> = y#.arr#
-            <array-set>#[Int(0)] = inc#(<unary>#)
+            lval <unary>: <implicit> = y#.arr#.get#(Int(0))
+            y#.arr#.set#(Int(0), inc#(<unary>#))
             <unary>#
         }
 
         lval x2: <implicit> =  {
-            lval <unary>: <implicit> = y#.arr#[Int(1)]
+            lval <unary>: <implicit> = y#.arr#.get#(Int(1))
             lval <unary-result>: <implicit> = inc#(<unary>#)
-            lval <array-set>: <implicit> = y#.arr#
-            <array-set>#[Int(1)] = <unary-result>#
+            y#.arr#.set#(Int(1), <unary-result>#)
             <unary-result>#
         }
 

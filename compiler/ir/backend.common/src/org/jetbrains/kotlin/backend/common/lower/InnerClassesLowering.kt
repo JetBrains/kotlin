@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -39,7 +39,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         // TODO: is this the correct way to get the class?
         // -1 means value is either IMPLICIT or EXTENSION receiver
         get() = if (this is IrValueParameterSymbol && owner.index == -1 && owner.name.isSpecial /* <this> */)
-            owner.type.classifierOrNull?.owner as IrClass
+            owner.type.classOrNull?.owner
         else
             null
 

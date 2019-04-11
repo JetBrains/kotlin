@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.symbols.impl
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
 
@@ -25,27 +26,28 @@ abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descript
 
 abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D) :
     IrBindableSymbol<D, B>, IrSymbolBase<D>(descriptor) {
+
     init {
-//        assert(isOriginalDescriptor(descriptor)) {
-//            "Substituted descriptor $descriptor for ${descriptor.original}"
-//        }
+        assert(isOriginalDescriptor(descriptor)) {
+            "Substituted descriptor $descriptor for ${descriptor.original}"
+        }
     }
 
     private fun isOriginalDescriptor(descriptor: DeclarationDescriptor): Boolean =
-        if (descriptor is ValueParameterDescriptor)
-            isOriginalDescriptor(descriptor.containingDeclaration)
-        else
-            descriptor == descriptor.original
+        descriptor is IrBasedDeclarationDescriptor ||
+                descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
+                descriptor == descriptor.original
 
     private var _owner: B? = null
     override val owner: B
         get() = _owner ?: throw IllegalStateException("Symbol for $descriptor is unbound")
 
     override fun bind(owner: B) {
-        if (_owner == null)
+        if (_owner == null) {
             _owner = owner
-        else
+        } else {
             throw IllegalStateException("${javaClass.simpleName} for $descriptor is already bound")
+        }
     }
 
     override val isBound: Boolean

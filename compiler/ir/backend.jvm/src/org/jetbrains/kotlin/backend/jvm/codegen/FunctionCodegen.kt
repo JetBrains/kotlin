@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.FunctionCodegen
@@ -27,7 +26,11 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-open class FunctionCodegen(private val irFunction: IrFunction, private val classCodegen: ClassCodegen) {
+open class FunctionCodegen(
+    private val irFunction: IrFunction,
+    private val classCodegen: ClassCodegen,
+    private val isInlineLambda: Boolean = false
+) {
 
     val state = classCodegen.state
 
@@ -56,7 +59,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
             methodVisitor.visitEnd()
         } else {
             val frameMap = createFrameMapWithReceivers(classCodegen.state, irFunction, signature)
-            ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()
+            ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen, isInlineLambda).generate()
         }
 
         return signature
@@ -91,8 +94,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
                 deprecation or
                 nativeFlag or
                 bridgeFlag or
-                syntheticFlag or
-                (if (descriptor is JvmDescriptorWithExtraFlags) descriptor.extraFlags else 0)
+                syntheticFlag
     }
 
     protected open fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {

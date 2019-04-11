@@ -1,0 +1,2 @@
+val a: Int? = 1                 // RESULT: val a: Int?
+kotlin.test.assertNotNull(1)    // RESULT: 1

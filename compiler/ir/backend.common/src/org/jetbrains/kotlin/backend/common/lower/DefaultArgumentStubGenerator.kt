@@ -236,7 +236,7 @@ open class DefaultParameterInjector(
                     type = context.irBuiltIns.unitType,
                     symbol = symbolForCall as IrConstructorSymbol,
                     descriptor = symbolForCall.descriptor,
-                    typeArgumentsCount = symbolForCall.owner.typeParameters.size
+                    typeArgumentsCount = expression.typeArgumentsCount
                 )
                     .apply {
                         copyTypeArgumentsFrom(expression)

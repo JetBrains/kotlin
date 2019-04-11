@@ -18,11 +18,9 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 
@@ -43,10 +41,6 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         return object : PackageCodegen {
             override fun generate(errorHandler: CompilationErrorHandler) {
                 JvmBackendFacade.doGenerateFiles(files, state, errorHandler, phaseConfig)
-            }
-
-            override fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: PackageContext) {
-                TODO()
             }
 
             override fun getPackageFragment(): PackageFragmentDescriptor {

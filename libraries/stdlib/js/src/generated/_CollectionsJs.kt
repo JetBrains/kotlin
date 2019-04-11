@@ -11,6 +11,8 @@ package kotlin.collections
 //
 
 import kotlin.js.*
+import kotlin.ranges.contains
+import kotlin.ranges.reversed
 
 /**
  * Reverses elements in the list in-place.

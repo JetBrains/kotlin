@@ -30,18 +30,20 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetSibling
 import org.jetbrains.kotlin.idea.refactoring.introduce.validateExpressionElements
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtFile
 
 class ExtractKotlinFunctionHandler(
-        private val allContainersEnabled: Boolean = false,
-        private val helper: ExtractionEngineHelper = ExtractKotlinFunctionHandler.InteractiveExtractionHelper) : RefactoringActionHandler {
+    private val allContainersEnabled: Boolean = false,
+    private val helper: ExtractionEngineHelper = InteractiveExtractionHelper
+) : RefactoringActionHandler {
 
     object InteractiveExtractionHelper : ExtractionEngineHelper(EXTRACT_FUNCTION) {
         override fun configureAndRun(
-                project: Project,
-                editor: Editor,
-                descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
-                onFinish: (ExtractionResult) -> Unit
+            project: Project,
+            editor: Editor,
+            descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
+            onFinish: (ExtractionResult) -> Unit
         ) {
             KotlinExtractFunctionDialog(descriptorWithConflicts.descriptor.extractionData.project, descriptorWithConflicts) {
                 doRefactor(it.currentConfiguration, onFinish)
@@ -50,10 +52,10 @@ class ExtractKotlinFunctionHandler(
     }
 
     fun doInvoke(
-            editor: Editor,
-            file: KtFile,
-            elements: List<PsiElement>,
-            targetSibling: PsiElement
+        editor: Editor,
+        file: KtFile,
+        elements: List<PsiElement>,
+        targetSibling: PsiElement
     ) {
         val adjustedElements = (elements.singleOrNull() as? KtBlockExpression)?.statements ?: elements
         val extractionData = ExtractionData(file, adjustedElements.toRange(false), targetSibling)
@@ -64,14 +66,14 @@ class ExtractKotlinFunctionHandler(
 
     fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
         selectElementsWithTargetSibling(
-                EXTRACT_FUNCTION,
-                editor,
-                file,
-                "Select target code block",
-                listOf(CodeInsightUtils.ElementKind.EXPRESSION),
-                ::validateExpressionElements,
-                { elements, parent -> parent.getExtractionContainers(elements.size == 1, allContainersEnabled) },
-                continuation
+            EXTRACT_FUNCTION,
+            editor,
+            file,
+            "Select target code block",
+            listOf(CodeInsightUtils.ElementKind.EXPRESSION),
+            ::validateExpressionElements,
+            { elements, parent -> parent.getExtractionContainers(elements.size == 1, allContainersEnabled) },
+            continuation
         )
     }
 

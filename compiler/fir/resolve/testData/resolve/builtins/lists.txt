@@ -1,10 +1,14 @@
 FILE: lists.kt
-    public abstract class MyStringList : R|kotlin/collections/List<kotlin/String>|, R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+    public abstract class MyStringList : R|kotlin/collections/List<kotlin/String>| {
+        public constructor(): R|MyStringList| {
+            super<R|kotlin/Any|>()
+        }
 
     }
-    public abstract class MyMutableStringList : R|kotlin/collections/MutableList<kotlin/String>|, R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+    public abstract class MyMutableStringList : R|kotlin/collections/MutableList<kotlin/String>| {
+        public constructor(): R|MyMutableStringList| {
+            super<R|kotlin/Any|>()
+        }
 
     }
     public final fun R|kotlin/collections/List<kotlin/String>|.convert(): R|MyStringList| {

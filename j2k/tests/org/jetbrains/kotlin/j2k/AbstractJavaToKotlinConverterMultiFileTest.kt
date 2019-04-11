@@ -53,7 +53,7 @@ abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaToKotlin
             assert(psiFile is PsiJavaFile || psiFile is KtFile)
         }
 
-        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
+        val converter = OldJavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
         val (results, externalCodeProcessor) = converter.filesToKotlin(psiFilesToConvert, J2kPostProcessor(formatCode = true))
 
         val process = externalCodeProcessor?.prepareWriteOperation(EmptyProgressIndicator())

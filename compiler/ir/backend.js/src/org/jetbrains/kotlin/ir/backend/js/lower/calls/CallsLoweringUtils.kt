@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
 
@@ -58,21 +58,7 @@ internal fun MemberToTransformer.add(type: IrType, name: Name, v: (IrCall) -> Ir
     put(SimpleMemberKey(type, name), v)
 }
 
-internal class SimpleMemberKey(val klass: IrType, val name: Name) {
-    // TODO drop custom equals and hashCode when IrTypes will have right equals
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as SimpleMemberKey
-
-        if (name != other.name) return false
-
-        return klass.isEqualTo(other.klass)
-    }
-
-    override fun hashCode() = 31 * klass.toHashCode() + name.hashCode()
-}
+internal data class SimpleMemberKey(val klass: IrType, val name: Name)
 
 enum class PrimitiveType {
     FLOATING_POINT_NUMBER,

@@ -152,7 +152,8 @@ class KotlinCodeBlockModificationListener(
 
                 is KtScriptInitializer -> {
                     return (blockDeclaration.body as? KtCallExpression)
-                        ?.lambdaArguments?.last()
+                        ?.lambdaArguments
+                        ?.lastOrNull()
                         ?.getLambdaExpression()
                         ?.takeIf { it.isAncestor(element) }
                 }

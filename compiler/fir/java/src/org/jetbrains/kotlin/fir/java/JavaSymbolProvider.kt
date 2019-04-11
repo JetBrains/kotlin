@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.fir.java
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
@@ -22,9 +25,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 
 class JavaSymbolProvider(
@@ -37,36 +42,18 @@ class JavaSymbolProvider(
 
     private fun findClass(classId: ClassId): JavaClass? = facade.findClass(JavaClassFinder.Request(classId), searchScope)
 
-    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
-        return callableCache.lookupCacheOrCalculate(callableId) {
-            val classId = callableId.classId ?: return@lookupCacheOrCalculate emptyList()
-            val classSymbol = getClassLikeSymbolByFqName(classId) as? FirClassSymbol
-                ?: return@lookupCacheOrCalculate emptyList()
-            val firClass = classSymbol.fir
-            val callableSymbols = mutableListOf<ConeCallableSymbol>()
-            for (declaration in firClass.declarations) {
-                val declarationId = when (declaration) {
-                    is FirConstructor -> {
-                        CallableId(callableId.packageName, callableId.className, firClass.name)
-                    }
-                    is FirCallableMemberDeclaration -> {
-                        CallableId(callableId.packageName, callableId.className, declaration.name)
-                    }
-                    else -> null
-                }
-                if (declarationId == callableId) {
-                    val symbol = (declaration as FirCallableMemberDeclaration).symbol as ConeCallableSymbol
-                    callableSymbols += symbol
-                }
-            }
-            callableSymbols
-        }.orEmpty()
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> =
+        emptyList()
+
+    override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
+        val classSymbol = getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
+        return FirClassDeclaredMemberScope(classSymbol.fir)
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
         return classCache.lookupCacheOrCalculateWithPostCompute(classId, {
             val foundClass = findClass(classId)
-            if (foundClass == null) {
+            if (foundClass == null || foundClass.annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }) {
                 null to null
             } else {
                 FirClassSymbol(classId) to foundClass

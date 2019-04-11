@@ -22,7 +22,11 @@ class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         super.configureCompilations(platformTarget)
 
         platformTarget.compilations.all {
-            it.compileKotlinTask.kotlinOptions.moduleKind = "umd"
+            it.compileKotlinTask.kotlinOptions {
+                moduleKind = "umd"
+                sourceMap = true
+                sourceMapEmbedSources = null
+            }
         }
     }
 

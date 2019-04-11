@@ -16,4 +16,4 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-class InlineCallSiteInfo(val ownerClassName: String, val functionName: String?, val functionDesc: String?)
+class InlineCallSiteInfo(val ownerClassName: String, val functionName: String?, val functionDesc: String?, val isInlineOrInsideInline: Boolean)

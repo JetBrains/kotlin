@@ -46,6 +46,8 @@ dependencies {
     compileOnly(project(":kotlin-annotation-processing-gradle"))
     compileOnly(project(":kotlin-scripting-compiler"))
 
+    compile("com.google.code.gson:gson:2.8.5")
+
     compileOnly("com.android.tools.build:gradle:2.0.0")
     compileOnly("com.android.tools.build:gradle-core:2.0.0")
     compileOnly("com.android.tools.build:builder:2.0.0")
@@ -63,10 +65,9 @@ dependencies {
     runtime(project(":kotlin-reflect"))
 
     jarContents(compileOnly(intellijDep()) {
-        includeJars("serviceMessages")
+        includeJars("serviceMessages", "gson-2.8.5")
         includeJars("asm-all", rootProject = rootProject)
     })
-    jarContents(projectArchives(":kotlin-test-nodejs-runner"))
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
     compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
@@ -82,6 +83,10 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(project(":kotlin-annotation-processing"))
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
+}
+
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    configurations.compile.get().exclude("com.android.tools.external.com-intellij", "intellij-core")
 }
 
 runtimeJar(rewriteDepsToShadedCompiler(jar)) {
@@ -178,5 +183,10 @@ pluginBundle {
         name = "kotlinScriptingPlugin",
         id = "org.jetbrains.kotlin.plugin.scripting",
         display = "Gradle plugin for kotlin scripting"
+    )
+    create(
+        name = "kotlinNativeCocoapodsPlugin",
+        id = "org.jetbrains.kotlin.native.cocoapods",
+        display = "Kotlin Native plugin for CocoaPods integration"
     )
 }

@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.scopes.impl.*
 
-fun FirCompositeScope.addImportingScopes(file: FirFile, session: FirSession) {
-    scopes += listOf(
+fun MutableList<FirScope>.addImportingScopes(file: FirFile, session: FirSession) {
+    this += listOf(
         // from low priority to high priority
         FirDefaultStarImportingScope(session),
         FirExplicitStarImportingScope(file.imports, session),
@@ -19,4 +19,8 @@ fun FirCompositeScope.addImportingScopes(file: FirFile, session: FirSession) {
         // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
         FirExplicitSimpleImportingScope(file.imports, session)
     )
+}
+
+fun FirCompositeScope.addImportingScopes(file: FirFile, session: FirSession) {
+    scopes.addImportingScopes(file, session)
 }

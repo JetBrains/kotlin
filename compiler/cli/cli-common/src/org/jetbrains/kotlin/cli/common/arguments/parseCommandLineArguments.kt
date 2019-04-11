@@ -186,7 +186,11 @@ private fun <A : CommonToolArguments> updateField(property: KMutableProperty1<A,
     when (property.returnType.classifier) {
         Boolean::class, String::class -> property.set(result, value)
         Array<String>::class -> {
-            val newElements = (value as String).split(delimiter).toTypedArray()
+            val newElements = if (delimiter.isEmpty()) {
+                arrayOf(value as String)
+            } else {
+                (value as String).split(delimiter).toTypedArray()
+            }
             @Suppress("UNCHECKED_CAST")
             val oldValue = property.get(result) as Array<String>?
             property.set(result, if (oldValue != null) arrayOf(*oldValue, *newElements) else newElements)

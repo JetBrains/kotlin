@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import java.io.File
+import java.util.*
 
 data class KotlinSourceSetImpl(
     override val name: String,
@@ -18,12 +19,12 @@ data class KotlinSourceSetImpl(
     val defaultIsTestModule: Boolean = false
 ) : KotlinSourceSet {
 
-    constructor(kotlinSourceSet: KotlinSourceSet) : this(
+    constructor(kotlinSourceSet: KotlinSourceSet, cloningCache: MutableMap<Any, Any>) : this(
         kotlinSourceSet.name,
         KotlinLanguageSettingsImpl(kotlinSourceSet.languageSettings),
         HashSet(kotlinSourceSet.sourceDirs),
         HashSet(kotlinSourceSet.resourceDirs),
-        kotlinSourceSet.dependencies.map { it.deepCopy() }.toSet(),
+        kotlinSourceSet.dependencies.map { it.deepCopy(cloningCache) }.toSet(),
         HashSet(kotlinSourceSet.dependsOnSourceSets),
         kotlinSourceSet.platform,
         kotlinSourceSet.isTestModule
@@ -87,10 +88,14 @@ data class KotlinCompilationImpl(
 ) : KotlinCompilation {
 
     // create deep copy
-    constructor(kotlinCompilation: KotlinCompilation) : this(
+    constructor(kotlinCompilation: KotlinCompilation, cloningCache: MutableMap<Any, Any>) : this(
         kotlinCompilation.name,
-        kotlinCompilation.sourceSets.map { KotlinSourceSetImpl(it) }.toList(),
-        kotlinCompilation.dependencies.map { it.deepCopy() }.toSet(),
+        kotlinCompilation.sourceSets.map { initialSourceSet ->
+            (cloningCache[initialSourceSet] as? KotlinSourceSet) ?: KotlinSourceSetImpl(initialSourceSet, cloningCache).also {
+                cloningCache[initialSourceSet] = it
+            }
+        }.toList(),
+        kotlinCompilation.dependencies.map { it.deepCopy(cloningCache) }.toSet(),
         KotlinCompilationOutputImpl(kotlinCompilation.output),
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
         ArrayList(kotlinCompilation.dependencyClasspath)
@@ -126,12 +131,16 @@ data class KotlinTargetImpl(
 ) : KotlinTarget {
     override fun toString() = name
 
-    constructor(target: KotlinTarget) : this(
+    constructor(target: KotlinTarget, cloningCache: MutableMap<Any, Any>) : this(
         target.name,
         target.presetName,
         target.disambiguationClassifier,
         KotlinPlatform.byId(target.platform.id) ?: KotlinPlatform.COMMON,
-        target.compilations.map { KotlinCompilationImpl(it) }.toList(),
+        target.compilations.map { initialCompilation ->
+            (cloningCache[initialCompilation] as? KotlinCompilation) ?: KotlinCompilationImpl(initialCompilation, cloningCache).also {
+                cloningCache[initialCompilation] = it
+            }
+        }.toList(),
         KotlinTargetJarImpl(target.jar?.archiveFile)
     )
 }
@@ -147,9 +156,18 @@ data class KotlinMPPGradleModelImpl(
     override val kotlinNativeHome: String
 ) : KotlinMPPGradleModel {
 
-    constructor(mppModel: KotlinMPPGradleModel) : this(
-        mppModel.sourceSets.mapValues { KotlinSourceSetImpl(it.value) },
-        mppModel.targets.map { KotlinTargetImpl(it) }.toList(),
+    constructor(mppModel: KotlinMPPGradleModel, cloningCache: MutableMap<Any, Any>) : this(
+        mppModel.sourceSets.mapValues { initialSourceSet ->
+            (cloningCache[initialSourceSet] as? KotlinSourceSet) ?: KotlinSourceSetImpl(
+                initialSourceSet.value,
+                cloningCache
+            ).also { cloningCache[initialSourceSet] = it }
+        },
+        mppModel.targets.map { initialTarget ->
+            (cloningCache[initialTarget] as? KotlinTarget) ?: KotlinTargetImpl(initialTarget, cloningCache).also {
+                cloningCache[initialTarget] = it
+            }
+        }.toList(),
         ExtraFeaturesImpl(mppModel.extraFeatures.coroutinesState),
         mppModel.kotlinNativeHome
     )

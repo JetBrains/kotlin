@@ -1,5 +1,5 @@
 FILE: ByteArray.kt
-    public abstract interface My {
+    public abstract interface My : R|kotlin/Any| {
         public abstract val array: R|kotlin/ByteArray|
             public get(): R|kotlin/ByteArray|
 

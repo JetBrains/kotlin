@@ -4,7 +4,7 @@ apply plugin: 'kotlin'
 
 configureJvm6Project(project)
 
-def jpsBuild = findProperty("jpsBuild")?.toString() == "true"
+def includeJava9 = BuildPropertiesKt.getKotlinBuildProperties(project).includeJava9
 
 sourceSets {
     main {
@@ -13,7 +13,7 @@ sourceSets {
         }
     }
 
-    if (!jpsBuild) {
+    if (includeJava9) {
         java9
     }
 }
@@ -28,7 +28,7 @@ dependencies {
     compileOnly "org.jetbrains:annotations:13.0"
 }
 
-if (!jpsBuild) {
+if (includeJava9) {
     compileJava9Sources(
             project, 'kotlin.reflect',
             [sourceSets.main.output, configurations.compileOnly.filter {
@@ -52,7 +52,7 @@ jar {
 
 task java9Jar(type: Jar) {
     classifier = "java9"
-    if (!jpsBuild) {
+    if (includeJava9) {
         from sourceSets.java9.output
     }
 }

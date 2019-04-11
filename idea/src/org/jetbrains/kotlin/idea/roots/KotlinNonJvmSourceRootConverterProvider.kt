@@ -30,7 +30,6 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer
-import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer
 import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer.*
 import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.config.getFacetPlatformByConfigurationElement
@@ -45,10 +44,10 @@ import org.jetbrains.kotlin.utils.PathUtil
 class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jvm-source-roots") {
     companion object {
         private val rootTypesToMigrate: List<JpsModuleSourceRootType<*>> = listOf(
-                JavaSourceRootType.SOURCE,
-                JavaSourceRootType.TEST_SOURCE,
-                JavaResourceRootType.RESOURCE,
-                JavaResourceRootType.TEST_RESOURCE
+            JavaSourceRootType.SOURCE,
+            JavaSourceRootType.TEST_SOURCE,
+            JavaResourceRootType.RESOURCE,
+            JavaResourceRootType.TEST_RESOURCE
         )
 
         private val TargetPlatform.stdlibDetector: ((Array<VirtualFile>) -> Boolean)?
@@ -74,7 +73,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                 val moduleSettingsImpl = moduleSettings as? ModuleSettingsImpl ?: return VirtualFile.EMPTY_ARRAY
                 return contextImpl
                     .getClassRoots(element, moduleSettingsImpl)
-                    .mapNotNull { it.toVirtualFile()?.let { JarFileSystem.getInstance().getJarRootForLocalFile(it) } }
+                    .mapNotNull { it.toVirtualFile()?.let { file -> JarFileSystem.getInstance().getJarRootForLocalFile(file) } }
                     .toTypedArray()
             }
         }
@@ -83,7 +82,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
             override val explicitKind: PersistentLibraryKind<*>?
                 get() = (library as? LibraryEx)?.kind
 
-            override fun getRoots() = library.getFiles(OrderRootType.CLASSES)
+            override fun getRoots(): Array<VirtualFile> = library.getFiles(OrderRootType.CLASSES)
         }
 
         abstract val explicitKind: PersistentLibraryKind<*>?
@@ -109,16 +108,14 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
         private fun findProjectLibrary(name: String) = projectLibrariesByName[name]?.firstOrNull()
 
         private fun createLibInfo(orderEntryElement: Element, moduleSettings: ModuleSettings): LibInfo? {
-            val entryType = orderEntryElement.getAttributeValue(ORDER_ENTRY_TYPE_ATTR)
-            return when (entryType) {
-                JpsModuleRootModelSerializer.MODULE_LIBRARY_TYPE -> {
+            return when (orderEntryElement.getAttributeValue(ORDER_ENTRY_TYPE_ATTR)) {
+                MODULE_LIBRARY_TYPE -> {
                     orderEntryElement.getChild(LIBRARY_TAG)?.let { LibInfo.ByXml(it, context, moduleSettings) }
                 }
 
-                JpsModuleRootModelSerializer.LIBRARY_TYPE -> {
+                LIBRARY_TYPE -> {
                     val libraryName = orderEntryElement.getAttributeValue(NAME_ATTRIBUTE) ?: return null
-                    val level = orderEntryElement.getAttributeValue(LEVEL_ATTRIBUTE)
-                    when (level) {
+                    when (orderEntryElement.getAttributeValue(LEVEL_ATTRIBUTE)) {
                         LibraryTablesRegistrar.PROJECT_LEVEL ->
                             findProjectLibrary(libraryName)?.let { LibInfo.ByXml(it, context, moduleSettings) }
                         LibraryTablesRegistrar.APPLICATION_LEVEL ->
@@ -147,8 +144,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                         .asSequence()
                         .mapNotNull { createLibInfo(it, this) }
                         .forEach {
-                            val platform = it.platform
-                            when (platform) {
+                            when (val platform = it.platform) {
                                 is CommonPlatform -> {
                                     if (!hasCommonStdlib && it.isStdlib) {
                                         hasCommonStdlib = true
@@ -166,8 +162,8 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
 
                 private fun ModuleSettings.detectPlatform(): TargetPlatform {
                     return detectPlatformByFacet()
-                            ?: detectPlatformByDependencies()
-                            ?: JvmPlatform
+                        ?: detectPlatformByDependencies()
+                        ?: JvmPlatform
                 }
 
                 private fun ModuleSettings.getSourceFolderElements(): List<Element> {
@@ -188,19 +184,22 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                 override fun isConversionNeeded(settings: ModuleSettings): Boolean {
                     if (settings.isExternalModule()) return false
 
-                    val targetPlatform = settings.detectPlatform()
-                    if (targetPlatform == JvmPlatform) return false
-
-                    return settings.getSourceFolderElements().any {
-                        JpsModuleRootModelSerializer.loadSourceRoot(it).rootType in rootTypesToMigrate
+                    val hasMigrationRoots = settings.getSourceFolderElements().any {
+                        loadSourceRoot(it).rootType in rootTypesToMigrate
                     }
+                    if (!hasMigrationRoots) {
+                        return false
+                    }
+
+                    val targetPlatform = settings.detectPlatform()
+                    return (targetPlatform != JvmPlatform)
                 }
 
                 override fun process(settings: ModuleSettings) {
                     for (sourceFolder in settings.getSourceFolderElements()) {
                         val contentRoot = sourceFolder.parent as? Element ?: continue
-                        val oldSourceRoot = JpsModuleRootModelSerializer.loadSourceRoot(sourceFolder)
-                        val url = sourceFolder.getAttributeValue(JpsModuleRootModelSerializer.URL_ATTRIBUTE)
+                        val oldSourceRoot = loadSourceRoot(sourceFolder)
+                        val url = sourceFolder.getAttributeValue(URL_ATTRIBUTE)
 
                         val (newRootType, data) = oldSourceRoot.getMigratedSourceRootTypeWithProperties() ?: continue
                         @Suppress("UNCHECKED_CAST")
@@ -208,7 +207,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                                 as? JpsTypedModuleSourceRoot<JpsElement> ?: continue
 
                         contentRoot.removeContent(sourceFolder)
-                        JpsModuleRootModelSerializer.saveSourceRoot(contentRoot, url, newSourceRoot)
+                        saveSourceRoot(contentRoot, url, newSourceRoot)
                     }
                 }
             }

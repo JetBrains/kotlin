@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 
@@ -66,6 +67,14 @@ internal fun classifierTypes(classTypes: Array<PsiClassType>): Collection<JavaCl
 
 internal fun annotations(annotations: Array<out PsiAnnotation>): Collection<JavaAnnotation> =
         annotations.convert(::JavaAnnotationImpl)
+
+internal fun nullabilityAnnotations(annotations: Array<out PsiAnnotation>): Collection<JavaAnnotation> =
+        annotations.convert(::JavaAnnotationImpl)
+                .filter { annotation ->
+                    val fqName = annotation.classId?.asSingleFqName() ?: return@filter false
+                    fqName in NULLABILITY_ANNOTATIONS
+                }
+
 
 internal fun namedAnnotationArguments(nameValuePairs: Array<PsiNameValuePair>): Collection<JavaAnnotationArgument> =
         nameValuePairs.convert { psi ->

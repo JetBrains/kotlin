@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -726,6 +726,9 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             if (variableDescriptor instanceof ValueParameterDescriptor &&
                 ((ValueParameterDescriptor) variableDescriptor).isCrossinline()) {
                 DeclarationDescriptor functionWithCrossinlineParameter = variableDescriptor.getContainingDeclaration();
+                if (functionsStack.peek().isSuspend()) {
+                    bindingTrace.record(CALL_SITE_IS_SUSPEND_FOR_CROSSINLINE_LAMBDA, (ValueParameterDescriptor) variableDescriptor, true);
+                }
                 for (int i = functionsStack.size() - 1; i >= 0; i--) {
                     Boolean alreadyPutValue = bindingTrace.getBindingContext()
                             .get(CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA, functionsStack.get(i));

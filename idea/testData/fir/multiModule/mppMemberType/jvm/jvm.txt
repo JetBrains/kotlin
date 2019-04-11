@@ -1,6 +1,8 @@
 FILE: jvm.kt
     public final actual class MyList : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|MyList| {
+            super<R|kotlin/Any|>()
+        }
 
         public final actual fun get(i: R|kotlin/Int|): R|kotlin/Int| {
             ^get R|<local>/i|
@@ -11,7 +13,9 @@ FILE: jvm.kt
 
     }
     public final class DerivedList : R|MyList| {
-        public constructor(): super<R|MyList|>()
+        public constructor(): R|DerivedList| {
+            super<R|MyList|>()
+        }
 
         public final fun useMember(): R|kotlin/Unit| {
             R|/MyList.get|(Int(1))
@@ -24,7 +28,9 @@ FILE: jvm.kt
         R|<local>/list|.R|/MyList.set|(Int(2), Int(3))
     }
     public final class DerivedWrapper : R|Wrapper| {
-        public constructor(): super<R|Wrapper|>()
+        public constructor(): R|DerivedWrapper| {
+            super<R|Wrapper|>()
+        }
 
         public final fun use(): R|kotlin/Unit| {
             R|/Wrapper.list|.R|/MyList.get|(Int(1))

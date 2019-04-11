@@ -1,0 +1,41 @@
+FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
+  FUN name:testD visibility:public modality:FINAL <> (x:kotlin.Comparable<kotlin.Double>, y:kotlin.Comparable<kotlin.Double>) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Comparable<kotlin.Double>
+    VALUE_PARAMETER name:y index:1 type:kotlin.Comparable<kotlin.Double>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testD (x: kotlin.Comparable<kotlin.Double>, y: kotlin.Comparable<kotlin.Double>): kotlin.Boolean declared in <root>'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'x: kotlin.Comparable<kotlin.Double> declared in <root>.testD' type=kotlin.Comparable<kotlin.Double> origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  GET_VAR 'y: kotlin.Comparable<kotlin.Double> declared in <root>.testD' type=kotlin.Comparable<kotlin.Double> origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/Comparable' type=kotlin.Boolean
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false
+  FUN name:testF visibility:public modality:FINAL <> (x:kotlin.Comparable<kotlin.Float>, y:kotlin.Comparable<kotlin.Float>) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Comparable<kotlin.Float>
+    VALUE_PARAMETER name:y index:1 type:kotlin.Comparable<kotlin.Float>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testF (x: kotlin.Comparable<kotlin.Float>, y: kotlin.Comparable<kotlin.Float>): kotlin.Boolean declared in <root>'
+        WHEN type=kotlin.Boolean origin=ANDAND
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'x: kotlin.Comparable<kotlin.Float> declared in <root>.testF' type=kotlin.Comparable<kotlin.Float> origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  GET_VAR 'y: kotlin.Comparable<kotlin.Float> declared in <root>.testF' type=kotlin.Comparable<kotlin.Float> origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/Comparable' type=kotlin.Boolean
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONST Boolean type=kotlin.Boolean value=false

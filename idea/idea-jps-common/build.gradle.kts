@@ -21,8 +21,4 @@ sourceSets {
     "test" {}
 }
 
-runtimeJar {
-    archiveName = "jps-common-ide.jar"
-}
-
-ideaPlugin()
+runtimeJar()

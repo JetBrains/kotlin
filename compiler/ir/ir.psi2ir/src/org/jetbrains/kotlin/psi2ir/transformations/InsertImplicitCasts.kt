@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
@@ -107,7 +108,11 @@ open class InsertImplicitCasts(
 
     override fun visitReturn(expression: IrReturn): IrExpression =
         expression.transformPostfix {
-            value = value.cast(expression.returnTarget.returnType)
+            value = if (expression.returnTargetSymbol is IrConstructorSymbol) {
+                value.coerceToUnit()
+            } else {
+                value.cast(expression.returnTarget.returnType)
+            }
         }
 
     override fun visitSetVariable(expression: IrSetVariable): IrExpression =

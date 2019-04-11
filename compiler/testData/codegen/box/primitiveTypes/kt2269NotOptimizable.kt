@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun identity(x: Int): Int {
     return when {
         x < 0 -> identity(x + 1) - 1

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -81,11 +82,13 @@ val jvmPhases = namedIrFilePhase(
             makePatchParentsPhase(1) then
 
             jvmLocalDeclarationsPhase then
+            singleAbstractMethodPhase then
             callableReferencePhase then
             functionNVarargInvokePhase then
 
             innerClassesPhase then
             innerClassConstructorCallsPhase then
+            forLoopsPhase then
 
             makePatchParentsPhase(2) then
 
@@ -107,6 +110,8 @@ val jvmPhases = namedIrFilePhase(
             jvmBuiltinOptimizationLoweringPhase then
             additionalClassAnnotationPhase then
 
+            // should be last transformation
+            removeDeclarationsThatWouldBeInlined then
             makePatchParentsPhase(3)
 )
 

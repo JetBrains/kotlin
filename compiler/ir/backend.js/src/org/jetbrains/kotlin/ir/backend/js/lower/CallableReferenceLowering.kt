@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.isEqualTo
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -546,7 +545,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             val value = JsIrBuilder.buildGetValue(unboundParamSymbols[i])
             val parameter = callTarget.valueParameters[j]
             val argument =
-                if (parameter.varargElementType?.let { closureParam.type.isEqualTo(it) } == true) {
+                if (parameter.varargElementType == closureParam.type) {
                     // fun foo(x: X, vararg y: Y): Z
                     // val r: (X, Y) -> Z = ::foo
                     val tailValues = unboundParamSymbols.drop(i)

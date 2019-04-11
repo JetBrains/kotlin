@@ -5,29 +5,22 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.codegen.`when`.SwitchCodegen.Companion.preferLookupOverSwitch
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isTrueConst
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
 // TODO: eliminate the temporary variable
 class SwitchGenerator(private val expression: IrWhen, private val data: BlockInfo, private val codegen: ExpressionCodegen) {
-    private val mv = codegen.mv
-
     data class ExpressionToLabel(val expression: IrExpression, val label: Label)
     data class CallToLabel(val call: IrCall, val label: Label)
     data class ValueToLabel(val value: Any?, val label: Label)
 
     // @return null if the IrWhen cannot be emitted as lookupswitch or tableswitch.
-    fun generate(): StackValue? {
+    fun generate(): PromisedValue? {
         val expressionToLabels = ArrayList<ExpressionToLabel>()
         var elseExpression: IrExpression? = null
         val callToLabels = ArrayList<CallToLabel>()
@@ -183,35 +176,22 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         return null
     }
 
-    private fun gen(expression: IrElement, data: BlockInfo): StackValue = codegen.gen(expression, data)
-
-    private fun coerceNotToUnit(fromType: Type, fromKotlinType: KotlinType?, toKotlinType: KotlinType): StackValue =
-        codegen.coerceNotToUnit(fromType, fromKotlinType, toKotlinType)
-
     abstract inner class Switch(
         val subject: IrGetValue,
         val elseExpression: IrExpression?,
         val expressionToLabels: ArrayList<ExpressionToLabel>
     ) {
-        protected val endLabel = Label()
         protected val defaultLabel = Label()
 
         open fun shouldOptimize() = false
 
-        open fun genOptimizedIfEnoughCases(): StackValue? {
+        open fun genOptimizedIfEnoughCases(): PromisedValue? {
             if (!shouldOptimize())
                 return null
 
-            genSubject()
             genSwitch()
-            genThenExpressions()
-            val result = genElseExpression()
-
-            mv.mark(endLabel)
-            return result
+            return genBranchTargets()
         }
-
-        protected abstract fun genSubject()
 
         protected abstract fun genSwitch()
 
@@ -225,34 +205,31 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             //
             // lookupswitch is 2X as large as tableswitch with the same entries. However, lookupswitch is sparse while tableswitch must
             // enumerate all the entries in the range.
-            if (preferLookupOverSwitch(intCases.size, rangeLength)) {
-                mv.lookupswitch(defaultLabel, intCases.map { it.value as Int }.toIntArray(), intCases.map { it.label }.toTypedArray())
-            } else {
-                val labels = Array(rangeLength.toInt()) { defaultLabel }
-                for (case in intCases)
-                    labels[case.value as Int - caseMin] = case.label
-                mv.tableswitch(caseMin, caseMax, defaultLabel, *labels)
+            with(codegen) {
+                if (preferLookupOverSwitch(intCases.size, rangeLength)) {
+                    mv.lookupswitch(defaultLabel, intCases.map { it.value as Int }.toIntArray(), intCases.map { it.label }.toTypedArray())
+                } else {
+                    val labels = Array(rangeLength.toInt()) { defaultLabel }
+                    for (case in intCases)
+                        labels[case.value as Int - caseMin] = case.label
+                    mv.tableswitch(caseMin, caseMax, defaultLabel, *labels)
+                }
             }
         }
 
-        protected fun genThenExpressions() {
-            for ((thenExpression, label) in expressionToLabels) {
-                mv.visitLabel(label)
-                val stackValue = thenExpression.run { gen(this, data) }
-                coerceNotToUnit(stackValue.type, stackValue.kotlinType, expression.type.toKotlinType())
-                mv.goTo(endLabel)
-            }
-        }
-
-        protected fun genElseExpression(): StackValue {
-            mv.visitLabel(defaultLabel)
-            return if (elseExpression == null) {
-                // There's no else part. Generate Unit if needed.
-                coerceNotToUnit(Type.VOID_TYPE, null, expression.type.toKotlinType())
-            } else {
-                // Generate the else part.
-                val stackValue = gen(elseExpression, data)
-                coerceNotToUnit(stackValue.type, stackValue.kotlinType, expression.type.toKotlinType())
+        protected fun genBranchTargets(): PromisedValue {
+            with(codegen) {
+                val endLabel = Label()
+                for ((thenExpression, label) in expressionToLabels) {
+                    mv.visitLabel(label)
+                    thenExpression.accept(codegen, data).coerce(expression.asmType).materialized
+                    mv.goTo(endLabel)
+                }
+                mv.visitLabel(defaultLabel)
+                val stackValue = elseExpression?.accept(codegen, data) ?: voidValue
+                val result = stackValue.coerce(expression.asmType).materialized
+                mv.mark(endLabel)
+                return result
             }
         }
     }
@@ -267,12 +244,11 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         // IF is more compact when there are only 1 or fewer branches, in addition to else.
         override fun shouldOptimize() = cases.size > 1
 
-        override fun genSubject() {
-            gen(subject, data)
-        }
-
         override fun genSwitch() {
-            genIntSwitch(cases)
+            with(codegen) {
+                subject.accept(codegen, data).materialize()
+                genIntSwitch(cases)
+            }
         }
     }
 
@@ -340,30 +316,29 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         // same bucket). The optimization isn't better than an IF cascade when #switch-targets <= 2.
         override fun shouldOptimize() = hashAndSwitchLabels.size > 2
 
-        override fun genSubject() {
-            if (subject.type.isNullableString()) {
-                val nullLabel = cases.find { it.value == null }?.label ?: defaultLabel
-                gen(subject, data)
-                mv.ifnull(nullLabel)
-            }
-            gen(subject, data)
-            mv.invokevirtual("java/lang/String", "hashCode", "()I", false)
-        }
-
         override fun genSwitch() {
-            genIntSwitch(hashAndSwitchLabels)
-
-            // Multiple strings can be hashed into the same bucket.
-            // Generate an if cascade to resolve that for each bucket.
-            for ((hash, switchLabel) in hashAndSwitchLabels) {
-                mv.visitLabel(switchLabel)
-                for ((string, label) in hashToStringAndExprLabels[hash]!!) {
-                    gen(subject, data)
-                    mv.aconst(string)
-                    mv.invokevirtual("java/lang/String", "equals", "(Ljava/lang/Object;)Z", false)
-                    mv.ifne(label)
+            with(codegen) {
+                if (subject.type.isNullableString()) {
+                    subject.accept(codegen, data).materialize()
+                    mv.ifnull(cases.find { it.value == null }?.label ?: defaultLabel)
                 }
-                mv.goTo(defaultLabel)
+                // Reevaluating the subject is fine here because it is a read of a temporary.
+                subject.accept(codegen, data).materialize()
+                mv.invokevirtual("java/lang/String", "hashCode", "()I", false)
+                genIntSwitch(hashAndSwitchLabels)
+
+                // Multiple strings can be hashed into the same bucket.
+                // Generate an if cascade to resolve that for each bucket.
+                for ((hash, switchLabel) in hashAndSwitchLabels) {
+                    mv.visitLabel(switchLabel)
+                    for ((string, label) in hashToStringAndExprLabels[hash]!!) {
+                        subject.accept(codegen, data).materialize()
+                        mv.aconst(string)
+                        mv.invokevirtual("java/lang/String", "equals", "(Ljava/lang/Object;)Z", false)
+                        mv.ifne(label)
+                    }
+                    mv.goTo(defaultLabel)
+                }
             }
         }
     }

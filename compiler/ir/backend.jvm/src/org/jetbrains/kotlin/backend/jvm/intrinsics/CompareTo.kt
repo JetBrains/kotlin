@@ -16,13 +16,19 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.BranchedValue
+import org.jetbrains.kotlin.codegen.NumberCompare
+import org.jetbrains.kotlin.codegen.ObjectCompare
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.lang.UnsupportedOperationException
@@ -59,35 +65,34 @@ class CompareTo : IntrinsicMethod() {
     }
 }
 
+class BooleanComparison(val op: IElementType, val a: MaterialValue, val b: MaterialValue) : BooleanValue(a.mv) {
+    override fun jumpIfFalse(target: Label) {
+        // TODO 1. get rid of the dependency; 2. take `b.type` into account.
+        val opcode = if (a.type.sort == Type.OBJECT)
+            ObjectCompare.getObjectCompareOpcode(op)
+        else
+            NumberCompare.patchOpcode(NumberCompare.getNumberCompareOpcode(op), mv, op, a.type)
+        mv.visitJumpInsn(opcode, target)
+    }
+
+    override fun jumpIfTrue(target: Label) {
+        val opcode = if (a.type.sort == Type.OBJECT)
+            BranchedValue.negatedOperations[ObjectCompare.getObjectCompareOpcode(op)]!!
+        else
+            NumberCompare.patchOpcode(BranchedValue.negatedOperations[NumberCompare.getNumberCompareOpcode(op)]!!, mv, op, a.type)
+        mv.visitJumpInsn(opcode, target)
+    }
+}
 
 class PrimitiveComparison(
     private val primitiveNumberType: KotlinType,
     private val operatorToken: KtSingleValueToken
-) : IntrinsicMethod(), ComparisonIntrinsic {
-
-    override fun genStackValue(expression: IrMemberAccessExpression, context: JvmBackendContext): StackValue {
-        val parameterType = context.state.typeMapper.mapType(primitiveNumberType)
-
-        return StackValue.cmp(
-            operatorToken,
-            parameterType,
-            StackValue.onStack(parameterType, primitiveNumberType),
-            StackValue.onStack(parameterType, primitiveNumberType)
-        )
+) : IntrinsicMethod() {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        val parameterType = codegen.typeMapper.mapType(primitiveNumberType)
+        val (left, right) = expression.receiverAndArgs()
+        val a = left.accept(codegen, data).coerce(parameterType).materialized
+        val b = right.accept(codegen, data).coerce(parameterType).materialized
+        return BooleanComparison(operatorToken, a, b)
     }
-
-    override fun toCallable(
-        expression: IrMemberAccessExpression,
-        signature: JvmMethodSignature,
-        context: JvmBackendContext
-    ): IrIntrinsicFunction {
-        val parameterType = context.state.typeMapper.mapType(primitiveNumberType)
-
-        return object : IrIntrinsicFunction(expression, signature, context, listOf(parameterType, parameterType)) {
-            override fun genInvokeInstruction(v: InstructionAdapter) {
-                genStackValue(expression, context).put(Type.BOOLEAN_TYPE, v)
-            }
-        }
-    }
-
 }

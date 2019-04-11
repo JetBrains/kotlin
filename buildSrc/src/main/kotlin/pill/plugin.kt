@@ -13,7 +13,7 @@ import java.io.File
 
 class PillConfigurablePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.configurations.create(EmbeddedComponents.CONFIGURATION_NAME)
+        project.configurations.maybeCreate(EmbeddedComponents.CONFIGURATION_NAME)
         project.extensions.create("pill", PillExtension::class.java)
     }
 }
@@ -141,7 +141,9 @@ class JpsCompatiblePlugin : Plugin<Project> {
         }
 
         val projectLibraries = getProjectLibraries(rootProject)
-        val parserContext = ParserContext(getDependencyMappers(projectLibraries), variant)
+        val dependencyMappers = getDependencyMappers(projectLibraries)
+
+        val parserContext = ParserContext(dependencyMappers, variant)
 
         val jpsProject = parse(rootProject, projectLibraries, parserContext)
             .mapLibraries(this::attachPlatformSources, this::attachAsmSources)
@@ -152,7 +154,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
         removeJpsAndPillRunConfigurations()
         removeAllArtifactConfigurations()
 
-        generateKotlinPluginArtifactFile(rootProject).write()
+        generateKotlinPluginArtifactFile(rootProject, dependencyMappers).write()
 
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(rootProject)
@@ -308,7 +310,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     private fun attachPlatformSources(library: PLibrary): PLibrary {
-        val platformSourcesJar = File(platformDir, "../sources/ideaIC-$platformVersion-sources.jar")
+        val platformSourcesJar = File(platformDir, "../../../sources/intellij-$platformVersion-sources.jar")
 
         if (library.classes.any { it.startsWith(platformDir) }) {
             return library.attachSource(platformSourcesJar)

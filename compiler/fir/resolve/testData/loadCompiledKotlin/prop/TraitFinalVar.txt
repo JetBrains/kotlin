@@ -1,0 +1,2 @@
+public abstract interface A : R|kotlin/Any| {
+}

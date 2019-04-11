@@ -1,9 +1,9 @@
 FILE: functionTypes.kt
-    <T> public? final? fun simpleRun(f: ( (T) -> Unit )): Unit {
+    public? final? fun <T> simpleRun(f: ( (T) -> Unit )): Unit {
         ^simpleRun f#()
     }
-    <T, R> public? final? fun List<T>.simpleMap(f: ( (T) -> R )): R {
+    public? final? fun <T, R> List<T>.simpleMap(f: ( (T) -> R )): R {
     }
-    <T> public? final? fun simpleWith(t: T, f: ( T.() -> Unit )): Unit {
+    public? final? fun <T> simpleWith(t: T, f: ( T.() -> Unit )): Unit {
         ^simpleWith t#.f#()
     }

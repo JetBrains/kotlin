@@ -14,9 +14,10 @@ import java.io.PipedOutputStream
 import kotlin.concurrent.thread
 
 data class TCServiceMessagesTestExecutionSpec(
-        val forkOptions: ProcessForkOptions,
-        val args: List<String>,
-        val clientSettings: TCServiceMessagesClientSettings
+    val forkOptions: ProcessForkOptions,
+    val args: List<String>,
+    val checkExitCode: Boolean,
+    val clientSettings: TCServiceMessagesClientSettings
 ) : TestExecutionSpec
 
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing")
@@ -50,8 +51,8 @@ class TCServiceMessagesTestExecutor(
                                 ServiceMessage.parse(it, client)
                             } catch (e: Exception) {
                                 log.error(
-                                        "Error while processing test process output message \"$it\"",
-                                        e
+                                    "Error while processing test process output message \"$it\"",
+                                    e
                                 )
                             }
                         }
@@ -73,7 +74,7 @@ class TCServiceMessagesTestExecutor(
         val result = execHandle!!.waitForFinish()
         outputReaderThread!!.join()
 
-        if (result.exitValue != 0) {
+        if (spec.checkExitCode && result.exitValue != 0) {
             error("$execHandle exited with errors (exit code: ${result.exitValue})")
         }
     }

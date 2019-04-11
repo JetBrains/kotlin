@@ -20,11 +20,15 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.model.StubTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-fun ConstraintStorage.buildCurrentSubstitutor(additionalBindings: Map<TypeConstructor, StubType>): NewTypeSubstitutorByConstructorMap =
-    NewTypeSubstitutorByConstructorMap(fixedTypeVariables.entries.associate { it.key to it.value } + additionalBindings)
+fun ConstraintStorage.buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): NewTypeSubstitutorByConstructorMap =
+    NewTypeSubstitutorByConstructorMap( (fixedTypeVariables.entries.associate { it.key to it.value } + additionalBindings).cast() ) // TODO: SUB
 
 fun ConstraintStorage.buildResultingSubstitutor(): NewTypeSubstitutor {
     val currentSubstitutorMap = fixedTypeVariables.entries.associate {
@@ -33,11 +37,11 @@ fun ConstraintStorage.buildResultingSubstitutor(): NewTypeSubstitutor {
     val uninferredSubstitutorMap = notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
         freshTypeConstructor to ErrorUtils.createErrorTypeWithCustomConstructor(
             "Uninferred type",
-            typeVariable.typeVariable.freshTypeConstructor
+            (typeVariable.typeVariable as NewTypeVariable).freshTypeConstructor// TODO: SUB
         )
     }
 
-    return NewTypeSubstitutorByConstructorMap(currentSubstitutorMap + uninferredSubstitutorMap)
+    return NewTypeSubstitutorByConstructorMap((currentSubstitutorMap + uninferredSubstitutorMap).cast()) // TODO: SUB
 }
 
 val CallableDescriptor.returnTypeOrNothing: UnwrappedType
@@ -63,7 +67,7 @@ fun CallableDescriptor.substituteAndApproximateCapturedTypes(substitutor: NewTyp
 
         override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
             substitutor.safeSubstitute(topLevelType.unwrap()).let { substitutedType ->
-                TypeApproximator().approximateToSuperType(substitutedType, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation)
+                TypeApproximator(builtIns).approximateToSuperType(substitutedType, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation)
                         ?: substitutedType
             }
     }

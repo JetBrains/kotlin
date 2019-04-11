@@ -1,0 +1,6 @@
+public open class MethodTypePOneUpperBound : R|kotlin/Any| {
+    public open fun <T> bar(): R|kotlin/Unit|
+
+    public constructor(): R|test/MethodTypePOneUpperBound|
+
+}

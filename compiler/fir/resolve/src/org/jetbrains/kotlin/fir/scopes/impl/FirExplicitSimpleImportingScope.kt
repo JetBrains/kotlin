@@ -16,6 +16,6 @@ class FirExplicitSimpleImportingScope(
 
     override val simpleImports =
         imports.filterIsInstance<FirResolvedImportImpl>()
-            .filter { !it.isAllUnder }
-            .groupBy { it.aliasName ?: it.resolvedFqName.shortClassName }
+            .filter { !it.isAllUnder && it.importedName != null }
+            .groupBy { it.aliasName ?: it.importedName!! }
 }

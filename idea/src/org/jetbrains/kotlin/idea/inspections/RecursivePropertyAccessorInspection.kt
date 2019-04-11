@@ -26,15 +26,18 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return simpleNameExpressionVisitor { expression ->
             if (isRecursivePropertyAccess(expression)) {
-                holder.registerProblem(expression,
-                                       "Recursive property accessor",
-                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                       ReplaceWithFieldFix())
-            }
-            else if (isRecursiveSyntheticPropertyAccess(expression)) {
-                holder.registerProblem(expression,
-                                       "Recursive synthetic property accessor",
-                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+                holder.registerProblem(
+                    expression,
+                    "Recursive property accessor",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    ReplaceWithFieldFix()
+                )
+            } else if (isRecursiveSyntheticPropertyAccess(expression)) {
+                holder.registerProblem(
+                    expression,
+                    "Recursive synthetic property accessor",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                )
             }
         }
     }
@@ -55,7 +58,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
     companion object {
 
         private fun KtBinaryExpression?.isAssignmentTo(expression: KtSimpleNameExpression): Boolean =
-                this != null && KtPsiUtil.isAssignment(this) && PsiTreeUtil.isAncestor(left, expression, false)
+            this != null && KtPsiUtil.isAssignment(this) && PsiTreeUtil.isAncestor(left, expression, false)
 
         private fun isSameAccessor(expression: KtSimpleNameExpression, isGetter: Boolean): Boolean {
             val binaryExpr = expression.getStrictParentOfType<KtBinaryExpression>()
@@ -64,8 +67,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
                     return KtTokens.AUGMENTED_ASSIGNMENTS.contains(binaryExpr?.operationToken)
                 }
                 return true
-            }
-            else /* isSetter */ {
+            } else /* isSetter */ {
                 if (binaryExpr.isAssignmentTo(expression)) {
                     return true
                 }
@@ -84,7 +86,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             if (element.parent is KtCallableReferenceExpression) return false
             val bindingContext = element.analyze()
             val target = bindingContext[REFERENCE_TARGET, element]
-            if (target != bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, propertyAccessor.property]) return false
+            if (target != bindingContext[DECLARATION_TO_DESCRIPTOR, propertyAccessor.property]) return false
             (element.parent as? KtQualifiedExpression)?.let {
                 if (it.receiverExpression.text != KtTokens.THIS_KEYWORD.value && !it.hasObjectReceiver(bindingContext)) return false
             }
@@ -104,11 +106,12 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             val syntheticDescriptor = bindingContext[REFERENCE_TARGET, element] as? SyntheticJavaPropertyDescriptor ?: return false
             val namedFunctionDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, namedFunction]
             if (namedFunctionDescriptor != syntheticDescriptor.getMethod &&
-                namedFunctionDescriptor != syntheticDescriptor.setMethod) return false
+                namedFunctionDescriptor != syntheticDescriptor.setMethod
+            ) return false
             return isSameAccessor(element, isGetter)
         }
 
-        private fun KtQualifiedExpression.hasObjectReceiver(context: BindingContext) : Boolean {
+        private fun KtQualifiedExpression.hasObjectReceiver(context: BindingContext): Boolean {
             val receiver = receiverExpression as? KtReferenceExpression ?: return false
             return (context[REFERENCE_TARGET, receiver] as? ClassDescriptor)?.kind == ClassKind.OBJECT
         }

@@ -21,4 +21,7 @@ class FirPrimaryConstructorImpl(
     isActual: Boolean,
     delegatedSelfTypeRef: FirTypeRef,
     delegatedConstructor: FirDelegatedConstructorCall?
-) : FirConstructorImpl(session, psi, symbol, visibility, isExpect, isActual, delegatedSelfTypeRef, delegatedConstructor)
+) : FirConstructorImpl(session, psi, symbol, visibility, isExpect, isActual, delegatedSelfTypeRef, delegatedConstructor) {
+    override val isPrimary: Boolean
+        get() = true
+}

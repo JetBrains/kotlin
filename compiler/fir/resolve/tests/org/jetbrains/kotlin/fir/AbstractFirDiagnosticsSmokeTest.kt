@@ -49,7 +49,6 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
     }
 
     private fun analyzeAndCheckUnhandled(files: List<TestFile>) {
-
         val groupedByModule = files.groupBy(TestFile::module)
 
         val modules = createModules(groupedByModule)
@@ -57,7 +56,11 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
         val sessionProvider = FirProjectSessionProvider(project)
 
         //For BuiltIns, registered in sessionProvider automatically
-        FirLibrarySession(builtInsModuleInfo, sessionProvider, GlobalSearchScope.EMPTY_SCOPE)
+        val allProjectScope = GlobalSearchScope.allScope(project)
+        FirLibrarySession.create(
+            builtInsModuleInfo, sessionProvider, allProjectScope,
+            environment
+        )
 
         val configToSession = modules.mapValues { (config, info) ->
             val moduleFiles = groupedByModule.getValue(config)

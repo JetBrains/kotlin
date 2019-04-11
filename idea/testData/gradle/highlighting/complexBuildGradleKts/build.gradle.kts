@@ -118,7 +118,8 @@ extra["compilerModules"] = arrayOf(
             ":compiler:fir:cones",
             ":compiler:fir:resolve",
             ":compiler:fir:tree",
-            ":compiler:fir:psi2fir"
+            ":compiler:fir:psi2fir",
+            ":compiler:fir:fir2ir"
         )
     } else {
         emptyArray()

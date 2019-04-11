@@ -1,12 +1,14 @@
 FILE: genericFunctions.kt
-    public? final? interface Any {
+    public? final? interface Any : kotlin/Any {
     }
-    <reified T : Any> public? final? inline fun Any.safeAs(): T? {
+    public? final? inline fun <reified T : Any> Any.safeAs(): T? {
         ^safeAs (this# as? T)
     }
     public? abstract class Summator : kotlin/Any {
-        public? constructor(): super<kotlin/Any>()
+        public? constructor(): R|Summator| {
+            super<kotlin/Any>()
+        }
 
-        <T> public? abstract fun plus(first: T, second: T): T
+        public? abstract fun <T> plus(first: T, second: T): T
 
     }

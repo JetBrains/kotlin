@@ -5,24 +5,47 @@
 
 package org.jetbrains.kotlin.ir.symbols
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 interface IrClassifierEqualityChecker {
     fun areEqual(left: IrClassifierSymbol, right: IrClassifierSymbol): Boolean
+
+    fun getHashCode(symbol: IrClassifierSymbol): Int
 }
 
 object FqNameEqualityChecker : IrClassifierEqualityChecker {
     override fun areEqual(left: IrClassifierSymbol, right: IrClassifierSymbol): Boolean {
         if (left === right) return true
-        if (!left.isBound || !right.isBound) checkViaDescriptors(left.descriptor, right.descriptor)
+        if (!left.isBound || !right.isBound) {
+            return checkViaDescriptors(left.descriptor, right.descriptor)
+        }
         return checkViaDeclarations(left.owner, right.owner)
     }
 
-    private val IrDeclarationWithName.fqName
-        get(): FqName? {
+    override fun getHashCode(symbol: IrClassifierSymbol): Int {
+        if (symbol.isBound) {
+            val owner = symbol.owner
+            if (owner is IrClass && !isLocalClass(owner)) {
+                return owner.fqName.hashCode()
+            }
+            return owner.hashCode()
+        }
+
+        val descriptor = symbol.descriptor
+        if (descriptor is ClassDescriptor && !DescriptorUtils.isLocal(descriptor)) {
+            return descriptor.fqNameSafe.hashCode()
+        }
+        return descriptor.hashCode()
+    }
+
+    private val IrDeclarationWithName.fqName: FqName?
+        get() {
             val parentFqName = when (val parent = parent) {
                 is IrPackageFragment -> parent.fqName
                 is IrDeclarationWithName -> parent.fqName

@@ -73,6 +73,12 @@ fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
         removeArtifacts(configurations.getOrCreate("archives"), defaultJarTask)
     }
     return task.apply {
+        configurations.findByName("embedded")?.let { embedded ->
+            dependsOn(embedded)
+            from {
+                embedded.map(::zipTree)
+            }
+        }
         setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         body()

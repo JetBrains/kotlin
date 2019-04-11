@@ -1,8 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 suspend fun wrapUp2() {
     withContext<Unit> {
-        other()
+        <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>other<!>()
     }
 }
 suspend fun <T> withContext(block: suspend () -> T) {}

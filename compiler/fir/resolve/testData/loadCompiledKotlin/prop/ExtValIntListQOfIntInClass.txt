@@ -1,0 +1,4 @@
+public final class ExtValInClass : R|kotlin/Any| {
+    public constructor(): R|test/ExtValInClass|
+
+}

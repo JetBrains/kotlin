@@ -9,7 +9,6 @@ import com.intellij.openapi.util.Comparing
 import org.jetbrains.kotlin.codegen.AbstractCheckLocalVariablesTableTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.junit.ComparisonFailure
 import java.io.File
 
@@ -17,10 +16,6 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.put(JVMConfigurationKeys.IR, true)
-    }
-
-    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
-        return ConfigurationKind.ALL
     }
 
     override fun doCompare(

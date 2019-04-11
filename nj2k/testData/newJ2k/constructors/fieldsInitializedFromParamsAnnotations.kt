@@ -1,0 +1,1 @@
+internal class C(@Deprecated("") private val p1: Int, private val myP2: Int, @SuppressWarnings("x") var p3: Int)

@@ -1,0 +1,35 @@
+package
+
+@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> produce(/*0*/ @kotlin.BuilderInference block: suspend ProducerScope<E>.() -> kotlin.Unit): ProducerScope<E>
+public fun test(/*0*/ ls: kotlin.collections.List<kotlin.Int>): ProducerScope<kotlin.Int>
+private fun </*0*/ E> kotlin.collections.Iterable<E>.asReceiveChannel(): ReceiveChannel<E>
+public suspend fun </*0*/ E, /*1*/ C> ReceiveChannel<E>.toChannel(/*0*/ destination: C): C
+
+public final class CoroutineScope {
+    public constructor CoroutineScope()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ K> {
+    public constructor Inv</*0*/ K>(/*0*/ value: K)
+    public final val value: K
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ProducerScope</*0*/ E> {
+    public abstract val prop: Inv<E>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ReceiveChannel</*0*/ E> {
+    public constructor ReceiveChannel</*0*/ E>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

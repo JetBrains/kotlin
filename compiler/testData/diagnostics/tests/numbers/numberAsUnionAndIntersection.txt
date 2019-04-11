@@ -1,0 +1,6 @@
+package
+
+public fun getShort(): kotlin.Short?
+public fun </*0*/ R : kotlin.Comparable<R>> shortComparable(/*0*/ f: () -> R): kotlin.Unit
+public fun </*0*/ R> shortExpected(/*0*/ f: () -> R): kotlin.Unit
+public fun test(/*0*/ numbers: kotlin.collections.List<kotlin.Number>): kotlin.Unit

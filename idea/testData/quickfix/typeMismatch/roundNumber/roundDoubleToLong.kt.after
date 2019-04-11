@@ -1,0 +1,9 @@
+import kotlin.math.roundToLong
+
+// "Round using roundToLong()" "true"
+// WITH_RUNTIME
+fun test(d: Double) {
+    bar(d.roundToLong())
+}
+
+fun bar(x: Long) {}

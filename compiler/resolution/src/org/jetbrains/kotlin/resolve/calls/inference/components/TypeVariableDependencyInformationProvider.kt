@@ -18,24 +18,26 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.utils.SmartSet
 
 class TypeVariableDependencyInformationProvider(
-    private val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>,
+    private val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>,
     private val postponedKtPrimitives: List<PostponedResolvedAtom>,
-    private val topLevelType: UnwrappedType?
+    private val topLevelType: KotlinTypeMarker?,
+    private val typeSystemContext: TypeSystemInferenceExtensionContext
 ) {
     // not oriented edges
-    private val constrainEdges: MutableMap<TypeConstructor, MutableSet<TypeConstructor>> = hashMapOf()
+    private val constrainEdges: MutableMap<TypeConstructorMarker, MutableSet<TypeConstructorMarker>> = hashMapOf()
 
     // oriented edges
-    private val postponeArgumentsEdges: MutableMap<TypeConstructor, MutableSet<TypeConstructor>> = hashMapOf()
+    private val postponeArgumentsEdges: MutableMap<TypeConstructorMarker, MutableSet<TypeConstructorMarker>> = hashMapOf()
 
-    private val relatedToAllOutputTypes: MutableSet<TypeConstructor> = hashSetOf()
-    private val relatedToTopLevelType: MutableSet<TypeConstructor> = hashSetOf()
+    private val relatedToAllOutputTypes: MutableSet<TypeConstructorMarker> = hashSetOf()
+    private val relatedToTopLevelType: MutableSet<TypeConstructorMarker> = hashSetOf()
 
     init {
         computeConstraintEdges()
@@ -44,17 +46,17 @@ class TypeVariableDependencyInformationProvider(
         computeRelatedToTopLevelType()
     }
 
-    fun isVariableRelatedToTopLevelType(variable: TypeConstructor) = relatedToTopLevelType.contains(variable)
-    fun isVariableRelatedToAnyOutputType(variable: TypeConstructor) = relatedToAllOutputTypes.contains(variable)
+    fun isVariableRelatedToTopLevelType(variable: TypeConstructorMarker) = relatedToTopLevelType.contains(variable)
+    fun isVariableRelatedToAnyOutputType(variable: TypeConstructorMarker) = relatedToAllOutputTypes.contains(variable)
 
     private fun computeConstraintEdges() {
-        fun addConstraintEdge(from: TypeConstructor, to: TypeConstructor) {
+        fun addConstraintEdge(from: TypeConstructorMarker, to: TypeConstructorMarker) {
             constrainEdges.getOrPut(from) { hashSetOf() }.add(to)
             constrainEdges.getOrPut(to) { hashSetOf() }.add(from)
         }
 
         for (variableWithConstraints in notFixedTypeVariables.values) {
-            val from = variableWithConstraints.typeVariable.freshTypeConstructor
+            val from = variableWithConstraints.typeVariable.freshTypeConstructor(typeSystemContext)
 
             for (constraint in variableWithConstraints.constraints) {
                 constraint.type.forAllMyTypeVariables {
@@ -67,14 +69,14 @@ class TypeVariableDependencyInformationProvider(
     }
 
     private fun computePostponeArgumentsEdges() {
-        fun addPostponeArgumentsEdges(from: TypeConstructor, to: TypeConstructor) {
+        fun addPostponeArgumentsEdges(from: TypeConstructorMarker, to: TypeConstructorMarker) {
             postponeArgumentsEdges.getOrPut(from) { hashSetOf() }.add(to)
         }
 
         for (argument in postponedKtPrimitives) {
             if (argument.analyzed) continue
 
-            val typeVariablesInOutputType = SmartSet.create<TypeConstructor>()
+            val typeVariablesInOutputType = SmartSet.create<TypeConstructorMarker>()
             (argument.outputType ?: continue).forAllMyTypeVariables { typeVariablesInOutputType.add(it) }
             if (typeVariablesInOutputType.isEmpty()) continue
 
@@ -104,18 +106,21 @@ class TypeVariableDependencyInformationProvider(
         }
     }
 
-    private fun isMyTypeVariable(typeConstructor: TypeConstructor) = notFixedTypeVariables.containsKey(typeConstructor)
+    private fun isMyTypeVariable(typeConstructor: TypeConstructorMarker) = notFixedTypeVariables.containsKey(typeConstructor)
 
-    private fun UnwrappedType.forAllMyTypeVariables(action: (TypeConstructor) -> Unit) = this.contains {
-        if (isMyTypeVariable(it.constructor)) action(it.constructor)
+    private fun KotlinTypeMarker.forAllMyTypeVariables(action: (TypeConstructorMarker) -> Unit) =
+        with(typeSystemContext) {
+            contains {
+                if (isMyTypeVariable(it.typeConstructor())) action(it.typeConstructor())
+                false
+            }
+        }
 
-        false
-    }
 
-    private fun getConstraintEdges(from: TypeConstructor): Set<TypeConstructor> = constrainEdges[from] ?: emptySet()
-    private fun getPostponeEdges(from: TypeConstructor): Set<TypeConstructor> = postponeArgumentsEdges[from] ?: emptySet()
+    private fun getConstraintEdges(from: TypeConstructorMarker): Set<TypeConstructorMarker> = constrainEdges[from] ?: emptySet()
+    private fun getPostponeEdges(from: TypeConstructorMarker): Set<TypeConstructorMarker> = postponeArgumentsEdges[from] ?: emptySet()
 
-    private fun addAllRelatedNodes(to: MutableSet<TypeConstructor>, node: TypeConstructor, includePostponedEdges: Boolean) {
+    private fun addAllRelatedNodes(to: MutableSet<TypeConstructorMarker>, node: TypeConstructorMarker, includePostponedEdges: Boolean) {
         if (to.add(node)) {
             for (relatedNode in getConstraintEdges(node)) {
                 addAllRelatedNodes(to, relatedNode, includePostponedEdges)

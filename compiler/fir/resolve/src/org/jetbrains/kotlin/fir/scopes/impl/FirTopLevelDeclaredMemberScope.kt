@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class FirTopLevelDeclaredMemberScope(
@@ -25,13 +25,13 @@ class FirTopLevelDeclaredMemberScope(
     private val packageFqName = file.packageFqName
 
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
-        val constructors = provider.getCallableSymbols(CallableId(packageFqName, FqName.topLevel(name), name))
+        val constructors = provider.getClassDeclaredCallableSymbols(ClassId.topLevel(packageFqName.child(name)), name)
         for (symbol in constructors) {
             if (symbol is ConeFunctionSymbol && !processor(symbol)) {
                 return STOP
             }
         }
-        val symbols = provider.getCallableSymbols(CallableId(packageFqName, name))
+        val symbols = provider.getTopLevelCallableSymbols(packageFqName, name)
         for (symbol in symbols) {
             if (symbol is ConeFunctionSymbol && !processor(symbol)) {
                 return STOP
@@ -41,7 +41,7 @@ class FirTopLevelDeclaredMemberScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
-        val symbols = provider.getCallableSymbols(CallableId(packageFqName, name))
+        val symbols = provider.getTopLevelCallableSymbols(packageFqName, name)
         for (symbol in symbols) {
             if (symbol is ConePropertySymbol && !processor(symbol)) {
                 return STOP

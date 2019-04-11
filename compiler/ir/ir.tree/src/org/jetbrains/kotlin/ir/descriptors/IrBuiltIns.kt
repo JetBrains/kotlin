@@ -12,11 +12,8 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -127,7 +124,6 @@ class IrBuiltIns(
 
     val collectionClass = builtIns.collection.toIrSymbol()
 
-    val arrayType = builtIns.array.toIrType(symbolTable = symbolTable)
     val arrayClass = builtIns.array.toIrSymbol()
 
     val throwableType = builtIns.throwable.defaultType.toIrType()
@@ -163,12 +159,28 @@ class IrBuiltIns(
 
     val primitiveIrTypes by lazy { listOf(booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType) }
 
-    val kCallableClass = builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe()).toIrSymbol()
-    val kPropertyClass = builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kPropertyFqName.toSafe()).toIrSymbol()
+    val kCallableClass = builtIns.kCallable.toIrSymbol()
+    val kPropertyClass = builtIns.kProperty.toIrSymbol()
+    val kDeclarationContainerClass = builtIns.kDeclarationContainer.toIrSymbol()
+    val kClassClass = builtIns.kClass.toIrSymbol()
+
+    private val kProperty0Class = builtIns.kProperty0.toIrSymbol()
+    private val kProperty1Class = builtIns.kProperty1.toIrSymbol()
+    private val kProperty2Class = builtIns.kProperty2.toIrSymbol()
+    private val kMutableProperty0Class = builtIns.kMutableProperty0.toIrSymbol()
+    private val kMutableProperty1Class = builtIns.kMutableProperty1.toIrSymbol()
+    private val kMutableProperty2Class = builtIns.kMutableProperty2.toIrSymbol()
+
+    fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol = when (n) {
+        0 -> if (mutable) kMutableProperty0Class else kProperty0Class
+        1 -> if (mutable) kMutableProperty1Class else kProperty1Class
+        2 -> if (mutable) kMutableProperty2Class else kProperty2Class
+        else -> error("No KProperty for n=$n mutable=$mutable")
+    }
 
     // TODO switch to IrType
     val primitiveTypes = listOf(bool, char, byte, short, int, long, float, double)
-    val primitiveTypesWithComparisons = listOf(int, long, float, double)
+    val primitiveTypesWithComparisons = listOf(char, byte, short, int, long, float, double)
     val primitiveFloatingPointTypes = listOf(float, double)
 
     val lessFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType(OperatorNames.LESS)
@@ -246,6 +258,6 @@ class IrBuiltIns(
         const val THROW_CCE = "THROW_CCE"
         const val THROW_ISE = "THROW_ISE"
         const val NO_WHEN_BRANCH_MATCHED_EXCEPTION = "noWhenBranchMatchedException"
-        const val ILLEGAL_ARGUMENT_EXCEPTION = "illegalArgumentException "
+        const val ILLEGAL_ARGUMENT_EXCEPTION = "illegalArgumentException"
     }
 }

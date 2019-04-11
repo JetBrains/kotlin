@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -42,10 +41,9 @@ fun ConeAbbreviatedType.directExpansionType(useSiteSession: FirSession): ConeCla
 fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
     when (this) {
         is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
-        is FirTypeParameterSymbol -> this.symbol
+        is ConeTypeParameterSymbol -> this
         else -> error("sealed")
     }
-
 
 fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {

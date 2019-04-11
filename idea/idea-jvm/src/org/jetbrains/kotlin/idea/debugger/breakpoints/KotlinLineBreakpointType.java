@@ -45,6 +45,14 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
         super("kotlin-line", "Kotlin Line Breakpoints");
     }
 
+    @NotNull
+    @Override
+    public Breakpoint<JavaLineBreakpointProperties> createJavaBreakpoint(
+            Project project, XBreakpoint<JavaLineBreakpointProperties> breakpoint
+    ) {
+        return new KotlinLineBreakpoint(project, breakpoint);
+    }
+
     @Override
     public boolean matchesPosition(@NotNull LineBreakpoint<?> breakpoint, @NotNull SourcePosition position) {
         JavaBreakpointProperties properties = getProperties(breakpoint);

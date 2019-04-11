@@ -104,6 +104,8 @@ public class AsmUtil {
 
     public static final String LABELED_THIS_FIELD = THIS + "_";
 
+    public static final String INLINE_DECLARATION_SITE_THIS = "this_";
+
     public static final String LABELED_THIS_PARAMETER = "$" + THIS + "$";
 
     public static final String CAPTURED_THIS_FIELD = "this$0";
@@ -848,17 +850,28 @@ public class AsmUtil {
         return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
             left.put(AsmTypes.OBJECT_TYPE, left.kotlinType, v);
             right.put(AsmTypes.OBJECT_TYPE, right.kotlinType, v);
-            genAreEqualCall(v);
-
-            if (opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ) {
-                genInvertBoolean(v);
-            }
-            return Unit.INSTANCE;
+            return genAreEqualCall(v, opToken);
         });
+    }
+
+    @NotNull
+    public static StackValue genEqualsBoxedOnStack(@NotNull IElementType opToken) {
+        return StackValue.operation(Type.BOOLEAN_TYPE, v -> genAreEqualCall(v, opToken));
     }
 
     public static void genAreEqualCall(InstructionAdapter v) {
         v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
+    }
+
+    @NotNull
+    private static Unit genAreEqualCall(InstructionAdapter v, @NotNull IElementType opToken) {
+        genAreEqualCall(v);
+
+        if (opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ) {
+            genInvertBoolean(v);
+        }
+
+        return Unit.INSTANCE;
     }
 
     public static void genIEEE754EqualForNullableTypesCall(InstructionAdapter v, Type left, Type right) {

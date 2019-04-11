@@ -907,6 +907,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/ifElseIf.kt");
         }
 
+        @TestMetadata("implicitCastInReturnFromConstructor.kt")
+        public void testImplicitCastInReturnFromConstructor() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/implicitCastInReturnFromConstructor.kt");
+        }
+
         @TestMetadata("implicitCastOnPlatformType.kt")
         public void testImplicitCastOnPlatformType() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/implicitCastOnPlatformType.kt");
@@ -1356,6 +1361,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             public void testSamConversionsWithSmartCasts() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/sam/samConversionsWithSmartCasts.kt");
             }
+
+            @TestMetadata("samOperators.kt")
+            public void testSamOperators() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/samOperators.kt");
+            }
         }
     }
 
@@ -1516,6 +1526,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("genericClassInDifferentModule.kt")
         public void testGenericClassInDifferentModule() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/genericClassInDifferentModule.kt");
+        }
+
+        @TestMetadata("javaConstructorWithTypeParameters.kt")
+        public void testJavaConstructorWithTypeParameters() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/javaConstructorWithTypeParameters.kt");
         }
 
         @TestMetadata("javaEnum.kt")

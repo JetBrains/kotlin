@@ -35,13 +35,12 @@ import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.j2k.ParseContext
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -154,7 +153,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             val newBounds = insertImports(boundsAfterReplace, referenceData, explicitImports)
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
-            AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
+            AfterConversionPass(project, JavaToKotlinConverterFactory.createPostProcessor(formatCode = true)).run(targetFile, newBounds)
 
             conversionPerformed = true
         }
@@ -207,16 +206,17 @@ internal class ConversionResult(
 )
 
 internal fun ElementAndTextList.convertCodeToKotlin(project: Project): ConversionResult {
-    val converter = JavaToKotlinConverter(
+    val converter =
+        JavaToKotlinConverterFactory.createJavaToKotlinConverter(
             project,
             ConverterSettings.defaultSettings,
             IdeaJavaToKotlinServices
-    )
+        )
 
     val inputElements = this.toList().filterIsInstance<PsiElement>()
     val results =
             ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                    ThrowableComputable<JavaToKotlinConverter.Result, Exception> {
+                    ThrowableComputable<org.jetbrains.kotlin.j2k.Result, Exception> {
                         runReadAction { converter.elementsToKotlin(inputElements) }
                     },
                     JavaToKotlinAction.title,

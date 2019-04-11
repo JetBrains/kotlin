@@ -9,19 +9,13 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxAgainstJavaCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TargetBackend
-import java.io.File
 
 abstract class AbstractIrBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxAgainstJavaCodegenTest() {
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.addJvmClasspathRoot(javaClassesOutputDirectory)
         configuration.put(JVMConfigurationKeys.IR, true)
-    }
-
-    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
-        return ConfigurationKind.ALL
     }
 
     override fun getBackend() = TargetBackend.JVM_IR

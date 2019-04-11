@@ -30,6 +30,14 @@ public class ClassContext extends FieldOwnerContext<ClassDescriptor> {
         super(contextDescriptor, contextKind, parentContext, typeMapper.getBindingContext().get(CLOSURE, contextDescriptor),
               contextDescriptor, localLookup);
 
+        if (contextKind == OwnerKind.ERASED_INLINE_CLASS) {
+            assert parentContext instanceof ClassContext &&
+                   parentContext.getContextKind() == OwnerKind.IMPLEMENTATION &&
+                   parentContext.getContextDescriptor() == contextDescriptor:
+                    "Erased inline class context should be created inside implementation context for the same class:" + contextDescriptor +
+                    "parent: " + parentContext;
+        }
+
         this.typeMapper = typeMapper;
     }
 

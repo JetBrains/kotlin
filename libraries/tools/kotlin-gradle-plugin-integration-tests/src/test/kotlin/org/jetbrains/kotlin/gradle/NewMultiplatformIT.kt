@@ -182,7 +182,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 // Check that linker options were correctly passed to the K/N compiler.
                 checkProgramCompilationCommandLine {
-                    assertTrue(it.contains("-linker-options -L."))
+                    assertTrue(it.contains("-linker-option -L."))
                 }
             }
 
@@ -398,6 +398,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     arrayOf(
                         it + "com/example/lib/CommonKt.class",
                         it + "com/example/lib/MainKt.class",
+                        it + "Script.class",
                         it + "META-INF/new-mpp-lib-with-tests.kotlin_module"
                     )
                 },
@@ -932,7 +933,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
         }
 
-        // Check that run tasks work find and an entry point can be specified.
+        // Check that run tasks work fine and an entry point can be specified.
         build("runDebugExecutable$hostSuffix") {
             assertSuccessful()
             assertTrue(output.contains("<root>.main"))
@@ -994,7 +995,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("linkCustomReleaseFrameworkIos") {
                 assertSuccessful()
                 checkFrameworkCompilationCommandLine {
-                    assertTrue(it.contains("-linker-options -L."))
+                    assertTrue(it.contains("-linker-option -L."))
                     assertTrue(it.contains("-Xtime"))
                     assertTrue(it.contains("-Xstatic-framework"))
                     assertFalse(it.contains("-Xembed-bitcode-marker"))
@@ -1074,7 +1075,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testNativeTests() = with(Project("new-mpp-native-tests", gradleVersion)) {
         val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test")
-        val hostTestTask = ":${nativeHostTargetName}Test"
+        val hostTestTask = "${nativeHostTargetName}Test"
         build("tasks") {
             assertSuccessful()
             println(output)
@@ -1085,7 +1086,8 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
         build("check") {
             assertSuccessful()
-            assertTasksExecuted(hostTestTask)
+            assertTasksExecuted(":$hostTestTask")
+            assertTestResults("testProject/new-mpp-native-tests/TEST-TestKt.xml", hostTestTask)
         }
     }
 
@@ -1108,25 +1110,35 @@ class NewMultiplatformIT : BaseGradleIT() {
                 """.trimIndent())
             }
 
-            val host = nativeHostTargetName
+            val targetsToBuild = if (HostManager.hostIsMingw) {
+                listOf(nativeHostTargetName, "mingw86")
+            } else {
+                listOf(nativeHostTargetName)
+            }
 
-            val libraryCinteropTask = ":projectLibrary:cinteropStdio${host.capitalize()}"
-            val libraryCompileTask = ":projectLibrary:compileKotlin${host.capitalize()}"
+            val libraryCinteropTasks = targetsToBuild.map { ":projectLibrary:cinteropStdio${it.capitalize()}" }
+            val libraryCompileTasks = targetsToBuild.map { ":projectLibrary:compileKotlin${it.capitalize()}" }
 
             build(":projectLibrary:build") {
                 assertSuccessful()
-                assertTasksExecuted(libraryCinteropTask)
+                assertTasksExecuted(libraryCinteropTasks)
                 assertTrue(output.contains("Project test"), "No test output found")
-                assertFileExists("projectLibrary/build/classes/kotlin/$host/main/projectLibrary-cinterop-stdio.klib")
+                targetsToBuild.forEach {
+                    assertFileExists("projectLibrary/build/classes/kotlin/$it/main/projectLibrary-cinterop-stdio.klib")
+                }
             }
 
             build(":publishedLibrary:build", ":publishedLibrary:publish") {
                 assertSuccessful()
-                assertTasksExecuted(":publishedLibrary:cinteropStdio${host.capitalize()}")
+                assertTasksExecuted(
+                    targetsToBuild.map { ":publishedLibrary:cinteropStdio${it.capitalize()}" }
+                )
                 assertTrue(output.contains("Published test"), "No test output found")
-                assertFileExists("publishedLibrary/build/classes/kotlin/$host/main/publishedLibrary-cinterop-stdio.klib")
-                assertFileExists("publishedLibrary/build/classes/kotlin/$host/test/test-cinterop-stdio.klib")
-                assertFileExists("repo/org/example/publishedLibrary-$host/1.0/publishedLibrary-$host-1.0-cinterop-stdio.klib")
+                targetsToBuild.forEach {
+                    assertFileExists("publishedLibrary/build/classes/kotlin/$it/main/publishedLibrary-cinterop-stdio.klib")
+                    assertFileExists("publishedLibrary/build/classes/kotlin/$it/test/test-cinterop-stdio.klib")
+                    assertFileExists("repo/org/example/publishedLibrary-$it/1.0/publishedLibrary-$it-1.0-cinterop-stdio.klib")
+                }
             }
 
             build(":build") {
@@ -1136,14 +1148,18 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             // Check that changing the compiler version in properties causes interop reprocessing and source recompilation.
+            val hostLibraryTasks = listOf(
+                ":projectLibrary:cinteropStdio${nativeHostTargetName.capitalize()}",
+                ":projectLibrary:compileKotlin${nativeHostTargetName.capitalize()}"
+            )
             build(":projectLibrary:build") {
                 assertSuccessful()
-                assertTasksUpToDate(libraryCinteropTask, libraryCompileTask)
+                assertTasksUpToDate(hostLibraryTasks)
             }
 
-            build(libraryCinteropTask, libraryCompileTask, "-Porg.jetbrains.kotlin.native.version=1.1.0") {
+            build(*hostLibraryTasks.toTypedArray(), "-Porg.jetbrains.kotlin.native.version=1.1.0") {
                 assertSuccessful()
-                assertTasksExecuted(libraryCinteropTask, libraryCompileTask)
+                assertTasksExecuted(hostLibraryTasks)
             }
         }
     }
@@ -1483,7 +1499,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "wasm32", "mingw64", "linux64", "macos64"
+                "jvm6", "nodeJs", "wasm32", "mingw64", "mingw86", "linux64", "macos64"
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(target, compilation, "$target${compilation.capitalize()}")

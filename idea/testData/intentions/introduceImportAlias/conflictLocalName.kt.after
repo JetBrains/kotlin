@@ -13,6 +13,6 @@ class Outer {
 class Test() {
     fun test() {
         val foo = 1
-        foo1()
+        foo<caret>1()
     }
 }

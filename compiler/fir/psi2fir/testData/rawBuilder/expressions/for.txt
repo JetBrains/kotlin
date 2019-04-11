@@ -1,6 +1,6 @@
 FILE: for.kt
     public? final? fun foo(): kotlin/Unit {
-        lval <range>: <implicit> = rangeTo#(Int(1), Int(10))
+        lval <range>: <implicit> = Int(1).rangeTo#(Int(10))
         lval <iterator>: <implicit> = <range>#.iterator#()
         while(<iterator>#.hasNext#()) {
             lval i: <implicit> = <iterator>#.next#()
@@ -25,12 +25,14 @@ FILE: for.kt
 
     }
     public? final? data class Some : kotlin/Any {
-        public? constructor(x: Int, y: Int): super<kotlin/Any>()
+        public? constructor(x: Int, y: Int): R|Some| {
+            super<kotlin/Any>()
+        }
 
-        public? final? val x: Int
+        public? final? val x: Int = R|<local>/x|
             public? get(): Int
 
-        public? final? val y: Int
+        public? final? val y: Int = R|<local>/y|
             public? get(): Int
 
     }
@@ -39,9 +41,9 @@ FILE: for.kt
         lval <iterator>: <implicit> = <range>#.iterator#()
         while(<iterator>#.hasNext#()) {
             lval <destruct>: <implicit> = <iterator>#.next#()
-            lval x: <implicit> = component1(<destruct>#)
-            lval y: <implicit> = component2(<destruct>#)
-            println#(plus#(String(x = ), x#, String( y = ), y#))
+            lval x: <implicit> = <destruct>#.component1()
+            lval y: <implicit> = <destruct>#.component2()
+            println#(String(x = ).plus#(x#, String( y = ), y#))
         }
 
     }

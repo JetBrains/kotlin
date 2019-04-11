@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSymbolProvider() {
     private val dependencyProviders by lazy {
@@ -24,16 +26,14 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
         }.toList()
     }
 
-    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
-        return callableCache.lookupCacheOrCalculate(callableId) {
-            for (provider in dependencyProviders) {
-                provider.getCallableSymbols(callableId).let {
-                    if (it.isNotEmpty()) return@lookupCacheOrCalculate it
-                }
-            }
-            emptyList()
-        }.orEmpty()
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
+        return topLevelCallableCache.lookupCacheOrCalculate(CallableId(packageFqName, null, name)) {
+            dependencyProviders.flatMap { provider -> provider.getTopLevelCallableSymbols(packageFqName, name) }
+        } ?: emptyList()
     }
+
+    override fun getClassDeclaredMemberScope(classId: ClassId) =
+        dependencyProviders.firstNotNullResult { it.getClassDeclaredMemberScope(classId) }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
         return classCache.lookupCacheOrCalculate(classId) {
@@ -55,5 +55,21 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
             }
             null
         }
+    }
+
+    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
+        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getAllCallableNamesInPackage(fqName) }
+    }
+
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
+        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getClassNamesInPackage(fqName) }
+    }
+
+    override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> {
+        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getAllCallableNamesInClass(classId) }
+    }
+
+    override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
+        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getNestedClassesNamesInClass(classId) }
     }
 }

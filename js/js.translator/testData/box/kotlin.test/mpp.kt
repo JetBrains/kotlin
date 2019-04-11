@@ -1,6 +1,6 @@
+// EXPECTED_REACHABLE_NODES: 1697
 // !LANGUAGE: +MultiPlatformProjects
-// EXPECTED_REACHABLE_NODES: 1328
-// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
 
 // FILE: lib.kt
 import kotlin.test.Test

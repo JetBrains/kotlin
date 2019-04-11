@@ -1,13 +1,19 @@
 FILE: fakeRecursiveSupertype.kt
     public final class My : R|error: Recursion detected: R|My|| {
-        public constructor(): super<R|My|>()
+        public constructor(): R|My| {
+            super<R|My|>()
+        }
 
     }
     public final class Your : R|His| {
-        public constructor(): super<R|His|>()
+        public constructor(): R|Your| {
+            super<R|His|>()
+        }
 
     }
     public final class His : R|error: Recursion detected: R|Your|| {
-        public constructor(): super<R|Your|>()
+        public constructor(): R|His| {
+            super<R|Your|>()
+        }
 
     }

@@ -1,0 +1,4 @@
+public open class PropertySimpleType : R|kotlin/Any| {
+    public constructor(): R|test/PropertySimpleType|
+
+}

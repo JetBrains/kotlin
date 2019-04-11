@@ -1,6 +1,8 @@
 FILE: access.kt
     public final class Foo : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val x: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
@@ -15,7 +17,9 @@ FILE: access.kt
 
     }
     public final class Bar : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val x: R|kotlin/String| = String()
             public get(): R|kotlin/String|
@@ -32,8 +36,8 @@ FILE: access.kt
             ^plus String()
         }
 
-        public final fun R|Foo|.check(): R|kotlin/String| {
-            ^check R|/Bar.plus|(R|/Foo.abc|(), R|/Bar.bar|())
+        public final fun R|Foo|.check(): <ERROR TYPE REF: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> {
+            ^check R|/Foo.abc|().<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|/Bar.bar|())
         }
 
     }
@@ -51,14 +55,14 @@ FILE: access.kt
         lval d: R|kotlin/String| = String()
         lval c: <ERROR TYPE REF: Unresolved name: c> = <Unresolved name: c>#
         <Unresolved name: abc>#()
-        public final fun bcd(): R|kotlin/Unit| {
+        local final fun bcd(): R|kotlin/Unit| {
         }
 
-        public final fun abc(): R|kotlin/Unit| {
+        local final fun abc(): R|kotlin/Unit| {
             lval a: R|kotlin/String| = R|<local>/d|
             lval b: R|kotlin/String| = R|<local>/a|
             R|<local>/bcd|()
-            public final fun dcb(): R|kotlin/Unit| {
+            local final fun dcb(): R|kotlin/Unit| {
             }
 
             R|<local>/dcb|()

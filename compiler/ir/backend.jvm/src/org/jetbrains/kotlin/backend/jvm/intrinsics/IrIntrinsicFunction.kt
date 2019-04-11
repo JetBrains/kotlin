@@ -12,38 +12,15 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
-
-private class IrEmptyVarargExpression(
-    override val type: IrType,
-    override val startOffset: Int,
-    override val endOffset: Int
-) : IrExpression {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        TODO("not implemented")
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        TODO("not implemented")
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        TODO("not implemented")
-    }
-}
 
 open class IrIntrinsicFunction(
     val expression: IrMemberAccessExpression,
@@ -94,22 +71,23 @@ open class IrIntrinsicFunction(
         codegen: ExpressionCodegen,
         data: BlockInfo
     ) {
-        val args = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver) +
-                expression.descriptor.valueParameters.mapIndexed { i, descriptor ->
-                    expression.getValueArgument(i) ?: if (descriptor.isVararg)
-                        IrEmptyVarargExpression(descriptor.type.toIrType()!!, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                    else error("Unknown parameter: $descriptor in $expression")
+        var offset = 0
+        expression.dispatchReceiver?.let { genArg(it, codegen, offset++, data) }
+        expression.extensionReceiver?.let { genArg(it, codegen, offset++, data) }
+        for ((i, descriptor) in expression.descriptor.valueParameters.withIndex()) {
+            val argument = expression.getValueArgument(i)
+            when {
+                argument != null ->
+                    genArg(argument, codegen, i + offset, data)
+                descriptor.isVararg -> {
+                    val parameterType = codegen.typeMapper.mapType(descriptor.type)
+                    StackValue.operation(parameterType) {
+                        it.aconst(0)
+                        it.newarray(AsmUtil.correctElementType(parameterType))
+                    }.put(parameterType, codegen.mv)
                 }
-
-        args.forEachIndexed { i, irExpression ->
-            if (irExpression is IrEmptyVarargExpression) {
-                val parameterType = codegen.typeMapper.mapType(irExpression.type.toKotlinType())
-                StackValue.operation(parameterType) {
-                    it.aconst(0)
-                    it.newarray(AsmUtil.correctElementType(parameterType))
-                }.put(parameterType, codegen.mv)
-            } else {
-                genArg(irExpression, codegen, i, data)
+                else ->
+                    error("Unknown parameter: $descriptor in $expression")
             }
         }
     }
@@ -132,11 +110,12 @@ open class IrIntrinsicFunction(
             }
         }
 
-        fun createWithResult(expression: IrMemberAccessExpression,
-                   signature: JvmMethodSignature,
-                   context: JvmBackendContext,
-                   argsTypes: List<Type> = expression.argTypes(context),
-                   invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Type): IrIntrinsicFunction {
+        fun createWithResult(
+            expression: IrMemberAccessExpression, signature: JvmMethodSignature,
+            context: JvmBackendContext,
+            argsTypes: List<Type> = expression.argTypes(context),
+            invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Type
+        ): IrIntrinsicFunction {
             return object : IrIntrinsicFunction(expression, signature, context, argsTypes) {
 
                 override fun genInvokeInstructionWithResult(v: InstructionAdapter) = invokeInstruction(v)

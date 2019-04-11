@@ -32,7 +32,7 @@ class JsDeclarationFactory : DeclarationFactory {
     private val outerThisFieldSymbols = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
 
-    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField = TODO()
+    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, entryType: IrType): IrField = TODO()
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")

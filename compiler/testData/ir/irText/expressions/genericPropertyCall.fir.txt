@@ -1,0 +1,16 @@
+FILE fqName:<root> fileName:/genericPropertyCall.kt
+  PROPERTY name:id visibility:public modality:FINAL [val]
+    FUN name:<get-id> visibility:public modality:FINAL <> () returnType:IrErrorType
+      correspondingProperty: PROPERTY name:id visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-id> (): IrErrorType declared in <root>'
+          ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
+  PROPERTY name:test visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:public [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun <get-id> (): IrErrorType declared in <root>' type=IrErrorType origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:IrErrorType
+      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test> (): IrErrorType declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null

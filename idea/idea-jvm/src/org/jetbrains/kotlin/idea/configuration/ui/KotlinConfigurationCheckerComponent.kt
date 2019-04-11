@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyl
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.versions.collectModulesWithOutdatedRuntime
 import org.jetbrains.kotlin.idea.versions.findOutdatedKotlinLibraries
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerComponent(val project: Project) : ProjectComponent {
@@ -44,33 +45,54 @@ class KotlinConfigurationCheckerComponent(val project: Project) : ProjectCompone
     @Volatile
     private var notificationPostponed = false
 
+    private val moduleRootListener = object : ModuleRootListener {
+
+        private val checkInProgress = AtomicBoolean(false)
+
+        private val modulesUpdatedDuringCheck = AtomicBoolean(false)
+
+        override fun rootsChanged(event: ModuleRootEvent) {
+            try {
+                modulesUpdatedDuringCheck.set(true)
+                // forbid running multiple checks in parallel
+                if (!checkInProgress.compareAndSet(false, true)) return
+
+                // if during the execution of the current check the module list has updated, we should re-run this check
+                do {
+                    modulesUpdatedDuringCheck.set(false)
+                    if (!project.isInitialized) return
+
+                    if (notificationPostponed && !isSyncing) {
+                        DumbService.getInstance(project).runWhenSmart {
+                            if (!isSyncing) {
+                                notificationPostponed = false
+
+                                val excludeModules = collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(project))
+
+                                showConfigureKotlinNotificationIfNeeded(
+                                    project,
+                                    excludeModules
+                                )
+                            }
+                        }
+                    }
+
+                    checkHideNonConfiguredNotifications(project)
+                } while (
+                    modulesUpdatedDuringCheck.get()
+                )
+            } finally {
+                checkInProgress.set(false)
+            }
+        }
+    }
+
     init {
         NotificationsConfiguration.getNotificationsConfiguration()
             .register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true)
 
         val connection = project.messageBus.connect()
-        connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent) {
-                if (!project.isInitialized) return
-
-                if (notificationPostponed && !isSyncing) {
-                    DumbService.getInstance(project).runWhenSmart {
-                        if (!isSyncing) {
-                            notificationPostponed = false
-
-                            val excludeModules = collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(project))
-
-                            showConfigureKotlinNotificationIfNeeded(
-                                project,
-                                excludeModules
-                            )
-                        }
-                    }
-                }
-
-                checkHideNonConfiguredNotifications(project)
-            }
-        })
+        connection.subscribe(ProjectTopics.PROJECT_ROOTS, moduleRootListener)
 
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
             notifyOutdatedBundledCompilerIfNecessary(project)

@@ -36,7 +36,9 @@ build/
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/.name
 .idea/artifacts/dist_auto_*
+.idea/artifacts/ideaPlugin.xml
 kotlin-ultimate/
 node_modules/
 .rpt2_cache/
 libraries/tools/kotlin-test-nodejs-runner/lib/
+local.properties

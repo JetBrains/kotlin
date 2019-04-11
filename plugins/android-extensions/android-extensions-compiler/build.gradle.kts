@@ -34,7 +34,7 @@ dependencies {
     robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")
     robolectricClasspath(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 
-    embeddedComponents(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
+    embedded(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 }
 
 sourceSets {
@@ -42,13 +42,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-runtimeJar {
-    fromEmbeddedComponents()
-}
+runtimeJar()
 
 dist()
-
-ideaPlugin()
 
 testsJar {}
 

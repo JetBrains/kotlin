@@ -2,7 +2,9 @@ FILE: extension.kt
     public final fun x(): R|kotlin/Unit| {
     }
     public final class Foo : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
 
         public final operator fun R|kotlin/Int|.invoke(): R|Foo| {
             ^invoke this@Foo
@@ -11,8 +13,8 @@ FILE: extension.kt
         public final val x: R|kotlin/Int| = Int(0)
             public get(): R|kotlin/Int|
 
-        public final fun foo(): R|Foo| {
-            ^foo R|/Foo.x|.R|/Foo.invoke|()
+        public final fun foo(): R|kotlin/Unit| {
+            ^foo R|/x|()
         }
 
     }

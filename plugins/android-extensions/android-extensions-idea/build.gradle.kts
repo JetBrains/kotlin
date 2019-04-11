@@ -82,5 +82,3 @@ projectTest {
 }
 
 runtimeJar()
-
-ideaPlugin()

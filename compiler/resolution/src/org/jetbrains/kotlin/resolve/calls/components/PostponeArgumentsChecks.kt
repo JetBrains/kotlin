@@ -34,10 +34,18 @@ fun resolveKtPrimitive(
     diagnosticsHolder: KotlinDiagnosticsHolder,
     isReceiver: Boolean
 ): ResolvedAtom = when (argument) {
-    is SimpleKotlinCallArgument -> checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
-    is LambdaKotlinCallArgument -> preprocessLambdaArgument(csBuilder, argument, expectedType)
-    is CallableReferenceKotlinCallArgument -> preprocessCallableReference(csBuilder, argument, expectedType, diagnosticsHolder)
-    is CollectionLiteralKotlinCallArgument -> preprocessCollectionLiteralArgument(argument, expectedType)
+    is SimpleKotlinCallArgument ->
+        checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
+
+    is LambdaKotlinCallArgument ->
+        preprocessLambdaArgument(csBuilder, argument, expectedType)
+
+    is CallableReferenceKotlinCallArgument ->
+        preprocessCallableReference(csBuilder, argument, expectedType, diagnosticsHolder)
+
+    is CollectionLiteralKotlinCallArgument ->
+        preprocessCollectionLiteralArgument(argument, expectedType)
+
     else -> unexpectedArgument(argument)
 }
 
@@ -137,11 +145,13 @@ private fun preprocessCallableReference(
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder
 ): ResolvedAtom {
-    val result = ResolvedCallableReferenceAtom(argument, expectedType)
+    val result = EagerCallableReferenceAtom(argument, expectedType)
+
     if (expectedType == null) return result
 
     val notCallableTypeConstructor =
-        csBuilder.getProperSuperTypeConstructors(expectedType).firstOrNull { !ReflectionTypes.isPossibleExpectedCallableType(it) }
+        csBuilder.getProperSuperTypeConstructors(expectedType)
+            .firstOrNull { !ReflectionTypes.isPossibleExpectedCallableType(it.requireIs()) }
 
     argument.lhsResult.safeAs<LHSResult.Type>()?.let {
         val lhsType = it.unboundDetailedReceiver.stableType
@@ -151,7 +161,13 @@ private fun preprocessCallableReference(
         }
     }
     if (notCallableTypeConstructor != null) {
-        diagnosticsHolder.addDiagnostic(NotCallableExpectedType(argument, expectedType, notCallableTypeConstructor))
+        diagnosticsHolder.addDiagnostic(
+            NotCallableExpectedType(
+                argument,
+                expectedType,
+                notCallableTypeConstructor.requireIs()
+            )
+        )
     }
     return result
 }
@@ -162,4 +178,9 @@ private fun preprocessCollectionLiteralArgument(
 ): ResolvedAtom {
     // todo add some checks about expected type
     return ResolvedCollectionLiteralAtom(collectionLiteralArgument, expectedType)
+}
+
+internal inline fun <reified T : Any> Any.requireIs(): T {
+    require(this is T)
+    return this
 }

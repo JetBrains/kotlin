@@ -28,8 +28,7 @@ class AfterConversionPass(val project: Project, val postProcessor: PostProcessor
             marker.isGreedyToLeft = true
             marker.isGreedyToRight = true
             marker
-        }
-        else {
+        } else {
             null
         }
 

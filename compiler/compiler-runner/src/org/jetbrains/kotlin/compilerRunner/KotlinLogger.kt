@@ -10,6 +10,5 @@ interface KotlinLogger {
     fun warn(msg: String)
     fun info(msg: String)
     fun debug(msg: String)
-
     val isDebugEnabled: Boolean
 }
