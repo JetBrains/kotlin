@@ -6,7 +6,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
             import android.widget.Button
             import com.google.r4a.*
-            import com.google.r4a.adapters.setOnClick
+            import androidx.ui.androidview.adapters.setOnClick
 
             @Model
             class FancyButtonData() {
@@ -1454,7 +1454,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testKeyAttributeWithPivotal() = testCompile(
         """
         import com.google.r4a.*
-        import com.google.r4a.adapters.*
+        import androidx.ui.androidview.adapters.*
 
         class Foo(
             val a: Int,
@@ -1482,7 +1482,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testKeyAttributeWithoutPivotal() = testCompile(
         """
         import com.google.r4a.*
-        import com.google.r4a.adapters.*
+        import androidx.ui.androidview.adapters.*
 
         @Pivotal
         fun Foo.setKey(x: Any?) {}
@@ -1511,7 +1511,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testNamedChildrenAttributeProperty() = testCompile(
         """
         import com.google.r4a.*
-        import com.google.r4a.adapters.*
+        import androidx.ui.androidview.adapters.*
 
         class Foo {
             @Children var children: (() -> Unit)? = null
@@ -1533,7 +1533,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testNamedChildrenAttributeSetter() = testCompile(
         """
         import com.google.r4a.*
-        import com.google.r4a.adapters.*
+        import androidx.ui.androidview.adapters.*
 
         class Foo {
             @Children fun setChildren(children: () -> Unit) {}
@@ -1555,7 +1555,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testOverloadedChildren() = testCompile(
         """
         import com.google.r4a.*
-        import com.google.r4a.adapters.*
+        import androidx.ui.androidview.adapters.*
 
         class Foo {
             @Children var children: ((x: Int, y: Int) -> Unit)? = null
@@ -1588,7 +1588,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testKtxVariableTagsProperlyCapturedAcrossKtxLambdas() = testCompile(
         """
         import com.google.r4a.*
-        import com.google.r4a.adapters.*
+        import androidx.ui.androidview.adapters.*
 
         class Foo(@Children var children: (sub: () -> Unit) -> Unit) {
             @Composable
@@ -1616,7 +1616,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testPassChildrenLambdaVarWithCorrectType() = testCompile(
         """
         import com.google.r4a.*
-        import com.google.r4a.adapters.*
+        import androidx.ui.androidview.adapters.*
 
         class Boo(@Children var children: () -> Unit) {
             @Composable
@@ -1636,7 +1636,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testPassChildrenLambdaLiteralWithCorrectType() = testCompile(
         """
         import com.google.r4a.*
-        import com.google.r4a.adapters.*
+        import androidx.ui.androidview.adapters.*
 
         class Boo {
             @Children lateinit var children: () -> Unit
@@ -1658,7 +1658,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenLiteral() = testCompile(
         """
         import com.google.r4a.*
-        import com.google.r4a.adapters.*
+        import androidx.ui.androidview.adapters.*
 
         class Boo(@Children var children: () -> Unit) {
             @Composable

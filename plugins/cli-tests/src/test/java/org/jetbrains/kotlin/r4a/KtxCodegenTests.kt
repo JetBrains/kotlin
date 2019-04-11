@@ -48,7 +48,7 @@ class ModelClass() {
             """
                 import android.widget.Button
                 import com.google.r4a.*
-                import com.google.r4a.adapters.setOnClick
+                import androidx.ui.androidview.adapters.setOnClick
 
                 @Model
                 class FancyButtonData() {
@@ -84,7 +84,7 @@ class ModelClass() {
             """
                 import android.widget.*
                 import com.google.r4a.*
-                import com.google.r4a.adapters.setOnClick
+                import androidx.ui.androidview.adapters.setOnClick
 
                 @Model
                 class FancyButtonCount() {
@@ -1177,7 +1177,7 @@ class ModelClass() {
     fun testEffects1(): Unit = ensureSetup {
         compose(
             """
-                import com.google.r4a.adapters.*
+                import androidx.ui.androidview.adapters.*
 
                 @Composable
                 fun Counter() {
@@ -1211,7 +1211,7 @@ class ModelClass() {
     fun testEffects2(): Unit = ensureSetup {
         compose(
             """
-                import com.google.r4a.adapters.*
+                import androidx.ui.androidview.adapters.*
 
                 @Model class MyState<T>(var value: T)
 
@@ -1248,7 +1248,7 @@ class ModelClass() {
         val log = StringBuilder()
         compose(
             """
-                import com.google.r4a.adapters.*
+                import androidx.ui.androidview.adapters.*
 
                 @Composable
                 fun Counter(log: StringBuilder) {
@@ -1293,7 +1293,7 @@ class ModelClass() {
         val log = StringBuilder()
         compose(
             """
-                import com.google.r4a.adapters.*
+                import androidx.ui.androidview.adapters.*
 
                 fun printer(log: StringBuilder, str: String) = effectOf<Unit> {
                     +onCommit {
@@ -1788,6 +1788,7 @@ class ModelClass() {
            import android.widget.*
            import com.google.r4a.*
            import com.google.r4a.adapters.*
+           import androidx.ui.androidview.adapters.*
 
            $prefix
 

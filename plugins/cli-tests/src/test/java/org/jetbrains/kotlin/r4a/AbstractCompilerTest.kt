@@ -70,6 +70,13 @@ abstract class AbstractCompilerTest : TestCase() {
                 ).normalize()
             ),
             assertExists(
+                File(
+                    projectRoot,
+                    "out/support/ui-android-view-non-ir/build/" +
+                            "intermediates/intermediate-jars/debug/classes.jar"
+                ).normalize()
+            ),
+            assertExists(
                 File(projectRoot, "prebuilts/fullsdk-linux/platforms/android-28/android.jar")
             )
         )

@@ -36,6 +36,7 @@ dependencies {
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-idea:$R4A_VERSION")
 
     testImplementation(project(":compose-runtime"))
+    testImplementation(project(":ui-android-view-non-ir"))
     testImplementation(project(":compose-plugin-cli"))
 }
 
