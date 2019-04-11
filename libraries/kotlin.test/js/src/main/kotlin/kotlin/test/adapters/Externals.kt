@@ -10,8 +10,8 @@ package kotlin.test.adapters
  */
 internal external object QUnit {
     fun module(name: String, suiteFn: () -> Unit): Unit
-    fun test(name: String, testFn: (dynamic) -> Any): Unit
-    fun skip(name: String, testFn: (dynamic) -> Any): Unit
+    fun test(name: String, testFn: (dynamic) -> Any?): Unit
+    fun skip(name: String, testFn: (dynamic) -> Any?): Unit
 }
 
 /*
@@ -20,8 +20,8 @@ internal external object QUnit {
 
 internal external fun describe(name: String, fn: () -> Unit)
 internal external fun xdescribe(name: String, fn: () -> Unit)
-internal external fun it(name: String, fn: () -> Any)
-internal external fun xit(name: String, fn: () -> Any)
+internal external fun it(name: String, fn: () -> Any?)
+internal external fun xit(name: String, fn: () -> Any?)
 
 internal fun isQUnit() = jsTypeOf(QUnit) !== "undefined"
 
