@@ -52,6 +52,10 @@ interface CompilerArgumentAwareWithInput<T : CommonToolArguments> : CompilerArgu
     override val defaultSerializedCompilerArguments: List<String>
         get() = super.defaultSerializedCompilerArguments
 
+    @get:Internal
+    override val serializedCompilerArgumentsIgnoreClasspathIssues: List<String>
+        get() = super.serializedCompilerArgumentsIgnoreClasspathIssues
+
     @get:Input
     override val filteredArgumentsMap: Map<String, String>
         get() = super.filteredArgumentsMap
