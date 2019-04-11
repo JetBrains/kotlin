@@ -312,7 +312,11 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
 
         private fun KtCallElement.extractArgumentsTo(container: FirAbstractCall) {
             for (argument in this.valueArguments) {
-                container.arguments += argument.toFirExpression()
+                val argumentExpression = argument.toFirExpression()
+                container.arguments += when (argument) {
+                    is KtLambdaArgument -> FirLambdaArgumentExpressionImpl(session, argument, argumentExpression)
+                    else -> argumentExpression
+                }
             }
         }
 
@@ -1244,9 +1248,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 }
                 this.calleeReference = calleeReference
                 firFunctionCalls += this
-                for (argument in expression.valueArguments) {
-                    arguments += argument.toFirExpression()
-                }
+                expression.extractArgumentsTo(this)
                 for (typeArgument in expression.typeArguments) {
                     typeArguments += typeArgument.convert<FirTypeProjection>()
                 }

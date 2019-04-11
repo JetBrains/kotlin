@@ -617,9 +617,9 @@ internal class Fir2IrVisitor(
         }
     }
 
-    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: Any?): IrElement {
+    override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: Any?): IrElement {
         // TODO: change this temporary hack to something correct
-        return namedArgumentExpression.expression.toIrExpression()
+        return wrappedArgumentExpression.expression.toIrExpression()
     }
 
     private fun FirQualifiedAccess.toIrExpression(typeRef: FirTypeRef): IrExpression {

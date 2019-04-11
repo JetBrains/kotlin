@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.name.Name
 
-interface FirNamedArgumentExpression : FirWrappedArgumentExpression {
-    val name: Name
-
+interface FirLambdaArgumentExpression : FirWrappedArgumentExpression {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitNamedArgumentExpression(this, data)
+        visitor.visitLambdaArgumentExpression(this, data)
 }

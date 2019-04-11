@@ -24,7 +24,7 @@ FILE: lambda.kt
 
         }
 
-        use#(use@fun <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> {
+        use#(<L> = use@fun <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> {
             ^  {
                 lval x: <implicit> = <destruct>#.component1()
                 lval y: <implicit> = <destruct>#.component2()
@@ -33,7 +33,7 @@ FILE: lambda.kt
 
         }
         )
-        ^foo use#(use@fun <implicit>.<anonymous>(): <implicit> {
+        ^foo use#(<L> = use@fun <implicit>.<anonymous>(): <implicit> {
             ^  {
                 when () {
                     ==(it#.x#, Int(0)) ->  {
@@ -50,7 +50,7 @@ FILE: lambda.kt
         )
     }
     public? final? fun bar(): Int {
-        ^bar use#(lambda@fun <implicit>.<anonymous>(): <implicit> {
+        ^bar use#(<L> = lambda@fun <implicit>.<anonymous>(): <implicit> {
             ^  {
                 when () {
                     ==(it#.x#, Int(0)) ->  {
@@ -68,7 +68,7 @@ FILE: lambda.kt
     }
     public? final? fun test(list: List<Int>): kotlin/Unit {
         lval map: <implicit> = mutableMapOf#<Int, String>()
-        list#.forEach#(forEach@fun <implicit>.<anonymous>(): <implicit> {
+        list#.forEach#(<L> = forEach@fun <implicit>.<anonymous>(): <implicit> {
             ^  {
                 lval <complex-set>: <implicit> = map#.getOrPut#(it#, getOrPut@fun <implicit>.<anonymous>(): <implicit> {
                     ^  {

@@ -260,10 +260,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformJump(returnExpression, data)
     }
 
-    open fun transformNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
-        return transformExpression(namedArgumentExpression, data)
-    }
-
     open fun transformThrowExpression(throwExpression: FirThrowExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(throwExpression, data)
     }
@@ -274,6 +270,18 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformWhenExpression(whenExpression: FirWhenExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(whenExpression, data)
+    }
+
+    open fun transformWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformExpression(wrappedArgumentExpression, data)
+    }
+
+    open fun transformLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformWrappedArgumentExpression(lambdaArgumentExpression, data)
+    }
+
+    open fun transformNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformWrappedArgumentExpression(namedArgumentExpression, data)
     }
 
     open fun transformLoop(loop: FirLoop, data: D): CompositeTransformResult<FirStatement> {
@@ -556,6 +564,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformLabeledElement(labeledElement, data)
     }
 
+    final override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformLambdaArgumentExpression(lambdaArgumentExpression, data)
+    }
+
     final override fun visitLoop(loop: FirLoop, data: D): CompositeTransformResult<FirElement> {
         return transformLoop(loop, data)
     }
@@ -734,6 +746,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitWhileLoop(whileLoop: FirWhileLoop, data: D): CompositeTransformResult<FirElement> {
         return transformWhileLoop(whileLoop, data)
+    }
+
+    final override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformWrappedArgumentExpression(wrappedArgumentExpression, data)
     }
 
     final override fun visitElement(element: FirElement, data: D): CompositeTransformResult<FirElement> {
