@@ -7,7 +7,7 @@ val ideaSandboxDir: File by extra
 val ideaSdkPath: String
     get() = IntellijRootUtils.getIntellijRootDir(rootProject).absolutePath
 
-val intellijUltimateEnabled : Boolean by rootProject.extra
+val intellijUltimateEnabled: Boolean by rootProject.extra
 val ideaUltimatePluginDir: File by rootProject.extra
 val ideaUltimateSandboxDir: File by rootProject.extra
 
@@ -37,8 +37,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         apply(mapOf("plugin" to "idea"))
     }
 
-    rootProject.afterEvaluate {
-        allprojects {
+    gradle.projectsEvaluated {
+        rootProject.allprojects {
             idea {
                 module {
                     inheritOutputDirs = true
@@ -51,6 +51,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 settings {
                     ideArtifacts {
                         generateIdeArtifacts(rootProject, this@ideArtifacts)
+
+                        ideaPlugin()
                     }
 
                     compiler {
@@ -150,40 +152,32 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
             }
         }
     }
+}
 
-    project(":prepare:idea-plugin").afterEvaluate {
-        val ideaPluginProject = this
-        val libraries by configurations
-        val jpsPlugin by configurations
+fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
+    val ideaPluginProject = project(":prepare:idea-plugin")
+    val libraries by ideaPluginProject.configurations
+    val jpsPlugin by ideaPluginProject.configurations
 
-        rootProject.idea {
-            project {
-                settings {
-                    ideArtifacts {
-                        create("ideaPlugin") {
-                            directory("Kotlin") {
-                                directory("kotlinc") {
-                                    artifact("kotlinc")
-                                }
+    create("ideaPlugin") {
+        directory("Kotlin") {
+            directory("kotlinc") {
+                artifact("kotlinc")
+            }
 
-                                directory("lib") {
-                                    archive("kotlin-plugin.jar") {
-                                        directory("META-INF") {
-                                            file("$buildDir/tmp/jar/MANIFEST.MF")
-                                        }
-
-                                        jarFromEmbedded(ideaPluginProject)
-                                    }
-                                    
-                                    directoryFromConfiguration(libraries)
-
-                                    directory("jps") {
-                                        directoryFromConfiguration(jpsPlugin)
-                                    }
-                                }
-                            }
-                        }
+            directory("lib") {
+                archive("kotlin-plugin.jar") {
+                    directory("META-INF") {
+                        file("$buildDir/tmp/jar/MANIFEST.MF")
                     }
+
+                    jarFromEmbedded(ideaPluginProject)
+                }
+
+                directoryFromConfiguration(libraries)
+
+                directory("jps") {
+                    directoryFromConfiguration(jpsPlugin)
                 }
             }
         }
