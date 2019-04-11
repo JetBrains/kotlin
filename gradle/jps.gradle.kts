@@ -215,6 +215,10 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project
             directory("META-INF") {
                 file("${project.buildDir}/tmp/jar/MANIFEST.MF")
             }
+            
+            if (project.sourceSets.names.contains("main")) {
+               moduleOutput(moduleName(project.path)) 
+            }
 
             jarContentsFromEmbeddedConfiguration(project)
 
