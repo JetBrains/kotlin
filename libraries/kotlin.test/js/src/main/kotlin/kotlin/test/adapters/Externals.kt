@@ -23,6 +23,6 @@ internal external fun xdescribe(name: String, fn: () -> Unit)
 internal external fun it(name: String, fn: () -> Any?)
 internal external fun xit(name: String, fn: () -> Any?)
 
-internal fun isQUnit() = jsTypeOf(QUnit) !== "undefined"
+internal fun isQUnit() = js("typeof QUnit !== 'undefined'")
 
 internal fun isJasmine() = js("typeof describe === 'function' && typeof it === 'function'")
