@@ -59,6 +59,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     ideArtifacts {
                         generateIdeArtifacts(rootProject, this@ideArtifacts)
 
+                        kotlinJpsPluginJar()
+
                         ideaPlugin()
                     }
 
@@ -161,6 +163,22 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
+fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinJpsPluginJar() {
+    val jpsPluginProject = project(":kotlin-jps-plugin")
+
+    create("kotlin-jps-plugin.jar") {
+        archive("kotlin-jps-plugin.jar") {
+            directory("META-INF") {
+                file("${jpsPluginProject.buildDir}/tmp/jar/MANIFEST.MF")
+            }
+
+            jarFromEmbedded(jpsPluginProject)
+
+            file("${jpsPluginProject.rootDir}/resources/kotlinManifest.properties")
+        }
+    }
+}
+
 fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
     val ideaPluginProject = project(":prepare:idea-plugin")
     (ideaPluginProject as ProjectInternal).evaluate()
@@ -176,7 +194,7 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
             directory("lib") {
                 archive("kotlin-plugin.jar") {
                     directory("META-INF") {
-                        file("$buildDir/tmp/jar/MANIFEST.MF")
+                        file("${ideaPluginProject.buildDir}/tmp/jar/MANIFEST.MF")
                     }
 
                     file("${ideaPluginProject.rootDir}/resources/kotlinManifest.properties")
