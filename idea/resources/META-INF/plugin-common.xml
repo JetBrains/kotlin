@@ -3378,8 +3378,8 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceJavaStaticMethodWithTopLevelFunctionInspection"
-                     displayName="Replace Java static method with Kotlin top-level function"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceJavaStaticMethodWithKotlinAnalogInspection"
+                     displayName="Replace Java static method with Kotlin analog"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"

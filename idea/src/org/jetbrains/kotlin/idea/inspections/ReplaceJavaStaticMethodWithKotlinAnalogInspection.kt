@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInspection() {
+class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = callExpressionVisitor(fun(call) {
         val callee = call.calleeExpression ?: return
         val dotQualified = call.getStrictParentOfType<KtDotQualifiedExpression>() ?: return
@@ -50,11 +50,11 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
             dotQualified,
             TextRange(0, callee.endOffset - dotQualified.startOffset),
             "Should be replaced with '${replacement.kotlinFunctionShortName}()'",
-            ReplaceWithTopLevelFunction(replacements)
+            ReplaceWithKotlinAnalogFunction(replacements)
         )
     })
 
-    private class ReplaceWithTopLevelFunction(private val replacements: List<Replacement>) : LocalQuickFix {
+    private class ReplaceWithKotlinAnalogFunction(private val replacements: List<Replacement>) : LocalQuickFix {
         override fun getName() = "Replace with '${replacements.first().kotlinFunctionShortName}()'"
 
         override fun getFamilyName() = name

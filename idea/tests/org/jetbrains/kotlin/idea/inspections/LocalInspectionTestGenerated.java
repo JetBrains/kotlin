@@ -7138,19 +7138,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction")
+    @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceJavaStaticMethodWithTopLevelFunction extends AbstractLocalInspectionTest {
+    public static class ReplaceJavaStaticMethodWithKotlinAnalog extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
-        public void testAllFilesPresentInReplaceJavaStaticMethodWithTopLevelFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        public void testAllFilesPresentInReplaceJavaStaticMethodWithKotlinAnalog() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/arrays")
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Arrays extends AbstractLocalInspectionTest {
@@ -7159,26 +7159,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
 
             public void testAllFilesPresentInArrays() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/arrays"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("nonArraysCopyOf.kt")
             public void testNonArraysCopyOf() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/arrays/nonArraysCopyOf.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays/nonArraysCopyOf.kt");
             }
 
             @TestMetadata("qualified.kt")
             public void testQualified() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/arrays/qualified.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays/qualified.kt");
             }
 
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/arrays/simple.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays/simple.kt");
             }
         }
 
-        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare")
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Compare extends AbstractLocalInspectionTest {
@@ -7187,46 +7187,46 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
 
             public void testAllFilesPresentInCompare() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("byte.kt")
             public void testByte() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/byte.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare/byte.kt");
             }
 
             @TestMetadata("character.kt")
             public void testCharacter() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/character.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare/character.kt");
             }
 
             @TestMetadata("double.kt")
             public void testDouble() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/double.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare/double.kt");
             }
 
             @TestMetadata("float.kt")
             public void testFloat() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/float.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare/float.kt");
             }
 
             @TestMetadata("integer.kt")
             public void testInteger() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/integer.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare/integer.kt");
             }
 
             @TestMetadata("long.kt")
             public void testLong() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/long.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare/long.kt");
             }
 
             @TestMetadata("short.kt")
             public void testShort() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/short.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare/short.kt");
             }
         }
 
-        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io")
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/io")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Io extends AbstractLocalInspectionTest {
@@ -7235,31 +7235,31 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
 
             public void testAllFilesPresentInIo() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/io"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("print.kt")
             public void testPrint() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io/print.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/io/print.kt");
             }
 
             @TestMetadata("println.kt")
             public void testPrintln() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io/println.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/io/println.kt");
             }
 
             @TestMetadata("println_2.kt")
             public void testPrintln_2() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io/println_2.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/io/println_2.kt");
             }
 
             @TestMetadata("println_3.kt")
             public void testPrintln_3() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io/println_3.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/io/println_3.kt");
             }
         }
 
-        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math")
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Math extends AbstractLocalInspectionTest {
@@ -7269,165 +7269,165 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
             @TestMetadata("abs.kt")
             public void testAbs() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/abs.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/abs.kt");
             }
 
             @TestMetadata("acos.kt")
             public void testAcos() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/acos.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/acos.kt");
             }
 
             public void testAllFilesPresentInMath() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("asin.kt")
             public void testAsin() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/asin.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/asin.kt");
             }
 
             @TestMetadata("atan.kt")
             public void testAtan() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/atan.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/atan.kt");
             }
 
             @TestMetadata("atan2.kt")
             public void testAtan2() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/atan2.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/atan2.kt");
             }
 
             @TestMetadata("ceil.kt")
             public void testCeil() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/ceil.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/ceil.kt");
             }
 
             @TestMetadata("copySign.kt")
             public void testCopySign() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/copySign.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/copySign.kt");
             }
 
             @TestMetadata("cos.kt")
             public void testCos() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/cos.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/cos.kt");
             }
 
             @TestMetadata("cosh.kt")
             public void testCosh() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/cosh.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/cosh.kt");
             }
 
             @TestMetadata("exp.kt")
             public void testExp() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/exp.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/exp.kt");
             }
 
             @TestMetadata("expm1.kt")
             public void testExpm1() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/expm1.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/expm1.kt");
             }
 
             @TestMetadata("floor.kt")
             public void testFloor() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/floor.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/floor.kt");
             }
 
             @TestMetadata("hypot.kt")
             public void testHypot() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/hypot.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/hypot.kt");
             }
 
             @TestMetadata("IEEEremainder.kt")
             public void testIEEEremainder() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/IEEEremainder.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/IEEEremainder.kt");
             }
 
             @TestMetadata("log.kt")
             public void testLog() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/log.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/log.kt");
             }
 
             @TestMetadata("log10.kt")
             public void testLog10() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/log10.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/log10.kt");
             }
 
             @TestMetadata("log1p.kt")
             public void testLog1p() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/log1p.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/log1p.kt");
             }
 
             @TestMetadata("max.kt")
             public void testMax() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/max.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/max.kt");
             }
 
             @TestMetadata("min.kt")
             public void testMin() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/min.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/min.kt");
             }
 
             @TestMetadata("nextAfter.kt")
             public void testNextAfter() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/nextAfter.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/nextAfter.kt");
             }
 
             @TestMetadata("nextDown.kt")
             public void testNextDown() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/nextDown.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/nextDown.kt");
             }
 
             @TestMetadata("nextUp.kt")
             public void testNextUp() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/nextUp.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/nextUp.kt");
             }
 
             @TestMetadata("pow.kt")
             public void testPow() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/pow.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/pow.kt");
             }
 
             @TestMetadata("rint.kt")
             public void testRint() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/rint.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/rint.kt");
             }
 
             @TestMetadata("round.kt")
             public void testRound() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/round.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/round.kt");
             }
 
             @TestMetadata("signum.kt")
             public void testSignum() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/signum.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/signum.kt");
             }
 
             @TestMetadata("sin.kt")
             public void testSin() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/sin.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/sin.kt");
             }
 
             @TestMetadata("sinh.kt")
             public void testSinh() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/sinh.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/sinh.kt");
             }
 
             @TestMetadata("sqrt.kt")
             public void testSqrt() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/sqrt.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/sqrt.kt");
             }
 
             @TestMetadata("tan.kt")
             public void testTan() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/tan.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/tan.kt");
             }
 
             @TestMetadata("tanh.kt")
             public void testTanh() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/tanh.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math/tanh.kt");
             }
         }
 
-        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system")
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/system")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class System extends AbstractLocalInspectionTest {
@@ -7436,16 +7436,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
 
             public void testAllFilesPresentInSystem() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/system"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("exit.kt")
             public void testExit() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system/exit.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/system/exit.kt");
             }
         }
 
-        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString")
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ToString extends AbstractLocalInspectionTest {
@@ -7454,77 +7454,77 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
 
             public void testAllFilesPresentInToString() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("byteToString.kt")
             public void testByteToString() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/byteToString.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/byteToString.kt");
             }
 
             @TestMetadata("charToString.kt")
             public void testCharToString() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/charToString.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/charToString.kt");
             }
 
             @TestMetadata("doubleToString.kt")
             public void testDoubleToString() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/doubleToString.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/doubleToString.kt");
             }
 
             @TestMetadata("floatToString.kt")
             public void testFloatToString() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/floatToString.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/floatToString.kt");
             }
 
             @TestMetadata("incorrectDescriptor.kt")
             public void testIncorrectDescriptor() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/incorrectDescriptor.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/incorrectDescriptor.kt");
             }
 
             @TestMetadata("intToString.kt")
             public void testIntToString() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/intToString.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/intToString.kt");
             }
 
             @TestMetadata("intToString2.kt")
             public void testIntToString2() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/intToString2.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/intToString2.kt");
             }
 
             @TestMetadata("longToString.kt")
             public void testLongToString() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/longToString.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/longToString.kt");
             }
 
             @TestMetadata("longToString2.kt")
             public void testLongToString2() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/longToString2.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/longToString2.kt");
             }
 
             @TestMetadata("replaceIntToString.kt")
             public void testReplaceIntToString() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/replaceIntToString.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/replaceIntToString.kt");
             }
 
             @TestMetadata("replaceListElementToString.kt")
             public void testReplaceListElementToString() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/replaceListElementToString.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/replaceListElementToString.kt");
             }
 
             @TestMetadata("replaceToStringBase.kt")
             public void testReplaceToStringBase() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/replaceToStringBase.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/replaceToStringBase.kt");
             }
 
             @TestMetadata("replaceToStringWithRadix.kt")
             public void testReplaceToStringWithRadix() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/replaceToStringWithRadix.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/replaceToStringWithRadix.kt");
             }
 
             @TestMetadata("shortToString.kt")
             public void testShortToString() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/shortToString.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/shortToString.kt");
             }
         }
     }
