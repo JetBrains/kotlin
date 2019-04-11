@@ -178,6 +178,35 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             get() = this@FirBodyResolveTransformer.session
     })
 
+    private fun <T : FirQualifiedAccess> transformCallee(qualifiedAccess: T): T {
+        val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
+
+        val receiver = qualifiedAccess.explicitReceiver?.transformSingle(this, null)
+
+        val info = CallInfo(CallKind.VariableAccess, receiver, emptyList(), emptyList()) { it.resultType }
+        val resolver = CallResolver(jump, session)
+        resolver.callInfo = info
+        resolver.scopes = (scopes + localScopes).asReversed()
+
+        val consumer = createVariableAndObjectConsumer(
+            session,
+            callee.name,
+            info, inferenceComponents
+        )
+        val result = resolver.runTowerResolver(consumer)
+
+        val nameReference = createResolvedNamedReference(
+            callee,
+            result.bestCandidates(),
+            result.currentApplicability
+        )
+
+        val resultExpression =
+            qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference) as T
+        if (resultExpression is FirExpression) storeTypeFromCallee(resultExpression)
+        return resultExpression
+    }
+
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: Any?
@@ -203,32 +232,15 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 }
             }
         }
-        val callee = qualifiedAccessExpression.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccessExpression.compose()
+        return transformCallee(qualifiedAccessExpression).compose()
+    }
 
-        val receiver = qualifiedAccessExpression.explicitReceiver?.transformSingle(this, null)
-
-        val info = CallInfo(CallKind.VariableAccess, receiver, emptyList(), emptyList()) { it.resultType }
-        val resolver = CallResolver(jump, session)
-        resolver.callInfo = info
-        resolver.scopes = (scopes + localScopes).asReversed()
-
-        val consumer = createVariableAndObjectConsumer(
-            session,
-            callee.name,
-            info, inferenceComponents
-        )
-        val result = resolver.runTowerResolver(consumer)
-
-        val nameReference = createResolvedNamedReference(
-            callee,
-            result.bestCandidates(),
-            result.currentApplicability
-        )
-
-        val resultExpression =
-            qualifiedAccessExpression.transformCalleeReference(StoreNameReference, nameReference)
-        storeTypeFromCallee(resultExpression as FirQualifiedAccessExpression)
-        return resultExpression.compose()
+    override fun transformVariableAssignment(
+        variableAssignment: FirVariableAssignment,
+        data: Any?
+    ): CompositeTransformResult<FirStatement> {
+        val variableAssignment = variableAssignment.transformRValue(this, null)
+        return transformCallee(variableAssignment).compose()
     }
 
     private fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
