@@ -15,6 +15,7 @@ def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${projectDir}/../src/kotlin"
 def commonSrcDir2 = "${projectDir}/../common/src"
+def jsCommonDir = "${projectDir}/../js"
 def coroutinesExpJsSrcDir = "${rootDir}/libraries/stdlib/coroutines-experimental/js/src"
 
 def builtinsDir = "${rootDir}/core/builtins"
@@ -22,8 +23,12 @@ def unsignedCommonSrcDir = "${rootDir}/libraries/stdlib/unsigned/src"
 def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
 def experimentalJsModuleName = 'kotlin-experimental'
 def coroutinesJsModuleName = 'kotlin-stdlib-coroutines'
+
 def jsSrcDir = "src"
+def jsCommonSrcDir = "${jsCommonDir}/src"
 def jsTestSrcDir = "test"
+def jsCommonTestSrcDir = "${jsCommonDir}/test"
+
 def jsSrcJsDir = "${jsSrcDir}/js"
 def jsOutputFile = "${buildDir}/classes/kotlin.js"
 def jsOutputMetaFile = "${buildDir}/classes/kotlin.meta.js"
@@ -34,11 +39,11 @@ def kotlinTestJsOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}
 def jsTestOutputFile = "${buildDir}/classes/kotlin/test/kotlin-stdlib-js_test.js"
 def kotlinTestJsTestOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/kotlin/test/kotlin-test-js_test.js"
 
-
 sourceSets {
     builtins {
         kotlin {
             srcDir builtinsSrcDir2
+            srcDir "${jsCommonDir}/runtime"
             srcDir 'runtime'
         }
     }
@@ -46,6 +51,7 @@ sourceSets {
     main {
         kotlin {
             srcDir builtinsSrcDir
+            srcDir jsCommonSrcDir
             srcDir jsSrcDir
         }
     }
@@ -60,6 +66,7 @@ sourceSets {
     test {
         kotlin {
             srcDir jsTestSrcDir
+            srcDir jsCommonTestSrcDir
         }
     }
 
@@ -145,7 +152,7 @@ compileKotlin2Js {
         sourceMap = true
         sourceMapPrefix = "./"
         freeCompilerArgs += [
-            "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir, commonSrcDir2, unsignedCommonSrcDir].collect { file(it).absoluteFile }.join(File.pathSeparator),
+            "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, jsCommonSrcDir, commonSrcDir, commonSrcDir2, unsignedCommonSrcDir].collect { file(it).absoluteFile }.join(File.pathSeparator),
             "-Xuse-experimental=kotlin.Experimental",
             "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
@@ -198,6 +205,7 @@ task compileJs(type: NoDebugJavaExec) {
     inputs.files(compileExperimentalKotlin2Js.outputs.files)
     inputs.files(compileCoroutinesExperimentalKotlin2Js.outputs.files)
     inputs.dir(jsSrcDir)
+    inputs.dir(jsCommonSrcDir)
     outputs.file(jsOutputFile)
     outputs.file("${jsOutputFile}.map")
 
@@ -239,15 +247,15 @@ task compileJs(type: NoDebugJavaExec) {
 
         def sourceMapBasePaths = [
                 "./",
-                "libraries/stdlib/js/src/js/",
-                "libraries/stdlib/js/src/",
+                "libraries/stdlib/js-v1/src/js/",
+                "libraries/stdlib/js-v1/src/",
         ]
         sourceMap.sources = sourceMap.sources.collect { sourcePath ->
             def prefixToRemove = sourceMapBasePaths.find { basePath -> sourcePath.startsWith(basePath) }
             if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
         }
 
-        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir, experimentalSrcDir,  unsignedCommonSrcDir]
+        def sourceMapSourcesBaseDirs = [jsSrcDir, jsCommonSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir, experimentalSrcDir,  unsignedCommonSrcDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
             def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text

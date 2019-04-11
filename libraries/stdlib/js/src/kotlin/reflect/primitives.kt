@@ -73,7 +73,7 @@ internal object PrimitiveClasses {
     fun functionClass(arity: Int): KClassImpl<Any> {
         return functionClasses.get(arity) ?: run {
             val result = PrimitiveKClassImpl(js("Function").unsafeCast<JsClass<Any>>(), "Function$arity",
-                                             { jsTypeOf(it) === "function" && it.asDynamic().length == arity })
+                                             { jsTypeOf(it) === "function" && it.asDynamic().length === arity })
             functionClasses.asDynamic()[arity] = result
             result
         }

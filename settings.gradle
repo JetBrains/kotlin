@@ -247,7 +247,7 @@ if (flags.inJpsBuildIdeaSync) {
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
-    project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js" as File
+    project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js-v1" as File
     project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
     project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
     project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
