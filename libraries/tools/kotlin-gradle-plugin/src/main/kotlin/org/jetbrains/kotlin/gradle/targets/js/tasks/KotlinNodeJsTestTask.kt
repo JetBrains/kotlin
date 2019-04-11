@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
@@ -34,6 +35,8 @@ open class KotlinNodeJsTestTask : KotlinTestTask() {
     fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(), body)
 
     fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(), body)
+
+    fun useKarma(body: KotlinKarma.() -> Unit) = use(KotlinKarma(), body)
 
     private inline fun <T : KotlinJsTestFramework> use(runner: T, body: T.() -> Unit) {
         testFramework = runner.also(body)

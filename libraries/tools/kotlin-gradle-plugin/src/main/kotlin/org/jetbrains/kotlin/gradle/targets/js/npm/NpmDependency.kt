@@ -49,6 +49,7 @@ data class NpmDependency(
     }
 
     private fun tryFindNodeModule(): MutableSet<File> {
+        // todo: transitive dependencies
         var p = project
         do {
             val result = p.rootDir.resolve("node_modules/$key")
