@@ -5,7 +5,7 @@
 
 @file:Suppress("DEPRECATION")
 
-package org.jetbrains.kotlin.scripting.shared.resolve
+package org.jetbrains.kotlin.scripting.resolve
 
 import org.jetbrains.kotlin.script.DependencyResolverWrapper
 import java.io.File

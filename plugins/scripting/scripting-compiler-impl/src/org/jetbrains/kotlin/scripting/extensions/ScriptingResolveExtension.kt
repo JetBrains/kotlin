@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.shared.extensions
+package org.jetbrains.kotlin.scripting.extensions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
-import org.jetbrains.kotlin.scripting.shared.resolve.LazyScriptDescriptor
+import org.jetbrains.kotlin.scripting.resolve.LazyScriptDescriptor
 
 class ScriptingResolveExtension : SyntheticResolveExtension {
     override fun generateSyntheticClasses(

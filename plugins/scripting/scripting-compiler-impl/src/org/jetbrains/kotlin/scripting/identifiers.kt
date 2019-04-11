@@ -3,6 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.shared
+package org.jetbrains.kotlin.scripting
 
 const val KOTLIN_SCRIPTING_PLUGIN_ID = "kotlin.scripting"

@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.shared.definitions
+package org.jetbrains.kotlin.scripting.definitions
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -62,7 +62,9 @@ fun discoverScriptTemplatesInClasspath(
                         if (jar.getJarEntry(SCRIPT_DEFINITION_MARKERS_PATH) != null) {
                             val definitionNames = jar.entries().asSequence().mapNotNull {
                                 if (it.isDirectory || !it.name.startsWith(SCRIPT_DEFINITION_MARKERS_PATH)) null
-                                else it.name.removePrefix(SCRIPT_DEFINITION_MARKERS_PATH).removeSuffix(SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT)
+                                else it.name.removePrefix(SCRIPT_DEFINITION_MARKERS_PATH).removeSuffix(
+                                    SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
+                                )
                             }.toList()
                             val (loadedDefinitions, notFoundClasses) =
                                     definitionNames.partitionLoadJarDefinitions(jar, loader, scriptResolverEnv, messageCollector)
