@@ -171,6 +171,8 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
                         file("$buildDir/tmp/jar/MANIFEST.MF")
                     }
 
+                    file("${ideaPluginProject.rootDir}/resources/kotlinManifest.properties")
+                    
                     jarFromEmbedded(ideaPluginProject)
                 }
 
