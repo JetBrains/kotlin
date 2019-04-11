@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.internal.operation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
@@ -32,7 +31,7 @@ object Yarn : NpmApi {
         val yarnEnv = YarnPlugin[project].buildEnv()
 
         project.execWithProgress(description) { exec ->
-            exec.executable = nodeJsEnv.nodeExec
+            exec.executable = nodeJsEnv.nodeExecutable
             exec.args = listOf(yarnEnv.home.resolve("bin/yarn.js").absolutePath) + args
             exec.workingDir = npmProjectLayout.nodeWorkDir
         }

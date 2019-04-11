@@ -6,50 +6,42 @@
 package org.jetbrains.kotlin.gradle.targets.js.tasks
 
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.SkipWhenEmpty
-import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTrace
-import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunner
+import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
-import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
-import java.io.File
 
 open class KotlinNodeJsTestTask : KotlinTestTask() {
-    @Input
-    var ignoredTestSuites: IgnoredTestSuites =
-        IgnoredTestSuites.showWithContents
-
-    @Input
-    @SkipWhenEmpty
-    var nodeModulesToLoad: Set<String> = setOf()
-
-    @Input
-    lateinit var testRuntimeNodeModules: Collection<String>
-
-    @Suppress("LeakingThis")
     @Internal
-    val nodeJsProcessOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
-
-    @Suppress("unused")
-    val nodeJsExecutable: String
-        @Input get() = nodeJsProcessOptions.executable
-
-    @Suppress("unused")
-    val nodeJsWorkingDirCanonicalPath: String
-        @Input get() = nodeJsProcessOptions.workingDir.canonicalPath
+    private var testFramework: KotlinJsTestFramework = KotlinNodeJsTestRunner()
 
     @Input
     var debug: Boolean = false
 
-    fun nodeJs(options: ProcessForkOptions.() -> Unit) {
-        options(nodeJsProcessOptions)
+    @Internal
+    var runtimeDependencyHandler: HasKotlinDependencies? = null
+
+    @Input
+    var nodeModulesToLoad: MutableList<String> = mutableListOf()
+
+    fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(), body)
+
+    fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(), body)
+
+    private inline fun <T : KotlinJsTestFramework> use(runner: T, body: T.() -> Unit) {
+        testFramework = runner.also(body)
+
+        val dependenciesHolder = runtimeDependencyHandler
+        if (dependenciesHolder != null) {
+            testFramework.configure(dependenciesHolder)
+        }
     }
 
     override fun executeTests() {
@@ -58,13 +50,12 @@ open class KotlinNodeJsTestTask : KotlinTestTask() {
     }
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
-        val extendedForkOptions = DefaultProcessForkOptions(fileResolver)
-        nodeJsProcessOptions.copyTo(extendedForkOptions)
+        val forkOptions = DefaultProcessForkOptions(fileResolver)
 
         NpmResolver.resolve(project)
 
-        val npmProjectLayout = NpmProjectLayout[project]
-        extendedForkOptions.workingDir = npmProjectLayout.nodeWorkDir
+        forkOptions.workingDir = NpmProjectLayout[project].nodeWorkDir
+        forkOptions.executable = NodeJsPlugin[project].buildEnv().nodeExecutable
 
         val nodeJsArgs = mutableListOf<String>()
 
@@ -72,61 +63,6 @@ open class KotlinNodeJsTestTask : KotlinTestTask() {
             nodeJsArgs.add("--inspect-brk")
         }
 
-        val cliArgs = KotlinNodeJsTestRunnerCliArgs(
-            nodeModulesToLoad.toList(),
-            filterExt.includePatterns + filterExt.commandLineIncludePatterns,
-            excludes,
-            ignoredTestSuites.cli
-        )
-
-        val clientSettings = TCServiceMessagesClientSettings(
-            name,
-            testNameSuffix = if (showTestTargetName) targetName else null,
-            prepandSuiteName = true,
-            stackTraceParser = ::parseNodeJsStackTraceAsJvm
-        )
-
-        return TCServiceMessagesTestExecutionSpec(
-            extendedForkOptions,
-            nodeJsArgs +
-                    testRuntimeNodeModules
-                        .map { npmProjectLayout.nodeModulesDir.resolve(it) }
-                        .filter { it.exists() }
-                        .map { it.absolutePath } +
-                    cliArgs.toList(),
-            true,
-            clientSettings
-        )
-    }
-}
-
-data class KotlinNodeJsTestRunnerCliArgs(
-    val moduleNames: List<String>,
-    val include: Collection<String> = listOf(),
-    val exclude: Collection<String> = listOf(),
-    val ignoredTestSuites: IgnoredTestSuitesReporting = IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored
-) {
-    fun toList(): List<String> = mutableListOf<String>().also { args ->
-        if (include.isNotEmpty()) {
-            args.add("--include")
-            args.add(include.joinToString(","))
-        }
-
-        if (exclude.isNotEmpty()) {
-            args.add("--exclude")
-            args.add(exclude.joinToString(","))
-        }
-
-        if (ignoredTestSuites !== IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored) {
-            args.add("--ignoredTestSuites")
-            args.add(ignoredTestSuites.name)
-        }
-
-        args.addAll(moduleNames)
-    }
-
-    @Suppress("EnumEntryName")
-    enum class IgnoredTestSuitesReporting {
-        skip, reportAsIgnoredTest, reportAllInnerTestsAsIgnored
+        return testFramework.createTestExecutionSpec(this, forkOptions, nodeJsArgs)
     }
 }

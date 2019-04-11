@@ -66,7 +66,7 @@ open class NodeJsSetupTask : DefaultTask() {
         unpackNodeArchive(result, destination.parentFile) // parent because archive contains name already
 
         if (!env.isWindows) {
-            File(env.nodeExec).setExecutable(true)
+            File(env.nodeExecutable).setExecutable(true)
         }
     }
 

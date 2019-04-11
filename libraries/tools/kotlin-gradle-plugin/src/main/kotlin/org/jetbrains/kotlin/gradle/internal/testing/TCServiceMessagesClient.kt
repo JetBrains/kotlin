@@ -24,7 +24,8 @@ data class TCServiceMessagesClientSettings(
     val testNameSuffix: String? = null,
     val prepandSuiteName: Boolean = false,
     val treatFailedTestOutputAsStacktrace: Boolean = false,
-    val stackTraceParser: (String) -> ParsedStackTrace? = { null }
+    val stackTraceParser: (String) -> ParsedStackTrace? = { null },
+    val ignoreOutOfRootNodes: Boolean = false
 )
 
 internal class TCServiceMessagesClient(
@@ -190,8 +191,13 @@ internal class TCServiceMessagesClient(
 
     private fun close(ts: Long, assertLocalId: String?) = pop().also {
         if (assertLocalId != null) {
+            if (it.localId != assertLocalId && settings.ignoreOutOfRootNodes && it.parent == null) {
+                push(it)
+                return it
+            }
+
             check(it.localId == assertLocalId) {
-                "Bad TCSM: unexpected node to close: ${it.localId}, stack: ${
+                "Bad TCSM: unexpected node to close `$assertLocalId`, expected `${it.localId}`, stack: ${
                 leaf.collectParents().joinToString("") { item -> "\n - ${item.localId}" }
                 }\n"
             }

@@ -18,9 +18,6 @@ import javax.inject.Inject
 
 abstract class KotlinTestTask : AbstractTestTask() {
     @Input
-    var showTestTargetName: Boolean = false
-
-    @Input
     @Optional
     var targetName: String? = null
 
@@ -35,10 +32,10 @@ abstract class KotlinTestTask : AbstractTestTask() {
         filterExt.isFailOnNoMatchingTests = false
     }
 
-    protected val includePatterns: Set<String>
+    val includePatterns: Set<String>
         @Internal get() = filterExt.includePatterns + filterExt.commandLineIncludePatterns
 
-    protected val excludePatterns: Set<String>
+    val excludePatterns: Set<String>
         @Internal get() = excludes
 
     @get:Inject

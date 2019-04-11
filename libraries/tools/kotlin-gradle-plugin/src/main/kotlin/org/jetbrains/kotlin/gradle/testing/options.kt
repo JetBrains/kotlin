@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.gradle.testing
 
-import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunnerCliArgs
 
 @Suppress("EnumEntryName")
 enum class IgnoredTestSuites(val cli: KotlinNodeJsTestRunnerCliArgs.IgnoredTestSuitesReporting) {
