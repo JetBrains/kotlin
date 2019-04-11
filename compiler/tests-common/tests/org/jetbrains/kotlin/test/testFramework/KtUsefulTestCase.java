@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.test.testFramework;
 
-
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
 import com.intellij.diagnostic.PerformanceWatcher;
@@ -36,12 +35,9 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.*;
 import com.intellij.testFramework.exceptionCases.AbstractExceptionCase;
-import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
 import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.PeekableIterator;
-import com.intellij.util.containers.PeekableIteratorWrapper;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.lang.CompoundRuntimeException;
 import com.intellij.util.ui.UIUtil;
@@ -121,14 +117,8 @@ public abstract class KtUsefulTestCase extends TestCase {
         super.setUp();
 
         if (shouldContainTempFiles()) {
-            IdeaTestExecutionPolicy policy = IdeaTestExecutionPolicy.current();
-            String testName = null;
-            if (policy != null) {
-                testName = policy.getPerTestTempDirName();
-            }
-            if (testName == null) {
-                testName = FileUtil.sanitizeFileName(getTestName(true));
-            }
+            String testName =  FileUtil.sanitizeFileName(getTestName(true));
+            if (StringUtil.isEmptyOrSpaces(testName)) testName = "";
             testName = new File(testName).getName(); // in case the test name contains file separators
             myTempDir = FileUtil.createTempDirectory(TEMP_DIR_MARKER, testName, false);
             FileUtil.resetCanonicalTempPathCache(myTempDir.getPath());
@@ -273,7 +263,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         AtomicBoolean completed = new AtomicBoolean(false);
         Runnable runnable = () -> {
             try {
-                TestLoggerFactory.onTestStarted();
+                //TestLoggerFactory.onTestStarted();
                 super.runTest();
                 TestLoggerFactory.onTestFinished(true);
                 completed.set(true);
@@ -309,16 +299,16 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     protected void invokeTestRunnable(@NotNull Runnable runnable) throws Exception {
-        IdeaTestExecutionPolicy policy = IdeaTestExecutionPolicy.current();
-        if (policy != null && !policy.runInDispatchThread()) {
-            runnable.run();
-        }
-        else {
+        //IdeaTestExecutionPolicy policy = IdeaTestExecutionPolicy.current();
+        //if (policy != null && !policy.runInDispatchThread()) {
+        //    runnable.run();
+        //}
+        //else {
             EdtTestUtilKt.runInEdtAndWait(() -> {
                 runnable.run();
                 return null;
             });
-        }
+        //}
     }
 
     private void defaultRunBare() throws Throwable {
@@ -394,10 +384,10 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     protected boolean runInDispatchThread() {
-        IdeaTestExecutionPolicy policy = IdeaTestExecutionPolicy.current();
-        if (policy != null) {
-            return policy.runInDispatchThread();
-        }
+        //IdeaTestExecutionPolicy policy = IdeaTestExecutionPolicy.current();
+        //if (policy != null) {
+        //    return policy.runInDispatchThread();
+        //}
         return true;
     }
 
@@ -533,20 +523,9 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     public static <T> void assertContainsOrdered(@NotNull Collection<? extends T> collection, @NotNull Collection<? extends T> expected) {
-        PeekableIterator<T> expectedIt = new PeekableIteratorWrapper<>(expected.iterator());
-        PeekableIterator<T> actualIt = new PeekableIteratorWrapper<>(collection.iterator());
-
-        while (actualIt.hasNext() && expectedIt.hasNext()) {
-            T expectedElem = expectedIt.peek();
-            T actualElem = actualIt.peek();
-            if (expectedElem.equals(actualElem)) {
-                expectedIt.next();
-            }
-            actualIt.next();
-        }
-        if (expectedIt.hasNext()) {
-            throw new ComparisonFailure("", toString(expected), toString(collection));
-        }
+        ArrayList<T> copy = new ArrayList<>(collection);
+        copy.retainAll(expected);
+        assertOrderedEquals(toString(collection), copy, expected);
     }
 
     @SafeVarargs
