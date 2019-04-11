@@ -59,6 +59,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     ideArtifacts {
                         generateIdeArtifacts(rootProject, this@ideArtifacts)
 
+                        kotlinDaemonClientJar()
+
                         kotlinJpsPluginJar()
 
                         ideaPlugin()
@@ -163,19 +165,13 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
+fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinDaemonClientJar() =
+    jarFromProject(project(":kotlin-daemon-client"))
+
 fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinJpsPluginJar() {
     val jpsPluginProject = project(":kotlin-jps-plugin")
-
-    create("kotlin-jps-plugin.jar") {
-        archive("kotlin-jps-plugin.jar") {
-            directory("META-INF") {
-                file("${jpsPluginProject.buildDir}/tmp/jar/MANIFEST.MF")
-            }
-
-            jarFromEmbedded(jpsPluginProject)
-
-            file("${jpsPluginProject.rootDir}/resources/kotlinManifest.properties")
-        }
+    jarFromProject(jpsPluginProject) {
+        file("${jpsPluginProject.rootDir}/resources/kotlinManifest.properties")
     }
 }
 
@@ -199,7 +195,7 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
 
                     file("${ideaPluginProject.rootDir}/resources/kotlinManifest.properties")
                     
-                    jarFromEmbedded(ideaPluginProject)
+                    jarContentsFromEmbeddedConfiguration(ideaPluginProject)
                 }
 
                 directoryFromConfiguration(libraries)
@@ -208,6 +204,21 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
                     directoryFromConfiguration(jpsPlugin)
                 }
             }
+        }
+    }
+}
+
+fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project, configureAction: RecursiveArtifact.() -> Unit = {}) {
+    val jarName = project.name + ".jar"
+    create(jarName) {
+        archive(jarName) {
+            directory("META-INF") {
+                file("${project.buildDir}/tmp/jar/MANIFEST.MF")
+            }
+
+            jarContentsFromEmbeddedConfiguration(project)
+
+            configureAction()
         }
     }
 }
@@ -224,7 +235,7 @@ val jarArtifactProjects = listOf(
 
 fun moduleName(projectPath: String) = rootProject.name + projectPath.replace(':', '.') + ".main"
 
-fun RecursiveArtifact.jarFromEmbedded(project: Project) {
+fun RecursiveArtifact.jarContentsFromEmbeddedConfiguration(project: Project) {
     val embedded = project.configurations.findByName("embedded") ?: return
 
     val resolvedArtifacts = embedded
@@ -240,7 +251,7 @@ fun RecursiveArtifact.jarFromEmbedded(project: Project) {
         .filterIsInstance<ProjectComponentIdentifier>()
         .forEach {
             moduleOutput(moduleName(it.projectPath))
-            jarFromEmbedded(project(it.projectPath))
+            jarContentsFromEmbeddedConfiguration(project(it.projectPath))
         }
 }
 
