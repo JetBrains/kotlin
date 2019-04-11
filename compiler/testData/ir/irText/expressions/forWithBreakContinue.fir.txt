@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
         CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in kotlin.collections.List' type=kotlin.collections.Iterator<E of <uninitialized parent>> origin=null
       WHILE label=null origin=FOR_LOOP_INNER_WHILE
         condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
-        body: BLOCK type=IrErrorType origin=null
+        body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s type:T of <uninitialized parent> [val]
             CALL 'public abstract fun next (): T of <uninitialized parent> declared in kotlin.collections.Iterator' type=T of <uninitialized parent> origin=null
           BREAK label=null loop.label=null
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
         CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in kotlin.collections.List' type=kotlin.collections.Iterator<E of <uninitialized parent>> origin=null
       WHILE label=OUTER origin=FOR_LOOP_INNER_WHILE
         condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
-        body: BLOCK type=IrErrorType origin=null
+        body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s1 type:T of <uninitialized parent> [val]
             CALL 'public abstract fun next (): T of <uninitialized parent> declared in kotlin.collections.Iterator' type=T of <uninitialized parent> origin=null
           VAR name:<range> type:kotlin.collections.List<kotlin.String> [val]
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
             CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in kotlin.collections.List' type=kotlin.collections.Iterator<E of <uninitialized parent>> origin=null
           WHILE label=INNER origin=FOR_LOOP_INNER_WHILE
             condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
-            body: BLOCK type=IrErrorType origin=null
+            body: BLOCK type=kotlin.Nothing origin=null
               VAR name:s2 type:T of <uninitialized parent> [val]
                 CALL 'public abstract fun next (): T of <uninitialized parent> declared in kotlin.collections.Iterator' type=T of <uninitialized parent> origin=null
               BREAK label=OUTER loop.label=OUTER
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
         CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in kotlin.collections.List' type=kotlin.collections.Iterator<E of <uninitialized parent>> origin=null
       WHILE label=null origin=FOR_LOOP_INNER_WHILE
         condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
-        body: BLOCK type=IrErrorType origin=null
+        body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s type:T of <uninitialized parent> [val]
             CALL 'public abstract fun next (): T of <uninitialized parent> declared in kotlin.collections.Iterator' type=T of <uninitialized parent> origin=null
           CONTINUE label=null loop.label=null
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
         CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in kotlin.collections.List' type=kotlin.collections.Iterator<E of <uninitialized parent>> origin=null
       WHILE label=OUTER origin=FOR_LOOP_INNER_WHILE
         condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
-        body: BLOCK type=IrErrorType origin=null
+        body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s1 type:T of <uninitialized parent> [val]
             CALL 'public abstract fun next (): T of <uninitialized parent> declared in kotlin.collections.Iterator' type=T of <uninitialized parent> origin=null
           VAR name:<range> type:kotlin.collections.List<kotlin.String> [val]
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
             CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in kotlin.collections.List' type=kotlin.collections.Iterator<E of <uninitialized parent>> origin=null
           WHILE label=INNER origin=FOR_LOOP_INNER_WHILE
             condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
-            body: BLOCK type=IrErrorType origin=null
+            body: BLOCK type=kotlin.Nothing origin=null
               VAR name:s2 type:T of <uninitialized parent> [val]
                 CALL 'public abstract fun next (): T of <uninitialized parent> declared in kotlin.collections.Iterator' type=T of <uninitialized parent> origin=null
               CONTINUE label=OUTER loop.label=OUTER

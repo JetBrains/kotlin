@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/badBreakContinue.kt
     BLOCK_BODY
       WHILE label=L1 origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
-        body: BLOCK type=IrErrorType origin=null
+        body: BLOCK type=kotlin.Nothing origin=null
           ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
           ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/badBreakContinue.kt
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test3'
-                    BLOCK type=IrErrorType origin=null
+                    BLOCK type=kotlin.Nothing origin=null
                       BREAK label=L1 loop.label=L1
                       CONTINUE label=L1 loop.label=L1
               FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test3' type=IrErrorType origin=LAMBDA
