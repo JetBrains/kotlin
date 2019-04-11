@@ -14,9 +14,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
@@ -98,12 +97,19 @@ open class FunctionCodegen(
     }
 
     protected open fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
+        // @Throws(vararg exceptionClasses: KClass<out Throwable>)
+        val exceptions = irFunction.getAnnotation(FqName("kotlin.jvm.Throws"))?.getValueArgument(0)?.let {
+            (it as IrVararg).elements.map { exceptionClass ->
+                classCodegen.typeMapper.mapType((exceptionClass as IrClassReference).classType.toKotlinType()).internalName
+            }.toTypedArray()
+        }
+
         return classCodegen.visitor.newMethod(
             irFunction.OtherOrigin,
             flags,
             signature.asmMethod.name, signature.asmMethod.descriptor,
             if (irFunction.origin == IrDeclarationOrigin.BRIDGE) null else signature.genericsSignature,
-            null/*TODO support exception*/
+            exceptions
         )
     }
 
