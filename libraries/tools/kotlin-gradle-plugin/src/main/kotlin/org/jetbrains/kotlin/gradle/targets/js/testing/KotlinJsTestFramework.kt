@@ -1,0 +1,24 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle.targets.js.testing
+
+import org.gradle.process.ProcessForkOptions
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestTask
+
+interface KotlinJsTestFramework {
+    fun createTestExecutionSpec(
+        task: KotlinNodeJsTestTask,
+        forkOptions: ProcessForkOptions,
+        nodeJsArgs: MutableList<String>
+    ): TCServiceMessagesTestExecutionSpec
+
+    fun configure(dependenciesHolder: HasKotlinDependencies) {
+
+    }
+}

@@ -44,8 +44,8 @@ interface KotlinDependencyHandler {
 
     fun project(notation: Map<String, Any?>): ProjectDependency
 
-    fun npm(packageName: String, version: String = "*"): Dependency?
-    fun npm(org: String, packageName: String, version: String = "*"): Dependency?
+    fun npm(packageName: String, version: String = "*"): Dependency
+    fun npm(org: String, packageName: String, version: String = "*"): Dependency
 }
 
 interface HasKotlinDependencies {

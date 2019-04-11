@@ -177,18 +177,23 @@ internal class GradleNodeModulesSync(val project: Project) {
         val kotlin2JsCompile = compilation.compileKotlinTask as Kotlin2JsCompile
 
         // classpath
-        kotlin2JsCompile.classpath.forEach { srcFile ->
-            when {
-                srcFile.name == PACKAGE_JSON -> visitPackageJson(srcFile, transitiveDependencies)
-                isKotlinJsRuntimeFile(srcFile) -> getOrCompute(srcFile) {
-                    listOf(srcFile)
-                }
-                srcFile.isZip -> getOrCompute(srcFile) {
-                    mutableListOf<File>().also { files ->
-                        this.project.zipTree(srcFile).forEach { innerFile ->
-                            when {
-                                innerFile.name == PACKAGE_JSON -> visitPackageJson(innerFile, transitiveDependencies)
-                                isKotlinJsRuntimeFile(innerFile) -> files.add(innerFile)
+        compilation.relatedConfigurationNames.forEach {
+            val configuration = project.configurations.getByName(it)
+            if (configuration.isCanBeResolved) {
+                configuration.resolve().forEach { srcFile ->
+                    when {
+                        srcFile.name == PACKAGE_JSON -> visitPackageJson(srcFile, transitiveDependencies)
+                        isKotlinJsRuntimeFile(srcFile) -> getOrCompute(srcFile) {
+                            listOf(srcFile)
+                        }
+                        srcFile.isZip -> getOrCompute(srcFile) {
+                            mutableListOf<File>().also { files ->
+                                this.project.zipTree(srcFile).forEach { innerFile ->
+                                    when {
+                                        innerFile.name == PACKAGE_JSON -> visitPackageJson(innerFile, transitiveDependencies)
+                                        isKotlinJsRuntimeFile(innerFile) -> files.add(innerFile)
+                                    }
+                                }
                             }
                         }
                     }

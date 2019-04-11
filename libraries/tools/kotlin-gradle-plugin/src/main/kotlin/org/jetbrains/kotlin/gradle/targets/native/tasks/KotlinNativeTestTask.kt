@@ -48,8 +48,8 @@ open class KotlinNativeTestTask : KotlinTestTask() {
 
         val clientSettings = TCServiceMessagesClientSettings(
             name,
-            testNameSuffix = if (showTestTargetName) targetName else null,
-            prepandSuiteName = showTestTargetName,
+            testNameSuffix = targetName,
+            prepandSuiteName = targetName != null,
             treatFailedTestOutputAsStacktrace = true,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm
         )

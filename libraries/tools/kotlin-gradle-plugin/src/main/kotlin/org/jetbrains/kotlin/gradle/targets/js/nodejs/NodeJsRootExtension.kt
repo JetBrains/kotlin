@@ -49,8 +49,8 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
         return NodeJsEnv(
             nodeDir = nodeDir,
             nodeBinDir = nodeBinDir,
-            nodeExec = getExecutable("node", nodeCommand, "exe"),
-            npmExec = getExecutable("npm", npmCommand, "cmd"),
+            nodeExecutable = getExecutable("node", nodeCommand, "exe"),
+            npmExecutable = getExecutable("npm", npmCommand, "cmd"),
             platformName = platform,
             architectureName = architecture,
             ivyDependency = getIvyDependency()

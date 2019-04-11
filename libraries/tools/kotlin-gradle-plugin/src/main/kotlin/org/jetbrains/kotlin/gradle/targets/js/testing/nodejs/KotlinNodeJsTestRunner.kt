@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
+import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
 
 class KotlinNodeJsTestRunner : KotlinJsTestFramework {
@@ -27,7 +27,7 @@ class KotlinNodeJsTestRunner : KotlinJsTestFramework {
     }
 
     override fun createTestExecutionSpec(
-        task: KotlinJsTest,
+        task: KotlinNodeJsTestTask,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>
     ): TCServiceMessagesTestExecutionSpec {
@@ -41,20 +41,24 @@ class KotlinNodeJsTestRunner : KotlinJsTestFramework {
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
             testNameSuffix = task.targetName,
-            prependSuiteName = true,
+            prepandSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm
         )
 
         val testRuntimeNodeModules = listOf(
-            "kotlin-test-nodejs-runner/kotlin-test-nodejs-runner.js",
-            "kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support.js"
+            "kotlin-test-nodejs-runner.js",
+            "kotlin-nodejs-source-map-support.js"
         )
 
-        val npmProjectLayout = NpmProject[task.project]
+        val npmProjectLayout = NpmProjectLayout[task.project]
 
         val args = nodeJsArgs +
                 testRuntimeNodeModules.map {
-                    npmProjectLayout.getModuleEntryPath(it)
+                    npmProjectLayout.nodeModulesDir.resolve(it).also { file ->
+                        check(file.isFile) {
+                            "Cannot find ${file.canonicalPath}"
+                        }
+                    }.canonicalPath
                 } +
                 cliArgs.toList()
 
