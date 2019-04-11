@@ -124,7 +124,7 @@ fun IrValueParameter.isInlineParameter(): Boolean =
 val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
     get() = generateSequence(this, { it.parent as? IrDeclaration })
 
-fun IrClass.companionObject() = this.declarations.singleOrNull {it is IrClass && it.isCompanion }
+fun IrClass.companionObject() = this.declarations.filterIsInstance<IrClass>().atMostOne { it.isCompanion }
 
 val IrDeclaration.isGetter get() = this is IrSimpleFunction && this == this.correspondingProperty?.getter
 

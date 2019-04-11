@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.companionObject
 import org.jetbrains.kotlin.backend.konan.objcexport.namePrefix
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
@@ -95,7 +96,6 @@ internal abstract class BaseInteropIrTransformer(private val context: Context) :
 internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransformer(context), FileLoweringPass {
 
     private val symbols get() = context.ir.symbols
-    private val symbolTable get() = symbols.symbolTable
 
     lateinit var currentFile: IrFile
 
@@ -595,16 +595,15 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
 
             val initCall = builder.genLoweredObjCMethodCall(
                     initMethodInfo,
-                    superQualifier = symbolTable.referenceClass(expression.descriptor.constructedClass),
+                    superQualifier = expression.symbol.owner.constructedClass.symbol,
                     receiver = builder.getRawPtr(builder.irGet(constructedClass.thisReceiver!!)),
                     arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index)!! },
                     call = expression,
                     method = initMethod
             )
 
-            val superConstructor = symbolTable.referenceConstructor(
-                    expression.descriptor.constructedClass.constructors.single { it.valueParameters.size == 0 }
-            )
+            val superConstructor = expression.symbol.owner.constructedClass
+                    .constructors.single { it.valueParameters.size == 0 }.symbol
 
             return builder.irBlock(expression) {
                 // Required for the IR to be valid, will be ignored in codegen:
@@ -727,11 +726,12 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
                 if (classSymbol == null) {
                     expression
                 } else {
-                    val classDescriptor = classSymbol.descriptor
-                    val companionObject = classDescriptor.companionObjectDescriptor ?:
-                            error("native variable class $classDescriptor must have the companion object")
+                    val irClass = classSymbol.owner
 
-                    builder.at(expression).irGetObject(symbolTable.lazyWrapper.referenceClass(companionObject))
+                    val companionObject = irClass.companionObject() ?:
+                            error("native variable class ${irClass.descriptor} must have the companion object")
+
+                    builder.at(expression).irGetObject(companionObject.symbol)
                 }
             }
             else -> expression
