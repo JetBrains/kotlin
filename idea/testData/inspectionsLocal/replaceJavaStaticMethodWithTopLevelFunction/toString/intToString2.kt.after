@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+
+fun foo() {
+    val b = listOf(42, 10)
+    println(b.first().toString(b.last()).let{it} + 1)
+}

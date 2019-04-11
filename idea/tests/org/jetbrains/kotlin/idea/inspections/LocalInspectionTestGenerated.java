@@ -7138,44 +7138,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceJavaIntegerToStringWithMember extends AbstractLocalInspectionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInReplaceJavaIntegerToStringWithMember() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("incorrectDescriptor.kt")
-        public void testIncorrectDescriptor() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/incorrectDescriptor.kt");
-        }
-
-        @TestMetadata("replaceIntToString.kt")
-        public void testReplaceIntToString() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/replaceIntToString.kt");
-        }
-
-        @TestMetadata("replaceListElementToString.kt")
-        public void testReplaceListElementToString() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/replaceListElementToString.kt");
-        }
-
-        @TestMetadata("replaceToStringBase.kt")
-        public void testReplaceToStringBase() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/replaceToStringBase.kt");
-        }
-
-        @TestMetadata("replaceToStringWithRadix.kt")
-        public void testReplaceToStringWithRadix() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/replaceToStringWithRadix.kt");
-        }
-    }
-
     @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -7419,6 +7381,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("println_3.kt")
             public void testPrintln_3() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system/println_3.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ToString extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInToString() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("incorrectDescriptor.kt")
+            public void testIncorrectDescriptor() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/incorrectDescriptor.kt");
+            }
+
+            @TestMetadata("intToString.kt")
+            public void testIntToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/intToString.kt");
+            }
+
+            @TestMetadata("intToString2.kt")
+            public void testIntToString2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/intToString2.kt");
+            }
+
+            @TestMetadata("replaceIntToString.kt")
+            public void testReplaceIntToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/replaceIntToString.kt");
+            }
+
+            @TestMetadata("replaceListElementToString.kt")
+            public void testReplaceListElementToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/replaceListElementToString.kt");
+            }
+
+            @TestMetadata("replaceToStringBase.kt")
+            public void testReplaceToStringBase() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/replaceToStringBase.kt");
+            }
+
+            @TestMetadata("replaceToStringWithRadix.kt")
+            public void testReplaceToStringWithRadix() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/toString/replaceToStringWithRadix.kt");
             }
         }
     }

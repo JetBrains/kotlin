@@ -3360,15 +3360,6 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceJavaIntegerToStringWithMemberInspection"
-                     displayName="Replace 'Integer.toString(int)' with 'int.toString()'"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceNotNullAssertionWithElvisReturnInspection"
                      displayName="Replace '!!' with '?: return'"
                      groupPath="Kotlin"
