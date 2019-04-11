@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import kotlin.reflect.full.isSubclassOf
 
 abstract class FirAbstractStarImportingScope(
     session: FirSession, lookupInFir: Boolean = true
