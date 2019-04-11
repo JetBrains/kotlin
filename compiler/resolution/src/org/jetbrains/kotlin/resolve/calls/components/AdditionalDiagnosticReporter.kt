@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.expandIntersectionTypeIfNecessary
 
 // very initial state of component
 // todo: handle all diagnostic inside DiagnosticReporterByTrackingStrategy
@@ -44,14 +43,10 @@ class AdditionalDiagnosticReporter(private val languageVersionSettings: Language
         expectedResultType: UnwrappedType
     ): SmartCastDiagnostic? {
         if (argument !is ExpressionKotlinCallArgument) return null
-
-        val types = expectedResultType.expandIntersectionTypeIfNecessary()
-
-        val argumentType = argument.receiver.receiverValue.type
-        val isSubtype = types.map { KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, it) }
-        if (isSubtype.any { it }) return null
-
-        return SmartCastDiagnostic(argument, types.first().unwrap(), candidate.atom)
+        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(argument.receiver.receiverValue.type, expectedResultType)) {
+            return SmartCastDiagnostic(argument, expectedResultType.unwrap(), candidate.atom)
+        }
+        return null
     }
 
     private fun reportSmartCastOnReceiver(
