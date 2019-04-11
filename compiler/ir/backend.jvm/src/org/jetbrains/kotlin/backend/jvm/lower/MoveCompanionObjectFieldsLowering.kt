@@ -101,6 +101,7 @@ private class MoveCompanionObjectFieldsLowering(val context: CommonBackendContex
         val newField = createStaticBackingField(oldField, propertyParent, fieldParent)
 
         irProperty.backingField = newField
+        newField.correspondingPropertySymbol = irProperty.symbol
 
         fieldReplacementMap[oldField.symbol] = newField.symbol
 

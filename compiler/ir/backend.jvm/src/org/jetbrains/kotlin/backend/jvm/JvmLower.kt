@@ -66,8 +66,8 @@ val jvmPhases = namedIrFilePhase(
             jvmLateinitPhase then
 
             moveCompanionObjectFieldsPhase then
-            constPhase then
             propertyReferencePhase then
+            constPhase then
             propertiesToFieldsPhase then
             propertiesPhase then
             renameFieldsPhase then
