@@ -15,7 +15,7 @@ fun loadScriptingPlugin(configuration: CompilerConfiguration) {
     val pluginClasspath = with (PathUtil) {
         listOf(
             KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR,
-            KOTLIN_SCRIPTING_IMPL_JAR,
+            KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
             KOTLIN_SCRIPTING_COMMON_JAR,
             KOTLIN_SCRIPTING_JVM_JAR
         ).map { File(libPath, it).path }

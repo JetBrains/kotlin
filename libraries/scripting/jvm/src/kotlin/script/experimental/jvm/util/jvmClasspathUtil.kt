@@ -24,7 +24,6 @@ internal const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar"
 internal const val TROVE4J_JAR = "trove4j.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_JAR = "kotlin-scripting-compiler.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_EMBEDDABLE_JAR = "kotlin-scripting-compiler-embeddable.jar"
-internal const val KOTLIN_SCRIPTING_IMPL_JAR = "kotlin-scripting-impl.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_IMPL_JAR = "kotlin-scripting-compiler-impl.jar"
 internal const val KOTLIN_SCRIPTING_COMPILER_IMPL_EMBEDDABLE_JAR = "kotlin-scripting-compiler-impl-embeddable.jar"
 internal const val KOTLIN_SCRIPTING_COMMON_JAR = "kotlin-scripting-common.jar"
@@ -205,7 +204,6 @@ object KotlinJars {
         )
         val kotlinScriptingJars = if (withScripting) listOf(
             KOTLIN_SCRIPTING_COMPILER_JAR,
-            KOTLIN_SCRIPTING_IMPL_JAR,
             KOTLIN_SCRIPTING_COMPILER_EMBEDDABLE_JAR,
             KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
             KOTLIN_SCRIPTING_COMPILER_IMPL_EMBEDDABLE_JAR,

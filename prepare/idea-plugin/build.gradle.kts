@@ -129,7 +129,7 @@ dependencies {
     libraries(project(":kotlin-script-runtime"))
     libraries(project(":kotlin-script-util"))
     libraries(project(":kotlin-scripting-common"))
-    libraries(project(":kotlin-scripting-impl"))
+    libraries(project(":kotlin-scripting-compiler-impl"))
     libraries(project(":kotlin-scripting-intellij"))
     libraries(project(":kotlin-scripting-jvm"))
 
