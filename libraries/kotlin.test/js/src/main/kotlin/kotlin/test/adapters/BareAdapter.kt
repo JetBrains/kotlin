@@ -18,7 +18,7 @@ internal open class BareAdapter : FrameworkAdapter {
         }
     }
 
-    override fun test(name: String, ignored: Boolean, testFn: () -> Any) {
+    override fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
         if (!ignored) {
             testFn()
         }

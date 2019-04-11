@@ -22,7 +22,7 @@ internal class QUnitAdapter : FrameworkAdapter {
         ignoredSuite = prevIgnore
     }
 
-    override fun test(name: String, ignored: Boolean, testFn: () -> Any) {
+    override fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
         if (ignored or ignoredSuite) {
             QUnit.skip(name, wrapTest(testFn))
         } else {
@@ -30,7 +30,7 @@ internal class QUnitAdapter : FrameworkAdapter {
         }
     }
 
-    private fun wrapTest(testFn: () -> Any): (dynamic) -> Any = { assert ->
+    private fun wrapTest(testFn: () -> Any?): (dynamic) -> Any? = { assert ->
         var assertionsHappened = false
         assertHook = { testResult ->
             assertionsHappened = true
