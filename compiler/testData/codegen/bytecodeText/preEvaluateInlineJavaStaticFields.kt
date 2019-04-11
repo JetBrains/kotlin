@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: JClass.java
 
 import org.jetbrains.annotations.NotNull;

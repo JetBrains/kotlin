@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.intrinsics.Not
 import org.jetbrains.kotlin.backend.jvm.lower.CrIrType
+import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
@@ -421,6 +422,14 @@ class ExpressionCodegen(
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
+        expression.symbol.owner.constantValue()?.let {
+            // Handling const reads before codegen is important for constant folding.
+            assert(expression is IrSetField) { "read of const val ${expression.symbol.owner.name} not inlined by ConstLowering" }
+            // This can only be the field's initializer; JVM implementations are required
+            // to generate those for ConstantValue-marked fields automatically, so this is redundant.
+            return voidValue.coerce(expression.asmType)
+        }
+
         val realDescriptor = DescriptorUtils.unwrapFakeOverride(expression.descriptor)
         val fieldType = typeMapper.mapType(realDescriptor.original.type)
         val ownerType = typeMapper.mapImplementationOwner(expression.descriptor).internalName
