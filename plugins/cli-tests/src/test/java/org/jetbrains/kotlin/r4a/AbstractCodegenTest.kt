@@ -30,6 +30,12 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
                 ).normalize()
             ),
             assertExists(
+                File(
+                    "../../../../../out/support/ui-android-view-non-ir/" +
+                            "build/intermediates/intermediate-jars/debug/classes.jar"
+                ).normalize()
+            ),
+            assertExists(
                 File("../../../../../prebuilts/fullsdk-linux/platforms/android-28/android.jar")
             )
         )
