@@ -16,3 +16,12 @@ private val isJava6 = System.getProperty("java.version").startsWith("1.6.")
 internal actual fun String.removeLeadingPlusOnJava6(): String =
     if (isJava6) removePrefix("+") else this
 
+private val isJava7 = System.getProperty("java.version").startsWith("1.7.")
+
+private val isJava8AndAbove = !isJava6 && !isJava7
+
+internal actual inline fun testOnNonJvm6And7(f: () -> Unit) {
+    if (isJava8AndAbove) {
+        f()
+    }
+}
