@@ -622,6 +622,11 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         namedArgumentExpression.expression.accept(this)
     }
 
+    override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression) {
+        print("<L> = ")
+        lambdaArgumentExpression.expression.accept(this)
+    }
+
     override fun visitCall(call: FirCall) {
         print("(")
         call.arguments.renderSeparated()
