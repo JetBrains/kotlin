@@ -20,44 +20,30 @@ class PillConfigurablePlugin : Plugin<Project> {
 
 class JpsCompatiblePlugin : Plugin<Project> {
     companion object {
-        val MODULE_CONFIGURATIONS = arrayOf("apiElements", "runtimeElements")
-
-        private fun mapper(module: String, vararg configurations: String): DependencyMapper {
-            return DependencyMapper("org.jetbrains.kotlin", module, *configurations) { MappedDependency(PDependency.Library(module)) }
-        }
-
         private fun getDependencyMappers(projectLibraries: List<PLibrary>): List<DependencyMapper> {
             val mappersForKotlinLibrariesExeptStdlib = projectLibraries
                 .filter { it.name != "kotlin-stdlib" }
-                .mapTo(mutableListOf()) { mapper(it.name, "default", "distJar", *MODULE_CONFIGURATIONS) }
+                .map { DependencyMapper.forProject(it.originalName) { MappedDependency(PDependency.Library(it.name)) } }
 
-            return mappersForKotlinLibrariesExeptStdlib + listOf(
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-stdlib", "distJar", *MODULE_CONFIGURATIONS) {
+            val disabledModuleMappers = listOf(
+                ":kotlin-stdlib-common",
+                ":core:builtins",
+                ":kotlin-compiler",
+                ":kotlin-compiler-embeddable",
+                ":kotlin-test:kotlin-test-common",
+                ":kotlin-test:kotlin-test-annotations-common"
+            ).map { DependencyMapper.forProject(it) { null } }
+
+            return listOf(
+                DependencyMapper.forProject(":kotlin-stdlib") {
                     MappedDependency(
                         PDependency.Library("kotlin-stdlib"),
                         listOf(PDependency.Library("annotations-13.0"))
                     )
                 },
-                DependencyMapper("org.jetbrains", "annotations", "default", "runtime", version = "13.0") {
-                    MappedDependency(
-                        null,
-                        listOf(PDependency.Library("annotations-13.0"))
-                    )
-                },
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-reflect-api", *MODULE_CONFIGURATIONS) {
-                    MappedDependency(PDependency.Library("kotlin-reflect"))
-                },
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler-embeddable", "runtimeJar") { null },
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-stdlib-js", "distJar") { null },
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler", "runtimeJar") { null },
-                DependencyMapper("org.jetbrains.kotlin", "compiler", *MODULE_CONFIGURATIONS) { null },
-                DependencyMapper("kotlin.build", "android", "default") { dep ->
-                    val (sdkCommon, otherJars) = dep.moduleArtifacts.map { it.file }.partition { it.name == "sdk-common.jar" }
-                    val mainLibrary = PDependency.ModuleLibrary(PLibrary(dep.moduleName, otherJars))
-                    val deferredLibrary = PDependency.ModuleLibrary(PLibrary(dep.moduleName + "-deferred", sdkCommon))
-                    MappedDependency(mainLibrary, listOf(deferredLibrary))
-                }
-            )
+                DependencyMapper.forProject(":kotlin-test:kotlin-test-jvm") { MappedDependency(PDependency.Library("kotlin-test-jvm")) },
+                DependencyMapper.forProject(":kotlin-reflect-api") { MappedDependency(PDependency.Library("kotlin-reflect")) }
+            ) + mappersForKotlinLibrariesExeptStdlib + disabledModuleMappers
         }
 
         fun getProjectLibraries(rootProject: Project): List<PLibrary> {
@@ -78,7 +64,8 @@ class JpsCompatiblePlugin : Plugin<Project> {
                     PLibrary(
                         library.name,
                         classes = listOf(File(libraryPath, "$archivesBaseName.jar")).filterExisting(),
-                        sources = listOf(File(libraryPath, "$archivesBaseName-sources.jar")).filterExisting()
+                        sources = listOf(File(libraryPath, "$archivesBaseName-sources.jar")).filterExisting(),
+                        originalName = library.path
                     )
                 }
 

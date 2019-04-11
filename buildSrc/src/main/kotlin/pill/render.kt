@@ -31,12 +31,7 @@ private fun renderModulesFile(project: PProject) = PFile(
 
                 for (module in project.modules) {
                     val moduleFilePath = pathContext(module.moduleFile)
-
-                    if (module.group != null) {
-                        xml("module", "fileurl" to "file://$moduleFilePath", "filepath" to moduleFilePath, "group" to module.group)
-                    } else {
-                        xml("module", "fileurl" to "file://$moduleFilePath", "filepath" to moduleFilePath)
-                    }
+                    xml("module", "fileurl" to "file://$moduleFilePath", "filepath" to moduleFilePath)
                 }
             }
         }
@@ -85,7 +80,7 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
 
                             kotlinCompileOptions.noStdlib.option("noStdlib")
                             kotlinCompileOptions.noReflect.option("noReflect")
-                            kotlinCompileOptions.moduleName.option("moduleName")
+                            module.name.option("moduleName")
                             xml("option", "name" to "jvmTarget", "value" to platformVersion)
                             kotlinCompileOptions.languageVersion.option("languageVersion")
                             kotlinCompileOptions.apiVersion.option("apiVersion")
@@ -202,4 +197,4 @@ private fun renderLibraryToXml(library: PLibrary, pathContext: PathContext, name
     }
 }
 
-fun PLibrary.renderName() = name?.takeIf { it != "unspecified" } ?: classes.first().nameWithoutExtension
+fun PLibrary.renderName() = name.takeIf { it != "unspecified" } ?: classes.first().nameWithoutExtension

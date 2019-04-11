@@ -11,7 +11,6 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.extra
-import org.jetbrains.kotlin.pill.DependencyInfo.ResolvedDependencyInfo
 import org.jetbrains.kotlin.pill.ArtifactElement.*
 import org.jetbrains.kotlin.pill.POrderRoot.*
 import java.io.File
@@ -114,7 +113,6 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMappers: Li
     fun Project.getProject(name: String) = findProject(name) ?: error("Cannot find project $name")
 
     val prepareIdeaPluginProject = rootProject.getProject(":prepare:idea-plugin")
-    val prepareJpsPluginProject = rootProject.getProject(":kotlin-jps-plugin")
 
     root.add(Directory("kotlinc").apply {
         val kotlincDirectory = rootProject.extra["distKotlinHomeDir"].toString()
@@ -123,20 +121,21 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMappers: Li
 
     root.add(Directory("lib").apply {
         val librariesConfiguration = prepareIdeaPluginProject.configurations.getByName("libraries")
-        add(getArtifactElements(librariesConfiguration, dependencyMappers, false))
+        add(getArtifactElements(rootProject, librariesConfiguration, dependencyMappers, false))
 
         add(Directory("jps").apply {
-            add(Archive(prepareJpsPluginProject.name).apply {
-                val embeddedConfiguration = prepareJpsPluginProject.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
-                add(getArtifactElements(embeddedConfiguration, dependencyMappers, true))
+            val prepareJpsPluginProject = rootProject.getProject(":kotlin-jps-plugin")
+            add(Archive(prepareJpsPluginProject.name + ".jar").apply {
+                val jpsPluginConfiguration = prepareIdeaPluginProject.configurations.getByName("jpsPlugin")
+                add(getArtifactElements(rootProject, jpsPluginConfiguration, dependencyMappers, true))
             })
         })
 
-        add(Archive(prepareIdeaPluginProject.name + ".jar").apply {
+        add(Archive("kotlin-plugin.jar").apply {
             add(FileCopy(File(rootProject.projectDir, "resources/kotlinManifest.properties")))
 
             val embeddedConfiguration = prepareIdeaPluginProject.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
-            add(getArtifactElements(embeddedConfiguration, dependencyMappers, true))
+            add(getArtifactElements(rootProject, embeddedConfiguration, dependencyMappers, true))
         })
     })
 
@@ -148,42 +147,28 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMappers: Li
 }
 
 private fun getArtifactElements(
+    rootProject: Project,
     configuration: Configuration,
     dependencyMappers: List<DependencyMapper>,
     extractDependencies: Boolean
 ): List<ArtifactElement> {
-    val resolved = configuration.resolvedConfiguration
-    val collected = CollectedConfiguration(resolved, Scope.COMPILE)
-    val dependencies = listOf(collected).collectDependencies()
-
-    val mainRoots = mutableListOf<POrderRoot>()
-    val deferredRoots = mutableListOf<POrderRoot>()
-
-    dependencies.forEach { it.processResolvedDependency(mainRoots, deferredRoots, dependencyMappers) }
+    val dependencies = rootProject.resolveDependencies(configuration, false, dependencyMappers, withEmbedded = true).join()
 
     val artifacts = mutableListOf<ArtifactElement>()
 
-    for (dependency in configuration.allDependencies) {
-        if (dependency !is ProjectDependency) continue
+    for (dependency in dependencies) {
+        when (dependency) {
+            is PDependency.Module -> {
+                val moduleOutput = ModuleOutput(dependency.name)
 
-        val project = dependency.dependencyProject
-        val moduleOutput = ModuleOutput(project.name + ".src")
-
-        if (extractDependencies) {
-            artifacts += moduleOutput
-        } else {
-            artifacts += Archive(project.name + ".jar").apply {
-                add(moduleOutput)
+                if (extractDependencies) {
+                    artifacts += moduleOutput
+                } else {
+                    artifacts += Archive(dependency.name + ".jar").apply {
+                        add(moduleOutput)
+                    }
+                }
             }
-        }
-
-        val embeddedConfiguration = project.configurations.findByName(EmbeddedComponents.CONFIGURATION_NAME) ?: continue
-        artifacts += getArtifactElements(embeddedConfiguration, dependencyMappers, extractDependencies)
-    }
-
-    for (orderRoot in listOf(mainRoots, deferredRoots).flatten()) {
-        when (val dependency = orderRoot.dependency) {
-            is PDependency.Module -> {} // already added above
             is PDependency.Library -> artifacts += ProjectLibrary(dependency.name)
             is PDependency.ModuleLibrary -> {
                 val files = dependency.library.classes
