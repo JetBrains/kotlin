@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
+import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 
 class KotlinKarma : KotlinJsTestFramework {
@@ -31,19 +31,19 @@ class KotlinKarma : KotlinJsTestFramework {
     }
 
     override fun createTestExecutionSpec(
-        task: KotlinJsTest,
+        task: KotlinNodeJsTestTask,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>
     ): TCServiceMessagesTestExecutionSpec {
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
             testNameSuffix = task.targetName,
-            prependSuiteName = true,
+            prepandSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true
         )
 
-        val npmProjectLayout = NpmProject[task.project]
+        val npmProjectLayout = NpmProjectLayout[task.project]
 
         val files = task.nodeModulesToLoad.map {
             npmProjectLayout.nodeModulesDir.resolve(it).also { file ->
