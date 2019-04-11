@@ -23,6 +23,18 @@ public class Long internal constructor(
          * A constant holding the maximum value an instance of Long can have.
          */
         public const val MAX_VALUE: Long = 9223372036854775807L
+
+        /**
+         * The number of bytes used to represent an instance of Long in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Long in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**

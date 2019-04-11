@@ -97,6 +97,18 @@ public inline class Char internal constructor (val value: Int) : Comparable<Char
          * The maximum value of a Unicode surrogate code unit.
          */
         public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+
+        /**
+         * The number of bytes used to represent a Char in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 2
+
+        /**
+         * The number of bits used to represent a Char in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 16
     }
 
 }
