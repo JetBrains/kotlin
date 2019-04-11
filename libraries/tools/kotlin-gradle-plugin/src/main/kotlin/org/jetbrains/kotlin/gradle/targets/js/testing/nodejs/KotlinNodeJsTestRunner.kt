@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
-import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
 
 class KotlinNodeJsTestRunner : KotlinJsTestFramework {
@@ -27,7 +27,7 @@ class KotlinNodeJsTestRunner : KotlinJsTestFramework {
     }
 
     override fun createTestExecutionSpec(
-        task: KotlinNodeJsTestTask,
+        task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>
     ): TCServiceMessagesTestExecutionSpec {

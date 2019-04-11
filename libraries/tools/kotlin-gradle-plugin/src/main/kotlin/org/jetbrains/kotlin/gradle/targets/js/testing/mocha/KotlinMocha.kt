@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
-import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestTask
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 
 class KotlinMocha : KotlinJsTestFramework {
@@ -24,7 +24,7 @@ class KotlinMocha : KotlinJsTestFramework {
     }
 
     override fun createTestExecutionSpec(
-        task: KotlinNodeJsTestTask,
+        task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>
     ): TCServiceMessagesTestExecutionSpec {
@@ -46,7 +46,7 @@ class KotlinMocha : KotlinJsTestFramework {
         val args = nodeJsArgs +
                 nodeModules.map {
                     npmProjectLayout.nodeModulesDir.resolve(it).also { file ->
-                        check(file.isFile) { "Cannot find ${file.canonicalPath}"}
+                        check(file.isFile) { "Cannot find ${file.canonicalPath}" }
                     }.canonicalPath
                 } +
                 listOf(
