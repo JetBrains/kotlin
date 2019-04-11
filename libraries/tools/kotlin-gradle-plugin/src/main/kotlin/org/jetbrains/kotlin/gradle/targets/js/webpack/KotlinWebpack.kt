@@ -11,7 +11,7 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.tasks.*
 import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -64,7 +64,7 @@ open class KotlinWebpack : DefaultTask() {
 
         NpmResolver.resolve(project)
 
-        val npmProjectLayout = NpmProject[project]
+        val npmProjectLayout = NpmProjectLayout[project]
 
         configFile.writeText(buildConfig())
 
