@@ -17,10 +17,11 @@ val TEMPLATE_ARGUMENTS_CIDR_NEW_PROJECT = mapOf(
         "CIDR_MPP_PLATFORM" to mppPlatform,
         "CIDR_PLUGIN_VERSION" to pluginVersion,
         "CIDR_CUSTOM_PLUGIN_REPOS" to customPluginRepos,
+        "CIDR_PLUGIN_RESOLUTION_RULES" to pluginResolutionRules,
         "CIDR_CURRENT_YEAR" to currentYear
 )
 
-fun mergeTemplate(template: String, templateArguments: Map<String, Any>): String = StringWriter().apply {
+fun mergeTemplate(template: String, templateArguments: Map<String, Any?>): String = StringWriter().apply {
     Velocity.evaluate(VelocityContext(templateArguments), this, "", template)
 }.toString()
 
@@ -45,6 +46,24 @@ private val customPluginRepos get() = when (defaultCidrKotlinVersion.releaseType
             "https://dl.bintray.com/kotlin/kotlin-dev",
             "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$defaultCidrKotlinVersion,branch:default:any/artifacts/content/maven/"
     )
+    is SNAPSHOT -> listOf(
+            "https://oss.sonatype.org/content/repositories/snapshots"
+    )
 }
 
-private val currentYear get() = max(Year.now().value, 2019)
+private val pluginResolutionRules get() = when (defaultCidrKotlinVersion.releaseType) {
+    is SNAPSHOT -> """
+        |    resolutionStrategy {
+        |        eachPlugin {
+        |            if (requested.id.name == "multiplatform") {
+        |                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}{requested.version}")
+        |            }
+        |        }
+        |    }
+        |
+        |
+        """.trimMargin()
+    else -> null
+}
+
+private val currentYear get() = Year.now().value

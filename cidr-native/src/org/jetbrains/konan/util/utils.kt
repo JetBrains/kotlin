@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
 import org.jetbrains.konan.gradle.KonanProjectDataService
 import org.jetbrains.konan.util.CidrKotlinReleaseType.RELEASE
+import org.jetbrains.konan.util.CidrKotlinReleaseType.SNAPSHOT
 import org.jetbrains.kotlin.konan.library.lite.LiteKonanDistributionInfoProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -41,11 +42,21 @@ val cidrKotlinPlugin: IdeaPluginDescriptor by lazy {
 
 // The default version of Kotlin (determined by Kotlin/Native plugin version)
 val defaultCidrKotlinVersion: CidrKotlinVersion by lazy {
-    val pluginVersion = cidrKotlinPlugin.version!!.toLowerCase()
-    val platformPrefix = PlatformUtils.getPlatformPrefix()!!.toLowerCase()
+    val pluginVersion = cidrKotlinPlugin.version!!
+    val platformPrefix = PlatformUtils.getPlatformPrefix()!!
 
-    val fullKotlinVersion = pluginVersion.substringBefore("-$platformPrefix")
-    parseFullKotlinVersionString(fullKotlinVersion) ?: error("Invalid Kotlin/Native plugin version: $pluginVersion")
+    val endIndex = pluginVersion.toLowerCase().indexOf("-${platformPrefix.toLowerCase()}").takeIf { it != -1 }
+            ?: pluginVersion.length
+    val fullKotlinVersion = pluginVersion.substring(0, endIndex)
+
+    parseFullKotlinVersionString(fullKotlinVersion)
+            ?: error("""
+                |
+                |Kotlin/Native plugin version: $pluginVersion
+                |Platform prefix: $platformPrefix
+                |Evaluated (broken) Kotlin version: $fullKotlinVersion
+                """.trimMargin()
+            )
 }
 
 sealed class CidrKotlinReleaseType {
@@ -67,7 +78,7 @@ sealed class CidrKotlinReleaseType {
 
     class RC(val number: Int?) : CidrKotlinReleaseType() {
         companion object : CidrKotlinReleaseTypeProducer<RC> {
-            private val prefix = RC::class.simpleName!!.toLowerCase()
+            private val prefix = RC::class.java.simpleName!!.toLowerCase()
 
             override fun getOrNull(name: String): RC? {
                 if (!name.startsWith(prefix, ignoreCase = true)) return null
@@ -79,6 +90,10 @@ sealed class CidrKotlinReleaseType {
         }
     }
 
+    object SNAPSHOT : CidrKotlinReleaseType(), CidrKotlinReleaseTypeProducer<SNAPSHOT> {
+        override fun getOrNull(name: String): SNAPSHOT? = if (isNameEqual(name)) SNAPSHOT else null
+    }
+
     companion object {
         private fun CidrKotlinReleaseType.isNameEqual(name: String) = javaClass.simpleName.equals(name, ignoreCase = true)
 
@@ -87,6 +102,7 @@ sealed class CidrKotlinReleaseType {
                         ?: DEV.getOrNull(name)
                         ?: EAP.getOrNull(name)
                         ?: RC.getOrNull(name)
+                        ?: SNAPSHOT.getOrNull(name)
     }
 }
 
@@ -120,7 +136,7 @@ private fun parseFullKotlinVersionString(fullKotlinVersion: String): CidrKotlinV
     val releaseType = CidrKotlinReleaseType.findByName(releaseTypeString) ?: return null
 
     val buildString = when (releaseType) {
-        RELEASE -> if (fullKotlinVersionParts.size == 3) return null else null
+        RELEASE, SNAPSHOT -> if (fullKotlinVersionParts.size == 3) return null else null
         else -> if (fullKotlinVersionParts.size == 3) fullKotlinVersionParts[2] else return null
     }
 
