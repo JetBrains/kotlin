@@ -135,7 +135,6 @@ open class KotlinNativeTargetConfigurator(
                 group = LifecycleBasePlugin.VERIFICATION_GROUP
                 description = "Executes Kotlin/Native unit tests for target ${binary.target.name}."
                 targetName = binary.compilation.target.targetName
-                showTestTargetName = true
 
                 enabled = binary.target.konanTarget.isCurrentHost
 
