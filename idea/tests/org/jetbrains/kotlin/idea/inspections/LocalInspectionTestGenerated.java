@@ -7178,6 +7178,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Compare extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCompare() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("byte.kt")
+            public void testByte() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/byte.kt");
+            }
+
+            @TestMetadata("character.kt")
+            public void testCharacter() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/character.kt");
+            }
+
+            @TestMetadata("double.kt")
+            public void testDouble() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/double.kt");
+            }
+
+            @TestMetadata("float.kt")
+            public void testFloat() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/float.kt");
+            }
+
+            @TestMetadata("integer.kt")
+            public void testInteger() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/integer.kt");
+            }
+
+            @TestMetadata("long.kt")
+            public void testLong() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/long.kt");
+            }
+
+            @TestMetadata("short.kt")
+            public void testShort() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/compare/short.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/io")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

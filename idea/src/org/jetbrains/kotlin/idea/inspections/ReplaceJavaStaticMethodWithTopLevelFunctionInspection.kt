@@ -117,8 +117,19 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
     }
 
     companion object {
-        private val JAVA_PRIMITIVES = listOf("Integer", "Long", "Byte", "Character", "Short", "Double", "Float").map {
-            Replacement("java.lang.$it.toString", "kotlin.text.toString", toExtensionFunction = true)
+        private val JAVA_PRIMITIVES = listOf(
+            "Integer" to "Int",
+            "Long" to "Long",
+            "Byte" to "Byte",
+            "Character" to "Char",
+            "Short" to "Short",
+            "Double" to "Double",
+            "Float" to "Float"
+        ).flatMap {
+            listOf(
+                Replacement("java.lang.${it.first}.toString", "kotlin.text.toString", toExtensionFunction = true),
+                Replacement("java.lang.${it.first}.compare", "kotlin.primitives.${it.second}.compareTo", toExtensionFunction = true)
+            )
         }
 
         private val JAVA_IO = listOf(
