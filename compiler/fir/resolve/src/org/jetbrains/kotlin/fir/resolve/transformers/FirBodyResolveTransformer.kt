@@ -425,6 +425,18 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return whenExpression.compose()
     }
 
+    override fun transformWhenSubjectExpression(
+        whenSubjectExpression: FirWhenSubjectExpression,
+        data: Any?
+    ): CompositeTransformResult<FirStatement> {
+        val parentWhen = whenSubjectExpression.whenSubject.whenExpression
+        val subjectType = parentWhen.subject?.resultType ?: parentWhen.subjectVariable?.returnTypeRef
+        if (subjectType != null) {
+            whenSubjectExpression.resultType = subjectType
+        }
+        return whenSubjectExpression.compose()
+    }
+
     override fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: Any?): CompositeTransformResult<FirStatement> {
         val expectedType = data as FirTypeRef?
 

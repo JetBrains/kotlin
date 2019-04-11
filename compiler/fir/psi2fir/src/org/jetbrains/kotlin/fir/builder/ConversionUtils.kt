@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.declarations.impl.FirVariableImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
@@ -179,10 +180,12 @@ internal fun FirExpression.generateNotNullOrOther(
 ): FirWhenExpression {
     val subjectName = Name.special("<$caseId>")
     val subjectVariable = generateTemporaryVariable(session, psi, subjectName, this)
-    val subjectExpression = FirWhenSubjectExpression(session, psi)
+    val subject = FirWhenSubject()
+    val subjectExpression = FirWhenSubjectExpressionImpl(session, psi, subject)
     return FirWhenExpressionImpl(
         session, basePsi, this, subjectVariable
     ).apply {
+        subject.bind(this)
         branches += FirWhenBranchImpl(
             session, psi,
             FirOperatorCallImpl(session, psi, FirOperation.EQ).apply {
@@ -219,10 +222,11 @@ internal fun FirExpression.generateLazyLogicalOperation(
 
 internal fun KtWhenCondition.toFirWhenCondition(
     session: FirSession,
+    subject: FirWhenSubject,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
 ): FirExpression {
-    val firSubjectExpression = FirWhenSubjectExpression(session, this)
+    val firSubjectExpression = FirWhenSubjectExpressionImpl(session, this, subject)
     return when (this) {
         is KtWhenConditionWithExpression -> {
             FirOperatorCallImpl(
@@ -255,12 +259,13 @@ internal fun KtWhenCondition.toFirWhenCondition(
 internal fun Array<KtWhenCondition>.toFirWhenCondition(
     session: FirSession,
     basePsi: KtElement,
+    subject: FirWhenSubject,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
 ): FirExpression {
     var firCondition: FirExpression? = null
     for (condition in this) {
-        val firConditionElement = condition.toFirWhenCondition(session, convert, toFirOrErrorTypeRef)
+        val firConditionElement = condition.toFirWhenCondition(session, subject, convert, toFirOrErrorTypeRef)
         firCondition = when (firCondition) {
             null -> firConditionElement
             else -> firCondition.generateLazyLogicalOperation(

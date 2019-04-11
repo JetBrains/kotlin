@@ -276,6 +276,10 @@ abstract class FirVisitor<out R, in D> {
         return visitExpression(whenExpression, data)
     }
 
+    open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): R {
+        return visitExpression(whenSubjectExpression, data)
+    }
+
     open fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): R {
         return visitExpression(wrappedArgumentExpression, data)
     }

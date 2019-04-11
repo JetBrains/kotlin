@@ -972,26 +972,30 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         }
 
         override fun visitWhenExpression(expression: KtWhenExpression, data: Unit): FirElement {
-            val subjectExpression = expression.subjectExpression
-            val subject = when (subjectExpression) {
-                is KtVariableDeclaration -> subjectExpression.initializer
-                else -> subjectExpression
-            }?.toFirExpression("Incorrect when subject expression: ${subjectExpression?.text}")
-            val subjectVariable = when (subjectExpression) {
+            val ktSubjectExpression = expression.subjectExpression
+            val subjectExpression = when (ktSubjectExpression) {
+                is KtVariableDeclaration -> ktSubjectExpression.initializer
+                else -> ktSubjectExpression
+            }?.toFirExpression("Incorrect when subject expression: ${ktSubjectExpression?.text}")
+            val subjectVariable = when (ktSubjectExpression) {
                 is KtVariableDeclaration -> FirVariableImpl(
-                    session, subjectExpression, subjectExpression.nameAsSafeName,
-                    subjectExpression.typeReference.toFirOrImplicitType(),
-                    isVar = false, initializer = subject
+                    session, ktSubjectExpression, ktSubjectExpression.nameAsSafeName,
+                    ktSubjectExpression.typeReference.toFirOrImplicitType(),
+                    isVar = false, initializer = subjectExpression
                 )
                 else -> null
             }
-            val hasSubject = subject != null
+            val hasSubject = subjectExpression != null
+            val subject = FirWhenSubject()
             return FirWhenExpressionImpl(
                 session,
                 expression,
-                subject,
+                subjectExpression,
                 subjectVariable
             ).apply {
+                if (hasSubject) {
+                    subject.bind(this)
+                }
                 for (entry in expression.entries) {
                     val branch = entry.expression.toFirBlock()
                     branches += if (!entry.isElse) {
@@ -999,6 +1003,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                             val firCondition = entry.conditions.toFirWhenCondition(
                                 this@RawFirBuilder.session,
                                 entry,
+                                subject,
                                 { toFirExpression(it) },
                                 { toFirOrErrorType() }
                             )

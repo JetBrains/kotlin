@@ -276,6 +276,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitExpression(whenExpression, null)
     }
 
+    open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression) {
+        visitExpression(whenSubjectExpression, null)
+    }
+
     open fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression) {
         visitExpression(wrappedArgumentExpression, null)
     }
@@ -750,6 +754,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?) {
         visitWhenExpression(whenExpression)
+    }
+
+    final override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Nothing?) {
+        visitWhenSubjectExpression(whenSubjectExpression)
     }
 
     final override fun visitWhileLoop(whileLoop: FirWhileLoop, data: Nothing?) {
