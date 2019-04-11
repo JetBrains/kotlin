@@ -1,4 +1,5 @@
-# v1.2.0 (Mar 2019)
+# v1.2.0 (Apr 2019)
+  * New intermediate representation based library format allowing global optimizations
   * Exception backtraces in debug mode on macOS and iOS targets contains symbolic information
   * Support for 32-bit Windows targets (target mingw_x86)
   * Support for cross-compilation to Linux (x86-64 and arm32) from macOS and Windows hosts
@@ -14,7 +15,8 @@
     * Fix bool conversion
     * Support variable length arrays
     * Provide Kotlin access to C compiler intrinsics via platform.builtins package
-    * Support clang modules
+    * Support clang modules (for Objective-C only)
+    * Experimental integration with CocoaPods
   * IDE
     * Kotlin/Native plugin is supported in CLion 2018.3 and AppCode/CLion 2019.1
     * Basic highlighting support for .def files
