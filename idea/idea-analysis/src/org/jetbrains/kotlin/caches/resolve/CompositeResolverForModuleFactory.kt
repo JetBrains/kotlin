@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl

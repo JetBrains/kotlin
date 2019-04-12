@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
 import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
 open class ExpectedActualDeclarationChecker(
+    val moduleStructureOracle: ModuleStructureOracle,
     val argumentExtractor: ActualAnnotationArgumentExtractor
 ) : DeclarationChecker,
     PlatformSpecificExtension<ExpectedActualDeclarationChecker> {
@@ -69,24 +71,51 @@ open class ExpectedActualDeclarationChecker(
         if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
         if (descriptor.isExpect) {
-            checkExpectedDeclarationHasActual(declaration, descriptor, context.trace, descriptor.module, context.expectActualTracker)
+            checkExpectedDeclarationGotActualOnAnyPath(declaration, descriptor, context.trace, context.expectActualTracker)
         } else {
             val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
-            checkActualDeclarationHasExpected(declaration, descriptor, context.trace, checkActual)
+            checkActualDeclarationHasExactlyOneExpected(declaration, descriptor, context.trace, checkActual)
         }
     }
 
-    fun checkExpectedDeclarationHasActual(
+    private fun checkActualDeclarationHasExactlyOneExpected(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         trace: BindingTrace,
-        platformModule: ModuleDescriptor,
+        checkActual: Boolean
+    ) {
+        for (path in moduleStructureOracle.findAllExpectedByPaths(descriptor.module)) {
+            checkActualDeclarationHasExpected(reportOn, descriptor, trace, checkActual, path)
+        }
+    }
+
+    private fun checkExpectedDeclarationGotActualOnAnyPath(
+        reportOn: KtNamedDeclaration,
+        descriptor: MemberDescriptor,
+        trace: BindingTrace,
+        expectActualTracker: ExpectActualTracker
+    ) {
+        for (path in moduleStructureOracle.findAllActualizationPaths(descriptor.module)) {
+            checkExpectedDeclarationHasActual(reportOn, descriptor, trace, path, expectActualTracker)
+        }
+    }
+
+    private fun checkExpectedDeclarationHasActual(
+        reportOn: KtNamedDeclaration,
+        descriptor: MemberDescriptor,
+        trace: BindingTrace,
+        path: ModulePath,
         expectActualTracker: ExpectActualTracker
     ) {
         // Only look for top level actual members; class members will be handled as a part of that expected class
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
 
-        val compatibility = ExpectedActualResolver.findActualForExpected(descriptor, platformModule) ?: return
+        val compatibility = path.nodes
+            .mapNotNull { ExpectedActualResolver.findActualForExpected(descriptor, it) }
+            .ifEmpty { return }
+            .fold(LinkedHashMap<Compatibility, List<MemberDescriptor>>()) { resultMap, partialMap ->
+                resultMap.apply { putAll(partialMap) }
+            }
 
         if (compatibility.allStrongIncompatibilities() && isOptionalAnnotationClass(descriptor)) return
 
@@ -98,7 +127,7 @@ open class ExpectedActualDeclarationChecker(
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            trace.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, platformModule, incompatibility))
+            trace.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, path, incompatibility))
         } else {
             val actualMembers = compatibility.asSequence()
                 .filter { (compatibility, _) ->
@@ -135,17 +164,13 @@ open class ExpectedActualDeclarationChecker(
             ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
 
     private fun checkActualDeclarationHasExpected(
-        reportOn: KtNamedDeclaration, descriptor: MemberDescriptor, trace: BindingTrace, checkActual: Boolean
+        reportOn: KtNamedDeclaration,
+        descriptor: MemberDescriptor,
+        trace: BindingTrace,
+        checkActual: Boolean,
+        path: ModulePath
     ) {
-        // TODO: ideally, we should always use common module here
-        // However, in compiler context platform & common modules are joined into one module,
-        // so there is yet no "common module" in this situation.
-        // So yet we are using own module in compiler context and common module in IDE context.
-        //
-        // Also note that we have to include container-module (not only it's parents), because it is possible to declare
-        // 'expect' in platform module and actualize it right here.
-        val commonOrOwnModules = (descriptor.module.expectedByModules + listOf(descriptor.module)).ifEmpty { listOf(descriptor.module) }
-        val compatibility = commonOrOwnModules
+        val compatibility = path.nodes
             .mapNotNull { ExpectedActualResolver.findExpectedForActual(descriptor, it) }
             .ifEmpty { return }
             .fold(LinkedHashMap<Compatibility, List<MemberDescriptor>>()) { resultMap, partialMap ->
@@ -196,7 +221,7 @@ open class ExpectedActualDeclarationChecker(
             if (nonTrivialUnfulfilled.isNotEmpty()) {
                 val classDescriptor =
                     (descriptor as? TypeAliasDescriptor)?.expandedType?.constructor?.declarationDescriptor as? ClassDescriptor
-                            ?: (descriptor as ClassDescriptor)
+                        ?: (descriptor as ClassDescriptor)
                 trace.report(
                     Errors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.on(
                         reportOn, classDescriptor, nonTrivialUnfulfilled
@@ -212,8 +237,8 @@ open class ExpectedActualDeclarationChecker(
             val expected = compatibility[Compatible]!!.first()
             if (expected is ClassDescriptor && expected.kind == ClassKind.ANNOTATION_CLASS) {
                 val actualConstructor =
-                    (descriptor as? ClassDescriptor)?.constructors?.singleOrNull() ?:
-                    (descriptor as? TypeAliasDescriptor)?.constructors?.singleOrNull()?.underlyingConstructorDescriptor
+                    (descriptor as? ClassDescriptor)?.constructors?.singleOrNull()
+                        ?: (descriptor as? TypeAliasDescriptor)?.constructors?.singleOrNull()?.underlyingConstructorDescriptor
                 val expectedConstructor = expected.constructors.singleOrNull()
                 if (expectedConstructor != null && actualConstructor != null) {
                     checkAnnotationConstructors(expectedConstructor, actualConstructor, trace, reportOn)
@@ -278,9 +303,7 @@ open class ExpectedActualDeclarationChecker(
             return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, declaration.defaultValue)?.toConstantValue(expectedType)
         }
 
-        for (extractor in argumentExtractors) {
-            extractor.extractDefaultValue(actualParameter, expectedType)?.let { return it }
-        }
+        argumentExtractor.extractDefaultValue(actualParameter, expectedType)?.let { return it }
 
         return null
     }

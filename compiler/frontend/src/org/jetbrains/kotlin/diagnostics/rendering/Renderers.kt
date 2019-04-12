@@ -78,11 +78,20 @@ object Renderers {
     val NAME = Renderer<Named> { it.name.asString() }
 
     @JvmField
-    val PLATFORM = Renderer<ModuleDescriptor> {
-        val platform = it.platform
-        " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: ""}" + when {
-            platform == null || platform.isCommon() -> ""
-            else -> " for " + platform.single().platformName
+    val MODULE_PATH = object : DiagnosticParameterRenderer<ModulePath> {
+        override fun render(obj: ModulePath, renderingContext: RenderingContext): String {
+            // Prettify rendering for two-level MPP projects
+            if (obj.nodes.size <= 2) return " in module ${renderModule(obj.nodes.last())}"
+
+            return " on path ${obj.nodes.joinToString(separator = " -> ") { renderModule(it) }}"
+        }
+
+        private fun renderModule(module: ModuleDescriptor): String {
+            val platform = module.platform
+            val moduleName = module.getCapability(ModuleInfo.Capability)?.displayedName ?: ""
+            val platformNameIfAny = if (platform == null || platform.isCommon()) "" else " for " + platform.single().platformName
+
+            return moduleName + platformNameIfAny
         }
     }
 

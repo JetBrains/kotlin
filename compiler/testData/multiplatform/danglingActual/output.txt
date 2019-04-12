@@ -1,0 +1,10 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/danglingActual/jvm.kt:5:14: error: actual class 'Dangling' has no corresponding expected declaration
+actual class Dangling
+             ^

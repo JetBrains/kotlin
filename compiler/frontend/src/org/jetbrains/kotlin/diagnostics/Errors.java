@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.ModulePath;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -639,7 +640,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory3<KtNamedDeclaration, MemberDescriptor, ModuleDescriptor,
+    DiagnosticFactory3<KtNamedDeclaration, MemberDescriptor, ModulePath,
             Map<Incompatible, Collection<MemberDescriptor>>> NO_ACTUAL_FOR_EXPECT =
             DiagnosticFactory3.create(ERROR, INCOMPATIBLE_DECLARATION);
     DiagnosticFactory2<KtNamedDeclaration, MemberDescriptor,
