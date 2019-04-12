@@ -280,12 +280,15 @@ interface PlatformAnalysisParameters {
 
 interface CombinedModuleInfo : ModuleInfo {
     val containedModules: List<ModuleInfo>
+    val platformModule: ModuleInfo
 }
 
 fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
     is CombinedModuleInfo -> listOf(this) + containedModules
     else -> listOf(this)
 }
+
+fun ModuleInfo.unwrapPlatform(): ModuleInfo = if (this is CombinedModuleInfo) platformModule else this
 
 interface TrackableModuleInfo : ModuleInfo {
     fun createModificationTracker(): ModificationTracker

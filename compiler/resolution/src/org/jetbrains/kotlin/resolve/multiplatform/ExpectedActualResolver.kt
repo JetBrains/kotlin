@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
 
 object ExpectedActualResolver {
+    // FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects
     fun MemberDescriptor.findCompatibleActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> =
         findActualForExpected(this, platformModule)?.get(Compatible).orEmpty()
 
@@ -42,10 +43,14 @@ object ExpectedActualResolver {
     fun MemberDescriptor.findCompatibleExpectedForActual(commonModule: ModuleDescriptor): List<MemberDescriptor> =
         findExpectedForActual(this, commonModule)?.get(Compatible).orEmpty()
 
-    fun findActualForExpected(expected: MemberDescriptor, platformModule: ModuleDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
+    fun findActualForExpected(
+        expected: MemberDescriptor,
+        platformModule: ModuleDescriptor,
+        moduleVisibilityFilter: ModuleFilter = onlyFromThisModule(platformModule)
+    ): Map<Compatibility, List<MemberDescriptor>>? {
         return when (expected) {
             is CallableMemberDescriptor -> {
-                expected.findNamesakesFromModule(platformModule).filter { actual ->
+                expected.findNamesakesFromModule(platformModule, moduleVisibilityFilter).filter { actual ->
                     expected != actual && !actual.isExpect &&
                     // TODO: support non-source definitions (e.g. from Java)
                     actual.source.containingFile != SourceFile.NO_SOURCE_FILE
@@ -54,7 +59,7 @@ object ExpectedActualResolver {
                 }
             }
             is ClassDescriptor -> {
-                expected.findClassifiersFromModule(platformModule).filter { actual ->
+                expected.findClassifiersFromModule(platformModule, moduleVisibilityFilter).filter { actual ->
                     expected != actual && !actual.isExpect &&
                     actual.source.containingFile != SourceFile.NO_SOURCE_FILE
                 }.groupBy { actual ->
@@ -65,7 +70,11 @@ object ExpectedActualResolver {
         }
     }
 
-    fun findExpectedForActual(actual: MemberDescriptor, commonModule: ModuleDescriptor): Map<Compatibility, List<MemberDescriptor>>? {
+    fun findExpectedForActual(
+        actual: MemberDescriptor,
+        commonModule: ModuleDescriptor,
+        moduleFilter: (ModuleDescriptor) -> Boolean = onlyFromThisModule(commonModule)
+    ): Map<Compatibility, List<MemberDescriptor>>? {
         return when (actual) {
             is CallableMemberDescriptor -> {
                 val container = actual.containingDeclaration
@@ -73,10 +82,10 @@ object ExpectedActualResolver {
                     is ClassifierDescriptorWithTypeParameters -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val expectedClass =
-                            findExpectedForActual(container, commonModule)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
+                            findExpectedForActual(container, commonModule, moduleFilter)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         expectedClass?.getMembers(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                     }
-                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonModule)
+                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonModule, moduleFilter)
                     else -> return null // do not report anything for incorrect code, e.g. 'actual' local function
                 }
 
@@ -95,7 +104,7 @@ object ExpectedActualResolver {
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
-                actual.findClassifiersFromModule(commonModule).filter { declaration ->
+                actual.findClassifiersFromModule(commonModule, moduleFilter).filter { declaration ->
                     actual != declaration &&
                     declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { expected ->
@@ -106,14 +115,16 @@ object ExpectedActualResolver {
         }
     }
 
-    private fun CallableMemberDescriptor.findNamesakesFromModule(module: ModuleDescriptor): Collection<CallableMemberDescriptor> {
-        val containingDeclaration = containingDeclaration
-        val scopes = when (containingDeclaration) {
+    private fun CallableMemberDescriptor.findNamesakesFromModule(
+        module: ModuleDescriptor,
+        moduleFilter: (ModuleDescriptor) -> Boolean
+    ): Collection<CallableMemberDescriptor> {
+        val scopes = when (val containingDeclaration = containingDeclaration) {
             is PackageFragmentDescriptor -> {
                 listOf(module.getPackage(containingDeclaration.fqName).memberScope)
             }
             is ClassDescriptor -> {
-                val classes = containingDeclaration.findClassifiersFromModule(module)
+                val classes = containingDeclaration.findClassifiersFromModule(module, moduleFilter)
                     .mapNotNull { if (it is TypeAliasDescriptor) it.classDescriptor else it }
                     .filterIsInstance<ClassDescriptor>()
                 if (this is ConstructorDescriptor) return classes.flatMap { it.constructors }
@@ -124,15 +135,23 @@ object ExpectedActualResolver {
         }
 
         return when (this) {
-            is FunctionDescriptor -> scopes.flatMap { it.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) }
-            is PropertyDescriptor -> scopes.flatMap { it.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED) }
+            is FunctionDescriptor -> scopes.flatMap {
+                it.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS, { it == name })
+                    .filter { it.name == name } as Collection<CallableMemberDescriptor>
+            }
+
+            is PropertyDescriptor -> scopes.flatMap {
+                it.getContributedDescriptors(DescriptorKindFilter.VARIABLES, { it == name })
+                    .filter { it.name == name } as Collection<CallableMemberDescriptor>
+            }
+
             else -> throw AssertionError("Unsupported declaration: $this")
-        }.onlyFromThis(module)
+        }.applyFilter(moduleFilter)
     }
 
     private fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
         module: ModuleDescriptor,
-        includeDependencies: Boolean = false
+        moduleFilter: (ModuleDescriptor) -> Boolean
     ): Collection<ClassifierDescriptorWithTypeParameters> {
         val classId = classId ?: return emptyList()
 
@@ -142,7 +161,7 @@ object ExpectedActualResolver {
 
         val segments = classId.relativeClassName.pathSegments()
         var classifiers = module.getPackage(classId.packageFqName).memberScope.getAllClassifiers(segments.first())
-        if (!includeDependencies) classifiers = classifiers.onlyFromThis(module)
+        classifiers = classifiers.applyFilter(moduleFilter)
 
         for (name in segments.subList(1, segments.size)) {
             classifiers = classifiers.mapNotNull { classifier ->
@@ -154,9 +173,6 @@ object ExpectedActualResolver {
 
         return classifiers
     }
-
-    private fun <T : DeclarationDescriptor> Iterable<T>.onlyFromThis(module: ModuleDescriptor): List<T> =
-        filter { it.module == module }
 
     sealed class Compatibility {
         // For IncompatibilityKind.STRONG `actual` declaration is considered as overload and error reports on expected declaration
@@ -231,7 +247,9 @@ object ExpectedActualResolver {
         platformModule: ModuleDescriptor = b.module,
         parentSubstitutor: Substitutor? = null
     ): Compatibility {
-        assert(a.name == b.name) { "This function should be invoked only for declarations with the same name: $a, $b" }
+        assert(a.name == b.name) {
+            "This function should be invoked only for declarations with the same name: $a, $b"
+        }
         assert(a.containingDeclaration is ClassifierDescriptorWithTypeParameters == b.containingDeclaration is ClassifierDescriptorWithTypeParameters) {
             "This function should be invoked only for declarations in the same kind of container (both members or both top level): $a, $b"
         }
@@ -329,7 +347,7 @@ object ExpectedActualResolver {
         return expected is ClassifierDescriptorWithTypeParameters &&
                 expected.isExpect &&
                 actual is ClassifierDescriptorWithTypeParameters &&
-                expected.findClassifiersFromModule(platformModule, includeDependencies = true).any { classifier ->
+                expected.findClassifiersFromModule(platformModule, moduleFilter = ALL_MODULES).any { classifier ->
                     // Note that it's fine to only check that this "actual typealias" expands to the expected class, without checking
                     // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
                     // allow simple cases like "actual typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkActualTypeAlias
@@ -537,3 +555,4 @@ object ExpectedActualResolver {
             (parent?.invoke(type) ?: type)?.asTypeProjection()?.let(typeSubstitutor::substitute)?.type
     }
 }
+

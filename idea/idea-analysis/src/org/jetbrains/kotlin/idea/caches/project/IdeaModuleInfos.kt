@@ -464,7 +464,7 @@ interface SourceForBinaryModuleInfo : IdeaModuleInfo {
 }
 
 data class PlatformModuleInfo(
-    val platformModule: ModuleSourceInfo,
+    override val platformModule: ModuleSourceInfo,
     private val commonModules: List<ModuleSourceInfo> // NOTE: usually contains a single element for current implementation
 ) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
@@ -484,6 +484,9 @@ data class PlatformModuleInfo(
         get() = platform.findAnalyzerServices
 
     override fun dependencies() = platformModule.dependencies()
+
+    override val expectedBy: List<ModuleInfo>
+        get() = platformModule.expectedBy
 
     override fun modulesWhoseInternalsAreVisible() = containedModules.flatMap { it.modulesWhoseInternalsAreVisible() }
 

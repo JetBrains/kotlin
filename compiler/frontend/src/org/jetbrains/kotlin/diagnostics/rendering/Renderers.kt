@@ -21,6 +21,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.moduleInfo
+import org.jetbrains.kotlin.analyzer.unwrapPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.WhenMissingCase
 import org.jetbrains.kotlin.cfg.hasUnknown
@@ -85,14 +87,14 @@ object Renderers {
     val NAME = Renderer<Named> { it.name.asString() }
 
     @JvmField
-    val PLATFORM = Renderer<ModuleDescriptor> {
-        val platform = it.platform
-        " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: ""}" + when {
-            platform == null || platform.isCommon() -> ""
-            else -> " for " + platform.single().platformName
-        }
-    }
+    val MODULE_WITH_PLATFORM = Renderer<ModuleDescriptor> { module ->
+        val platform = module.platform
+        val moduleName = module.moduleInfo?.unwrapPlatform()?.displayedName ?: ""
+        val platformNameIfAny = if (platform == null || platform.isCommon()) "" else " for " + platform.single().platformName
 
+        moduleName + platformNameIfAny
+    }
+    
     @JvmField
     val VISIBILITY = Renderer<Visibility> {
         if (it == Visibilities.INVISIBLE_FAKE)

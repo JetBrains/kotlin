@@ -39,3 +39,6 @@ interface ModuleInfo {
         val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
     }
 }
+
+val ModuleDescriptor.moduleInfo: ModuleInfo?
+    get() = getCapability(ModuleInfo.Capability)

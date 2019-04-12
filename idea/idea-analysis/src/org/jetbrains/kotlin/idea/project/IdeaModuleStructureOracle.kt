@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.project
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.resolve.ModulePath
 import org.jetbrains.kotlin.resolve.ModuleStructureOracle
@@ -28,7 +29,7 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
         val currentPath: Stack<ModuleDescriptor> = Stack()
 
         return sequence<ModulePath> {
-            yieldPathsFromSubgraph(module, currentPath, getChilds = { it.expectedByModules })
+            yieldPathsFromSubgraph(module, currentPath, getChilds = { it.implementedDescriptors })
         }.toList()
     }
 
