@@ -41,8 +41,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
                 JsNameChecker, JsModuleChecker, JsExternalFileChecker,
                 JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
                 JsRuntimeAnnotationChecker,
-                JsDynamicDeclarationChecker,
-                ExpectedActualDeclarationChecker()
+                JsDynamicDeclarationChecker
         ),
         additionalCallCheckers = listOf(
                 JsModuleCallChecker,
@@ -77,5 +76,11 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(JsQualifierChecker)
         container.useInstance(JsNativeDiagnosticSuppressor)
         container.useInstance(CoroutineCompatibilitySupport.DISABLED)
+        container.useInstance(ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractor.DEFAULT)
+    }
+
+    override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
+        super.configureModuleDependentCheckers(container)
+        container.useImpl<ExpectedActualDeclarationChecker>()
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.konan.platform
 
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 object KonanPlatformConfigurator : PlatformConfiguratorBase(
     DynamicTypesSettings(),
-    additionalDeclarationCheckers = listOf(ExpectedActualDeclarationChecker()),
+    additionalDeclarationCheckers = listOf(),
     additionalCallCheckers = listOf(SuperCallWithDefaultArgumentsChecker()),
     additionalTypeCheckers = listOf(),
     additionalClassifierUsageCheckers = listOf(),
@@ -36,5 +37,11 @@ object KonanPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(SyntheticScopes.Empty)
         container.useInstance(TypeSpecificityComparator.NONE)
         container.useInstance(SamConversionTransformer.Empty)
+        container.useInstance(ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractor.DEFAULT)
+    }
+
+    override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
+        super.configureModuleDependentCheckers(container)
+        container.useImpl<ExpectedActualDeclarationChecker>()
     }
 }

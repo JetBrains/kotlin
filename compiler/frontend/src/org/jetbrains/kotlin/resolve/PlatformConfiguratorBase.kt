@@ -72,7 +72,8 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
     SamConversionTransformerClashesResolver(),
     FunctionWithBigAritySupportClashesResolver(),
     PlatformDiagnosticSuppressorClashesResolver(),
-    CoroutineCompatibilitySupportClashesResolver()
+    CoroutineCompatibilitySupportClashesResolver(),
+    ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractorClashResolver()
 )
 
 fun StorageComponentContainer.configureDefaultCheckers() {

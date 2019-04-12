@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
@@ -27,6 +28,7 @@ private object CommonPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(SyntheticScopes.Empty)
         container.useInstance(SamConversionTransformer.Empty)
         container.useInstance(TypeSpecificityComparator.NONE)
+        container.useInstance(ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractor.DEFAULT)
     }
 }
 

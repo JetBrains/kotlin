@@ -20,6 +20,8 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -41,10 +43,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
-class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnotationArgumentExtractor> = emptyList()) : DeclarationChecker {
-    interface ActualAnnotationArgumentExtractor {
+class ExpectedActualDeclarationChecker(
+    val argumentExtractor: ActualAnnotationArgumentExtractor
+) : DeclarationChecker {
+    interface ActualAnnotationArgumentExtractor : PlatformSpecificExtension<ActualAnnotationArgumentExtractor> {
         fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>?
+
+        object DEFAULT : ActualAnnotationArgumentExtractor {
+            override fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>? = null
+        }
     }
+
+    class ActualAnnotationArgumentExtractorClashResolver : PlatformExtensionsClashResolver.PreferNonDefault<ActualAnnotationArgumentExtractor>(
+        ActualAnnotationArgumentExtractor.DEFAULT,
+        ActualAnnotationArgumentExtractor::class.java
+    )
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return

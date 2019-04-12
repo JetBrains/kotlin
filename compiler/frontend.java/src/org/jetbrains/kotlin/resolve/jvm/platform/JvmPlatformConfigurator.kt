@@ -35,7 +35,6 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         TypeParameterBoundIsNotArrayChecker(),
         JvmSyntheticApplicabilityChecker(),
         StrictfpApplicabilityChecker(),
-        ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor())),
         JvmAnnotationsTargetNonExistentAccessorChecker(),
         BadInheritedJavaSignaturesChecker,
         JvmMultifileClassStateChecker,
@@ -105,5 +104,11 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JvmDefaultSuperCallChecker>()
         container.useImpl<JvmSamConversionTransformer>()
         container.useInstance(FunctionWithBigAritySupport.LANGUAGE_VERSION_DEPENDENT)
+        container.useInstance(JavaActualAnnotationArgumentExtractor())
+    }
+
+    override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
+        super.configureModuleDependentCheckers(container)
+        container.useImpl<ExpectedActualDeclarationChecker>()
     }
 }
