@@ -118,6 +118,69 @@ class DefaultKotlinSourceSet(
     }
 
     internal val dependencyTransformations: MutableMap<KotlinDependencyScope, GranularMetadataTransformation> = mutableMapOf()
+
+    //region IDE import for Granular source sets metadata
+
+    data class MetadataDependencyTransformation(
+        val groupId: String?,
+        val moduleName: String,
+        val projectPath: String?,
+        val projectStructureMetadata: KotlinProjectStructureMetadata?,
+        val allVisibleSourceSets: Set<String>,
+        /** If empty, then this source set does not see any 'new' source sets of the dependency, compared to its dependsOn parents, but it
+         * still does see all what the dependsOn parents see. */
+        val useFilesForSourceSets: Map<String, Iterable<File>>
+    )
+
+    @Suppress("unused") // Used in IDE import
+    fun getDependenciesTransformation(configurationName: String): Iterable<MetadataDependencyTransformation> {
+        val scope = KotlinDependencyScope.values().find {
+            project.sourceSetMetadataConfigurationByScope(this, it).name == configurationName
+        } ?: return emptyList()
+
+        return getDependenciesTransformation(scope)
+    }
+
+    internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
+        val metadataDependencyResolutionByModule =
+            dependencyTransformations[scope]?.metadataDependencyResolutions
+                ?.associateBy { it.dependency.moduleGroup to it.dependency.moduleName }
+                ?: emptyMap()
+
+        val baseDir = project.buildDir.resolve("tmp/kotlinMetadata/$name/${scope.scopeName}")
+        if (metadataDependencyResolutionByModule.values.any { it is MetadataDependencyResolution.ChooseVisibleSourceSets }) {
+            if (baseDir.isDirectory) {
+                baseDir.deleteRecursively()
+            }
+            baseDir.mkdirs()
+        }
+
+        return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
+            val (group, name) = groupAndName
+            val projectPath = resolution.projectDependency?.dependencyProject?.path
+            when (resolution) {
+                is MetadataDependencyResolution.KeepOriginalDependency -> null
+
+                is MetadataDependencyResolution.ExcludeAsUnrequested ->
+                    MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
+
+                is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
+                    val filesBySourceSet = resolution.getMetadataFilesBySourceSet(
+                        baseDir,
+                        doProcessFiles = true
+                    )
+                    MetadataDependencyTransformation(
+                        group, name, projectPath,
+                        resolution.projectStructureMetadata,
+                        resolution.allVisibleSourceSetNames,
+                        filesBySourceSet
+                    )
+                }
+            }
+        }
+    }
+
+    //endregion
 }
 
 private fun KotlinSourceSet.checkForCircularDependencies() {
