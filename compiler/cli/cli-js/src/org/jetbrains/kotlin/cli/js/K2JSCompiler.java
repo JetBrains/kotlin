@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.js.facade.TranslationUnit;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
@@ -73,6 +74,7 @@ import org.jetbrains.kotlin.utils.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
@@ -144,6 +146,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             }
             Arrays.sort(allSources);
 
+            Set<FqName> dirtyPackages = nonCompiledSources.values().stream().map(KtFile::getPackageFqName).collect(Collectors.toSet());
+            Map<FqName, byte[]> packageMetadata = new HashMap<>();
+            for (Map.Entry<String, byte[]> e : incrementalDataProvider.getPackageMetadata().entrySet()) {
+                FqName name = new FqName(e.getKey());
+                if (!dirtyPackages.contains(name)) {
+                    packageMetadata.put(name, e.getValue());
+                }
+            }
+
             List<TranslationUnit> translationUnits = new ArrayList<>();
             for (i = 0; i < allSources.length; i++) {
                 KtFile nonCompiled = nonCompiledSources.get(allSources[i]);
@@ -155,7 +166,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                     translationUnits.add(new TranslationUnit.BinaryAst(translatedValue.getBinaryAst(), translatedValue.getInlineData()));
                 }
             }
-            return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult);
+            return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult, packageMetadata);
         }
 
         CollectionsKt.sortBy(allKotlinFiles, ktFile -> VfsUtilCore.virtualToIoFile(ktFile.getVirtualFile()));
