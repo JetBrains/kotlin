@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 object KonanPlatformConfigurator : PlatformConfiguratorBase(
     DynamicTypesSettings(),
-    additionalDeclarationCheckers = listOf(ExpectedActualDeclarationChecker()),
+    additionalDeclarationCheckers = listOf(),
     additionalCallCheckers = listOf(SuperCallWithDefaultArgumentsChecker()),
     additionalTypeCheckers = listOf(),
     additionalClassifierUsageCheckers = listOf(),
@@ -36,5 +36,6 @@ object KonanPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(SyntheticScopes.Empty)
         container.useInstance(TypeSpecificityComparator.NONE)
         container.useInstance(SamConversionTransformer.Empty)
+        container.useInstance(ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractor.DEFAULT)
     }
 }

@@ -72,7 +72,8 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
     SamConversionTransformerClashesResolver(),
     FunctionWithBigAritySupportClashesResolver(),
     PlatformDiagnosticSuppressorClashesResolver(),
-    CoroutineCompatibilitySupportClashesResolver()
+    CoroutineCompatibilitySupportClashesResolver(),
+    ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractorClashResolver()
 )
 
 fun StorageComponentContainer.configureDefaultCheckers() {
@@ -107,6 +108,7 @@ abstract class PlatformConfiguratorBase(
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
         container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
+        container.useImpl<ExpectedActualDeclarationChecker>()
     }
 
     fun configureExtensionsAndCheckers(container: StorageComponentContainer) {

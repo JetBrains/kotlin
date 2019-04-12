@@ -42,11 +42,22 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
-open class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnotationArgumentExtractor> = emptyList()) : DeclarationChecker,
+open class ExpectedActualDeclarationChecker(
+    val argumentExtractor: ActualAnnotationArgumentExtractor
+) : DeclarationChecker,
     PlatformSpecificExtension<ExpectedActualDeclarationChecker> {
-    interface ActualAnnotationArgumentExtractor {
+    interface ActualAnnotationArgumentExtractor : PlatformSpecificExtension<ActualAnnotationArgumentExtractor> {
         fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>?
+
+        object DEFAULT : ActualAnnotationArgumentExtractor {
+            override fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>? = null
+        }
     }
+
+    class ActualAnnotationArgumentExtractorClashResolver : PlatformExtensionsClashResolver.PreferNonDefault<ActualAnnotationArgumentExtractor>(
+        ActualAnnotationArgumentExtractor.DEFAULT,
+        ActualAnnotationArgumentExtractor::class.java
+    )
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
