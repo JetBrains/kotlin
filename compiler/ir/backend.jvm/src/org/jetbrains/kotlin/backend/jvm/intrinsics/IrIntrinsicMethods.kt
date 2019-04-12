@@ -213,9 +213,9 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             }
 
         private fun arrayMethods(arrayClass: IrClassSymbol) = listOf(
-            arrayClass.constructors.single { it.owner.valueParameters.size == 2 }.toKey()!! to ArrayConstructor,
             arrayClass.owner.properties.single { it.name.asString() == "size" }.getter!!.symbol.toKey()!! to ArraySize
         ) +
+                arrayClass.constructors.filter { it.owner.valueParameters.size == 1 }.map { it.toKey()!! to NewArray } +
                 methodWithArity(arrayClass, "set", 2, ArraySet) +
                 methodWithArity(arrayClass, "get", 1, ArrayGet) +
                 methodWithArity(arrayClass, "clone", 0, Clone) +
