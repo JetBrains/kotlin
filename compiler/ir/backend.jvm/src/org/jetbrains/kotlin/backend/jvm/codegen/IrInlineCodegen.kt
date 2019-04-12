@@ -93,7 +93,13 @@ class IrInlineCodegen(
         expression: IrFunctionAccessExpression
     ) {
         val typeArguments = expression.descriptor.typeParameters.keysToMap { expression.getTypeArgumentOrDefault(it) }
-        performInline(typeArguments, callDefault, codegen)
+        // TODO port inlining cycle detection to IrFunctionAccessExpression & pass it
+        state.globalInlineContext.enterIntoInlining(null)
+        try {
+            performInline(typeArguments, callDefault, codegen)
+        } finally {
+            state.globalInlineContext.exitFromInliningOf(null)
+        }
     }
 
     private fun rememberClosure(irReference: IrFunctionReference, type: Type, parameter: IrValueParameter): LambdaInfo {
