@@ -44,7 +44,9 @@ fun Project.packageCidrPlugin(
     }
 
     into("templates") {
-        from(project(predecessorProjectName).file("templates"))
+        val templatesDir = project(predecessorProjectName).file("templates")
+        inputs.dir(templatesDir)
+        from(templatesDir)
     }
 
     val ideaPluginDir = if (isStandaloneBuild) {
