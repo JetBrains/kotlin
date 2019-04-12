@@ -17,7 +17,6 @@ dependencies {
     compile(project(":kotlin-scripting-compiler-impl"))
     compile(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(project(":compiler:frontend"))

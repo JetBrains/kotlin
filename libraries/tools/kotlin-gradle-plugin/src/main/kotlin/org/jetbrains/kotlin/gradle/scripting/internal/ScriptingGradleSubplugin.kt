@@ -23,10 +23,16 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.useLazyTaskConfiguration
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.io.File
 
 private const val MISCONFIGURATION_MESSAGE_SUFFIX = "the plugin is probably applied by a mistake"
+
+private const val MIN_SUPPORTED_GRADLE_MAJOR_VERSION = 5
+private const val MIN_SUPPORTED_GRADLE_MINOR_VERSION = 0
+
+private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
 
 class ScriptingGradleSubplugin : Plugin<Project> {
     companion object {
@@ -55,12 +61,17 @@ class ScriptingGradleSubplugin : Plugin<Project> {
 
                         try {
                             val discoveryClasspathConfigurationName = getDiscoveryClasspathConfigurationName(task.sourceSetName)
-                            project.configurations.findByName(discoveryClasspathConfigurationName)?.let { _ ->
-                                configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName)
+                            if (project.configurations.findByName(discoveryClasspathConfigurationName)?.allDependencies?.isEmpty() == false) {
+                                if (isGradleVersionAtLeast(MIN_SUPPORTED_GRADLE_MAJOR_VERSION, MIN_SUPPORTED_GRADLE_MINOR_VERSION)) {
+                                    configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName)
+                                } else {
+                                    project.logger.warn("$SCRIPTING_LOG_PREFIX incompatible Gradle version. Please use the plugin with Gradle version $MIN_SUPPORTED_GRADLE_MAJOR_VERSION.$MIN_SUPPORTED_GRADLE_MINOR_VERSION or newer.")
+                                }
+                            } else {
+                                project.logger.warn("$SCRIPTING_LOG_PREFIX $project.${task.name} - configuration not found: $discoveryClasspathConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
                             }
-                                ?: project.logger.warn("kotlin scripting plugin: $project.${task.name} - configuration not found: $discoveryClasspathConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
                         } catch (e: IllegalStateException) {
-                            project.logger.warn("kotlin scripting plugin: applied in the non-supported environment (error received: ${e.message})")
+                            project.logger.warn("$SCRIPTING_LOG_PREFIX applied in the non-supported environment (error received: ${e.message})")
                         }
                     }
                 }
@@ -72,7 +83,7 @@ class ScriptingGradleSubplugin : Plugin<Project> {
             } else {
                 // TODO: implement support for discovery in MPP project: use KotlinSourceSet directly and do not rely on java convevtion sourcesets
                 if (project.multiplatformExtensionOrNull == null) {
-                    project.logger.warn("kotlin scripting plugin: applied to a non-JVM project $project, $MISCONFIGURATION_MESSAGE_SUFFIX")
+                    project.logger.warn("$SCRIPTING_LOG_PREFIX applied to a non-JVM project $project, $MISCONFIGURATION_MESSAGE_SUFFIX")
                 }
             }
         }
@@ -89,19 +100,19 @@ class ScriptingGradleSubplugin : Plugin<Project> {
 
             val kotlinSourceSet = sourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
             if (kotlinSourceSet == null) {
-                project.logger.warn("kotlin scripting plugin: kotlin source set not found: $project.$sourceSet, $MISCONFIGURATION_MESSAGE_SUFFIX")
+                project.logger.warn("$SCRIPTING_LOG_PREFIX kotlin source set not found: $project.$sourceSet, $MISCONFIGURATION_MESSAGE_SUFFIX")
             } else {
                 val extensions by lazy {
                     val discoveryResultsConfiguration = project.configurations.findByName(discoveryResultsConfigurationName)
                     if (discoveryResultsConfiguration == null) {
-                        project.logger.warn("kotlin scripting plugin: discovery results not found: $project.$discoveryResultsConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
+                        project.logger.warn("$SCRIPTING_LOG_PREFIX discovery results not found: $project.$discoveryResultsConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
                         emptySet<String>()
                     } else {
                         discoveryResultsConfiguration.files.flatMapTo(HashSet()) {
                             it.readLines().filter(String::isNotBlank)
                         }.also {
                             kotlinSourceSet.addCustomSourceFilesExtensions(it.toList())
-                            project.logger.debug("kotlin scripting plugin: $project.$sourceSet: discovered script extensions: $it")
+                            project.logger.debug("$SCRIPTING_LOG_PREFIX $project.$sourceSet: discovered script extensions: $it")
                         }
                     }
                 }
@@ -133,14 +144,16 @@ private fun configureDiscoveryTransformation(
     project.configurations.maybeCreate(discoveryResultsConfigurationName).apply {
         isCanBeConsumed = false
     }
-    project.dependencies.apply {
-        add(
-            discoveryResultsConfigurationName,
-            project.withRegisteredDiscoverScriptExtensionsTransform {
-                discoveryConfiguration.discoverScriptExtensionsFiles()
-            }
-        )
-    }
+    if (isGradleVersionAtLeast(MIN_SUPPORTED_GRADLE_MAJOR_VERSION, MIN_SUPPORTED_GRADLE_MINOR_VERSION)) {
+        project.dependencies.apply {
+            add(
+                discoveryResultsConfigurationName,
+                project.withRegisteredDiscoverScriptExtensionsTransform {
+                    discoveryConfiguration.discoverScriptExtensionsFiles()
+                }
+            )
+        }
+    } // otherwise the warning should already be reported in the ScriptingGradleSubplugin.apply
 }
 
 internal class DiscoverScriptExtensionsTransform : ArtifactTransform() {
