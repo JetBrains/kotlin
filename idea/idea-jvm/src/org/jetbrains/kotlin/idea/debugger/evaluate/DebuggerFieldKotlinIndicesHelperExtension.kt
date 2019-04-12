@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.synthetic.JavaSyntheticPropertiesScope
 import org.jetbrains.kotlin.types.KotlinType
+import java.lang.IllegalStateException
 
 class DebuggerFieldKotlinIndicesHelperExtension : KotlinIndicesHelperExtension {
     override fun appendExtensionCallables(
@@ -30,5 +31,14 @@ class DebuggerFieldKotlinIndicesHelperExtension : KotlinIndicesHelperExtension {
                 consumer += property
             }
         }
+    }
+
+    override fun appendExtensionCallables(
+        consumer: MutableList<in CallableDescriptor>,
+        moduleDescriptor: ModuleDescriptor,
+        receiverTypes: Collection<KotlinType>,
+        nameFilter: (String) -> Boolean
+    ) {
+        throw IllegalStateException("Should not be called")
     }
 }

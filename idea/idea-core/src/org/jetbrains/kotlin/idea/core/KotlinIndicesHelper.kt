@@ -171,7 +171,7 @@ class KotlinIndicesHelper(
         val additionalDescriptors = ArrayList<CallableDescriptor>(0)
 
         val lookupLocation = this.file?.let { KotlinLookupLocation(it) } ?: NoLookupLocation.FROM_IDE
-        for (extension in KotlinIndicesHelperExtension.getInstances(project)) {
+        for (extension in @Suppress("DEPRECATION") KotlinIndicesHelperExtension.getInstances(project)) {
             extension.appendExtensionCallables(additionalDescriptors, moduleDescriptor, receiverTypes, nameFilter, lookupLocation)
         }
 

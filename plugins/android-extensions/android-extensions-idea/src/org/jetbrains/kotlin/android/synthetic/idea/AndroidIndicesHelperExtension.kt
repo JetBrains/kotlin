@@ -56,4 +56,13 @@ class AndroidIndicesHelperExtension : KotlinIndicesHelperExtension {
             }
         }
     }
+
+    override fun appendExtensionCallables(
+        consumer: MutableList<in CallableDescriptor>,
+        moduleDescriptor: ModuleDescriptor,
+        receiverTypes: Collection<KotlinType>,
+        nameFilter: (String) -> Boolean
+    ) {
+        throw IllegalStateException("Should not be called")
+    }
 }
