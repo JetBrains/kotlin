@@ -84,6 +84,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/NestedOfAliasedType.kt");
     }
 
+    @TestMetadata("nestedReturnType.kt")
+    public void testNestedReturnType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/nestedReturnType.kt");
+    }
+
     @TestMetadata("NestedSuperType.kt")
     public void testNestedSuperType() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/NestedSuperType.kt");
@@ -246,9 +251,7 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             }
 
             public void testAllFilesPresentInInference() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(),
-                                                                new File("compiler/fir/resolve/testData/resolve/expresssions/inference"),
-                                                                Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("id.kt")
@@ -414,6 +417,24 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @TestMetadata("TypeAliasExpansion.kt")
         public void testTypeAliasExpansion() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/multifile/TypeAliasExpansion.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/nested")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Nested extends AbstractFirResolveTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInNested() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/nested"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/nested/simple.kt");
         }
     }
 
