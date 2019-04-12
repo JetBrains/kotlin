@@ -68,6 +68,8 @@ class Psi2IrTranslator(
     fun generateModuleFragment(context: GeneratorContext, ktFiles: Collection<KtFile>, deserializer: IrDeserializer? = null): IrModuleFragment {
         val moduleGenerator = ModuleGenerator(context)
         val irModule = moduleGenerator.generateModuleFragmentWithoutDependencies(ktFiles)
+        moduleGenerator.generateUnboundSymbolsAsDependencies(irModule, deserializer)
+        irModule.patchDeclarationParents()
         postprocess(context, irModule)
         moduleGenerator.generateUnboundSymbolsAsDependencies(irModule, deserializer)
         return irModule
