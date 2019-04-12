@@ -14,16 +14,17 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
-internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
-                                                   val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
-                                                   val parent: IrDeclarationParent?) {
+internal class DeepCopyIrTreeWithSymbolsForInliner(
+    val context: Context,
+    val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
+    val parent: IrDeclarationParent?
+) {
 
     fun copy(irElement: IrElement): IrElement {
         // Create new symbols.
@@ -36,7 +37,7 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
         val result = irElement.transform(copier, data = null)
 
         // Bind newly created IR with wrapped descriptors.
-        result.acceptVoid(object: IrElementVisitorVoid {
+        result.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -53,7 +54,8 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
 
             override fun visitEnumEntry(declaration: IrEnumEntry) {
                 (declaration.descriptor as WrappedClassDescriptor).bind(
-                        declaration.correspondingClass ?: declaration.parentAsClass)
+                    declaration.correspondingClass ?: declaration.parentAsClass
+                )
                 declaration.acceptChildrenVoid(this)
             }
 
@@ -108,45 +110,47 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
 
     private inner class DescriptorsToIrRemapper : DescriptorsRemapper {
         override fun remapDeclaredClass(descriptor: ClassDescriptor) =
-                WrappedClassDescriptor(descriptor.annotations, descriptor.source)
+            WrappedClassDescriptor(descriptor.annotations, descriptor.source)
 
         override fun remapDeclaredConstructor(descriptor: ClassConstructorDescriptor) =
-                WrappedClassConstructorDescriptor(descriptor.annotations, descriptor.source)
+            WrappedClassConstructorDescriptor(descriptor.annotations, descriptor.source)
 
         override fun remapDeclaredEnumEntry(descriptor: ClassDescriptor) =
-                WrappedClassDescriptor(descriptor.annotations, descriptor.source)
+            WrappedClassDescriptor(descriptor.annotations, descriptor.source)
 
         override fun remapDeclaredField(descriptor: PropertyDescriptor) =
-                WrappedFieldDescriptor(descriptor.annotations, descriptor.source)
+            WrappedFieldDescriptor(descriptor.annotations, descriptor.source)
 
         override fun remapDeclaredSimpleFunction(descriptor: FunctionDescriptor) =
-                WrappedSimpleFunctionDescriptor(descriptor.annotations, descriptor.source)
+            WrappedSimpleFunctionDescriptor(descriptor.annotations, descriptor.source)
 
         override fun remapDeclaredTypeParameter(descriptor: TypeParameterDescriptor) =
-                WrappedTypeParameterDescriptor(descriptor.annotations, descriptor.source)
+            WrappedTypeParameterDescriptor(descriptor.annotations, descriptor.source)
 
         override fun remapDeclaredVariable(descriptor: VariableDescriptor) =
-                WrappedVariableDescriptor(descriptor.annotations, descriptor.source)
+            WrappedVariableDescriptor(descriptor.annotations, descriptor.source)
 
         override fun remapDeclaredValueParameter(descriptor: ParameterDescriptor): ParameterDescriptor =
-                if (descriptor is ReceiverParameterDescriptor)
-                    WrappedReceiverParameterDescriptor(descriptor.annotations, descriptor.source)
-                else
-                    WrappedValueParameterDescriptor(descriptor.annotations, descriptor.source)
+            if (descriptor is ReceiverParameterDescriptor)
+                WrappedReceiverParameterDescriptor(descriptor.annotations, descriptor.source)
+            else
+                WrappedValueParameterDescriptor(descriptor.annotations, descriptor.source)
     }
 
-    private inner class InlinerTypeRemapper(val symbolRemapper: SymbolRemapper,
-                                            val typeArguments: Map<IrTypeParameterSymbol, IrType?>?) : TypeRemapper {
+    private inner class InlinerTypeRemapper(
+        val symbolRemapper: SymbolRemapper,
+        val typeArguments: Map<IrTypeParameterSymbol, IrType?>?
+    ) : TypeRemapper {
 
-        override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) { }
+        override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
 
-        override fun leaveScope() { }
+        override fun leaveScope() {}
 
         private fun remapTypeArguments(arguments: List<IrTypeArgument>) =
-                arguments.map { argument ->
-                    (argument as? IrTypeProjection)?.let { makeTypeProjection(remapType(it.type), it.variance) }
-                            ?: argument
-                }
+            arguments.map { argument ->
+                (argument as? IrTypeProjection)?.let { makeTypeProjection(remapType(it.type), it.variance) }
+                    ?: argument
+            }
 
         override fun remapType(type: IrType): IrType {
             if (type !is IrSimpleType) return type
