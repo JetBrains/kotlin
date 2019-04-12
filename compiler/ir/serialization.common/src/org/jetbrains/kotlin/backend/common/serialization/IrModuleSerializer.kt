@@ -779,7 +779,7 @@ open class IrModuleSerializer(
             is IrClassReference
             -> operationProto.classReference = serializeClassReference(expression)
             is IrCall -> operationProto.call = serializeCall(expression)
-
+            is IrConstructorCall -> operationProto.constructorCall = serializeConstructorCall(expression)
             is IrComposite -> operationProto.composite = serializeComposite(expression)
             is IrConst<*> -> operationProto.const = serializeConst(expression)
             is IrContinue -> operationProto.`continue` = serializeContinue(expression)
