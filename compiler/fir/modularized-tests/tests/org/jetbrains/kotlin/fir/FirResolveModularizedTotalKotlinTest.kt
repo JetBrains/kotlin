@@ -52,7 +52,13 @@ private const val FIR_DUMP_PATH = "tmp/firDump"
 private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
 private const val FIR_LOGS_PATH = "tmp/fir-logs"
 
-private data class ModuleData(val name: String, val classpath: List<File>, val sources: List<File>, val javaSourceRoots: List<File>)
+private data class ModuleData(
+    val name: String,
+    val qualifiedName: String,
+    val classpath: List<File>,
+    val sources: List<File>,
+    val javaSourceRoots: List<File>
+)
 
 private const val PASSES = 1
 
@@ -92,7 +98,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
 
     private fun dumpFir(moduleData: ModuleData, firFiles: List<FirFile>) {
         if (!DUMP_FIR) return
-        val dumpRoot = File(FIR_DUMP_PATH).resolve(moduleData.name)
+        val dumpRoot = File(FIR_DUMP_PATH).resolve(moduleData.qualifiedName)
         firFiles.forEach {
             val directory = it.packageFqName.pathSegments().fold(dumpRoot) { file, name -> file.resolve(name.asString()) }
             directory.mkdirs()
@@ -102,7 +108,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
 
     private fun dumpFirHtml(moduleData: ModuleData, firFiles: List<FirFile>) {
         if (!DUMP_FIR) return
-        dump.module(moduleData.name) {
+        dump.module(moduleData.qualifiedName) {
             firFiles.forEach(dump::indexFile)
             firFiles.forEach(dump::generateFile)
         }
@@ -142,6 +148,8 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
         val document = builder.parse(file)
         val moduleElement = document.childNodes.item(0).childNodesList.first { it.nodeType == Node.ELEMENT_NODE }
         val moduleName = moduleElement.attributes.getNamedItem("name").nodeValue
+        val outputDir = moduleElement.attributes.getNamedItem("outputDir").nodeValue
+        val qualifiedModuleName = outputDir.substringAfterLast("/")
         val javaSourceRoots = mutableListOf<File>()
         val classpath = mutableListOf<File>()
         val sources = mutableListOf<File>()
@@ -160,7 +168,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
             }
         }
 
-        return ModuleData(moduleName, classpath, sources, javaSourceRoots)
+        return ModuleData(moduleName, qualifiedModuleName, classpath, sources, javaSourceRoots)
     }
 
 
@@ -176,7 +184,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
 //                .sortedByDescending { it.name == "idea" }
 
 
-        for (module in modules.progress(step = 0.0) { "Analyzing ${it.name}" }) {
+        for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
             processModule(module)
             if (bench.hasFiles && FAIL_FAST) {
                 break
