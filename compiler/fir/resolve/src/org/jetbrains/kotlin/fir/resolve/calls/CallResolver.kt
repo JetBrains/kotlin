@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByNameWithAction
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -140,12 +141,12 @@ class MemberScopeTowerLevel(
 
     private fun <T : ConeSymbol> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
-        takeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
+        processScopeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
     ): ProcessorAction {
         val scope = dispatchReceiver.type.scope(session) ?: return ProcessorAction.NEXT
-        if (scope.takeMembers { output.consumeCandidate(it, dispatchReceiver) }.stop()) return ProcessorAction.STOP
+        if (scope.processScopeMembers { output.consumeCandidate(it, dispatchReceiver) }.stop()) return ProcessorAction.STOP
         val withSynthetic = FirSyntheticPropertiesScope(session, scope, ReturnTypeCalculatorWithJump(session))
-        return withSynthetic.takeMembers { output.consumeCandidate(it, dispatchReceiver) }
+        return withSynthetic.processScopeMembers { output.consumeCandidate(it, dispatchReceiver) }
     }
 
     override fun <T : ConeSymbol> processElementsByName(
@@ -163,6 +164,8 @@ class MemberScopeTowerLevel(
 
 }
 
+private fun ConeCallableSymbol.hasExtensionReceiver(): Boolean = (this as? FirCallableSymbol)?.fir?.receiverTypeRef != null
+
 class ScopeTowerLevel(
     val session: FirSession,
     val scope: FirScope
@@ -175,12 +178,26 @@ class ScopeTowerLevel(
     ): ProcessorAction {
         return when (token) {
 
-            TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name) { processor.consumeCandidate(it as T, null) }
-            TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(name) { processor.consumeCandidate(it as T, null) }
+            TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name) { candidate ->
+                val candidateHasExtensionReceiver = candidate.hasExtensionReceiver()
+                if (candidateHasExtensionReceiver == (extensionReceiver != null)) {
+                    processor.consumeCandidate(candidate as T, boundDispatchReceiver = null)
+                } else {
+                    ProcessorAction.NEXT
+                }
+            }
+            TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(name) { candidate ->
+                val candidateHasExtensionReceiver = candidate.hasExtensionReceiver()
+                if (candidateHasExtensionReceiver == (extensionReceiver != null)) {
+                    processor.consumeCandidate(candidate as T, boundDispatchReceiver = null)
+                } else {
+                    ProcessorAction.NEXT
+                }
+            }
             TowerScopeLevel.Token.Objects -> scope.processClassifiersByNameWithAction(name, FirPosition.OTHER) {
                 processor.consumeCandidate(
                     it as T,
-                    null
+                    boundDispatchReceiver = null
                 )
             }
         }
@@ -319,8 +336,8 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                 MemberScopeTowerLevel(session, explicitReceiver).processElementsByName(
                     token,
                     name,
-                    null,
-                    object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
+                    extensionReceiver = null,
+                    processor = object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
                             resultCollector.consumeCandidate(
                                 group,
@@ -339,8 +356,8 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                 towerScopeLevel.processElementsByName(
                     token,
                     name,
-                    explicitReceiver,
-                    object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
+                    extensionReceiver = explicitReceiver,
+                    processor = object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
                             resultCollector.consumeCandidate(
                                 group,
