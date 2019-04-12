@@ -1,6 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
 // NO_CHECK_LAMBDA_INLINING
-// IGNORE_BACKEND: JVM_IR
 
 // FILE: 1.kt
 
