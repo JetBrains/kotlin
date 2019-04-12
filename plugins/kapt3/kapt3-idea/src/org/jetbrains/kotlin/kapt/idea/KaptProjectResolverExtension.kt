@@ -76,9 +76,9 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
     override fun getToolingExtensionsClasses() = setOf(KaptModelBuilderService::class.java, Unit::class.java)
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
-        val kaptModel = resolverCtx.getExtraProject(gradleModule, KaptGradleModel::class.java) ?: return
+        val kaptModel = resolverCtx.getExtraProject(gradleModule, KaptGradleModel::class.java)
 
-        if (kaptModel.isEnabled) {
+        if (kaptModel != null && kaptModel.isEnabled) {
             for (sourceSet in kaptModel.sourceSets) {
                 populateAndroidModuleModelIfNeeded(ideModule, sourceSet)
 

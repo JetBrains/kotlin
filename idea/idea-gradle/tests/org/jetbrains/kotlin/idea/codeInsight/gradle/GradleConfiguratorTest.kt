@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
+import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestRunConfigurationProducer
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test
@@ -325,6 +326,14 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         runReadAction {
             assertEmpty(getConfigurationPossibilitiesForConfigureNotification(myProject).first)
         }
+    }
+
+    @Test
+    fun testTestTasksAreImported() {
+        importProjectFromTestData()
+
+        val testTasks = GradleTestRunConfigurationProducer.getTasksToRun(myTestFixture.module)
+        assertTrue("There should be at least one test task", testTasks.isNotEmpty())
     }
 
     @Test
