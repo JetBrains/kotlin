@@ -89,16 +89,19 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             val file = dotQualified.containingKtFile
             val psiFactory = KtPsiFactory(call)
             val valueArguments = call.valueArguments
+            val typeArguments = call.typeArgumentList?.text ?: ""
             if (replacement.toExtensionFunction) {
                 val receiverText = valueArguments.first().text
                 val argumentsText = valueArguments.drop(1).joinToString(separator = ", ") { it.text }
-                dotQualified.replaced(psiFactory.createExpression("$receiverText.${replacement.kotlinFunctionShortName}($argumentsText)"))
+                dotQualified.replaced(psiFactory.createExpression("$receiverText.${replacement.kotlinFunctionShortName}$typeArguments($argumentsText)"))
                 file.resolveImportReference(FqName(replacement.kotlinFunctionFqName)).firstOrNull()?.let {
                     ImportInsertHelper.getInstance(project).importDescriptor(file, it)
                 }
             } else {
                 val argumentsText = valueArguments.joinToString(separator = ", ") { it.text }
-                val replaced = dotQualified.replaced(psiFactory.createExpression("${replacement.kotlinFunctionFqName}($argumentsText)"))
+                val replaced = dotQualified.replaced(
+                    psiFactory.createExpression("${replacement.kotlinFunctionFqName}$typeArguments($argumentsText)")
+                )
                 ShortenReferences.DEFAULT.process(replaced)
             }
         }
@@ -176,8 +179,21 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             Replacement("java.lang.Math.copySign", "kotlin.math.withSign", toExtensionFunction = true)
         )
 
-        private val JAVA_ARRAYS = listOf(Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", toExtensionFunction = true))
+        private val JAVA_COLLECTIONS = listOf(
+            Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", toExtensionFunction = true),
+            Replacement("java.util.Arrays.asList", "kotlin.collections.listOf"),
+            Replacement("java.util.Arrays.asList", "kotlin.collections.mutableListOf"),
+            Replacement("java.util.Set.of", "kotlin.collections.setOf"),
+            Replacement("java.util.Set.of", "kotlin.collections.mutableSetOf"),
+            Replacement("java.util.List.of", "kotlin.collections.listOf"),
+            Replacement("java.util.List.of", "kotlin.collections.mutableListOf")
+        )
 
-        private val REPLACEMENTS = (JAVA_MATH + JAVA_SYSTEM + JAVA_IO + JAVA_PRIMITIVES + JAVA_ARRAYS).groupBy { it.javaMethodShortName }
+        private val REPLACEMENTS = (JAVA_MATH +
+                JAVA_SYSTEM +
+                JAVA_IO +
+                JAVA_PRIMITIVES +
+                JAVA_COLLECTIONS
+                ).groupBy { it.javaMethodShortName }
     }
 }

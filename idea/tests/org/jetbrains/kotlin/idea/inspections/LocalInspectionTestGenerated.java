@@ -7150,31 +7150,46 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays")
+        @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Arrays extends AbstractLocalInspectionTest {
+        public static class Collections extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
             }
 
-            public void testAllFilesPresentInArrays() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            public void testAllFilesPresentInCollections() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("asList.kt")
+            public void testAsList() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/asList.kt");
+            }
+
+            @TestMetadata("copyOf.kt")
+            public void testCopyOf() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/copyOf.kt");
             }
 
             @TestMetadata("nonArraysCopyOf.kt")
             public void testNonArraysCopyOf() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays/nonArraysCopyOf.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/nonArraysCopyOf.kt");
             }
 
             @TestMetadata("qualified.kt")
             public void testQualified() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays/qualified.kt");
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/qualified.kt");
             }
 
-            @TestMetadata("simple.kt")
-            public void testSimple() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/arrays/simple.kt");
+            @TestMetadata("setOf.kt")
+            public void testSetOf() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/setOf.kt");
+            }
+
+            @TestMetadata("setOf2.kt")
+            public void testSetOf2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/setOf2.kt");
             }
         }
 
