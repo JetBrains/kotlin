@@ -21,6 +21,7 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
     testCompile(projectTests(":compiler:fir:resolve"))
     testCompile(project(":compiler:fir:resolve"))
+    testCompile(project(":compiler:fir:dump"))
 }
 
 sourceSets {

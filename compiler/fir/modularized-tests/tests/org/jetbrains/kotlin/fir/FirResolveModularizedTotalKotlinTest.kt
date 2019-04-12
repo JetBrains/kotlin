@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
@@ -48,6 +49,7 @@ private const val FAIL_FAST = true
 private const val DUMP_FIR = true
 
 private const val FIR_DUMP_PATH = "tmp/firDump"
+private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
 private const val FIR_LOGS_PATH = "tmp/fir-logs"
 
 private data class ModuleData(val name: String, val classpath: List<File>, val sources: List<File>, val javaSourceRoots: List<File>)
@@ -58,6 +60,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
 
 
     private lateinit var bench: FirResolveBench
+    private lateinit var dump: MultiModuleHtmlFirDump
 
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
         val project = environment.project
@@ -84,6 +87,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
         bench.processFiles(firFiles, totalTransformer.transformers)
 
         dumpFir(moduleData, firFiles)
+        dumpFirHtml(moduleData, firFiles)
     }
 
     private fun dumpFir(moduleData: ModuleData, firFiles: List<FirFile>) {
@@ -93,6 +97,14 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
             val directory = it.packageFqName.pathSegments().fold(dumpRoot) { file, name -> file.resolve(name.asString()) }
             directory.mkdirs()
             directory.resolve(it.name + ".fir").writeText(it.render())
+        }
+    }
+
+    private fun dumpFirHtml(moduleData: ModuleData, firFiles: List<FirFile>) {
+        if (!DUMP_FIR) return
+        dump.module(moduleData.name) {
+            firFiles.forEach(dump::indexFile)
+            firFiles.forEach(dump::generateFile)
         }
     }
 
@@ -153,6 +165,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
 
 
     private fun runTestOnce(pass: Int) {
+        if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
         val testDataPath = "/Users/jetbrains/jps"
         val root = File(testDataPath)
 
@@ -160,6 +173,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
 
         val modules =
             root.listFiles().sortedBy { it.lastModified() }.map { loadModule(it) }
+//                .sortedByDescending { it.name == "idea" }
 
 
         for (module in modules.progress(step = 0.0) { "Analyzing ${it.name}" }) {
@@ -177,7 +191,8 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
         }
     }
 
-    fun saveReport() {
+    private fun saveReport() {
+        if (DUMP_FIR) dump.finish()
         val format = SimpleDateFormat("yyyy-MM-dd__hh-mm")
         val logDir = File(FIR_LOGS_PATH)
         logDir.mkdirs()
