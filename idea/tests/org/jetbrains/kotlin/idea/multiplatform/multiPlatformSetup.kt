@@ -69,16 +69,11 @@ fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
 
     for ((resolveModule, ideaModule) in resolveModulesToIdeaModules.entries) {
         val platform = resolveModule.platform
-        when {
-            platform.isCommon() -> ideaModule.createFacet(platform, useProjectSettings = false)
-            else -> {
-                ideaModule.createFacet(
-                    platform,
-                    implementedModuleName = resolveModule.dependencies.singleOrNull { it.kind == ResolveDependency.Kind.EXPECTED_BY }?.to?.name
-                )
-                ideaModule.enableMultiPlatform()
-            }
-        }
+        ideaModule.createFacet(
+            platform,
+            implementedModuleName = resolveModule.dependencies.singleOrNull { it.kind == ResolveDependency.Kind.EXPECTED_BY }?.to?.name
+        )
+        ideaModule.enableMultiPlatform()
     }
 }
 
