@@ -30,15 +30,18 @@ import java.io.IOException
 import java.util.*
 
 
-open class LookupStorage(targetDataDir: File) : BasicMapsOwner(targetDataDir) {
+open class LookupStorage(
+    targetDataDir: File,
+    sourcePathConverter: SourceFileToPathConverter
+) : BasicMapsOwner(targetDataDir) {
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5
         private val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
     }
 
     private val countersFile = "counters".storageFile
-    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile))
-    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile))
+    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, sourcePathConverter))
+    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, sourcePathConverter))
     private val lookupMap = registerMap(LookupMap("lookups".storageFile))
 
     @Volatile

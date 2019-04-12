@@ -204,7 +204,7 @@ abstract class AbstractIncrementalJpsTest(
                 return MakeResult(
                     log = logger.log,
                     makeFailed = false,
-                    mappingsDump = createMappingsDump(projectDescriptor),
+                    mappingsDump = createMappingsDump(projectDescriptor, kotlinCompileContext),
                     name = name
                 )
             }
@@ -327,9 +327,10 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun createMappingsDump(
-        project: ProjectDescriptor
+        project: ProjectDescriptor,
+        kotlinContext: KotlinCompileContext
     ) = createKotlinIncrementalCacheDump(project) + "\n\n\n" +
-            createLookupCacheDump(project) + "\n\n\n" +
+            createLookupCacheDump(kotlinContext) + "\n\n\n" +
             createCommonMappingsDump(project) + "\n\n\n" +
             createJavaMappingsDump(project)
 
@@ -348,13 +349,13 @@ abstract class AbstractIncrementalJpsTest(
         }
     }
 
-    private fun createLookupCacheDump(project: ProjectDescriptor): String {
+    private fun createLookupCacheDump(kotlinContext: KotlinCompileContext): String {
         val sb = StringBuilder()
         val p = Printer(sb)
         p.println("Begin of Lookup Maps")
         p.println()
 
-        project.dataManager.withLookupStorage { lookupStorage ->
+        kotlinContext.lookupStorageManager.withLookupStorage { lookupStorage ->
             lookupStorage.forceGC()
             p.print(lookupStorage.dump(lookupsDuringTest))
         }
