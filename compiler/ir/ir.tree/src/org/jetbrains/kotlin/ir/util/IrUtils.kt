@@ -334,7 +334,7 @@ fun IrDeclaration.isEffectivelyExternal(): Boolean {
             is IrSimpleFunction -> correspondingProperty ?: parent as? IrDeclaration
             else -> parent as? IrDeclaration
         }
-
+    val parent = parent
     return when (this) {
         is IrFunction -> isExternal || (effectiveParentDeclaration()?.isEffectivelyExternal() ?: false)
         is IrField -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
