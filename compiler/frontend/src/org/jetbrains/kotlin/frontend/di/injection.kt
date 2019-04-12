@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -113,7 +114,8 @@ fun createContainerForBodyResolve(
     platform: TargetPlatform,
     statementFilter: StatementFilter,
     compilerServices: PlatformDependentCompilerServices,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
+    moduleStructureOracle: ModuleStructureOracle
 ): StorageComponentContainer = createContainer("BodyResolve", compilerServices) {
     configureModule(moduleContext, platform, compilerServices, bindingTrace, languageVersionSettings)
 
@@ -123,6 +125,7 @@ fun createContainerForBodyResolve(
     useImpl<AnnotationResolverImpl>()
 
     useImpl<BodyResolver>()
+    useInstance(moduleStructureOracle)
 }
 
 fun createContainerForLazyBodyResolve(
@@ -132,7 +135,8 @@ fun createContainerForLazyBodyResolve(
     platform: TargetPlatform,
     bodyResolveCache: BodyResolveCache,
     compilerServices: PlatformDependentCompilerServices,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
+    moduleStructureOracle: ModuleStructureOracle
 ): StorageComponentContainer = createContainer("LazyBodyResolve", compilerServices) {
     configureModule(moduleContext, platform, compilerServices, bindingTrace, languageVersionSettings)
 
@@ -142,6 +146,7 @@ fun createContainerForLazyBodyResolve(
     useImpl<AnnotationResolverImpl>()
     useImpl<LazyTopDownAnalyzer>()
     useImpl<BasicAbsentDescriptorHandler>()
+    useInstance(moduleStructureOracle)
 }
 
 fun createContainerForLazyLocalClassifierAnalyzer(
