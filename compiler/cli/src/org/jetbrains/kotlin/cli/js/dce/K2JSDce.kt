@@ -122,7 +122,7 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
 
     private fun mapSourcePaths(inputFile: File, targetFile: File): Boolean {
         val json = try {
-            InputStreamReader(FileInputStream(inputFile), "UTF-8").use { parseJson(it) }
+            parseJson(inputFile)
         } catch (e: JsonSyntaxException) {
             return false
         }

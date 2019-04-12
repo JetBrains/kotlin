@@ -16,20 +16,29 @@
 
 package org.jetbrains.kotlin.js.parser.sourcemaps
 
+import java.io.File
 import java.io.IOException
-import java.io.Reader
 import java.io.StringReader
 
 object SourceMapParser {
     @Throws(IOException::class)
-    fun parse(reader: Reader): SourceMapParseResult {
+    fun parse(file: File): SourceMapParseResult {
+        return parse(file.readText(Charsets.UTF_8))
+    }
+
+    @Throws(IOException::class)
+    fun parse(content: String): SourceMapParseResult {
         val jsonObject = try {
-            parseJson(reader)
+            parseJson(content)
         }
         catch (e: JsonSyntaxException) {
             return SourceMapError(e.message ?: "parse error")
         }
+        return parse(jsonObject)
+    }
 
+    @Throws(IOException::class)
+    private fun parse(jsonObject: JsonNode): SourceMapParseResult {
         if (jsonObject !is JsonObject) return SourceMapError("Top-level object expected")
 
         val version = jsonObject.properties["version"] ?: return SourceMapError("Version not defined")

@@ -420,8 +420,8 @@ abstract class BasicBoxTest(
         val recompiledSourceMap = removeRecompiledSuffix(
                 FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.name + ".map")))
         if (originalSourceMap != recompiledSourceMap) {
-            val originalSourceMapParse = SourceMapParser.parse(StringReader(originalSourceMap))
-            val recompiledSourceMapParse = SourceMapParser.parse(StringReader(recompiledSourceMap))
+            val originalSourceMapParse = SourceMapParser.parse(originalSourceMap)
+            val recompiledSourceMapParse = SourceMapParser.parse(recompiledSourceMap)
             if (originalSourceMapParse is SourceMapSuccess && recompiledSourceMapParse is SourceMapSuccess) {
                 assertEquals("Source map file changed after recompilation",
                              originalSourceMapParse.toDebugString(),
@@ -570,7 +570,7 @@ abstract class BasicBoxTest(
         val parsedProgram = JsProgram()
         parsedProgram.globalBlock.statements += parse(code, ThrowExceptionOnErrorReporter, parsedProgram.scope, outputFile.path).orEmpty()
         removeLocationFromBlocks(parsedProgram)
-        val sourceMapParseResult = SourceMapParser.parse(StringReader(generatedSourceMap))
+        val sourceMapParseResult = SourceMapParser.parse(generatedSourceMap)
         val sourceMap = when (sourceMapParseResult) {
             is SourceMapSuccess -> sourceMapParseResult.value
             is SourceMapError -> error("Could not parse source map: ${sourceMapParseResult.message}")
