@@ -85,11 +85,24 @@ object Renderers {
     val NAME = Renderer<Named> { it.name.asString() }
 
     @JvmField
-    val PLATFORM = Renderer<ModuleDescriptor> {
-        val platform = it.platform
-        " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: ""}" + when {
-            platform == null || platform.isCommon() -> ""
-            else -> " for " + platform.single().platformName
+    val MODULE_WITH_PLATFORM = Renderer<ModuleDescriptor> { module ->
+        val platform = module.platform
+        val moduleName = module.getCapability(ModuleInfo.Capability)?.displayedName ?: ""
+        val platformNameIfAny = if (platform == null || platform.isCommon()) "" else " for " + platform.single().platformName
+
+        moduleName + platformNameIfAny
+    }
+
+    @JvmField
+    val MODULE_PATH = object : DiagnosticParameterRenderer<ModulePath> {
+        override fun render(obj: ModulePath, renderingContext: RenderingContext): String {
+            // Prettify rendering for two-level MPP projects
+            //   - path of size = 2 is usual 'common' -> 'platform' configuration
+            //   - path of size = 1 is trivial path consisting of one module. It may appear as the result of misconfiguration
+            // In either case, we should take last node in path for rendering
+            if (obj.nodes.size <= 2) return " in module ${MODULE_WITH_PLATFORM.render(obj.nodes.last(), renderingContext)}"
+
+            return " on path ${obj.nodes.joinToString(separator = " -> ") { MODULE_WITH_PLATFORM.render(it, renderingContext) }}"
         }
     }
 

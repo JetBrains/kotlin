@@ -37,13 +37,15 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ModuleFilter
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
-class ExpectedActualDeclarationChecker(
+open class ExpectedActualDeclarationChecker(
+    val moduleStructureOracle: ModuleStructureOracle,
     val argumentExtractor: ActualAnnotationArgumentExtractor
 ) : DeclarationChecker {
     interface ActualAnnotationArgumentExtractor : PlatformSpecificExtension<ActualAnnotationArgumentExtractor> {
@@ -54,10 +56,11 @@ class ExpectedActualDeclarationChecker(
         }
     }
 
-    class ActualAnnotationArgumentExtractorClashResolver : PlatformExtensionsClashResolver.PreferNonDefault<ActualAnnotationArgumentExtractor>(
-        ActualAnnotationArgumentExtractor.DEFAULT,
-        ActualAnnotationArgumentExtractor::class.java
-    )
+    class ActualAnnotationArgumentExtractorClashResolver :
+        PlatformExtensionsClashResolver.PreferNonDefault<ActualAnnotationArgumentExtractor>(
+            ActualAnnotationArgumentExtractor.DEFAULT,
+            ActualAnnotationArgumentExtractor::class.java
+        )
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
@@ -69,44 +72,122 @@ class ExpectedActualDeclarationChecker(
         if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
         if (descriptor.isExpect) {
-            checkExpectedDeclarationHasActual(declaration, descriptor, context.trace, descriptor.module, context.expectActualTracker)
+            checkExpectedDeclarationHasProperActuals(declaration, descriptor, context.trace, context.expectActualTracker)
         } else {
             val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
-            checkActualDeclarationHasExpected(declaration, descriptor, context.trace, checkActual)
+
+            val allImplementedModules = moduleStructureOracle.findAllExpectedByPaths(descriptor.module).flatMap { it.nodes }.toHashSet()
+            checkActualDeclarationHasExpected(
+                declaration,
+                descriptor,
+                context.trace,
+                checkActual,
+                moduleVisibilityFilter = { it in allImplementedModules }
+            )
         }
     }
 
-    fun checkExpectedDeclarationHasActual(
+    private fun checkExpectedDeclarationHasProperActuals(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         trace: BindingTrace,
-        platformModule: ModuleDescriptor,
         expectActualTracker: ExpectActualTracker
+    ) {
+        val allActualizationPaths = moduleStructureOracle.findAllActualizationPaths(descriptor.module)
+        val leafModuleToVisibleModules = allActualizationPaths.groupBy { it.nodes.last() }
+            .mapValues { it.value.flatMap { it.nodes }.toSet() }
+
+        for ((leafModule, modulesVisibleFromLeaf) in leafModuleToVisibleModules) {
+            checkExpectedDeclarationHasAtLeastOneActual(
+                reportOn,
+                descriptor,
+                trace,
+                leafModule,
+                expectActualTracker,
+                moduleVisibilityFilter = { it in modulesVisibleFromLeaf }
+            )
+        }
+
+        /*
+        Note that we have to check for 'duplicate actuals' separately, considering paths
+        instead of only leaf-module, because currently we have to distinguish the following
+        two cases:
+
+               expect class A                      expect class A
+                /            \                       /           \
+               /              \                     /             \
+         actual class A     actual class A   actual class A    (no actual)
+               \              /                     \             /
+                \            /                       \           /
+           (warning or nothing, TBD)                 actual class A
+                                                  (ERROR: duplicate actuals)
+
+        If we merge behaviour (e.g. decide to report ERROR for first case too)
+        for those two cases, we can drop separate logic for DUPLICATE_ACTUALS
+        */
+        for (path in allActualizationPaths) {
+            val modulesOnThisPath = path.nodes.toSet()
+            checkExpectedDeclarationHasAtMostOneActual(
+                reportOn, descriptor, trace, path, moduleVisibilityFilter = { it in modulesOnThisPath }
+            )
+        }
+    }
+
+    private fun checkExpectedDeclarationHasAtMostOneActual(
+        reportOn: KtNamedDeclaration,
+        descriptor: MemberDescriptor,
+        trace: BindingTrace,
+        path: ModulePath,
+        moduleVisibilityFilter: ModuleFilter
+    ) {
+        val compatibility = path.nodes
+            .mapNotNull { ExpectedActualResolver.findActualForExpected(descriptor, it, moduleVisibilityFilter) }
+            .ifEmpty { return }
+            .fold(LinkedHashMap<Compatibility, List<MemberDescriptor>>()) { resultMap, partialMap ->
+                resultMap.apply { putAll(partialMap) }
+            }
+
+        // Several compatible actuals on one path: report AMBIGUIOUS_ACTUALS here
+        val atLeastWeaklyCompatibleActuals = compatibility.filterKeys { it.isCompatibleOrWeakCompatible() }.values.flatten()
+        if (atLeastWeaklyCompatibleActuals.size > 1) {
+            trace.report(Errors.AMBIGUOUS_ACTUALS.on(reportOn, descriptor, atLeastWeaklyCompatibleActuals.map { it.module }.distinct()))
+        }
+    }
+
+    private fun checkExpectedDeclarationHasAtLeastOneActual(
+        reportOn: KtNamedDeclaration,
+        descriptor: MemberDescriptor,
+        trace: BindingTrace,
+        module: ModuleDescriptor,
+        expectActualTracker: ExpectActualTracker,
+        moduleVisibilityFilter: ModuleFilter
     ) {
         // Only look for top level actual members; class members will be handled as a part of that expected class
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
 
-        val compatibility = ExpectedActualResolver.findActualForExpected(descriptor, platformModule) ?: return
+        val compatibility = ExpectedActualResolver.findActualForExpected(descriptor, module, moduleVisibilityFilter) ?: return
 
+        // Only strong incompatibilities, but this is an OptionalExpectation -- don't report it
         if (compatibility.allStrongIncompatibilities() && isOptionalAnnotationClass(descriptor)) return
 
-        val shouldReportError =
-            compatibility.allStrongIncompatibilities() ||
-                    Compatible !in compatibility && descriptor.hasNoActualWithDiagnostic(compatibility)
-
-        if (shouldReportError) {
+        // Only strong incompatibilities, or error won't be reported on actual: report NO_ACTUAL_FOR_EXPECT here
+        if (compatibility.allStrongIncompatibilities() ||
+            Compatible !in compatibility && descriptor.hasNoActualWithDiagnostic(compatibility)
+        ) {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            trace.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, platformModule, incompatibility))
-        } else {
-            val actualMembers = compatibility.asSequence()
-                .filter { (compatibility, _) ->
-                    compatibility is Compatible || (compatibility is Incompatible && compatibility.kind != Compatibility.IncompatibilityKind.STRONG)
-                }.flatMap { it.value.asSequence() }
-
-            expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
+            trace.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, module, incompatibility))
+            return
         }
+
+        // Here we have exactly one compatible actual and/or some weakly incompatible. In either case, we don't report anything on expect
+        val actualMembers = compatibility.asSequence()
+            .filter { (compatibility, _) ->
+                compatibility is Compatible || (compatibility is Incompatible && compatibility.kind != Compatibility.IncompatibilityKind.STRONG)
+            }.flatMap { it.value.asSequence() }
+
+        expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
     }
 
     private fun MemberDescriptor.hasNoActualWithDiagnostic(
@@ -135,19 +216,16 @@ class ExpectedActualDeclarationChecker(
             ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
 
     private fun checkActualDeclarationHasExpected(
-        reportOn: KtNamedDeclaration, descriptor: MemberDescriptor, trace: BindingTrace, checkActual: Boolean
+        reportOn: KtNamedDeclaration,
+        descriptor: MemberDescriptor,
+        trace: BindingTrace,
+        checkActual: Boolean,
+        moduleVisibilityFilter: ModuleFilter
     ) {
-        // TODO: ideally, we should always use common module here
-        // However, in compiler context platform & common modules are joined into one module,
-        // so there is yet no "common module" in this situation.
-        // So yet we are using own module in compiler context and common module in IDE context.
-        val commonOrOwnModules = descriptor.module.expectedByModules.ifEmpty { listOf(descriptor.module) }
-        val compatibility = commonOrOwnModules
-            .mapNotNull { ExpectedActualResolver.findExpectedForActual(descriptor, it) }
-            .ifEmpty { return }
-            .fold(LinkedHashMap<Compatibility, List<MemberDescriptor>>()) { resultMap, partialMap ->
-                resultMap.apply { putAll(partialMap) }
-            }
+        val compatibility = ExpectedActualResolver.findExpectedForActual(descriptor, descriptor.module, moduleVisibilityFilter)
+            ?: return
+
+        checkAmbiguousExpects(compatibility, trace, reportOn, descriptor)
 
         val hasActualModifier = descriptor.isActual && reportOn.hasActualModifier()
         if (!hasActualModifier) {
@@ -193,7 +271,7 @@ class ExpectedActualDeclarationChecker(
             if (nonTrivialUnfulfilled.isNotEmpty()) {
                 val classDescriptor =
                     (descriptor as? TypeAliasDescriptor)?.expandedType?.constructor?.declarationDescriptor as? ClassDescriptor
-                            ?: (descriptor as ClassDescriptor)
+                        ?: (descriptor as ClassDescriptor)
                 trace.report(
                     Errors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.on(
                         reportOn, classDescriptor, nonTrivialUnfulfilled
@@ -209,8 +287,8 @@ class ExpectedActualDeclarationChecker(
             val expected = compatibility[Compatible]!!.first()
             if (expected is ClassDescriptor && expected.kind == ClassKind.ANNOTATION_CLASS) {
                 val actualConstructor =
-                    (descriptor as? ClassDescriptor)?.constructors?.singleOrNull() ?:
-                    (descriptor as? TypeAliasDescriptor)?.constructors?.singleOrNull()?.underlyingConstructorDescriptor
+                    (descriptor as? ClassDescriptor)?.constructors?.singleOrNull()
+                        ?: (descriptor as? TypeAliasDescriptor)?.constructors?.singleOrNull()?.underlyingConstructorDescriptor
                 val expectedConstructor = expected.constructors.singleOrNull()
                 if (expectedConstructor != null && actualConstructor != null) {
                     checkAnnotationConstructors(expectedConstructor, actualConstructor, trace, reportOn)
@@ -218,6 +296,31 @@ class ExpectedActualDeclarationChecker(
             }
         }
     }
+
+    private fun checkAmbiguousExpects(
+        compatibility: Map<Compatibility, List<MemberDescriptor>>,
+        trace: BindingTrace,
+        reportOn: KtNamedDeclaration,
+        descriptor: MemberDescriptor
+    ) {
+        val modulesWithAtLeastWeaklyCompatibleExpects = compatibility.asSequence()
+            .filter { (compatibility, _) ->
+                compatibility.isCompatibleOrWeakCompatible()
+            }
+            .map { (_, members) -> members }
+            .flatten()
+            .map { it.module }
+            .distinct()
+            .toList()
+
+        if (modulesWithAtLeastWeaklyCompatibleExpects.size > 1) {
+            trace.report(Errors.AMBIGUOUS_EXPECTS.on(reportOn, descriptor, modulesWithAtLeastWeaklyCompatibleExpects))
+        }
+    }
+
+    private fun Compatibility.isCompatibleOrWeakCompatible() =
+        this is Compatible ||
+                this is Incompatible && kind == ExpectedActualResolver.Compatibility.IncompatibilityKind.WEAK
 
     // we don't require `actual` modifier on
     //  - annotation constructors, because annotation classes can only have one constructor
@@ -275,9 +378,7 @@ class ExpectedActualDeclarationChecker(
             return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, declaration.defaultValue)?.toConstantValue(expectedType)
         }
 
-        for (extractor in argumentExtractors) {
-            extractor.extractDefaultValue(actualParameter, expectedType)?.let { return it }
-        }
+        argumentExtractor.extractDefaultValue(actualParameter, expectedType)?.let { return it }
 
         return null
     }
@@ -308,5 +409,14 @@ class ExpectedActualDeclarationChecker(
 
         fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
             this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
+
+        private fun <K, V> LinkedHashMap<K, List<V>>.merge(other: Map<K, List<V>>): LinkedHashMap<K, List<V>> {
+            for ((key, newValue) in other) {
+                val oldValue = this[key] ?: emptyList()
+                this[key] = oldValue + newValue
+            }
+
+            return this
+        }
     }
 }

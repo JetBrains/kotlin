@@ -35,6 +35,7 @@ class OptionalExpectationInspection : AbstractKotlinInspection() {
             val descriptor = classOrObject.resolveToDescriptorIfAny() ?: return
             if (!descriptor.annotations.hasAnnotation(ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME)) return
 
+            // FIXME(dsavvinov): this is wrong in HMPP model, use logic similar to ExpectedActualDeclarationChecker
             val implementingModules = classOrObject.findModuleDescriptor().implementingDescriptors
             if (implementingModules.isEmpty()) return
 
