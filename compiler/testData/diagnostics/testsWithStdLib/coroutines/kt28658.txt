@@ -1,0 +1,14 @@
+package
+
+public fun </*0*/ T> f1(/*0*/ f: Foo<T>.() -> kotlin.Unit): kotlin.Unit
+@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> f2(/*0*/ @kotlin.BuilderInference f: Foo<T>.() -> kotlin.Unit): kotlin.Unit
+public fun test1(): kotlin.Unit
+public fun test2(): kotlin.sequences.Sequence<kotlin.Any?>
+public fun test3(): kotlin.Unit
+
+public final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
