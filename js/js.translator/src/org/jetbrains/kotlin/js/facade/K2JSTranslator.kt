@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.facade
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
@@ -48,6 +49,9 @@ import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.coroutine.transformCoroutines
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNamesInAllScopes
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
 
@@ -82,7 +86,8 @@ class K2JSTranslator @JvmOverloads constructor(
         reporter: JsConfig.Reporter,
         units: List<TranslationUnit>,
         mainCallParameters: MainCallParameters,
-        analysisResult: JsAnalysisResult? = null
+        analysisResult: JsAnalysisResult? = null,
+        packageMetadata: MutableMap<FqName, ByteArray> = mutableMapOf()
     ): TranslationResult {
         val files = ArrayList<KtFile>()
         for (unit in units) {
@@ -95,7 +100,7 @@ class K2JSTranslator @JvmOverloads constructor(
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        return translate(reporter, files, units, mainCallParameters, actualAnalysisResult)
+        return translate(reporter, files, units, mainCallParameters, actualAnalysisResult, packageMetadata)
     }
 
     @Throws(TranslationException::class)
@@ -104,7 +109,8 @@ class K2JSTranslator @JvmOverloads constructor(
         files: List<KtFile>,
         allUnits: List<TranslationUnit>,
         mainCallParameters: MainCallParameters,
-        analysisResult: JsAnalysisResult
+        analysisResult: JsAnalysisResult,
+        packageMetadata: MutableMap<FqName, ByteArray>
     ): TranslationResult {
         val bindingTrace = analysisResult.bindingTrace
         TopDownAnalyzerFacadeForJS.checkForErrors(files, bindingTrace.bindingContext)
@@ -134,7 +140,8 @@ class K2JSTranslator @JvmOverloads constructor(
         expandIsCalls(translationResult.newFragments)
         checkCanceled()
 
-        trySaveIncrementalData(translationResult, pathResolver, bindingTrace, moduleDescriptor)
+        updatePackageMetadata(translationResult, bindingTrace, moduleDescriptor, packageMetadata)
+        trySaveIncrementalData(translationResult, pathResolver, bindingTrace, moduleDescriptor, packageMetadata)
         checkCanceled()
 
         // Global phases
@@ -154,7 +161,8 @@ class K2JSTranslator @JvmOverloads constructor(
                 diagnostics,
                 importedModules,
                 moduleDescriptor,
-                bindingTrace.bindingContext
+                bindingTrace.bindingContext,
+                packageMetadata
             )
         }
     }
@@ -163,11 +171,37 @@ class K2JSTranslator @JvmOverloads constructor(
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
     }
 
+    private fun serializeScope(bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor, packageName: FqName, scope: Collection<DeclarationDescriptor>): ProtoBuf.PackageFragment {
+        val metadataVersion = config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)
+        return KotlinJavascriptSerializationUtil.serializeDescriptors(
+            bindingContext,
+            moduleDescriptor,
+            scope,
+            packageName,
+            config.configuration.languageVersionSettings,
+            metadataVersion ?: JsMetadataVersion.INSTANCE
+        )
+    }
+
+    private fun updatePackageMetadata(
+        translationResult: AstGenerationResult,
+        bindingTrace: BindingTrace,
+        moduleDescriptor: ModuleDescriptor,
+        packageMetadata: MutableMap<FqName, ByteArray>
+    ) {
+        translationResult.translatedSourceFiles.keys.mapTo(mutableSetOf()) { it.file.packageFqName }.forEach { packageName ->
+            val memberScope = moduleDescriptor.getPackage(packageName).memberScope.getContributedDescriptors()
+            val bytes = serializeScope(bindingTrace.bindingContext, moduleDescriptor, packageName, memberScope).toByteArray()
+            packageMetadata[packageName] = bytes
+        }
+    }
+
     private fun trySaveIncrementalData(
         translationResult: AstGenerationResult,
         pathResolver: SourceFilePathResolver,
         bindingTrace: BindingTrace,
-        moduleDescriptor: ModuleDescriptor
+        moduleDescriptor: ModuleDescriptor,
+        packageMetadata: Map<FqName, ByteArray>
     ) {
         // TODO Maybe switch validation on for recompile
         if (incrementalResults == null && !shouldValidateJsAst) return
@@ -187,13 +221,7 @@ class K2JSTranslator @JvmOverloads constructor(
             serializer.serialize(fragment, output)
             val binaryAst = output.toByteArray()
 
-            val scope = fileTranslationResult.memberScope
-            val metadataVersion = config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)
-            val packagePart = KotlinJavascriptSerializationUtil.serializeDescriptors(
-                bindingTrace.bindingContext, moduleDescriptor, scope, file.packageFqName,
-                config.configuration.languageVersionSettings,
-                metadataVersion ?: JsMetadataVersion.INSTANCE
-            )
+            val packagePart = serializeScope(bindingTrace.bindingContext, moduleDescriptor, file.packageFqName, fileTranslationResult.memberScope)
 
             val inlineData = serializeInlineData(fileTranslationResult.inlineFunctionTags)
 
