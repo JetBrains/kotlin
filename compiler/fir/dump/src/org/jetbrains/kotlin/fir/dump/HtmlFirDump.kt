@@ -48,6 +48,7 @@ internal interface FirLinkResolver {
 
 private const val PACKAGE_INDEX = "package-index.html"
 private const val MODULE_INDEX = "module-index.html"
+private const val ROOT_INDEX = "root-index.html"
 
 
 private fun HEAD.commonHead() {
@@ -84,6 +85,14 @@ private class SupplementaryGenerator(val outputRoot: File) {
                 supplementary(this, moduleInfo.moduleRoot)
             }
             body {
+                h4 {
+                    a(
+                        href = linkToRootIndex(moduleInfo.moduleRoot),
+                        classes = "container-ref"
+                    ) {
+                        +"back to root"
+                    }
+                }
                 h2 { +moduleInfo.name }
                 ul {
                     for (packageInfo in moduleInfo.packages.values) {
@@ -107,6 +116,10 @@ private class SupplementaryGenerator(val outputRoot: File) {
 
     fun linkToIndex(packageInfo: PackageInfo, from: File): String {
         return packageInfo.packageRoot.resolve(PACKAGE_INDEX).relativeTo(from).path
+    }
+
+    fun linkToRootIndex(from: File): String {
+        return outputRoot.resolve(ROOT_INDEX).relativeTo(from).path
     }
 
     fun generateIndex(packageInfo: PackageInfo, writer: Writer) {
@@ -139,6 +152,28 @@ private class SupplementaryGenerator(val outputRoot: File) {
         }
     }
 
+    fun generateIndex(modules: List<ModuleInfo>, writer: Writer) {
+        val title = "Root dump index"
+        writer.appendHTML().html {
+            head {
+                title { +title }
+                commonHead()
+                supplementary(this, outputRoot)
+            }
+            body {
+                h2 { +title }
+
+                ul {
+                    for (module in modules) {
+                        li {
+                            a(href = linkToIndex(module, outputRoot), classes = "container-ref") { +module.name }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     fun supplementary(head: HEAD, originDir: File) = with(head) {
         for (file in jsFiles) {
@@ -157,7 +192,7 @@ private val cssFiles = listOf("style.css", "colors.white.css", "colors.dark.css"
 
 class MultiModuleHtmlFirDump(private val outputRoot: File) {
 
-    private val modules = mutableMapOf<String, ModuleInfo>()
+    private val modules = LinkedHashMap<String, ModuleInfo>()
 
     private lateinit var currentModule: ModuleInfo
     private var inModule = false
@@ -181,16 +216,17 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
     fun finish() {
         require(!finished)
         finished = true
+        outputRoot.resolve(ROOT_INDEX).writer().use {
+            supplementaryGenerator.generateIndex(modules.values.toList(), it)
+        }
         for (module in modules.values) {
-            module.moduleRoot.resolve(MODULE_INDEX)
-                .writer().use {
-                    supplementaryGenerator.generateIndex(module, it)
-                }
+            module.moduleRoot.resolve(MODULE_INDEX).writer().use {
+                supplementaryGenerator.generateIndex(module, it)
+            }
             for (packageInfo in module.packages.values) {
-                packageInfo.packageRoot.resolve(PACKAGE_INDEX)
-                    .writer().use {
-                        supplementaryGenerator.generateIndex(packageInfo, it)
-                    }
+                packageInfo.packageRoot.resolve(PACKAGE_INDEX).writer().use {
+                    supplementaryGenerator.generateIndex(packageInfo, it)
+                }
             }
         }
         val supplementaryFiles = jsFiles + cssFiles
