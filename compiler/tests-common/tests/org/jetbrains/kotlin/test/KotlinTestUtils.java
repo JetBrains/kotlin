@@ -120,7 +120,7 @@ public class KotlinTestUtils {
 
     static {
         try {
-            IDEA_SYSTEM_PATH = tmpDirForReusableFolder("idea-system").getPath();
+            IDEA_SYSTEM_PATH = FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), "idea-system", "", false).getPath();
         }
         catch (IOException e) {
             throw new RuntimeException(e);
