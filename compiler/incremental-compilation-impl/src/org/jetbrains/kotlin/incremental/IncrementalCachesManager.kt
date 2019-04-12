@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
+import org.jetbrains.kotlin.incremental.storage.SourceFileToCanonicalPathConverter
 import java.io.File
+
+private val PATH_CONVERTER = SourceFileToCanonicalPathConverter
 
 abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache<*>>(
     cachesRootDir: File,
@@ -67,14 +70,14 @@ class IncrementalJvmCachesManager(
 ) : IncrementalCachesManager<IncrementalJvmCache>(cacheDirectory, reporter) {
 
     private val jvmCacheDir = File(cacheDirectory, "jvm").apply { mkdirs() }
-    override val platformCache = IncrementalJvmCache(jvmCacheDir, outputDir).apply { registerCache() }
+    override val platformCache = IncrementalJvmCache(jvmCacheDir, outputDir, PATH_CONVERTER).apply { registerCache() }
 }
 
 class IncrementalJsCachesManager(
-        cachesRootDir: File,
-        reporter: ICReporter
+    cachesRootDir: File,
+    reporter: ICReporter
 ) : IncrementalCachesManager<IncrementalJsCache>(cachesRootDir, reporter) {
 
     private val jsCacheFile = File(cachesRootDir, "js").apply { mkdirs() }
-    override val platformCache = IncrementalJsCache(jsCacheFile).apply { registerCache() }
+    override val platformCache = IncrementalJsCache(jsCacheFile, PATH_CONVERTER).apply { registerCache() }
 }

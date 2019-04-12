@@ -14,6 +14,8 @@ import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.storage.SourceFileToCanonicalPathConverter
+import org.jetbrains.kotlin.incremental.storage.SourceFileToPathConverter
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndex
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndexBuilder
@@ -65,6 +67,8 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     val shouldCheckCacheVersions = System.getProperty(KotlinBuilder.SKIP_CACHE_VERSION_CHECK_PROPERTY) == null
 
     val hasKotlinMarker = HasKotlinMarker(dataManager)
+
+    val sourceFileToPathConverter: SourceFileToPathConverter = SourceFileToCanonicalPathConverter
 
     /**
      * Flag to prevent rebuilding twice.
