@@ -262,6 +262,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
                 addOrReplaceOptionValue("ideaSdk.androidPlugin.path", platformDirProjectRelative + "/plugins/android/lib")
                 addOrReplaceOptionValue("robolectric.classpath", robolectricClasspath)
                 addOrReplaceOptionValue("use.jps", "true")
+                addOrReplaceOptionValue("kotlinVersion", project.rootProject.extra["kotlinVersion"].toString())
 
                 val isAndroidStudioBunch = project.findProperty("versions.androidStudioRelease") != null
                 addOrReplaceOptionValue("idea.platform.prefix", if (isAndroidStudioBunch) "AndroidStudio" else null)
