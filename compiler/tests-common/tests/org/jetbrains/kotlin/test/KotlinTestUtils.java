@@ -28,6 +28,7 @@ import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
+import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function1;
@@ -709,9 +710,23 @@ public class KotlinTestUtils {
             @NotNull Disposable disposable,
             @Nullable File javaErrorFile
     ) throws IOException {
+        return compileKotlinWithJava(javaFiles, ktFiles, outDir, disposable, javaErrorFile, null);
+    }
+
+    public static boolean compileKotlinWithJava(
+            @NotNull List<File> javaFiles,
+            @NotNull List<File> ktFiles,
+            @NotNull File outDir,
+            @NotNull Disposable disposable,
+            @Nullable File javaErrorFile,
+            @Nullable Function1<CompilerConfiguration, Unit> updateConfiguration
+    ) throws IOException {
         if (!ktFiles.isEmpty()) {
             KotlinCoreEnvironment environment = createEnvironmentWithFullJdkAndIdeaAnnotations(disposable);
             CompilerTestLanguageVersionSettingsKt.setupLanguageVersionSettingsForMultifileCompilerTests(ktFiles, environment);
+            if (updateConfiguration != null) {
+                updateConfiguration.invoke(environment.getConfiguration());
+            }
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
         }
         else {

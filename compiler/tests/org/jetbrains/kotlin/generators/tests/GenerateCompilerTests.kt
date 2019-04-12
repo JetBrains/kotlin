@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
+import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
@@ -263,8 +264,8 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompileJavaAgainstKotlinTest> {
-            model("compileJavaAgainstKotlin", testClassName = "WithoutJavac", testMethod = "doTestWithoutJavac")
-            model("compileJavaAgainstKotlin", testClassName = "WithJavac", testMethod = "doTestWithJavac")
+            model("compileJavaAgainstKotlin", testClassName = "WithoutJavac", testMethod = "doTestWithoutJavac", targetBackend = TargetBackend.JVM)
+            model("compileJavaAgainstKotlin", testClassName = "WithJavac", testMethod = "doTestWithJavac", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractCompileKotlinAgainstJavaTest> {
@@ -363,6 +364,11 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
             model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrCompileJavaAgainstKotlinTest> {
+            model("compileJavaAgainstKotlin", testClassName = "WithoutJavac", testMethod = "doTestWithoutJavac", targetBackend = TargetBackend.JVM_IR)
+            //model("compileJavaAgainstKotlin", testClassName = "WithJavac", testMethod = "doTestWithJavac", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrCompileKotlinAgainstKotlinTest> {
