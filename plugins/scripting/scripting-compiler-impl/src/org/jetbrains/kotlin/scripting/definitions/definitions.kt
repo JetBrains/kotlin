@@ -24,7 +24,7 @@ fun PsiFile.scriptDefinition(): KotlinScriptDefinition? {
 }
 
 fun VirtualFile.findScriptDefinition(project: Project): KotlinScriptDefinition? {
-    if (isNonScript()) return null
+    if (!isValid || isNonScript()) return null
     // Do not use psiFile.script here because this method can be called during indexes access
     // and accessing stubs may cause deadlock
     // TODO: measure performance effect and if necessary consider detecting indexing here or using separate logic for non-IDE operations to speed up filtering
