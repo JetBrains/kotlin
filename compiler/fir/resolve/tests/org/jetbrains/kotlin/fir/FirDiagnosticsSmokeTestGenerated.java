@@ -17975,6 +17975,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/samConversions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("checkSamConversionsAreDisabledByDefault.kt")
+        public void testCheckSamConversionsAreDisabledByDefault() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/samConversions/checkSamConversionsAreDisabledByDefault.kt");
+        }
+
         @TestMetadata("DisabledForKTSimple.kt")
         public void testDisabledForKTSimple() throws Exception {
             runTest("compiler/testData/diagnostics/tests/samConversions/DisabledForKTSimple.kt");

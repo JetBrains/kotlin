@@ -305,7 +305,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (newInference) {
                 put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.SamConversionForKotlinFunctions, LanguageFeature.State.ENABLED)
             }
 
             if (legacySmartCastAfterTry) {
@@ -343,20 +342,11 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
 
-        var samConversionsExplicitlyPassed = false
         for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
-            if (feature == LanguageFeature.SamConversionForKotlinFunctions) {
-                samConversionsExplicitlyPassed = true
-            }
-
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature
             }
-        }
-
-        if (!samConversionsExplicitlyPassed && this[LanguageFeature.NewInference] == LanguageFeature.State.ENABLED) {
-            put(LanguageFeature.SamConversionForKotlinFunctions, LanguageFeature.State.ENABLED)
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {

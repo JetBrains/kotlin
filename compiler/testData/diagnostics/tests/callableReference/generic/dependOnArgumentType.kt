@@ -16,14 +16,14 @@ fun <T> bar(s: T) {}
 fun <T> complex(t: T, f: (T) -> Unit) {}
 
 fun test1() {
-    foo(1, <!NI;TYPE_MISMATCH!>A::invokeLater<!>) // KT-24507 SAM conversion accidentally applied to callable reference and incorrectly handled via BE
+    foo(1, A::invokeLater) // KT-24507 SAM conversion accidentally applied to callable reference and incorrectly handled via BE
     foo(1, ::bar)
 
     complex(1, ::bar)
 }
 
 fun <R> test2(x: R) {
-    foo(x, <!NI;TYPE_MISMATCH!>A::invokeLater<!>) // KT-24507 SAM conversion accidentally applied to callable reference and incorrectly handled via BE
+    foo(x, A::invokeLater) // KT-24507 SAM conversion accidentally applied to callable reference and incorrectly handled via BE
     foo(x, ::bar)
 
     complex(x, ::bar)
