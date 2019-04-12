@@ -89,15 +89,6 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): DefaultSourceMapper
 val IrType.isExtensionFunctionType: Boolean
     get() = isFunctionTypeOrSubtype() && hasAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)
 
-/**
- * @return true if the function is a constructor of one of 9 array classes (Array&lt;T&gt;, IntArray, FloatArray, ...)
- * which takes the size and an initializer lambda as parameters. Such constructors are marked as 'inline' but they are not loaded
- * as such because the 'inline' flag is not stored for constructors in the binary metadata. Therefore we pretend that they are inline
- */
-fun IrFunction.isArrayConstructorWithLambda(): Boolean = this is IrConstructor &&
-        valueParameters.size == 2 &&
-        parentAsClass.isArrayOrPrimitiveArray()
-
 
 /* Borrowed from MemberCodegen.java */
 

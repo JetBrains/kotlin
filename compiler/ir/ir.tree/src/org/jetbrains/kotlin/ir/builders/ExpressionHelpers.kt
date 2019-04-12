@@ -253,7 +253,7 @@ fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol, type: IrType): IrC
 fun IrBuilderWithScope.irCall(callee: IrConstructorSymbol, type: IrType): IrConstructorCall =
     IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, type, callee)
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrMemberAccessExpression =
+fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrFunctionAccessExpression =
     when (callee) {
         is IrConstructorSymbol -> irCall(callee, type)
         is IrSimpleFunctionSymbol -> irCall(callee, type)
@@ -266,13 +266,13 @@ fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol): IrCall =
 fun IrBuilderWithScope.irCall(callee: IrConstructorSymbol): IrConstructorCall =
     irCall(callee, callee.owner.returnType)
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrMemberAccessExpression =
+fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrFunctionAccessExpression =
     irCall(callee, callee.owner.returnType)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDescriptor, type: IrType): IrCall =
     IrCallImpl(startOffset, endOffset, type, callee as IrSimpleFunctionSymbol, descriptor)
 
-fun IrBuilderWithScope.irCall(callee: IrFunction): IrMemberAccessExpression =
+fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression =
     irCall(callee.symbol)
 
 fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin): IrCall =
