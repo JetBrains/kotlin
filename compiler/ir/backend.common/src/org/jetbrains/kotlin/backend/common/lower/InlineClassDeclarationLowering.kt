@@ -183,6 +183,16 @@ class InlineClassLowering(val context: BackendContext) {
         override fun lower(irFile: IrFile) {
             irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
 
+                override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+                    expression.transformChildrenVoid(this)
+                    val function = expression.symbol.owner
+                    if (!function.parentAsClass.isInline || function.isPrimary) {
+                        return expression
+                    }
+
+                    return irCall(expression, getOrCreateStaticMethod(function), dispatchReceiverAsFirstArgument = false)
+                }
+
                 override fun visitCall(expression: IrCall): IrExpression {
                     expression.transformChildrenVoid(this)
                     val function = expression.symbol.owner
@@ -208,7 +218,7 @@ class InlineClassLowering(val context: BackendContext) {
                     val klass = function.parentAsClass
                     return when {
                         !klass.isInline -> expression
-                        function.isPrimary -> irCall(expression, function)
+                        function.isPrimary -> irConstructorCall(expression, function)
                         else -> irCall(expression, getOrCreateStaticMethod(function)).apply {
                             (0 until expression.valueArgumentsCount).forEach {
                                 putValueArgument(it, expression.getValueArgument(it)!!)

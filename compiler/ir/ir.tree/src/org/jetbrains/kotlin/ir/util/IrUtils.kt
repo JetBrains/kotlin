@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -395,6 +396,41 @@ fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunc
  * [dispatchReceiverAsFirstArgument]: optionally convert call with dispatch receiver to static call
  * [firstArgumentAsDispatchReceiver]: optionally convert static call to call with dispatch receiver
  */
+
+fun irConstructorCall(
+    call: IrMemberAccessExpression,
+    newFunction: IrConstructor,
+    dispatchReceiverAsFirstArgument: Boolean = false,
+    firstArgumentAsDispatchReceiver: Boolean = false
+): IrConstructorCall =
+    irConstructorCall(call, newFunction.symbol, dispatchReceiverAsFirstArgument, firstArgumentAsDispatchReceiver)
+
+fun irConstructorCall(
+    call: IrMemberAccessExpression,
+    newSymbol: IrConstructorSymbol,
+    dispatchReceiverAsFirstArgument: Boolean = false,
+    firstArgumentAsDispatchReceiver: Boolean = false
+): IrConstructorCall =
+    call.run {
+        IrConstructorCallImpl(
+            startOffset,
+            endOffset,
+            type,
+            newSymbol,
+            newSymbol.descriptor,
+            typeArgumentsCount,
+            0,
+            call.valueArgumentsCount,
+            origin
+        ).apply {
+            copyTypeAndValueArgumentsFrom(
+                call,
+                dispatchReceiverAsFirstArgument,
+                firstArgumentAsDispatchReceiver
+            )
+        }
+    }
+
 fun irCall(
     call: IrMemberAccessExpression,
     newFunction: IrFunction,
@@ -427,7 +463,7 @@ fun irCall(
         }
     }
 
-private fun IrCall.copyTypeAndValueArgumentsFrom(
+private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
     call: IrMemberAccessExpression,
     dispatchReceiverAsFirstArgument: Boolean = false,
     firstArgumentAsDispatchReceiver: Boolean = false

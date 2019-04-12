@@ -9,7 +9,11 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.irCall
 
@@ -23,9 +27,11 @@ class ArrayConstructorTransformer(
             it.inlineConstructor to it.sizeConstructor
         }
 
-    fun transformCall(expression: IrCall): IrCall {
+    fun transformConstructorCall(expression: IrConstructorCall): IrFunctionAccessExpression {
         if (expression.symbol == context.intrinsics.array.inlineConstructor) {
-            return irCall(expression, context.intrinsics.jsArray)
+            return irCall(expression, context.intrinsics.jsArray).apply {
+                copyTypeArgumentsFrom(expression)
+            }
         } else {
             primitiveArrayInlineToSizeConstructorMap[expression.symbol]?.let { sizeConstructor ->
                 return IrCallImpl(
@@ -34,7 +40,7 @@ class ArrayConstructorTransformer(
                     expression.type,
                     context.intrinsics.jsFillArray
                 ).apply {
-                    putValueArgument(0, IrCallImpl(
+                    putValueArgument(0, IrConstructorCallImpl.fromSymbolOwner(
                         expression.startOffset,
                         expression.endOffset,
                         expression.type,

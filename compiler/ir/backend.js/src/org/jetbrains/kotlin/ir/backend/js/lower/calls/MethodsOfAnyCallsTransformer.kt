@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isArray
@@ -21,14 +22,14 @@ import org.jetbrains.kotlin.name.Name
 
 class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
-    private val nameToTransformer: Map<Name, (IrCall) -> IrExpression>
+    private val nameToTransformer: Map<Name, (IrFunctionAccessExpression) -> IrExpression>
 
     init {
         nameToTransformer = mutableMapOf()
         nameToTransformer.run {
             put(Name.identifier("toString")) { call ->
                 if (shouldReplaceToStringWithRuntimeCall(call)) {
-                    if (call.isSuperToAny()) {
+                    if ((call as IrCall).isSuperToAny()) {
                         irCall(call, intrinsics.jsAnyToString, dispatchReceiverAsFirstArgument = true)
                     } else {
                         irCall(call, intrinsics.jsToString, dispatchReceiverAsFirstArgument = true)
@@ -40,7 +41,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
 
             put(Name.identifier("hashCode")) { call ->
                 if (call.symbol.owner.isFakeOverriddenFromAny()) {
-                    if (call.isSuperToAny()) {
+                    if ((call as IrCall).isSuperToAny()) {
                         irCall(call, intrinsics.jsGetObjectHashCode, dispatchReceiverAsFirstArgument = true)
                     } else {
                         irCall(call, intrinsics.jsHashCode, dispatchReceiverAsFirstArgument = true)
@@ -53,7 +54,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
     }
 
 
-    override fun transformCall(call: IrCall): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
         val symbol = call.symbol
         nameToTransformer[symbol.owner.name]?.let {
             return it(call)
@@ -62,7 +63,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
         return call
     }
 
-    private fun shouldReplaceToStringWithRuntimeCall(call: IrCall): Boolean {
+    private fun shouldReplaceToStringWithRuntimeCall(call: IrFunctionAccessExpression): Boolean {
         // TODO: (KOTLIN-CR-2079)
         //  - User defined extension functions Any?.toString() call can be lost during lowering.
         //  - Use direct method call for dynamic types???

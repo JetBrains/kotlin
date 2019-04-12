@@ -48,7 +48,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
 
         val constructorSymbol = closureBoxConstructorDeclaration.symbol
 
-        val irCall = IrCallImpl(initializer.startOffset, initializer.endOffset, closureBoxType, constructorSymbol).apply {
+        val irCall = IrConstructorCallImpl.fromSymbolDescriptor(initializer.startOffset, initializer.endOffset, closureBoxType, constructorSymbol).apply {
             putValueArgument(0, initializer)
         }
 
@@ -132,6 +132,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
 
         descriptor.bind(declaration)
         declaration.parent = implicitDeclarationsFile
+        // TODO: substitute
         closureBoxType = IrSimpleTypeImpl(declaration.symbol, false, emptyList(), emptyList())
         declaration.thisReceiver =
                 JsIrBuilder.buildValueParameter(Name.special("<this>"), -1, closureBoxType, IrDeclarationOrigin.INSTANCE_RECEIVER).apply {

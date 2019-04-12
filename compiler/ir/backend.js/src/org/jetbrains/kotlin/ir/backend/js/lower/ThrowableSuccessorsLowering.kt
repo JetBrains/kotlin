@@ -108,8 +108,8 @@ class ThrowableSuccessorsLowering(val context: JsIrBackendContext) : FileLowerin
     }
 
     inner class ThrowableInstanceCreationLowering : IrElementTransformerVoid() {
-        override fun visitCall(expression: IrCall): IrExpression {
-            if (expression.symbol !in throwableConstructors) return super.visitCall(expression)
+        override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+            if (expression.symbol !in throwableConstructors) return super.visitConstructorCall(expression)
 
             expression.transformChildrenVoid(this)
 

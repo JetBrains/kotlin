@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -26,5 +27,5 @@ class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) :
     )
 
 
-    override fun transformCall(call: IrCall) = helperMapping[call.symbol]?.let { irCall(call, it) } ?: call
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression) = helperMapping[call.symbol]?.let { irCall(call, it) } ?: call
 }

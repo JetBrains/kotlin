@@ -29,6 +29,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
     override fun IrExpression.useAs(type: IrType): IrExpression {
 
         val actualType = when (this) {
+            is IrConstructorCall -> symbol.owner.returnType
             is IrCall -> {
                 val function = this.symbol.owner
                 if (function.let { it is IrSimpleFunction && it.isSuspend }) {
@@ -127,8 +128,9 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
     private val IrFunctionAccessExpression.target: IrFunction
         get() = when (this) {
-            is IrCall -> this.callTarget
+            is IrConstructorCall -> this.symbol.owner
             is IrDelegatingConstructorCall -> this.symbol.owner
+            is IrCall -> this.callTarget
             else -> TODO(this.render())
         }
 

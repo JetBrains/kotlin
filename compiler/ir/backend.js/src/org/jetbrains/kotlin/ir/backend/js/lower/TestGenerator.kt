@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -135,7 +136,7 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
             JsIrBuilder.buildGetObjectValue(defaultType, symbol)
         } else {
             declarations.asSequence().filterIsInstance<IrConstructor>().single { it.isPrimary }.let { constructor ->
-                JsIrBuilder.buildCall(constructor.symbol).also {
+                IrConstructorCallImpl.fromSymbolOwner(defaultType, constructor.symbol).also {
                     if (isInner) {
                         it.dispatchReceiver = (parent as IrClass).instance()
                     }

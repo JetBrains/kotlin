@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -517,7 +519,13 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         val callTarget = context.ir.defaultParameterDeclarationsCache[declaration] ?: declaration
 
-        val irCall = JsIrBuilder.buildCall(callTarget.symbol, type = returnType)
+        val target = callTarget.symbol
+
+        val irCall =
+            if (target is IrConstructorSymbol) IrConstructorCallImpl.fromSymbolOwner(returnType, target) else JsIrBuilder.buildCall(
+                callTarget.symbol,
+                type = returnType
+            )
 
         var cp = 0
         var gp = 0

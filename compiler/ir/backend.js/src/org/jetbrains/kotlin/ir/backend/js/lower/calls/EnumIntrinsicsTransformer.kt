@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.isStaticMethodOfClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.findDeclaration
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 
 class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     private fun transformEnumTopLevelIntrinsic(
-        call: IrCall,
+        call: IrFunctionAccessExpression,
         staticMethodPredicate: (IrSimpleFunction) -> Boolean
     ): IrExpression {
         val enum = call.getTypeArgument(0)?.getClass() ?: return call
@@ -32,17 +33,17 @@ class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : Calls
         return irCall(call, staticMethod.symbol)
     }
 
-    private fun transformEnumValueOfIntrinsic(call: IrCall) = transformEnumTopLevelIntrinsic(call) {
+    private fun transformEnumValueOfIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
         it.name == Name.identifier("valueOf") &&
                 it.valueParameters.count() == 1 &&
                 it.valueParameters[0].type.isString()
     }
 
-    private fun transformEnumValuesIntrinsic(call: IrCall) = transformEnumTopLevelIntrinsic(call) {
+    private fun transformEnumValuesIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
         it.name == Name.identifier("values") && it.valueParameters.count() == 0
     }
 
-    override fun transformCall(call: IrCall) = when (call.symbol) {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression) = when (call.symbol) {
         context.intrinsics.enumValueOfIntrinsic -> transformEnumValueOfIntrinsic(call)
         context.intrinsics.enumValuesIntrinsic -> transformEnumValuesIntrinsic(call)
         else -> call

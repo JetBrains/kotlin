@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 
@@ -56,13 +59,13 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
         }
     }
 
-    override fun transformCall(call: IrCall): IrExpression {
-        val symbol = call.symbol
+    override fun transformFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+        val symbol = expression.symbol
         symbolToTransformer[symbol]?.let {
-            return it(call)
+            return it(expression)
         }
 
-        return call
+        return expression
     }
 }
 

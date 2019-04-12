@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -36,11 +36,11 @@ class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 return super.visitFunction(declaration)
             }
 
-            override fun visitCall(expression: IrCall): IrExpression {
-                val call = super.visitCall(expression)
-                if (call is IrCall) {
+            override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+                val call = super.visitFunctionAccess(expression)
+                if (call is IrFunctionAccessExpression) {
                     for (transformer in transformers) {
-                        val newCall = transformer.transformCall(call)
+                        val newCall = transformer.transformFunctionAccess(call)
                         if (newCall !== call) {
                             return newCall
                         }
@@ -53,5 +53,5 @@ class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
 }
 
 interface CallsTransformer {
-    fun transformCall(call: IrCall): IrExpression
+    fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression
 }

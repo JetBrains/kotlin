@@ -192,20 +192,19 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
     private val oldCtorToNewMap = context.secondaryConstructorToFactoryCache
     private val defaultThrowableConstructor = context.defaultThrowableCtor
 
-    private val IrFunction.isSecondaryConstructorCall
+    private val IrConstructor.isSecondaryConstructorCall
         get() =
-            this is IrConstructor && !isPrimary && this != defaultThrowableConstructor && !isExternal && !parentAsClass.isInline
+            !isPrimary && this != defaultThrowableConstructor && !isExternal && !parentAsClass.isInline
 
     override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement = super.visitFunction(declaration, declaration)
 
-    override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-        super.visitCall(expression, data)
+    override fun visitConstructorCall(expression: IrConstructorCall, data: IrFunction?): IrElement {
+        super.visitConstructorCall(expression, data)
 
         val target = expression.symbol.owner
         return if (target.isSecondaryConstructorCall) {
-            val constructor = target as IrConstructor
-            val ctor = oldCtorToNewMap.getOrPut(constructor) {
-                buildConstructorStubDeclarations(constructor, constructor.parentAsClass)
+            val ctor = oldCtorToNewMap.getOrPut(target) {
+                buildConstructorStubDeclarations(target, target.parentAsClass)
             }
             replaceSecondaryConstructorWithFactoryFunction(expression, ctor.stub.symbol)
         } else expression

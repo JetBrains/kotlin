@@ -133,6 +133,34 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return JsInvocation(callFuncRef, listOf(thisRef) + arguments)
     }
 
+    override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
+        val function = expression.symbol.owner
+        val symbol = expression.symbol
+
+        context.staticContext.intrinsics[symbol]?.let {
+            return it(expression, context)
+        }
+
+        val arguments = translateCallArguments(expression, context)
+        val klass = function.parentAsClass
+        return if (klass.isInline) {
+            assert(function.isPrimary) {
+                "Inline class secondary constructors must be lowered into static methods"
+            }
+            // Argument value constructs unboxed inline class instance
+            arguments.single()
+        } else {
+            val ref = when {
+                klass.isEffectivelyExternal() ->
+                    context.getRefForExternalClass(klass)
+
+                else ->
+                    context.getNameForClass(klass).makeRef()
+            }
+            JsNew(ref, arguments)
+        }
+    }
+
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
         val function = expression.symbol.owner.realOverrideTarget
         val symbol = function.symbol

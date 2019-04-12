@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -45,7 +46,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         }
     }
 
-    private fun transformLongComparison(comparator: IrSimpleFunctionSymbol): (IrCall) -> IrExpression = { call ->
+    private fun transformLongComparison(comparator: IrSimpleFunctionSymbol): (IrFunctionAccessExpression) -> IrExpression = { call ->
         IrCallImpl(
             call.startOffset,
             call.endOffset,
@@ -57,7 +58,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         }
     }
 
-    override fun transformCall(call: IrCall): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
         val symbol = call.symbol
         symbolToTransformer[symbol]?.let {
             return it(call)
@@ -65,12 +66,12 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
         return when (symbol.owner.name) {
             Name.identifier("compareTo") -> transformCompareToMethodCall(call)
-            Name.identifier("equals") -> transformEqualsMethodCall(call)
+            Name.identifier("equals") -> transformEqualsMethodCall(call as IrCall)
             else -> call
         }
     }
 
-    private fun transformEqeqOperator(call: IrCall): IrExpression {
+    private fun transformEqeqOperator(call: IrFunctionAccessExpression): IrExpression {
         val lhs = call.getValueArgument(0)!!
         val rhs = call.getValueArgument(1)!!
 
@@ -101,17 +102,17 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         }
     }
 
-    private fun chooseEqualityOperatorForPrimitiveTypes(call: IrCall): IrExpression = when {
+    private fun chooseEqualityOperatorForPrimitiveTypes(call: IrFunctionAccessExpression): IrExpression = when {
         call.allValueArgumentsAreNullable() ->
             irCall(call, intrinsics.jsEqeq)
         else ->
             irCall(call, intrinsics.jsEqeqeq)
     }
 
-    private fun IrCall.allValueArgumentsAreNullable() =
+    private fun IrFunctionAccessExpression.allValueArgumentsAreNullable() =
         (0 until valueArgumentsCount).all { getValueArgument(it)!!.type.isNullable() }
 
-    private fun transformCompareToMethodCall(call: IrCall): IrExpression {
+    private fun transformCompareToMethodCall(call: IrFunctionAccessExpression): IrExpression {
         val function = call.symbol.owner as IrSimpleFunction
         if (function.parent !is IrClass) return call
 

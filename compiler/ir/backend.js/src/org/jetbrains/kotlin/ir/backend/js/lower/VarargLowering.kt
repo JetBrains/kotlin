@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
-import org.jetbrains.kotlin.ir.expressions.IrVararg
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -67,7 +65,7 @@ private class VarargTransformer(
         if (inlineClass == null)
             this
         else
-            IrCallImpl(startOffset, endOffset, inlineClass.defaultType, inlineClass.constructors.single { it.isPrimary }.symbol).also {
+            IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, inlineClass.defaultType, inlineClass.constructors.single { it.isPrimary }.symbol).also {
                 it.putValueArgument(0, this)
             }
 
@@ -165,7 +163,7 @@ private class VarargTransformer(
             res
     }
 
-    override fun visitCall(expression: IrCall): IrExpression {
+    private fun transformFunctionAccessExpression(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid()
         val size = expression.valueArgumentsCount
 
@@ -179,4 +177,7 @@ private class VarargTransformer(
 
         return expression
     }
+
+    override fun visitCall(expression: IrCall) = transformFunctionAccessExpression(expression)
+    override fun visitConstructorCall(expression: IrConstructorCall) = transformFunctionAccessExpression(expression)
 }

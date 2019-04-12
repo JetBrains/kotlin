@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -216,40 +217,10 @@ open class DefaultParameterInjector(
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                super.visitDelegatingConstructorCall(expression)
-
-                val declaration = expression.symbol.owner as IrFunction
-
-                if (!declaration.needsDefaultArgumentsLowering(skipInline, skipExternalMethods))
-                    return expression
-
-                val argumentsCount = argumentCount(expression)
-
-                if (argumentsCount == declaration.valueParameters.size)
-                    return expression
-
-                val (symbolForCall, params) = parametersForCall(expression)
-                return IrDelegatingConstructorCallImpl(
-                    startOffset = expression.startOffset,
-                    endOffset = expression.endOffset,
-                    type = context.irBuiltIns.unitType,
-                    symbol = symbolForCall as IrConstructorSymbol,
-                    descriptor = symbolForCall.descriptor,
-                    typeArgumentsCount = expression.typeArgumentsCount
-                )
-                    .apply {
-                        copyTypeArgumentsFrom(expression)
-                        params.forEach {
-                            log { "call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}" }
-                            putValueArgument(it.first.index, it.second)
-                        }
-                        dispatchReceiver = expression.dispatchReceiver
-                    }
-            }
-
-            override fun visitCall(expression: IrCall): IrExpression {
-                super.visitCall(expression)
+            private fun visitFunctionAccessExpression(
+                expression: IrFunctionAccessExpression,
+                builder: (IrFunctionSymbol) -> IrFunctionAccessExpression
+            ): IrExpression {
                 val functionDeclaration = expression.symbol.owner
 
                 if (!functionDeclaration.needsDefaultArgumentsLowering(skipInline, skipExternalMethods))
@@ -268,30 +239,66 @@ open class DefaultParameterInjector(
                 }
                 declaration.typeParameters.forEach { log { "$declaration[${it.index}] : $it" } }
 
-                return IrCallImpl(
-                    startOffset = expression.startOffset,
-                    endOffset = expression.endOffset,
-                    type = symbol.owner.returnType,
-                    symbol = symbol,
-                    descriptor = descriptor,
-                    typeArgumentsCount = expression.typeArgumentsCount,
-                    origin = DEFAULT_DISPATCH_CALL,
-                    superQualifierSymbol = expression.superQualifierSymbol
-                )
-                    .apply {
-                        this.copyTypeArgumentsFrom(expression)
+                return builder(symbol).apply {
+                    this.copyTypeArgumentsFrom(expression)
 
-                        params.forEach {
-                            log { "call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}" }
-                            putValueArgument(it.first.index, it.second)
-                        }
-
-                        dispatchReceiver = expression.dispatchReceiver
-                        extensionReceiver = expression.extensionReceiver
-
-                        log { "call::extension@: ${ir2string(expression.extensionReceiver)}" }
-                        log { "call::dispatch@: ${ir2string(expression.dispatchReceiver)}" }
+                    params.forEach {
+                        log { "call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}" }
+                        putValueArgument(it.first.index, it.second)
                     }
+
+                    dispatchReceiver = expression.dispatchReceiver
+                    extensionReceiver = expression.extensionReceiver
+
+                    log { "call::extension@: ${ir2string(expression.extensionReceiver)}" }
+                    log { "call::dispatch@: ${ir2string(expression.dispatchReceiver)}" }
+                }
+            }
+
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                super.visitDelegatingConstructorCall(expression)
+
+                return visitFunctionAccessExpression(expression) {
+                    IrDelegatingConstructorCallImpl(
+                        startOffset = expression.startOffset,
+                        endOffset = expression.endOffset,
+                        type = context.irBuiltIns.unitType,
+                        symbol = it as IrConstructorSymbol,
+                        descriptor = it.descriptor,
+                        typeArgumentsCount = expression.typeArgumentsCount
+                    )
+                }
+            }
+
+            override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+                super.visitConstructorCall(expression)
+
+                return visitFunctionAccessExpression(expression) {
+                    IrConstructorCallImpl.fromSymbolOwner(
+                        expression.startOffset,
+                        expression.endOffset,
+                        it.owner.returnType,
+                        it as IrConstructorSymbol,
+                        DEFAULT_DISPATCH_CALL
+                    )
+                }
+            }
+
+            override fun visitCall(expression: IrCall): IrExpression {
+                super.visitCall(expression)
+
+                return visitFunctionAccessExpression(expression) {
+                    IrCallImpl(
+                        startOffset = expression.startOffset,
+                        endOffset = expression.endOffset,
+                        type = it.owner.returnType,
+                        symbol = it,
+                        descriptor = it.descriptor,
+                        typeArgumentsCount = expression.typeArgumentsCount,
+                        origin = DEFAULT_DISPATCH_CALL,
+                        superQualifierSymbol = expression.superQualifierSymbol
+                    )
+                }
             }
 
             private fun IrFunction.findSuperMethodWithDefaultArguments(): IrFunction? {

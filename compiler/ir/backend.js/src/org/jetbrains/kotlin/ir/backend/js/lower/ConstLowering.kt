@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -31,7 +33,7 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
     ): IrExpression {
         val constructor = irClass.constructors.single()
         val argType = constructor.owner.valueParameters.first().type
-        return JsIrBuilder.buildCall(constructor).apply {
+        return IrConstructorCallImpl.fromSymbolOwner(irClass.owner.defaultType, constructor).apply {
             for (i in args.indices) {
                 putValueArgument(i, carrierFactory(UNDEFINED_OFFSET, UNDEFINED_OFFSET, argType, args[i]))
             }
