@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.getValue
 import org.jetbrains.kotlin.container.useImpl
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.frontend.di.configureModule
@@ -43,6 +44,7 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
         )
         useImpl<SubstitutingScopeProviderImpl>()
         useImpl<AnnotationResolverImpl>()
+        useInstance(ModuleStructureOracle.SingleModule)
     })
 }
 

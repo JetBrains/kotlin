@@ -108,7 +108,8 @@ fun createContainerForBodyResolve(
     platform: TargetPlatform,
     statementFilter: StatementFilter,
     analyzerServices: PlatformDependentAnalyzerServices,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
+    moduleStructureOracle: ModuleStructureOracle
 ): StorageComponentContainer = createContainer("BodyResolve", analyzerServices) {
     configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings)
 
@@ -118,6 +119,7 @@ fun createContainerForBodyResolve(
     useImpl<AnnotationResolverImpl>()
 
     useImpl<BodyResolver>()
+    useInstance(moduleStructureOracle)
     useImpl<SubstitutingScopeProviderImpl>()
 }
 
@@ -128,7 +130,8 @@ fun createContainerForLazyBodyResolve(
     platform: TargetPlatform,
     bodyResolveCache: BodyResolveCache,
     analyzerServices: PlatformDependentAnalyzerServices,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
+    moduleStructureOracle: ModuleStructureOracle
 ): StorageComponentContainer = createContainer("LazyBodyResolve", analyzerServices) {
     configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings)
 
@@ -138,6 +141,7 @@ fun createContainerForLazyBodyResolve(
     useImpl<AnnotationResolverImpl>()
     useImpl<LazyTopDownAnalyzer>()
     useImpl<BasicAbsentDescriptorHandler>()
+    useInstance(moduleStructureOracle)
     useImpl<SubstitutingScopeProviderImpl>()
 }
 

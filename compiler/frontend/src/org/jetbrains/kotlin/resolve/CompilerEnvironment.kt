@@ -27,5 +27,6 @@ object CompilerEnvironment : TargetEnvironment("Compiler") {
         container.useInstance(BodyResolveCache.ThrowException)
         container.useImpl<CompilerLocalDescriptorResolver>()
         container.useImpl<BasicAbsentDescriptorHandler>()
+        container.useInstance(ModuleStructureOracle.SingleModule)
     }
 }

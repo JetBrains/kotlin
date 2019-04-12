@@ -714,7 +714,8 @@ class ResolveElementCache(
             targetPlatform,
             statementFilter,
             targetPlatform.findAnalyzerServices,
-            file.languageVersionSettings
+            file.languageVersionSettings,
+            IdeaModuleStructureOracle()
         ).get()
     }
 
