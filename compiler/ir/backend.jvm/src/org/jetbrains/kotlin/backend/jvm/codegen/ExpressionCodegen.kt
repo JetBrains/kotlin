@@ -19,13 +19,11 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -246,63 +244,29 @@ class ExpressionCodegen(
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo) =
         visitStatementContainer(expression, data).coerce(expression.asmType)
 
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: BlockInfo): PromisedValue {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
-        mv.load(0, OBJECT_TYPE) // HACK
-        return generateCall(expression, null, data)
-    }
-
-    override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
-        expression.markLineNumber(startOffset = true)
-        if (expression.symbol.owner is IrConstructor) {
-            throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
-        }
-        return generateCall(expression, expression.superQualifierSymbol, data)
-    }
-
-    override fun visitConstructorCall(expression: IrConstructorCall, data: BlockInfo): PromisedValue {
-        val type = expression.asmType
-        if (type.sort == Type.ARRAY) {
-            //noinspection ConstantConditions
-            return generateNewArray(expression, data)
-        }
-
-        mv.anew(expression.asmType)
-        mv.dup()
-        generateCall(expression, null, data)
-        return expression.onStack
-    }
-
-    private fun generateNewArray(expression: IrConstructorCall, data: BlockInfo): PromisedValue {
-        val args = expression.symbol.owner.valueParameters
-        assert(args.size == 1 || args.size == 2) { "Unknown constructor called: " + args.size + " arguments" }
-
-        if (args.size == 1) {
-            // TODO move to the intrinsic
-            expression.getValueArgument(0)!!.accept(this, data).coerce(Type.INT_TYPE).materialize()
-            newArrayInstruction(expression.type)
-            return expression.onStack
-        }
-
-        return generateCall(expression, null, data)
-    }
-
-    private fun generateCall(expression: IrFunctionAccessExpression, superQualifierSymbol: IrClassSymbol?, data: BlockInfo): PromisedValue {
         classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
             ?.invoke(expression, this, data)?.let { return it.coerce(expression.asmType) }
-        val isSuperCall = superQualifierSymbol != null
-        val callable = resolveToCallable(expression, isSuperCall)
-        return generateCall(expression, callable, data, isSuperCall)
-    }
 
-    fun generateCall(
-        expression: IrFunctionAccessExpression,
-        callable: Callable,
-        data: BlockInfo,
-        isSuperCall: Boolean = false
-    ): PromisedValue {
+        val isSuperCall = (expression as? IrCall)?.superQualifier != null
+        val callable = resolveToCallable(expression, isSuperCall)
         val callee = expression.symbol.owner
         val callGenerator = getOrCreateCallGenerator(expression, data)
+
+        when {
+            expression is IrConstructorCall -> {
+                // IR constructors have no receiver and return the new instance, but on JVM they are void-returning
+                // instance methods named <init>.
+                mv.anew(expression.asmType)
+                mv.dup()
+            }
+            expression is IrDelegatingConstructorCall ->
+                // In this case the receiver is `this` (not specified in IR) and the return value is discarded anyway.
+                mv.load(0, OBJECT_TYPE)
+            expression.descriptor is ConstructorDescriptor ->
+                throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
+        }
 
         val receiver = expression.dispatchReceiver
         receiver?.apply {
@@ -374,17 +338,19 @@ class ExpressionCodegen(
         )
 
         val returnType = callee.returnType.substitute(typeSubstitutionMap)
-        if (returnType.isNothing()) {
-            mv.aconst(null)
-            mv.athrow()
-            return voidValue
-        } else if (callee is IrConstructor) {
-            return voidValue
-        } else if (expression.type.isUnit()) {
-            // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
-            return MaterialValue(mv, callable.returnType).discard().coerce(expression.asmType)
+        return when {
+            returnType.isNothing() -> {
+                mv.aconst(null)
+                mv.athrow()
+                voidValue
+            }
+            expression is IrConstructorCall -> expression.onStack
+            expression is IrDelegatingConstructorCall -> voidValue
+            expression.type.isUnit() ->
+                // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
+                MaterialValue(mv, callable.returnType).discard().coerce(expression.asmType)
+            else -> MaterialValue(mv, callable.returnType).coerce(expression.asmType)
         }
-        return MaterialValue(mv, callable.returnType).coerce(expression.asmType)
     }
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
@@ -1040,50 +1006,23 @@ class ExpressionCodegen(
         return typeMapper.mapToCallableMethod(irCall.symbol.owner, isSuper)
     }
 
-    private fun getOrCreateCallGenerator(
-        irFunction: IrFunction,
-        element: IrMemberAccessExpression?,
-        typeParameterMappings: IrTypeParameterMappings?,
-        isDefaultCompilation: Boolean,
-        data: BlockInfo
-    ): IrCallGenerator {
-        if (element == null) return IrCallGenerator.DefaultCallGenerator
-
-        // We should inline callable containing reified type parameters even if inline is disabled
-        // because they may contain something to reify and straight call will probably fail at runtime
-        val isInline = irFunction.isInlineCall(state)
-
-        if (!isInline) return IrCallGenerator.DefaultCallGenerator
-
-        val original = (irFunction as? IrSimpleFunction)?.resolveFakeOverride() ?: irFunction
-        return if (isDefaultCompilation) {
-            TODO()
-        } else {
-            IrInlineCodegen(this, state, original.descriptor, typeParameterMappings!!, IrSourceCompilerForInline(state, element, this, data))
+    private fun getOrCreateCallGenerator(element: IrFunctionAccessExpression, data: BlockInfo): IrCallGenerator {
+        if (!element.symbol.owner.isInlineFunctionCall(context)) {
+            return IrCallGenerator.DefaultCallGenerator
         }
-    }
 
-    private fun getOrCreateCallGenerator(
-        functionAccessExpression: IrFunctionAccessExpression,
-        data: BlockInfo
-    ): IrCallGenerator {
-        val callee = functionAccessExpression.symbol.owner
+        val callee = element.symbol.owner
         val typeArgumentContainer = if (callee is IrConstructor) callee.parentAsClass else callee
         val typeArguments =
-            if (functionAccessExpression.typeArgumentsCount == 0) {
+            if (element.typeArgumentsCount == 0) {
                 //avoid ambiguity with type constructor type parameters
                 emptyMap()
             } else typeArgumentContainer.typeParameters.keysToMap {
-                functionAccessExpression.getTypeArgumentOrDefault(it)
+                element.getTypeArgumentOrDefault(it)
             }
 
         val mappings = IrTypeParameterMappings()
-        for (entry in typeArguments.entries) {
-            val key = entry.key
-            val type = entry.value
-
-            val isReified = key.isReified || callee.isArrayConstructorWithLambda()
-
+        for ((key, type) in typeArguments.entries) {
             val reificationArgument = extractReificationArgument(type)
             if (reificationArgument == null) {
                 // type is not generic
@@ -1091,16 +1030,17 @@ class ExpressionCodegen(
                 val asmType = typeMapper.mapTypeParameter(type, signatureWriter)
 
                 mappings.addParameterMappingToType(
-                    key.name.identifier, type, asmType, signatureWriter.toString(), isReified
+                    key.name.identifier, type, asmType, signatureWriter.toString(), key.isReified
                 )
             } else {
                 mappings.addParameterMappingForFurtherReification(
-                    key.name.identifier, type, reificationArgument, isReified
+                    key.name.identifier, type, reificationArgument, key.isReified
                 )
             }
         }
 
-        return getOrCreateCallGenerator(callee, functionAccessExpression, mappings, false, data)
+        val original = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: irFunction
+        return IrInlineCodegen(this, state, original.descriptor, mappings, IrSourceCompilerForInline(state, element, this, data))
     }
 
     override fun consumeReifiedOperationMarker(typeParameterDescriptor: TypeParameterDescriptor) {
@@ -1213,20 +1153,8 @@ fun DefaultCallArgs.generateOnStackIfNeeded(callGenerator: IrCallGenerator, isCo
     return toInts.isNotEmpty()
 }
 
-internal fun IrFunction.isInlineCall(state: GenerationState) =
-    (!state.isInlineDisabled || containsReifiedTypeParameters()) &&
-            (isInline || isArrayConstructorWithLambda())
-
 val IrType.isReifiedTypeParameter: Boolean
     get() = this.classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
-
-/* Copied and modified from InlineUtil.java */
-fun isInline(declaration: IrDeclaration?): Boolean = declaration is IrSimpleFunction && declaration.isInline
-
-fun IrFunction.containsReifiedTypeParameters(): Boolean =
-    typeParameters.any { it.isReified }
-
-fun IrClass.isArrayOrPrimitiveArray() = this.defaultType.let { it.isArray() || it.isPrimitiveArray() }
 
 /* From typeUtil.java */
 fun IrType.getTypeParameterOrNull() = classifierOrNull?.owner?.safeAs<IrTypeParameter>()

@@ -41,6 +41,12 @@ public class ByteArray(size: Int) {
  * @constructor Creates a new array of the specified [size], with all elements initialized to null char (`\u0000').
  */
 public class CharArray(size: Int) {
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> Char)
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Char
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
@@ -51,17 +57,6 @@ public class CharArray(size: Int) {
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): CharIterator
-}
-
-@kotlin.internal.InlineOnly
-public inline fun CharArray(size: Int, init: (Int) -> Char): CharArray {
-    val result = CharArray(size)
-    var i = 0
-    while (i != result.size) {
-        result[i] = init(i)
-        ++i
-    }
-    return result
 }
 
 /**
