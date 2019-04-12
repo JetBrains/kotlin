@@ -15,5 +15,5 @@ FILE: localImplicitBodies.kt
 
         }
 
-        lval g: <ERROR TYPE REF: Unresolved name: abc> = R|<local>/x|.R|/sss|()
+        lval g: <ERROR TYPE REF: Unresolved name: sss> = R|<local>/x|.<Unresolved name: sss>#()
     }

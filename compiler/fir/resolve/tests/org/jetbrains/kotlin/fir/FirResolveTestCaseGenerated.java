@@ -227,6 +227,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/objects.kt");
         }
 
+        @TestMetadata("receiverConsistency.kt")
+        public void testReceiverConsistency() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/receiverConsistency.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/simple.kt");
@@ -430,6 +435,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
 
         public void testAllFilesPresentInNested() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/nested"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/nested/inner.kt");
         }
 
         @TestMetadata("simple.kt")

@@ -6,11 +6,13 @@ class Owner {
     }
 
     fun bar() {
-        val n = Nested()
-        n.baz()
+        val i = Inner()
+        i.baz()
     }
 
-    class Nested {
+    fun err() {}
+
+    inner class Inner {
         fun baz() {
             gau()
             this.gau()
@@ -19,11 +21,9 @@ class Owner {
         fun gau() {
             val o = Owner()
             o.foo()
-        }
-
-        fun err() {
             foo()
-            this.foo()
+            this@Owner.foo()
+            this.err()
         }
     }
 }
@@ -31,6 +31,8 @@ class Owner {
 fun test() {
     val o = Owner()
     o.foo()
-    val n = Owner.Nested()
-    n.baz()
+    val err = Owner.Inner()
+    err.baz()
+    val i = o.Inner()
+    i.gau()
 }
