@@ -4,7 +4,7 @@ FILE: sealedStarImport.kt
             super<R|kotlin/Any|>()
         }
 
-        public abstract fun createTest(): R|error: Symbol not found, for `Test`|
+        public abstract fun createTest(): R|class error: Symbol not found, for `Test`|
 
         public abstract fun createObj(): R|test/Test.O|
 
