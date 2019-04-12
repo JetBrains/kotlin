@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// FIX: Replace with `listOf` function
+// FIX: Replace with `mutableListOf` function
 import java.util.Arrays
 
 fun test() {

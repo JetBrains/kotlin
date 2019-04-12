@@ -1,5 +1,6 @@
 import kotlin.math.roundToLong
 
+// FIX: Replace with `roundToLong` function
 // WITH_RUNTIME
 fun test(x: Double) {
     x.roundToLong()

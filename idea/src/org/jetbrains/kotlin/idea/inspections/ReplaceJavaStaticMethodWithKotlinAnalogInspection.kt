@@ -8,14 +8,8 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.popup.PopupStep
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -23,8 +17,8 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.callExpressionVisitor
@@ -38,53 +32,34 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = callExpressionVisitor(fun(call) {
         val callee = call.calleeExpression ?: return
         val dotQualified = call.getStrictParentOfType<KtDotQualifiedExpression>() ?: return
-        val calleeText = callee.text
-        val replacements = REPLACEMENTS[calleeText]?.let { list ->
-            val callDescriptor = call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL)) ?: return
-            list.filter { callDescriptor.isCalling(FqName(it.javaMethodFqName)) }
-        } ?: return
+        val replacements = REPLACEMENTS[callee.text]
+            ?.filter { it.filter(call) }
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { list ->
+                val callDescriptor = call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL)) ?: return
+                list.filter {
+                    callDescriptor.isCalling(FqName(it.javaMethodFqName)) && (!it.toExtensionFunction || call.valueArguments.isNotEmpty())
+                }
+            }
+            ?.takeIf { it.isNotEmpty() }
+            ?.map { ReplaceWithKotlinAnalogFunction(it) }
+            ?.toTypedArray() ?: return
 
-        val replacement = replacements.firstOrNull() ?: return
-        if (replacement.toExtensionFunction && call.valueArguments.isEmpty()) return
         holder.registerProblem(
             dotQualified,
             TextRange(0, callee.endOffset - dotQualified.startOffset),
-            "Should be replaced with '${replacement.kotlinFunctionShortName}()'",
-            ReplaceWithKotlinAnalogFunction(replacements)
+            "Should be replaced with Kotlin function",
+            *replacements
         )
     })
 
-    private class ReplaceWithKotlinAnalogFunction(private val replacements: List<Replacement>) : LocalQuickFix {
-        override fun getName() = "Replace with '${replacements.first().kotlinFunctionShortName}()'"
+    private class ReplaceWithKotlinAnalogFunction(private val replacement: Replacement) : LocalQuickFix {
+        override fun getName() = "Replace with `${replacement.kotlinFunctionShortName}` function"
 
-        override fun getFamilyName() = name
+        override fun getFamilyName() = "Replace with Kotlin analog"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val element = descriptor.psiElement ?: return
-            val editor = element.findExistingEditor()
-            if (editor != null && replacements.size > 1 && !ApplicationManager.getApplication().isUnitTestMode) {
-                chooseAndApplyFix(editor, project, element)
-            } else {
-                applyFix(replacements.first(), project, element)
-            }
-        }
-
-        private fun chooseAndApplyFix(editor: Editor, project: Project, element: PsiElement) {
-            JBPopupFactory.getInstance().createListPopup(object : BaseListPopupStep<Replacement>("Choose function", replacements) {
-                override fun onChosen(selectedValue: Replacement?, finalChoice: Boolean): PopupStep<String>? {
-                    if (selectedValue == null || project.isDisposed) return null
-                    project.executeWriteCommand(name) {
-                        applyFix(selectedValue, project, element)
-                    }
-                    return null
-                }
-
-                override fun getTextFor(value: Replacement) = value.kotlinFunctionFqName
-            }).showInBestPositionFor(editor)
-        }
-
-        private fun applyFix(replacement: Replacement, project: Project, element: PsiElement) {
-            val dotQualified = element as? KtDotQualifiedExpression ?: return
+            val dotQualified = descriptor.psiElement as? KtDotQualifiedExpression ?: return
             val call = dotQualified.callExpression ?: return
             val file = dotQualified.containingKtFile
             val psiFactory = KtPsiFactory(call)
@@ -110,7 +85,8 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
     private data class Replacement(
         val javaMethodFqName: String,
         val kotlinFunctionFqName: String,
-        val toExtensionFunction: Boolean = false
+        val toExtensionFunction: Boolean = false,
+        val filter: (KtCallExpression) -> Boolean = { true }
     ) {
         private fun String.shortName() = takeLastWhile { it != '.' }
 
@@ -130,7 +106,16 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             "Float" to "Float"
         ).flatMap {
             listOf(
-                Replacement("java.lang.${it.first}.toString", "kotlin.text.toString", toExtensionFunction = true),
+                Replacement(
+                    "java.lang.${it.first}.toString",
+                    "kotlin.text.toString",
+                    toExtensionFunction = true
+                ) { call -> call.valueArguments.size == 2 },
+                Replacement(
+                    "java.lang.${it.first}.toString",
+                    "kotlin.primitives.${it.second}.toString",
+                    toExtensionFunction = true
+                ) { call -> call.valueArguments.size == 1 },
                 Replacement("java.lang.${it.first}.compare", "kotlin.primitives.${it.second}.compareTo", toExtensionFunction = true)
             )
         }
