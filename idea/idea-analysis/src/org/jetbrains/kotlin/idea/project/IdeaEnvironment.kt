@@ -27,5 +27,6 @@ object IdeaEnvironment : TargetEnvironment("Idea") {
         container.useImpl<IdeaLocalDescriptorResolver>()
         container.useImpl<IdeaAbsentDescriptorHandler>()
         container.useImpl<LazyLightClassDataHolder.DiagnosticsHolder>()
+        container.useImpl<IdeaModuleStructureOracle>()
     }
 }
