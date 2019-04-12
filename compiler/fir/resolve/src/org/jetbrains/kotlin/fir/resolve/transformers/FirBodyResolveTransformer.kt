@@ -377,7 +377,8 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 FirErrorNamedReference(
                     namedReference.session,
                     namedReference.psi,
-                    "Inapplicable($applicability): ${candidates.map { describeSymbol(it.symbol) }}"
+                    "Inapplicable($applicability): ${candidates.map { describeSymbol(it.symbol) }}",
+                    namedReference.name
                 )
             }
             candidates.size == 1 -> FirNamedReferenceWithCandidate(
@@ -385,7 +386,8 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 name, candidates.single()
             )
             else -> FirErrorNamedReference(
-                namedReference.session, namedReference.psi, "Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}"
+                namedReference.session, namedReference.psi, "Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}",
+                namedReference.name
             )
         }
     }

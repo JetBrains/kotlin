@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.name.Name
 class FirErrorNamedReference(
     session: FirSession,
     psi: PsiElement?,
-    val errorReason: String
-) : FirAbstractElement(session, psi), FirNamedReference {
+    val errorReason: String,
     override val name: Name = Name.special("<$errorReason>")
-}
+) : FirAbstractElement(session, psi), FirNamedReference
