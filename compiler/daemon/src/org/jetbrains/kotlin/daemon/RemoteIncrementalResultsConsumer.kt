@@ -14,6 +14,7 @@ import java.io.File
 
 class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacade, eventManager: EventManager, val rpcProfiler: Profiler) :
     IncrementalResultsConsumer {
+
     init {
         eventManager.onCompilationFinished(this::flush)
     }
@@ -39,6 +40,12 @@ class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacad
     }
 
     override fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>) = error("Should not be called in Daemon Server")
+
+    override fun processPackageMetadata(packageName: String, metadata: ByteArray) {
+        rpcProfiler.withMeasure(this) {
+            facade.incrementalResultsConsumer_processPackageMetadata(packageName, metadata)
+        }
+    }
 
     fun flush() {
         rpcProfiler.withMeasure(this) {

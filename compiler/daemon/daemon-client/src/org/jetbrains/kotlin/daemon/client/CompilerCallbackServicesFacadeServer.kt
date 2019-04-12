@@ -134,6 +134,10 @@ open class CompilerCallbackServicesFacadeServer(
         incrementalResultsConsumer!!.processInlineFunctions(functions)
     }
 
+    override fun incrementalResultsConsumer_processPackageMetadata(packageName: String, metadata: ByteArray) {
+        incrementalResultsConsumer!!.processPackageMetadata(packageName, metadata)
+    }
+
     override fun incrementalDataProvider_getHeaderMetadata(): ByteArray = incrementalDataProvider!!.headerMetadata
 
     override fun incrementalDataProvider_getMetadataVersion(): IntArray = incrementalDataProvider!!.metadataVersion
@@ -141,5 +145,10 @@ open class CompilerCallbackServicesFacadeServer(
     override fun incrementalDataProvider_getCompiledPackageParts() =
         incrementalDataProvider!!.compiledPackageParts.entries.map {
             CompiledPackagePart(it.key.path, it.value.metadata, it.value.binaryAst, it.value.inlineData)
+        }
+
+    override fun incrementalDataProvider_getPackageMetadata(): Collection<PackageMetadata> =
+        incrementalDataProvider!!.packageMetadata.entries.map { (fqName, metadata) ->
+            PackageMetadata(fqName, metadata)
         }
 }

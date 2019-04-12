@@ -75,20 +75,8 @@ object KotlinJavascriptSerializationUtil {
         languageVersionSettings: LanguageVersionSettings,
         metadataVersion: JsMetadataVersion
     ): SerializedMetadata {
-        val serializedFragments = HashMap<FqName, ByteArray>()
-        val module = jsDescriptor.data
-
-        for (fqName in getPackagesFqNames(module).sortedBy { it.asString() }) {
-            val fragment = serializeDescriptors(
-                bindingContext, module,
-                module.getPackage(fqName).memberScope.getContributedDescriptors(),
-                fqName, languageVersionSettings, metadataVersion
-            )
-
-            if (!fragment.isEmpty()) {
-                serializedFragments[fqName] = fragment.toByteArray()
-            }
-        }
+        val serializedFragments =
+            emptyMap<FqName, ByteArray>().missingMetadata(bindingContext, jsDescriptor.data, languageVersionSettings, metadataVersion)
 
         return SerializedMetadata(serializedFragments, jsDescriptor, languageVersionSettings, metadataVersion)
     }
@@ -258,9 +246,6 @@ object KotlinJavascriptSerializationUtil {
         return filesProto.build()
     }
 
-    private fun ProtoBuf.PackageFragment.isEmpty(): Boolean =
-        class_Count == 0 && `package`.let { it.functionCount == 0 && it.propertyCount == 0 && it.typeAliasCount == 0 }
-
     fun serializeHeader(
         module: ModuleDescriptor, packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings
     ): JsProtoBuf.Header {
@@ -293,7 +278,7 @@ object KotlinJavascriptSerializationUtil {
         return header.build()
     }
 
-    private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
+    fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
         return mutableSetOf<FqName>().apply {
             getSubPackagesFqNames(module.getPackage(FqName.ROOT), this)
             add(FqName.ROOT)
@@ -330,6 +315,34 @@ object KotlinJavascriptSerializationUtil {
         return KotlinJavaScriptLibraryParts(header, content.packageFragmentList, moduleKind, content.importedModuleList, metadataVersion)
     }
 }
+
+fun Map<FqName, ByteArray>.missingMetadata(
+    bindingContext: BindingContext,
+    moduleDescriptor: ModuleDescriptor,
+    languageVersionSettings: LanguageVersionSettings,
+    metadataVersion: JsMetadataVersion
+): Map<FqName, ByteArray> {
+    val serializedFragments = HashMap<FqName, ByteArray>()
+
+    for (fqName in KotlinJavascriptSerializationUtil.getPackagesFqNames(moduleDescriptor).sortedBy { it.asString() }) {
+        if (fqName in this) continue
+
+        val fragment = KotlinJavascriptSerializationUtil.serializeDescriptors(
+            bindingContext, moduleDescriptor,
+            moduleDescriptor.getPackage(fqName).memberScope.getContributedDescriptors(),
+            fqName, languageVersionSettings, metadataVersion
+        )
+
+        if (!fragment.isEmpty()) {
+            serializedFragments[fqName] = fragment.toByteArray()
+        }
+    }
+
+    return serializedFragments
+}
+
+private fun ProtoBuf.PackageFragment.isEmpty(): Boolean =
+    class_Count == 0 && `package`.let { it.functionCount == 0 && it.propertyCount == 0 && it.typeAliasCount == 0 }
 
 data class KotlinJavaScriptLibraryParts(
     val header: JsProtoBuf.Header,

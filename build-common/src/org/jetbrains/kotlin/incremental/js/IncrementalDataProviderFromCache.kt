@@ -18,4 +18,7 @@ class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : 
 
     override val metadataVersion: IntArray
         get() = JsMetadataVersion.INSTANCE.toArray() // TODO: store and load correct metadata version
+
+    override val packageMetadata: Map<String, ByteArray>
+        get() = cache.packageMetadata()
 }
