@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
+import java.io.OutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
@@ -74,7 +75,7 @@ object KotlinJavascriptSerializationUtil {
         languageVersionSettings: LanguageVersionSettings,
         metadataVersion: JsMetadataVersion
     ): SerializedMetadata {
-        val serializedFragments = HashMap<FqName, ProtoBuf.PackageFragment>()
+        val serializedFragments = HashMap<FqName, ByteArray>()
         val module = jsDescriptor.data
 
         for (fqName in getPackagesFqNames(module).sortedBy { it.asString() }) {
@@ -85,7 +86,7 @@ object KotlinJavascriptSerializationUtil {
             )
 
             if (!fragment.isEmpty()) {
-                serializedFragments[fqName] = fragment
+                serializedFragments[fqName] = fragment.toByteArray()
             }
         }
 
@@ -93,7 +94,7 @@ object KotlinJavascriptSerializationUtil {
     }
 
     class SerializedMetadata(
-        private val serializedFragments: Map<FqName, ProtoBuf.PackageFragment>,
+        private val serializedFragments: Map<FqName, ByteArray>,
         private val jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
         private val languageVersionSettings: LanguageVersionSettings,
         private val metadataVersion: JsMetadataVersion
@@ -112,7 +113,7 @@ object KotlinJavascriptSerializationUtil {
                 }
 
                 serializeHeader(jsDescriptor.data, fqName, languageVersionSettings).writeDelimitedTo(stream)
-                part.writeTo(stream)
+                stream.write(part)
 
                 packages.add(SerializedPackage(fqName, stream.toByteArray()))
             }
@@ -132,12 +133,12 @@ object KotlinJavascriptSerializationUtil {
                         languageVersionSettings = languageVersionSettings
                     ).writeDelimitedTo(stream)
                     asLibrary().writeTo(stream)
+                    appendPackageFragments(stream)
                 }
             }.toByteArray()
 
         private fun asLibrary(): JsProtoBuf.Library {
             val moduleKind = jsDescriptor.kind
-            jsDescriptor.imported
             val builder = JsProtoBuf.Library.newBuilder()
 
             val moduleProtoKind = when (moduleKind) {
@@ -152,11 +153,23 @@ object KotlinJavascriptSerializationUtil {
 
             jsDescriptor.imported.forEach { builder.addImportedModule(it) }
 
-            for ((_, fragment) in serializedFragments.entries.sortedBy { (fqName, _) -> fqName.asString() }) {
-                builder.addPackageFragment(fragment)
-            }
-
             return builder.build()
+        }
+
+        private fun appendPackageFragments(stream: OutputStream) {
+            for ((_, fragment) in serializedFragments.entries.sortedBy { (fqName, _) -> fqName.asString() }) {
+                // Message header
+                stream.write((JsProtoBuf.Library.PACKAGE_FRAGMENT_FIELD_NUMBER shl 3) or 2)
+                // Size varint
+                var size = fragment.size
+                while (size > 0x7F) {
+                    stream.write(0x80 or (size and 0x7F))
+                    size = size ushr 7
+                }
+                stream.write(size)
+                // Fragment itself
+                stream.write(fragment)
+            }
         }
     }
 
