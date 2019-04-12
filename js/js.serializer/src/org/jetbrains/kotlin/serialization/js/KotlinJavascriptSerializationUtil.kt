@@ -133,7 +133,10 @@ object KotlinJavascriptSerializationUtil {
                         languageVersionSettings = languageVersionSettings
                     ).writeDelimitedTo(stream)
                     asLibrary().writeTo(stream)
-                    appendPackageFragments(stream)
+                    stream.appendPackageFragments()
+                    jsDescriptor.imported.forEach {
+                        stream.writeProto(JsProtoBuf.Library.IMPORTED_MODULE_FIELD_NUMBER, it.toByteArray())
+                    }
                 }
             }.toByteArray()
 
@@ -151,24 +154,26 @@ object KotlinJavascriptSerializationUtil {
                 builder.kind = moduleProtoKind
             }
 
-            jsDescriptor.imported.forEach { builder.addImportedModule(it) }
-
             return builder.build()
         }
 
-        private fun appendPackageFragments(stream: OutputStream) {
+        private fun OutputStream.writeProto(fieldNumber: Int, content: ByteArray) {
+            // Message header
+            write((fieldNumber shl 3) or 2)
+            // Size varint
+            var size = content.size
+            while (size > 0x7F) {
+                write(0x80 or (size and 0x7F))
+                size = size ushr 7
+            }
+            write(size)
+            // Fragment itself
+            write(content)
+        }
+
+        private fun OutputStream.appendPackageFragments() {
             for ((_, fragment) in serializedFragments.entries.sortedBy { (fqName, _) -> fqName.asString() }) {
-                // Message header
-                stream.write((JsProtoBuf.Library.PACKAGE_FRAGMENT_FIELD_NUMBER shl 3) or 2)
-                // Size varint
-                var size = fragment.size
-                while (size > 0x7F) {
-                    stream.write(0x80 or (size and 0x7F))
-                    size = size ushr 7
-                }
-                stream.write(size)
-                // Fragment itself
-                stream.write(fragment)
+                writeProto(JsProtoBuf.Library.PACKAGE_FRAGMENT_FIELD_NUMBER, fragment)
             }
         }
     }
