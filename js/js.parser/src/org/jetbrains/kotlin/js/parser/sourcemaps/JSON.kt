@@ -133,8 +133,8 @@ fun parseJson(file: File): JsonNode = parseJson(file.readText(Charsets.UTF_8))
 fun parseJson(text: String): JsonNode = JsonParser(text).parse()
 
 private class JsonParser(val content: String) {
-    private var index = 0
-    private var charCode = content.getOrNull(index++)?.toInt() ?: -1
+    private var index = -1
+    private var charCode = content.getOrNull(++index)?.toInt() ?: -1
     private var offset = 0
     private var line = 0
     private var col = 0
@@ -236,21 +236,30 @@ private class JsonParser(val content: String) {
         expectCharAndAdvance('"')
 
         val sb = StringBuilder()
-        while (true) {
+
+        var leftIndex = index
+        while (index < content.length) {
+            charCode = content[index].toInt()
+
+            if (charCode < ' '.toInt()) {
+                error("Invalid character in string literal")
+            }
+
             when (charCode) {
-                '"'.toInt() -> { advance(); return sb.toString() }
-                '\\'.toInt() -> sb.append(parseEscapeSequence())
-                else -> {
-                    if (charCode >= ' '.toInt()) {
-                        sb.append(charCode.toChar())
-                        advance()
-                    }
-                    else {
-                        error("Invalid character in string literal")
-                    }
+                '"'.toInt() -> {
+                    sb.append(content, leftIndex, index)
+                    advance()
+                    return sb.toString()
                 }
+                '\\'.toInt() -> {
+                    sb.append(content, leftIndex, index)
+                    sb.append(parseEscapeSequence())
+                    leftIndex = index
+                }
+                else -> ++index
             }
         }
+        error("Unexpected end of file")
     }
 
     private fun parseEscapeSequence(): Char {
@@ -365,7 +374,7 @@ private class JsonParser(val content: String) {
                 wasCR = false
             }
         }
-        charCode = content.getOrNull(index++)?.toInt() ?: -1
+        charCode = content.getOrNull(++index)?.toInt() ?: -1
         offset++
     }
 
