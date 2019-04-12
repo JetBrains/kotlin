@@ -52,7 +52,7 @@ private fun mergeStdlibParts(outputFile: File, wrapperFile: File, baseDir: File,
 
         val sourceMapFile = File(file.parent, file.name + ".map")
         if (sourceMapFile.exists()) {
-            val sourceMapParse = sourceMapFile.reader().use { SourceMapParser.parse(it) }
+            val sourceMapParse = SourceMapParser.parse(sourceMapFile)
             when (sourceMapParse) {
                 is SourceMapError -> {
                     System.err.println("Error parsing source map file $sourceMapFile: ${sourceMapParse.message}")
@@ -82,7 +82,7 @@ private fun mergeStdlibParts(outputFile: File, wrapperFile: File, baseDir: File,
 
     outputFile.writeText(programText + "\n//# sourceMappingURL=${sourceMapFile.name}\n")
 
-    val sourceMapJson = StringReader(sourceMapContent).use { parseJson(it) }
+    val sourceMapJson = parseJson(sourceMapContent)
     val sources = (sourceMapJson as JsonObject).properties["sources"] as JsonArray
 
     sourceMapJson.properties["sourcesContent"] = JsonArray(*sources.elements.map { sourcePath ->

@@ -114,7 +114,7 @@ class FunctionReader(
                 }
 
                 val sourceMap = sourceMapContent?.let {
-                    val sourceMapResult = SourceMapParser.parse(StringReader(it))
+                    val sourceMapResult = SourceMapParser.parse(it)
                     when (sourceMapResult) {
                         is SourceMapSuccess -> sourceMapResult.value
                         is SourceMapError -> {
