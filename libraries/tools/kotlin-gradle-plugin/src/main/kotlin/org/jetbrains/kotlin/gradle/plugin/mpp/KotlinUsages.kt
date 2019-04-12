@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Project
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -12,11 +13,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
 object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
     const val KOTLIN_RUNTIME = "kotlin-runtime"
+    const val KOTLIN_METADATA = "kotlin-metadata"
+
     val values = setOf(KOTLIN_API, KOTLIN_RUNTIME)
 
     private val jvmPlatformTypes: Set<KotlinPlatformType> = setOf(jvm, androidJvm)
@@ -63,6 +67,33 @@ object KotlinUsages {
         }
     }
 
+    private val javaUsagesForKotlinMetadataConsumers = listOf("java-api-jars", JAVA_API, JAVA_RUNTIME_JARS, JAVA_RUNTIME)
+
+    private class KotlinMetadataCompatibility : AttributeCompatibilityRule<Usage> {
+        override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
+            // ensure that a consumer that requests 'kotlin-metadata' can also consumer 'kotlin-api' artifacts or the
+            // 'java-*' ones (these are how Gradle represents a module that is published with no Gradle module metadata)
+            if (
+                consumerValue?.name == KOTLIN_METADATA &&
+                (producerValue?.name == KOTLIN_API || producerValue?.name in javaUsagesForKotlinMetadataConsumers)
+            ) {
+                compatible()
+            }
+        }
+    }
+
+    private class KotlinMetadataDisambiguation : AttributeDisambiguationRule<Usage> {
+        override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
+            if (consumerValue?.name == KOTLIN_METADATA) {
+                // Prefer Kotlin metadata, but if there's no such variant then accept 'kotlin-api' or the Java usages
+                // (see the compatibility rule):
+                val acceptedProducerValues = listOf(KOTLIN_METADATA, KOTLIN_API, *javaUsagesForKotlinMetadataConsumers.toTypedArray())
+                val candidatesMap = candidateValues.associateBy { it.name }
+                acceptedProducerValues.firstOrNull { it in candidatesMap }?.let { closestMatch(candidatesMap.getValue(it)) }
+            }
+        }
+    }
+
     private class KotlinUsagesDisambiguation : AttributeDisambiguationRule<Usage> {
         override fun execute(details: MultipleCandidatesDetails<Usage?>) = with(details) {
             val candidateNames = candidateValues.map { it?.name }.toSet()
@@ -96,10 +127,15 @@ object KotlinUsages {
         }
     }
 
-    internal fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
-        attributesSchema.attribute(Usage.USAGE_ATTRIBUTE) { strategy ->
+    internal fun setupAttributesMatchingStrategy(project: Project, attributesSchema: AttributesSchema) {
+        attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
             strategy.compatibilityRules.add(KotlinJavaRuntimeJarsCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinUsagesDisambiguation::class.java)
+
+            if (project.isKotlinGranularMetadataEnabled) {
+                strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
+                strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
+            }
         }
     }
 }

@@ -19,11 +19,13 @@ class KotlinCommonCompilation(
     override val compileKotlinTask: KotlinCompileCommon
         get() = super.compileKotlinTask as KotlinCompileCommon
 
-    // TODO once we properly compile metadata for each source set, the default source sets will likely become just the source sets
-    // which are transformed to metadata
-    private val commonSourceSetName = when (compilationName) {
-        KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME
-        else -> error("Custom metadata compilations are not supported yet")
+    private val commonSourceSetName by lazy {
+        when (compilationName) {
+            // Historically, a metadata target has a main compilation. We keep using it to compile just the commonMain source set:
+            KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME
+            // All other common source sets are compiled by compilations named according to the source sets:
+            else -> compilationName
+        }
     }
 
     override val defaultSourceSet: KotlinSourceSet

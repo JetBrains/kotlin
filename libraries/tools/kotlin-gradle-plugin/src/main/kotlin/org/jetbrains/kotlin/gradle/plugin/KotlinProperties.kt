@@ -88,6 +88,9 @@ internal class PropertiesProvider(private val project: Project) {
     val setJvmTargetFromAndroidCompileOptions: Boolean?
         get() = booleanProperty("kotlin.setJvmTargetFromAndroidCompileOptions")
 
+    val enableGranularSourceSetsMetadata: Boolean?
+        get() = booleanProperty("kotlin.mpp.enableGranularSourceSetsMetadata")
+
     /**
      * Enables parallel tasks execution within a project with Workers API.
      * Does not enable using actual worker proccesses

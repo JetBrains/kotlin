@@ -64,7 +64,7 @@ open class KotlinVariant(
     final override val target: KotlinTarget
         get() = producingCompilation.target
 
-    override fun getUsages(): Set<UsageContext> = usages
+    override fun getUsages(): Set<KotlinUsageContext> = usages
 
     override fun getName(): String = componentName ?: producingCompilation.target.targetName
 
@@ -101,7 +101,7 @@ class KotlinVariantWithMetadataDependency(
     val originalUsages: Set<DefaultKotlinUsageContext>,
     private val metadataTarget: AbstractKotlinTarget
 ) : KotlinVariantWithCoordinates(producingCompilation, originalUsages) {
-    override fun getUsages(): Set<UsageContext> = originalUsages.mapTo(mutableSetOf()) { usageContext ->
+    override fun getUsages(): Set<KotlinUsageContext> = originalUsages.mapTo(mutableSetOf()) { usageContext ->
         KotlinUsageContextWithAdditionalDependencies(usageContext, setOf(metadataDependency()))
     }
 
@@ -135,7 +135,7 @@ class JointAndroidKotlinTargetComponent(
     override val sourcesArtifacts: Set<PublishArtifact>
     ) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
 
-    override fun getUsages(): Set<UsageContext> = nestedVariants.flatMap { it.usages }.toSet()
+    override fun getUsages(): Set<KotlinUsageContext> = nestedVariants.flatMap { it.usages }.toSet()
 
     override fun getName(): String = lowerCamelCaseName(target.targetName, *flavorNames.toTypedArray())
 

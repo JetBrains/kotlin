@@ -218,7 +218,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal var commonSourceSet: Iterable<File> = emptyList()
+    internal var commonSourceSet: FileCollection = project.files()
 
     @get:Input
     internal val moduleName: String

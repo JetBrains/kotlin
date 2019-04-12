@@ -10,6 +10,7 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.util.concurrent.Callable
 
 class KotlinNativeCompilation(
     override val target: KotlinNativeTarget,
@@ -40,7 +42,7 @@ class KotlinNativeCompilation(
     internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
 
     // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
-    internal val commonSources: MutableSet<SourceDirectorySet> = mutableSetOf()
+    internal val commonSources: ConfigurableFileCollection = project.files()
 
     var friendCompilationName: String? = null
 
@@ -82,10 +84,8 @@ class KotlinNativeCompilation(
     val binariesTaskName: String
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "binaries")
 
-    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Boolean) {
+    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
         allSources.add(sourceSet.kotlin)
-        if (addAsCommonSources) {
-            commonSources.add(sourceSet.kotlin)
-        }
+        commonSources.from(project.files(Callable { if (addAsCommonSources.value) sourceSet.kotlin else emptyList<Any>() }))
     }
 }

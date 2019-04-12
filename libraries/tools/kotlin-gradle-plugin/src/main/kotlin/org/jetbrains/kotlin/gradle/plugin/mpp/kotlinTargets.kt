@@ -118,12 +118,13 @@ abstract class AbstractKotlinTarget(
                             configuration.dependencyConstraints.addAll(kotlinUsageContext.dependencyConstraints)
                             configuration.artifacts.addAll(kotlinUsageContext.artifacts)
 
-                            kotlinUsageContext.attributes.keySet().forEach {
+                            val attributes = kotlinUsageContext.attributes
+                            attributes.keySet().forEach {
                                 // capture type parameter T
                                 fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
                                     to.attribute(key, from.getAttribute(key)!!)
                                 }
-                                copyAttribute(it, kotlinUsageContext.attributes, configuration.attributes)
+                                copyAttribute(it, attributes, configuration.attributes)
                             }
                         }
 

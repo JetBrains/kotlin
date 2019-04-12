@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 
 internal fun Project.rewritePomMppDependenciesToActualTargetModules(
     pomXml: XmlProvider,
-    component: KotlinTargetComponent
+    component: KotlinTargetComponent,
+    filterDependencies: (groupNameVersion: Triple<String?, String, String?>) -> Boolean = { true }
 ) {
     if (component !is SoftwareComponentInternal)
         return
 
-    val dependenciesNodeList = pomXml.asNode().get("dependencies") as NodeList
-    val dependencyNodes = dependenciesNodeList.filterIsInstance<Node>().flatMap {
-        (it.get("dependency") as? NodeList).orEmpty()
-    }.filterIsInstance<Node>()
+    val dependenciesNode = (pomXml.asNode().get("dependencies") as NodeList).filterIsInstance<Node>().singleOrNull() ?: return
+
+    val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()
 
     val dependencyByNode = mutableMapOf<Node, ModuleDependency>()
 
@@ -57,6 +57,15 @@ internal fun Project.rewritePomMppDependenciesToActualTargetModules(
     // Rewrite the dependency nodes according to the mapping:
     dependencyNodes.forEach { dependencyNode ->
         val moduleDependency = dependencyByNode[dependencyNode]
+
+        if (moduleDependency != null) {
+            val groupNameVersion = Triple(moduleDependency.group, moduleDependency.name, moduleDependency.version)
+            if (!filterDependencies(groupNameVersion)) {
+                dependenciesNode.remove(dependencyNode)
+                return@forEach
+            }
+        }
+
         val mapDependencyTo = resultDependenciesForEachUsageContext.find { moduleDependency in it }?.get(moduleDependency)
 
         if (mapDependencyTo != null) {

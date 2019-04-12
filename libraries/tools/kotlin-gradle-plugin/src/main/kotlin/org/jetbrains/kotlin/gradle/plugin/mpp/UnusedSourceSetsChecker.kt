@@ -37,7 +37,7 @@ object UnusedSourceSetsChecker {
     fun checkSourceSets(project: Project) {
         // TODO once Android compilations are configured eagerly, move this to afterEvaluate { ... } instead of taskGraph.whenReady { ... }
         project.gradle.taskGraph.whenReady { _ ->
-            val compilationsBySourceSet = compilationsBySourceSet(project)
+            val compilationsBySourceSet = CompilationSourceSetUtil.compilationsBySourceSets(project)
             val unusedSourceSets = project.kotlinExtension.sourceSets.filter {
                 compilationsBySourceSet[it]?.isEmpty() ?: true
             }

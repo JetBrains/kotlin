@@ -23,8 +23,6 @@ class KotlinMetadataTargetPreset(
     project,
     kotlinPluginVersion
 ) {
-    override fun instantiateTarget() = KotlinOnlyTarget<KotlinCommonCompilation>(project, KotlinPlatformType.common)
-
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(
@@ -41,6 +39,8 @@ class KotlinMetadataTargetPreset(
 
     override fun createKotlinTargetConfigurator(): KotlinTargetConfigurator<KotlinCommonCompilation> =
         KotlinMetadataTargetConfigurator(kotlinPluginVersion)
+
+    override fun instantiateTarget(): KotlinOnlyTarget<KotlinCommonCompilation> = KotlinMetadataTarget(project)
 
     override fun createTarget(name: String): KotlinOnlyTarget<KotlinCommonCompilation> =
         super.createTarget(name).apply {

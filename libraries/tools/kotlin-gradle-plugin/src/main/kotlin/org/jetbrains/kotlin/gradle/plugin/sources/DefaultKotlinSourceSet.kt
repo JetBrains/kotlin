@@ -17,8 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.File
 import java.lang.reflect.Constructor
 import java.util.*
 
@@ -112,9 +116,11 @@ class DefaultKotlinSourceSet(
     override fun addCustomSourceFilesExtensions(extensions: List<String>) {
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
+
+    internal val dependencyTransformations: MutableMap<KotlinDependencyScope, GranularMetadataTransformation> = mutableMapOf()
 }
 
-private fun KotlinSourceSet.checkForCircularDependencies(): Unit {
+private fun KotlinSourceSet.checkForCircularDependencies() {
     // If adding an edge creates a cycle, than the source node of the edge belongs to the cycle, so run DFS from that node
     // to check whether it became reachable from itself
     val visited = hashSetOf<KotlinSourceSet>()
@@ -148,6 +154,7 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
 
 private fun createDefaultSourceDirectorySet(project: Project, name: String?, resolver: FileResolver?): SourceDirectorySet {
     if (isGradleVersionAtLeast(5, 0)) {
+        @Suppress("UnstableApiUsage")
         val objects = project.objects
         val sourceDirectorySetMethod = objects.javaClass.methods.single { it.name == "sourceDirectorySet" && it.parameterCount == 2 }
         return sourceDirectorySetMethod(objects, name, name) as SourceDirectorySet

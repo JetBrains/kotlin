@@ -22,6 +22,7 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
@@ -54,31 +55,28 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         cleanTask.delete(kotlinCompilation.output.allOutputs)
     }
 
+    protected open fun setupCompilationDependencyFiles(project: Project, compilation: KotlinCompilation<KotlinCommonOptions>) {
+        compilation.compileDependencyFiles = project.configurations.maybeCreate(compilation.compileDependencyConfigurationName)
+        if (compilation is KotlinCompilationToRunnableFiles) {
+            compilation.runtimeDependencyFiles = project.configurations.maybeCreate(compilation.runtimeDependencyConfigurationName)
+        }
+    }
+
     protected open fun configureCompilations(platformTarget: KotlinTargetType) {
         val project = platformTarget.project
         val main = platformTarget.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         platformTarget.compilations.all {
             project.registerOutputsForStaleOutputCleanup(it)
-            it.compileDependencyFiles = project.configurations.maybeCreate(it.compileDependencyConfigurationName)
-            if (it is KotlinCompilationToRunnableFiles) {
-                it.runtimeDependencyFiles = project.configurations.maybeCreate(it.runtimeDependencyConfigurationName)
-            }
+            setupCompilationDependencyFiles(project, it)
         }
 
         if (createTestCompilation) {
             platformTarget.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
-                compileDependencyFiles = project.files(
-                    main.output.allOutputs,
-                    project.configurations.maybeCreate(compileDependencyConfigurationName)
-                )
+                compileDependencyFiles += main.output.allOutputs
 
                 if (this is KotlinCompilationToRunnableFiles) {
-                    runtimeDependencyFiles = project.files(
-                        output.allOutputs,
-                        main.output.allOutputs,
-                        project.configurations.maybeCreate(runtimeDependencyConfigurationName)
-                    )
+                    runtimeDependencyFiles += project.files(output.allOutputs, main.output.allOutputs)
                 }
             }
         }
@@ -328,17 +326,21 @@ abstract class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilatio
         }
     }
 
+    /** The implementations are expected to create a [Jar] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
+    protected open fun createJarTasks(target: KotlinOnlyTarget<KotlinCompilationType>) {
+        val result = target.project.tasks.create(target.artifactsTaskName, Jar::class.java)
+        result.description = "Assembles a jar archive containing the main classes."
+        result.group = BasePlugin.BUILD_GROUP
+        result.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
+    }
+
     override fun configureArchivesAndComponent(target: KotlinOnlyTarget<KotlinCompilationType>) {
         val project = target.project
 
         val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-        val jar = project.tasks.create(target.artifactsTaskName, Jar::class.java)
-        jar.description = "Assembles a jar archive containing the main classes."
-        jar.group = BasePlugin.BUILD_GROUP
-        jar.from(mainCompilation.output.allOutputs)
-
-        val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
+        createJarTasks(target)
+        val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
 
         target.disambiguationClassifier?.let { jar.appendix = it.toLowerCase() }
 
@@ -349,6 +351,7 @@ abstract class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilatio
                 jarArtifact.builtBy(jar)
                 jarArtifact.type = ArtifactTypeDefinition.JAR_TYPE
 
+                val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
                 addJar(apiElementsConfiguration, jarArtifact)
 
                 if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {

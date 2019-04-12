@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
@@ -78,6 +79,10 @@ internal class DefaultKotlinSourceSetFactory(
                 isVisible = false
                 isCanBeConsumed = false
                 extendsFrom(project.configurations.maybeCreate(configurationName))
+
+                if (project.isKotlinGranularMetadataEnabled) {
+                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                }
             }
         }
     }
