@@ -9777,11 +9777,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedType.kt");
                 }
 
-                @TestMetadata("capturedTypeAgainstNullableInvariantType.kt")
-                public void testCapturedTypeAgainstNullableInvariantType() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypeAgainstNullableInvariantType.kt");
-                }
-
                 @TestMetadata("capturedTypeAndApproximation.kt")
                 public void testCapturedTypeAndApproximation() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypeAndApproximation.kt");
