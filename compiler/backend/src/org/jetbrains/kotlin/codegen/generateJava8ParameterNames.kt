@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-internal fun generateParameterNames(
+fun generateParameterNames(
         functionDescriptor: FunctionDescriptor,
         mv: MethodVisitor,
         jvmSignature: JvmMethodSignature,
