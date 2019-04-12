@@ -19,12 +19,10 @@ package org.jetbrains.kotlin.idea.scratch.compile
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessOutput
-import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
@@ -45,6 +42,7 @@ import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputType
+import org.jetbrains.kotlin.idea.util.JavaParametersBuilder
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -177,17 +175,15 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     }
 
     private fun createCommandLine(originalFile: KtFile, module: Module?, mainClassName: String, tempOutDir: String): GeneralCommandLine {
-        val javaParameters = KotlinConsoleKeeper.createJavaParametersWithSdk(module)
-        javaParameters.mainClass = mainClassName
+        val javaParameters = JavaParametersBuilder(originalFile.project)
+            .withSdkFrom(module, true)
+            .withMainClassName(mainClassName)
+            .build()
 
         javaParameters.classPath.add(tempOutDir)
 
         if (module != null) {
-            val compiledModulePath = CompilerPathsEx.getOutputPaths(arrayOf(module)).toList()
-            javaParameters.classPath.addAll(compiledModulePath)
-
-            val moduleDependencies = OrderEnumerator.orderEntries(module).recursively().pathsList.pathList
-            javaParameters.classPath.addAll(moduleDependencies)
+            javaParameters.classPath.addAll(JavaParametersBuilder.getModuleDependencies(module))
         }
 
         val scriptDependencies = ScriptDependenciesManager.getInstance(originalFile.project).getScriptDependencies(originalFile.virtualFile)

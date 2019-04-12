@@ -44,7 +44,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         handler.onStart(file)
 
         val module = file.getModule()
-        val cmdLine = KotlinConsoleKeeper.createCommandLine(module)
+        val cmdLine = KotlinConsoleKeeper.createReplCommandLine(file.project, module)
 
         LOG.printDebugMessage("Execute REPL: ${cmdLine.commandLineString}")
 

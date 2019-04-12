@@ -17,18 +17,11 @@
 package org.jetbrains.kotlin.console
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.configurations.JavaParameters
-import com.intellij.execution.configurations.ParametersList
-import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.JavaSdkType
-import com.intellij.openapi.projectRoots.SimpleJavaSdkType
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.SystemProperties
+import org.jetbrains.kotlin.idea.util.JavaParametersBuilder
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -44,7 +37,7 @@ class KotlinConsoleKeeper(val project: Project) {
 
     fun run(module: Module, previousCompilationFailed: Boolean = false): KotlinConsoleRunner? {
         val path = module.moduleFilePath
-        val cmdLine = createCommandLine(module)
+        val cmdLine = createReplCommandLine(project, module)
 
         val consoleRunner = KotlinConsoleRunner(module, cmdLine, previousCompilationFailed, project, REPL_TITLE, path)
         consoleRunner.initAndRun()
@@ -54,61 +47,32 @@ class KotlinConsoleKeeper(val project: Project) {
     companion object {
         @JvmStatic fun getInstance(project: Project) = ServiceManager.getService(project, KotlinConsoleKeeper::class.java)
 
-        fun createCommandLine(module: Module?): GeneralCommandLine {
-            val javaParameters = createJavaParametersWithSdk(module)
+        fun createReplCommandLine(project: Project, module: Module?): GeneralCommandLine {
+            val javaParameters = JavaParametersBuilder(project)
+                .withSdkFrom(module, true)
+                .withMainClassName("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+                .build()
 
-            javaParameters.mainClass = "dummy"
+            javaParameters.charset = null
+            javaParameters.vmParametersList.add("-Dkotlin.repl.ideMode=true")
 
-            val commandLine = javaParameters.toCommandLine()
-
-            val paramList = commandLine.parametersList
-            paramList.clearAll()
-
-            // use to debug repl process
-            //paramList.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
-
-            val kotlinPaths = PathUtil.kotlinPathsForIdeaPlugin
-            val replClassPath =
-                (kotlinPaths.compilerClasspath + kotlinPaths.compilerPath)
-                    .joinToString(File.pathSeparator) { it.absolutePath }
-
-            paramList.add("-cp")
-            paramList.add(replClassPath)
-
-            paramList.add("-Dkotlin.repl.ideMode=true")
-
-            paramList.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+            javaParameters.classPath.apply {
+                val kotlinPaths = PathUtil.kotlinPathsForIdeaPlugin
+                addAll(kotlinPaths.compilerClasspath.map { it.absolutePath })
+                add(kotlinPaths.compilerPath.absolutePath)
+            }
 
             if (module != null) {
-                addPathToCompiledOutput(paramList, module)
+                val classPath = JavaParametersBuilder.getModuleDependencies(module)
+                if (classPath.isNotEmpty()) {
+                    javaParameters.programParametersList.add("-cp")
+                    javaParameters.programParametersList.add(
+                        classPath.joinToString(File.pathSeparator)
+                    )
+                }
             }
 
-            return commandLine
-        }
-
-        fun createJavaParametersWithSdk(module: Module?): JavaParameters {
-            val params = JavaParameters()
-            params.charset = null
-
-            val sdk = module?.let { ModuleRootManager.getInstance(module).sdk }
-            if (sdk != null && sdk.sdkType is JavaSdkType && File(sdk.homePath).exists()) {
-                params.jdk = sdk
-            }
-
-            if (params.jdk == null) {
-                params.jdk = SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome())
-            }
-
-            return params
-        }
-
-        private fun addPathToCompiledOutput(paramList: ParametersList, module: Module) {
-            val compiledModulePath = CompilerPathsEx.getOutputPaths(arrayOf(module)).joinToString(File.pathSeparator)
-            val moduleDependencies = OrderEnumerator.orderEntries(module).recursively().pathsList.pathsString
-            val compiledOutputClasspath = "$compiledModulePath${File.pathSeparator}$moduleDependencies"
-
-            paramList.add("-cp")
-            paramList.add(compiledOutputClasspath)
+            return javaParameters.toCommandLine()
         }
     }
 }
