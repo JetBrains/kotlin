@@ -202,28 +202,59 @@ internal fun KotlinCompilation<*>.disambiguateName(simpleName: String): String {
     )
 }
 
-private object CompilationSourceSetUtil {
-    // Cache the results per project
-    private val projectSourceSetsInMultipleCompilationsCache = WeakHashMap<Project, Set<String>>()
+internal object CompilationSourceSetUtil {
+    // Store only names in the cache to avoid memory leak through indirect references to the project
+    private data class TargetCompilationName(val targetName: String, val compilationName: String) {
+        fun toCompilation(project: Project): KotlinCompilation<*>? {
+            val kotlinExtension = project.kotlinExtension
+            val target = when (kotlinExtension) {
+                is KotlinMultiplatformExtension -> kotlinExtension.targets.findByName(targetName)
+                is KotlinSingleTargetExtension -> kotlinExtension.target.takeIf { it.name == targetName }
+                else -> null
+            }
+            return target?.compilations?.getByName(compilationName)
+        }
 
-    fun sourceSetsInMultipleCompilations(project: Project) =
-        projectSourceSetsInMultipleCompilationsCache.computeIfAbsent(project) { _ ->
+        companion object {
+            fun from(compilation: KotlinCompilation<*>) = TargetCompilationName(compilation.target.name, compilation.name)
+        }
+    }
+
+    private val compilationsBySourceSetCache = WeakHashMap<Project, Map<String, Set<TargetCompilationName>>>()
+
+    /** Evaluates once per project. Don't access until all source set dependsOn relationships are built and all source sets are added
+     * to the relevant compilations. */
+    fun compilationsBySourceSets(project: Project): Map<KotlinSourceSet, Set<KotlinCompilation<*>>> {
+        val compilationNamesBySourceSetName = compilationsBySourceSetCache.computeIfAbsent(project) { _ ->
             check(project.state.executed) { "Should only be computed after the project is evaluated" }
 
-            val compilations = project.multiplatformExtensionOrNull?.targets?.flatMap { it.compilations }
-                ?: return@computeIfAbsent null
-
-            val sources = compilations
-                .flatMap { compilation -> compilation.allKotlinSourceSets.map { sourceSet -> compilation to sourceSet } }
-                .groupingBy { (_, sourceSet) -> sourceSet }
-                .eachCount()
-
-            HashSet<String>().apply {
-                for (entry in sources) {
-                    if (entry.value > 1) {
-                        add(entry.key.name)
-                    }
-                }
+            val kotlinExtension = project.kotlinExtension
+            val targets = when (kotlinExtension) {
+                is KotlinMultiplatformExtension -> kotlinExtension.targets
+                is KotlinSingleTargetExtension -> listOf(kotlinExtension.target)
+                else -> emptyList()
             }
+
+            val compilations = targets.flatMap { it.compilations }
+
+            compilations
+                .flatMap { compilation -> compilation.allKotlinSourceSets.map { sourceSet -> compilation to sourceSet } }
+                .groupBy(
+                    { (_, sourceSet) -> sourceSet.name },
+                    valueTransform = { (compilation, _) -> TargetCompilationName.from(compilation) }
+                )
+                .mapValues { (_, compilations) -> compilations.toSet() }
+        }
+
+        return compilationNamesBySourceSetName.entries.associate { (sourceSetName, compilationNames) ->
+            project.kotlinExtension.sourceSets.getByName(sourceSetName).to(
+                compilationNames.map { checkNotNull(it.toCompilation(project)) }.toSet()
+            )
+        }
+    }
+
+    fun sourceSetsInMultipleCompilations(project: Project) =
+        compilationsBySourceSets(project).mapNotNullTo(mutableSetOf()) { (sourceSet, compilations) ->
+            sourceSet.name.takeIf { compilations.size > 1 }
         }
 }
