@@ -1,4 +1,5 @@
 apply plugin: 'kotlin'
+apply plugin: 'jps-compatible'
 
 configureJvmProject(project)
 configurePublishing(project)
@@ -6,6 +7,10 @@ configurePublishing(project)
 repositories {
     mavenLocal()
     jcenter()
+}
+
+pill {
+    variant = 'FULL'
 }
 
 dependencies {

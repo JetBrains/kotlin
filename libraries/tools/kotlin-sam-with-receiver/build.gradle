@@ -1,4 +1,5 @@
 apply plugin: 'kotlin'
+apply plugin: 'jps-compatible'
 
 configureJvmProject(project)
 configurePublishing(project)
@@ -7,6 +8,10 @@ compileJava {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
     options.fork = false
+}
+
+pill {
+    variant = 'FULL'
 }
 
 repositories {

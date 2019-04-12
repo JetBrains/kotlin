@@ -1,8 +1,14 @@
+import org.jetbrains.kotlin.pill.PillExtension
 
 description = "Sample Kotlin JSR 223 scripting jar with daemon (out-of-process) compilation and local (in-process) evaluation"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
+}
+
+pill {
+    variant = PillExtension.Variant.FULL
 }
 
 val compilerClasspath by configurations.creating

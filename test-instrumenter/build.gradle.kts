@@ -1,8 +1,14 @@
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
     java
     kotlin("jvm")
+    id("jps-compatible")
+}
+
+pill {
+    variant = PillExtension.Variant.FULL
 }
 
 dependencies {

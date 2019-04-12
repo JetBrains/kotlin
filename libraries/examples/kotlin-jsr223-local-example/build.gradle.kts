@@ -1,8 +1,14 @@
+import org.jetbrains.kotlin.pill.PillExtension
 
 description = "Sample Kotlin JSR 223 scripting jar with local (in-process) compilation and evaluation"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
+}
+
+pill {
+    variant = PillExtension.Variant.FULL
 }
 
 dependencies {
