@@ -145,3 +145,13 @@ NSObject* createNSObject() {
 @property (class) void (^nullBlock)(void);
 @property (class) void (^notNullBlock)(void);
 @end;
+
+@interface TestVarargs : NSObject
+-(instancetype _Nonnull)initWithFormat:(NSString*)format, ...;
++(instancetype _Nonnull)testVarargsWithFormat:(NSString*)format, ...;
+@property NSString* formatted;
+@end;
+
+@interface TestVarargs (TestVarargsExtension)
+-(instancetype _Nonnull)initWithFormat:(NSString*)format, ...;
+@end;

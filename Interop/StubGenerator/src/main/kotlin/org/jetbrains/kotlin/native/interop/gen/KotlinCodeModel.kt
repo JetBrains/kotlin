@@ -321,6 +321,17 @@ abstract class KotlinFile(
 
 }
 
-data class KotlinParameter(val name: String, val type: KotlinType) {
-    fun render(scope: KotlinScope) = "${name.asSimpleName()}: ${type.render(scope)}"
+data class KotlinParameter(
+        val name: String,
+        val type: KotlinType,
+        val isVararg: Boolean,
+        val annotations: List<String>
+) {
+    fun render(scope: KotlinScope) = buildString {
+        annotations.forEach { append("$it ") }
+        if (isVararg) append("vararg ")
+        append(name.asSimpleName())
+        append(": ")
+        append(type.render(scope))
+    }
 }

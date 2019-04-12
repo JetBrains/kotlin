@@ -596,7 +596,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
                     initMethodInfo,
                     superQualifier = expression.symbol.owner.constructedClass.symbol,
                     receiver = builder.getRawPtr(builder.irGet(constructedClass.thisReceiver!!)),
-                    arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index)!! },
+                    arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index) },
                     call = expression,
                     method = initMethod
             )
@@ -629,7 +629,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
             info: ObjCMethodInfo,
             superQualifier: IrClassSymbol?,
             receiver: IrExpression,
-            arguments: List<IrExpression>,
+            arguments: List<IrExpression?>,
             call: IrFunctionAccessExpression,
             method: IrSimpleFunction
     ): IrExpression = generateWithStubs(call) {
@@ -655,7 +655,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
             val initMethod = callee.getObjCInitMethod()
 
             if (initMethod != null) {
-                val arguments = descriptor.valueParameters.map { expression.getValueArgument(it)!! }
+                val arguments = descriptor.valueParameters.map { expression.getValueArgument(it) }
                 assert(expression.extensionReceiver == null)
                 assert(expression.dispatchReceiver == null)
 
@@ -670,7 +670,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
 
         descriptor.getObjCFactoryInitMethodInfo()?.let { initMethodInfo ->
             val arguments = (0 until expression.valueArgumentsCount)
-                    .map { index -> expression.getValueArgument(index)!! }
+                    .map { index -> expression.getValueArgument(index) }
 
             return builder.at(expression).run {
                 val classPtr = getRawPtr(expression.extensionReceiver!!)
@@ -688,7 +688,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
                     builder.scope.scopeOwner.annotations.hasAnnotation(FqName("kotlin.native.internal.ExportForCppRuntime"))
 
             if (!useKotlinDispatch) {
-                val arguments = descriptor.valueParameters.map { expression.getValueArgument(it)!! }
+                val arguments = descriptor.valueParameters.map { expression.getValueArgument(it) }
                 assert(expression.dispatchReceiver == null || expression.extensionReceiver == null)
 
                 if (expression.superQualifier?.isObjCMetaClass() == true) {
@@ -773,7 +773,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
     private fun IrBuilderWithScope.callAllocAndInit(
             classPtr: IrExpression,
             initMethodInfo: ObjCMethodInfo,
-            arguments: List<IrExpression>,
+            arguments: List<IrExpression?>,
             call: IrFunctionAccessExpression,
             initMethod: IrSimpleFunction
     ): IrExpression = irBlock(startOffset, endOffset) {

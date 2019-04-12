@@ -174,7 +174,7 @@ sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclar
 
 data class ObjCMethod(
         val selector: String, val encoding: String, val parameters: List<Parameter>, private val returnType: Type,
-        val isClass: Boolean, val nsConsumesSelf: Boolean, val nsReturnsRetained: Boolean,
+        val isVariadic: Boolean, val isClass: Boolean, val nsConsumesSelf: Boolean, val nsReturnsRetained: Boolean,
         val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean
 ) {
 

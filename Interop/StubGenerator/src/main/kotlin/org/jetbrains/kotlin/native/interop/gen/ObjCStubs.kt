@@ -25,29 +25,29 @@ private fun ObjCMethod.getKotlinParameterNames(forConstructorOrFactory: Boolean 
 
     val result = mutableListOf<String>()
 
+    fun String.mangled(): String {
+        var mangled = this
+        while (mangled in result) {
+            mangled = "_$mangled"
+        }
+        return mangled
+    }
+
     // The names of all parameters except first must depend only on the selector:
     this.parameters.forEachIndexed { index, _ ->
         if (index > 0) {
-            var name = selectorParts[index]
-            if (name.isEmpty()) {
-                name = "_$index"
-            }
-
-            while (name in result) {
-                name = "_$name"
-            }
-
-            result.add(name)
+            val name = selectorParts[index].takeIf { it.isNotEmpty() } ?: "_$index"
+            result.add(name.mangled())
         }
     }
 
     this.parameters.firstOrNull()?.let {
-        var name = this.getFirstKotlinParameterNameCandidate(forConstructorOrFactory)
+        val name = this.getFirstKotlinParameterNameCandidate(forConstructorOrFactory)
+        result.add(0, name.mangled())
+    }
 
-        while (name in result) {
-            name = "_$name"
-        }
-        result.add(0, name)
+    if (this.isVariadic) {
+        result.add("args".mangled())
     }
 
     return result
@@ -65,6 +65,32 @@ private fun ObjCMethod.getFirstKotlinParameterNameCandidate(forConstructorOrFact
     return this.parameters.first().name?.takeIf { it.isNotEmpty() } ?: "_0"
 }
 
+private fun ObjCMethod.getKotlinParameters(
+        stubGenerator: StubGenerator,
+        forConstructorOrFactory: Boolean
+): List<KotlinParameter> {
+    val names = getKotlinParameterNames(forConstructorOrFactory) // TODO: consider refactoring.
+    val result = mutableListOf<KotlinParameter>()
+
+    this.parameters.mapIndexedTo(result) { index, it ->
+        val kotlinType = stubGenerator.mirror(it.type).argType
+        val name = names[index]
+        val annotations = if (it.nsConsumed) listOf("@CCall.Consumed") else emptyList()
+        KotlinParameter(name, kotlinType, isVararg = false, annotations = annotations)
+    }
+
+    if (this.isVariadic) {
+        result += KotlinParameter(
+                names.last(),
+                KotlinTypes.any.makeNullable(),
+                isVararg = true,
+                annotations = emptyList()
+        )
+    }
+
+    return result
+}
+
 class ObjCMethodStub(private val stubGenerator: StubGenerator,
                      val method: ObjCMethod,
                      private val container: ObjCContainer,
@@ -80,17 +106,15 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                     // TODO: generate only constructor/factory in this case.
                     val kotlinScope = stubGenerator.kotlinFile
 
-                    val newParameterNames = method.getKotlinParameterNames(forConstructorOrFactory = true)
-                    val parameters = kotlinParameters.zip(newParameterNames) { parameter, newName ->
-                        KotlinParameter(newName, parameter.type)
-                    }.renderParameters(kotlinScope)
+                    val parameters = method.getKotlinParameters(stubGenerator, forConstructorOrFactory = true)
+                            .renderParameters(kotlinScope)
 
                     when (container) {
                         is ObjCClass -> {
                             result.add(0,
                                     deprecatedInit(
                                             container.kotlinClassName(method.isClass),
-                                            kotlinParameters.map { it.name },
+                                            kotlinMethodParameters.map { it.name },
                                             factory = false
                                     )
                             )
@@ -113,7 +137,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                             result.add(0,
                                     deprecatedInit(
                                             className,
-                                            kotlinParameters.map { it.name },
+                                            kotlinMethodParameters.map { it.name },
                                             factory = true
                                     )
                             )
@@ -145,28 +169,18 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                 )
             }
 
-    private val kotlinParameters: List<KotlinParameter>
+    private val kotlinMethodParameters: List<KotlinParameter>
     private val kotlinReturnType: String
     private val header: String
     internal val objCMethodAnnotations: List<String>
     private val isStret: Boolean
 
     init {
-        kotlinParameters = mutableListOf()
+        kotlinMethodParameters = method.getKotlinParameters(stubGenerator, forConstructorOrFactory = false)
 
         val returnType = method.getReturnType(container.classOrProtocol)
 
         isStret = returnType.isStret(stubGenerator.configuration.target)
-
-        val kotlinParameterNames = method.getKotlinParameterNames()
-
-        method.parameters.forEachIndexed { index, it ->
-            val name = kotlinParameterNames[index]
-
-            val kotlinType = stubGenerator.mirror(it.type).argType
-            val annotatedName = if (it.nsConsumed) "@CCall.Consumed $name" else name
-            kotlinParameters.add(KotlinParameter(annotatedName, kotlinType))
-        }
 
         this.kotlinReturnType = if (returnType.unwrapTypedefs() is VoidType) {
             KotlinTypes.unit
@@ -176,7 +190,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
 
         objCMethodAnnotations = buildObjCMethodAnnotations("@ObjCMethod")
 
-        val joinedKotlinParameters = kotlinParameters.renderParameters(stubGenerator.kotlinFile)
+        val joinedKotlinParameters = kotlinMethodParameters.renderParameters(stubGenerator.kotlinFile)
 
         this.header = buildString {
             if (container !is ObjCProtocol) append("external ")
@@ -229,7 +243,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
 private fun deprecatedInit(className: String, initParameterNames: List<String>, factory: Boolean): String {
     val replacement = if (factory) "$className.create" else className
     val replacementKind = if (factory) "factory method" else "constructor"
-    val replaceWith = "$replacement(${initParameterNames.joinToString()})"
+    val replaceWith = "$replacement(${initParameterNames.joinToString { it.asSimpleName() }})"
 
     return deprecated("Use $replacementKind instead", replaceWith)
 }

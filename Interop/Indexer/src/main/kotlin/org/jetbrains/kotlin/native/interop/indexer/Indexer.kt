@@ -896,6 +896,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 
         return ObjCMethod(
                 selector, encoding, parameters, returnType,
+                isVariadic = clang_Cursor_isVariadic(cursor) != 0,
                 isClass = isClass,
                 nsConsumesSelf = hasAttribute(cursor, NS_CONSUMES_SELF),
                 nsReturnsRetained = hasAttribute(cursor, NS_RETURNS_RETAINED),

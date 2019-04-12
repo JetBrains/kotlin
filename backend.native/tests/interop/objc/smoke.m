@@ -120,3 +120,28 @@ static CustomRetainMethodsImpl* retainedCustomRetainMethodsImpl;
 }
 
 @end;
+
+@implementation TestVarargs
+-(instancetype _Nonnull)initWithFormat:(NSString*)format, ... {
+    self = [super init];
+
+    va_list args;
+    va_start(args, format);
+    self.formatted = [[NSString alloc] initWithFormat:format arguments:args];
+    va_end(args);
+
+    return self;
+}
+
++(instancetype _Nonnull)testVarargsWithFormat:(NSString*)format, ... {
+    TestVarargs* result = [[TestVarargs alloc] init];
+
+    va_list args;
+    va_start(args, format);
+    result.formatted = [[NSString alloc] initWithFormat:format arguments:args];
+    va_end(args);
+
+    return result;
+}
+
+@end;
