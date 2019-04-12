@@ -79,6 +79,19 @@ class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpress
         val list = NotPropertyListPanel(fqNameList)
         return LabeledComponent.create(list, "Excluded methods")
     }
+
+    override fun inspectionTarget(element: KtCallExpression): PsiElement? {
+        return element.calleeExpression
+    }
+
+    override fun inspectionProblemText(element: KtCallExpression): String? {
+        val accessor = when (element.valueArguments.size) {
+            0 -> "getter"
+            1 -> "setter"
+            else -> null
+        }
+        return "Use of $accessor method instead of property access syntax"
+    }
 }
 
 
