@@ -65,6 +65,7 @@ class KotlinConsoleKeeper(val project: Project) {
             if (module != null) {
                 val classPath = JavaParametersBuilder.getModuleDependencies(module)
                 if (classPath.isNotEmpty()) {
+                    javaParameters.setUseDynamicParameters(javaParameters.isDynamicClasspath)
                     javaParameters.programParametersList.add("-cp")
                     javaParameters.programParametersList.add(
                         classPath.joinToString(File.pathSeparator)

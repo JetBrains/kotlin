@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
-import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.ide.scratch.ScratchRootType
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 import org.junit.Assert
 import javax.swing.JCheckBox
@@ -17,18 +14,7 @@ import kotlin.reflect.full.declaredMemberProperties
 class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
 
     fun testOptionsSaveOnClosingFile() {
-        val fileText = "val a = 1"
-
-        val scratchFile = ScratchRootType.getInstance().createScratchFile(
-            project,
-            "scratch_1.kts",
-            KotlinLanguage.INSTANCE,
-            fileText,
-            ScratchFileService.Option.create_if_missing
-        ) ?: error("Couldn't create scratch file")
-
-        myManager.openFile(scratchFile, true)
-
+        val scratchFile = createScratchFile("scratch_1.kts", "val a = 1")
         val (_, scratchPanelBeforeClosingFile) = getEditorWithScratchPanel(myManager, scratchFile) ?: error("Couldn't find scratch panel")
 
         Assert.assertEquals(

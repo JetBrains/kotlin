@@ -134,6 +134,20 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
         Assert.assertTrue(javaParameters.classPath.rootDirs.contains(moduleWithDependencySrcDir))
     }
 
+    fun testLongCommandLine() {
+        val myModule = configureModule(moduleDirPath("module"), getTestProject().baseDir).module
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, addJdk(testRootDisposable, ::mockJdk))
+
+        ModuleRootModificationUtil.addDependency(myModule, createLibraryWithLongPaths(project))
+
+        val kotlinRunConfiguration = createConfigurationFromMain("some.test.main")
+        kotlinRunConfiguration.setModule(myModule)
+
+        val javaParameters = getJavaRunParameters(kotlinRunConfiguration)
+        val commandLine = javaParameters.toCommandLine().commandLineString
+        Assert.assertTrue(commandLine.length < javaParameters.classPath.pathList.joinToString().length)
+    }
+
     fun testClassesAndObjects() {
         doTest(ConfigLibraryUtil::configureKotlinRuntimeAndSdk)
     }

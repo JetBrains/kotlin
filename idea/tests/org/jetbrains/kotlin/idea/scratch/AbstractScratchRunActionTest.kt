@@ -88,15 +88,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         val sourceFile = File(testDataPath, fileName)
         val fileText = sourceFile.readText()
 
-        val scratchFile = ScratchRootType.getInstance().createScratchFile(
-            project,
-            sourceFile.name,
-            KotlinLanguage.INSTANCE,
-            fileText,
-            ScratchFileService.Option.create_if_missing
-        ) ?: error("Couldn't create scratch file ${sourceFile.path}")
-
-        myFixture.openFileInEditor(scratchFile)
+        val scratchFile = createScratchFile(sourceFile.name, fileText)
 
         ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchFile, project)
 
@@ -114,16 +106,6 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         }
 
         launchScratch(scratchFile)
-
-        UIUtil.dispatchAllInvocationEvents()
-
-        val start = System.currentTimeMillis()
-        // wait until output is displayed in editor or for 1 minute
-        while (ScratchCompilationSupport.isAnyInProgress() && (System.currentTimeMillis() - start) < 60000) {
-            Thread.sleep(100)
-        }
-
-        UIUtil.dispatchAllInvocationEvents()
 
         val doc = PsiDocumentManager.getInstance(project).getDocument(psiFile) ?: error("Document for ${psiFile.name} is null")
 
@@ -152,13 +134,36 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualOutput.toString())
     }
 
-    private fun launchScratch(scratchFile: VirtualFile) {
+    protected fun createScratchFile(name: String, text: String): VirtualFile {
+        val scratchFile = ScratchRootType.getInstance().createScratchFile(
+            project,
+            name,
+            KotlinLanguage.INSTANCE,
+            text,
+            ScratchFileService.Option.create_if_missing
+        ) ?: error("Couldn't create scratch file")
+
+        myFixture.openFileInEditor(scratchFile)
+        return scratchFile
+    }
+
+    protected fun launchScratch(scratchFile: VirtualFile) {
         val action = RunScratchAction()
         val e = getActionEvent(scratchFile, action)
 
         action.beforeActionPerformedUpdate(e)
         Assert.assertTrue(e.presentation.isEnabled && e.presentation.isVisible)
         action.actionPerformed(e)
+
+        UIUtil.dispatchAllInvocationEvents()
+
+        val start = System.currentTimeMillis()
+        // wait until output is displayed in editor or for 1 minute
+        while (ScratchCompilationSupport.isAnyInProgress() && (System.currentTimeMillis() - start) < 60000) {
+            Thread.sleep(100)
+        }
+
+        UIUtil.dispatchAllInvocationEvents()
     }
 
     private fun getActionEvent(virtualFile: VirtualFile, action: AnAction): TestActionEvent {

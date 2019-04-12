@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.execution.ShortenCommandLine
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
+import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.openapi.roots.ModuleRootManager
@@ -29,7 +31,18 @@ class JavaParametersBuilder(private val project: Project) {
             if (jdk == null && setDefaultSdk) {
                 this.jdk = SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome())
             }
+            this.setShortenCommandLine(getDefaultShortenCommandLineMethod(jdk?.homePath), project)
         }
+    }
+
+    /**
+     * This method is partially copied from IDEA sources but doesn't check presence of dynamic.classpath property
+     * because we want to shorten command line for scratches and repl anyway
+     * @see [com.intellij.execution.ShortenCommandLine.getDefaultMethod]
+     */
+    private fun getDefaultShortenCommandLineMethod(rootPath: String?): ShortenCommandLine {
+        if (rootPath != null && JdkUtil.isModularRuntime(rootPath)) return ShortenCommandLine.ARGS_FILE
+        return if (JdkUtil.useClasspathJar()) ShortenCommandLine.MANIFEST else ShortenCommandLine.CLASSPATH_FILE
     }
 
     fun withMainClassName(name: String?): JavaParametersBuilder {
