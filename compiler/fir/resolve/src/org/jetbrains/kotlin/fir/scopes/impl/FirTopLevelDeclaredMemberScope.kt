@@ -29,6 +29,7 @@ class FirTopLevelDeclaredMemberScope(
         val matchedClass = provider.getClassLikeSymbolByFqName(ClassId(packageFqName, name))
 
         if (matchedClass != null && matchedClass is FirClassSymbol) {
+            // TODO: why don't we use declared member scope at this point?
             if (matchedClass.fir.buildUseSiteScope(session).processFunctionsByName(name, processor) == STOP) {
                 return STOP
             }
