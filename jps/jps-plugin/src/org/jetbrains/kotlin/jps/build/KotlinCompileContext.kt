@@ -70,6 +70,8 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     val sourceFileToPathConverter: SourceFileToPathConverter = SourceFileToCanonicalPathConverter
 
+    val lookupStorageManager = JpsLookupStorageManager(dataManager, sourceFileToPathConverter)
+
     /**
      * Flag to prevent rebuilding twice.
      *
@@ -107,7 +109,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
             // try to perform a lookup
             // request rebuild if storage is corrupted
             try {
-                dataManager.withLookupStorage {
+                lookupStorageManager.withLookupStorage {
                     it.get(LookupSymbol("<#NAME#>", "<#SCOPE#>"))
                 }
             } catch (e: Exception) {
@@ -189,13 +191,11 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
         KotlinBuilder.LOG.info("Rebuilding all Kotlin: $reason")
 
-        val dataManager = jpsContext.projectDescriptor.dataManager
-
         targetsIndex.chunks.forEach {
             markChunkForRebuildBeforeBuild(it)
         }
 
-        dataManager.cleanLookupStorage(KotlinBuilder.LOG)
+        lookupStorageManager.cleanLookupStorage(KotlinBuilder.LOG)
     }
 
     private fun markChunkForRebuildBeforeBuild(chunk: KotlinChunk) {
@@ -223,7 +223,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     private fun clearLookupCache() {
         KotlinBuilder.LOG.info("Clearing lookup cache")
-        dataManager.cleanLookupStorage(KotlinBuilder.LOG)
+        lookupStorageManager.cleanLookupStorage(KotlinBuilder.LOG)
         initialLookupsCacheStateDiff.manager.writeVersion()
     }
 
