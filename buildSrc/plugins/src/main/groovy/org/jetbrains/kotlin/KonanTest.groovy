@@ -42,6 +42,7 @@ abstract class KonanTest extends JavaExec {
     String goldValue = null
     // Checks test's output against gold value and returns true if the output matches the expectation
     Function<String, Boolean> outputChecker = { str -> (goldValue == null || goldValue == str) }
+    boolean printOutput = true
     String testData = null
     int expectedExitStatus = 0
     List<String> arguments = null
@@ -365,7 +366,9 @@ abstract class KonanTest extends JavaExec {
             }
         }
         def result = compilerMessagesText + out.toString("UTF-8")
-        println(result)
+        if (printOutput) {
+            println(result)
+        }
         result = result.replace(System.lineSeparator(), "\n")
         def goldValueMismatch = !outputChecker.apply(result)
         if (goldValueMismatch) {
