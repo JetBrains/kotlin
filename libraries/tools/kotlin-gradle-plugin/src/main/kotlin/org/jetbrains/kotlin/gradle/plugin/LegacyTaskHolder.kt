@@ -5,9 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.Project
 import org.gradle.api.Task
 
-class LegacyTaskHolder<T : Task>(private val task: T) : TaskHolder<T> {
+class LegacyTaskHolder<out T : Task>(private val task: T) : TaskHolder<T> {
+    override val project: Project
+        get() = task.project
+
+    override val name: String
+        get() = task.name
+
     override fun doGetTask() = task
 
     override fun getTaskOrProvider(): Any = task
