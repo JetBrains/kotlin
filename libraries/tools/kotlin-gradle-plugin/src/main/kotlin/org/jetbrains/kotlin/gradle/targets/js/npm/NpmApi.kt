@@ -19,13 +19,18 @@ interface NpmApi {
         subprojects: MutableList<NpmResolver.NpmPackage>
     )
 
+    /**
+     * Change contents of root's project `package.json`.
+     * @return true if `package.json` is required even it is empty
+     */
     @Suppress("EXPOSED_PARAMETER_TYPE")
-    fun hookRootPackage(rootProject: Project, rootPackageJson: PackageJson, allWorkspaces: Collection<NpmResolver.NpmPackage>) {
+    fun hookRootPackage(
+        rootProject: Project,
+        rootPackageJson: PackageJson,
+        allWorkspaces: Collection<NpmResolver.NpmPackage>
+    ): Boolean = false
 
-    }
-
-    open val hoistGradleNodeModules
-        get() = false
+    open fun getHoistGradleNodeModules(project: Project) = false
 
     companion object {
         fun resolveOperationDescription(packageManagerTitle: String): String =

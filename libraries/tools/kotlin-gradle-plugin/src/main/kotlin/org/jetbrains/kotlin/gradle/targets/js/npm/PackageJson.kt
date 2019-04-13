@@ -10,11 +10,15 @@ class PackageJson(
     var version: String
 ) {
     val empty: Boolean
-        get() = private == null && workspaces == null && dependencies.isEmpty()
+        get() = private == null &&
+                workspaces == null &&
+                dependencies.isEmpty() &&
+                devDependencies.isEmpty()
 
     var private: Boolean? = null
 
     var workspaces: Collection<String>? = null
 
+    val devDependencies = mutableMapOf<String, String>()
     val dependencies = mutableMapOf<String, String>()
 }
