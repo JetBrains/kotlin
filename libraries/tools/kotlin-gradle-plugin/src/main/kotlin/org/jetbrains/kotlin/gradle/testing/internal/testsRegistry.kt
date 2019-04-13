@@ -34,31 +34,34 @@ private val Project.allTestsTask: TaskHolder<AggregateTestReport>
 private fun cleanTaskName(taskName: String) = "clean" + taskName.capitalize()
 
 @Suppress("UnstableApiUsage")
-internal fun registerTestTask(task: AbstractTestTask) {
-    val project = task.project
+internal fun registerTestTask(taskHolder: TaskHolder<AbstractTestTask>) {
+    val project = taskHolder.project
     val allTests = project.allTestsTask.doGetTask()
 
-    project.tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(task)
-    project.tasks.maybeCreate(cleanTaskName(allTests.name)).dependsOn(cleanTaskName(task.name))
+    val tasks = project.tasks
+    tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(taskHolder.name)
+    tasks.maybeCreate(cleanTaskName(allTests.name)).dependsOn(cleanTaskName(taskHolder.name))
+    allTests.dependsOn(taskHolder.name)
 
-    allTests.dependsOn(task)
-    allTests.registerTestTask(task)
+    taskHolder.configure { task ->
+        allTests.registerTestTask(task)
 
-    project.gradle.taskGraph.whenReady {
-        if (it.hasTask(allTests)) {
-            // when [allTestsTask] task enabled, test failure should be reported only on [allTestsTask],
-            // not at individual target's test tasks. To do that, we need:
-            // - disable all reporting in test tasks
-            // - enable [checkFailedTests] on [allTestsTask]
+        project.gradle.taskGraph.whenReady {
+            if (it.hasTask(allTests)) {
+                // when [allTestsTask] task enabled, test failure should be reported only on [allTestsTask],
+                // not at individual target's test tasks. To do that, we need:
+                // - disable all reporting in test tasks
+                // - enable [checkFailedTests] on [allTestsTask]
 
-            task.ignoreFailures = true
-            task.reports.html.isEnabled = false
-            task.reports.junitXml.isEnabled = false
+                task.ignoreFailures = true
+                task.reports.html.isEnabled = false
+                task.reports.junitXml.isEnabled = false
 
-            allTests.checkFailedTests = true
-            allTests.ignoreFailures = false
+                allTests.checkFailedTests = true
+                allTests.ignoreFailures = false
+            }
         }
-    }
 
-    ijListenTestTask(task)
+        ijListenTestTask(task)
+    }
 }

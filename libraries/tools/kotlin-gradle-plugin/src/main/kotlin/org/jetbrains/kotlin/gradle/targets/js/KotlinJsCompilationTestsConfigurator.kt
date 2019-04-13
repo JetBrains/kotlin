@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -40,7 +40,7 @@ internal class KotlinJsCompilationTestsConfigurator(
         // apply plugin (cannot do it lazy)
         val nodeJs = NodeJsPlugin[target.project]
 
-        registerTask(project, testTaskName, KotlinJsTest::class.java) { testJs ->
+        val testJs = project.createOrRegisterTask<KotlinJsTest>(testTaskName) { testJs ->
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
             testJs.dependsOn(compileTestKotlin2Js, nodeJs.nodeJsSetupTask)
@@ -54,7 +54,8 @@ internal class KotlinJsCompilationTestsConfigurator(
             testJs.nodeModulesToLoad.add(compileTestKotlin2Js.outputFile.name)
 
             testJs.configureConventions()
-            registerTestTask(testJs)
         }
+
+        registerTestTask(testJs)
     }
 }

@@ -25,6 +25,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
+import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
@@ -272,7 +273,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                     isVisible = false
                     isCanBeResolved = true // Needed for IDE import
                     description =
-                            "Runtime dependencies for $compilation (deprecated, use '${compilation.runtimeOnlyConfigurationName} ' instead)."
+                        "Runtime dependencies for $compilation (deprecated, use '${compilation.runtimeOnlyConfigurationName} ' instead)."
                 }
 
                 val runtimeOnlyConfiguration = configurations.maybeCreate(compilation.runtimeOnlyConfigurationName).apply {
@@ -361,23 +362,27 @@ abstract class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilatio
     }
 
     override fun configureTest(target: KotlinOnlyTarget<KotlinCompilationType>) {
-        val testCompilation = target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME) as? KotlinCompilationToRunnableFiles<*>
-            ?: return // Otherwise, there is no runtime classpath
+        val testCompilation =
+            target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME) as? KotlinCompilationToRunnableFiles<*>
+                ?: return // Otherwise, there is no runtime classpath
 
-        target.project.tasks.create(lowerCamelCaseName(target.disambiguationClassifier, testTaskNameSuffix), KotlinJvmTest::class.java).apply {
-            registerTestTask(this)
+        val testTaskName = lowerCamelCaseName(target.disambiguationClassifier, testTaskNameSuffix)
+        val testTask = target.project.createOrRegisterTask<KotlinJvmTest>(testTaskName) { testTask ->
+            testTask.targetName = target.disambiguationClassifier
+        }
 
-            targetName = target.disambiguationClassifier
-
-            project.afterEvaluate {
-                // use afterEvaluate to override the JavaPlugin defaults for Test tasks
-                conventionMapping.map("testClassesDirs") { testCompilation.output.classesDirs }
-                conventionMapping.map("classpath") { testCompilation.runtimeDependencyFiles }
-                description = "Runs the unit tests."
-                group = JavaBasePlugin.VERIFICATION_GROUP
-                target.project.tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)?.dependsOn(this@apply)
+        testTask.project.afterEvaluate {
+            // use afterEvaluate to override the JavaPlugin defaults for Test tasks
+            testTask.configure { testTask ->
+                testTask.conventionMapping.map("testClassesDirs") { testCompilation.output.classesDirs }
+                testTask.conventionMapping.map("classpath") { testCompilation.runtimeDependencyFiles }
+                testTask.description = "Runs the unit tests."
+                testTask.group = JavaBasePlugin.VERIFICATION_GROUP
+                testTask.project.tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)?.dependsOn(testTask)
             }
         }
+
+        registerTestTask(testTask)
     }
 
     private fun addJar(configuration: Configuration, jarArtifact: PublishArtifact) {

@@ -129,24 +129,23 @@ open class KotlinNativeTargetConfigurator(
         val taskName = binary.runTaskName ?: return
 
         if (binary.isDefaultTestExecutable) {
-            tasks.create(taskName, KotlinNativeTest::class.java).apply {
-                tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(this)
+            val testTask = createOrRegisterTask<KotlinNativeTest>(taskName) { testTask ->
+                testTask.group = LifecycleBasePlugin.VERIFICATION_GROUP
+                testTask.description = "Executes Kotlin/Native unit tests for target ${binary.target.name}."
+                testTask.targetName = binary.compilation.target.targetName
 
-                group = LifecycleBasePlugin.VERIFICATION_GROUP
-                description = "Executes Kotlin/Native unit tests for target ${binary.target.name}."
-                targetName = binary.compilation.target.targetName
+                testTask.enabled = binary.target.konanTarget.isCurrentHost
 
-                enabled = binary.target.konanTarget.isCurrentHost
+                testTask.executable = binary.outputFile
+                testTask.workingDir = project.projectDir.absolutePath
 
-                executable = binary.outputFile
-                workingDir = project.projectDir.absolutePath
+                testTask.onlyIf { binary.outputFile.exists() }
+                testTask.dependsOn(binary.linkTaskName)
 
-                onlyIf { binary.outputFile.exists() }
-                dependsOn(binary.linkTaskName)
-                configureConventions()
-
-                registerTestTask(this)
+                testTask.configureConventions()
             }
+
+            registerTestTask(testTask)
         } else {
             tasks.create(taskName, Exec::class.java).apply {
                 group = RUN_GROUP

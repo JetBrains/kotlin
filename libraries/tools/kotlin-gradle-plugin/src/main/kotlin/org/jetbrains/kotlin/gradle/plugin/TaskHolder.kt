@@ -24,7 +24,9 @@ import org.gradle.api.Project
  * Reference to a org.gradle.api.Task or  org.gradle.api.TaskProvider necessary in order to support flexible creation of tasks.
  * For gradle versions < 4.9 tasks are created meanwhile for gradle with version >= 4.9 tasks are registered
  */
-interface TaskHolder<T : Task> {
+interface TaskHolder<out T : Task> {
+    val project: Project
+    val name: String
 
     /**
      * Returns Task itself if task was created or TaskProvider<Task> if task was registered.
