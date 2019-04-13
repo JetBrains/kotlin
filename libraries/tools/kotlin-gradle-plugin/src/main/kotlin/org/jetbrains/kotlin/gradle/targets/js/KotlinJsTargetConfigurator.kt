@@ -27,7 +27,7 @@ class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
 
         platformTarget.compilations.all {
             it.compileKotlinTask.kotlinOptions {
-                moduleKind = "umd"
+                moduleKind = "commonjs"
                 sourceMap = true
                 sourceMapEmbedSources = null
             }
