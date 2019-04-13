@@ -33,7 +33,7 @@ import java.lang.reflect.Modifier;
 public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortable {
 
     static {
-        KotlinTestUtils.setIdeaSystemPathProperties();
+        IdeaSystemPropertiesForParallelRunConfigurator.setProperties();
     }
 
     private final Runner delegateRunner;

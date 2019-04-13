@@ -41,6 +41,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.test.IdeaSystemPropertiesForParallelRunConfigurator;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.testFramework.MockComponentManagerCreationTracer;
 import org.jetbrains.kotlin.types.FlexibleTypeImpl;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -67,6 +69,7 @@ public abstract class KtUsefulTestCase extends TestCase {
     private Application application;
 
     static {
+        IdeaSystemPropertiesForParallelRunConfigurator.setProperties();
         Logger.setFactory(TestLoggerFactory.class);
     }
 

@@ -115,19 +115,6 @@ public class KotlinTestUtils {
 
     private static final List<File> filesToDelete = new ArrayList<>();
 
-    // It's important that this is not created per test, but rather per process.
-    public static final String IDEA_SYSTEM_PATH;
-
-    static {
-        try {
-            IDEA_SYSTEM_PATH = FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), "idea-system", "", false).getPath();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
     /**
      * Syntax:
      *
@@ -1323,10 +1310,5 @@ public class KotlinTestUtils {
         }
         // Several extension if name contains another dot
         return name.indexOf('.', firstDotIndex + 1) != -1;
-    }
-
-    public static void setIdeaSystemPathProperties() {
-        System.setProperty(PROPERTY_SYSTEM_PATH, IDEA_SYSTEM_PATH);
-        System.setProperty(PROPERTY_CONFIG_PATH, IDEA_SYSTEM_PATH + "/config");
     }
 }
