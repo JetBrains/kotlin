@@ -38,7 +38,7 @@ internal class KotlinJsCompilationTestsConfigurator(
 
     fun configure() {
         // apply plugin (cannot do it lazy)
-        val nodeJs = NodeJsPlugin[target.project]
+        val nodeJs = NodeJsPlugin.apply(target.project).root
 
         val testJs = project.createOrRegisterTask<KotlinJsTest>(testTaskName) { testJs ->
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
@@ -56,6 +56,16 @@ internal class KotlinJsCompilationTestsConfigurator(
             testJs.configureConventions()
         }
 
+        testJs.doGetTask().useNodeJs { }
+
         registerTestTask(testJs)
+
+//        project.afterEvaluate {
+//            testJs.configure {
+//                if (it.testFramework == null) {
+//                    it.useNodeJs { }
+//                }
+//            }
+//        }
     }
 }
