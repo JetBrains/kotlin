@@ -12,7 +12,6 @@ import org.gradle.api.Project
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import java.io.File
 
 class NpmProjectLayout(
@@ -34,18 +33,6 @@ class NpmProjectLayout(
         exec.workingDir = nodeWorkDir
         exec.executable = project.nodeJs.root.environment.nodeExecutable
         exec.args = listOf(findModule(tool)) + args
-    }
-
-    val hoistGradleNodeModules: Boolean
-        get() = project.nodeJs.root.packageManager.getHoistGradleNodeModules(project)
-
-    val gradleNodeModulesDir: File
-        get() =
-            if (hoistGradleNodeModules) project.rootProject.npmProject.nodeModulesDir
-            else nodeModulesDir
-
-    fun moduleOutput(compilationTask: Kotlin2JsCompile): File {
-        return gradleNodeModulesDir.resolve(compilationTask.outputFile.name)
     }
 
     @TailRecursive
