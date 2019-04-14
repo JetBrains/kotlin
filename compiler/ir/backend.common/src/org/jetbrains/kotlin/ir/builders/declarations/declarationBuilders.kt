@@ -81,6 +81,26 @@ inline fun IrDeclarationContainer.addProperty(b: IrPropertyBuilder.() -> Unit): 
         property.parent = this@addProperty
     }
 
+inline fun IrProperty.addGetter(b: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
+    IrFunctionBuilder().run {
+        name = Name.special("<get-${this@addGetter.name}>")
+        b()
+        buildFun().also { getter ->
+            this@addGetter.getter = getter
+            getter.parent = this@addGetter.parent
+        }
+    }
+
+inline fun IrProperty.addSetter(b: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
+    IrFunctionBuilder().run {
+        name = Name.special("<set-${this@addSetter.name}>")
+        b()
+        buildFun().also { setter ->
+            this@addSetter.setter = setter
+            setter.parent = this@addSetter.parent
+        }
+    }
+
 fun IrFunctionBuilder.buildFun(): IrSimpleFunction {
     val wrappedDescriptor = WrappedSimpleFunctionDescriptor()
     return IrFunctionImpl(
@@ -181,6 +201,34 @@ inline fun IrFunction.addValueParameter(b: IrValueParameterBuilder.() -> Unit): 
 fun IrFunction.addValueParameter(name: String, type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
     addValueParameter {
         this.name = Name.identifier(name)
+        this.type = type
+        this.origin = origin
+    }
+
+inline fun IrSimpleFunction.addDispatchReceiver(b: IrValueParameterBuilder.() -> Unit): IrValueParameter =
+    IrValueParameterBuilder().run {
+        b()
+        index = -1
+        name = "this".synthesizedName
+        build().also { receiver ->
+            dispatchReceiverParameter = receiver
+            receiver.parent = this@addDispatchReceiver
+        }
+    }
+
+inline fun IrSimpleFunction.addExtensionReceiver(b: IrValueParameterBuilder.() -> Unit): IrValueParameter =
+    IrValueParameterBuilder().run {
+        b()
+        index = -1
+        name = "receiver".synthesizedName
+        build().also { receiver ->
+            extensionReceiverParameter = receiver
+            receiver.parent = this@addExtensionReceiver
+        }
+    }
+
+fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED ): IrValueParameter =
+    addExtensionReceiver {
         this.type = type
         this.origin = origin
     }
