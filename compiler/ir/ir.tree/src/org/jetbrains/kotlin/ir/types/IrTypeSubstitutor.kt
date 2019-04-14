@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
 
 class IrTypeSubstitutor(
@@ -20,44 +18,53 @@ class IrTypeSubstitutor(
 ) {
     private val substitution = typeParameters.zip(typeArguments).toMap()
 
-    fun substitute(type: IrType) = if (substitution.isNotEmpty()) doSubstituteType(type) else type
+    private fun IrType.typeParameterConstructor(): IrTypeParameterSymbol? {
+        return if (this is IrSimpleType) classifier as? IrTypeParameterSymbol
+        else null
+    }
 
-    private fun doSubstituteTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument {
+    fun substitute(type: IrType): IrType {
+        if (substitution.isEmpty()) return type
+
+        return type.typeParameterConstructor()?.let {
+            val typeArgument = substitution.getValue(it)
+            when (typeArgument) {
+                is IrStarProjection -> irBuiltIns.anyNType
+                is IrTypeProjection -> typeArgument.type
+                else -> error("unknown type argument")
+            }
+        } ?: substituteType(type)
+    }
+
+    private fun substituteType(irType: IrType): IrType {
+        return when (irType) {
+            is IrDynamicType -> irType
+            is IrErrorType -> irType
+            else -> {
+                require(irType is IrSimpleType)
+                with(irType.toBuilder()) {
+                    arguments = irType.arguments.map { substituteTypeArgument(it) }
+                    buildSimpleType()
+                }
+            }
+        }
+    }
+
+    private fun substituteTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument {
         if (typeArgument is IrStarProjection) return typeArgument
 
         require(typeArgument is IrTypeProjection)
 
-        return if (typeArgument is IrSimpleType) {
-            val classifier = typeArgument.classifier
-            if (classifier is IrTypeParameterSymbol) substitution.getValue(classifier)
-            else {
-                makeTypeProjection(doSubstituteType(typeArgument), Variance.INVARIANT)
-            }
-        } else makeTypeProjection(doSubstituteType(typeArgument.type), typeArgument.variance)
-    }
-
-    private fun doSubstituteType(type: IrType): IrType = when (type) {
-        is IrErrorType -> type
-        is IrDynamicType -> type
-        is IrSimpleType -> {
+        val type = typeArgument.type
+        if (type is IrSimpleType) {
             val classifier = type.classifier
             if (classifier is IrTypeParameterSymbol) {
-                val argument = substitution.getValue(classifier)
-                if (argument is IrTypeProjection) {
-                    argument.type
-                } else irBuiltIns.anyNType // StarProjection
-            } else {
-                type.run {
-                    IrSimpleTypeImpl(
-                        originalKotlinType,
-                        classifier,
-                        hasQuestionMark,
-                        arguments.map { doSubstituteTypeArgument(it) },
-                        annotations
-                    )
-                }
+                val newArgument = substitution.getValue(classifier)
+                return if (newArgument is IrTypeProjection) {
+                    makeTypeProjection(newArgument.type, TypeSubstitutor.combine(typeArgument.variance, newArgument.variance))
+                } else newArgument
             }
         }
-        else -> error("Unknown type")
+        return makeTypeProjection(substituteType(typeArgument.type), typeArgument.variance)
     }
 }
