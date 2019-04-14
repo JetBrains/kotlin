@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -182,6 +183,17 @@ class IrBuiltIns(
     val primitiveTypes = listOf(bool, char, byte, short, int, long, float, double)
     val primitiveTypesWithComparisons = listOf(char, byte, short, int, long, float, double)
     val primitiveFloatingPointTypes = listOf(float, double)
+
+    val primitiveTypeToIrType = mapOf(
+        PrimitiveType.BOOLEAN to booleanType,
+        PrimitiveType.CHAR to charType,
+        PrimitiveType.BYTE to byteType,
+        PrimitiveType.SHORT to shortType,
+        PrimitiveType.INT to intType,
+        PrimitiveType.FLOAT to floatType,
+        PrimitiveType.LONG to longType,
+        PrimitiveType.DOUBLE to doubleType
+    )
 
     val lessFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType(OperatorNames.LESS)
     val lessOrEqualFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType(OperatorNames.LESS_OR_EQUAL)

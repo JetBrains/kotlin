@@ -302,7 +302,7 @@ class ExpressionCodegen(
     }
 
     private fun generateCall(expression: IrFunctionAccessExpression, superQualifier: ClassDescriptor?, data: BlockInfo): PromisedValue {
-        classCodegen.context.irIntrinsics.getIntrinsic(expression.descriptor.original as CallableMemberDescriptor)
+        classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
             ?.invoke(expression, this, data)?.let { return it.coerce(expression.asmType) }
         val isSuperCall = superQualifier != null
         val callable = resolveToCallable(expression, isSuperCall)

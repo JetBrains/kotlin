@@ -154,7 +154,7 @@ private class AnnotationLowering(private val context: JvmBackendContext) : FileL
     }
 
     private fun IrCall.isGetJava(): Boolean =
-        context.irIntrinsics.getIntrinsic(descriptor) is KClassJavaProperty
+        context.irIntrinsics.getIntrinsic(symbol) is KClassJavaProperty
 }
 
 private fun IrClassSymbol.getFunctionByName(name: String, numParams: Int): IrSimpleFunctionSymbol =

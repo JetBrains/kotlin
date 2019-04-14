@@ -19,7 +19,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 abstract class IntrinsicMethod {
     open fun toCallable(
-        expression: IrMemberAccessExpression,
+        expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         context: JvmBackendContext
     ): IrIntrinsicFunction = TODO("implement toCallable() or invoke() of $this")

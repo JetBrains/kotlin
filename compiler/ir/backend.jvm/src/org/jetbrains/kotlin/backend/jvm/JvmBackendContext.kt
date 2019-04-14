@@ -39,7 +39,7 @@ class JvmBackendContext(
     private val symbolTable = symbolTable.lazyWrapper
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
 
-    val irIntrinsics = IrIntrinsicMethods(irBuiltIns)
+    val irIntrinsics = IrIntrinsicMethods(irBuiltIns, ir.symbols)
 
     override var inVerbosePhase: Boolean = false
 

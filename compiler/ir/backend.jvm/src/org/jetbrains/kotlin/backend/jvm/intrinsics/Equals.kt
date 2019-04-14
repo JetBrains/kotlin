@@ -61,7 +61,7 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
     private val boxedOperandType = AsmUtil.boxType(operandType)
 
     override fun toCallable(
-        expression: IrMemberAccessExpression,
+        expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         context: JvmBackendContext
     ): IrIntrinsicFunction {
