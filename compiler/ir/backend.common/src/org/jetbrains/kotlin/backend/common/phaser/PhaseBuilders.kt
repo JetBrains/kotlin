@@ -239,3 +239,16 @@ fun <Context : CommonBackendContext, OldData, NewData> transform(op: (OldData) -
     object : CompilerPhase<Context, OldData, NewData> {
         override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<OldData>, context: Context, input: OldData) = op(input)
     }
+
+fun <Context : CommonBackendContext, ExtendedContext : CommonBackendContext, Input, Output> withExtendedContext(
+    extend: (Context) -> ExtendedContext, phase: CompilerPhase<ExtendedContext, Input, Output>
+) = object : CompilerPhase<Context, Input, Output> {
+    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
+        phase.invoke(phaseConfig, phaserState, extend(context), input)
+
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AnyNamedPhase>> {
+        return phase.getNamedSubphases(startDepth)
+    }
+
+    override val stickyPostconditions = phase.stickyPostconditions
+}
