@@ -54,7 +54,7 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         class ResolvedNow(val resolution: ResolvedProject) : ResolutionCallResult()
     }
 
-    private val nodeJs = NodeJsPlugin.apply(rootProject)
+    private val nodeJs = NodeJsPlugin.apply(rootProject).root
     private val packageManager = nodeJs.packageManager
     private val hoistGradleNodeModules = packageManager.getHoistGradleNodeModules(rootProject)
     private val npmPackages = mutableListOf<NpmPackage>()

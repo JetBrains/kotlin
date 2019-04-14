@@ -28,7 +28,7 @@ object Yarn : NpmApi {
         vararg args: String,
         npmProjectLayout: NpmProjectLayout = NpmProjectLayout[project]
     ) {
-        val nodeJsEnv = NodeJsPlugin.apply(project).environment
+        val nodeJsEnv = NodeJsPlugin.apply(project).root.environment
         val yarnEnv = YarnPlugin.apply(project).environment
 
         val packageJsonHashFile = project.packageJsonHashFile

@@ -54,11 +54,7 @@ class KotlinNodeJsTestRunner : KotlinJsTestFramework {
 
         val args = nodeJsArgs +
                 testRuntimeNodeModules.map {
-                    npmProjectLayout.nodeModulesDir.resolve(it).also { file ->
-                        check(file.isFile) {
-                            "Cannot find ${file.canonicalPath}"
-                        }
-                    }.canonicalPath
+                    npmProjectLayout.findModule(it)
                 } +
                 cliArgs.toList()
 

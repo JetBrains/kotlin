@@ -15,14 +15,16 @@ open class YarnPlugin : Plugin<Project> {
             "YarnPlugin can be applied only to root project"
         }
 
+        val nodeJs = NodeJsPlugin.apply(this).root
+
         this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
         tasks.create(YarnSetupTask.NAME, YarnSetupTask::class.java) {
-            it.dependsOn(NodeJsPlugin[this].nodeJsSetupTask)
+            it.dependsOn(nodeJs.nodeJsSetupTask)
         }
     }
 
     companion object {
-        operator fun get(project: Project): YarnRootExtension {
+        fun apply(project: Project): YarnRootExtension {
             val rootProject = project.rootProject
             rootProject.plugins.apply(YarnPlugin::class.java)
             return rootProject.extensions.getByName(YarnRootExtension.YARN) as YarnRootExtension

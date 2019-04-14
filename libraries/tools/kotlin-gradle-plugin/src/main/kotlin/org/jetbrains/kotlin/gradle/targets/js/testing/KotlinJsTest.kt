@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
@@ -14,13 +15,14 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
-import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
+import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunner
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 open class KotlinJsTest : KotlinTest() {
     @Internal
-    private var testFramework: KotlinJsTestFramework = KotlinNodeJsTestRunner()
+    @SkipWhenEmpty
+    internal var testFramework: KotlinJsTestFramework? = null
 
     @Input
     var debug: Boolean = false
@@ -37,13 +39,20 @@ open class KotlinJsTest : KotlinTest() {
 
     fun useKarma(body: KotlinKarma.() -> Unit) = use(KotlinKarma(), body)
 
-    private inline fun <T : KotlinJsTestFramework> use(runner: T, body: T.() -> Unit) {
-        testFramework = runner.also(body)
+    private inline fun <T : KotlinJsTestFramework> use(runner: T, body: T.() -> Unit): T {
+        check(testFramework == null) {
+            "testFramework already configured for task ${this.path}"
+        }
+
+        val testFramework = runner.also(body)
+        this.testFramework = testFramework
 
         val dependenciesHolder = runtimeDependencyHandler
         if (dependenciesHolder != null) {
             testFramework.configure(dependenciesHolder)
         }
+
+        return testFramework
     }
 
     override fun executeTests() {
@@ -57,7 +66,7 @@ open class KotlinJsTest : KotlinTest() {
         NpmResolver.resolve(project)
 
         forkOptions.workingDir = NpmProjectLayout[project].nodeWorkDir
-        forkOptions.executable = NodeJsPlugin[project].buildEnv().nodeExecutable
+        forkOptions.executable = NodeJsPlugin.apply(project).root.environment.nodeExecutable
 
         val nodeJsArgs = mutableListOf<String>()
 
@@ -65,6 +74,6 @@ open class KotlinJsTest : KotlinTest() {
             nodeJsArgs.add("--inspect-brk")
         }
 
-        return testFramework.createTestExecutionSpec(this, forkOptions, nodeJsArgs)
+        return testFramework!!.createTestExecutionSpec(this, forkOptions, nodeJsArgs)
     }
 }
