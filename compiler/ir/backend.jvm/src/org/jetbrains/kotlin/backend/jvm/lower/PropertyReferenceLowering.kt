@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -342,14 +343,20 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
 
                 expression.getter?.owner?.let { getter ->
                     buildOverride(superClass.functions.single { it.name.asString() == "get" }) { valueParameters ->
-                        irGet(getter.returnType, null, getter.symbol).apply { setReceiversOn(this, valueParameters) }
+                        irGet(getter.returnType, null, getter.symbol).apply {
+                            copyTypeArgumentsFrom(expression)
+                            setReceiversOn(this, valueParameters)
+                        }
                     }
                 }
 
                 expression.setter?.owner?.let { setter ->
                     buildOverride(superClass.functions.single { it.name.asString() == "set" }) { valueParameters ->
                         val value = irGet(valueParameters.last())
-                        irSet(setter.returnType, null, setter.symbol, value).apply { setReceiversOn(this, valueParameters) }
+                        irSet(setter.returnType, null, setter.symbol, value).apply {
+                            copyTypeArgumentsFrom(expression)
+                            setReceiversOn(this, valueParameters)
+                        }
                     }
                 }
 

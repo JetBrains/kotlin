@@ -188,7 +188,7 @@ open class DeepCopyIrTreeWithSymbols(
             }
         }
 
-    private fun IrAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
+    private fun IrMutableAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
         declaration.annotations.transformTo(annotations)
     }
 
@@ -211,7 +211,7 @@ open class DeepCopyIrTreeWithSymbols(
             this.getter = declaration.getter?.transform()
             this.setter = declaration.setter?.transform()
             this.backingField?.let {
-                it.correspondingProperty = this
+                it.correspondingPropertySymbol = symbol
             }
         }
 

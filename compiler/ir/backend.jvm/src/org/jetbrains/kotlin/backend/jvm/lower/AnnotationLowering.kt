@@ -129,7 +129,7 @@ private class AnnotationLowering(private val context: JvmBackendContext) : FileL
             ?.takeIf { (it.parent as? IrClass)?.isAnnotationClass ?: false }
             ?: return super.visitCall(expression)
 
-        val field = function.correspondingProperty?.backingField
+        val field = function.correspondingPropertySymbol?.owner?.backingField
             ?: return super.visitCall(expression)
 
         // Wrap the property access with a call to getOrCreateKClass(es) and fix the type
@@ -154,7 +154,7 @@ private class AnnotationLowering(private val context: JvmBackendContext) : FileL
     }
 
     private fun IrCall.isGetJava(): Boolean =
-        context.irIntrinsics.getIntrinsic(descriptor.original) is KClassJavaProperty
+        context.irIntrinsics.getIntrinsic(descriptor) is KClassJavaProperty
 }
 
 private fun IrClassSymbol.getFunctionByName(name: String, numParams: Int): IrSimpleFunctionSymbol =

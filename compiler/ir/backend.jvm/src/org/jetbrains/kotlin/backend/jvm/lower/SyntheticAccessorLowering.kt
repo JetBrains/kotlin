@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
+import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -125,7 +126,8 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         IrDelegatingConstructorCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             context.irBuiltIns.unitType,
-            targetSymbol, targetSymbol.descriptor, targetSymbol.owner.typeParameters.size
+            targetSymbol, targetSymbol.descriptor,
+            targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
         ).also {
             copyAllParamsToArgs(it, accessor)
         }
@@ -326,11 +328,15 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         call: IrFunctionAccessExpression,
         syntheticFunction: IrFunction
     ) {
+        var typeArgumentOffset = 0
+        if (syntheticFunction is IrConstructor) {
+            call.passTypeArgumentsFrom(syntheticFunction.parentAsClass)
+            typeArgumentOffset = syntheticFunction.parentAsClass.typeParameters.size
+        }
+        call.passTypeArgumentsFrom(syntheticFunction, offset = typeArgumentOffset)
+
         var offset = 0
         val delegateTo = call.symbol.owner
-        syntheticFunction.typeParameters.forEachIndexed { i, typeParam ->
-            call.putTypeArgument(i, IrSimpleTypeImpl(typeParam.symbol, false, emptyList(), emptyList()))
-        }
         delegateTo.dispatchReceiverParameter?.let {
             call.dispatchReceiver =
                 IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)

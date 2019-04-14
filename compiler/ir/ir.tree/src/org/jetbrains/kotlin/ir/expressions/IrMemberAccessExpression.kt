@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -59,6 +61,9 @@ val CallableDescriptor.typeParametersCount: Int
 
 fun IrMemberAccessExpression.getTypeArgumentOrDefault(typeParameterDescriptor: TypeParameterDescriptor) =
     getTypeArgument(typeParameterDescriptor)?.toKotlinType() ?: typeParameterDescriptor.defaultType
+
+fun IrMemberAccessExpression.getTypeArgumentOrDefault(irTypeParameter: IrTypeParameter) =
+    getTypeArgument(irTypeParameter.index) ?: irTypeParameter.defaultType
 
 interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationReference {
     override val descriptor: FunctionDescriptor

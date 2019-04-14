@@ -148,6 +148,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                     expression.startOffset, expression.endOffset, expression.type, newCallee.symbol, expression.origin
                 )
 
+                newCall.copyTypeArgumentsFrom(expression)
                 newCall.putValueArgument(0, dispatchReceiver)
                 for (i in 1..newCallee.valueParameters.lastIndex) {
                     newCall.putValueArgument(i, expression.getValueArgument(i - 1))
@@ -166,7 +167,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                 val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(
                     expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol, newCallee.descriptor,
-                    classConstructor.typeParameters.size
+                    expression.typeArgumentsCount
                 ).apply { copyTypeArgumentsFrom(expression) }
 
                 newCall.putValueArgument(0, dispatchReceiver)

@@ -38,7 +38,7 @@ interface IrExternalPackageFragment : IrPackageFragment {
     override val symbol: IrExternalPackageFragmentSymbol
 }
 
-interface IrFile : IrPackageFragment, IrAnnotationContainer, IrMetadataSourceOwner {
+interface IrFile : IrPackageFragment, IrMutableAnnotationContainer, IrMetadataSourceOwner {
     override val symbol: IrFileSymbol
 
     val fileEntry: SourceManager.FileEntry

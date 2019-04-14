@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -233,6 +234,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         ).apply {
             descriptor.bind(this)
             parent = irClass
+            copyTypeParametersFrom(target)
 
             // Have to specify type explicitly to prevent an attempt to remap it.
             dispatchReceiverParameter = irClass.thisReceiver?.copyTo(this, type = irClass.defaultType)
@@ -275,6 +277,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                             origin = IrStatementOrigin.BRIDGE_DELEGATION,
                             superQualifierSymbol = if (invokeStatically) maybeOrphanedTarget.parentAsClass.symbol else null
                         ).apply {
+                            passTypeArgumentsFrom(this@createBridgeBody)
                             dispatchReceiver = irImplicitCast(irGet(dispatchReceiverParameter!!), dispatchReceiverParameter!!.type)
                             extensionReceiverParameter?.let {
                                 extensionReceiver = irImplicitCast(irGet(it), extensionReceiverParameter!!.type)

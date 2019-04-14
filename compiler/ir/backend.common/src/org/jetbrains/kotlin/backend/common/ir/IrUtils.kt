@@ -153,6 +153,7 @@ fun IrValueParameter.copyTo(
         descriptor.bind(it)
         it.parent = irFunction
         it.defaultValue = defaultValueCopy
+        it.annotations.addAll(annotations.map { it.deepCopyWithSymbols() })
     }
 }
 
@@ -249,6 +250,12 @@ fun IrFunction.copyValueParametersToStatic(
                 index = oldValueParameter.index + shift
             )
         )
+    }
+}
+
+fun IrFunctionAccessExpression.passTypeArgumentsFrom(irFunction: IrTypeParametersContainer, offset: Int = 0) {
+    irFunction.typeParameters.forEachIndexed { i, param ->
+        putTypeArgument(i + offset, param.defaultType)
     }
 }
 
@@ -464,3 +471,6 @@ fun IrClass.addFakeOverrides() {
 
     declarations += fakeOverriddenFunctions.values
 }
+
+fun IrValueParameter.isInlineParameter() =
+    !isNoinline && !type.isNullable() && type.isFunctionOrKFunction()
