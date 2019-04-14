@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -160,7 +159,7 @@ open class DefaultArgumentStubGenerator(
         newIrFunction: IrFunction,
         params: MutableList<IrVariable>
     ): IrExpression {
-        val dispatchCall = irCall(irFunction).apply {
+        val dispatchCall = irCall(irFunction.symbol).apply {
             passTypeArgumentsFrom(newIrFunction)
             dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
             extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }

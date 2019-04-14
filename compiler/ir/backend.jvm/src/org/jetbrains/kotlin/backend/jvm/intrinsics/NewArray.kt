@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -21,11 +20,11 @@ object NewArray : IntrinsicMethod() {
         signature: JvmMethodSignature,
         context: JvmBackendContext
     ): IrIntrinsicFunction {
-        val ktType = expression.type
+        val irType = expression.type
         return object : IrIntrinsicFunction(expression, signature, context) {
             override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
                 super.invoke(v, codegen, data)
-                codegen.newArrayInstruction(ktType.toKotlinType())
+                codegen.newArrayInstruction(irType)
                 return StackValue.onStack(returnType)
             }
 

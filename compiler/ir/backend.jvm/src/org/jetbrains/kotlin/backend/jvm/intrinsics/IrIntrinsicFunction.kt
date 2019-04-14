@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -23,7 +22,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
 open class IrIntrinsicFunction(
-    val expression: IrMemberAccessExpression,
+    val expression: IrFunctionAccessExpression,
     val signature: JvmMethodSignature,
     val context: JvmBackendContext,
     val argsTypes: List<Type> = expression.argTypes(context)
@@ -80,7 +79,7 @@ open class IrIntrinsicFunction(
                 argument != null ->
                     genArg(argument, codegen, i + offset, data)
                 descriptor.isVararg -> {
-                    val parameterType = codegen.typeMapper.mapType(descriptor.type)
+                    val parameterType = codegen.typeMapper.kotlinTypeMapper.mapType(descriptor.type)
                     StackValue.operation(parameterType) {
                         it.aconst(0)
                         it.newarray(AsmUtil.correctElementType(parameterType))
@@ -98,7 +97,7 @@ open class IrIntrinsicFunction(
 
     companion object {
         fun create(
-            expression: IrMemberAccessExpression,
+            expression: IrFunctionAccessExpression,
             signature: JvmMethodSignature,
             context: JvmBackendContext,
             argsTypes: List<Type> = expression.argTypes(context),
@@ -111,7 +110,7 @@ open class IrIntrinsicFunction(
         }
 
         fun createWithResult(
-            expression: IrMemberAccessExpression, signature: JvmMethodSignature,
+            expression: IrFunctionAccessExpression, signature: JvmMethodSignature,
             context: JvmBackendContext,
             argsTypes: List<Type> = expression.argTypes(context),
             invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Type
@@ -123,7 +122,7 @@ open class IrIntrinsicFunction(
         }
 
         fun create(
-            expression: IrMemberAccessExpression,
+            expression: IrFunctionAccessExpression,
             signature: JvmMethodSignature,
             context: JvmBackendContext,
             type: Type,
@@ -134,17 +133,17 @@ open class IrIntrinsicFunction(
     }
 }
 
-fun IrMemberAccessExpression.argTypes(context: JvmBackendContext): ArrayList<Type> {
-    val callableMethod = context.state.typeMapper.mapToCallableMethod(descriptor as FunctionDescriptor, false)
+fun IrFunctionAccessExpression.argTypes(context: JvmBackendContext): ArrayList<Type> {
+    val callableMethod = context.state.typeMapper.mapToCallableMethod(descriptor, false)
     return arrayListOf<Type>().apply {
         callableMethod.dispatchReceiverType?.let { add(it) }
         addAll(callableMethod.getAsmMethod().argumentTypes)
     }
 }
 
-fun IrMemberAccessExpression.receiverAndArgs(): List<IrExpression> {
+fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
     return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
-            descriptor.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
+            symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
 }
 
 fun List<IrExpression>.asmTypes(context: JvmBackendContext): List<Type> {

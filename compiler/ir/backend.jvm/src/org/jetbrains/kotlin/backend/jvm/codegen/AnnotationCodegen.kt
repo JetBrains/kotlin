@@ -107,7 +107,7 @@ class AnnotationCodegen(
         if (declaration is IrValueParameter && isInvisibleFromTheOutside(declaration.parent as? IrDeclaration)) return
 
         // No need to annotate annotation methods since they're always non-null
-        if (declaration is IrSimpleFunction && declaration.correspondingProperty != null &&
+        if (declaration is IrSimpleFunction && declaration.correspondingPropertySymbol != null &&
             declaration.parentAsClass.isAnnotationClass
         ) {
             return
@@ -276,7 +276,7 @@ class AnnotationCodegen(
 }
 
 interface InnerClassConsumer {
-    fun addInnerClassInfoFromAnnotation(irClass: IrClass)
+    fun addInnerClassInfoFromAnnotation(innerClass: IrClass)
 }
 
 private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {

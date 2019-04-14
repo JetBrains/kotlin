@@ -1,5 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND: JS, JS_IR, NATIVE, JVM_IR
+// TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
 
 package test
@@ -24,12 +24,12 @@ fun box(): String {
     check("test.C?", typeOf<C?>())
 
     check("kotlin.collections.List<kotlin.String>", typeOf<List<String>>())
-    check("kotlin.collections.Map<in kotlin.Number, kotlin.Any?>?", typeOf<Map<in Number, *>?>())
-    check("kotlin.Enum<out kotlin.Enum<*>>", typeOf<Enum<*>>())
+    check("kotlin.collections.Map<in kotlin.Number, *>?", typeOf<Map<in Number, *>?>())
+    check("kotlin.Enum<*>", typeOf<Enum<*>>())
     check("kotlin.Enum<kotlin.annotation.AnnotationRetention>", typeOf<Enum<AnnotationRetention>>())
 
     check("kotlin.Array<kotlin.Any>", typeOf<Array<Any>>())
-    check("kotlin.Array<out kotlin.Any?>", typeOf<Array<*>>())
+    check("kotlin.Array<*>", typeOf<Array<*>>())
     check("kotlin.Array<kotlin.IntArray>", typeOf<Array<IntArray>>())
     check("kotlin.Array<in kotlin.Array<test.C>?>", typeOf<Array<in Array<C>?>>())
 

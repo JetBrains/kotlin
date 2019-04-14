@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -109,7 +108,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                     val vararg = IrVarargImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         context.ir.symbols.array.typeWith(context.irBuiltIns.anyNType),
-                        context.irBuiltIns.anyClass.typeWith(),
+                        context.irBuiltIns.anyNType,
                         (0 until argumentsCount).map { i -> expression.getValueArgument(i)!! }
                     )
                     val invokeFun = context.ir.symbols.functionN.owner.declarations.single {
@@ -595,27 +594,4 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
     companion object {
         const val MAX_ARGCOUNT_WITHOUT_VARARG = 22
     }
-}
-
-// TODO: Move to IrUtils
-private fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrType {
-    if (this !is IrSimpleType) return this
-
-    substitutionMap[classifier]?.let { return it }
-
-    val newArguments = arguments.map {
-        if (it is IrTypeProjection) {
-            makeTypeProjection(it.type.substitute(substitutionMap), it.variance)
-        } else {
-            it
-        }
-    }
-
-    val newAnnotations = annotations.map { it.deepCopyWithSymbols() }
-    return IrSimpleTypeImpl(
-        classifier,
-        hasQuestionMark,
-        newArguments,
-        newAnnotations
-    )
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
-internal fun visitAnnotableParameterCount(mv: MethodVisitor, paramCount: Int) {
+fun visitAnnotableParameterCount(mv: MethodVisitor, paramCount: Int) {
     mv.visitAnnotableParameterCount(paramCount, true)
     mv.visitAnnotableParameterCount(paramCount, false)
 }

@@ -6,27 +6,23 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -53,10 +49,7 @@ class JvmSymbols(
     private fun createPackage(fqName: FqName): IrPackageFragment =
         IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(context.state.module, fqName)))
 
-    private val kotlinPackage: IrPackageFragment = createPackage(FqName("kotlin"))
-    private val kotlinJvmPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm"))
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
-    private val kotlinJvmInternalUnsafePackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal.unsafe"))
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
 
     private fun createClass(fqName: FqName, classKind: ClassKind = ClassKind.CLASS, block: (IrClass) -> Unit): IrClass =
@@ -261,47 +254,4 @@ class JvmSymbols(
 
     val getOrCreateKotlinClasses: IrSimpleFunctionSymbol =
         reflection.functions.single { it.owner.name.asString() == "getOrCreateKotlinClasses" }
-
-    val javaClassProperty: IrPropertySymbol = kotlinJvmPackage.addProperty {
-        name = Name.identifier("javaClass")
-    }.apply {
-        addGetter().apply {
-            val typeParameter = addTypeParameter {
-                name = Name.identifier("T")
-            }.apply {
-                superTypes.add(irBuiltIns.anyType)
-            }
-            addExtensionReceiver(typeParameter.defaultType)
-            returnType = javaLangClass.typeWith(typeParameter.defaultType)
-        }
-    }.symbol
-
-    val kClassJavaProperty: IrPropertySymbol = kotlinJvmPackage.addProperty {
-        name = Name.identifier("java")
-    }.apply {
-        addGetter().apply {
-            val extensionReceiverType = irBuiltIns.kClassClass.typeWith()
-            addExtensionReceiver(extensionReceiverType)
-            returnType = javaLangClass.typeWith(extensionReceiverType)
-        }
-    }.symbol
-
-    val monitorEnter = kotlinJvmInternalUnsafePackage.addFunction("monitorEnter", irBuiltIns.unitType, isStatic = true).apply {
-        addValueParameter("monitor", irBuiltIns.anyType)
-    }.symbol
-
-    val monitorExit = kotlinJvmInternalUnsafePackage.addFunction("monitorExit", irBuiltIns.unitType, isStatic = true).apply {
-        addValueParameter("monitor", irBuiltIns.anyType)
-    }.symbol
-
-    val isArrayOf = kotlinJvmPackage.addFunction("isArrayOf", irBuiltIns.booleanType, isStatic = true).apply {
-        addExtensionReceiver(irBuiltIns.arrayClass.owner.defaultType)
-        addTypeParameter("T", irBuiltIns.anyNType)
-    }.symbol
-
-    // We cannot create Cloneable reference out of thin air, since we have to preserve the information that it is a Java interface and
-    // it has no DefaultImpls counterpart.
-    val cloneable = symbolTable.referenceClass(
-        builtInsPackage("kotlin").getContributedClassifier(Name.identifier("Cloneable"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-    )
 }

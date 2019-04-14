@@ -88,7 +88,7 @@ class PrimitiveComparison(
     private val operatorToken: KtSingleValueToken
 ) : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
-        val parameterType = codegen.typeMapper.mapType(primitiveNumberType)
+        val parameterType = codegen.typeMapper.kotlinTypeMapper.mapType(primitiveNumberType)
         val (left, right) = expression.receiverAndArgs()
         val a = left.accept(codegen, data).coerce(parameterType).materialized
         val b = right.accept(codegen, data).coerce(parameterType).materialized

@@ -1,7 +1,7 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR
 // WITH_RUNTIME
+// Separate test is needed for IR because of different ways type arguments of typeOf are calculated.
 
 package test
 
@@ -40,7 +40,7 @@ fun box(): String {
 
     equal<Array<Any>, Array<Any>>()
     equal<Array<IntArray>, Array<IntArray>>()
-    equal<Array<*>, Array<out Any?>>() // This is subject to change if we retain star projections in typeOf
+    equal<Array<*>, Array<*>>()
 
     equal<Int, Int>()
     equal<Int?, Int?>()
