@@ -315,7 +315,7 @@ open class FatFrameworkTask: DefaultTask() {
         // TODO: handle bundle id.
         project.copy {
             it.from(dsymInputs.values.first().infoPlist)
-            it.into(fatDsym.infoPlist)
+            it.into(fatDsym.infoPlist.parentFile)
         }
     }
 
