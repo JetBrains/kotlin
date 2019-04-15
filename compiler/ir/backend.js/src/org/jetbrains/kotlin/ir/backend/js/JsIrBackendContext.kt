@@ -148,7 +148,7 @@ class JsIrBackendContext(
             .filter { it.name != "LONG" && it.name != "CHAR" } // skip due to they have own explicit companions
             .map { it.typeName }
 
-        return numbers + listOf(Name.identifier("String"))
+        return numbers + listOf(Name.identifier("String"), Name.identifier("Boolean"))
     }
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
