@@ -44,7 +44,7 @@ class DeprecatedSymbolUsageFixSpecialTest : KotlinLightCodeInsightFixtureTestCas
         val element = file.findElementAt(offset)
         val nameExpression = element!!.parents.firstIsInstance<KtSimpleNameExpression>()
         project.executeWriteCommand("") {
-            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern, emptyList())).invoke(project, editor, file)
+            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern, emptyList(), false)).invoke(project, editor, file)
         }
 
         myFixture.checkResultByFile("$testPath.after")

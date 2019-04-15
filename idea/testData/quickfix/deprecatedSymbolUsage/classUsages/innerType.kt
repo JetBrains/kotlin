@@ -1,4 +1,4 @@
-// "Replace with 'B<N>'" "true"
+// "Replace with 'B<F<Int>>'" "true"
 // WITH_RUNTIME
 
 @Deprecated(message = "renamed", replaceWith = ReplaceWith("B<N>"))

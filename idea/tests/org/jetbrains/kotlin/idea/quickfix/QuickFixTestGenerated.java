@@ -6617,6 +6617,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("classLiteral.kt")
+            public void testClassLiteral() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/classLiteral.kt");
+            }
+
+            @TestMetadata("classLiteral2.kt")
+            public void testClassLiteral2() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/classLiteral2.kt");
+            }
+
             @TestMetadata("emptyVarargRuntime.kt")
             public void testEmptyVarargRuntime() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/emptyVarargRuntime.kt");
@@ -6630,6 +6640,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("explicitTypeArg.kt")
             public void testExplicitTypeArg() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/explicitTypeArg.kt");
+            }
+
+            @TestMetadata("explicitTypeArg2.kt")
+            public void testExplicitTypeArg2() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/explicitTypeArg2.kt");
             }
 
             @TestMetadata("keepInUserCodeRuntime.kt")
@@ -6650,6 +6665,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("nonEmptyVarargRuntime.kt")
             public void testNonEmptyVarargRuntime() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/nonEmptyVarargRuntime.kt");
+            }
+
+            @TestMetadata("typeReference.kt")
+            public void testTypeReference() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/typeReference.kt");
             }
         }
 
