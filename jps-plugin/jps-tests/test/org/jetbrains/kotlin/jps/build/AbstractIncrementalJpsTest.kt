@@ -321,7 +321,6 @@ abstract class AbstractIncrementalJpsTest(
             UsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, logs)
 
             val lastMakeResult = otherMakeResults.last()
-            rebuildAndCheckOutput(lastMakeResult)
             clearCachesRebuildAndCheckOutput(lastMakeResult)
         }
     }
