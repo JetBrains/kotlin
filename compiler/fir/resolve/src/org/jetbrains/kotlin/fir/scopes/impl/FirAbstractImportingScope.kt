@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -53,6 +54,19 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
                 return ProcessorAction.STOP
             }
         } else {
+            val matchedClass = provider.getClassLikeSymbolByFqName(ClassId(import.packageFqName, name))
+
+            if (matchedClass != null && matchedClass is FirClassSymbol) {
+                //TODO: why don't we use declared member scope at this point?
+                if (matchedClass.fir.buildUseSiteScope(session, scopeCache).processFunctionsByName(
+                        name,
+                        processor
+                    ) == ProcessorAction.STOP
+                ) {
+                    return ProcessorAction.STOP
+                }
+            }
+
             val symbols = provider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
 
             for (symbol in symbols) {

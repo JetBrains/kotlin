@@ -7,7 +7,7 @@ FILE: Annotations.kt
 
         @R|annotations/Simple|() public abstract fun foo(@R|annotations/WithString|(String(abc)) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|
 
-        @R|annotations/Complex|(<Unresolved name: WithInt>#(Int(7)), <Unresolved name: WithString>#(String())) public abstract val v: R|kotlin/String|
+        @R|annotations/Complex|(R|annotations/WithInt.WithInt|(Int(7)), R|annotations/WithString.WithString|(String())) public abstract val v: R|kotlin/String|
             public get(): R|kotlin/String|
 
     }
