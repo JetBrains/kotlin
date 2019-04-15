@@ -1,3 +1,5 @@
+// !LANGUAGE: -NewInference
+
 interface In<in T>
 
 inline fun <reified T> In<T>.isT(): Boolean =

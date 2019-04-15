@@ -1,3 +1,5 @@
+// !LANGUAGE: -NewInference
+
 interface A<out T>
 interface Foo
 
