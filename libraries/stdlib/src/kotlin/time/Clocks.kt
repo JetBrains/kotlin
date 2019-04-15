@@ -7,49 +7,54 @@ package kotlin.time
 
 import kotlin.js.JsName
 
+/**
+ * The most precise clock available in the platform, whose readings increase monotonically over time.
+ */
 public expect object MonoClock : Clock
 
+/**
+ * An abstract class used to implement clocks that return their readings as [Long] values in the specified [unit].
+ */
+public abstract class AbstractLongClock(protected val unit: DurationUnit) : Clock {
+    protected abstract fun read(): Long
 
-public abstract class LongReadingClock : Clock {
-    abstract fun reading(): Long
-    abstract val unit: DurationUnit
-
-    override fun mark(initialElapsed: Duration): ClockMark = object : ClockMark {
-        val startedAt = reading()
-        override val clock: Clock get() = this@LongReadingClock
-        override val elapsedFrom: Duration get() = Duration(reading() - startedAt, this@LongReadingClock.unit) + initialElapsed
+    override fun mark(): ClockMark = object : ClockMark {
+        val startedAt = read()
+        override fun elapsed(): Duration = Duration(read() - startedAt, this@AbstractLongClock.unit)
     }
 }
 
-public abstract class DoubleReadingClock : Clock {
-    abstract fun reading(): Double
-    abstract val unit: DurationUnit
+/**
+ * An abstract class used to implement clocks that return their readings as [Double] values in the specified [unit].
+ */
+public abstract class AbstractDoubleClock(protected val unit: DurationUnit) : Clock {
+    protected abstract fun read(): Double
 
-    override fun mark(initialElapsed: Duration): ClockMark = object : ClockMark {
-        val startedAt = reading()
-        override val clock: Clock get() = this@DoubleReadingClock
-        override val elapsedFrom: Duration get() = Duration(reading() - startedAt, this@DoubleReadingClock.unit) + initialElapsed
+    override fun mark(): ClockMark = object : ClockMark {
+        val startedAt = read()
+        override fun elapsed(): Duration = Duration(read() - startedAt, this@AbstractDoubleClock.unit)
     }
 }
 
-
-
+/**
+ * A clock, whose readings can be preset and changed manually. It is useful as a predictable source of time in tests.
+ */
 public class TestClock(
     @JsName("readingValue")
     var reading: Long = 0L,
-    override val unit: DurationUnit = DurationUnit.NANOSECONDS
-) : LongReadingClock() {
-    override fun reading(): Long = reading
+    unit: DurationUnit = DurationUnit.NANOSECONDS
+) : AbstractLongClock(unit) {
+    override fun read(): Long = reading
 }
 
 /*
 public interface WallClock {
     fun currentTimeMilliseconds(): Long
 
-    companion object : WallClock, LongReadingClock() {
+    companion object : WallClock, AbstractLongClock(unit = DurationUnit.MILLISECONDS) {
         override fun currentTimeMilliseconds(): Long = System.currentTimeMillis()
-        override fun reading(): Long = System.currentTimeMillis()
-        override val unit: DurationUnit get() = DurationUnit.MILLISECONDS
+        override fun read(): Long = System.currentTimeMillis()
+        override fun toString(): String = "WallClock(System.currentTimeMillis())"
     }
 }
 */

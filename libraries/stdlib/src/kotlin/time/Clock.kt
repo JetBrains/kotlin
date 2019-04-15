@@ -5,27 +5,49 @@
 
 package kotlin.time
 
+/**
+ * A source of time for measuring time intervals.
+ *
+ * The only operation provided by the clock is [mark]. It returns a [ClockMark], which can be used to query the elapsed time later.
+ *
+ * @see [measureTime]
+ * @see [withMeasureTime]
+ */
 public interface Clock {
-
     /**
      * Marks a time point on this clock.
-     *
-     * @param initialElapsed An initial value of [ClockMark.elapsedFrom] property of the resulting [ClockMark]:
-     *
-     * - pass [Duration.ZERO] to mark a time point that is now.
-     * - pass a positive duration to mark a time point in the past.
-     * - pass a negative duration to mark a time point in the future.
-     *
      */
-    fun mark(initialElapsed: Duration = Duration.ZERO): ClockMark
-
-    companion object {
-        val Default: Clock get() = MonoClock
-    }
-
+    fun mark(): ClockMark
 }
 
+/**
+ * Represents a time point notched on a particular [Clock]. Remains bound to the clock it was taken from
+ * and allows querying for the duration of time elapsed from that point (see the function [elapsed]).
+ */
 public interface ClockMark {
-    val clock: Clock
-    val elapsedFrom: Duration
+    /**
+     * Returns the amount of time passed from this clock mark on the clock from which this mark was taken.
+     */
+    fun elapsed(): Duration
+
+    /**
+     * Returns a clock mark on the same clock that is ahead of this clock mark by the specified [duration].
+     *
+     * The returned clock mark is more _late_ when the [duration] is positive, and more _early_ when the [duration] is negative.
+     */
+    operator fun plus(duration: Duration): ClockMark = AdjustedClockMark(this, duration)
+
+    /**
+     * Returns a clock mark on the same clock that is behind this clock mark by the specified [duration].
+     *
+     * The returned clock mark is more _early_ when the [duration] is positive, and more _late_ when the [duration] is negative.
+     */
+    operator fun minus(duration: Duration): ClockMark = plus(-duration)
+}
+
+
+private class AdjustedClockMark(val mark: ClockMark, val adjustment: Duration) : ClockMark {
+    override fun elapsed(): Duration = mark.elapsed() - adjustment
+
+    override fun plus(duration: Duration): ClockMark = AdjustedClockMark(mark, adjustment + duration)
 }

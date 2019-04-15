@@ -21,7 +21,7 @@ public actual object MonoClock : Clock {
 
     }
 
-    override fun mark(initialElapsed: Duration): ClockMark = actualClock.mark(initialElapsed)
+    override fun mark(): ClockMark = actualClock.mark()
 }
 
 internal external interface Process {
@@ -30,24 +30,21 @@ internal external interface Process {
 
 internal class HrTimeClock(val process: Process) : Clock {
 
-    override fun mark(initialElapsed: Duration): ClockMark = object : ClockMark {
+    override fun mark(): ClockMark = object : ClockMark {
         val startedAt = process.hrtime()
-        override val clock: Clock get() = this@HrTimeClock // delegation problem?
-        override val elapsedFrom: Duration
-            get() = process.hrtime(startedAt).let { (seconds, nanos) -> seconds.seconds + nanos.nanoseconds + initialElapsed }
+        override fun elapsed(): Duration =
+            process.hrtime(startedAt).let { (seconds, nanos) -> seconds.seconds + nanos.nanoseconds }
     }
 
     override fun toString(): String = "Clock(process.hrtime())"
 }
 
-internal class PerformanceClock(val performance: Performance) : DoubleReadingClock() {
-    override val unit: DurationUnit get() = DurationUnit.MILLISECONDS
-    override fun reading(): Double = performance.now()
+internal class PerformanceClock(val performance: Performance) : AbstractDoubleClock(unit = DurationUnit.MILLISECONDS) {
+    override fun read(): Double = performance.now()
     override fun toString(): String = "Clock(self.performance.now())"
 }
 
-internal object DateNowClock : DoubleReadingClock() {
-    override val unit: DurationUnit get() = DurationUnit.MILLISECONDS
-    override fun reading(): Double = kotlin.js.Date.now()
+internal object DateNowClock : AbstractDoubleClock(unit = DurationUnit.MILLISECONDS) {
+    override fun read(): Double = kotlin.js.Date.now()
     override fun toString(): String = "Clock(Date.now())"
 }

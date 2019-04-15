@@ -22,7 +22,7 @@ public inline fun Clock.measureTime(action: () -> Unit): Duration {
 
     val mark = mark()
     action()
-    return mark.elapsedFrom
+    return mark.elapsed()
 }
 
 
@@ -44,5 +44,5 @@ public inline fun <T> Clock.withMeasureTime(action: () -> T): DurationMeasured<T
 
     val mark = mark()
     val result = action()
-    return DurationMeasured(result, mark.elapsedFrom)
+    return DurationMeasured(result, mark.elapsed())
 }
