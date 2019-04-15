@@ -37,8 +37,10 @@ FILE fqName:<root> fileName:/intersectionType1.kt
           $receiver: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=<root>.In<kotlin.Any?> origin=GET_ARRAY_ELEMENT
             $this: CALL 'public final fun select <S> (x: S of <root>.select, y: S of <root>.select): S of <root>.select declared in <root>' type=kotlin.Array<out <root>.In<kotlin.Any?>> origin=null
               <S>: kotlin.Array<out <root>.In<kotlin.Any?>>
-              x: GET_VAR 'a: kotlin.Array<<root>.In<T of <root>.foo>> declared in <root>.foo' type=kotlin.Array<<root>.In<T of <root>.foo>> origin=null
-              y: GET_VAR 'b: kotlin.Array<<root>.In<kotlin.String>> declared in <root>.foo' type=kotlin.Array<<root>.In<kotlin.String>> origin=null
+              x: TYPE_OP type=kotlin.Array<out <root>.In<kotlin.Any?>> origin=IMPLICIT_CAST typeOperand=kotlin.Array<out <root>.In<kotlin.Any?>>
+                GET_VAR 'a: kotlin.Array<<root>.In<T of <root>.foo>> declared in <root>.foo' type=kotlin.Array<<root>.In<T of <root>.foo>> origin=null
+              y: TYPE_OP type=kotlin.Array<out <root>.In<kotlin.Any?>> origin=IMPLICIT_CAST typeOperand=kotlin.Array<out <root>.In<kotlin.Any?>>
+                GET_VAR 'b: kotlin.Array<<root>.In<kotlin.String>> declared in <root>.foo' type=kotlin.Array<<root>.In<kotlin.String>> origin=null
             index: CONST Int type=kotlin.Int value=0
           y: CONST Boolean type=kotlin.Boolean value=true
   FUN name:ofType visibility:public modality:FINAL <K> ($receiver:<root>.In<K of <root>.ofType>, y:kotlin.Any?) returnType:kotlin.Boolean [inline] 
