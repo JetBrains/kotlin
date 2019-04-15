@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 const val empty = ""
 
 val test1 = ""
