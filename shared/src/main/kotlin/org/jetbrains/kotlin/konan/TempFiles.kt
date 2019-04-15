@@ -24,19 +24,21 @@ import org.jetbrains.kotlin.konan.file.*
  */
 class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
     private val outputName = File(outputPath).name
+    val deleteOnExit = pathToTemporaryDir == null || pathToTemporaryDir.isEmpty()
 
-    val nativeBinaryFile    by lazy { File(dir,"${outputName}.kt.bc") }
-    val cAdapterCpp         by lazy { File(dir, "api.cpp") }
-    val cAdapterBitcode     by lazy { File(dir, "api.bc") }
+    val nativeBinaryFile    by lazy { create(outputName,".kt.bc") }
+    val cAdapterCpp         by lazy { create("api", ".cpp") }
+    val cAdapterBitcode     by lazy { create("api", ".bc") }
 
     val nativeBinaryFileName    get() = nativeBinaryFile.absolutePath
     val cAdapterCppName         get() = cAdapterCpp.absolutePath
     val cAdapterBitcodeName     get() = cAdapterBitcode.absolutePath
 
-    private val dir by lazy { if (pathToTemporaryDir == null || pathToTemporaryDir.isEmpty()) {
+    private val dir by lazy {
+        if (deleteOnExit) {
             createTempDir("konan_temp").deleteOnExit()
         } else {
-            createDirForTemporaryFiles(pathToTemporaryDir)
+            createDirForTemporaryFiles(pathToTemporaryDir!!)
         }
     }
 
@@ -53,6 +55,8 @@ class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
      * Create file named {name}{suffix} inside temporary dir
      */
     fun create(prefix: String, suffix: String = ""): File =
-            File(dir, "$prefix$suffix")
+            File(dir, "$prefix$suffix").also {
+                if (deleteOnExit) it.deleteOnExit()
+            }
 }
 
