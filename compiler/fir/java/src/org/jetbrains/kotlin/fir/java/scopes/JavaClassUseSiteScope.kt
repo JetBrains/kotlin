@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractProviderBasedScope
@@ -58,8 +56,8 @@ class JavaClassUseSiteScope(
     private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef) =
         isEqualTypes(a.toNotNullConeKotlinType(session), b.toNotNullConeKotlinType(session))
 
-    private fun isOverriddenFunCheck(overriddenInJava: FirNamedFunction, base: FirNamedFunction): Boolean {
-        val receiverTypeRef = base.receiverTypeRef
+    private fun isOverriddenFunCheck(overriddenInJava: FirFunction, base: FirFunction): Boolean {
+        val receiverTypeRef = (base as FirCallableMemberDeclaration).receiverTypeRef
         if (receiverTypeRef == null) {
             return overriddenInJava.valueParameters.size == base.valueParameters.size &&
                     overriddenInJava.valueParameters.zip(base.valueParameters).all { (memberParam, selfParam) ->
@@ -91,9 +89,10 @@ class JavaClassUseSiteScope(
 
         val overriding = when (this) {
             is FirFunctionSymbol -> {
-                val self = fir as FirNamedFunction
+                val self = firUnsafe<FirFunction>()
+                self as FirCallableMemberDeclaration
                 candidates.firstOrNull {
-                    val member = (it as FirFunctionSymbol).fir as FirNamedFunction
+                    val member = (it as FirFunctionSymbol).fir as FirFunction
                     self.modality != Modality.FINAL && isOverriddenFunCheck(member, self)
                 }
             }
