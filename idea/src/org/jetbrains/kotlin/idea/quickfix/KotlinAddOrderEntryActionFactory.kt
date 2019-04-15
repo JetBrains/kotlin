@@ -26,6 +26,7 @@ import com.intellij.psi.PsiReferenceBase
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.runWhenSmart
 import org.jetbrains.kotlin.psi.KtElement
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 object KotlinAddOrderEntryActionFactory : KotlinIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val simpleExpression = diagnostic.psiElement as? KtSimpleNameExpression ?: return emptyList()
+        if (ProjectRootsUtil.isInProjectSource(simpleExpression, includeScriptsOutsideSourceRoots = false)) return emptyList()
+
         val refElement = simpleExpression.getQualifiedElement()
 
         val reference = object: PsiReferenceBase<KtElement>(refElement) {
