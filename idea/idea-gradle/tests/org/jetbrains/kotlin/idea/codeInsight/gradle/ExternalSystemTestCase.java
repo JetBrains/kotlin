@@ -55,13 +55,11 @@ import static org.jetbrains.kotlin.test.testFramework.EdtTestUtil.runInEdtAndWai
 
 // part of com.intellij.openapi.externalSystem.test.ExternalSystemTestCase
 public abstract class ExternalSystemTestCase extends UsefulTestCase {
-    private File ourTempDir;
 
     protected IdeaProjectTestFixture myTestFixture;
 
     protected Project myProject;
 
-    private File myTestDir;
     private VirtualFile myProjectRoot;
     private final List<VirtualFile> myAllConfigs = new ArrayList<VirtualFile>();
 
@@ -69,10 +67,6 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        ensureTempDirCreated();
-
-        myTestDir = new File(ourTempDir, getTestName(false));
-        FileUtil.ensureExists(myTestDir);
 
         setUpFixtures();
         myProject = myTestFixture.getProject();
@@ -133,24 +127,13 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
         return roots;
     }
 
-    private void ensureTempDirCreated() throws IOException {
-        if (ourTempDir != null) return;
-
-        ourTempDir = new File(FileUtil.getTempDirectory(), getTestsTempDir());
-        FileUtil.delete(ourTempDir);
-        FileUtil.ensureExists(ourTempDir);
-    }
-
-    protected abstract String getTestsTempDir();
-
     protected void setUpFixtures() throws Exception {
         myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).getFixture();
         myTestFixture.setUp();
     }
 
     private void setUpInWriteAction() throws Exception {
-        File projectDir = new File(myTestDir, "project");
-        FileUtil.ensureExists(projectDir);
+        File projectDir = FileUtil.createTempDirectory("project",  "", false);
         myProjectRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
     }
 
@@ -166,11 +149,6 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
                 }
             });
             myProject = null;
-            if (!FileUtil.delete(myTestDir) && myTestDir.exists()) {
-                System.err.println("Cannot delete " + myTestDir);
-                //printDirectoryContent(myDir);
-                myTestDir.deleteOnExit();
-            }
         }
         finally {
             super.tearDown();

@@ -144,8 +144,6 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         return if (name.methodName == null) super.getName() else FileUtil.sanitizeFileName(name.methodName)
     }
 
-    override fun getTestsTempDir(): String = "gradleImportTests"
-
     override fun getExternalSystemConfigFileName(): String = "build.gradle"
 
     protected fun importProjectUsingSingeModulePerGradleProject() {
