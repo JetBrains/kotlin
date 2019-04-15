@@ -44,4 +44,26 @@ class MeasureTimeTest {
         assertEquals(someResult, result)
         assertTrue(elapsed > Duration.ZERO)
     }
+
+
+    @Test fun measureTimeTestClock() {
+        val clock = TestClock(unit = DurationUnit.NANOSECONDS)
+        val expectedNs = Random.nextLong(1_000_000_000L)
+        val elapsed = clock.measureTime {
+            clock.reading += expectedNs
+        }
+
+        assertEquals(expectedNs.nanoseconds, elapsed)
+
+        val expectedResult: Long
+
+        val (result, elapsed2) = clock.withMeasureTime {
+            clock.reading += expectedNs
+            expectedResult = expectedNs
+            expectedNs
+        }
+
+        assertEquals(expectedResult, result)
+        assertEquals(result.nanoseconds, elapsed2)
+    }
 }
