@@ -78,12 +78,12 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         if (nonScriptFileName(fileName)) return null
         if (!isReady()) return null
 
-        val cached = synchronized(scriptDefinitionsCacheLock) { scriptDefinitionsCache.get(fileName) }
+        val cached = scriptDefinitionsCacheLock.write { scriptDefinitionsCache.get(fileName) }
         if (cached != null) return cached
 
         val definition = super.findScriptDefinition(fileName) ?: return null
 
-        synchronized(scriptDefinitionsCacheLock) {
+        scriptDefinitionsCacheLock.write {
             scriptDefinitionsCache.put(fileName, definition)
         }
 
@@ -184,7 +184,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         }
 
         clearCache()
-        scriptDefinitionsCache.clear()
+        scriptDefinitionsCacheLock.write { scriptDefinitionsCache.clear() }
 
         // TODO: clear by script type/definition
         ServiceManager.getService(project, ScriptDependenciesCache::class.java).clear()
