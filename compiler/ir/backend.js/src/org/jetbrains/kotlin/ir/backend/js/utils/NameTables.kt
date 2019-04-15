@@ -143,7 +143,7 @@ class NameTables(packages: List<IrPackageFragment>) {
             parent = parent.parent
         }
 
-        error("Can't find name for declaration $declaration")
+        error("Can't find name for declaration ${declaration.fqNameWhenAvailable}")
     }
 
 
