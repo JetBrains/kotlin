@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.idea.editor
 
-import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
 import org.junit.Assert
 
 
-class TemplateTokenSequenceTest:UsefulTestCase() {
-    fun doTest(input: String, expected:String) {
+class TemplateTokenSequenceTest : TestCase() {
+    fun doTest(input: String, expected: String) {
         val output = createTemplateSequenceTokenString(input)
         Assert.assertEquals("Unexpected template sequence output for $input: " , expected, output)
     }
