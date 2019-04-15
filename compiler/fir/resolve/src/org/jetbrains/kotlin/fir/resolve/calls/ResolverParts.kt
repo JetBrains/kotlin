@@ -79,6 +79,14 @@ internal object CheckArguments : CheckerStage() {
             sink.reportApplicability(CandidateApplicability.INAPPLICABLE)
         }
     }
+}
+
+internal object DiscriminateSynthetics : CheckerStage() {
+    override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        if (candidate.symbol is SyntheticSymbol) {
+            sink.reportApplicability(CandidateApplicability.SYNTHETIC_RESOLVED)
+        }
+    }
 
 }
 
@@ -90,6 +98,6 @@ internal fun functionCallResolutionSequence() = listOf(
 
 
 internal fun qualifiedAccessResolutionSequence() = listOf(
-    CheckExplicitReceiverConsistency, CheckReceivers.Dispatch, CheckReceivers.Extension,
+    DiscriminateSynthetics, CheckExplicitReceiverConsistency, CheckReceivers.Dispatch, CheckReceivers.Extension,
     CreateFreshTypeVariableSubstitutorStage
 )

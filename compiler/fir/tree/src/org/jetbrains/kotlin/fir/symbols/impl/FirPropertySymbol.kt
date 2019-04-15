@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol(callableId), ConePropertySymbol
+open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol(callableId), ConePropertySymbol
 
 open class FirVariableSymbol(override val callableId: CallableId) : ConeVariableSymbol, FirCallableSymbol() {
 

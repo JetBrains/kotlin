@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.firSafeNullable
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.Name
+
+interface SyntheticSymbol : ConeSymbol
+
+class SyntheticPropertySymbol(callableId: CallableId) : FirPropertySymbol(callableId), SyntheticSymbol
 
 class FirSyntheticPropertiesScope(val session: FirSession, val baseScope: FirScope, val typeCalculator: ReturnTypeCalculator) : FirScope {
 
@@ -36,7 +37,7 @@ class FirSyntheticPropertiesScope(val session: FirSession, val baseScope: FirSco
         if (fir.typeParameters.isNotEmpty()) return ProcessorAction.NEXT
         if (fir.valueParameters.isNotEmpty()) return ProcessorAction.NEXT
 
-        val synthetic = FirPropertySymbol(CallableId(symbol.callableId.packageName, symbol.callableId.className, name))
+        val synthetic = SyntheticPropertySymbol(CallableId(symbol.callableId.packageName, symbol.callableId.className, name))
 
         val returnTypeRef = typeCalculator.tryCalculateReturnType(fir)
         FirMemberPropertyImpl(

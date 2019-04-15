@@ -373,7 +373,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             candidates.isEmpty() -> FirErrorNamedReference(
                 namedReference.session, namedReference.psi, "Unresolved name: $name"
             )
-            applicability < CandidateApplicability.RESOLVED -> {
+            applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
                 FirErrorNamedReference(
                     namedReference.session,
                     namedReference.psi,
