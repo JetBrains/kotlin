@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.FirNamedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
-import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
-import org.jetbrains.kotlin.fir.resolve.getOrPut
+import org.jetbrains.kotlin.fir.java.topLevelName
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
@@ -45,18 +44,39 @@ class KotlinDeserializedJvmSymbolsProvider(
 ) : AbstractFirSymbolProvider() {
 
     private val classesCache = mutableMapOf<ClassId, FirClassSymbol>()
-    private val packagePartsCache = mutableMapOf<FqName, Collection<Pair<ProtoBuf.Package, FirDeserializationContext>>>()
+    private val packagePartsCache = mutableMapOf<FqName, Collection<PackagePartsCacheData>>()
 
-    private fun computePackagePartsInfos(packageFqName: FqName): List<Pair<ProtoBuf.Package, FirDeserializationContext>> {
+    private class PackagePartsCacheData(val proto: ProtoBuf.Package, val context: FirDeserializationContext) {
+        val topLevelNameIndex by lazy {
+            proto.functionList.withIndex()
+                .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
+        }
+    }
+
+    private val knownClassNamesInPackage = mutableMapOf<FqName, Set<String>?>()
+
+    private fun hasTopLevelClassOf(classId: ClassId): Boolean {
+        val knownNames = knownClassNamesInPackage.getOrPut(classId.packageFqName) {
+            javaClassFinder.knownClassNamesInPackage(classId.packageFqName)
+        } ?: return false
+        return classId.relativeClassName.topLevelName() in knownNames
+    }
+
+    private fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
+
         return packagePartProvider.findPackageParts(packageFqName.asString()).mapNotNull { partName ->
             val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
+            if (!hasTopLevelClassOf(classId)) return@mapNotNull null
             val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return@mapNotNull null
 
             val data = kotlinJvmBinaryClass.classHeader.data ?: return@mapNotNull null
             val strings = kotlinJvmBinaryClass.classHeader.strings ?: return@mapNotNull null
             val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
 
-            packageProto to FirDeserializationContext.createForPackage(packageFqName, packageProto, nameResolver, session)
+            PackagePartsCacheData(
+                packageProto,
+                FirDeserializationContext.createForPackage(packageFqName, packageProto, nameResolver, session)
+            )
         }
     }
 
@@ -78,6 +98,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
     ): FirClassSymbol? {
+        if (!hasTopLevelClassOf(classId)) return null
         return classesCache.getOrPut(classId) {
             //return null
             val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
@@ -97,25 +118,29 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
-        return getPackageParts(packageFqName).flatMap { (packageProto, context) ->
-            packageProto.functionList.map {
-                context.memberDeserializer.loadFunction(it).symbol
-            }.filter { callableSymbol -> callableSymbol.callableId.callableName == name }
+        return getPackageParts(packageFqName).flatMap { part ->
+            val functionIds = part.topLevelNameIndex[name] ?: return@flatMap emptyList()
+            functionIds.map { part.proto.getFunction(it) }
+                .map {
+                    part.context.memberDeserializer.loadFunction(it).symbol
+                }.filter { callableSymbol ->
+                    callableSymbol.callableId.callableName == name
+                }
         }
     }
 
     override fun getClassDeclaredMemberScope(classId: ClassId) =
         findRegularClass(classId)?.let(::FirClassDeclaredMemberScope)
 
-    private fun getPackageParts(packageFqName: FqName): Collection<Pair<ProtoBuf.Package, FirDeserializationContext>> {
+    private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> {
         return packagePartsCache.getOrPut(packageFqName) {
             computePackagePartsInfos(packageFqName)
         }
     }
 
     override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
-        return getPackageParts(fqName).flatMapTo(mutableSetOf()) { (packageProto, context) ->
-            packageProto.functionList.map { context.nameResolver.getName(it.name) }
+        return getPackageParts(fqName).flatMapTo(mutableSetOf()) { packagePart ->
+            packagePart.proto.functionList.map { packagePart.context.nameResolver.getName(it.name) }
         }
     }
 
