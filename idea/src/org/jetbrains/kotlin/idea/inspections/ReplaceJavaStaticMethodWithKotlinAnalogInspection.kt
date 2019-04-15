@@ -12,17 +12,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.callExpressionVisitor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -121,8 +120,8 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
         }
 
         private val JAVA_IO = listOf(
-            Replacement("java.io.PrintStream.print", "kotlin.io.print"),
-            Replacement("java.io.PrintStream.println", "kotlin.io.println")
+            Replacement("java.io.PrintStream.print", "kotlin.io.print", filter = ::isJavaSystemOut),
+            Replacement("java.io.PrintStream.println", "kotlin.io.println", filter = ::isJavaSystemOut)
         )
 
         private val JAVA_SYSTEM = listOf(
@@ -182,3 +181,8 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
                 ).groupBy { it.javaMethodShortName }
     }
 }
+
+private fun isJavaSystemOut(callExpression: KtCallExpression): Boolean = (callExpression.calleeExpression as? KtSimpleNameExpression)
+    ?.getReceiverExpression()
+    ?.resolveToCall()
+    ?.isCalling(FqName("java.lang.System.out")) ?: false
