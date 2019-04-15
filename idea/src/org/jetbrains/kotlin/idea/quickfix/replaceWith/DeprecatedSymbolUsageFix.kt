@@ -50,7 +50,7 @@ class DeprecatedSymbolUsageFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val (nameExpression, replacement) = extractDataFromDiagnostic(diagnostic) ?: return null
+            val (nameExpression, replacement) = extractDataFromDiagnostic(diagnostic, false) ?: return null
             return DeprecatedSymbolUsageFix(nameExpression, replacement)
         }
 
@@ -61,7 +61,7 @@ class DeprecatedSymbolUsageFix(
             if (targetDescriptors.isEmpty()) return false
 
             return targetDescriptors.all {
-                fetchReplaceWithPattern(it, import.project, null) != null
+                fetchReplaceWithPattern(it, import.project, null, false) != null
             }
         }
     }

@@ -1,4 +1,4 @@
-// "Replace with 'B<E>'" "true"
+// "Replace with 'B<String>'" "true"
 // WITH_RUNTIME
 
 @Deprecated(message = "renamed", replaceWith = ReplaceWith("B<E>"))

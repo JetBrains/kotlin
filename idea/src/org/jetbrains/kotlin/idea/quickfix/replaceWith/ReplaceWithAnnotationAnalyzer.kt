@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import java.util.*
 
-data class ReplaceWith(val pattern: String, val imports: List<String>)
+data class ReplaceWith(val pattern: String, val imports: List<String>, val replaceInWholeProject: Boolean)
 
 object ReplaceWithAnnotationAnalyzer {
     fun analyzeCallableReplacement(
