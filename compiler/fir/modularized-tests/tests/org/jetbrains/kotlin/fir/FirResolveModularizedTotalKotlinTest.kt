@@ -73,7 +73,8 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
         val ktFiles = environment.getSourceFiles()
 
         val scope = ProjectScope.getContentScope(project)
-        val session = createSession(environment, scope)
+        val librariesScope = ProjectScope.getLibrariesScope(project)
+        val session = createSession(environment, scope, librariesScope)
         val builder = RawFirBuilder(session, stubMode = false)
 
         val totalTransformer = FirTotalResolveTransformer()

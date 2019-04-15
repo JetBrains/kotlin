@@ -11,23 +11,29 @@ import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 
-fun createSession(environment: KotlinCoreEnvironment, sourceScope: GlobalSearchScope): FirSession {
+fun createSession(
+    environment: KotlinCoreEnvironment,
+    sourceScope: GlobalSearchScope,
+    librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope)
+): FirSession {
     val moduleInfo = FirTestModuleInfo()
     val project = environment.project
     val provider = FirProjectSessionProvider(project)
     return FirJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
-        createSessionForDependencies(provider, moduleInfo, sourceScope, environment)
+        createSessionForDependencies(provider, moduleInfo, librariesScope, environment)
     }
 }
 
 private fun createSessionForDependencies(
     provider: FirProjectSessionProvider,
     moduleInfo: FirTestModuleInfo,
-    sourceScope: GlobalSearchScope,
+    librariesScope: GlobalSearchScope,
     environment: KotlinCoreEnvironment
 ) {
     val dependenciesInfo = FirTestModuleInfo()
     moduleInfo.dependencies.add(dependenciesInfo)
-    val scope = GlobalSearchScope.notScope(sourceScope)
-    FirLibrarySession.create(dependenciesInfo, provider, scope, environment.project, environment.createPackagePartProvider(scope))
+    FirLibrarySession.create(
+        dependenciesInfo, provider, librariesScope, environment.project,
+        environment.createPackagePartProvider(librariesScope)
+    )
 }
