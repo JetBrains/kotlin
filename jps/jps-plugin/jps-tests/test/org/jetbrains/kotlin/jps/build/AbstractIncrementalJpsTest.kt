@@ -43,6 +43,7 @@ import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.LookupSymbol
@@ -124,6 +125,8 @@ abstract class AbstractIncrementalJpsTest(
         lookupsDuringTest = hashSetOf()
         isJvmICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
         isJsICEnabledBackup = IncrementalCompilation.isEnabledForJs()
+
+        System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
         IncrementalCompilation.setIsEnabledForJvm(true)
         IncrementalCompilation.setIsEnabledForJs(true)
