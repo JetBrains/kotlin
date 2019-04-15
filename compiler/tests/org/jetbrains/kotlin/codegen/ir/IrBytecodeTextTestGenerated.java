@@ -3432,6 +3432,16 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concat.kt");
         }
 
+        @TestMetadata("constConcat.kt")
+        public void testConstConcat() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/constConcat.kt");
+        }
+
+        @TestMetadata("constValConcat.kt")
+        public void testConstValConcat() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/constValConcat.kt");
+        }
+
         @TestMetadata("doNotAppendEmptyString.kt")
         public void testDoNotAppendEmptyString() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/doNotAppendEmptyString.kt");
@@ -3470,6 +3480,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("nullableStringPlus.kt")
         public void testNullableStringPlus() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/nullableStringPlus.kt");
+        }
+
+        @TestMetadata("partiallyConstConcat.kt")
+        public void testPartiallyConstConcat() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/partiallyConstConcat.kt");
         }
 
         @TestMetadata("plusAssign.kt")
