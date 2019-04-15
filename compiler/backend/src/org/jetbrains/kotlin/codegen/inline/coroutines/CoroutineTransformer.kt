@@ -48,8 +48,6 @@ class CoroutineTransformer(
     fun shouldGenerateStateMachine(node: MethodNode): Boolean {
         // Continuations are similar to lambdas from bird's view, but we should never generate state machine for them
         if (isContinuationNotLambda()) return false
-        // The method does not have state-machine, but should. Generate it
-        if (node.name.endsWith(FOR_INLINE_SUFFIX)) return true
         // there can be suspend lambdas inside inline functions, which do not
         // capture crossinline lambdas, thus, there is no need to transform them
         return isSuspendFunctionWithFakeConstructorCall(node) || (isSuspendLambda(node) && !isStateMachine(node))
@@ -225,7 +223,7 @@ class SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
             if (insn.opcode != Opcodes.INVOKEINTERFACE) continue
             insn as MethodInsnNode
             if (!isInvokeOnLambda(insn.owner, insn.name)) continue
-            val frame = sourceFrames[insn.index()]
+            val frame = sourceFrames[insn.index()] ?: continue
             val receiver = findReceiverOfInvoke(frame, insn).takeIf { it?.isSuspendLambda(insn) == true } as? FieldInsnNode ?: continue
             val aload = receiver.findPreviousOrNull { it.opcode != Opcodes.GETFIELD } ?: error("GETFIELD cannot be the first instruction")
             assert(aload.opcode == Opcodes.ALOAD) { "Before GETFIELD there shall be ALOAD" }

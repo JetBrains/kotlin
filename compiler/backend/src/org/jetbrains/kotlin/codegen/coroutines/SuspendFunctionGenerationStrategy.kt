@@ -65,8 +65,10 @@ open class SuspendFunctionGenerationStrategy(
         )
 
         val forInline = state.bindingContext[CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA, originalSuspendDescriptor] == true
-        // Yegor Bugayenko style
-        return if (forInline)
+        // Both capturing and inline functions share the same suffix, however, inline functions can also be capturing
+        // they are already covered by SuspendInlineFunctionGenerationStrategy, thus, if we generate yet another copy,
+        // we will get name+descriptor clash
+        return if (forInline && !originalSuspendDescriptor.isInline)
             AddConstructorCallForCoroutineRegeneration(
                 MethodNodeCopyingMethodVisitor(
                     SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
