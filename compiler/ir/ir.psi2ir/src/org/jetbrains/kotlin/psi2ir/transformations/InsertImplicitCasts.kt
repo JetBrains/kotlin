@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,21 +26,18 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
     element.transformChildren(
@@ -246,20 +242,12 @@ open class InsertImplicitCasts(
         }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression =
-        if (expression.operator == IrTypeOperator.SAM_CONVERSION)
-            expression.coerceArgumentToFunctionalType()
-        else
-            super.visitTypeOperator(expression)
-
-    private fun IrTypeOperatorCall.coerceArgumentToFunctionalType(): IrExpression {
-        val targetClassDescriptor = typeOperandClassifier.descriptor as? ClassDescriptor
-            ?: throw AssertionError("Target type of $operator should be a class: ${render()}")
-
-//        argument = argument.cast(samConversion.getFunctionTypeForSAMClass(targetClassDescriptor))
-        argument = argument.cast(error("Not Implemented"))
-
-        return this
-    }
+        when (expression.operator) {
+            IrTypeOperator.IMPLICIT_CAST ->
+                expression.argument.cast(expression.typeOperand)
+            else ->
+                super.visitTypeOperator(expression)
+        }
 
     override fun visitVararg(expression: IrVararg): IrExpression =
         expression.transformPostfix {
@@ -277,9 +265,6 @@ open class InsertImplicitCasts(
         expression = expression.cast(expectedType)
     }
 
-//    private fun IrExpression.cast(irType: IrType): IrExpression =
-//        cast(irType)
-
     private fun IrExpression.cast(expectedType: IrType?): IrExpression {
         if (expectedType == null) return this
         if (expectedType is IrErrorType) return this
@@ -289,67 +274,47 @@ open class InsertImplicitCasts(
         val valueType = this.type
         val valueKotlinType = valueType.originalKotlinType!!
         val expectedKotlinType = expectedType.originalKotlinType!!
-        val notNullableExpectedKotlinType = expectedKotlinType.makeNotNullable()
 
         return when {
-//            expectedKotlinType.isUnit() -> {
             expectedType.isUnit() -> {
-//                require(expectedType.isUnit())
                 coerceToUnit()
             }
 
             valueType is IrDynamicType && expectedType !is IrDynamicType -> {
                 require(valueKotlinType.isDynamic() && !expectedKotlinType.isDynamic())
-//                if (expectedKotlinType.isNullableAny()) {
                 if (expectedType.isNullableAny()) {
-//                    require(expectedType.isNullableAny())
                     this
-                } else
+                } else {
                     implicitCast(expectedType, IrTypeOperator.IMPLICIT_CAST)
+                }
             }
 
-//            valueKotlinType.isNullabilityFlexible() && valueKotlinType.containsNull() && !expectedKotlinType.containsNull() -> {
             valueKotlinType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() -> {
-//                require(valueType.containsNull() && !expectedType.containsNull())
                 implicitNonNull(valueType, expectedType)
             }
 
-//            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueKotlinType, expectedKotlinType.makeNullable()) -> {
             valueType.isSubtypeOf(expectedType.makeNullable(), irBuiltIns) -> {
-//                require(KotlinTypeChecker.DEFAULT.isSubtypeOf(valueKotlinType, expectedKotlinType.makeNullable()))
                 this
             }
 
-//            valueKotlinType.isInt() && notNullableExpectedKotlinType.isBuiltInIntegerType() -> {
             valueType.isInt() && notNullableExpectedType.isBuiltInIntegerType() -> {
-                if (!(valueType.isInt() && notNullableExpectedType.isBuiltInIntegerType())) {
-                    println("dd")
-//                    require(valueType.isInt() && notNullableExpectedType.isBuiltInIntegerType())
-                }
                 implicitCast(notNullableExpectedType, IrTypeOperator.IMPLICIT_INTEGER_COERCION)
             }
 
-//            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueKotlinType, expectedKotlinType) -> {
             valueType.isSubtypeOf(expectedType, irBuiltIns) -> {
                 require(valueType.isSubtypeOf(expectedType, irBuiltIns))
                 this
             }
 
             else -> {
-//                val targetType = if (!valueKotlinType.containsNull()) {
-                val targetType = if (!valueType.containsNull()) {
-//                    require(!valueType.containsNull())
-                    notNullableExpectedType
-                } else expectedType
+                val targetType = if (!valueType.containsNull()) notNullableExpectedType else expectedType
                 implicitCast(targetType, IrTypeOperator.IMPLICIT_CAST)
             }
         }
     }
 
     private fun IrExpression.implicitNonNull(valueType: IrType, expectedType: IrType): IrExpression {
-//        val nonNullValueKotlinType = valueType.originalKotlinType!!.upperIfFlexible().makeNotNullable()
         val notNullValueType = valueType.makeNotNull()
-//        require(notNullValueType.containsNull() == nonNullValueKotlinType.containsNull())
         return implicitCast(notNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
     }
 
@@ -357,7 +322,6 @@ open class InsertImplicitCasts(
         targetType: IrType,
         typeOperator: IrTypeOperator
     ): IrExpression {
-//        val irType = targetType.toIrType()
         return IrTypeOperatorCallImpl(
             startOffset,
             endOffset,

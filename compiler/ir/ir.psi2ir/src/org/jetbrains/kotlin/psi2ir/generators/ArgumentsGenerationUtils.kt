@@ -168,7 +168,7 @@ fun StatementGenerator.generateCallReceiver(
                 "Call for member imported from object $calleeDescriptor has non-null dispatch receiver $dispatchReceiver"
             }
             dispatchReceiverValue =
-                    generateReceiverForCalleeImportedFromObject(startOffset, endOffset, calleeDescriptor)
+                generateReceiverForCalleeImportedFromObject(startOffset, endOffset, calleeDescriptor)
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
         }
         is TypeAliasConstructorDescriptor -> {
@@ -280,6 +280,28 @@ fun StatementGenerator.generateValueArgumentUsing(
             TODO("Unexpected valueArgument: ${valueArgument::class.java.simpleName}")
     }
 
+fun StatementGenerator.castArgumentToFunctionalInterfaceForSamType(
+    irExpression: IrExpression,
+    samType: KotlinType
+): IrExpression {
+    val samConversion = context.extensions.samConversion
+    val samTypeDescriptor = samType.constructor.declarationDescriptor
+    val samClassDescriptor = samTypeDescriptor as? ClassDescriptor
+        ?: throw AssertionError("SAM class expected: $samType")
+    val kotlinFunctionType = samConversion.getFunctionTypeForSAMClass(samClassDescriptor)
+    val irFunctionType = context.typeTranslator.translateType(kotlinFunctionType)
+
+    return IrTypeOperatorCallImpl(
+        irExpression.startOffset, irExpression.endOffset,
+        irFunctionType,
+        IrTypeOperator.IMPLICIT_CAST,
+        irFunctionType
+    ).apply {
+        argument = irExpression
+        typeOperandClassifier = irFunctionType.classifierOrFail
+    }
+}
+
 fun Generator.getSuperQualifier(resolvedCall: ResolvedCall<*>): ClassDescriptor? {
     val superCallExpression = getSuperCallExpression(resolvedCall.call) ?: return null
     return getOrFail(BindingContext.REFERENCE_TARGET, superCallExpression.instanceReference) as ClassDescriptor
@@ -349,13 +371,13 @@ fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall
     }
 
     call.callReceiver =
-            if (resolvedCall.call.isSafeCall())
-                SafeExtensionInvokeCallReceiver(
-                    this, ktCallElement.startOffsetSkippingComments, ktCallElement.endOffset,
-                    call, functionReceiverValue, extensionInvokeReceiverValue
-                )
-            else
-                ExtensionInvokeCallReceiver(call, functionReceiverValue, extensionInvokeReceiverValue)
+        if (resolvedCall.call.isSafeCall())
+            SafeExtensionInvokeCallReceiver(
+                this, ktCallElement.startOffsetSkippingComments, ktCallElement.endOffset,
+                call, functionReceiverValue, extensionInvokeReceiverValue
+            )
+        else
+            ExtensionInvokeCallReceiver(call, functionReceiverValue, extensionInvokeReceiverValue)
 
     call.irValueArgumentsByIndex[0] = null
     resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
@@ -410,14 +432,14 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
         val targetClassifier = targetType.classifierOrFail
 
         call.irValueArgumentsByIndex[i] =
-                IrTypeOperatorCallImpl(
-                    originalArgument.startOffset, originalArgument.endOffset,
-                    targetType,
-                    IrTypeOperator.SAM_CONVERSION,
-                    targetType,
-                    targetClassifier,
-                    originalArgument
-                )
+            IrTypeOperatorCallImpl(
+                originalArgument.startOffset, originalArgument.endOffset,
+                targetType,
+                IrTypeOperator.SAM_CONVERSION,
+                targetType,
+                targetClassifier,
+                castArgumentToFunctionalInterfaceForSamType(originalArgument, underlyingParameterType)
+            )
     }
 }
 
