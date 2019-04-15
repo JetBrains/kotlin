@@ -223,6 +223,8 @@ internal object DataFlowIR {
 
         class Const(val type: Type) : Node()
 
+        object Null : Node()
+
         open class Call(val callee: FunctionSymbol, val arguments: List<Edge>,
                         open val irCallSite: IrFunctionAccessExpression?) : Node()
 
@@ -285,6 +287,9 @@ internal object DataFlowIR {
             fun nodeToString(node: Node, ids: Map<Node, Int>) = when (node) {
                 is Node.Const ->
                     "        CONST ${node.type}\n"
+
+                Node.Null ->
+                    "        NULL\n"
 
                 is Node.Parameter ->
                     "        PARAM ${node.index}\n"

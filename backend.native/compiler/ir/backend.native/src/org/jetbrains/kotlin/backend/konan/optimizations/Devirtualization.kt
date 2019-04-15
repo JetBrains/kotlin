@@ -866,6 +866,8 @@ internal object Devirtualization {
                         is DataFlowIR.Node.Const ->
                             sourceNode(concreteType(node.type.resolved())) { "Const\$${function.symbol}" }
 
+                        DataFlowIR.Node.Null -> constraintGraph.voidNode
+
                         is DataFlowIR.Node.Parameter ->
                             function.parameters[node.index]
 

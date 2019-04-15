@@ -587,6 +587,7 @@ internal object DFGSerializer {
         UNKNOWN,
         PARAMETER,
         CONST,
+        NULL,
         STATIC_CALL,
         NEW_OBJECT,
         VTABLE_CALL,
@@ -603,6 +604,7 @@ internal object DFGSerializer {
     class Node {
         var parameter    : Parameter?     = null
         var const        : Const?         = null
+        var nil          : Boolean        = false
         var staticCall   : StaticCall?    = null
         var newObject    : NewObject?     = null
         var vtableCall   : VtableCall?    = null
@@ -629,6 +631,7 @@ internal object DFGSerializer {
             arrayRead     != null -> NodeType.ARRAY_READ
             arrayWrite    != null -> NodeType.ARRAY_WRITE
             variable      != null -> NodeType.VARIABLE
+            nil                   -> NodeType.NULL
             else                  -> NodeType.UNKNOWN
         }
 
@@ -655,6 +658,8 @@ internal object DFGSerializer {
 
             fun const(type: Int) =
                     Node().also { it.const = Const(type) }
+
+            fun nil() = Node().also { it.nil = true }
 
             fun staticCall(call: Call, receiverType: Int?) =
                     Node().also { it.staticCall = StaticCall(call, receiverType) }
@@ -695,6 +700,7 @@ internal object DFGSerializer {
                 when (type) {
                     NodeType.PARAMETER      -> result.parameter     = Parameter    (data)
                     NodeType.CONST          -> result.const         = Const        (data)
+                    NodeType.NULL           -> result.nil           = true
                     NodeType.STATIC_CALL    -> result.staticCall    = StaticCall   (data)
                     NodeType.NEW_OBJECT     -> result.newObject     = NewObject    (data)
                     NodeType.VTABLE_CALL    -> result.vtableCall    = VtableCall   (data)
@@ -886,6 +892,8 @@ internal object DFGSerializer {
                                     is DataFlowIR.Node.Parameter -> Node.parameter(node.index)
 
                                     is DataFlowIR.Node.Const -> Node.const(typeMap[node.type]!!)
+
+                                    DataFlowIR.Node.Null -> Node.nil()
 
                                     is DataFlowIR.Node.StaticCall ->
                                         Node.staticCall(buildCall(node), node.receiverType?.let { typeMap[it]!! })
@@ -1105,6 +1113,8 @@ internal object DFGSerializer {
 
                             NodeType.CONST ->
                                 DataFlowIR.Node.Const(types[it.const!!.type])
+
+                            NodeType.NULL -> DataFlowIR.Node.Null
 
                             NodeType.STATIC_CALL -> {
                                 val staticCall = it.staticCall!!

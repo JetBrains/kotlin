@@ -2233,6 +2233,11 @@ task args0(type: RunStandaloneKonanTest) {
     source = "runtime/basic/args0.kt"
 }
 
+task devirtualization_lateinitInterface(type: RunStandaloneKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/devirtualization/lateinitInterface.kt"
+}
+
 task multiargs(type: RunStandaloneKonanTest) {
     arguments = ["AAA", "BB", "C"]
     multiRuns = true
