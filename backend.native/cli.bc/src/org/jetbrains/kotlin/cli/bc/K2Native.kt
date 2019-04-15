@@ -213,13 +213,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     companion object {
         @JvmStatic fun main(args: Array<String>) {
             profile("Total compiler main()") {
-                val options = args.flatMap {
-                    if (it.startsWith('@')) {
-                        File(it.substring(1)).readStrings()
-                    }
-                    else listOf(it)
-                }
-                CLITool.doMain(K2Native(), options.toTypedArray())
+                CLITool.doMain(K2Native(), args)
             }
         }
     }
