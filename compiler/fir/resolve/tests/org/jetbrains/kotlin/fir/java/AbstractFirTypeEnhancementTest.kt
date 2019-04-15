@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
@@ -170,7 +172,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             val processedJavaClasses = mutableSetOf<FirJavaClass>()
             for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
                 if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
-                val enhancementScope = javaClass.buildClassSpecificUseSiteScope(session).let {
+                val enhancementScope = javaProvider.getClassUseSiteMemberScope(javaClass.classId, session, ScopeSession()).let {
                     when (it) {
                         is FirCompositeScope -> it.scopes.filterIsInstance<JavaClassEnhancementScope>().first()
                         is JavaClassEnhancementScope -> it

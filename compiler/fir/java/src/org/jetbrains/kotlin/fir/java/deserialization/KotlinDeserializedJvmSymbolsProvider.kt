@@ -60,9 +60,14 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
     }
 
-    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession): FirScope? {
+    override fun getClassUseSiteMemberScope(
+        classId: ClassId,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        return symbol.firUnsafe<FirRegularClass>().buildUseSiteScope(session)
+
+        return symbol.firUnsafe<FirRegularClass>().buildDefaultUseSiteScope(session, scopeSession)
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {

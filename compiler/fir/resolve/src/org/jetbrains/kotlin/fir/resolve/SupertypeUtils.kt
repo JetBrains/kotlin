@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -30,40 +32,67 @@ fun lookupSuperTypes(
     }
 }
 
-fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession): FirScope {
-    return buildClassSpecificUseSiteScope(useSiteSession) ?: buildDefaultUseSiteScope(useSiteSession)
+class ScopeSession {
+    private val scopes = mutableMapOf<ConeClassifierSymbol, MutableMap<ScopeSessionKey<*>, FirScope>>()
+    fun <T : FirScope> getOrBuild(symbol: ConeClassifierSymbol, key: ScopeSessionKey<T>, build: () -> T): T {
+        return scopes.getOrPut(symbol) {
+            mutableMapOf()
+        }.getOrPut(key) {
+            build()
+        } as T
+    }
 }
 
-private fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession): FirScope {
-    val superTypeScope = FirCompositeScope(mutableListOf())
-    val declaredScope = FirClassDeclaredMemberScope(this)
-    lookupSuperTypes(this, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
-        .mapNotNullTo(superTypeScope.scopes) { useSiteSuperType ->
-            if (useSiteSuperType is ConeClassErrorType) return@mapNotNullTo null
-            val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-            if (symbol is FirClassSymbol) {
-                val useSiteScope = symbol.fir.buildUseSiteScope(useSiteSession)
-                useSiteSuperType.buildSubstitutionScope(useSiteSession, useSiteScope, symbol.fir) ?: useSiteScope
-            } else {
-                null
+abstract class ScopeSessionKey<T : FirScope>()
+
+inline fun <reified T : FirScope> scopeSessionKey(): ScopeSessionKey<T> {
+    return object : ScopeSessionKey<T>() {}
+}
+
+val USE_SITE = scopeSessionKey()
+val DECLARED = scopeSessionKey()
+
+data class SubstitutionScopeKey<T : FirClassSubstitutionScope>(val type: ConeClassLikeType) : ScopeSessionKey<T>() {}
+
+fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
+    val symbolProvider = useSiteSession.service<FirSymbolProvider>()
+    return symbolProvider.getClassUseSiteMemberScope(this.classId, useSiteSession, builder)!!
+}
+
+fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
+    return builder.getOrBuild(symbol, USE_SITE) {
+        val superTypeScope = FirCompositeScope(mutableListOf())
+        val declaredScope = builder.getOrBuild(this.symbol, DECLARED) { FirClassDeclaredMemberScope(this) }
+        lookupSuperTypes(this, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
+            .mapNotNullTo(superTypeScope.scopes) { useSiteSuperType ->
+                if (useSiteSuperType is ConeClassErrorType) return@mapNotNullTo null
+                val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
+                if (symbol is FirClassSymbol) {
+                    val useSiteScope = symbol.fir.buildUseSiteScope(useSiteSession, builder)
+                    useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteScope, symbol.fir, builder)
+                } else {
+                    null
+                }
             }
-        }
-    return FirClassUseSiteScope(useSiteSession, superTypeScope, declaredScope)
+        FirClassUseSiteScope(useSiteSession, superTypeScope, declaredScope)
+    }
 }
 
-private fun ConeClassLikeType.buildSubstitutionScope(
+private fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteScope: FirScope,
-    regularClass: FirRegularClass
-): FirClassSubstitutionScope? {
-    if (this.typeArguments.isEmpty()) return null
+    regularClass: FirRegularClass,
+    builder: ScopeSession
+): FirScope {
+    if (this.typeArguments.isEmpty()) return useSiteScope
+    return builder.getOrBuild(regularClass.symbol, SubstitutionScopeKey(this)) {
+        @Suppress("UNCHECKED_CAST")
+        val substitution = regularClass.typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
+            typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
+        }.filter { (_, type) -> type != null }.toMap() as Map<ConeTypeParameterSymbol, ConeKotlinType>
 
-    @Suppress("UNCHECKED_CAST")
-    val substitution = regularClass.typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
-        typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
-    }.filter { (_, type) -> type != null }.toMap() as Map<ConeTypeParameterSymbol, ConeKotlinType>
-
-    return FirClassSubstitutionScope(session, useSiteScope, substitution)
+        FirClassSubstitutionScope(session, useSiteScope, substitution)
+    }
 }
 
 private tailrec fun ConeClassLikeType.computePartialExpansion(useSiteSession: FirSession): ConeClassLikeType? {

@@ -40,9 +40,17 @@ class FirCompositeScope(
         name: Name,
         noinline processor: (T) -> ProcessorAction
     ): ProcessorAction {
+        val unique = mutableSetOf<T>()
         val scopes = if (reversedPriority) scopes.asReversed() else scopes
         for (scope in scopes) {
-            if (!scope.process(name, processor)) {
+            if (!scope.process(name) {
+                    if (unique.add(it)) {
+                        processor(it)
+                    } else {
+                        NEXT
+                    }
+                }
+            ) {
                 return STOP
             }
         }

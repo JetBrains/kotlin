@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.service
@@ -64,7 +65,7 @@ class IdeFirDependenciesSymbolProvider(
         }
     }
 
-    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession): FirScope? {
+    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
         TODO("not implemented")
     }
 

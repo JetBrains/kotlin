@@ -21,8 +21,6 @@ interface FirClass : FirDeclarationContainer, FirStatement, FirAnnotationContain
 
     val classKind: ClassKind
 
-    fun buildClassSpecificUseSiteScope(useSiteSession: FirSession): FirScope? = null
-
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
 

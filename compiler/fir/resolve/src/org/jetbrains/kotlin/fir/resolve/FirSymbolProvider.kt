@@ -30,7 +30,11 @@ interface FirSymbolProvider {
     fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol>
 
     fun getClassDeclaredMemberScope(classId: ClassId): FirScope?
-    fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession): FirScope?
+    fun getClassUseSiteMemberScope(
+        classId: ClassId,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope?
 
     fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()
     fun getClassNamesInPackage(fqName: FqName): Set<Name> = emptySet()

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
@@ -30,7 +31,7 @@ class FirTopLevelDeclaredMemberScope(
 
         if (matchedClass != null && matchedClass is FirClassSymbol) {
             // TODO: why don't we use declared member scope at this point?
-            if (matchedClass.fir.buildUseSiteScope(session).processFunctionsByName(name, processor) == STOP) {
+            if (matchedClass.fir.buildUseSiteScope(session, ScopeSession()).processFunctionsByName(name, processor) == STOP) {
                 return STOP
             }
         }

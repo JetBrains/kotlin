@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -196,7 +197,7 @@ internal class Fir2IrVisitor(
     private fun IrClass.addFakeOverrides(klass: FirClass, processedFunctionNames: MutableList<Name>) {
         if (fakeOverrideMode == FakeOverrideMode.NONE) return
         val superTypesFunctionNames = klass.collectFunctionNamesFromSupertypes()
-        val useSiteScope = (klass as? FirRegularClass)?.buildUseSiteScope(session) ?: return
+        val useSiteScope = (klass as? FirRegularClass)?.buildUseSiteScope(session, ScopeSession()) ?: return
         for (name in superTypesFunctionNames) {
             if (name in processedFunctionNames) continue
             processedFunctionNames += name
@@ -393,7 +394,7 @@ internal class Fir2IrVisitor(
         val classId = constructedClassSymbol.classId
         val provider = this@Fir2IrVisitor.session.service<FirSymbolProvider>()
         var constructorSymbol: FirCallableSymbol? = null
-        provider.getClassUseSiteMemberScope(classId, this@Fir2IrVisitor.session)!!.processFunctionsByName(
+        provider.getClassUseSiteMemberScope(classId, this@Fir2IrVisitor.session, ScopeSession())!!.processFunctionsByName(
             classId.shortClassName
         ) {
             if (arguments.size <= ((it as FirFunctionSymbol).fir as FirFunction).valueParameters.size) {

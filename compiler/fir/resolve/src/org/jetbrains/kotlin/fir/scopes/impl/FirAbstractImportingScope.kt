@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boolean) : FirAbstractProviderBasedScope(session, lookupInFir) {
 
 
-    protected val scopeCache = mutableMapOf<ClassId, FirScope>()
+    protected val scopeCache = ScopeSession()
 
     fun <T : ConeCallableSymbol> processCallables(
         import: FirResolvedImport,
@@ -34,9 +35,9 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
         val classId = import.resolvedClassId
         if (classId != null) {
 
-            val scope = scopeCache.getOrPut(classId) {
-                provider.getClassUseSiteMemberScope(classId, session) ?: error("No scope for $classId")
-            }
+            val scope =
+                provider.getClassUseSiteMemberScope(classId, session, scopeCache) ?: error("No scope for $classId")
+
             val action = when (token) {
                 TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(
                     callableId.callableName,

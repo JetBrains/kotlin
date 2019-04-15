@@ -13,18 +13,20 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
-import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
+import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteScope
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -52,9 +54,47 @@ class JavaSymbolProvider(
         return FirClassDeclaredMemberScope(classSymbol.fir)
     }
 
-    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession): FirScope? {
+    override fun getClassUseSiteMemberScope(
+        classId: ClassId,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        return symbol.firUnsafe<FirRegularClass>().buildUseSiteScope(useSiteSession)
+        val javaClass = symbol.firUnsafe<FirJavaClass>()
+        return buildJavaEnhancementScope(useSiteSession, javaClass.symbol, scopeSession)
+    }
+
+    private fun buildJavaEnhancementScope(
+        useSiteSession: FirSession,
+        symbol: FirClassSymbol,
+        scopeSession: ScopeSession
+    ): JavaClassEnhancementScope {
+        return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
+            JavaClassEnhancementScope(useSiteSession, buildJavaUseSiteScope(symbol.fir, useSiteSession, scopeSession))
+        }
+    }
+
+    private fun buildJavaUseSiteScope(
+        regularClass: FirRegularClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): JavaClassUseSiteScope {
+        return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
+            val superTypeEnhancementScope = FirCompositeScope(mutableListOf())
+            val declaredScope = scopeSession.getOrBuild(regularClass.symbol, DECLARED) { FirClassDeclaredMemberScope(regularClass) }
+            lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
+                .mapNotNullTo(superTypeEnhancementScope.scopes) { useSiteSuperType ->
+                    if (useSiteSuperType is ConeClassErrorType) return@mapNotNullTo null
+                    val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
+                    if (symbol is FirClassSymbol) {
+                        // We need JavaClassEnhancementScope here to have already enhanced signatures from supertypes
+                        buildJavaEnhancementScope(useSiteSession, symbol, scopeSession)
+                    } else {
+                        null
+                    }
+                }
+            JavaClassUseSiteScope(regularClass, useSiteSession, superTypeEnhancementScope, declaredScope)
+        }
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
@@ -175,3 +215,5 @@ fun FqName.topLevelName() =
     asString().substringBefore(".")
 
 
+private val JAVA_ENHANCEMENT = scopeSessionKey<JavaClassEnhancementScope>()
+private val JAVA_USE_SITE = scopeSessionKey<JavaClassUseSiteScope>()

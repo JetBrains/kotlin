@@ -86,7 +86,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup(scopes) {
             val type = regularClass.defaultType()
-            scopes.addIfNotNull(type.scope(session))
+            scopes.addIfNotNull(type.scope(session, ScopeSession()))
             withLabel(regularClass.name, type) {
                 super.transformRegularClass(regularClass, data)
             }
@@ -484,7 +484,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         fun transform(): CompositeTransformResult<FirDeclaration> {
             localScopes.lastOrNull()?.storeDeclaration(namedFunction)
             return withScopeCleanup(scopes) {
-                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe<ConeKotlinType>()?.scope(session))
+                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session, ScopeSession()))
 
 
                 val result = super.transformNamedFunction(namedFunction, namedFunction.returnTypeRef).single as FirNamedFunction
