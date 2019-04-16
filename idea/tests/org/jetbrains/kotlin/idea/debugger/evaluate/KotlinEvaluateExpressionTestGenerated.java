@@ -391,6 +391,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/stdlib.kt");
         }
 
+        @TestMetadata("synchronizedBlock.kt")
+        public void testSynchronizedBlock() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/synchronizedBlock.kt");
+        }
+
         @TestMetadata("typeParameterRef.kt")
         public void testTypeParameterRef() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/typeParameterRef.kt");
