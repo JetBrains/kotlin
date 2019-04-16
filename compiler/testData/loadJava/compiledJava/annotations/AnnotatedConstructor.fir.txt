@@ -1,4 +1,4 @@
 public open class AnnotatedConstructor : R|java/lang/Object| {
-    @R|test/AnnotatedConstructor.Anno|(String(constructor)) public final fun AnnotatedConstructor(): R|test/AnnotatedConstructor|
+    @R|test/AnnotatedConstructor.Anno|(String(constructor)) public constructor(): R|test/AnnotatedConstructor|
 
 }

@@ -2,8 +2,8 @@ public final enum class EnumConstructorParameter : R|java/lang/Enum<test/EnumCon
     public final static val INSTANCE: R|ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>|!
         public get(): R|ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>|!
 
-    private final fun EnumConstructorParameter(@R|test/EnumConstructorParameter.Anno|(String(string)) s: R|ft<kotlin/String, kotlin/String?>|!): R|test/EnumConstructorParameter|
+    private constructor(@R|test/EnumConstructorParameter.Anno|(String(string)) s: R|ft<kotlin/String, kotlin/String?>|!): R|test/EnumConstructorParameter|
 
-    private final fun EnumConstructorParameter(x: R|kotlin/Int|): R|test/EnumConstructorParameter|
+    private constructor(x: R|kotlin/Int|): R|test/EnumConstructorParameter|
 
 }

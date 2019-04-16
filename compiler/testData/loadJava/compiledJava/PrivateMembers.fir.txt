@@ -11,6 +11,6 @@ public open class PrivateMembers : R|java/lang/Object| {
 
     private open static operator fun staticMethod(): R|kotlin/Unit|
 
-    private final fun PrivateMembers(): R|test/PrivateMembers|
+    private constructor(): R|test/PrivateMembers|
 
 }

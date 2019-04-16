@@ -10,6 +10,6 @@ public final enum class EnumMembers : R|java/lang/Enum<test/EnumMembers>| {
 
     public open operator fun first(): R|kotlin/Boolean|
 
-    private final fun EnumMembers(isFirst: R|kotlin/Boolean|): R|test/EnumMembers|
+    private constructor(isFirst: R|kotlin/Boolean|): R|test/EnumMembers|
 
 }

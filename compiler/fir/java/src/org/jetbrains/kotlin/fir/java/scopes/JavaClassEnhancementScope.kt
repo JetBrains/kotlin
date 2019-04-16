@@ -170,24 +170,35 @@ class JavaClassEnhancementScope(
         }
 
         val symbol = if (!isAccessor) FirFunctionSymbol(methodId) else FirAccessorSymbol(callableId = propertyId!!, accessorId = methodId)
-        FirMemberFunctionImpl(
-            this@JavaClassEnhancementScope.session, null, symbol, name,
-            newReceiverTypeRef, newReturnTypeRef
-        ).apply {
-            status = firMethod.status as FirDeclarationStatusImpl
-            annotations += firMethod.annotations
-            valueParameters += firMethod.valueParameters.zip(newValueParameterInfo) { valueParameter, newInfo ->
-                val (newTypeRef, newDefaultValue) = newInfo
-                with(valueParameter) {
-                    FirValueParameterImpl(
-                        this@JavaClassEnhancementScope.session, psi,
-                        this.name, newTypeRef,
-                        defaultValue ?: newDefaultValue, isCrossinline, isNoinline, isVararg
-                    ).apply {
-                        annotations += valueParameter.annotations
-                    }
+        val newValueParameters = firMethod.valueParameters.zip(newValueParameterInfo) { valueParameter, newInfo ->
+            val (newTypeRef, newDefaultValue) = newInfo
+            with(valueParameter) {
+                FirValueParameterImpl(
+                    this@JavaClassEnhancementScope.session, psi,
+                    this.name, newTypeRef,
+                    defaultValue ?: newDefaultValue, isCrossinline, isNoinline, isVararg
+                ).apply {
+                    annotations += valueParameter.annotations
                 }
             }
+        }
+        val function = when (firMethod) {
+            is FirJavaConstructor -> FirConstructorImpl(
+                this@JavaClassEnhancementScope.session, null, symbol as FirFunctionSymbol,
+                newReceiverTypeRef, newReturnTypeRef
+            ).apply {
+                this.valueParameters += newValueParameters
+            }
+            else -> FirMemberFunctionImpl(
+                this@JavaClassEnhancementScope.session, null, symbol, name,
+                newReceiverTypeRef, newReturnTypeRef
+            ).apply {
+                this.valueParameters += newValueParameters
+            }
+        }
+        function.apply {
+            status = firMethod.status as FirDeclarationStatusImpl
+            annotations += firMethod.annotations
         }
         return symbol
     }

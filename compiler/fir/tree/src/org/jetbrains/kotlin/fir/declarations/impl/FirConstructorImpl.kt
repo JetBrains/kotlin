@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
@@ -23,21 +21,38 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
-open class FirConstructorImpl(
-    session: FirSession,
-    psi: PsiElement?,
-    override val symbol: FirFunctionSymbol,
-    visibility: Visibility,
-    isExpect: Boolean,
-    isActual: Boolean,
-    delegatedSelfTypeRef: FirTypeRef,
-    final override var delegatedConstructor: FirDelegatedConstructorCall?
-) : FirAbstractCallableMember(
-    session, psi, NAME, visibility, Modality.FINAL,
-    isExpect, isActual, isOverride = false, receiverTypeRef = null, returnTypeRef = delegatedSelfTypeRef
-), FirConstructor {
+open class FirConstructorImpl : FirAbstractCallableMember, FirConstructor {
 
-    init {
+    override val symbol: FirFunctionSymbol
+
+    final override var delegatedConstructor: FirDelegatedConstructorCall? = null
+
+    constructor(
+        session: FirSession,
+        psi: PsiElement?,
+        symbol: FirFunctionSymbol,
+        visibility: Visibility,
+        isExpect: Boolean,
+        isActual: Boolean,
+        delegatedSelfTypeRef: FirTypeRef,
+        delegatedConstructor: FirDelegatedConstructorCall?
+    ) : super(
+        session, psi, NAME, visibility, Modality.FINAL,
+        isExpect, isActual, isOverride = false, receiverTypeRef = null, returnTypeRef = delegatedSelfTypeRef
+    ) {
+        this.symbol = symbol
+        this.delegatedConstructor = delegatedConstructor
+        symbol.bind(this)
+    }
+
+    constructor(
+        session: FirSession,
+        psi: PsiElement?,
+        symbol: FirFunctionSymbol,
+        receiverTypeRef: FirTypeRef?,
+        returnTypeRef: FirTypeRef
+    ) : super(session, psi, NAME, receiverTypeRef, returnTypeRef) {
+        this.symbol = symbol
         symbol.bind(this)
     }
 

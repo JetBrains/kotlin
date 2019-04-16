@@ -13,6 +13,6 @@ public open class JFrame : R|awt/Frame| {
         public/*package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
         public/*package*/ set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
 
-    public final fun JFrame(): R|test/JFrame|
+    public constructor(): R|test/JFrame|
 
 }

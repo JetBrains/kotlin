@@ -1,4 +1,4 @@
 public open class ConstructorWithNewTypeParams<T> : R|java/lang/Object| {
-    public final fun ConstructorWithNewTypeParams(first: R|ft<U, U?>|!): R|test/ConstructorWithNewTypeParams|
+    public constructor(first: R|ft<U, U?>|!): R|test/ConstructorWithNewTypeParams|
 
 }
