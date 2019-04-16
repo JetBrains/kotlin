@@ -51,6 +51,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/anonymousObjects.kt");
         }
 
+        @TestMetadata("arrayMethods.kt")
+        public void testArrayMethods() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/arrayMethods.kt");
+        }
+
         @TestMetadata("arrays.kt")
         public void testArrays() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/arrays.kt");

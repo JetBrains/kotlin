@@ -219,13 +219,33 @@ class JDIEval(
         mayThrow { _class.setValue(field, jdiValue) }.ifFail(field)
     }
 
-    private fun findMethod(methodDesc: MethodDescription, _class: ReferenceType = methodDesc.ownerType.asReferenceType()): Method {
+    private fun findMethod(methodDesc: MethodDescription, clazz: ReferenceType = methodDesc.ownerType.asReferenceType()): Method {
+        val method = findMethodOrNull(methodDesc, clazz)
+        if (method != null) {
+            return method
+        }
+
+        throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
+    }
+
+    private fun findMethodOrNull(methodDesc: MethodDescription, clazz: ReferenceType): Method? {
         val methodName = methodDesc.name
-        val method = when (_class) {
-            is ClassType ->
-                _class.concreteMethodByName(methodName, methodDesc.desc)
-            else ->
-                _class.methodsByName(methodName, methodDesc.desc).firstOrNull()
+
+        var method: Method?
+        when (clazz) {
+            is ClassType -> {
+                method = clazz.concreteMethodByName(methodName, methodDesc.desc)
+            }
+            is ArrayType -> { // Copied from com.intellij.debugger.engine.DebuggerUtils.findMethod
+                val objectType = OBJECT.asReferenceType()
+                method = findMethodOrNull(methodDesc, objectType)
+                if (method == null && methodDesc.name == "clone" && methodDesc.desc == "()[Ljava/lang/Object;") {
+                    method = findMethodOrNull(MethodDescription(OBJECT.internalName, "clone", "()[Ljava/lang/Object;", false), objectType)
+                }
+            }
+            else -> {
+                method = clazz.methodsByName(methodName, methodDesc.desc).firstOrNull()
+            }
         }
 
         if (method != null) {
@@ -235,7 +255,7 @@ class JDIEval(
         // Module name can be different for internal functions during evaluation and compilation
         val internalNameWithoutSuffix = internalNameWithoutModuleSuffix(methodName)
         if (internalNameWithoutSuffix != null) {
-            val internalMethods = _class.visibleMethods().filter {
+            val internalMethods = clazz.visibleMethods().filter {
                 val name = it.name()
                 name.startsWith(internalNameWithoutSuffix) && canBeMangledInternalName(name) && it.signature() == methodDesc.desc
             }
@@ -246,7 +266,7 @@ class JDIEval(
             }
         }
 
-        throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
+        return null
     }
 
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
