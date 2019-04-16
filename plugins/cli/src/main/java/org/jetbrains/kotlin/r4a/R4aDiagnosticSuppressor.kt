@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.r4a
 
-import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.com.intellij.openapi.extensions.Extensions
+import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
