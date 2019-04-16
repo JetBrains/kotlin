@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import java.lang.IllegalStateException
@@ -22,7 +24,7 @@ abstract class CheckerStage : ResolutionStage()
 
 internal object CheckExplicitReceiverConsistency : ResolutionStage() {
     override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-        val receiverKind = candidate.receiverKind
+        val receiverKind = candidate.explicitReceiverKind
         val explicitReceiver = callInfo.explicitReceiver
         // TODO: add invoke cases
         when (receiverKind) {
@@ -42,14 +44,60 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
 }
 
 internal sealed class CheckReceivers : ResolutionStage() {
-    object Dispatch : CheckReceivers()
+    object Dispatch : CheckReceivers() {
+        override fun ExplicitReceiverKind.shouldBeResolvedAsImplicit(): Boolean {
+            return this == EXTENSION_RECEIVER || this == NO_EXPLICIT_RECEIVER
+        }
 
-    object Extension : CheckReceivers()
+        override fun ExplicitReceiverKind.shouldBeResolvedAsExplicit(): Boolean {
+            return this == DISPATCH_RECEIVER || this == BOTH_RECEIVERS
+        }
+
+        override fun Candidate.getReceiverValue(): ReceiverValue? {
+            return dispatchReceiverValue
+        }
+    }
+
+    object Extension : CheckReceivers() {
+        override fun ExplicitReceiverKind.shouldBeResolvedAsImplicit(): Boolean {
+            return this == DISPATCH_RECEIVER || this == NO_EXPLICIT_RECEIVER
+        }
+
+        override fun ExplicitReceiverKind.shouldBeResolvedAsExplicit(): Boolean {
+            return this == EXTENSION_RECEIVER || this == BOTH_RECEIVERS
+        }
+
+        override fun Candidate.getReceiverValue(): ReceiverValue? {
+            val callableSymbol = symbol as? FirCallableSymbol ?: return null
+            val callable = callableSymbol.fir
+            val type = (callable.receiverTypeRef as FirResolvedTypeRef?)?.type ?: return null
+            return object : ReceiverValue {
+                override val type: ConeKotlinType
+                    get() = type
+
+            }
+        }
+    }
+
+    abstract fun Candidate.getReceiverValue(): ReceiverValue?
+
+    abstract fun ExplicitReceiverKind.shouldBeResolvedAsExplicit(): Boolean
+
+    abstract fun ExplicitReceiverKind.shouldBeResolvedAsImplicit(): Boolean
 
     override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-        val callableSymbol = candidate.symbol as? FirCallableSymbol ?: return
-        val callableId = callableSymbol.callableId
-        val callable = callableSymbol.fir
+        val receiverParameterValue = candidate.getReceiverValue()
+        val explicitReceiverExpression = callInfo.explicitReceiver
+        val explicitReceiverKind = candidate.explicitReceiverKind
+
+        if (receiverParameterValue != null) {
+            if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeResolvedAsExplicit()) {
+                resolveArgumentExpression(
+                    candidate.csBuilder, explicitReceiverExpression, receiverParameterValue.type,
+                    sink, isReceiver = true, typeProvider = callInfo.typeProvider
+                )
+            }
+        }
     }
 }
 

@@ -33,7 +33,7 @@ fun resolveArgumentExpression(
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     return when (argument) {
-        is FirQualifiedAccessExpression, is FirFunctionCall -> checkPlainExpressionArgument(
+        is FirQualifiedAccessExpression, is FirFunctionCall -> resolvePlainExpressionArgument(
             csBuilder,
             argument,
             expectedType,
@@ -65,11 +65,11 @@ fun resolveArgumentExpression(
             acceptLambdaAtoms,
             typeProvider
         )
-        else -> checkPlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, typeProvider)
+        else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, typeProvider)
     }
 }
 
-fun checkPlainExpressionArgument(
+fun resolvePlainExpressionArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: FirExpression,
     expectedType: ConeKotlinType?,
@@ -79,16 +79,29 @@ fun checkPlainExpressionArgument(
 ) {
     if (expectedType == null) return
     val argumentType = typeProvider(argument)?.coneTypeSafe<ConeKotlinType>() ?: return
+    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver)
+}
 
+fun resolvePlainArgumentType(
+    csBuilder: ConstraintSystemBuilder,
+    argumentType: ConeKotlinType,
+    expectedType: ConeKotlinType,
+    sink: CheckerSink,
+    isReceiver: Boolean
+) {
     val position = SimpleConstraintSystemConstraintPosition //TODO
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         if (!isReceiver) {
             csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
+            return
         }
         val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE)
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
             sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER) // TODO
+        } else {
+            csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
+            sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER)
         }
 
     }

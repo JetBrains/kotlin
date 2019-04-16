@@ -64,6 +64,7 @@ class FirSyntheticPropertiesScope(val session: FirSession, val baseScope: FirSco
     }
 
     override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
+        if (name.isSpecial) return ProcessorAction.NEXT
         if (baseScope.processFunctionsByName(Name.guessByFirstCharacter("get${name.identifier.capitalize()}")) {
                 checkGetAndCreateSynthetic(name, it, processor)
             }.stop()) return ProcessorAction.STOP
