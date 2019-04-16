@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+fun test(list: List<String>) {
+    List(list.size) { index ->
+        if (index == 0) return@List 0
+        index + 42
+    }
+}

@@ -1,0 +1,11 @@
+<html>
+<body>
+This inspection reports a <b>mapIndexed</b> call replaceable by List generator. For example:
+<br /><br />
+<pre>
+val a = list.mapIndexed { i, _ -> // Should be replaced with List generator
+    i + 42
+}
+</pre>
+</body>
+</html>

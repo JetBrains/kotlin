@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+import kotlin.collections.mapIndexed as foo
+
+fun test(list: List<String>) {
+    List(list.size) { index ->
+        index + 42
+    }
+}

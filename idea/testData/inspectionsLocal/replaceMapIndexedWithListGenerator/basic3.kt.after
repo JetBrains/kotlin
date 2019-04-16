@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+fun test(list: List<String>) {
+    List(Foo().bar().size) { index ->
+        index + 42
+    }
+}
+
+class Foo {
+    fun bar() = emptyList<String>()
+}

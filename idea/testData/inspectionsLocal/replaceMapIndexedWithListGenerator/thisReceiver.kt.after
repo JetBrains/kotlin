@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun List<String>.test() {
+    List(this.size) { index ->
+        index + 42
+    }
+}
