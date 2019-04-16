@@ -16,16 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -50,7 +47,7 @@ interface ConstraintSystemBuilder : ConstraintSystemOperation {
     // if runOperations return true, then this operation will be applied, and function return true
     fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
 
-    fun buildCurrentSubstitutor(): NewTypeSubstitutor
+    fun buildCurrentSubstitutor(): TypeSubstitutorMarker
 
     fun currentStorage(): ConstraintStorage
 }

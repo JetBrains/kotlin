@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 /**
  * Call, Callable reference, lambda & function expression, collection literal.
@@ -71,9 +72,15 @@ class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : 
     }
 }
 
-sealed class PostponedResolvedAtom : ResolvedAtom() {
-    abstract val inputTypes: Collection<UnwrappedType>
-    abstract val outputType: UnwrappedType?
+interface PostponedResolvedAtomMarker {
+    val inputTypes: Collection<KotlinTypeMarker>
+    val outputType: KotlinTypeMarker?
+    val analyzed: Boolean
+}
+
+sealed class PostponedResolvedAtom : ResolvedAtom(), PostponedResolvedAtomMarker {
+    abstract override val inputTypes: Collection<UnwrappedType>
+    abstract override val outputType: UnwrappedType?
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(

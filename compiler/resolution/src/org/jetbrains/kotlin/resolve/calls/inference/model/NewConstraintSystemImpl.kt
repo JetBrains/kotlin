@@ -273,14 +273,14 @@ class NewConstraintSystemImpl(
     }
 
     // PostponedArgumentsAnalyzer.Context
-    override fun buildCurrentSubstitutor(): NewTypeSubstitutor {
+    override fun buildCurrentSubstitutor(): TypeSubstitutorMarker {
         checkState(State.BUILDING, State.COMPLETION)
         return buildCurrentSubstitutor(emptyMap())
     }
 
-    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): NewTypeSubstitutor {
+    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): TypeSubstitutorMarker {
         checkState(State.BUILDING, State.COMPLETION)
-        return storage.buildCurrentSubstitutor(additionalBindings)
+        return storage.buildCurrentSubstitutor(this, additionalBindings)
     }
 
     override fun bindingStubsForPostponedVariables(): Map<TypeVariableMarker, StubTypeMarker> {

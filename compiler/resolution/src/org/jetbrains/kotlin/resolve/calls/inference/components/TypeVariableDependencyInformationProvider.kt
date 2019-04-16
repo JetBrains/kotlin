@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.SmartSet
 
 class TypeVariableDependencyInformationProvider(
     private val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>,
-    private val postponedKtPrimitives: List<PostponedResolvedAtom>,
+    private val postponedKtPrimitives: List<PostponedResolvedAtomMarker>,
     private val topLevelType: KotlinTypeMarker?,
     private val typeSystemContext: TypeSystemInferenceExtensionContext
 ) {
