@@ -31,7 +31,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
     private val NEXT_LABEL_WIDTH = 85
     private val TETRISES_LABEL_WIDTH = 162
 
-    private val ratio: Float
+    private var ratio: Float
 
     private fun stretch(value: Int) = (value.toFloat() * ratio + 0.5).toInt()
 
@@ -114,8 +114,8 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
     private var displayHeight: Int = 0
     private val fieldWidth: Int
     private val fieldHeight: Int
-    private val windowX: Int
-    private val windowY: Int
+    private var windowX: Int
+    private var windowY: Int
     private val window: CPointer<SDL_Window>
     private val renderer: CPointer<SDL_Renderer>
     private val texture: CPointer<SDL_Texture>
@@ -124,8 +124,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
 
     init {
         if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-            println("SDL_Init Error: ${get_SDL_Error()}")
-            throw Error()
+            throw Error("SDL_Init Error: ${get_SDL_Error()}")
         }
 
         platform = SDL_GetPlatform()!!.toKString()
@@ -160,7 +159,8 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
             windowY = (displayHeight - windowHeight) / 2
             ratio = 1.0f
         }
-        val window = SDL_CreateWindow("Tetris", windowX, windowY, windowWidth, windowHeight, SDL_WINDOW_SHOWN)
+        val window = SDL_CreateWindow("Tetris", windowX, windowY, windowWidth, windowHeight,
+            SDL_WINDOW_SHOWN or SDL_WINDOW_ALLOW_HIGHDPI)
         if (window == null) {
             println("SDL_CreateWindow Error: ${get_SDL_Error()}")
             SDL_Quit()
@@ -177,11 +177,29 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         }
         this.renderer = renderer
 
-        // Workaround for Mojave SDL bug, see https://bugzilla.libsdl.org/show_bug.cgi?id=4272
-        SDL_PumpEvents()
-        SDL_SetWindowSize(window, windowWidth, windowHeight)
+        memScoped {
+            val realWidth = alloc<IntVar>()
+            val realHeight = alloc<IntVar>()
+            SDL_GetRendererOutputSize(renderer, realWidth.ptr, realHeight.ptr)
+            if (platform != "iOS" && windowHeight != realHeight.value) {
+                println("DPI differs ${realWidth.value} x ${realHeight.value} vs $windowWidth x $windowHeight")
+                ratio = realHeight.value.toFloat() / windowHeight
+            }
+        }
 
-        texture = loadImage(window, renderer, "tetris_all.bmp")
+        texture = loadImage(window, renderer, findFile("tetris_all.bmp"))
+    }
+
+    private fun findFile(name: String): String {
+      memScoped {
+         val dirs = listOf(".", SDL_GetBasePath()?.toKString() ?: "/")
+         val statBuffer = alloc<stat>()
+         dirs.forEach {
+            val candidate = "$it/$name"
+            if (stat(candidate, statBuffer.ptr) == 0) return candidate
+         }
+         throw Error("name not found")
+      }
     }
 
     private fun loadImage(win: CPointer<SDL_Window>, ren: CPointer<SDL_Renderer>, imagePath: String): CPointer<SDL_Texture> {
