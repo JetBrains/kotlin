@@ -12,11 +12,14 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.refactoring.toVirtualFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 import java.io.File
 
 private data class SuffixOption(val suffix: String, val expectedLine: Int, val expectedColumn: Int)
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinExceptionFilterTest : KotlinLightCodeInsightFixtureTestCase() {
     private val mySuffixPlug = "<suffix>"
     private val myPathPlug = "<path>"

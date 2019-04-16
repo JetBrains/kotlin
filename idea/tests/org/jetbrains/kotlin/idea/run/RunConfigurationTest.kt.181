@@ -34,12 +34,15 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 import java.io.File
 import java.util.*
 
 private val RUN_PREFIX = "// RUN:"
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class RunConfigurationTest: KotlinCodeInsightTestCase() {
     fun getTestProject() = myProject!!
     override fun getModule() = myModule!!

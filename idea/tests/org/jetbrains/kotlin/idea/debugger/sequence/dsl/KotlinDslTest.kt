@@ -8,7 +8,10 @@ import com.intellij.debugger.streams.test.DslTestCase
 import com.intellij.debugger.streams.trace.dsl.impl.DslImpl
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinCollectionsPeekCallFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFactory
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinDslTest : DslTestCase(DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))) {
     override fun getTestDataPath(): String {
         return "idea/testData/debugger/sequence/dsl"

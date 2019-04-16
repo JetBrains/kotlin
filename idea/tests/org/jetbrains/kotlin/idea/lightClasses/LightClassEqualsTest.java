@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDe
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase {
     @NotNull
     @Override

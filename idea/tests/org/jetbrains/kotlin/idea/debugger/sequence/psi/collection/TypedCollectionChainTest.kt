@@ -8,7 +8,10 @@ import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.collections.KotlinCollectionSupportProvider
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.TypedChainTestCase
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class TypedCollectionChainTest : TypedChainTestCase("collection/positive/types") {
     override val kotlinChainBuilder: StreamChainBuilder = KotlinCollectionSupportProvider().chainBuilder
 

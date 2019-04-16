@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.runner.RunWith
 import java.io.File
 import kotlin.test.assertNotNull
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LightClassesClasspathSortingTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testExplicitClass() {

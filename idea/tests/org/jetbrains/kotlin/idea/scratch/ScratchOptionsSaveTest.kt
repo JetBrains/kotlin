@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.idea.scratch
 
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 import javax.swing.JCheckBox
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
 
     fun testOptionsSaveOnClosingFile() {

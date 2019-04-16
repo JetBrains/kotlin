@@ -11,10 +11,13 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.test.HierarchyViewTestFixture;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public abstract class KotlinHierarchyViewTestBase extends KotlinLightCodeInsightFixtureTestCase {
     private final HierarchyViewTestFixture hierarchyFixture = new HierarchyViewTestFixture();
 

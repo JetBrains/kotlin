@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.configureLanguageAndApiVersion
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class OverrideImplementTest : AbstractOverrideImplementTest() {
     override fun setUp() {
         super.setUp()

@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
 import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase {
     @NotNull
     @Override

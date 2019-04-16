@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class KotlinStubsTest extends LightCodeInsightFixtureTestCase {
     @NotNull
     @Override

@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import java.lang.System.identityHashCode as idh
 
-
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LightElementsEqualsTest : KotlinLightCodeInsightFixtureTestCase() {
 
     private val SAMPLE_SOURCE = """

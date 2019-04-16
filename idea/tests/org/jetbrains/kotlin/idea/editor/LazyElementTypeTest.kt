@@ -13,8 +13,11 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase
 import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LazyElementTypeTest : KotlinLightCodeInsightFixtureTestCaseBase() {
     fun testSplitArrow() = reparse("val t = { a: Int -<caret>> }", ' ')
     fun testDeleteArrow() = reparse("val t = { a: Int -><caret> }", BACKSPACE_FAKE_CHAR)

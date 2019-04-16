@@ -9,8 +9,11 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType.*
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import java.io.File
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String =
             File(TEST_DATA_BASE_PATH, "/context").path + File.separator

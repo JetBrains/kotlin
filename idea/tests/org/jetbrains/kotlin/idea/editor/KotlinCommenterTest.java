@@ -11,11 +11,13 @@ import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
+import org.junit.runner.RunWith;
 
 import java.io.File;
-
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class KotlinCommenterTest extends LightCodeInsightTestCase {
     private static final String BASE_PATH =
             new File(PluginTestCaseBase.getTestDataPathBase(), "/editor/commenter/").getAbsolutePath();

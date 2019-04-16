@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinScriptFqnIndex
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
+import org.junit.runner.RunWith
 import kotlin.test.assertNotEquals
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
 
     fun testConfigurationForScript() {

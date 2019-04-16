@@ -13,9 +13,12 @@ import com.intellij.testFramework.utils.inlays.InlayHintsChecker
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.junit.Assert
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         const val DISABLE_ACTION_TEXT = "Do not show lambda return expression hints"

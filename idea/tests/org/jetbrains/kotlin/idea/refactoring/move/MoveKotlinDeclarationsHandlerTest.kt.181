@@ -20,8 +20,11 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.extractMultipleMarkerOffsets
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase()
 

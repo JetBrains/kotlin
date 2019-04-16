@@ -6,37 +6,33 @@
 package org.jetbrains.kotlin.findUsages
 
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
-import org.junit.Test
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import java.io.File
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class FindUsagesMultiModuleTest : AbstractFindUsagesMultiModuleTest() {
 
-    @Test
     fun testFindActualInterface() {
         doTest()
     }
 
-    @Test
     fun testFindCommonClassFromActual() {
         doTest()
     }
 
-    @Test
     fun testFindCommonFromActual() {
         doTest()
     }
 
-    @Test
     fun testFindCommonPropertyFromActual() {
         doTest()
     }
 
-    @Test
     fun testFindCommonSuperclass() {
         doTest()
     }
 
-    @Test
     fun testFindImplFromHeader() {
         doTest()
     }

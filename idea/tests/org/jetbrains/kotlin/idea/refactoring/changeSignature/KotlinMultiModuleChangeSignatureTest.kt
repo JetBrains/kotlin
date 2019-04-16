@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.types.KotlinType
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinMultiModuleChangeSignatureTest : KotlinMultiFileTestCase() {
     init {
         isMultiModule = true

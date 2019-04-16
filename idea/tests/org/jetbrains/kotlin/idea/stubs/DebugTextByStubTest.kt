@@ -27,7 +27,10 @@ import kotlin.test.assertEquals
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassInitializer
 import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     private fun createFileAndStubTree(text: String): Pair<KtFile, StubElement<*>> {
         val file = myFixture.configureByText("test.kt", text) as KtFile

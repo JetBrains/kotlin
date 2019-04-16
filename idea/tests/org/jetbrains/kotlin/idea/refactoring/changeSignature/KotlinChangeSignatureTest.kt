@@ -44,12 +44,14 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.sure
+import org.junit.runner.RunWith
 import java.io.File
 import java.util.*
-
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         internal val BUILT_INS = DefaultBuiltIns.Instance

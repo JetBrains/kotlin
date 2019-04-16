@@ -11,10 +11,13 @@ import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     private static final String TEST_RELATIVE_DIR = "wordSelection";
 

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.test
 import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.KotlinPluginVersion
 import org.jetbrains.kotlin.idea.PlatformVersion
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class CompatibilityVerifierVersionComparisonTest : LightPlatformTestCase() {
     fun testKotlinVersionParsing() {
         val version = KotlinPluginVersion.parse("1.2.40-dev-193-Studio3.0-1")

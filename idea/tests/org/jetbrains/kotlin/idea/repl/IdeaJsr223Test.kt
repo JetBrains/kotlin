@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.idea.repl
 
 import com.intellij.testFramework.PlatformTestCase
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Test
+import org.junit.runner.RunWith
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 import kotlin.test.assertFails
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class IdeaJsr223Test : PlatformTestCase() {
 
     @Test

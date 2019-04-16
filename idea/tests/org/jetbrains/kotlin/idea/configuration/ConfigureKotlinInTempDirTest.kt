@@ -14,9 +14,12 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumen
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 import java.io.IOException
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest() {
     @Throws(IOException::class)
     fun testNoKotlincExistsNoSettingsRuntime10() {

@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class NavigateFromLibrarySourcesTest: AbstractNavigateFromLibrarySourcesTest() {
     fun testJdkClass() {
         checkNavigationFromLibrarySource("Thread", "java.lang.Thread")

@@ -22,13 +22,15 @@ import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.kotlin.test.util.ReferenceUtils.renderAsGotoImplementation;
-
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testAny() throws Exception {
         doTest();

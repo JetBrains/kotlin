@@ -11,8 +11,11 @@ import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import java.util.*
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class QualifiedNamesTest: LightCodeInsightTestCase() {
     fun testClassRef() {
         LightPlatformCodeInsightTestCase.configureFromFileText(

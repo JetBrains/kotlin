@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.idea.completion.test.handlers
 
 import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import java.io.File
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
     fun testExtensionFunctionImport() {
         doTest()
