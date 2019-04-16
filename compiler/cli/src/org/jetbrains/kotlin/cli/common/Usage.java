@@ -97,7 +97,7 @@ public class Usage {
         while (sb.length() < descriptionStart) {
             sb.append(" ");
         }
-        appendln(sb, "Expand compiler arguments from the given file, containing one argument or file path per line");
+        appendln(sb, "Read compiler arguments and file paths from the given file");
     }
 
     private static void appendln(@NotNull StringBuilder sb, @NotNull String string) {
