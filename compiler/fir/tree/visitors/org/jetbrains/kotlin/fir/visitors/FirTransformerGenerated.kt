@@ -232,6 +232,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformOperatorCall(typeOperatorCall, data)
     }
 
+    open fun transformStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: D): CompositeTransformResult<FirStatement> {
+        return transformCall(stringConcatenationCall, data)
+    }
+
     open fun transformClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(classReferenceExpression, data)
     }
@@ -666,6 +670,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitStatement(statement: FirStatement, data: D): CompositeTransformResult<FirElement> {
         return transformStatement(statement, data)
+    }
+
+    final override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: D): CompositeTransformResult<FirElement> {
+        return transformStringConcatenationCall(stringConcatenationCall, data)
     }
 
     final override fun visitSuperReference(superReference: FirSuperReference, data: D): CompositeTransformResult<FirElement> {

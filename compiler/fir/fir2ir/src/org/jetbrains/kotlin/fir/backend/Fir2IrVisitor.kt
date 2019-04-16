@@ -80,6 +80,8 @@ internal class Fir2IrVisitor(
 
     private val booleanType = FirImplicitBooleanTypeRef(session, null).toIrType(session, declarationStorage)
 
+    private val stringType = FirImplicitStringTypeRef(session, null).toIrType(session, declarationStorage)
+
     private fun ModuleDescriptor.findPackageFragmentForFile(file: FirFile): PackageFragmentDescriptor =
         getPackage(file.packageFqName).fragments.first()
 
@@ -1067,6 +1069,15 @@ internal class Fir2IrVisitor(
     override fun visitOperatorCall(operatorCall: FirOperatorCall, data: Any?): IrElement {
         return operatorCall.convertWithOffsets { startOffset, endOffset ->
             generateOperatorCall(startOffset, endOffset, operatorCall.operation, operatorCall.arguments)
+        }
+    }
+
+    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Any?): IrElement {
+        return stringConcatenationCall.convertWithOffsets { startOffset, endOffset ->
+            IrStringConcatenationImpl(
+                startOffset, endOffset, stringType,
+                stringConcatenationCall.arguments.map { it.toIrExpression() }
+            )
         }
     }
 

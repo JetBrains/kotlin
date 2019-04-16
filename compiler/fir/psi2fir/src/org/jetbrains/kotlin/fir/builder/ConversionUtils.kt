@@ -304,14 +304,13 @@ internal fun Array<KtStringTemplateEntry>.toInterpolatingCall(
         }
         result = when {
             result == null -> nextArgument
-            callCreated && result is FirFunctionCallImpl -> result.apply {
+            callCreated && result is FirStringConcatenationCallImpl -> result.apply {
                 arguments += nextArgument
             }
             else -> {
                 callCreated = true
-                FirFunctionCallImpl(session, base).apply {
-                    calleeReference = FirSimpleNamedReference(session, base, OperatorNameConventions.PLUS)
-                    explicitReceiver = result
+                FirStringConcatenationCallImpl(session, base).apply {
+                    arguments += result!!
                     arguments += nextArgument
                 }
             }

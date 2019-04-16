@@ -232,6 +232,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitOperatorCall(typeOperatorCall, null)
     }
 
+    open fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall) {
+        visitCall(stringConcatenationCall, null)
+    }
+
     open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression) {
         visitExpression(classReferenceExpression, null)
     }
@@ -666,6 +670,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitStatement(statement: FirStatement, data: Nothing?) {
         visitStatement(statement)
+    }
+
+    final override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Nothing?) {
+        visitStringConcatenationCall(stringConcatenationCall)
     }
 
     final override fun visitSuperReference(superReference: FirSuperReference, data: Nothing?) {

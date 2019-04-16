@@ -59,8 +59,9 @@ FILE fqName:<root> fileName:/constValInitializers.kt
   PROPERTY name:STR4 visibility:public modality:FINAL [const,val]
     FIELD PROPERTY_BACKING_FIELD name:STR4 type:kotlin.String visibility:public [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-          other: CALL 'public final fun <get-STR2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+        STRING_CONCATENATION type=kotlin.String
+          CALL 'public final fun <get-STR1> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          CALL 'public final fun <get-STR2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR4> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:STR4 visibility:public modality:FINAL [const,val]
       BLOCK_BODY

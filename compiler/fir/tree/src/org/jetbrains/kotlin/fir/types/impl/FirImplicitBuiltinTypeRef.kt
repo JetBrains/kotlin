@@ -63,3 +63,8 @@ class FirImplicitNothingTypeRef(
     psi: PsiElement?
 ) : FirImplicitBuiltinTypeRef(session, psi, StandardClassIds.Nothing)
 
+class FirImplicitStringTypeRef(
+    session: FirSession,
+    psi: PsiElement?
+) : FirImplicitBuiltinTypeRef(session, psi, StandardClassIds.String)
+

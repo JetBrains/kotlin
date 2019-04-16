@@ -232,6 +232,10 @@ abstract class FirVisitor<out R, in D> {
         return visitOperatorCall(typeOperatorCall, data)
     }
 
+    open fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: D): R {
+        return visitCall(stringConcatenationCall, data)
+    }
+
     open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): R {
         return visitExpression(classReferenceExpression, data)
     }

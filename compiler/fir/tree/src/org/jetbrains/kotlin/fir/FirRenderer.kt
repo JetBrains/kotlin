@@ -641,6 +641,11 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print(")")
     }
 
+    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall) {
+        print("<strcat>")
+        visitCall(stringConcatenationCall)
+    }
+
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
         print("(")
         typeOperatorCall.argument.accept(this)

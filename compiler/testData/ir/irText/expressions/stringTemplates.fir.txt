@@ -60,7 +60,8 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   PROPERTY name:test6 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.String visibility:public [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Cannot bind 2 arguments to plus call with 1 parameters' type=kotlin.String
+        STRING_CONCATENATION type=kotlin.String
+          CALL 'public final fun <get-test1> (): kotlin.String declared in <root>' type=kotlin.String origin=null
           CONST String type=kotlin.String value=" "
           CALL 'public final fun foo (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.String

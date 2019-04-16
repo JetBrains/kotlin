@@ -19,8 +19,9 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
                     GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
                   arg1: ERROR_CALL 'Unresolved reference: <Unresolved name: next>#' type=IrErrorType
               then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-                CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-                  other: GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
+                STRING_CONCATENATION type=kotlin.String
+                  CONST String type=kotlin.String value="Fail "
+                  GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val]
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
           ERROR_CALL 'Unresolved reference: R|<local>/i|' type=IrErrorType
