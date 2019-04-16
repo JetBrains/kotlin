@@ -5316,6 +5316,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/multiModule/moduleAndVariableNameClash.kt");
         }
 
+        @TestMetadata("privateInterfaceMethodInheritance.kt")
+        public void testPrivateInterfaceMethodInheritance() throws Exception {
+            runTest("js/js.translator/testData/box/multiModule/privateInterfaceMethodInheritance.kt");
+        }
+
         @TestMetadata("privateInterfaceNameClash.kt")
         public void testPrivateInterfaceNameClash() throws Exception {
             runTest("js/js.translator/testData/box/multiModule/privateInterfaceNameClash.kt");
