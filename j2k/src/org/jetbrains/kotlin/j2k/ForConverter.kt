@@ -22,6 +22,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import kotlin.math.abs
 
 class ForConverter(
         private val statement: PsiForStatement,
@@ -278,7 +279,7 @@ class ForConverter(
 
         val converted = codeConverter.convertExpression(bound)
         val sign = if (correction > 0) JavaTokenType.PLUS else JavaTokenType.MINUS
-        return BinaryExpression(converted, LiteralExpression(Math.abs(correction).toString()).assignNoPrototype(), Operator(sign).assignPrototype(bound)).assignNoPrototype()
+        return BinaryExpression(converted, LiteralExpression(abs(correction).toString()).assignNoPrototype(), Operator(sign).assignPrototype(bound)).assignNoPrototype()
     }
 
     private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {

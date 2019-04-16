@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
     override fun isAvailable(sourcePosition: SourcePosition, evalContext: EvaluationContext): Boolean {
@@ -70,12 +72,12 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
 
     val limit = getLineRangeForElement(containingElement, doc)
 
-    var startLine = Math.max(limit.startOffset, line)
+    var startLine = max(limit.startOffset, line)
     while (startLine - 1 > limit.startOffset && shouldSkipLine(file, doc, startLine - 1)) {
         startLine--
     }
 
-    var endLine = Math.min(limit.endOffset, line)
+    var endLine = min(limit.endOffset, line)
     while (endLine + 1 < limit.endOffset && shouldSkipLine(file, doc, endLine + 1)) {
         endLine++
     }

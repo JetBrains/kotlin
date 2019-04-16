@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliases
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.math.min
 
 class TypeResolver(
     private val annotationResolver: AnnotationResolver,
@@ -699,7 +700,7 @@ class TypeResolver(
         var wasStatic = false
         val result = SmartList<KtTypeProjection>()
 
-        val classifierChainLastIndex = Math.min(classifierDescriptorChain.size, reversedQualifierParts.size) - 1
+        val classifierChainLastIndex = min(classifierDescriptorChain.size, reversedQualifierParts.size) - 1
 
         for (index in 0..classifierChainLastIndex) {
             val qualifierPart = reversedQualifierParts[index]
@@ -729,7 +730,7 @@ class TypeResolver(
 
         val nonClassQualifierParts =
             reversedQualifierParts.subList(
-                Math.min(classifierChainLastIndex + 1, reversedQualifierParts.size),
+                min(classifierChainLastIndex + 1, reversedQualifierParts.size),
                 reversedQualifierParts.size
             )
 

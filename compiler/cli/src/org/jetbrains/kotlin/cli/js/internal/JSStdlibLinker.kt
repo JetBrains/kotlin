@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import java.io.File
 import java.io.StringReader
+import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     val outputFile = File(args[0])
@@ -55,7 +56,7 @@ private fun mergeStdlibParts(outputFile: File, wrapperFile: File, baseDir: File,
             when (sourceMapParse) {
                 is SourceMapError -> {
                     System.err.println("Error parsing source map file $sourceMapFile: ${sourceMapParse.message}")
-                    System.exit(1)
+                    exitProcess(1)
                 }
                 is SourceMapSuccess -> {
                     val sourceMap = sourceMapParse.value

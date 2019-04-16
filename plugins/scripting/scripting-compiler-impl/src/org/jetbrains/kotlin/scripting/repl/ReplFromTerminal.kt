@@ -150,7 +150,7 @@ class ReplFromTerminal(
 
     companion object {
         private fun splitCommand(command: String): List<String> {
-            return Arrays.asList(*command.split(" ".toRegex()).dropLastWhile(String::isEmpty).toTypedArray())
+            return listOf(*command.split(" ".toRegex()).dropLastWhile(String::isEmpty).toTypedArray())
         }
 
         fun run(disposable: Disposable, configuration: CompilerConfiguration) {

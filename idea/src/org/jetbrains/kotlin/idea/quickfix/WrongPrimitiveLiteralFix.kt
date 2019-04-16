@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnsignedNumberType
+import kotlin.math.floor
 
 private val valueRanges = mapOf(
         KotlinBuiltIns.FQ_NAMES._byte to Byte.MIN_VALUE.toLong()..Byte.MAX_VALUE.toLong(),
@@ -85,7 +86,7 @@ class WrongPrimitiveLiteralFix(element: KtConstantExpression, type: KotlinType) 
 
         if (constValue is Float || constValue is Double) {
             val value = constValue.toDouble()
-            if (value != Math.floor(value)) return false
+            if (value != floor(value)) return false
             if (value !in Long.MIN_VALUE.toDouble()..Long.MAX_VALUE.toDouble()) return false
         }
 

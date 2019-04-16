@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.report.configureBuildReporter
 import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.lang.management.ManagementFactory
+import kotlin.math.max
 
 internal class KotlinGradleBuildServices private constructor(
     private val gradle: Gradle
@@ -132,7 +133,7 @@ internal class KotlinGradleBuildServices private constructor(
     }
 
     private fun getGcCount(): Long =
-        ManagementFactory.getGarbageCollectorMXBeans().sumByLong { Math.max(0, it.collectionCount) }
+        ManagementFactory.getGarbageCollectorMXBeans().sumByLong { max(0, it.collectionCount) }
 
     private var loadedInProjectPath: String? = null
 

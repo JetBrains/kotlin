@@ -16,6 +16,7 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.openapi.vfs.CharsetToolkit
 import org.junit.Assert
 import java.io.File
+import kotlin.math.min
 
 internal class KotlinOutputChecker(
         private val testDir: String,
@@ -79,7 +80,7 @@ internal class KotlinOutputChecker(
                 println("actual:")
                 println(actual)
 
-                val len = Math.min(expected.length, actual.length)
+                val len = min(expected.length, actual.length)
                 if (expected.length != actual.length) {
                     println("Text sizes differ: expected " + expected.length + " but actual: " + actual.length)
                 }

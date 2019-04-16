@@ -308,7 +308,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun assertStringItems(@NonNls vararg items: String) {
-        TestCase.assertEquals(Arrays.asList(*items), Arrays.asList(*itemStringsSorted))
+        TestCase.assertEquals(listOf(*items), listOf(*itemStringsSorted))
     }
 
     private val itemStrings: Array<String>

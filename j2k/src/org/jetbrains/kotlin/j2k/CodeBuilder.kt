@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.j2k.ast.SpacesInheritance
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.*
+import kotlin.math.max
 
 fun <T> CodeBuilder.buildList(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
@@ -192,7 +193,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             return when {
                 isEmpty() -> other
                 other.isEmpty() -> this
-                else -> Prefix(elements + other.elements, Math.max(lineBreaksBefore, other.lineBreaksBefore))
+                else -> Prefix(elements + other.elements, max(lineBreaksBefore, other.lineBreaksBefore))
             }
         }
 

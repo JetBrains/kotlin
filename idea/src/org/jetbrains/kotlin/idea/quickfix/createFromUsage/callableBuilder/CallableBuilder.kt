@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.*
+import kotlin.math.max
 
 /**
  * Represents a single choice for a type (e.g. parameter type or return type).
@@ -1062,7 +1063,7 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
             else -> 1
         }
 
-        return Math.max(lineBreaksNeeded - lineBreaksPresent, 0)
+        return max(lineBreaksNeeded - lineBreaksPresent, 0)
     }
 
     val actualContainer = (container as? KtClassOrObject)?.getOrCreateBody() ?: container

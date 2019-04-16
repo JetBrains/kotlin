@@ -23,8 +23,8 @@ private val BEGIN_MARKER = "<~BEGIN~>"
 private val END_MARKER = "<~END~>"
 
 fun CharSequence.substringWithContext(beginIndex: Int, endIndex: Int, range: Int): String {
-    val start = Math.max(0, beginIndex - range)
-    val end = Math.min(this.length, endIndex + range)
+    val start = kotlin.math.max(0, beginIndex - range)
+    val end = kotlin.math.min(this.length, endIndex + range)
 
     val notFromBegin = start != 0
     val notToEnd = end != this.length

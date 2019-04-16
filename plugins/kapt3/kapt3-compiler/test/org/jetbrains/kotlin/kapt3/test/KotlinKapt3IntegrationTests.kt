@@ -28,6 +28,7 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
+import kotlin.system.exitProcess
 
 class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9TestLauncher {
     override fun test(
@@ -149,7 +150,7 @@ internal class SingleJUnitTestRunner {
             val (className, methodName) = args.single().split('#')
             val request = Request.method(Class.forName(className), methodName)
             val result = JUnitCore().run(request)
-            System.exit(if (result.wasSuccessful()) 0 else 1)
+            exitProcess(if (result.wasSuccessful()) 0 else 1)
         }
     }
 }

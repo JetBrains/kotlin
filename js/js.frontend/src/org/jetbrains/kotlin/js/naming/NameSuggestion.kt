@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEnumValueOfMethod
 import java.util.*
+import kotlin.math.abs
 
 /**
  * This class is responsible for generating names for declarations. It does not produce fully-qualified JS name, instead
@@ -339,7 +340,7 @@ class NameSuggestion {
         }
 
         private fun mangledId(forCalculateId: String): String {
-            val absHashCode = Math.abs(forCalculateId.hashCode())
+            val absHashCode = abs(forCalculateId.hashCode())
             return if (absHashCode != 0) absHashCode.toString(Character.MAX_RADIX) else ""
         }
 

@@ -51,6 +51,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
 import kotlin.collections.HashSet
+import kotlin.math.max
 
 abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected val codegen: T,
@@ -340,9 +341,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 var marker = -1
                 val intervals = processor.localVarsMetaInfo.currentIntervals
                 for (interval in intervals) {
-                    marker = Math.max(interval.node.index + 1, marker)
+                    marker = max(interval.node.index + 1, marker)
                 }
-                while (frameMap.currentSize < Math.max(processor.nextFreeLocalIndex, offsetForFinallyLocalVar + marker)) {
+                while (frameMap.currentSize < max(processor.nextFreeLocalIndex, offsetForFinallyLocalVar + marker)) {
                     frameMap.enterTemp(Type.INT_TYPE)
                 }
 

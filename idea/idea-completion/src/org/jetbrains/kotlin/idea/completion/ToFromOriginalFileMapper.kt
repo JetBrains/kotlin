@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import kotlin.math.min
 
 class ToFromOriginalFileMapper private constructor(
         val originalFile: KtFile,
@@ -49,7 +50,7 @@ class ToFromOriginalFileMapper private constructor(
 
         syntheticLength = syntheticText.length
         originalLength = originalText.length
-        val minLength = Math.min(originalLength, syntheticLength)
+        val minLength = min(originalLength, syntheticLength)
         tailLength = (0..minLength-1).firstOrNull {
             syntheticText[syntheticLength - it - 1] != originalText[originalLength - it - 1]
         } ?: minLength

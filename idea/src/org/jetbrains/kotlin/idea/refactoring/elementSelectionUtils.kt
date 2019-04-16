@@ -42,6 +42,7 @@ import java.util.*
 import javax.swing.DefaultListCellRenderer
 import javax.swing.DefaultListModel
 import javax.swing.JList
+import kotlin.math.min
 
 @Throws(IntroduceRefactoringException::class)
 fun selectElement(
@@ -237,7 +238,7 @@ private fun smartSelectElement(
 fun getExpressionShortText(element: KtElement): String {
     val text = element.renderTrimmed()
     val firstNewLinePos = text.indexOf('\n')
-    var trimmedText = text.substring(0, if (firstNewLinePos != -1) firstNewLinePos else Math.min(100, text.length))
+    var trimmedText = text.substring(0, if (firstNewLinePos != -1) firstNewLinePos else min(100, text.length))
     if (trimmedText.length != text.length) trimmedText += " ..."
     return trimmedText
 }

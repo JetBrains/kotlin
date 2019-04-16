@@ -34,6 +34,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
+import kotlin.math.max
 
 private const val COROUTINES_DEBUG_METADATA_VERSION = 1
 
@@ -628,7 +629,7 @@ class CoroutineTransformerMethodVisitor(
             spilledToVariableMapping.add(spilledToVariable)
 
             varsCountByType.forEach {
-                maxVarsCountByType[it.key] = Math.max(maxVarsCountByType[it.key] ?: 0, it.value)
+                maxVarsCountByType[it.key] = max(maxVarsCountByType[it.key] ?: 0, it.value)
             }
         }
 

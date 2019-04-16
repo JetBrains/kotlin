@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
+import kotlin.math.max
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
     override fun TypeConstructorMarker.isDenotable(): Boolean {
@@ -470,7 +471,7 @@ private fun singleBestRepresentative(collection: Collection<KotlinType>) = colle
 internal fun UnwrappedType.typeDepthInternal() =
     when (this) {
         is SimpleType -> typeDepthInternal()
-        is FlexibleType -> Math.max(lowerBound.typeDepthInternal(), upperBound.typeDepthInternal())
+        is FlexibleType -> max(lowerBound.typeDepthInternal(), upperBound.typeDepthInternal())
     }
 
 internal fun SimpleType.typeDepthInternal(): Int {

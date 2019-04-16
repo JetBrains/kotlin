@@ -27,6 +27,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
+import kotlin.math.max
 
 /**
  * In cases like:
@@ -135,7 +136,7 @@ class UninitializedStoresProcessor(
                 nextVarIndex += type.size
                 storedTypes.add(type)
             }
-            methodNode.maxLocals = Math.max(methodNode.maxLocals, nextVarIndex)
+            methodNode.maxLocals = max(methodNode.maxLocals, nextVarIndex)
 
             methodNode.instructions.insertBefore(insn, insnListOf(
                     TypeInsnNode(Opcodes.NEW, newInsn.desc),

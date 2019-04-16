@@ -59,6 +59,8 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallIm
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.keysToMap
+import kotlin.math.max
+import kotlin.math.min
 
 class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
     override fun getStepOverCommand(
@@ -268,7 +270,7 @@ private fun findCallsOnPosition(sourcePosition: SourcePosition, filter: (KtCallE
     return allFilteredCalls.filter {
         val shouldInclude = it.getLineNumber() in linesRange
         if (shouldInclude) {
-            linesRange = Math.min(linesRange.start, it.getLineNumber())..Math.max(linesRange.endInclusive, it.getLineNumber(false))
+            linesRange = min(linesRange.start, it.getLineNumber())..max(linesRange.endInclusive, it.getLineNumber(false))
         }
         shouldInclude
     }

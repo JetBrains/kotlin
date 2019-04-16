@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.modules.isAtLeastJava9
 import org.jetbrains.kotlin.kapt.cli.CliToolOption.Format.*
 import java.io.File
+import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
@@ -29,7 +30,7 @@ fun main(args: Array<String>) {
     val kaptTransformed = transformArgs(args.asList(), messageCollector, false)
 
     if (messageCollector.hasErrors()) {
-        System.exit(ExitCode.COMPILATION_ERROR.code)
+        exitProcess(ExitCode.COMPILATION_ERROR.code)
         return
     }
 

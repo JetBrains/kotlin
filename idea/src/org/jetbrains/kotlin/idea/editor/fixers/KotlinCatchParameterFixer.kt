@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCatchClause
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import kotlin.math.min
 
 class KotlinCatchParameterFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
@@ -33,7 +34,7 @@ class KotlinCatchParameterFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmar
 
         val parameterList = psiElement.parameterList
         if (parameterList == null || parameterList.node.findChildByType(KtTokens.RPAR) == null) {
-            val endOffset = Math.min(psiElement.endOffset, psiElement.catchBody?.startOffset ?: Int.MAX_VALUE)
+            val endOffset = min(psiElement.endOffset, psiElement.catchBody?.startOffset ?: Int.MAX_VALUE)
             val parameter = parameterList?.parameters?.firstOrNull()?.text ?: ""
             editor.document.replaceString(catchEnd, endOffset, "($parameter)")
             processor.registerUnresolvedError(endOffset - 1)

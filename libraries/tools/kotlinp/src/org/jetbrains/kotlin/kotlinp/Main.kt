@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kotlinp
 
 import java.io.File
 import java.io.IOException
+import kotlin.system.exitProcess
 
 object Main {
     private fun run(args: Array<String>) {
@@ -60,7 +61,7 @@ object Main {
             run(args)
         } catch (e: KotlinpException) {
             System.err.println("error: " + e.message)
-            System.exit(1)
+            exitProcess(1)
         }
     }
 
@@ -75,7 +76,7 @@ where possible options include:
   -help (-h)                 Print a synopsis of options
 """
         )
-        System.exit(0)
+        exitProcess(0)
     }
 
     private fun printVersionAndExit() {
@@ -83,6 +84,6 @@ where possible options include:
         val version = "@snapshot@"
 
         println("Kotlin version " + version + " (JRE " + System.getProperty("java.runtime.version") + ")")
-        System.exit(0)
+        exitProcess(0)
     }
 }

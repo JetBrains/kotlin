@@ -33,6 +33,7 @@ import java.util.*
 import java.util.jar.Manifest
 import java.util.logging.*
 import kotlin.concurrent.schedule
+import kotlin.system.exitProcess
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
 val DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS = 60000L
@@ -153,7 +154,7 @@ object KotlinCompileDaemon {
                                                              timer.schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
                                                                  cancel()
                                                                  log.info("force JVM shutdown")
-                                                                 System.exit(0)
+                                                                 exitProcess(0)
                                                              }
                                                          }
                                                          else {

@@ -67,7 +67,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         var nonConfiguredModules = if (!ApplicationManager.getApplication().isUnitTestMode)
             getCanBeConfiguredModules(project, this)
         else
-            Arrays.asList(*ModuleManager.getInstance(project).modules)
+            listOf(*ModuleManager.getInstance(project).modules)
         nonConfiguredModules -= excludeModules
 
         var modulesToConfigure = nonConfiguredModules

@@ -32,6 +32,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
+import kotlin.math.max
 
 class ReificationArgument(
     val parameterName: String, val nullable: Boolean, private val arrayDepth: Int
@@ -194,7 +195,7 @@ class ReifiedTypeInliner(
         instructions.remove(stubCheckcast)
 
         // TODO: refine max stack calculation (it's not always as big as +4)
-        maxStackSize = Math.max(maxStackSize, 4)
+        maxStackSize = max(maxStackSize, 4)
 
         return true
     }
@@ -214,7 +215,7 @@ class ReifiedTypeInliner(
         instructions.remove(stubInstanceOf)
 
         // TODO: refine max stack calculation (it's not always as big as +2)
-        maxStackSize = Math.max(maxStackSize, 2)
+        maxStackSize = max(maxStackSize, 2)
         return true
     }
 
@@ -229,7 +230,7 @@ class ReifiedTypeInliner(
         instructions.insert(insn, newMethodNode.instructions)
         instructions.remove(stubConstNull)
 
-        maxStackSize = Math.max(maxStackSize, stackSize)
+        maxStackSize = max(maxStackSize, stackSize)
         return true
     }
 

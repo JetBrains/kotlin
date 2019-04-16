@@ -93,7 +93,7 @@ internal fun runToolInSeparateProcess(
         }
     } else {
         process.inputStream!!.bufferedReader().forEachLine {
-            System.out.println(it)
+            println(it)
         }
     }
 

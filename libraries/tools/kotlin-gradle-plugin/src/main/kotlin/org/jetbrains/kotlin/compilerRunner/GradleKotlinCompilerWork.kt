@@ -76,7 +76,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     companion object {
         init {
             if (System.getProperty("org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.trace.loading") == "true") {
-                System.out.println("Loaded GradleKotlinCompilerWork")
+                println("Loaded GradleKotlinCompilerWork")
             }
         }
     }

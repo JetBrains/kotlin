@@ -37,7 +37,7 @@ fun runProcess(
     val sb = StringBuilder()
     process.inputStream!!.bufferedReader().forEachLine {
         if (options?.forceOutputToStdout ?: false) {
-            System.out.println(it)
+            println(it)
         }
         sb.appendln(it)
     }

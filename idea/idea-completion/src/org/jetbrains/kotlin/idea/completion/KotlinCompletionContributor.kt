@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import kotlin.math.max
 
 var KtFile.doNotComplete: Boolean? by UserDataProperty(Key.create("DO_NOT_COMPLETE"))
 
@@ -71,7 +72,7 @@ class KotlinCompletionContributor : CompletionContributor() {
         context.replacementOffset = context.replacementOffset
 
         val offset = context.startOffset
-        val tokenBefore = psiFile.findElementAt(Math.max(0, offset - 1))
+        val tokenBefore = psiFile.findElementAt(max(0, offset - 1))
 
         if (offset > 0 && tokenBefore!!.node.elementType == KtTokens.REGULAR_STRING_PART && tokenBefore.text.startsWith(".")) {
             val prev = tokenBefore.parent.prevSibling
@@ -104,7 +105,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                     ?: DEFAULT_DUMMY_IDENTIFIER
         }
 
-        val tokenAt = psiFile.findElementAt(Math.max(0, offset))
+        val tokenAt = psiFile.findElementAt(max(0, offset))
         if (tokenAt != null) {
             if (context.completionType == CompletionType.SMART && !isAtEndOfLine(offset, context.editor.document) /* do not use parent expression if we are at the end of line - it's probably parsed incorrectly */) {
                 var parent = tokenAt.parent

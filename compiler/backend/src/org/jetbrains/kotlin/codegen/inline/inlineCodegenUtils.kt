@@ -47,6 +47,8 @@ import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 import java.io.PrintWriter
 import java.io.StringWriter
+import kotlin.math.max
+import kotlin.math.min
 
 const val GENERATE_SMAP = true
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
@@ -121,8 +123,8 @@ internal fun getMethodNode(
             return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
                 override fun visitLineNumber(line: Int, start: Label) {
                     super.visitLineNumber(line, start)
-                    lines[0] = Math.min(lines[0], line)
-                    lines[1] = Math.max(lines[1], line)
+                    lines[0] = min(lines[0], line)
+                    lines[1] = max(lines[1], line)
                 }
             }.also {
                 node = it
@@ -509,7 +511,7 @@ private fun getIndexAfterLastMarker(node: MethodNode): Int {
     var result = -1
     for (variable in node.localVariables) {
         if (isFakeLocalVariableForInline(variable.name)) {
-            result = Math.max(result, variable.index + 1)
+            result = max(result, variable.index + 1)
         }
     }
     return result

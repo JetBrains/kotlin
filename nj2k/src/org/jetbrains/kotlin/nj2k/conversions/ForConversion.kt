@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import kotlin.math.abs
 
 
 class ForConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -199,7 +200,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         val sign = if (correction > 0) KtTokens.PLUS else KtTokens.MINUS
         return kotlinBinaryExpression(
             bound,
-            JKKtLiteralExpressionImpl(Math.abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
+            JKKtLiteralExpressionImpl(abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
             JKKtSingleValueOperatorToken(sign),
             context.symbolProvider
         )!!

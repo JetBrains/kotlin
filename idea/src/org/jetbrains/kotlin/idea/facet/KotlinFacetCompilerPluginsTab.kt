@@ -30,6 +30,7 @@ import javax.swing.*
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.TableCellEditor
 import javax.swing.table.TableCellRenderer
+import kotlin.math.max
 
 class KotlinFacetCompilerPluginsTab(
         private val configuration: KotlinFacetConfiguration,
@@ -154,7 +155,7 @@ class KotlinFacetCompilerPluginsTab(
                 val component = super.prepareRenderer(renderer, row, column)
                 val rendererWidth = component.preferredSize.width
                 with(getColumnModel().getColumn(column)) {
-                    preferredWidth = Math.max(rendererWidth + intercellSpacing.width, preferredWidth)
+                    preferredWidth = max(rendererWidth + intercellSpacing.width, preferredWidth)
                 }
                 return component
             }

@@ -21,6 +21,7 @@ import com.intellij.execution.util.ExecUtil
 import com.intellij.util.LineSeparator
 import java.io.File
 import java.util.regex.Pattern
+import kotlin.system.exitProcess
 
 // This file generates protobuf classes from formal description.
 // To run it, you'll need protoc (protobuf compiler) 2.6.1 installed.
@@ -86,7 +87,7 @@ fun main(args: Array<String>) {
     }
     finally {
         // Workaround for JVM hanging: IDEA's process handler creates thread pool
-        System.exit(0)
+        exitProcess(0)
     }
 }
 

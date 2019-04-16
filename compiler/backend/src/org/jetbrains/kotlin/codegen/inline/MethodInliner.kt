@@ -38,6 +38,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.*
 import org.jetbrains.org.objectweb.asm.util.Printer
 import java.util.*
+import kotlin.math.max
 
 class MethodInliner(
     private val node: MethodNode,
@@ -259,7 +260,7 @@ class MethodInliner(
                     val erasedInvokeFunction = ClosureCodegen.getErasedInvokeFunction(actualInvokeDescriptor)
                     val invokeParameters = erasedInvokeFunction.valueParameters
 
-                    val valueParamShift = Math.max(nextLocalIndex, markerShift)//NB: don't inline cause it changes
+                    val valueParamShift = max(nextLocalIndex, markerShift)//NB: don't inline cause it changes
                     putStackValuesIntoLocalsForLambdaOnInvoke(
                         listOf(*info.invokeMethod.argumentTypes), valueParameters, invokeParameters, valueParamShift, this, coroutineDesc
                     )

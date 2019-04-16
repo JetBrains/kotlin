@@ -91,7 +91,7 @@ class CharValue(value: Char) : IntegerValueConstant<Char>(value) {
         //TODO: KT-8507
         12.toChar() -> "\\f"
         '\r' -> "\\r"
-        else -> if (isPrintableUnicode(c)) Character.toString(c) else "?"
+        else -> if (isPrintableUnicode(c)) c.toString() else "?"
     }
 
     private fun isPrintableUnicode(c: Char): Boolean {

@@ -278,7 +278,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: with Gradle-{0}")
         fun data(): Collection<Array<Any>> {
-            return Arrays.asList(*AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS)
+            return listOf(*AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS)
         }
 
         fun wrapperJar(): File {

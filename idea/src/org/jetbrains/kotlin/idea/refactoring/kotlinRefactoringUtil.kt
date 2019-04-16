@@ -100,6 +100,7 @@ import java.io.File
 import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
+import kotlin.math.min
 
 const val CHECK_SUPER_METHODS_YES_NO_DIALOG = "CHECK_SUPER_METHODS_YES_NO_DIALOG"
 
@@ -776,7 +777,7 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
     val oldCount = oldParameters.size
     val newCount = newParameters.size
 
-    val commonCount = Math.min(oldCount, newCount)
+    val commonCount = min(oldCount, newCount)
     for (i in 0 until commonCount) {
         oldParameters[i] = oldParameters[i].replace(newParameters[i]) as KtElement
     }

@@ -6,6 +6,7 @@ import com.google.gson.stream.JsonWriter
 import com.google.gson.stream.MalformedJsonException
 import org.slf4j.LoggerFactory
 import java.io.*
+import kotlin.math.min
 
 open class RewriteSourceMapFilterReader(
     val input: Reader
@@ -175,7 +176,7 @@ open class RewriteSourceMapFilterReader(
                 }
             }
 
-            val toRead = Math.min(todo, bufferAvailable)
+            val toRead = min(todo, bufferAvailable)
             buffer.getChars(bufferReadPos, bufferReadPos + toRead, dest, destOffset)
             bufferReadPos += toRead
             destOffset += toRead
@@ -201,7 +202,7 @@ open class RewriteSourceMapFilterReader(
                 }
             }
 
-            val toRead = Math.min(todo, bufferAvailable)
+            val toRead = min(todo, bufferAvailable)
             bufferReadPos += toRead
             todo -= toRead
         }

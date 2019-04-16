@@ -202,7 +202,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
 
         val kotlinMutableAnalogFqName = readOnlyToMutable[kotlinAnalog.fqNameUnsafe] ?: return setOf(kotlinAnalog)
 
-        return Arrays.asList(kotlinAnalog, builtIns.getBuiltInClassByFqName(kotlinMutableAnalogFqName))
+        return listOf(kotlinAnalog, builtIns.getBuiltInClassByFqName(kotlinMutableAnalogFqName))
     }
 
     override fun mapPlatformClass(classDescriptor: ClassDescriptor): Collection<ClassDescriptor> {

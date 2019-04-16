@@ -51,7 +51,7 @@ actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: S
  */
 @InlineOnly
 actual inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
-    System.out.println("TODO at " + currentStackTrace()[0])
+    println("TODO at " + currentStackTrace()[0])
 }
 
 /**

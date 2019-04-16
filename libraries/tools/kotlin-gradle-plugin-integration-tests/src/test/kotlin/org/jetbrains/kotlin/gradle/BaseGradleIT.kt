@@ -306,7 +306,7 @@ abstract class BaseGradleIT {
         } catch (t: Throwable) {
             // to prevent duplication of output
             if (!options.forceOutputToStdout) {
-                System.out.println(result.output)
+                println(result.output)
             }
             throw t
         }
