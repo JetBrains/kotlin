@@ -202,7 +202,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
 
     private fun saveReport() {
         if (DUMP_FIR) dump.finish()
-        val format = SimpleDateFormat("yyyy-MM-dd__hh-mm")
+        val format = SimpleDateFormat("yyyy-MM-dd__HH-mm")
         val logDir = File(FIR_LOGS_PATH)
         logDir.mkdirs()
         PrintStream(logDir.resolve("report-${format.format(Date())}.log").outputStream()).use { stream ->
