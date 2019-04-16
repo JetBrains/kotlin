@@ -88,7 +88,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
     private fun createFunctionalType(typeRef: FirFunctionTypeRef): ConeClassType {
         val parameters =
             listOfNotNull((typeRef.receiverTypeRef as FirResolvedTypeRef?)?.type) +
-                    typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>() }
+                    typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>() } +
+                    listOf(typeRef.returnTypeRef.coneTypeUnsafe())
         return ConeClassTypeImpl(
             resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), session).toLookupTag(),
             parameters.toTypedArray(),
