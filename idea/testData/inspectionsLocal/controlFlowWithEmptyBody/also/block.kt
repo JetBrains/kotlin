@@ -1,0 +1,7 @@
+// PROBLEM: 'also' has empty body
+// WITH_RUNTIME
+
+fun test(i: Int) {
+    i.<caret>also {
+    }
+}

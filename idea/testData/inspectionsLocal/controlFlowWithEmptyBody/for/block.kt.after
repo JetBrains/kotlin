@@ -1,0 +1,4 @@
+// PROBLEM: 'for' has empty body
+
+fun test() {
+}

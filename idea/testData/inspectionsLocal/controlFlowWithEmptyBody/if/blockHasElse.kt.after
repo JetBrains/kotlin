@@ -1,0 +1,4 @@
+// PROBLEM: 'if' has empty body
+
+fun test(i: Int) {
+}
