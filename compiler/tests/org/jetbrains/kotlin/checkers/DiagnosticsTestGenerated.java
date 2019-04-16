@@ -19616,6 +19616,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/kt30826.kt");
             }
 
+            @TestMetadata("kt30927.kt")
+            public void testKt30927() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt30927.kt");
+            }
+
             @TestMetadata("kt3224.kt")
             public void testKt3224() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/kt3224.kt");

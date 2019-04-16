@@ -20,7 +20,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker;
 
+import java.util.Objects;
+
+/**
+ * [ExtensionReceiver] is a receiver for pure `this` call inside lambda with receiver
+ *
+ * x.run {
+ *     this // ExtensionReceiver
+ *     this as String // ExtensionReceiver
+ *     this.toString() // ImplicitClassReceiver
+ *     toString() // ImplicitClassReceiver
+ * }
+ */
 public class ExtensionReceiver extends AbstractReceiverValue implements ImplicitReceiver {
 
     private final CallableDescriptor descriptor;
@@ -43,6 +56,9 @@ public class ExtensionReceiver extends AbstractReceiverValue implements Implicit
     @NotNull
     @Override
     public ReceiverValue replaceType(@NotNull KotlinType newType) {
+        if (NewKotlinTypeChecker.INSTANCE.equalTypes(receiverType, newType)) {
+            return this;
+        }
         return new ExtensionReceiver(descriptor, newType, getOriginal());
     }
 
