@@ -6267,6 +6267,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/simpleException.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("simpleSuspendCallableReference.kt")
+        public void testSimpleSuspendCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/simpleSuspendCallableReference.kt");
+        }
+
         @TestMetadata("simpleWithHandleResult.kt")
         public void testSimpleWithHandleResult_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/simpleWithHandleResult.kt", "kotlin.coroutines.experimental");

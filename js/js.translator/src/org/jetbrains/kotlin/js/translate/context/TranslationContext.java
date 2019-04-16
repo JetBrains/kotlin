@@ -540,9 +540,11 @@ public class TranslationContext {
 
     @Nullable
     public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        JsExpression nameRef = captureIfNeedAndGetCapturedName(descriptor);
-        if (nameRef != null) {
-            return nameRef;
+        if (continuationParameterDescriptor != descriptor) {
+            JsExpression nameRef = captureIfNeedAndGetCapturedName(descriptor);
+            if (nameRef != null) {
+                return nameRef;
+            }
         }
 
         JsExpression alias = aliasingContext.getAliasForDescriptor(descriptor);
