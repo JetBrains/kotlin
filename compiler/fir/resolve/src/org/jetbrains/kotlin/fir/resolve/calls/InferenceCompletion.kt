@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
@@ -12,9 +14,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirec
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.isIntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 fun Candidate.computeCompletionMode(
@@ -68,19 +73,21 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
     fun complete(
         c: KotlinConstraintSystemCompleter.Context,
         completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
-        candidateReturnType: ConeKotlinType
+        topLevelAtoms: List<FirExpression>,
+        candidateReturnType: ConeKotlinType,
+        analyze: (PostponedResolvedAtomMarker) -> Unit
     ) {
 
         while (true) {
-//            if (analyzePostponeArgumentIfPossible(c, topLevelAtoms, analyze)) continue
+            if (analyzePostponeArgumentIfPossible(c, topLevelAtoms, analyze)) continue
 
 
 //            val allTypeVariables = getOrderedAllTypeVariables(c, collectVariablesFromContext, topLevelAtoms)
             val allTypeVariables = c.notFixedTypeVariables.keys.toList()
-//            val postponedKtPrimitives = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
+            val postponedKtPrimitives = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
             val variableForFixation =
                 variableFixationFinder.findFirstVariableForFixation(
-                    c, allTypeVariables, emptyList(), completionMode, candidateReturnType
+                    c, allTypeVariables, postponedKtPrimitives, completionMode, candidateReturnType
                 ) ?: break
 
 //            if (shouldForceCallableReferenceOrLambdaResolution(completionMode, variableForFixation)) {
@@ -104,7 +111,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
 
         if (completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL) {
             // force resolution for all not-analyzed argument's
-//            getOrderedNotAnalyzedPostponedArguments(topLevelAtoms).forEach(analyze)
+            getOrderedNotAnalyzedPostponedArguments(topLevelAtoms).forEach(analyze)
 //
 //            if (c.notFixedTypeVariables.isNotEmpty() && c.postponedTypeVariables.isEmpty()) {
 //                runCompletion(c, completionMode, topLevelAtoms, topLevelType, analyze)
@@ -129,6 +136,51 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
     ) {
         val resultType = components.resultTypeResolver.findResultType(c, variableWithConstraints, direction)
         c.fixVariable(variableWithConstraints.typeVariable, resultType)
+    }
+
+    private fun analyzePostponeArgumentIfPossible(
+        c: KotlinConstraintSystemCompleter.Context,
+        topLevelAtoms: List<FirExpression>,
+        analyze: (PostponedResolvedAtomMarker) -> Unit
+    ): Boolean {
+        for (argument in getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)) {
+            if (canWeAnalyzeIt(c, argument)) {
+                analyze(argument)
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<FirExpression>): List<PostponedResolvedAtomMarker> {
+        fun FirExpression.process(to: MutableList<PostponedResolvedAtomMarker>) {
+            when (this) {
+                is FirFunctionCall -> {
+                    val candidate = (this.calleeReference as? FirNamedReferenceWithCandidate)?.candidate
+                    candidate?.postponedAtoms?.forEach {
+                        to.addIfNotNull(it.safeAs<PostponedResolvedAtomMarker>()?.takeUnless { it.analyzed })
+                    }
+                    this.arguments.forEach { it.process(to) }
+                }
+                // TOOD: WTF?
+            }
+//            if (analyzed) {
+//                subResolvedAtoms.forEach { it.process(to) }
+//            }
+        }
+
+        val notAnalyzedArguments = arrayListOf<PostponedResolvedAtomMarker>()
+        for (primitive in topLevelAtoms) {
+            primitive.process(notAnalyzedArguments)
+        }
+
+        return notAnalyzedArguments
+    }
+
+    private fun canWeAnalyzeIt(c: KotlinConstraintSystemCompleter.Context, argument: PostponedResolvedAtomMarker): Boolean {
+        if (argument.analyzed) return false
+
+        return argument.inputTypes.all { c.containsOnlyFixedOrPostponedVariables(it) }
     }
 
 }

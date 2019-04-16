@@ -6,12 +6,19 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 
 fun FirFunctionCall.copy(
     annotations: List<FirAnnotationCall> = this.annotations,
@@ -36,3 +43,31 @@ fun FirFunctionCall.copy(
     }
 }
 
+fun FirAnonymousFunction.copy(
+    receiverTypeRef: FirTypeRef? = this.receiverTypeRef,
+    psi: PsiElement? = this.psi,
+    session: FirSession = this.session,
+    returnTypeRef: FirTypeRef = this.returnTypeRef,
+    valueParameters: List<FirValueParameter> = this.valueParameters,
+    body: FirBlock? = this.body,
+    annotations: List<FirAnnotationCall> = this.annotations,
+    typeRef: FirTypeRef = this.typeRef,
+    label: FirLabel? = this.label
+): FirAnonymousFunction {
+    return FirAnonymousFunctionImpl(session, psi, returnTypeRef, receiverTypeRef).apply {
+        this.valueParameters.addAll(valueParameters)
+        this.body = body
+        this.annotations.addAll(annotations)
+        this.typeRef = typeRef
+        this.label = label
+    }
+}
+
+
+fun FirTypeRef.resolvedTypeFromPrototype(
+    type: ConeKotlinType
+): FirResolvedTypeRef {
+    return FirResolvedTypeRefImpl(
+        session, psi, type, false, annotations
+    )
+}

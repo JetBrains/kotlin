@@ -1,0 +1,7 @@
+FILE: mapList.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval x: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/List|<R|kotlin/String|>(Int(10), <L> = List@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/String| {
+            <strcat>(String(number = ), R|<local>/it|)
+        }
+        )
+    }

@@ -1,0 +1,27 @@
+FILE: lambda.kt
+    public final fun foo(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+    }
+    public final fun bar(block: R|kotlin/Function0<kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun itIs(block: R|kotlin/Function1<kotlin/String, kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun multipleArgs(block: R|kotlin/Function2<kotlin/String, kotlin/String, kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {
+            String(This is test)
+        }
+        )
+        R|/bar|(<L> = bar@fun <anonymous>(): R|kotlin/String| {
+            String(This is also test)
+        }
+        )
+        R|/itIs|(<L> = itIs@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| {
+            <strcat>(String(this is ), R|<local>/it|, String( test))
+        }
+        )
+        R|/multipleArgs|(<L> = multipleArgs@fun <anonymous>(a: R|kotlin/String|, b: R|kotlin/String|): R|kotlin/String| {
+            <strcat>(String(This is test of ), R|<local>/a|, String(, ), R|<local>/b|)
+        }
+        )
+    }

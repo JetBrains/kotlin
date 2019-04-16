@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 
 
 fun resolveArgumentExpression(
@@ -31,16 +29,42 @@ fun resolveArgumentExpression(
     expectedType: ConeKotlinType,
     sink: CheckerSink,
     isReceiver: Boolean,
+    acceptLambdaAtoms: (PostponedResolvedAtomMarker) -> Unit,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     return when (argument) {
-        is FirQualifiedAccessExpression, is FirFunctionCall -> checkPlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, typeProvider)
+        is FirQualifiedAccessExpression, is FirFunctionCall -> checkPlainExpressionArgument(
+            csBuilder,
+            argument,
+            expectedType,
+            sink,
+            isReceiver,
+            typeProvider
+        )
         // TODO:!
-        is FirAnonymousFunction -> Unit
+        is FirAnonymousFunction -> preprocessLambdaArgument(csBuilder, argument, expectedType, acceptLambdaAtoms)
         // TODO:!
         is FirCallableReferenceAccess -> Unit
         // TODO:!
         //TODO: Collection literal
+        is FirLambdaArgumentExpression -> resolveArgumentExpression(
+            csBuilder,
+            argument.expression,
+            expectedType,
+            sink,
+            isReceiver,
+            acceptLambdaAtoms,
+            typeProvider
+        )
+        is FirNamedArgumentExpression -> resolveArgumentExpression(
+            csBuilder,
+            argument.expression,
+            expectedType,
+            sink,
+            isReceiver,
+            acceptLambdaAtoms,
+            typeProvider
+        )
         else -> checkPlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, typeProvider)
     }
 }
@@ -79,7 +103,15 @@ internal fun Candidate.resolveArgument(
 ) {
 
     val expectedType = prepareExpectedType(argument, parameter)
-    resolveArgumentExpression(this.system.getBuilder(), argument, expectedType, sink, isReceiver, typeProvider)
+    resolveArgumentExpression(
+        this.system.getBuilder(),
+        argument,
+        expectedType,
+        sink,
+        isReceiver,
+        { this.postponedAtoms += it },
+        typeProvider
+    )
 }
 
 private fun Candidate.prepareExpectedType(argument: FirExpression, parameter: FirValueParameter): ConeKotlinType {

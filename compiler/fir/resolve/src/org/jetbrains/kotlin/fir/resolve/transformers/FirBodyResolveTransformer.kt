@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import com.google.common.collect.LinkedHashMultimap
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -249,6 +251,40 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return transformCallee(variableAssignment).compose()
     }
 
+    override fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
+        if (data == null) return anonymousFunction.compose()
+        if (data is LambdaResolution) return transformAnonymousFunction(anonymousFunction, data).compose()
+        return super.transformAnonymousFunction(anonymousFunction, data)
+    }
+
+    fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, lambdaResolution: LambdaResolution): FirAnonymousFunction {
+        val receiverTypeRef = anonymousFunction.receiverTypeRef
+        fun transform(): FirAnonymousFunction {
+            return withScopeCleanup(scopes) {
+                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session, ScopeSession()))
+                val result =
+                    super.transformAnonymousFunction(
+                        anonymousFunction,
+                        lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef
+                    ).single as FirAnonymousFunction
+                val body = result.body
+                if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
+                    result.transformReturnTypeRef(this, body.resultType)
+                    result
+                } else {
+                    result
+                }
+            }
+        }
+
+        val label = anonymousFunction.label
+        return if (label != null && receiverTypeRef != null) {
+            withLabel(Name.identifier(label.name), receiverTypeRef.coneTypeUnsafe()) { transform() }
+        } else {
+            transform()
+        }
+    }
+
     private fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
 
         val functionCall = functionCall.transformChildren(this, null) as FirFunctionCall
@@ -314,6 +350,8 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return resultExpression
     }
 
+    data class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?)
+
     private fun completeTypeInference(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
         val typeRef = typeFromCallee(functionCall)
         if (typeRef.type is ConeKotlinErrorType) {
@@ -327,7 +365,61 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
         val completionMode = candidate.computeCompletionMode(inferenceComponents, expectedTypeRef, initialType)
         val completer = ConstraintSystemCompleter(inferenceComponents)
-        completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, initialType)
+        val replacements = mutableMapOf<FirExpression, FirExpression>()
+
+        val analyzer = PostponedArgumentsAnalyzer(object : LambdaAnalyzer {
+            override fun analyzeAndGetLambdaReturnArguments(
+                lambdaArgument: FirAnonymousFunction,
+                isSuspend: Boolean,
+                receiverType: ConeKotlinType?,
+                parameters: List<ConeKotlinType>,
+                expectedReturnType: ConeKotlinType?,
+                stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
+            ): Pair<List<FirExpression>, InferenceSession> {
+
+                val itParam = when {
+                    lambdaArgument.valueParameters.isEmpty() && parameters.size == 1 ->
+                        FirValueParameterImpl(
+                            session,
+                            null,
+                            Name.identifier("it"),
+                            FirResolvedTypeRefImpl(session, null, parameters.single(), false, emptyList()),
+                            null,
+                            false,
+                            false,
+                            false
+                        )
+                    else -> null
+                }
+
+                val newLambdaExpression = lambdaArgument.copy(
+                    receiverTypeRef = receiverType?.let { lambdaArgument.receiverTypeRef!!.resolvedTypeFromPrototype(it) },
+                    valueParameters = lambdaArgument.valueParameters.mapIndexed { index, parameter ->
+                        parameter.transformReturnTypeRef(StoreType, parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index]))
+                        parameter
+                    } + listOfNotNull(itParam)
+                )
+
+
+                val expectedReturnTypeRef = expectedReturnType?.let { newLambdaExpression.returnTypeRef.resolvedTypeFromPrototype(it) }
+                replacements[lambdaArgument] =
+                    newLambdaExpression.transformSingle(this@FirBodyResolveTransformer, LambdaResolution(expectedReturnTypeRef))
+
+
+                return listOfNotNull(newLambdaExpression.body?.statements?.lastOrNull() as? FirExpression) to InferenceSession.default
+            }
+
+        }, { it.resultType }, session)
+
+        completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(functionCall), initialType) {
+            analyzer.analyze(
+                candidate.system.asPostponedArgumentsAnalyzerContext(),
+                it
+//                diagnosticsHolder
+            )
+        }
+
+        functionCall.transformChildren(ReplaceInArguments, replacements.toMap())
 
 
         if (completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL) {
@@ -711,5 +803,42 @@ private object StoreNameReference : FirTransformer<FirNamedReference>() {
         data: FirNamedReference
     ): CompositeTransformResult<FirNamedReference> {
         return data.compose()
+    }
+}
+
+private object StoreType : FirTransformer<FirResolvedTypeRef>() {
+    override fun <E : FirElement> transformElement(element: E, data: FirResolvedTypeRef): CompositeTransformResult<E> {
+        return element.compose()
+    }
+
+    override fun transformTypeRef(typeRef: FirTypeRef, data: FirResolvedTypeRef): CompositeTransformResult<FirTypeRef> {
+        return data.compose()
+    }
+}
+
+private object ReplaceInArguments : FirTransformer<Map<FirElement, FirElement>>() {
+    override fun <E : FirElement> transformElement(element: E, data: Map<FirElement, FirElement>): CompositeTransformResult<E> {
+        return ((data[element] ?: element) as E).compose()
+    }
+
+    override fun transformFunctionCall(
+        functionCall: FirFunctionCall,
+        data: Map<FirElement, FirElement>
+    ): CompositeTransformResult<FirStatement> {
+        return (functionCall.transformChildren(this, data) as FirStatement).compose()
+    }
+
+    override fun transformNamedArgumentExpression(
+        namedArgumentExpression: FirNamedArgumentExpression,
+        data: Map<FirElement, FirElement>
+    ): CompositeTransformResult<FirStatement> {
+        return (namedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
+    }
+
+    override fun transformLambdaArgumentExpression(
+        lambdaArgumentExpression: FirLambdaArgumentExpression,
+        data: Map<FirElement, FirElement>
+    ): CompositeTransformResult<FirStatement> {
+        return (lambdaArgumentExpression.transformChildren(this, data) as FirStatement).compose()
     }
 }
