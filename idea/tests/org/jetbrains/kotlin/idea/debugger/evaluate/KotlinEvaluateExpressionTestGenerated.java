@@ -296,6 +296,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/localClass.kt");
         }
 
+        @TestMetadata("localFunctionsWithReceivers.kt")
+        public void testLocalFunctionsWithReceivers() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/localFunctionsWithReceivers.kt");
+        }
+
         @TestMetadata("localVariables.kt")
         public void testLocalVariables() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/localVariables.kt");

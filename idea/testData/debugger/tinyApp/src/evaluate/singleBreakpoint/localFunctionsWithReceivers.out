@@ -1,0 +1,9 @@
+LineBreakpoint created at localFunctionsWithReceivers.kt:10
+Run Java
+Connected to the target VM
+localFunctionsWithReceivers.kt:10
+Compile bytecode for "a".foo("b")
+Compile bytecode for "b".foo()
+Disconnected from the target VM
+
+Process finished with exit code 0

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory.Com
 import org.jetbrains.kotlin.idea.debugger.safeLocation
 import org.jetbrains.kotlin.idea.debugger.safeMethod
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -28,12 +27,14 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_3_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.expressions.createFunctionType
 
 class CodeFragmentParameterInfo(
     val parameters: List<Smart>,
@@ -262,8 +263,8 @@ class CodeFragmentParameterAnalyzer(
         }
 
         return when (target) {
-            is FunctionDescriptor -> {
-                val type = SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(target, false)
+            is SimpleFunctionDescriptor -> {
+                val type = target.createFunctionType(target.builtIns, target.isSuspend) ?: return null
                 parameters.getOrPut(target) {
                     Smart(Dumb(Kind.LOCAL_FUNCTION, target.name.asString()), type, target)
                 }
