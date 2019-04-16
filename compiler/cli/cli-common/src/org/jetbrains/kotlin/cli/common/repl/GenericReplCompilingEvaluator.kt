@@ -20,13 +20,11 @@ import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 
-class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
-                                    baseClasspath: Iterable<File>,
-                                    baseClassloader: ClassLoader? = Thread.currentThread().contextClassLoader,
-                                    private val fallbackScriptArgs: ScriptArgsWithTypes? = null,
-                                    repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
+open class GenericReplCompilingEvaluatorBase(
+    val compiler: ReplCompiler,
+    val evaluator: ReplEvaluator,
+    private val fallbackScriptArgs: ScriptArgsWithTypes? = null
 ) : ReplFullEvaluator {
-    private val evaluator = GenericReplEvaluator(baseClasspath, baseClassloader, fallbackScriptArgs, repeatingMode)
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = AggregatedReplStageState(compiler.createState(lock), evaluator.createState(lock), lock)
 
@@ -75,7 +73,7 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
     }
 
     override fun eval(state: IReplStageState<*>, compileResult: ReplCompileResult.CompiledClasses, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult =
-            evaluator.eval(state, compileResult, scriptArgs, invokeWrapper)
+        evaluator.eval(state, compileResult, scriptArgs, invokeWrapper)
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = compiler.check(state, codeLine)
 
@@ -93,12 +91,24 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
                             private val evaluator: ReplEvaluator,
                             private val defaultScriptArgs: ScriptArgsWithTypes?) : Evaluable {
         override fun eval(scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult =
-                evaluator.eval(state, compiledCode, scriptArgs ?: defaultScriptArgs, invokeWrapper)
+            evaluator.eval(state, compiledCode, scriptArgs ?: defaultScriptArgs, invokeWrapper)
     }
 }
 
+class GenericReplCompilingEvaluator(
+    compiler: ReplCompiler,
+    baseClasspath: Iterable<File>,
+    baseClassloader: ClassLoader? = Thread.currentThread().contextClassLoader,
+    fallbackScriptArgs: ScriptArgsWithTypes? = null,
+    repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
+) : GenericReplCompilingEvaluatorBase(
+    compiler,
+    GenericReplEvaluator(baseClasspath, baseClassloader, fallbackScriptArgs, repeatingMode),
+    fallbackScriptArgs
+)
+
 private fun AggregatedReplStageState<*, *>.adjustHistories(): Iterable<ILineId>? =
-        state2.history.peek()?.let {
-            state1.history.resetTo(it.id)
-        }
+    state2.history.peek()?.let {
+        state1.history.resetTo(it.id)
+    }
         ?: state1.history.reset()

@@ -60,18 +60,21 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
 
     override fun resetTo(id: ILineId): Iterable<ILineId> {
         lock.write {
-            val idx = indexOfFirst { it.id == id }
-            if (idx < 0) throw java.util.NoSuchElementException("Cannot rest to inexistent line ${id.no}")
-            return if (idx < lastIndex) {
-                val removed = asSequence().drop(idx + 1).map { it.id }.toList()
-                removeRange(idx + 1, size)
-                currentGeneration.incrementAndGet()
-                removed
-            }
-            else {
-                currentGeneration.incrementAndGet()
-                emptyList()
-            }
+            return tryResetTo(id) ?: throw NoSuchElementException("Cannot reset to non-existent line ${id.no}")
+        }
+    }
+
+    protected fun tryResetTo(id: ILineId): List<ILineId>? {
+        val idx = indexOfFirst { it.id == id }
+        if (idx < 0) return null
+        return if (idx < lastIndex) {
+            val removed = asSequence().drop(idx + 1).map { it.id }.toList()
+            removeRange(idx + 1, size)
+            currentGeneration.incrementAndGet()
+            removed
+        } else {
+            currentGeneration.incrementAndGet()
+            emptyList()
         }
     }
 }
