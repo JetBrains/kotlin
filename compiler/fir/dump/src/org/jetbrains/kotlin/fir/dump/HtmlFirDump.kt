@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
@@ -1064,9 +1065,21 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generate(throwExpression.exception)
     }
 
+    private fun FlowContent.generate(unitExpression: FirUnitExpression) {
+        generate(unitExpression.typeRef)
+    }
+
+    private fun FlowContent.generate(stringConcatenationCall: FirStringConcatenationCall) {
+        generateList(stringConcatenationCall.arguments, separator = " + ") {
+            generate(it)
+        }
+    }
+
     private fun FlowContent.generate(expression: FirExpression) {
         exprType(expression.typeRef) {
             when (expression) {
+                is FirUnitExpression -> generate(expression)
+                is FirStringConcatenationCall -> generate(expression)
                 is FirAnonymousFunction -> generate(expression, isStatement = false)
                 is FirThrowExpression -> generate(expression)
                 is FirWhenSubjectExpression -> generate(expression)
