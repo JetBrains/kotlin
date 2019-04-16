@@ -735,7 +735,13 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
         val kotlinOptions = KotlinJvmOptionsImpl()
         project.whenEvaluated {
-            applyAndroidJavaVersion(project.extensions.getByType(BaseExtension::class.java), kotlinOptions)
+            // TODO don't require the flag once there is an Android Gradle plugin build that supports desugaring of Long.hashCode and
+            //  Boolean.hashCode. Instead, run conditionally, only with the AGP versions that play well with Kotlin bytecode for
+            //  JVM target 1.8.
+            //  See: KT-31027
+            if (PropertiesProvider(project).setJvmTargetFromAndroidCompileOptions == true) {
+                applyAndroidJavaVersion(project.extensions.getByType(BaseExtension::class.java), kotlinOptions)
+            }
         }
 
         kotlinOptions.noJdk = true
