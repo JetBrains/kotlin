@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.r4a.ComposableAnnotationChecker.Mode
 import org.jetbrains.kotlin.r4a.R4AComponentRegistrar
 import org.jetbrains.kotlin.r4a.AbstractR4aDiagnosticsTest
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.r4a.newConfiguration
 
 class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
@@ -19,7 +19,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun doTest(mode: Mode, text: String, expectPass: Boolean) {
         val classPath = createClasspath()
-        val configuration = KotlinTestUtils.newConfiguration()
+        val configuration = newConfiguration()
         configuration.addJvmClasspathRoots(classPath)
         configuration.put(R4AComponentRegistrar.COMPOSABLE_CHECKER_MODE_KEY, mode)
         val environment =

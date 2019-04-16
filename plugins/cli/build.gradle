@@ -25,10 +25,8 @@ plugins {
 }
 
 dependencies {
-    implementation(KOTLIN_STDLIB)
-    implementation("org.jetbrains.kotlin:kotlin-compiler")
-
-    testRuntime("org.jetbrains.kotlin:kotlin-idea-rt")
+    api(KOTLIN_STDLIB)
+    api("org.jetbrains.kotlin:kotlin-compiler-embeddable")
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
