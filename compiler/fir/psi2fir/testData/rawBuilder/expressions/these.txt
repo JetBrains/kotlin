@@ -27,10 +27,7 @@ FILE: these.kt
     }
     public? final? fun test(some: Some): Int {
         ^test with#(some#, <L> = with@fun <implicit>.<anonymous>(): <implicit> {
-            ^  {
-                this#.foo#().plus#(this@with.extension#())
-            }
-
+            this#.foo#().plus#(this@with.extension#())
         }
         )
     }

@@ -16,86 +16,62 @@ FILE: lambda.kt
     }
     public? final? fun foo(): Int {
         lval l1: <implicit> = fun <implicit>.<anonymous>(t: Tuple): <implicit> {
-            ^  {
-                lval x: <implicit> = t#.x#
-                lval y: <implicit> = t#.y#
-                x#.plus#(y#)
-            }
-
+            lval x: <implicit> = t#.x#
+            lval y: <implicit> = t#.y#
+            x#.plus#(y#)
         }
 
         use#(<L> = use@fun <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> {
-            ^  {
-                lval x: <implicit> = <destruct>#.component1()
-                lval y: <implicit> = <destruct>#.component2()
-                x#.plus#(y#)
-            }
-
+            lval x: <implicit> = <destruct>#.component1()
+            lval y: <implicit> = <destruct>#.component2()
+            x#.plus#(y#)
         }
         )
         ^foo use#(<L> = use@fun <implicit>.<anonymous>(): <implicit> {
-            ^  {
-                when () {
-                    ==(it#.x#, Int(0)) ->  {
-                        ^foo Int(0)
-                    }
-                    else ->  {
-                    }
+            when () {
+                ==(it#.x#, Int(0)) ->  {
+                    ^foo Int(0)
                 }
-
-                ^@use it#.y#
+                else ->  {
+                }
             }
 
+            ^@use it#.y#
         }
         )
     }
     public? final? fun bar(): Int {
         ^bar use#(<L> = lambda@fun <implicit>.<anonymous>(): <implicit> {
-            ^  {
-                when () {
-                    ==(it#.x#, Int(0)) ->  {
-                        ^bar Int(0)
-                    }
-                    else ->  {
-                    }
+            when () {
+                ==(it#.x#, Int(0)) ->  {
+                    ^bar Int(0)
                 }
-
-                ^@lambda it#.y#
+                else ->  {
+                }
             }
 
+            ^@lambda it#.y#
         }
         )
     }
     public? final? fun test(list: List<Int>): kotlin/Unit {
         lval map: <implicit> = mutableMapOf#<Int, String>()
         list#.forEach#(<L> = forEach@fun <implicit>.<anonymous>(): <implicit> {
-            ^  {
-                lval <complex-set>: <implicit> = map#.getOrPut#(it#, getOrPut@fun <implicit>.<anonymous>(): <implicit> {
-                    ^  {
-                        mutableListOf#()
-                    }
-
-                }
-                )
-                <complex-set># += String()
+            lval <complex-set>: <implicit> = map#.getOrPut#(it#, getOrPut@fun <implicit>.<anonymous>(): <implicit> {
+                mutableListOf#()
             }
-
+            )
+            <complex-set># += String()
         }
         )
     }
     public? final? val simple: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
-        ^  {
-            Unit
-        }
-
+        Unit
     }
 
         public? get(): <implicit>
     public? final? val another: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
-        ^  {
-            Int(42)
-        }
-
+        Int(42)
     }
 
         public? get(): <implicit>

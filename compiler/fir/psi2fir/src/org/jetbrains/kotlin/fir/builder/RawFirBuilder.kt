@@ -668,14 +668,14 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                         ) { toFirOrImplicitType() }
                         multiParameter
                     } else {
-                        valueParameter.convert<FirValueParameter>()
+                        valueParameter.toFirValueParameter(FirImplicitTypeRefImpl(session, psi))
                     }
                 }
                 label = firLabels.pop() ?: firFunctionCalls.lastOrNull()?.calleeReference?.name?.let {
                     FirLabelImpl(this@RawFirBuilder.session, expression, it.asString())
                 }
                 val bodyExpression = literal.bodyExpression.toFirExpression("Lambda has no body")
-                if (bodyExpression is FirBlockImpl) {
+                body = if (bodyExpression is FirBlockImpl) {
                     if (bodyExpression.statements.isEmpty()) {
                         bodyExpression.statements.add(FirUnitExpression(this@RawFirBuilder.session, expression))
                     }
@@ -684,8 +684,10 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                             bodyExpression.statements.add(index, statement)
                         }
                     }
+                    bodyExpression
+                } else {
+                    FirSingleExpressionBlock(this@RawFirBuilder.session, bodyExpression.toReturn())
                 }
-                body = FirSingleExpressionBlock(this@RawFirBuilder.session, bodyExpression.toReturn())
 
                 firFunctions.removeLast()
             }
