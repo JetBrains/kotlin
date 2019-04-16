@@ -15,14 +15,15 @@ enum class SpecTestValidationFailedReason(val description: String) {
     FILENAME_NOT_VALID("Incorrect test filename or folder name."),
     TESTINFO_NOT_VALID("Test info is incorrect."),
     FILEPATH_AND_TESTINFO_IN_FILE_NOT_CONSISTENCY("Test info from filepath and file content is not consistency"),
-    TEST_IS_NOT_POSITIVE("Test is not positive because it contains error elements (PsiErrorElement or diagnostic with error severity)."),
-    TEST_IS_NOT_NEGATIVE("Test is not negative because it not contains error type elements (PsiErrorElement or diagnostic with error severity)."),
+    TEST_IS_NOT_POSITIVE("Test isn't positive because it contains error elements."),
+    TEST_IS_NOT_NEGATIVE("Test isn't negative because it doesn't contain error elements."),
     INVALID_TEST_CASES_STRUCTURE(
         "All code in the test file must be divided and marked as a 'test case' label.${CommonPatterns.ls}Example:${CommonPatterns.ls.repeat(2)}// TESTCASE NUMBER: 1${CommonPatterns.ls}fun main() { println(\"Hello, Kotlin!\") }${CommonPatterns.ls.repeat(2)}"
     ),
     UNKNOWN_FRONTEND_EXCEPTION("Unknown frontend exception. Manual analysis is required."),
     UNMATCHED_FRONTEND_EXCEPTION("Unmatched frontend exception. Manual analysis is required."),
-    UNKNOWN("Unknown validation error.")
+    UNKNOWN("Unknown validation error."),
+    INCONSISTENT_REASONS("Inconsistent fail reasons: all test cases should have one fail reason within one test.")
 }
 
 class SpecTestValidationException(reason: SpecTestValidationFailedReason, details: String = "") : Exception() {
@@ -41,6 +42,8 @@ abstract class AbstractTestValidator(private val testInfo: AbstractSpecTest, pri
 
     fun validateTestType() {
         val computedTestTypes = computeTestTypes()
+        val invalidTestCases = mutableSetOf<Int>()
+        var invalidTestCasesReason: SpecTestValidationFailedReason? = null
 
         for ((caseNumber, case) in testInfo.cases.byNumbers) {
             val testType = computedTestTypes[caseNumber] ?: TestType.POSITIVE
@@ -53,8 +56,18 @@ abstract class AbstractTestValidator(private val testInfo: AbstractSpecTest, pri
                     isNotPositive -> SpecTestValidationFailedReason.TEST_IS_NOT_POSITIVE
                     else -> SpecTestValidationFailedReason.UNKNOWN
                 }
-                throw SpecTestValidationException(reason, details = "TESTCASE: $caseNumber")
+                if (invalidTestCasesReason != null && invalidTestCasesReason != reason)
+                    throw SpecTestValidationException(SpecTestValidationFailedReason.INCONSISTENT_REASONS)
+                invalidTestCasesReason = reason
+                invalidTestCases.add(caseNumber)
             }
+        }
+
+        if (invalidTestCasesReason != null) {
+            throw SpecTestValidationException(
+                invalidTestCasesReason,
+                details = "TEST CASES: ${invalidTestCases.sorted().joinToString(", ")}"
+            )
         }
     }
 }
