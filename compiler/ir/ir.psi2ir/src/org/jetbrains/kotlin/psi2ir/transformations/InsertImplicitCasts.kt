@@ -291,7 +291,7 @@ open class InsertImplicitCasts(
                 if (expectedType.isNullableAny()) {
                     this
                 } else {
-                    implicitCast(expectedType, IrTypeOperator.IMPLICIT_CAST)
+                    implicitCast(expectedType, IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
                 }
             }
 

@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/dynamicWithSmartCast.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
               GET_VAR 'd: dynamic declared in <root>.test1' type=dynamic origin=null
             then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
-              $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+              $this: TYPE_OP type=kotlin.String origin=IMPLICIT_DYNAMIC_CAST typeOperand=kotlin.String
                 GET_VAR 'd: dynamic declared in <root>.test1' type=dynamic origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/dynamicWithSmartCast.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
               GET_VAR 'd: dynamic declared in <root>.test2' type=dynamic origin=null
             then: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
-              $this: TYPE_OP type=kotlin.Array<out kotlin.Any?> origin=IMPLICIT_CAST typeOperand=kotlin.Array<out kotlin.Any?>
+              $this: TYPE_OP type=kotlin.Array<T of kotlin.Array> origin=IMPLICIT_DYNAMIC_CAST typeOperand=kotlin.Array<T of kotlin.Array>
                 GET_VAR 'd: dynamic declared in <root>.test2' type=dynamic origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

@@ -44,7 +44,12 @@ enum class IrTypeOperator {
      * SAM conversion: value of functional type F is used where Single Abstract Method interface value is expected.
      * Currently this is possible in Kotlin/JVM only, however, there's a big demand for SAM conversion for Kotlin interfaces.
      */
-    SAM_CONVERSION;
+    SAM_CONVERSION,
+    /**
+     * Implicit dynamic cast: implicit cast from `dynamic` to `T`.
+     * This currently can happen in Kotlin/JS only.
+     */
+    IMPLICIT_DYNAMIC_CAST;
 }
 
 interface IrTypeOperatorCall : IrExpression {

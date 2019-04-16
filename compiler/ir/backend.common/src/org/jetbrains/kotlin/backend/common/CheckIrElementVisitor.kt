@@ -182,11 +182,15 @@ class CheckIrElementVisitor(
             IrTypeOperator.IMPLICIT_NOTNULL,
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
             IrTypeOperator.IMPLICIT_INTEGER_COERCION,
-            IrTypeOperator.SAM_CONVERSION -> typeOperand
+            IrTypeOperator.SAM_CONVERSION,
+            IrTypeOperator.IMPLICIT_DYNAMIC_CAST ->
+                typeOperand
 
-            IrTypeOperator.SAFE_CAST -> typeOperand.makeNullable()
+            IrTypeOperator.SAFE_CAST ->
+                typeOperand.makeNullable()
 
-            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> irBuiltIns.booleanType
+            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF ->
+                irBuiltIns.booleanType
         }
 
         if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT && !typeOperand.isUnit()) {

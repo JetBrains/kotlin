@@ -601,24 +601,26 @@ open class IrModuleSerializer(
     }
 
     private fun serializeTypeOperator(operator: IrTypeOperator): KotlinIr.IrTypeOperator = when (operator) {
-        IrTypeOperator.CAST
-        -> KotlinIr.IrTypeOperator.CAST
-        IrTypeOperator.IMPLICIT_CAST
-        -> KotlinIr.IrTypeOperator.IMPLICIT_CAST
-        IrTypeOperator.IMPLICIT_NOTNULL
-        -> KotlinIr.IrTypeOperator.IMPLICIT_NOTNULL
-        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-        -> KotlinIr.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-        IrTypeOperator.IMPLICIT_INTEGER_COERCION
-        -> KotlinIr.IrTypeOperator.IMPLICIT_INTEGER_COERCION
-        IrTypeOperator.SAFE_CAST
-        -> KotlinIr.IrTypeOperator.SAFE_CAST
-        IrTypeOperator.INSTANCEOF
-        -> KotlinIr.IrTypeOperator.INSTANCEOF
-        IrTypeOperator.NOT_INSTANCEOF
-        -> KotlinIr.IrTypeOperator.NOT_INSTANCEOF
-        IrTypeOperator.SAM_CONVERSION
-        -> KotlinIr.IrTypeOperator.SAM_CONVERSION
+        IrTypeOperator.CAST ->
+            KotlinIr.IrTypeOperator.CAST
+        IrTypeOperator.IMPLICIT_CAST ->
+            KotlinIr.IrTypeOperator.IMPLICIT_CAST
+        IrTypeOperator.IMPLICIT_NOTNULL ->
+            KotlinIr.IrTypeOperator.IMPLICIT_NOTNULL
+        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ->
+            KotlinIr.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+        IrTypeOperator.IMPLICIT_INTEGER_COERCION ->
+            KotlinIr.IrTypeOperator.IMPLICIT_INTEGER_COERCION
+        IrTypeOperator.SAFE_CAST ->
+            KotlinIr.IrTypeOperator.SAFE_CAST
+        IrTypeOperator.INSTANCEOF ->
+            KotlinIr.IrTypeOperator.INSTANCEOF
+        IrTypeOperator.NOT_INSTANCEOF ->
+            KotlinIr.IrTypeOperator.NOT_INSTANCEOF
+        IrTypeOperator.SAM_CONVERSION ->
+            KotlinIr.IrTypeOperator.SAM_CONVERSION
+        IrTypeOperator.IMPLICIT_DYNAMIC_CAST ->
+            KotlinIr.IrTypeOperator.IMPLICIT_DYNAMIC_CAST
     }
 
     private fun serializeTypeOp(expression: IrTypeOperatorCall): KotlinIr.IrTypeOp {

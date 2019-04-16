@@ -512,6 +512,7 @@ enum IrTypeOperator {
   INSTANCEOF = 7;
   NOT_INSTANCEOF = 8;
   SAM_CONVERSION = 9;
+  IMPLICIT_DYNAMIC_CAST = 10;
 }
 
 

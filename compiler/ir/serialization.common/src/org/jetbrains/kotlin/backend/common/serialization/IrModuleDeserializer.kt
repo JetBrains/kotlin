@@ -530,24 +530,26 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeTypeOperator(operator: KotlinIr.IrTypeOperator) = when (operator) {
-        KotlinIr.IrTypeOperator.CAST
-        -> IrTypeOperator.CAST
-        KotlinIr.IrTypeOperator.IMPLICIT_CAST
-        -> IrTypeOperator.IMPLICIT_CAST
-        KotlinIr.IrTypeOperator.IMPLICIT_NOTNULL
-        -> IrTypeOperator.IMPLICIT_NOTNULL
-        KotlinIr.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-        -> IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-        KotlinIr.IrTypeOperator.IMPLICIT_INTEGER_COERCION
-        -> IrTypeOperator.IMPLICIT_INTEGER_COERCION
-        KotlinIr.IrTypeOperator.SAFE_CAST
-        -> IrTypeOperator.SAFE_CAST
-        KotlinIr.IrTypeOperator.INSTANCEOF
-        -> IrTypeOperator.INSTANCEOF
-        KotlinIr.IrTypeOperator.NOT_INSTANCEOF
-        -> IrTypeOperator.NOT_INSTANCEOF
-        KotlinIr.IrTypeOperator.SAM_CONVERSION
-        -> IrTypeOperator.SAM_CONVERSION
+        KotlinIr.IrTypeOperator.CAST ->
+            IrTypeOperator.CAST
+        KotlinIr.IrTypeOperator.IMPLICIT_CAST ->
+            IrTypeOperator.IMPLICIT_CAST
+        KotlinIr.IrTypeOperator.IMPLICIT_NOTNULL ->
+            IrTypeOperator.IMPLICIT_NOTNULL
+        KotlinIr.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ->
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+        KotlinIr.IrTypeOperator.IMPLICIT_INTEGER_COERCION ->
+            IrTypeOperator.IMPLICIT_INTEGER_COERCION
+        KotlinIr.IrTypeOperator.SAFE_CAST ->
+            IrTypeOperator.SAFE_CAST
+        KotlinIr.IrTypeOperator.INSTANCEOF ->
+            IrTypeOperator.INSTANCEOF
+        KotlinIr.IrTypeOperator.NOT_INSTANCEOF ->
+            IrTypeOperator.NOT_INSTANCEOF
+        KotlinIr.IrTypeOperator.SAM_CONVERSION ->
+            IrTypeOperator.SAM_CONVERSION
+        KotlinIr.IrTypeOperator.IMPLICIT_DYNAMIC_CAST ->
+            IrTypeOperator.IMPLICIT_DYNAMIC_CAST
     }
 
     private fun deserializeTypeOp(proto: KotlinIr.IrTypeOp, start: Int, end: Int, type: IrType): IrTypeOperatorCall {

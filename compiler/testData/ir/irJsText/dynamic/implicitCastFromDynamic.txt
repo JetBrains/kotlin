@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/implicitCastFromDynamic.kt
   PROPERTY name:p visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [final,static]
       EXPRESSION_BODY
-        TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+        TYPE_OP type=kotlin.Int origin=IMPLICIT_DYNAMIC_CAST typeOperand=kotlin.Int
           CALL 'public final fun <get-d> (): dynamic declared in <root>' type=dynamic origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
@@ -22,13 +22,13 @@ FILE fqName:<root> fileName:/implicitCastFromDynamic.kt
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (d: dynamic): kotlin.Int declared in <root>'
-        TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+        TYPE_OP type=kotlin.Int origin=IMPLICIT_DYNAMIC_CAST typeOperand=kotlin.Int
           GET_VAR 'd: dynamic declared in <root>.test1' type=dynamic origin=null
   FUN name:test2 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Any
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (d: dynamic): kotlin.Any declared in <root>'
-        TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+        TYPE_OP type=kotlin.Any origin=IMPLICIT_DYNAMIC_CAST typeOperand=kotlin.Any
           GET_VAR 'd: dynamic declared in <root>.test2' type=dynamic origin=null
   FUN name:test3 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Any?
     VALUE_PARAMETER name:d index:0 type:dynamic
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/implicitCastFromDynamic.kt
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (d: dynamic): kotlin.String declared in <root>'
-        TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+        TYPE_OP type=kotlin.String origin=IMPLICIT_DYNAMIC_CAST typeOperand=kotlin.String
           DYN_OP operator=INVOKE type=dynamic
             receiver: DYN_MEMBER memberName='member' type=dynamic
               GET_VAR 'd: dynamic declared in <root>.test4' type=dynamic origin=null

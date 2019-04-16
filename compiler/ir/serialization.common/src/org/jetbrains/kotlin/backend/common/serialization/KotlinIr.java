@@ -588,6 +588,10 @@ public final class KotlinIr {
      * <code>SAM_CONVERSION = 9;</code>
      */
     SAM_CONVERSION(8, 9),
+    /**
+     * <code>IMPLICIT_DYNAMIC_CAST = 10;</code>
+     */
+    IMPLICIT_DYNAMIC_CAST(9, 10),
     ;
 
     /**
@@ -626,6 +630,10 @@ public final class KotlinIr {
      * <code>SAM_CONVERSION = 9;</code>
      */
     public static final int SAM_CONVERSION_VALUE = 9;
+    /**
+     * <code>IMPLICIT_DYNAMIC_CAST = 10;</code>
+     */
+    public static final int IMPLICIT_DYNAMIC_CAST_VALUE = 10;
 
 
     public final int getNumber() { return value; }
@@ -641,6 +649,7 @@ public final class KotlinIr {
         case 7: return INSTANCEOF;
         case 8: return NOT_INSTANCEOF;
         case 9: return SAM_CONVERSION;
+        case 10: return IMPLICIT_DYNAMIC_CAST;
         default: return null;
       }
     }
