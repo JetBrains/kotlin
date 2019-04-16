@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -153,7 +154,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.toTypeRef(),
             local.typeDeserializer.type(proto.returnType(c.typeTable)).toTypeRef()
         ).apply {
-            typeParameters += local.typeDeserializer.ownTypeParameters.map { createTypeParameterSymbol(it.name).fir }
+            typeParameters += local.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
             annotations += getAnnotations(proto, flags, AnnotatedCallableKind.FUNCTION)
         }
