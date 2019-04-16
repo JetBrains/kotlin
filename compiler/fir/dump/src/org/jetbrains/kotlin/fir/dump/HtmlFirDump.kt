@@ -1021,6 +1021,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(whileLoop: FirWhileLoop) {
         iline {
+            generateLabel(whileLoop)
             keyword("while ")
             +"("
             generate(whileLoop.condition)
@@ -1075,6 +1076,14 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
+    private fun FlowContent.generateLabel(labeledElement: FirLabeledElement) {
+        val label = labeledElement.label ?: return
+        span("label") {
+            +label.name
+            +"@"
+        }
+    }
+
     private fun FlowContent.generate(expression: FirExpression) {
         exprType(expression.typeRef) {
             when (expression) {
@@ -1102,6 +1111,11 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirQualifiedAccessExpression -> generate(expression)
                 is FirNamedArgumentExpression -> {
                     simpleName(expression.name)
+                    +" = "
+                    generate(expression.expression)
+                }
+                is FirLambdaArgumentExpression -> {
+                    keyword("lambda")
                     +" = "
                     generate(expression.expression)
                 }
@@ -1190,6 +1204,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(anonymousFunction: FirAnonymousFunction, isStatement: Boolean) {
         generateMultiLineExpression(isStatement) {
             iline {
+                generateLabel(anonymousFunction)
                 keyword("fun ")
                 generateReceiver(anonymousFunction.receiverTypeRef)
 
