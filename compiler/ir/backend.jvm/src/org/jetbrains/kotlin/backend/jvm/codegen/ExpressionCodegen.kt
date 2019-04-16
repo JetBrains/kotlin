@@ -220,7 +220,8 @@ class ExpressionCodegen(
         if (expression.isTransparentScope)
             return super.visitBlock(expression, data)
         val info = data.create()
-        return super.visitBlock(expression, info).apply {
+        // Force materialization to avoid reading from out-of-scope variables.
+        return super.visitBlock(expression, info).materialized.apply {
             writeLocalVariablesInTable(info)
         }
     }
