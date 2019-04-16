@@ -49,8 +49,6 @@ javadocJar()
 
 dist()
 
-ideaPlugin()
-
 projectTest {
     workingDir = rootDir
 }

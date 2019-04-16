@@ -78,6 +78,7 @@ val projectsToShadow by extra(listOf(
         ":kotlin-noarg-compiler-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-scripting-idea",
+        ":kotlin-scripting-compiler-impl",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlinx-serialization-ide-plugin",
         ":idea:idea-android",
