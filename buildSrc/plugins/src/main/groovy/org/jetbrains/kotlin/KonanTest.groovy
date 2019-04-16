@@ -112,7 +112,11 @@ abstract class KonanTest extends JavaExec {
             def sources = File.createTempFile(name,".lst")
             sources.deleteOnExit()
             def sourcesWriter = sources.newWriter()
-            filesToCompile.each {sourcesWriter << "$it\n"}
+            filesToCompile.each { f ->
+                sourcesWriter.write(f.chars().any { Character.isWhitespace(it) }
+                        ? "\"$f\"\n" // escape file name
+                        : "$f\n")
+            }
             sourcesWriter.close()
             args = ["-output", output,
                     "@${sources.absolutePath}",
