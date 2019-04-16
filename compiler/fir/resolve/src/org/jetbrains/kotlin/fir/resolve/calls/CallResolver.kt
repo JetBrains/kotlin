@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -74,6 +75,7 @@ class Candidate(
     lateinit var substitutor: ConeSubstitutor
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
+    val postponedAtoms = mutableListOf<PostponedResolvedAtomMarker>()
 }
 
 sealed class CallKind {

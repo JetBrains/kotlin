@@ -36,7 +36,7 @@ class CandidateFactory(
     }
 }
 
-private fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(expression: FirExpression) {
+fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(expression: FirExpression) {
     when (expression) {
         is FirFunctionCall -> expression.candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
     }
