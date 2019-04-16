@@ -1,0 +1,31 @@
+FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiver.kt
+  FUN name:testPlatformEqualsPlatform visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testPlatformEqualsPlatform (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: equals, [kotlin/Any.equals, kotlin/Any.equals]>#' type=IrErrorType
+          CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
+  FUN name:testPlatformEqualsKotlin visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testPlatformEqualsKotlin (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: equals, [kotlin/Any.equals, kotlin/Any.equals]>#' type=IrErrorType
+          CONST Double type=kotlin.Double value=0.0
+  FUN name:testKotlinEqualsPlatform visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testKotlinEqualsPlatform (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: equals, [kotlin/Any.equals, kotlin/Any.equals]>#' type=IrErrorType
+          CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
+  FUN name:testPlatformCompareToPlatform visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testPlatformCompareToPlatform (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+          CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
+  FUN name:testPlatformCompareToKotlin visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testPlatformCompareToKotlin (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+          CONST Double type=kotlin.Double value=0.0
+  FUN name:testKotlinCompareToPlatform visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testKotlinCompareToPlatform (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+          CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null

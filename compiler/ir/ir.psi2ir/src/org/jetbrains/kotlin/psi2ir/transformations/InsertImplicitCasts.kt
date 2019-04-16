@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.makeTypeIntersection
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.isNullabilityFlexible
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
     element.transformChildren(
@@ -111,10 +111,12 @@ open class InsertImplicitCasts(
             val dTypeParameters = getDeclarationSideTypeParameters(declaration)
             val cTypeParameters = getTypeSideTypeParameters(declaration)
             val typeArguments = getTypeArguments(expression, dTypeParameters)
-            val dispatchReceiver = declaration.dispatchReceiverParameter
-            val extensionReceiver = declaration.extensionReceiverParameter
-            this.dispatchReceiver = this.dispatchReceiver?.cast(dispatchReceiver?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments))
-            this.extensionReceiver = this.extensionReceiver?.cast(extensionReceiver?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments))
+            dispatchReceiver = dispatchReceiver?.cast(
+                declaration.dispatchReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments)
+            )
+            extensionReceiver = extensionReceiver?.cast(
+                declaration.extensionReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments)
+            )
         }
     }
 
@@ -123,8 +125,12 @@ open class InsertImplicitCasts(
         val dTypeParameters = getDeclarationSideTypeParameters(declaration)
         val cTypeParameters = getTypeSideTypeParameters(declaration)
         val typeArguments = getTypeArguments(this, dTypeParameters)
-        dispatchReceiver = dispatchReceiver?.cast(declaration.dispatchReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments))
-        extensionReceiver = extensionReceiver?.cast(declaration.extensionReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments))
+        dispatchReceiver = dispatchReceiver?.cast(
+            declaration.dispatchReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments)
+        )
+        extensionReceiver = extensionReceiver?.cast(
+            declaration.extensionReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments)
+        )
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression =
@@ -314,7 +320,7 @@ open class InsertImplicitCasts(
     }
 
     private fun IrExpression.implicitNonNull(valueType: IrType, expectedType: IrType): IrExpression {
-        val notNullValueType = valueType.makeNotNull()
+        val notNullValueType = valueType.getRepresentableUpperBound().makeNotNull()
         return implicitCast(notNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
     }
 
@@ -352,9 +358,13 @@ open class InsertImplicitCasts(
 
     private fun IrType.isBuiltInIntegerType(): Boolean =
         isByte() || isShort() || isInt() || isLong() ||
-                isUByte() ||
-                isUShort() ||
-                isUInt() ||
-                isULong()
+                isUByte() || isUShort() || isUInt() || isULong()
+
+    private fun IrType.getRepresentableUpperBound(): IrType {
+        if (this !is IrSimpleType) return this
+        val classifier = this.classifier as? IrTypeParameterSymbol ?: return this
+        val superTypes = classifier.owner.superTypes
+        return makeTypeIntersection(superTypes)
+    }
 }
 

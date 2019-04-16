@@ -57,11 +57,11 @@ class TypeTranslator(
         typeParametersResolver.resolveScopedTypeParameter(typeParameterDescriptor)
             ?: symbolTable.referenceTypeParameter(typeParameterDescriptor)
 
-    fun translateType(ktType: KotlinType): IrType =
-        translateType(ktType, Variance.INVARIANT).type
+    fun translateType(kotlinType: KotlinType): IrType =
+        translateType(kotlinType, kotlinType, Variance.INVARIANT).type
 
-    private fun translateType(ktType: KotlinType, variance: Variance): IrTypeProjection {
-        val approximatedType = LegacyTypeApproximation().approximate(ktType)
+    private fun translateType(originalKotlinType: KotlinType, kotlinType: KotlinType, variance: Variance): IrTypeProjection {
+        val approximatedType = LegacyTypeApproximation().approximate(kotlinType)
 
         when {
             approximatedType.isError ->
@@ -69,7 +69,7 @@ class TypeTranslator(
             approximatedType.isDynamic() ->
                 return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType.annotations), variance)
             approximatedType.isFlexible() ->
-                return translateType(approximatedType.upperIfFlexible(), variance)
+                return translateType(originalKotlinType, approximatedType.upperIfFlexible(), variance)
         }
 
         val ktTypeConstructor = approximatedType.constructor
@@ -77,7 +77,7 @@ class TypeTranslator(
             ?: throw AssertionError("No descriptor for type $approximatedType")
 
         return IrSimpleTypeBuilder().apply {
-            kotlinType = approximatedType
+            this.kotlinType = originalKotlinType
             hasQuestionMark = approximatedType.isMarkedNullable
             this.variance = variance
             when (ktTypeDescriptor) {
@@ -140,6 +140,6 @@ class TypeTranslator(
             if (it.isStarProjection)
                 IrStarProjectionImpl
             else
-                translateType(it.type, it.projectionKind)
+                translateType(it.type, it.type, it.projectionKind)
         }
 }
