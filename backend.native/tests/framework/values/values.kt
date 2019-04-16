@@ -280,3 +280,61 @@ class Deeply {
 }
 
 data class CKeywords(val float: Float, val `enum`: Int, var goto: Boolean)
+
+interface Base1 {
+    fun same(value: Int?): Int?
+}
+
+interface ExtendedBase1 : Base1 {
+    override fun same(value: Int?): Int?
+}
+
+interface Base2 {
+    fun same(value: Int?): Int?
+}
+
+internal interface Base3 {
+    fun same(value: Int?): Int
+}
+
+open class Base23 : Base2, Base3 {
+    override fun same(value: Int?): Int = error("should not reach here")
+}
+
+fun call(base1: Base1, value: Int?) = base1.same(value)
+fun call(extendedBase1: ExtendedBase1, value: Int?) = extendedBase1.same(value)
+fun call(base2: Base2, value: Int?) = base2.same(value)
+fun call(base3: Any, value: Int?) = (base3 as Base3).same(value)
+fun call(base23: Base23, value: Int?) = base23.same(value)
+
+interface Transform<T, R> {
+    fun map(value: T): R
+}
+
+interface TransformWithDefault<T> : Transform<T, T> {
+    override fun map(value: T): T = value
+}
+
+class TransformInheritingDefault<T> : TransformWithDefault<T>
+
+interface TransformIntString {
+    fun map(intValue: Int): String
+}
+
+abstract class TransformIntToString : Transform<Int, String>, TransformIntString {
+    override abstract fun map(intValue: Int): String
+}
+
+open class TransformIntToDecimalString : TransformIntToString() {
+    override fun map(intValue: Int): String = intValue.toString()
+}
+
+private class TransformDecimalStringToInt : Transform<String, Int> {
+    override fun map(stringValue: String): Int = stringValue.toInt()
+}
+
+fun createTransformDecimalStringToInt(): Transform<String, Int> = TransformDecimalStringToInt()
+
+open class TransformIntToLong : Transform<Int, Long> {
+    override fun map(value: Int): Long = value.toLong()
+}

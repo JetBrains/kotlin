@@ -496,6 +496,35 @@ func testNames() throws {
     try assertEquals(actual: CKeywords(float: 1.0, enum : 42, goto: true).goto_, expected: true)
 }
 
+class Base123 : Base23, ExtendedBase1 {
+    override func same(value: KotlinInt?) -> KotlinInt {
+        return value!
+    }
+}
+
+func testSwiftOverride() throws {
+    let impl = Base123()
+    try assertEquals(actual: ValuesKt.call(base1: impl, value: 1), expected: 1)
+    try assertEquals(actual: ValuesKt.call(extendedBase1: impl, value: 2), expected: 2)
+    try assertEquals(actual: ValuesKt.call(base2: impl, value: 3), expected: 3)
+    try assertEquals(actual: ValuesKt.call(base3: impl, value: 4), expected: 4)
+    try assertEquals(actual: ValuesKt.call(base23: impl, value: 5), expected: 5)
+}
+
+class TransformIntToLongCallingSuper : TransformIntToLong {
+    override func map(value: KotlinInt) -> KotlinLong {
+        return super.map(value: value)
+    }
+}
+
+func testKotlinOverride() throws {
+    try assertEquals(actual: TransformInheritingDefault().map(value: 1) as! Int32, expected: 1)
+    try assertEquals(actual: TransformIntToDecimalString().map(value: 2), expected: "2")
+    try assertEquals(actual: TransformIntToDecimalString().map(intValue: 3), expected: "3")
+    try assertEquals(actual: ValuesKt.createTransformDecimalStringToInt().map(value: "4") as! Int32, expected: 4)
+    try assertEquals(actual: TransformIntToLongCallingSuper().map(value: 5), expected: 5)
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : TestProvider {
@@ -533,6 +562,8 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestShared", method: withAutorelease(testShared)),
             TestCase(name: "TestPureSwiftClasses", method: withAutorelease(testPureSwiftClasses)),
             TestCase(name: "TestNames", method: withAutorelease(testNames)),
+            TestCase(name: "TestSwiftOverride", method: withAutorelease(testSwiftOverride)),
+            TestCase(name: "TestKotlinOverride", method: withAutorelease(testKotlinOverride)),
         ]
     }
 }
