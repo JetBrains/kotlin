@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.js.translate.utils.finalElement
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFunctionResolvedCallWithAssert
@@ -127,7 +125,18 @@ object CallableReferenceTranslator {
             val type = functionDescriptor.valueParameters[index].type
             aliases[valueArg.getArgumentExpression()!!] = TranslationUtils.coerce(context, paramRef, type)
         }
-        val functionContext = context.innerBlock(function.body).innerContextWithAliasesForExpressions(aliases)
+
+        var functionContext = context.innerBlock(function.body).innerContextWithAliasesForExpressions(aliases).inner(functionDescriptor)
+
+        functionContext.continuationParameterDescriptor?.let { continuationDescriptor ->
+            function.parameters += JsParameter(context.getNameForDescriptor(continuationDescriptor))
+            functionContext = functionContext.innerContextWithDescriptorsAliased(mapOf(continuationDescriptor to JsAstUtils.stateMachineReceiver()))
+        }
+
+        if (functionDescriptor.isSuspend) {
+            function.fillCoroutineMetadata(functionContext, descriptor, hasController = false)
+        }
+
         val invocation = CallTranslator.translate(functionContext, fakeResolvedCall, receiverParam)
         function.body.statements += JsReturn(TranslationUtils.coerce(context, invocation, context.currentModule.builtIns.anyType))
 
