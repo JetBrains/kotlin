@@ -98,19 +98,19 @@ fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     }
 }
 
-projectTest {
+projectTest(parallel = true) {
     setUpBoxTests(jsEnabled = true, jsIrEnabled = true)
 }
 
-projectTest("jsTest") {
+projectTest("jsTest", true) {
     setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
 }
 
-projectTest("jsIrTest") {
+projectTest("jsIrTest", true) {
     setUpBoxTests(jsEnabled = false, jsIrEnabled = true)
 }
 
-projectTest("quickTest") {
+projectTest("quickTest", true) {
     setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
     systemProperty("kotlin.js.skipMinificationTest", "true")
 }

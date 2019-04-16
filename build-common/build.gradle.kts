@@ -40,4 +40,4 @@ javadocJar()
 
 testsJar()
 
-projectTest()
+projectTest(parallel = true)
