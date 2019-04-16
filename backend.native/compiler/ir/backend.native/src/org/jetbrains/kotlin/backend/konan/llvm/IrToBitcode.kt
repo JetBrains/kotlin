@@ -1577,16 +1577,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
-    val dummyFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("no source file"))
-
     private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlock) :
-            FileScope(returnableBlock.sourceFileSymbol?.owner ?: dummyFile) {
+            FileScope(returnableBlock.sourceFileSymbol?.owner ?: (currentCodeContext.fileScope() as? FileScope)?.file ?: error("returnable block should belong to current file at least") ) {
 
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null
 
         private fun getExit(): LLVMBasicBlockRef {
-            if (bbExit == null) bbExit = functionGenerationContext.basicBlock("returnable_block_exit", null)
+            if (bbExit == null) bbExit = functionGenerationContext.basicBlock("returnable_block_exit", returnableBlock.startLocation)
             return bbExit!!
         }
 

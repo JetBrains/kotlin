@@ -293,13 +293,13 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
         val returnTypeClassifier = (type as? IrSimpleType)?.classifier
         return when (returnTypeClassifier) {
             symbols.unit, symbols.nothing -> irBlock(value, null, type) {
-                +irReturnableBlock(symbol, type) {
+                +irReturnableBlock(finallyExpression.startOffset, finallyExpression.endOffset, symbol, type) {
                     +value
                 }
                 +copy(finallyExpression)
             }
             else -> irBlock(value, null, type) {
-                val tmp = irTemporary(irReturnableBlock(symbol, type) {
+                val tmp = irTemporary(irReturnableBlock(finallyExpression.startOffset, finallyExpression.endOffset, symbol, type) {
                     +irReturn(symbol, value)
                 })
                 +copy(finallyExpression)
@@ -314,7 +314,7 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
     fun IrBuilderWithScope.irReturn(target: IrReturnTargetSymbol, value: IrExpression) =
             IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, target, value)
 
-    private inline fun IrBuilderWithScope.irReturnableBlock(symbol: IrReturnableBlockSymbol,
+    private inline fun IrBuilderWithScope.irReturnableBlock(startOffset: Int, endOffset: Int, symbol: IrReturnableBlockSymbol,
                                                             type: IrType, body: IrBlockBuilder.() -> Unit) =
             IrReturnableBlockImpl(startOffset, endOffset, type, symbol, null,
                     IrBlockBuilder(context, scope, startOffset, endOffset, null, type)
