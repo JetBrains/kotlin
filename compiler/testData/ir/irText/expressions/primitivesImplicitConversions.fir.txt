@@ -62,8 +62,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
       VAR name:test3 type:kotlin.Long? [val]
         CONST Int type=kotlin.Long? value=42
       VAR name:test4 type:kotlin.Long? [val]
-        ERROR_CALL 'Unresolved reference: <Unresolved name: unaryMinus>#' type=IrErrorType
-          CONST Int type=kotlin.Int value=1
+        CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
       VAR name:test5 type:kotlin.Long? [val]
         CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
       VAR name:test6 type:kotlin.Short? [val]

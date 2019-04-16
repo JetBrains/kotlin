@@ -1216,14 +1216,15 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     calleeReference = FirSimpleNamedReference(
                         this@RawFirBuilder.session, expression.operationReference, conventionCallName
                     )
+                    explicitReceiver = argument.toFirExpression("No operand")
                 }
             } else {
                 val firOperation = operationToken.toFirOperation()
                 FirOperatorCallImpl(
                     session, expression, firOperation
-                )
-            }.apply {
-                arguments += argument.toFirExpression("No operand")
+                ).apply {
+                    arguments += argument.toFirExpression("No operand")
+                }
             }
         }
 

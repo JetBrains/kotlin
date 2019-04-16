@@ -5,6 +5,6 @@ FILE: namedArgument.kt
         foo#()
         foo#(String(Alpha), Boolean(false), Double(2.71))
         foo#(first = String(Hello), second = Boolean(true))
-        foo#(third = unaryMinus#(Double(1.0)), first = String(123))
+        foo#(third = Double(1.0).unaryMinus#(), first = String(123))
         foo#(ERROR_EXPR(Argument is absent))
     }

@@ -43,4 +43,9 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
     public void testReflectionClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/reflectionClass.kt");
     }
+
+    @TestMetadata("unaryOperators.kt")
+    public void testUnaryOperators() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/unaryOperators.kt");
+    }
 }
