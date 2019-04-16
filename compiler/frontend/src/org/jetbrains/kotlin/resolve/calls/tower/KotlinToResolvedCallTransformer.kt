@@ -125,8 +125,10 @@ class KotlinToResolvedCallTransformer(
                     doubleColonExpressionResolver, builtIns, deprecationResolver, moduleDescriptor, dataFlowValueFactory
                 )
 
-                for (subKtPrimitive in candidate.subResolvedAtoms) {
-                    ktPrimitiveCompleter.completeAll(subKtPrimitive)
+                if (!ErrorUtils.isError(candidate.candidateDescriptor)) {
+                    for (subKtPrimitive in candidate.subResolvedAtoms) {
+                        ktPrimitiveCompleter.completeAll(subKtPrimitive)
+                    }
                 }
 
                 val resolvedCall = ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.diagnostics) as ResolvedCall<D>

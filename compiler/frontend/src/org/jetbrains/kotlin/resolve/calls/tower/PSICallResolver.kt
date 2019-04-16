@@ -202,7 +202,7 @@ class PSICallResolver(
 
         val trace = context.trace
 
-        handleErrorResolutionResult<D>(trace, result, tracingStrategy)?.let { errorResult ->
+        handleErrorResolutionResult<D>(context, trace, result, tracingStrategy)?.let { errorResult ->
             context.inferenceSession.addErrorCallInfo(PSIErrorCallInfo(result, errorResult))
             return errorResult
         }
@@ -217,6 +217,7 @@ class PSICallResolver(
     }
 
     private fun <D : CallableDescriptor> handleErrorResolutionResult(
+        context: BasicCallResolutionContext,
         trace: BindingTrace,
         result: CallResolutionResult,
         tracingStrategy: TracingStrategy
@@ -224,6 +225,8 @@ class PSICallResolver(
         val diagnostics = result.diagnostics
 
         diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>()?.let {
+            kotlinToResolvedCallTransformer.transformAndReport<D>(result, context, tracingStrategy)
+
             tracingStrategy.unresolvedReference(trace)
             return OverloadResolutionResultsImpl.nameNotFound()
         }
