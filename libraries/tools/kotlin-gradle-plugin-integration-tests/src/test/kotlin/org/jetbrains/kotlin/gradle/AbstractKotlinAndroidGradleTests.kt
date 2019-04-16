@@ -680,7 +680,7 @@ fun getSomething() = 10
 
         val kotlinJvmTarget18Regex = Regex("Kotlin compiler args: .* -jvm-target 1.8")
 
-        build(":Lib:assemble") {
+        build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
             assertSuccessful()
             assertNotContains(kotlinJvmTarget18Regex)
         }
@@ -694,7 +694,12 @@ fun getSomething() = 10
             """.trimIndent()
         )
 
-        build(":Lib:assemble") {
+        build("clean", ":Lib:assembleDebug") {
+            assertSuccessful()
+            assertNotContains(kotlinJvmTarget18Regex)
+        }
+
+        build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
             assertSuccessful()
             assertContainsRegex(kotlinJvmTarget18Regex)
         }

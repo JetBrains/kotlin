@@ -85,6 +85,9 @@ internal class PropertiesProvider(private val project: Project) {
     val ignorePluginLoadedInMultipleProjects: Boolean?
         get() = booleanProperty("kotlin.pluginLoadedInMultipleProjects.ignore")
 
+    val setJvmTargetFromAndroidCompileOptions: Boolean?
+        get() = booleanProperty("kotlin.setJvmTargetFromAndroidCompileOptions")
+
     /**
      * Enables parallel tasks execution within a project with Workers API.
      * Does not enable using actual worker proccesses
