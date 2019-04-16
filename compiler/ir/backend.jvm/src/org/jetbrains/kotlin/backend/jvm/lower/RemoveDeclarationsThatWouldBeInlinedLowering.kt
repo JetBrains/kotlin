@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -34,7 +31,7 @@ private class RemoveDeclarationsThatWouldBeInlinedLowering(val context: JvmBacke
     override fun lower(irFile: IrFile) {
         val loweredLambdasToDelete = hashSetOf<IrDeclaration>()
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
+            override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
                 val owner = expression.symbol.owner
                 if (expression.symbol.owner.isInlineFunctionCall(context)) {
                     owner.valueParameters.filter {
@@ -49,7 +46,7 @@ private class RemoveDeclarationsThatWouldBeInlinedLowering(val context: JvmBacke
                     }
 
                 }
-                return super.visitCall(expression)
+                return super.visitFunctionAccess(expression)
             }
         })
 

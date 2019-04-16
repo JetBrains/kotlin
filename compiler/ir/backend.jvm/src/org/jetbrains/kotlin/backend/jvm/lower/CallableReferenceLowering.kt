@@ -83,7 +83,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
 
-            override fun visitCall(expression: IrCall): IrExpression {
+            override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
                 val callee = expression.symbol.owner
                 if (callee.isInlineFunctionCall(context)) {
                     //TODO: more wise filtering
@@ -121,7 +121,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                         invokeFun.symbol, invokeFun.descriptor,
                         1,
                         expression.origin,
-                        expression.superQualifier?.let { context.ir.symbols.externalSymbolTable.referenceClass(it) }
+                        (expression as? IrCall)?.superQualifier?.let { context.ir.symbols.externalSymbolTable.referenceClass(it) }
                     ).apply {
                         putTypeArgument(0, expression.type)
                         dispatchReceiver = expression.dispatchReceiver
@@ -131,7 +131,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 } else expression
 
                 //TODO: clean
-                return super.visitCall(newCall)
+                return super.visitFunctionAccess(newCall)
             }
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
