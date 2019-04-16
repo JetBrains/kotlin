@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -167,7 +168,8 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     val inferenceComponents = InferenceComponents(object : ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate {
         override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
-            TODO("not implemented")
+            //TODO wtf
+            return explicitSupertypes.firstOrNull()
         }
 
         override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
@@ -413,7 +415,12 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     private fun commonSuperType(types: List<FirTypeRef>): FirTypeRef? {
-        return types.firstOrNull()
+        val commonSuperType = with(NewCommonSuperTypeCalculator) {
+            with(inferenceComponents.ctx) {
+                commonSuperType(types.map { it.coneTypeUnsafe() })
+            }
+        } as ConeKotlinType
+        return FirResolvedTypeRefImpl(session, null, commonSuperType, false, emptyList())
     }
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Any?): CompositeTransformResult<FirStatement> {
