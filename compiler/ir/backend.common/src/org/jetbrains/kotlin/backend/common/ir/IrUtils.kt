@@ -384,7 +384,7 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
     dispatchReceiverParameter = IrValueParameterImpl(
         startOffset, endOffset,
         origin ?: parentAsClass.origin,
-        IrValueParameterSymbolImpl(parentAsClass.thisReceiver!!.descriptor),
+        IrValueParameterSymbolImpl(parentAsClass.thisReceiver!!.symbol.descriptor),
         Name.special("<this>"),
         0,
         parentAsClass.defaultType,
@@ -399,7 +399,7 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 val IrFunction.allParameters: List<IrValueParameter>
     get() = if (this is IrConstructor) {
         listOf(this.constructedClass.thisReceiver
-                   ?: error(this.descriptor)
+                   ?: error(this.symbol.descriptor)
         ) + explicitParameters
     } else {
         explicitParameters

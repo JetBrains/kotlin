@@ -9,17 +9,9 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrConst.ValueCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.DeclaratorCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrOperation.OperationCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatement.StatementCase
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.STAR
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.TYPE
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVarargElement.VarargElementCase
-import org.jetbrains.kotlin.backend.common.ir.rebindWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.tryToRebindWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrConst.ValueCase.*
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.DeclaratorCase.*
@@ -1074,6 +1066,7 @@ abstract class IrModuleDeserializer(
         KotlinIr.ModalityKind.ABSTRACT_MODALITY -> Modality.ABSTRACT
     }
 
+    @UseExperimental(DescriptorInIrDeclaration::class)
     private fun deserializeIrLocalDelegatedProperty(
         proto: KotlinIr.IrLocalDelegatedProperty,
         start: Int,

@@ -185,7 +185,7 @@ private fun IrExpression.negate(): IrExpression {
         is Long -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, -stepValue)
         else -> {
             val unaryMinusFun = type.getClass()!!.functions.first { it.name.asString() == "unaryMinus" }
-            IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol, unaryMinusFun.descriptor).apply {
+            IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol, unaryMinusFun.symbol.descriptor).apply {
                 dispatchReceiver = this@negate
             }
         }
