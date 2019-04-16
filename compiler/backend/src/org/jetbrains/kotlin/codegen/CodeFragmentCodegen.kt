@@ -63,7 +63,18 @@ class CodeFragmentCodegen private constructor(
 
     override fun generateBody() {
         genConstructor()
-        genMethod(classContext.intoFunction(methodDescriptor))
+
+        val methodContext = object : MethodContext(methodDescriptor, classContext.contextKind, classContext, null, false) {
+            override fun <D : CallableMemberDescriptor> getAccessorForSuperCallIfNeeded(
+                descriptor: D,
+                superCallTarget: ClassDescriptor?,
+                state: GenerationState
+            ): D {
+                return descriptor
+            }
+        }
+
+        genMethod(methodContext)
     }
 
     override fun generateKotlinMetadataAnnotation() {

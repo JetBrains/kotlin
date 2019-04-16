@@ -169,8 +169,16 @@ class CodeFragmentParameterAnalyzer(
                 return null
             }
 
-            override fun visitSuperExpression(expression: KtSuperExpression, data: Unit?): Void {
-                throw EvaluateExceptionUtil.createEvaluateException("Evaluation of 'super' call expression is not supported")
+            override fun visitSuperExpression(expression: KtSuperExpression, data: Unit?): Void? {
+                val type = bindingContext[BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression] ?: return null
+                val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+
+                parameters.getOrPut(descriptor) {
+                    val name = descriptor.name.asString()
+                    Smart(Dumb(Kind.DISPATCH_RECEIVER, "", "super@$name"), type, descriptor)
+                }
+
+                return null
             }
         }, Unit)
 

@@ -396,6 +396,16 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/stdlib.kt");
         }
 
+        @TestMetadata("superCallsCaptured.kt")
+        public void testSuperCallsCaptured() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/superCallsCaptured.kt");
+        }
+
+        @TestMetadata("superCallsSimple.kt")
+        public void testSuperCallsSimple() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/superCallsSimple.kt");
+        }
+
         @TestMetadata("synchronizedBlock.kt")
         public void testSynchronizedBlock() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/synchronizedBlock.kt");
