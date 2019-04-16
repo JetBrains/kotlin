@@ -196,12 +196,6 @@ open class GradleKotlinJSFrameworkSupportProvider(
 
     override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
 
-//    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
-//        if (specifyPluginVersionIfNeeded) {
-//            settingsBuilder.addResolutionStrategy("kotlin2js")
-//        }
-//    }
-
     override fun getDescription() = "A Kotlin library or application targeting JavaScript"
 }
 

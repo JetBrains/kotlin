@@ -237,13 +237,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
             kotlin {
                 jvm()
-                js() {
-                    compilations.all {
-                        kotlinOptions {
-                            sourceMap = true
-                        }
-                    }
-                }
+                js()
                 sourceSets {
                     $commonSourceName {
                         dependencies {
