@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirDelegatedConstructorCallImpl(
@@ -37,4 +38,6 @@ class FirDelegatedConstructorCallImpl(
 
         return super<FirAbstractCall>.transformChildren(transformer, data)
     }
+
+    override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
 }
