@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -151,6 +148,19 @@ fun IrExpression.isFalseConst() = this is IrConst<*> && this.kind == IrConstKind
 
 fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType, irBuiltIns: IrBuiltIns): IrExpression {
     return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, irBuiltIns.unitType.toKotlinType()))
+        this
+    else
+        IrTypeOperatorCallImpl(
+            startOffset, endOffset,
+            irBuiltIns.unitType,
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+            irBuiltIns.unitType, irBuiltIns.unitType.classifierOrFail,
+            this
+        )
+}
+
+fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns): IrExpression {
+    return if (valueType.isSubtypeOf(irBuiltIns.unitType, irBuiltIns))
         this
     else
         IrTypeOperatorCallImpl(

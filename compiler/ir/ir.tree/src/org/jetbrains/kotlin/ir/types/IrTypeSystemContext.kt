@@ -330,21 +330,23 @@ interface IrTypeSystemContext : TypeSystemInferenceExtensionContext {
         makeTypeIntersection(types as List<IrType>)
 }
 
-fun extractTypeParameters(klass: IrTypeParametersContainer): List<IrTypeParameter> {
+fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
     val result = mutableListOf<IrTypeParameter>()
-    var current: IrTypeParametersContainer? = klass
+    var current: IrDeclarationParent? = klass
     while (current != null) {
-        result += current.typeParameters
+//        result += current.typeParameters
+        (current as? IrTypeParametersContainer)?.let { result += it.typeParameters }
         current =
             when (current) {
+                is IrField -> current.parent
                 is IrClass -> when {
                     current.isInner -> current.parent as IrClass
-                    current.visibility == Visibilities.LOCAL -> current.parent as? IrTypeParametersContainer
+                    current.visibility == Visibilities.LOCAL -> current.parent
                     else -> null
                 }
                 is IrConstructor -> current.parent as IrClass
                 is IrFunction -> if (current.visibility == Visibilities.LOCAL || current.dispatchReceiverParameter != null) {
-                    current.parent as? IrTypeParametersContainer
+                    current.parent
                 } else null
                 else -> null
             }

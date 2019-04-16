@@ -102,5 +102,5 @@ fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
 fun makeTypeIntersection(types: List<IrType>): IrType =
     with(types.map { makeTypeProjection(it, Variance.INVARIANT).type }.distinct()) {
         if (size == 1) return single()
-        else first { !(it.isAny() || it.isNullableAny()) }
+        else firstOrNull { !(it.isAny() || it.isNullableAny()) } ?: first { it.isAny() }
     }

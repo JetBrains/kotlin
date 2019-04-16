@@ -27,10 +27,12 @@ class IrTypeSubstitutor(
         if (substitution.isEmpty()) return type
 
         return type.typeParameterConstructor()?.let {
+            // check whether it's T or T?
+            val isNullable = type.isMarkedNullable()
             val typeArgument = substitution.getValue(it)
             when (typeArgument) {
-                is IrStarProjection -> irBuiltIns.anyNType
-                is IrTypeProjection -> typeArgument.type
+                is IrStarProjection -> if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
+                is IrTypeProjection -> with(typeArgument.type) { if (isNullable) makeNullable() else makeNotNull() }
                 else -> error("unknown type argument")
             }
         } ?: substituteType(type)
@@ -61,7 +63,7 @@ class IrTypeSubstitutor(
             if (classifier is IrTypeParameterSymbol) {
                 val newArgument = substitution.getValue(classifier)
                 return if (newArgument is IrTypeProjection) {
-                    makeTypeProjection(newArgument.type, TypeSubstitutor.combine(typeArgument.variance, newArgument.variance))
+                    makeTypeProjection(newArgument.type, typeArgument.variance)
                 } else newArgument
             }
         }

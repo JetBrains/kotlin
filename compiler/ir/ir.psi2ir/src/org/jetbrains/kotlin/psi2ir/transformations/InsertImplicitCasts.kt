@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
     element.transformChildren(
@@ -279,15 +280,14 @@ open class InsertImplicitCasts(
 
         val valueType = this.type
         val valueKotlinType = valueType.originalKotlinType!!
-        val expectedKotlinType = expectedType.originalKotlinType!!
 
         return when {
             expectedType.isUnit() -> {
+                expectedType.originalKotlinType?.let { require(it.isUnit()) }
                 coerceToUnit()
             }
 
             valueType is IrDynamicType && expectedType !is IrDynamicType -> {
-                require(valueKotlinType.isDynamic() && !expectedKotlinType.isDynamic())
                 if (expectedType.isNullableAny()) {
                     this
                 } else {
@@ -339,8 +339,7 @@ open class InsertImplicitCasts(
     }
 
     protected open fun IrExpression.coerceToUnit(): IrExpression {
-        val valueType = getKotlinType(this)
-        return coerceToUnitIfNeeded(valueType, irBuiltIns)
+        return coerceToUnitIfNeeded(type, irBuiltIns)
     }
 
     protected fun getKotlinType(irExpression: IrExpression) =
