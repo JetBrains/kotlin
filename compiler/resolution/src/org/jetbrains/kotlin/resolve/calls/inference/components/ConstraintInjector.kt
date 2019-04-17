@@ -154,7 +154,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
             addConstraint(typeVariable, subType, LOWER)
 
         private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker) =
-            when ((type as? NewCapturedType)?.captureStatus) {
+            when ((type as? CapturedTypeMarker)?.captureStatus()) {
                 null, CaptureStatus.FROM_EXPRESSION -> false
                 CaptureStatus.FOR_SUBTYPING -> true
                 CaptureStatus.FOR_INCORPORATION ->
