@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
@@ -38,7 +38,7 @@ import java.io.IOException;
 
 import static org.jetbrains.kotlin.idea.TestResourceBundleKt.registerAdditionalResourceBundleInTests;
 
-public class PluginStartupComponent implements ApplicationComponent {
+public class PluginStartupComponent implements BaseComponent {
     private static final Logger LOG = Logger.getInstance(PluginStartupComponent.class);
 
     private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
