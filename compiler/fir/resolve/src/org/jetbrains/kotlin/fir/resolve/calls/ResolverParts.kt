@@ -93,8 +93,9 @@ internal sealed class CheckReceivers : ResolutionStage() {
         if (receiverParameterValue != null) {
             if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeResolvedAsExplicit()) {
                 resolveArgumentExpression(
-                    candidate.csBuilder, explicitReceiverExpression, receiverParameterValue.type,
-                    sink, isReceiver = true, typeProvider = callInfo.typeProvider
+                    candidate.csBuilder, explicitReceiverExpression,
+                    candidate.substitutor.substituteOrSelf(receiverParameterValue.type),
+                    sink, isReceiver = true, typeProvider = callInfo.typeProvider, acceptLambdaAtoms = { candidate.postponedAtoms += it }
                 )
             }
         }
