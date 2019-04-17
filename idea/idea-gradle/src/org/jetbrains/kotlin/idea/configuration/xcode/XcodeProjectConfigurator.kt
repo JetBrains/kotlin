@@ -14,6 +14,30 @@ class XcodeProjectConfigurator {
 
     private val mppDirName = "app"
 
+    fun templatePlist(varyingProperties: String = ""): String {
+        return """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>${'$'}(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>${'$'}(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>${'$'}(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${'$'}(PRODUCT_NAME)</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+${varyingProperties.trimIndent().prependIndent("\t")}
+</dict>
+</plist>"""
+    }
+
     fun createSkeleton(rootDir: VirtualFile) {
         val iosDir = rootDir.createChildDirectory(this, "iosApp")
         val sourceDir = iosDir.createChildDirectory(this, "iosApp")
@@ -85,81 +109,44 @@ class ViewController: UIViewController {
 }
                 """.trimIndent()
             )
+
             testInfo.write(
-                """
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>${'$'}(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleExecutable</key>
-	<string>${'$'}(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>${'$'}(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>${'$'}(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>BNDL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-</dict>
-</plist>
-                """.trimIndent()
+                templatePlist(
+                    """<key>CFBundlePackageType</key>
+<string>BNDL</string>"""
+                )
             )
+
             sourceInfo.write(
-                """
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>${'$'}(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleExecutable</key>
-	<string>${'$'}(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>${'$'}(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>${'$'}(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-</dict>
-</plist>
-                """.trimIndent()
+                templatePlist(
+                    """<key>CFBundlePackageType</key>
+<string>APPL</string>
+<key>LSRequiresIPhoneOS</key>
+<true/>
+<key>UILaunchStoryboardName</key>
+<string>LaunchScreen</string>
+<key>UIMainStoryboardFile</key>
+<string>Main</string>
+<key>UIRequiredDeviceCapabilities</key>
+<array>
+	<string>armv7</string>
+</array>
+<key>UISupportedInterfaceOrientations</key>
+<array>
+	<string>UIInterfaceOrientationPortrait</string>
+	<string>UIInterfaceOrientationLandscapeLeft</string>
+	<string>UIInterfaceOrientationLandscapeRight</string>
+</array>
+<key>UISupportedInterfaceOrientations~ipad</key>
+<array>
+	<string>UIInterfaceOrientationPortrait</string>
+	<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	<string>UIInterfaceOrientationLandscapeLeft</string>
+	<string>UIInterfaceOrientationLandscapeRight</string>
+</array>"""
+                )
             )
+
             launchScreen.write(
                 """
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -761,6 +748,7 @@ class ViewController: UIViewController {
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "${'$'}(SRCROOT)/../$mppDirName/Info.plist";
 				INSTALL_PATH = "${'$'}(LOCAL_LIBRARY_DIR)/Frameworks";
 				KOTLIN_BUILD_TYPE = DEBUG;
 				KOTLIN_TARGET = "";
@@ -792,6 +780,7 @@ class ViewController: UIViewController {
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "${'$'}(SRCROOT)/../$mppDirName/Info.plist";
 				INSTALL_PATH = "${'$'}(LOCAL_LIBRARY_DIR)/Frameworks";
 				KOTLIN_BUILD_TYPE = RELEASE;
 				KOTLIN_TARGET = "";
