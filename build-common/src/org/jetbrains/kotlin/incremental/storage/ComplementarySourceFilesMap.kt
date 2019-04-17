@@ -10,21 +10,21 @@ import java.io.File
 
 class ComplementarySourceFilesMap(
     storageFile: File,
-    private val sourcePathConverter: SourceFileToPathConverter
+    private val pathConverter: FileToPathConverter
 ) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
 
     operator fun set(sourceFile: File, complementaryFiles: Collection<File>) {
-        storage[sourcePathConverter.toPath(sourceFile)] = sourcePathConverter.toPaths(complementaryFiles)
+        storage[pathConverter.toPath(sourceFile)] = pathConverter.toPaths(complementaryFiles)
     }
 
     operator fun get(sourceFile: File): Collection<File> {
-        val paths = storage[sourcePathConverter.toPath(sourceFile)].orEmpty()
-        return sourcePathConverter.toFiles(paths)
+        val paths = storage[pathConverter.toPath(sourceFile)].orEmpty()
+        return pathConverter.toFiles(paths)
     }
 
     override fun dumpValue(value: Collection<String>) =
         value.dumpCollection()
 
     fun remove(file: File): Collection<File> =
-        get(file).also { storage.remove(sourcePathConverter.toPath(file)) }
+        get(file).also { storage.remove(pathConverter.toPath(file)) }
 }

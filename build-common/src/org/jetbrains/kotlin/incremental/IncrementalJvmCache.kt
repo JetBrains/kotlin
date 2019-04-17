@@ -44,10 +44,10 @@ val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 open class IncrementalJvmCache(
     private val targetDataRoot: File,
     targetOutputDir: File?,
-    sourcePathConverter: SourceFileToPathConverter
+    pathConverter: FileToPathConverter
 ) : AbstractIncrementalCache<JvmClassName>(
     workingDir = File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME),
-    sourcePathConverter = sourcePathConverter
+    pathConverter = pathConverter
 ), IncrementalCache {
     companion object {
         private val PROTO_MAP = "proto"
@@ -62,7 +62,7 @@ open class IncrementalJvmCache(
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
-    override val sourceToClassesMap = registerMap(SourceToJvmNameMap(SOURCE_TO_CLASSES.storageFile, sourcePathConverter))
+    override val sourceToClassesMap = registerMap(SourceToJvmNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter))
     override val dirtyOutputClassesMap = registerMap(DirtyClassesJvmNameMap(DIRTY_OUTPUT_CLASSES.storageFile))
 
     private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
@@ -72,7 +72,7 @@ open class IncrementalJvmCache(
     private val partToMultifileFacade = registerMap(MultifileClassPartMap(MULTIFILE_CLASS_PARTS.storageFile))
     private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
     // todo: try to use internal names only?
-    private val internalNameToSource = registerMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile, sourcePathConverter))
+    private val internalNameToSource = registerMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile, pathConverter))
     // gradle only
     private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile))
 
@@ -447,14 +447,14 @@ open class IncrementalJvmCache(
 
     inner class InternalNameToSourcesMap(
         storageFile: File,
-        private val sourcePathConverter: SourceFileToPathConverter
+        private val pathConverter: FileToPathConverter
     ) : BasicStringMap<Collection<String>>(storageFile, EnumeratorStringDescriptor(), PathCollectionExternalizer) {
         operator fun set(internalName: String, sourceFiles: Collection<File>) {
-            storage[internalName] = sourcePathConverter.toPaths(sourceFiles)
+            storage[internalName] = pathConverter.toPaths(sourceFiles)
         }
 
         operator fun get(internalName: String): Collection<File> =
-            sourcePathConverter.toFiles(storage[internalName] ?: emptyList())
+            pathConverter.toFiles(storage[internalName] ?: emptyList())
 
         fun remove(internalName: String) {
             storage.remove(internalName)

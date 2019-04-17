@@ -35,8 +35,8 @@ import java.io.File
 
 open class IncrementalJsCache(
     cachesDir: File,
-    sourcePathConverter: SourceFileToPathConverter
-) : AbstractIncrementalCache<FqName>(cachesDir, sourcePathConverter) {
+    pathConverter: FileToPathConverter
+) : AbstractIncrementalCache<FqName>(cachesDir, pathConverter) {
     companion object {
         private const val TRANSLATION_RESULT_MAP = "translation-result"
         private const val INLINE_FUNCTIONS = "inline-functions"
@@ -45,10 +45,10 @@ open class IncrementalJsCache(
         fun hasHeaderFile(cachesDir: File) = File(cachesDir, HEADER_FILE_NAME).exists()
     }
 
-    override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile, sourcePathConverter))
+    override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter))
     override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile))
-    private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, sourcePathConverter))
-    private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, sourcePathConverter))
+    private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, pathConverter))
+    private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, pathConverter))
 
     private val dirtySources = hashSetOf<File>()
 
@@ -154,24 +154,24 @@ private object TranslationResultValueExternalizer : DataExternalizer<Translation
 
 private class TranslationResultMap(
     storageFile: File,
-    private val sourcePathConverter: SourceFileToPathConverter
+    private val pathConverter: FileToPathConverter
 ) : BasicStringMap<TranslationResultValue>(storageFile, TranslationResultValueExternalizer) {
     override fun dumpValue(value: TranslationResultValue): String =
         "Metadata: ${value.metadata.md5()}, Binary AST: ${value.binaryAst.md5()}, InlineData: ${value.inlineData.md5()}"
 
     fun put(sourceFile: File, newMetadata: ByteArray, newBinaryAst: ByteArray, newInlineData: ByteArray) {
-        storage[sourcePathConverter.toPath(sourceFile)] =
+        storage[pathConverter.toPath(sourceFile)] =
             TranslationResultValue(metadata = newMetadata, binaryAst = newBinaryAst, inlineData = newInlineData)
     }
 
     operator fun get(sourceFile: File): TranslationResultValue? =
-        storage[sourcePathConverter.toPath(sourceFile)]
+        storage[pathConverter.toPath(sourceFile)]
 
     fun keys(): Collection<String> =
         storage.keys
 
     fun remove(sourceFile: File, changesCollector: ChangesCollector) {
-        val path = sourcePathConverter.toPath(sourceFile)
+        val path = pathConverter.toPath(sourceFile)
         val protoBytes = storage[path]!!.metadata
         val protoMap = getProtoData(sourceFile, protoBytes)
 
@@ -203,10 +203,10 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
 
 private class InlineFunctionsMap(
     storageFile: File,
-    private val sourcePathConverter: SourceFileToPathConverter
+    private val pathConverter: FileToPathConverter
 ) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
     fun process(srcFile: File, newMap: Map<String, Long>, changesCollector: ChangesCollector) {
-        val key = sourcePathConverter.toPath(srcFile)
+        val key = pathConverter.toPath(srcFile)
         val oldMap = storage[key] ?: emptyMap()
 
         if (newMap.isNotEmpty()) {
@@ -223,7 +223,7 @@ private class InlineFunctionsMap(
     }
 
     fun remove(sourceFile: File) {
-        storage.remove(sourcePathConverter.toPath(sourceFile))
+        storage.remove(pathConverter.toPath(sourceFile))
     }
 
     override fun dumpValue(value: Map<String, Long>): String =

@@ -47,7 +47,7 @@ interface IncrementalCacheCommon {
  */
 abstract class AbstractIncrementalCache<ClassName>(
     workingDir: File,
-    protected val sourcePathConverter: SourceFileToPathConverter
+    protected val pathConverter: FileToPathConverter
 ) : BasicMapsOwner(workingDir), IncrementalCacheCommon {
     companion object {
         private val SUBTYPES = "subtypes"
@@ -73,7 +73,7 @@ abstract class AbstractIncrementalCache<ClassName>(
 
     private val subtypesMap = registerMap(SubtypesMap(SUBTYPES.storageFile))
     private val supertypesMap = registerMap(SupertypesMap(SUPERTYPES.storageFile))
-    protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, sourcePathConverter))
+    protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, pathConverter))
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
     /**
@@ -82,7 +82,7 @@ abstract class AbstractIncrementalCache<ClassName>(
      * about missing parts.
      * TODO: provide a better solution (maintain an index of expect/actual declarations akin to IncrementalPackagePartProvider)
      */
-    private val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, sourcePathConverter))
+    private val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, pathConverter))
 
     override fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName> =
         files.flatMapTo(HashSet()) { sourceToClassesMap.getFqNames(it) }
@@ -157,15 +157,15 @@ abstract class AbstractIncrementalCache<ClassName>(
 
     protected class ClassFqNameToSourceMap(
         storageFile: File,
-        private val sourcePathConverter: SourceFileToPathConverter
+        private val pathConverter: FileToPathConverter
     ) :
         BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
         operator fun set(fqName: FqName, sourceFile: File) {
-            storage[fqName.asString()] = sourcePathConverter.toPath(sourceFile)
+            storage[fqName.asString()] = pathConverter.toPath(sourceFile)
         }
 
         operator fun get(fqName: FqName): File? =
-            storage[fqName.asString()]?.let(sourcePathConverter::toFile)
+            storage[fqName.asString()]?.let(pathConverter::toFile)
 
         fun remove(fqName: FqName) {
             storage.remove(fqName.asString())

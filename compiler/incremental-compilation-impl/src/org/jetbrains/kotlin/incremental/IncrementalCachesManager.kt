@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
-import org.jetbrains.kotlin.incremental.storage.SourceFileToCanonicalPathConverter
+import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
 import java.io.File
 
-private val PATH_CONVERTER = SourceFileToCanonicalPathConverter
+private val PATH_CONVERTER = FileToCanonicalPathConverter
 
 abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache<*>>(
     cachesRootDir: File,

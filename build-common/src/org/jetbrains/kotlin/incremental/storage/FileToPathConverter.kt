@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.incremental.storage
 
 import java.io.File
 
-interface SourceFileToPathConverter {
+interface FileToPathConverter {
     fun toPath(file: File): String
     fun toFile(path: String): File
 }
 
-fun SourceFileToPathConverter.toPaths(files: Collection<File>): List<String> =
+fun FileToPathConverter.toPaths(files: Collection<File>): List<String> =
     files.map { toPath(it) }
 
-fun SourceFileToPathConverter.toFiles(paths: Collection<String>): List<File> =
+fun FileToPathConverter.toFiles(paths: Collection<String>): List<File> =
     paths.map { toFile(it) }
 
-object SourceFileToCanonicalPathConverter : SourceFileToPathConverter {
+object FileToCanonicalPathConverter : FileToPathConverter {
     override fun toPath(file: File): String = file.canonicalPath
 
     override fun toFile(path: String): File = File(path)

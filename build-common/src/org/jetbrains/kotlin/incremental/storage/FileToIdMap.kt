@@ -20,25 +20,25 @@ import java.io.File
 
 internal class FileToIdMap(
     file: File,
-    private val sourcePathConverter: SourceFileToPathConverter
+    private val pathConverter: FileToPathConverter
 ) : BasicStringMap<Int>(file, IntExternalizer) {
     override fun dumpValue(value: Int): String = value.toString()
 
-    operator fun get(file: File): Int? = storage[sourcePathConverter.toPath(file)]
+    operator fun get(file: File): Int? = storage[pathConverter.toPath(file)]
 
     operator fun set(file: File, id: Int) {
-        storage[sourcePathConverter.toPath(file)] = id
+        storage[pathConverter.toPath(file)] = id
     }
 
     fun remove(file: File) {
-        storage.remove(sourcePathConverter.toPath(file))
+        storage.remove(pathConverter.toPath(file))
     }
 
     fun toMap(): Map<File, Int> {
         val result = HashMap<File, Int>()
         for (key in storage.keys) {
             val value = storage[key] ?: continue
-            result[sourcePathConverter.toFile(key)] = value
+            result[pathConverter.toFile(key)] = value
         }
         return result
     }

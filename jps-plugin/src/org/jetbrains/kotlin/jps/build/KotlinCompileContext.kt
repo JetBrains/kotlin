@@ -12,11 +12,9 @@ import org.jetbrains.jps.incremental.GlobalContextKey
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
-import org.jetbrains.jps.model.serialization.JpsModelSerializationDataService
 import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.incremental.storage.SourceFileToCanonicalPathConverter
-import org.jetbrains.kotlin.incremental.storage.SourceFileToPathConverter
+import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndex
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndexBuilder
@@ -69,10 +67,10 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     val hasKotlinMarker = HasKotlinMarker(dataManager)
 
-    val sourceFileToPathConverter: SourceFileToPathConverter =
-        JpsSourceFileToPathConverter(jpsContext.projectDescriptor.project)
+    val fileToPathConverter: FileToPathConverter =
+        JpsFileToPathConverter(jpsContext.projectDescriptor.project)
 
-    val lookupStorageManager = JpsLookupStorageManager(dataManager, sourceFileToPathConverter)
+    val lookupStorageManager = JpsLookupStorageManager(dataManager, fileToPathConverter)
 
     /**
      * Flag to prevent rebuilding twice.

@@ -32,7 +32,7 @@ import java.util.*
 
 open class LookupStorage(
     targetDataDir: File,
-    sourcePathConverter: SourceFileToPathConverter
+    pathConverter: FileToPathConverter
 ) : BasicMapsOwner(targetDataDir) {
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5
@@ -40,8 +40,8 @@ open class LookupStorage(
     }
 
     private val countersFile = "counters".storageFile
-    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, sourcePathConverter))
-    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, sourcePathConverter))
+    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, pathConverter))
+    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, pathConverter))
     private val lookupMap = registerMap(LookupMap("lookups".storageFile))
 
     @Volatile
