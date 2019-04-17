@@ -173,55 +173,61 @@ open class HostManager(protected val distribution: Distribution = Distribution()
         return target
     }
 
+    val enabledRegularByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
+        LINUX_X64 to setOf(
+            LINUX_X64,
+            LINUX_ARM32_HFP,
+            LINUX_MIPS32,
+            LINUX_MIPSEL32,
+            ANDROID_ARM32,
+            ANDROID_ARM64,
+            WASM32
+        ),
+        MINGW_X64 to setOf(
+            MINGW_X64,
+            MINGW_X86,
+            LINUX_X64,
+            LINUX_ARM32_HFP,
+            ANDROID_ARM32,
+            // TODO: toolchain to be fixed for that to work.
+            // ANDROID_ARM64,
+            WASM32
+        ),
+        MACOS_X64 to setOf(
+            MACOS_X64,
+            IOS_ARM32,
+            IOS_ARM64,
+            IOS_X64,
+            LINUX_X64,
+            LINUX_ARM32_HFP,
+            ANDROID_ARM32,
+            ANDROID_ARM64,
+            WASM32
+        )
+    )
+
+    val enabledExperimentalByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
+        LINUX_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
+        MACOS_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
+        MINGW_X64 to setOf<KonanTarget>() + zephyrSubtargets
+    )
+
+    val enabledByHost: Map<KonanTarget, Set<KonanTarget>> by lazy {
+        val result = enabledRegularByHost.toMutableMap()
+        if (experimentalEnabled) {
+            enabledExperimentalByHost.forEach { (k, v) ->
+                result.merge(k, v) { old, new -> old + new }
+            }
+        }
+        result.toMap()
+    }
+
     val enabledRegular: List<KonanTarget> by lazy {
-            when (host) {
-                KonanTarget.LINUX_X64 -> listOf(
-                    KonanTarget.LINUX_X64,
-                    KonanTarget.LINUX_ARM32_HFP,
-                    KonanTarget.LINUX_MIPS32,
-                    KonanTarget.LINUX_MIPSEL32,
-                    KonanTarget.ANDROID_ARM32,
-                    KonanTarget.ANDROID_ARM64,
-                    KonanTarget.WASM32
-                )
-                KonanTarget.MINGW_X64 -> listOf(
-                    KonanTarget.MINGW_X64,
-                    KonanTarget.MINGW_X86,
-                    KonanTarget.LINUX_X64,
-                    KonanTarget.LINUX_ARM32_HFP,
-                    KonanTarget.ANDROID_ARM32,
-                    // TODO: toolchain to be fixed for that to work.
-                    // KonanTarget.ANDROID_ARM64,
-                    KonanTarget.WASM32
-                )
-                KonanTarget.MACOS_X64 -> listOf(
-                    KonanTarget.MACOS_X64,
-                    KonanTarget.IOS_ARM32,
-                    KonanTarget.IOS_ARM64,
-                    KonanTarget.IOS_X64,
-                    KonanTarget.LINUX_X64,
-                    KonanTarget.LINUX_ARM32_HFP,
-                    KonanTarget.ANDROID_ARM32,
-                    KonanTarget.ANDROID_ARM64,
-                    KonanTarget.WASM32
-                )
-                else ->
-                    throw TargetSupportException("Unknown host platform: $host")
-            }        
+        enabledRegularByHost[host]?.toList() ?: throw TargetSupportException("Unknown host platform: $host")
     }
 
     val enabledExperimental: List<KonanTarget> by lazy {
-        when (host) {
-            KonanTarget.LINUX_X64 -> listOf(
-                    KonanTarget.MINGW_X86, KonanTarget.MINGW_X64
-            ) + zephyrSubtargets
-            KonanTarget.MACOS_X64 -> listOf(
-                    KonanTarget.MINGW_X86, KonanTarget.MINGW_X64
-            ) + zephyrSubtargets
-            KonanTarget.MINGW_X64 -> listOf<KonanTarget>(
-            ) + zephyrSubtargets
-            else -> throw TargetSupportException("Unknown host platform: $host")
-        }
+        enabledExperimentalByHost[host]?.toList() ?: throw TargetSupportException("Unknown host platform: $host")
     }
 
     val enabled : List<KonanTarget>
