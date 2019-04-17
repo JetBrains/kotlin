@@ -15,7 +15,7 @@ object IdeaSystemPropertiesForParallelRunConfigurator {
     private val GRADLE_WORKER = System.getProperty("org.gradle.test.worker") ?: ""
     //TODO: try to remove folder on jvm shutdown (there are some flashing test with deleteOnExit = true)
     private val PROCESS_TMP_ROOT_FOLDER =
-        FileUtil.createTempDirectory(File(System.getProperty("java.io.tmpdir")), "testRoot", GRADLE_WORKER, false).path
+        FileUtil.createTempDirectory(File(System.getProperty("java.io.tmpdir")), "testRoot", "GW$GRADLE_WORKER", false).path
     private val IDEA_SYSTEM = FileUtil.createTempDirectory(File(PROCESS_TMP_ROOT_FOLDER), "idea-system", "", false).path
     private val IDEA_CONFIG = FileUtil.createTempDirectory(File(PROCESS_TMP_ROOT_FOLDER), "idea-config", "", false).path
 
