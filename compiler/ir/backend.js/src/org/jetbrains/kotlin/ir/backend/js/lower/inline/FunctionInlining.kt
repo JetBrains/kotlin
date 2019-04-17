@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 typealias Context = JsIrBackendContext
@@ -90,11 +88,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         return (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
     }
 
-    private val inlineConstructor = FqName("kotlin.native.internal.InlineConstructor")
-
-    private val IrFunction.isInlineConstructor get() = annotations.hasAnnotation(inlineConstructor)
-
-    private val IrFunction.needsInlining get() = isInlineConstructor || (this.isInline && !this.isExternal)
+    private val IrFunction.needsInlining get() = (this.isInline && !this.isExternal)
 
     private inner class Inliner(val callSite: IrFunctionAccessExpression,
                                 val callee: IrFunction,
@@ -139,38 +133,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             val startOffset = callee.startOffset
             val endOffset = callee.endOffset
             val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, startOffset, endOffset)
-
-            if (callee.isInlineConstructor) {
-                // Copier sets parent to be the current function but
-                // constructor's parent cannot be a function.
-                val constructedClass = callee.parentAsClass
-                copiedCallee.parent = constructedClass
-                val delegatingConstructorCall = statements[0] as IrDelegatingConstructorCall
-                irBuilder.run {
-                    val constructorCall = IrConstructorCallImpl(
-                        startOffset, endOffset,
-                        callSite.type,
-                        delegatingConstructorCall.symbol, delegatingConstructorCall.descriptor,
-                        constructedClass.typeParameters.size, 0,
-                        delegatingConstructorCall.symbol.owner.valueParameters.size
-                    ).apply {
-                        delegatingConstructorCall.symbol.owner.valueParameters.forEach {
-                            putValueArgument(it.index, delegatingConstructorCall.getValueArgument(it.index))
-                        }
-                        constructedClass.typeParameters.forEach {
-                            putTypeArgument(it.index, delegatingConstructorCall.getTypeArgument(it.index))
-                        }
-                    }
-                    val oldThis = constructedClass.thisReceiver!!
-                    val newThis = currentScope.scope.createTemporaryVariableWithWrappedDescriptor(
-                        irExpression = constructorCall,
-                        nameHint = constructedClass.fqNameSafe.toString() + ".this"
-                    )
-                    statements[0] = newThis
-                    substituteMap[oldThis] = irGet(newThis)
-                    statements.add(irReturn(irGet(newThis)))
-                }
-            }
 
             val transformer = ParameterSubstitutor()
             statements.transform { it.transform(transformer, data = null) }
