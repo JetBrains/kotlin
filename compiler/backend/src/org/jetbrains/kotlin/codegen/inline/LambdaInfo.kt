@@ -230,7 +230,8 @@ class PsiExpressionLambda(
 
     private val labels: Set<String>
 
-    private var closure: CalculatedClosure
+    var closure: CalculatedClosure
+        private set
 
     init {
         val bindingContext = typeMapper.bindingContext
@@ -307,6 +308,4 @@ class PsiExpressionLambda(
 
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
-
-    val captureVariables = closure.captureVariables
 }

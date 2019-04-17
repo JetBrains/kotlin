@@ -261,7 +261,13 @@ public final class CrossinlineKt$filter$$inlined$source$1 {
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$fold$$inlined$consumeEach$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$fold$$inlined$consumeEach$1

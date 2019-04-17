@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_THIS_FIELD
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.*
-import org.jetbrains.kotlin.codegen.coroutines.getLastParameterIndex
-import org.jetbrains.kotlin.codegen.coroutines.replaceFakeContinuationsWithRealOnes
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.isReleaseCoroutines
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -98,7 +98,7 @@ class CoroutineTransformer(
                 ArrayUtil.toStringArray(node.exceptions)
             )
         ) {
-            val stateMachineBuilder = surroundNoinlineCallsWithMarkersIfNeeded(
+            val stateMachineBuilder = surroundNoinlineCallsWithMarkers(
                 node,
                 CoroutineTransformerMethodVisitor(
                     createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
@@ -137,7 +137,7 @@ class CoroutineTransformer(
                 ArrayUtil.toStringArray(node.exceptions)
             )
         ) {
-            val stateMachineBuilder = surroundNoinlineCallsWithMarkersIfNeeded(
+            val stateMachineBuilder = surroundNoinlineCallsWithMarkers(
                 node,
                 CoroutineTransformerMethodVisitor(
                     createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
@@ -165,16 +165,34 @@ class CoroutineTransformer(
         }
     }
 
-    private fun surroundNoinlineCallsWithMarkersIfNeeded(node: MethodNode, delegate: MethodVisitor): MethodVisitor =
-        if (capturedParams.any { it.functionalArgument?.isSuspendLambda() == true })
-            SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
-                delegate, node.access, node.name, node.desc, classBuilder.thisName, this::isCapturedSuspendLambda
-            )
-        else
-            delegate
+    private fun surroundNoinlineCallsWithMarkers(node: MethodNode, delegate: MethodVisitor): MethodVisitor =
+        SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
+            delegate, node.access, node.name, node.desc, classBuilder.thisName, this::fieldIsCapturedSuspendLambda
+        )
 
-    private fun isCapturedSuspendLambda(field: FieldInsnNode): Boolean =
-        capturedParams.find { it.newFieldName == field.name }?.functionalArgument?.isSuspendLambda() == true
+    private fun fieldIsCapturedSuspendLambda(field: FieldInsnNode): Boolean =
+        capturedParams.find { it.newFieldName == field.name }?.let { it.functionalArgument?.isSuspendLambda() == true }
+            ?: isSuspendLambdaCapturedByOuterObjectOrLambda(field)
+
+    // We cannot find the lambda in captured parameters: it came from object outside of the our reach:
+    // this can happen when the lambda capture by non-transformed closure:
+    //   inline fun inlineMe(crossinline c: suspend() -> Unit) = suspend { c() }
+    //   inline fun inlineMe2(crossinline c: suspend() -> Unit) = suspend { inlineMe { c() }() }
+    // Suppose, we inline inlineMe into inlineMe2: the only knowledge we have about inlineMe$1 is captured receiver (this$0)
+    // Thus, transformed lambda from inlineMe, inlineMe3$$inlined$inlineMe2$1 contains the following bytecode
+    //   ALOAD 0
+    //   GETFIELD inlineMe2$1$invokeSuspend$$inlined$inlineMe$1.this$0 : LScratchKt$inlineMe2$1;
+    //   GETFIELD inlineMe2$1.$c : Lkotlin/jvm/functions/Function1;
+    // Since inlineMe2's lambda is outside of reach of the inliner, find crossinline parameter from compilation context:
+    private fun isSuspendLambdaCapturedByOuterObjectOrLambda(field: FieldInsnNode): Boolean {
+        val functionDescriptor = inliningContext.root.sourceCompilerForInline.compilationContextFunctionDescriptor
+        val classDescriptor = functionDescriptor.findContainingClassOrLambda() ?: return false
+        return isCapturedSuspendLambda(classDescriptor, field.name, inliningContext.state.bindingContext)
+    }
+
+    private tailrec fun DeclarationDescriptor.findContainingClassOrLambda(): ClassDescriptor? =
+        if (containingDeclaration is ClassDescriptor) containingDeclaration as ClassDescriptor
+        else containingDeclaration?.findContainingClassOrLambda()
 
     private fun createNewMethodFrom(node: MethodNode, name: String): MethodVisitor {
         return classBuilder.newMethod(

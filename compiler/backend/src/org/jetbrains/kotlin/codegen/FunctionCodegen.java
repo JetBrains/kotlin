@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
+import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
@@ -1645,7 +1646,7 @@ public class FunctionCodegen {
     }
 
     @Nullable
-    public Map<DeclarationDescriptor, EnclosedValueDescriptor> getCaptureVariables() {
-        return owner.closure == null ? null : owner.closure.getCaptureVariables();
+    public CalculatedClosure getClosure() {
+        return owner.closure;
     }
 }

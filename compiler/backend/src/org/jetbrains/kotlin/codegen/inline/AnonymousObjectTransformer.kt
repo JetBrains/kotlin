@@ -484,9 +484,9 @@ class AnonymousObjectTransformer(
                         alreadyAddedParam?.newFieldName ?: getNewFieldName(desc.fieldName, false),
                         alreadyAddedParam != null
                     )
-                    if (info is PsiExpressionLambda && info.captureVariables.any { it.value.fieldName == desc.fieldName }) {
+                    if (info is PsiExpressionLambda && info.closure.captureVariables.any { it.value.fieldName == desc.fieldName }) {
                         recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend(
-                            isCapturedSuspendLambda(info.captureVariables, desc.fieldName)
+                            isCapturedSuspendLambda(info.closure, desc.fieldName, inliningContext.state.bindingContext)
                         )
                     }
                     val composed = StackValue.field(

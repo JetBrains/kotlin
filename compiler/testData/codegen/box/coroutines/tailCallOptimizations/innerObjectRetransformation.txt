@@ -140,7 +140,12 @@ public final class flow/InnerObjectRetransformationKt$flow$1 {
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$1

@@ -149,6 +149,10 @@ public final class flow/InnerObjectRetransformationKt$flow$1 {
 
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$1

@@ -76,10 +76,11 @@ open class SuspendFunctionGenerationStrategy(
                         access, name, desc, containingClassInternalName,
                         isCapturedSuspendLambda = {
                             isCapturedSuspendLambda(
-                                functionCodegen.captureVariables.sure {
+                                functionCodegen.closure.sure {
                                     "Anonymous object should have closure"
                                 },
-                                it.name
+                                it.name,
+                                state.bindingContext
                             )
                         }
                     ), access, name, desc,
