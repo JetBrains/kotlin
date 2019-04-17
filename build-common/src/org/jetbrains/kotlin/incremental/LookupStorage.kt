@@ -155,7 +155,7 @@ open class LookupStorage(
         size = 0
         deletedCount = 0
 
-        for ((file, oldId) in oldFileToId.entries) {
+        for ((file, oldId) in oldFileToId.entries.sortedBy { it.key.path }) {
             val newId = addFileIfNeeded(file)
             oldIdToNewId[oldId] = newId
         }
