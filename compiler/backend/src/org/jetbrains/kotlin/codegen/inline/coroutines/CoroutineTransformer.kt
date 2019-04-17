@@ -108,7 +108,8 @@ class CoroutineTransformer(
                     languageVersionSettings = state.languageVersionSettings,
                     shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                     containingClassInternalName = classBuilder.thisName,
-                    isForNamedFunction = false
+                    isForNamedFunction = false,
+                    sourceFile = element.containingKtFile.name
                 )
             )
 
@@ -149,7 +150,8 @@ class CoroutineTransformer(
                     containingClassInternalName = classBuilder.thisName,
                     isForNamedFunction = true,
                     needDispatchReceiver = true,
-                    internalNameForDispatchReceiver = classBuilder.thisName
+                    internalNameForDispatchReceiver = classBuilder.thisName,
+                    sourceFile = element.containingKtFile.name
                 )
             )
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -77,7 +77,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolea
             ""
 
     val checkStateMachineString = """
-    object StateMachineChecker {
+    class StateMachineCheckerClass {
         private var counter = 0
         var finished = false
 
@@ -106,6 +106,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolea
             if (!finished) error("Wrong state-machine generated: it is not finished yet")
         }
     }
+    val StateMachineChecker = StateMachineCheckerClass()
     object CheckStateMachineContinuation: ContinuationAdapter<Unit>() {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,11 +40,13 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 abstract class AbstractCoroutineCodegen(
     outerExpressionCodegen: ExpressionCodegen,
@@ -474,8 +476,8 @@ class CoroutineCodegenForLambda private constructor(
                             newMethod = { origin, newAccess, newName, newDesc ->
                                 functionCodegen.newMethod(origin, newAccess, newName, newDesc, null, null)
                             }
-                        ), access, name, desc, endLabel
-                    ) else AddEndLabelMethodVisitor(stateMachineBuilder, access, name, desc, endLabel)
+                        ), access, name, desc, Label()
+                    ) else AddEndLabelMethodVisitor(stateMachineBuilder, access, name, desc, Label())
                 }
 
                 override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
