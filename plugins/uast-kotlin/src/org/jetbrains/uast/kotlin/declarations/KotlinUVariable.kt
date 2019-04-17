@@ -59,7 +59,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
                 }
                 else -> null
             } ?: return null
-            return getLanguagePlugin().convertElement(initializerExpression, this) as? UExpression ?: UastEmptyExpression
+            return getLanguagePlugin().convertElement(initializerExpression, this) as? UExpression ?: UastEmptyExpression(null)
         }
 
     val delegateExpression: UExpression? by lz {
@@ -149,7 +149,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
 
 }
 
-private fun toUExpression(psi: PsiElement?): UExpression = psi.toUElementOfType<UExpression>() ?: UastEmptyExpression
+private fun toUExpression(psi: PsiElement?): UExpression = psi.toUElementOfType<UExpression>() ?: UastEmptyExpression(null)
 
 class KotlinUVariable(
         psi: PsiVariable,

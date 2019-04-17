@@ -54,7 +54,7 @@ class KotlinUSwitchEntry(
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), USwitchClauseExpressionWithBody {
     override val caseValues by lz {
-        psi.conditions.map { KotlinConverter.convertWhenCondition(it, this, DEFAULT_EXPRESSION_TYPES_LIST) ?: UastEmptyExpression }
+        psi.conditions.map { KotlinConverter.convertWhenCondition(it, this, DEFAULT_EXPRESSION_TYPES_LIST) ?: UastEmptyExpression(null) }
     }
 
     override val body: UExpressionList by lz {

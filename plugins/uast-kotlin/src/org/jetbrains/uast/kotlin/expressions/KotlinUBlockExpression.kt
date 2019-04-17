@@ -42,7 +42,7 @@ class KotlinUBlockExpression(
         fun create(initializers: List<KtAnonymousInitializer>, uastParent: UElement): UBlockExpression {
             val languagePlugin = uastParent.getLanguagePlugin()
             return KotlinLazyUBlockExpression(uastParent) { expressionParent ->
-                initializers.map { languagePlugin.convertOpt<UExpression>(it.body, expressionParent) ?: UastEmptyExpression }
+                initializers.map { languagePlugin.convertOpt<UExpression>(it.body, expressionParent) ?: UastEmptyExpression(null) }
             }
         }
     }

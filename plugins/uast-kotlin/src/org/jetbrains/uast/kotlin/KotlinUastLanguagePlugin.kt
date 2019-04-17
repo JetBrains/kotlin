@@ -236,7 +236,7 @@ internal object KotlinConverter {
                 }
             }
             is KtLiteralStringTemplateEntry, is KtEscapeStringTemplateEntry -> el<ULiteralExpression>(build(::KotlinStringULiteralExpression))
-            is KtStringTemplateEntry -> element.expression?.let { convertExpression(it, givenParent, expectedTypes) } ?: expr<UExpression> { UastEmptyExpression }
+            is KtStringTemplateEntry -> element.expression?.let { convertExpression(it, givenParent, expectedTypes) } ?: expr<UExpression> { UastEmptyExpression(null) }
             is KtWhenEntry -> el<USwitchClauseExpressionWithBody>(build(::KotlinUSwitchEntry))
             is KtWhenCondition -> convertWhenCondition(element, givenParent, expectedTypes)
             is KtTypeReference -> el<UTypeReferenceExpression> { LazyKotlinUTypeReferenceExpression(element, givenParent) }
@@ -381,7 +381,7 @@ internal object KotlinConverter {
                     KotlinUDeclarationsExpression(givenParent).apply {
                         declarations = listOf(KotlinUClass.create(lightClass, this))
                     }
-                } ?: UastEmptyExpression
+                } ?: UastEmptyExpression(null)
             }
             is KtFunction -> if (expression.name.isNullOrEmpty()) {
                 expr<ULambdaExpression>(build(::createLocalFunctionLambdaExpression))
@@ -427,7 +427,7 @@ internal object KotlinConverter {
                 is KtWhenConditionWithExpression ->
                     condition.expression?.let { KotlinConverter.convertExpression(it, givenParent, requiredType) }
 
-                else -> expr<UExpression> { UastEmptyExpression }
+                else -> expr<UExpression> { UastEmptyExpression(null) }
             }
         }
     }
@@ -614,7 +614,7 @@ internal object KotlinConverter {
 
 
     internal fun convertOrEmpty(expression: KtExpression?, parent: UElement?): UExpression {
-        return expression?.let { convertExpression(it, parent, DEFAULT_EXPRESSION_TYPES_LIST) } ?: UastEmptyExpression
+        return expression?.let { convertExpression(it, parent, DEFAULT_EXPRESSION_TYPES_LIST) } ?: UastEmptyExpression(null)
     }
 
     internal fun convertOrNull(expression: KtExpression?, parent: UElement?): UExpression? {
