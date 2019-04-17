@@ -140,12 +140,15 @@ internal object DiscriminateSynthetics : CheckerStage() {
 
 
 internal fun functionCallResolutionSequence() = listOf(
-    CheckExplicitReceiverConsistency, CheckReceivers.Dispatch, CheckReceivers.Extension,
-    MapArguments, CreateFreshTypeVariableSubstitutorStage, CheckArguments
+    MapArguments, CheckExplicitReceiverConsistency, CreateFreshTypeVariableSubstitutorStage,
+    CheckReceivers.Dispatch, CheckReceivers.Extension, CheckArguments
 )
 
 
 internal fun qualifiedAccessResolutionSequence() = listOf(
-    DiscriminateSynthetics, CheckExplicitReceiverConsistency, CheckReceivers.Dispatch, CheckReceivers.Extension,
-    CreateFreshTypeVariableSubstitutorStage
+    DiscriminateSynthetics,
+    CheckExplicitReceiverConsistency,
+    CreateFreshTypeVariableSubstitutorStage,
+    CheckReceivers.Dispatch,
+    CheckReceivers.Extension
 )
