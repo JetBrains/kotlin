@@ -33,6 +33,9 @@ class CoroutineTransformer(
     private val state = inliningContext.state
 
     fun shouldTransform(node: MethodNode): Boolean {
+        // Never generate state-machine for objects, which are going to be retransformed
+        // See innerObjectRetransformation.kt
+        if (inliningContext.callSiteInfo.isInlineOrInsideInline) return false
         if (isContinuationNotLambda()) return false
         val crossinlineParam = crossinlineLambda() ?: return false
         if (inliningContext.isInliningLambda && !inliningContext.isContinuation) return false
