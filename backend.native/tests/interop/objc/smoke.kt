@@ -22,6 +22,7 @@ fun run() {
     testBlocks()
     testCustomRetain()
     testVarargs()
+    testOverrideInit()
 
     assertEquals(2, ForwardDeclaredEnum.TWO.value)
 
@@ -297,6 +298,14 @@ fun testVarargs() {
                     format = "%d %d %d"
             ).formatted
     )
+}
+
+fun testOverrideInit() {
+    assertEquals(42, (TestOverrideInitImpl.createWithValue(42) as TestOverrideInitImpl).value)
+}
+
+class TestOverrideInitImpl @OverrideInit constructor(val value: Int) : TestOverrideInit(value) {
+    companion object : TestOverrideInitMeta()
 }
 
 private class MyException : Throwable()

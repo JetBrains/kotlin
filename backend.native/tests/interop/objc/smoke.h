@@ -155,3 +155,8 @@ NSObject* createNSObject() {
 @interface TestVarargs (TestVarargsExtension)
 -(instancetype _Nonnull)initWithFormat:(NSString*)format, ...;
 @end;
+
+@interface TestOverrideInit : NSObject
+-(instancetype)initWithValue:(int)value NS_DESIGNATED_INITIALIZER;
++(instancetype)createWithValue:(int)value;
+@end;
