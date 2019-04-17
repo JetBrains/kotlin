@@ -1,4 +1,5 @@
 // "Make bar internal" "false"
+// ACTION: Convert to lazy property
 // ACTION: Convert property initializer to getter
 // ACTION: Add names to call arguments
 // ACTION: Move to constructor

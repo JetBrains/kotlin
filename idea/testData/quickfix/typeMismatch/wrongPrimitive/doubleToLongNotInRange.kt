@@ -1,4 +1,5 @@
 // "Change to '10000000000000000000L'" "false"
+// ACTION: Convert to lazy property
 // ACTION: Add 'const' modifier
 // ACTION: Change type of 'a' to 'Double'
 // ACTION: Convert expression to 'Long'

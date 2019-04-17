@@ -5049,6 +5049,49 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertLazyPropertyToOrdinary")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertLazyPropertyToOrdinary extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInConvertLazyPropertyToOrdinary() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertLazyPropertyToOrdinary"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("comment.kt")
+        public void testComment() throws Exception {
+            runTest("idea/testData/intentions/convertLazyPropertyToOrdinary/comment.kt");
+        }
+
+        @TestMetadata("multiStatement.kt")
+        public void testMultiStatement() throws Exception {
+            runTest("idea/testData/intentions/convertLazyPropertyToOrdinary/multiStatement.kt");
+        }
+
+        @TestMetadata("noStatement.kt")
+        public void testNoStatement() throws Exception {
+            runTest("idea/testData/intentions/convertLazyPropertyToOrdinary/noStatement.kt");
+        }
+
+        @TestMetadata("singleStatement.kt")
+        public void testSingleStatement() throws Exception {
+            runTest("idea/testData/intentions/convertLazyPropertyToOrdinary/singleStatement.kt");
+        }
+
+        @TestMetadata("singleStatement2.kt")
+        public void testSingleStatement2() throws Exception {
+            runTest("idea/testData/intentions/convertLazyPropertyToOrdinary/singleStatement2.kt");
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            runTest("idea/testData/intentions/convertLazyPropertyToOrdinary/var.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertLineCommentToBlockComment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -5245,6 +5288,39 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("objectLiteralWithCapture.kt")
         public void testObjectLiteralWithCapture() throws Exception {
             runTest("idea/testData/intentions/convertObjectLiteralToClass/objectLiteralWithCapture.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/convertOrdinaryPropertyToLazy")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertOrdinaryPropertyToLazy extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInConvertOrdinaryPropertyToLazy() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertOrdinaryPropertyToLazy"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/intentions/convertOrdinaryPropertyToLazy/basic.kt");
+        }
+
+        @TestMetadata("noInitializer.kt")
+        public void testNoInitializer() throws Exception {
+            runTest("idea/testData/intentions/convertOrdinaryPropertyToLazy/noInitializer.kt");
+        }
+
+        @TestMetadata("run.kt")
+        public void testRun() throws Exception {
+            runTest("idea/testData/intentions/convertOrdinaryPropertyToLazy/run.kt");
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            runTest("idea/testData/intentions/convertOrdinaryPropertyToLazy/var.kt");
         }
     }
 

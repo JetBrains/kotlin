@@ -1,5 +1,6 @@
 // "Add annotation target" "false"
 // WITH_RUNTIME
+// ACTION: Convert to ordinary property
 // ACTION: Introduce import alias
 // ACTION: Make internal
 // ACTION: Make private

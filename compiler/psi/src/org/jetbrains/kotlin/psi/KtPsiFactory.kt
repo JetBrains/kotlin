@@ -278,6 +278,14 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         bodyExpression.replace(expression)
         return setter
     }
+    
+    fun createPropertyDelegate(expression: KtExpression): KtPropertyDelegate {
+        val property = createProperty("val x by lazy { 1 }")
+        val delegate = property.delegate!!
+        val delegateExpression = delegate.expression!!
+        delegateExpression.replace(expression)
+        return delegate
+    }
 
     fun createDestructuringDeclaration(text: String): KtDestructuringDeclaration {
         return createFunction("fun foo() {$text}").bodyBlockExpression!!.statements.first() as KtDestructuringDeclaration
