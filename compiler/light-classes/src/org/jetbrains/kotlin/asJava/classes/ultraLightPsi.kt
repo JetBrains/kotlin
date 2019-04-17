@@ -443,7 +443,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         val name =
             if (isConstructor)
                 this.name
-            else computeMethodName(ktFunction, ktFunction.name ?: SpecialNames.NO_NAME_PROVIDED.asString())
+            else computeMethodName(ktFunction, ktFunction.name ?: SpecialNames.NO_NAME_PROVIDED.asString(), MethodType.REGULAR)
 
         val method = lightMethod(name.orEmpty(), ktFunction, forceStatic, forcePrivate)
         val wrapper = KtUltraLightMethodForSourceDeclaration(method, ktFunction, support, this)
@@ -551,11 +551,34 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         ).setConstructor(declaration is KtConstructor<*>)
     }
 
-    private fun computeMethodName(declaration: KtDeclaration, name: String): String {
-        if (declaration.hasAnnotation(DescriptorUtils.JVM_NAME)) {
-            val newName = (declaration.resolve() as? Annotated)?.let(DescriptorUtils::getJvmName)
-            if (newName != null) return newName
+    private enum class MethodType {
+        REGULAR,
+        GETTER,
+        SETTER
+    }
+
+    private fun computeMethodName(declaration: KtDeclaration, name: String, type: MethodType): String {
+
+        fun tryCompute(declaration: KtDeclaration, type: MethodType): String? {
+
+            if (!declaration.hasAnnotation(DescriptorUtils.JVM_NAME)) return null
+
+            val annotated = (declaration.resolve() as? Annotated) ?: return null
+
+            val resultName = DescriptorUtils.getJvmName(annotated)
+            if (resultName !== null || type == MethodType.REGULAR) return resultName
+
+            val propertyAnnotated = when (type) {
+                MethodType.GETTER -> (annotated as? PropertyDescriptor)?.getter
+                MethodType.SETTER -> (annotated as? PropertyDescriptor)?.setter
+                else -> throw NotImplementedError()
+            }
+
+            return propertyAnnotated?.let(DescriptorUtils::getJvmName)
         }
+
+        val computedName = tryCompute(declaration, type)
+        if (computedName !== null) return computedName
 
         if (isInternalNonPublishedApi(declaration)) return KotlinTypeMapper.InternalNameMapper.mangleInternalName(name, support.moduleName)
         return name
@@ -614,7 +637,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         val result = arrayListOf<KtLightMethod>()
 
         if (needsAccessor(ktGetter)) {
-            val getterName = computeMethodName(ktGetter ?: declaration, JvmAbi.getterName(propertyName))
+            val getterName = computeMethodName(ktGetter ?: declaration, JvmAbi.getterName(propertyName), MethodType.GETTER)
             val getterPrototype = lightMethod(getterName, ktGetter ?: declaration, onlyJvmStatic)
             val getterWrapper = KtUltraLightMethodForSourceDeclaration(getterPrototype, declaration, support, this)
             val getterType: PsiType by lazyPub { methodReturnType(declaration, getterWrapper) }
@@ -624,7 +647,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }
 
         if (mutable && needsAccessor(ktSetter)) {
-            val setterName = computeMethodName(ktSetter ?: declaration, JvmAbi.setterName(propertyName))
+            val setterName = computeMethodName(ktSetter ?: declaration, JvmAbi.setterName(propertyName), MethodType.SETTER)
             val setterPrototype = lightMethod(setterName, ktSetter ?: declaration, onlyJvmStatic)
                 .setMethodReturnType(PsiType.VOID)
             val setterWrapper = KtUltraLightMethodForSourceDeclaration(setterPrototype, declaration, support, this)
