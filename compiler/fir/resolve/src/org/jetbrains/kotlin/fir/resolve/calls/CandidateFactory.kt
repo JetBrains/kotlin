@@ -21,6 +21,7 @@ class CandidateFactory(
 
     init {
         val system = inferenceComponents.createConstraintSystem()
+        callInfo.explicitReceiver?.let { system.addSubsystemFromExpression(it) }
         callInfo.arguments.forEach {
             system.addSubsystemFromExpression(it)
         }
