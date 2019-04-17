@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+val x = run {
+    foo()
+    1
+}
+
+fun foo() {}

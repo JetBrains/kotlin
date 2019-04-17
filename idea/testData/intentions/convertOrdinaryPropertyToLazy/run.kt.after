@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+val x by lazy {
+    foo()
+    3
+}
+
+fun foo() {}
