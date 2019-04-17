@@ -54,7 +54,7 @@ class IrInlineCodegen(
                 (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
             rememberClosure(irReference, parameterType, irValueParameter) as IrExpressionLambdaImpl
         } else {
-            putValueOnStack(argumentExpression, parameterType, irValueParameter?.index ?: -1)
+            putValueOnStack(argumentExpression, parameterType, irValueParameter?.index ?: -1, blockInfo)
         }
     }
 
@@ -71,14 +71,14 @@ class IrInlineCodegen(
     }
 
     private fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamIndex: Int) {
-        val onStack = codegen.gen(argumentExpression, valueType, BlockInfo.create())
+        val onStack = codegen.gen(argumentExpression, valueType, BlockInfo())
         putArgumentOrCapturedToLocalVal(
             JvmKotlinType(onStack.type, onStack.kotlinType), onStack, capturedParamIndex, capturedParamIndex, ValueKind.CAPTURED
         )
     }
 
-    private fun putValueOnStack(argumentExpression: IrExpression, valueType: Type, paramIndex: Int) {
-        val onStack = codegen.gen(argumentExpression, valueType, BlockInfo.create())
+    private fun putValueOnStack(argumentExpression: IrExpression, valueType: Type, paramIndex: Int, blockInfo: BlockInfo) {
+        val onStack = codegen.gen(argumentExpression, valueType, blockInfo)
         putArgumentOrCapturedToLocalVal(JvmKotlinType(onStack.type, onStack.kotlinType), onStack, -1, paramIndex, ValueKind.CAPTURED)
     }
 

@@ -59,7 +59,7 @@ class DeclarationIrBuilder(
 )
 
 abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
-    protected abstract fun remapVariable(value: IrValueDeclaration): IrValueParameter?
+    protected abstract fun remapVariable(value: IrValueDeclaration): IrValueDeclaration?
 
     override fun visitGetValue(expression: IrGetValue): IrExpression =
         remapVariable(expression.symbol.owner)?.let {
@@ -68,12 +68,12 @@ abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
 }
 
 class VariableRemapper(val mapping: Map<IrValueParameter, IrValueParameter>) : AbstractVariableRemapper() {
-    override fun remapVariable(value: IrValueDeclaration): IrValueParameter? =
+    override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
         mapping[value]
 }
 
 class VariableRemapperDesc(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
-    override fun remapVariable(value: IrValueDeclaration): IrValueParameter? =
+    override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
         mapping[value.descriptor]
 }
 
