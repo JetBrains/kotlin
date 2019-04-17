@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
@@ -33,31 +35,6 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
             fromInit to fromSize
         }
 
-    // Generate `array[index] = value`.
-    private fun IrBuilderWithScope.setItem(array: IrVariable, index: IrVariable, value: IrExpression) =
-        irCall(array.type.getClass()!!.functions.single { it.name.toString() == "set" }).apply {
-            dispatchReceiver = irGet(array)
-            putValueArgument(0, irGet(index))
-            putValueArgument(1, value)
-        }
-
-    // Generate `for (index in 0 until end) { element }`.
-    private fun IrBlockBuilder.fromZeroTo(end: IrVariable, element: IrBlockBuilder.(IrLoop, IrVariable) -> Unit) {
-        val index = irTemporaryVar(irInt(0))
-        +irWhile().apply {
-            condition = irCall(context.irBuiltIns.lessFunByOperandType[index.type.toKotlinType()]!!).apply {
-                putValueArgument(0, irGet(index))
-                putValueArgument(1, irGet(end))
-            }
-            body = irBlock {
-                val currentIndex = irTemporary(irGet(index))
-                val inc = index.type.getClass()!!.functions.single { it.name.asString() == "inc" }
-                +irSetVar(index.symbol, irCall(inc).apply { dispatchReceiver = irGet(index) })
-                element(this@apply, currentIndex)
-            }
-        }
-    }
-
     private fun IrExpression.asSingleArgumentLambda(): IrSimpleFunction? {
         // A lambda is represented as a block with a function declaration and a reference to it.
         if (this !is IrBlock || statements.size != 2)
@@ -75,8 +52,6 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val sizeConstructor = arrayInlineToSizeCtor[expression.symbol]
             ?: return super.visitConstructorCall(expression)
-        val arrayOfReferences = sizeConstructor == context.ir.symbols.arrayOfNulls
-
         // inline fun <reified T> Array(size: Int, invokable: (Int) -> T): Array<T> {
         //     val result = arrayOfNulls<T>(size)
         //     for (i in 0 until size) {
@@ -85,59 +60,61 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
         //     return result as Array<T>
         // }
         // (and similar for primitive arrays)
-        val loweringContext = context
         val size = expression.getValueArgument(0)!!.transform(this, null)
         val invokable = expression.getValueArgument(1)!!.transform(this, null)
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).irBlock(expression.startOffset, expression.endOffset) {
+            val index = irTemporaryVar(irInt(0))
             val sizeVar = irTemporary(size)
             val result = irTemporary(irCall(sizeConstructor, expression.type).apply {
-                if (arrayOfReferences) {
-                    putTypeArgument(0, expression.getTypeArgument(0))
-                }
+                copyTypeArgumentsFrom(expression)
                 putValueArgument(0, irGet(sizeVar))
             })
 
             val lambda = invokable.asSingleArgumentLambda()
-            if (lambda == null) {
-                val invokableVar = irTemporary(invokable)
-                val invoke = invokable.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
-                fromZeroTo(sizeVar) { _, index ->
-                    +setItem(result, index, irCall(invoke).apply {
-                        dispatchReceiver = irGet(invokableVar)
-                        putValueArgument(0, irGet(index))
-                    })
+            val invoke = invokable.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
+            val invokableVar = if (lambda == null) irTemporary(invokable) else null
+            +irWhile().apply {
+                condition = irCall(context.irBuiltIns.lessFunByOperandType[index.type.toKotlinType()]!!).apply {
+                    putValueArgument(0, irGet(index))
+                    putValueArgument(1, irGet(sizeVar))
                 }
-            } else {
-                // Inline `invokable` by replacing the argument with `i` and `return x` with `result[i] = x; continue`.
-                fromZeroTo(sizeVar) { loop, index ->
-                    val body = lambda.body!!.transform(object : IrElementTransformerVoidWithContext() {
-                        override fun visitGetValue(expression: IrGetValue) =
-                            if (expression.symbol == lambda.valueParameters[0].symbol)
-                                IrGetValueImpl(expression.startOffset, expression.endOffset, index.symbol)
-                            else
-                                super.visitGetValue(expression)
-
-                        override fun visitReturn(expression: IrReturn) =
-                            if (expression.returnTargetSymbol == lambda.symbol) {
-                                val value = expression.value.transform(this, null)
-                                val scope = currentScope?.scope?.scopeOwnerSymbol ?: lambda.symbol
-                                loweringContext.createIrBuilder(scope).irBlock(expression.startOffset, expression.endOffset) {
-                                    +setItem(result, index, value)
-                                    +irContinue(loop)
-                                }
-                            } else {
-                                super.visitReturn(expression)
-                            }
-                    }, null)
-
-                    when (body) {
-                        is IrExpressionBody -> +setItem(result, index, body.expression)
-                        is IrBlockBody -> body.statements.forEach { +it }
-                        else -> throw AssertionError("unexpected function body type: $body")
+                body = irBlock {
+                    val value =
+                        lambda?.inline(listOf(index)) ?: irCallOp(invoke.symbol, invoke.returnType, irGet(invokableVar!!), irGet(index))
+                    +irCall(result.type.getClass()!!.functions.single { it.name == OperatorNameConventions.SET }).apply {
+                        dispatchReceiver = irGet(result)
+                        putValueArgument(0, irGet(index))
+                        putValueArgument(1, value)
                     }
+                    val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
+                    +irSetVar(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
                 }
             }
             +irGet(result)
         }
+    }
+
+    // TODO use a generic inliner (e.g. JS/Native's FunctionInlining.Inliner)
+    private fun IrFunction.inline(arguments: List<IrValueDeclaration>): IrReturnableBlock {
+        val argumentMap = valueParameters.zip(arguments).toMap()
+        val blockSymbol = IrReturnableBlockSymbolImpl(descriptor)
+        val block = IrReturnableBlockImpl(startOffset, endOffset, returnType, blockSymbol, null, symbol)
+        val remapper = object : AbstractVariableRemapper() {
+            override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
+                argumentMap[value]
+
+            override fun visitReturn(expression: IrReturn): IrExpression = super.visitReturn(
+                if (expression.returnTargetSymbol == symbol)
+                    IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, blockSymbol, expression.value)
+                else
+                    expression
+            )
+        }
+        when (val transformed = body?.transform(remapper, null)) {
+            is IrBlockBody -> block.statements += transformed.statements
+            is IrExpressionBody -> block.statements += transformed.expression
+            else -> throw AssertionError("unexpected body type: $this")
+        }
+        return block
     }
 }
