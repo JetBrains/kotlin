@@ -77,12 +77,15 @@ fun Project.resolveDependencies(
         }
     }
 
+    val existingFiles = mutableSetOf<File>()
+
     for (dependency in configuration.dependencies) {
         if (dependency !is SelfResolvingDependency) {
             continue
         }
 
-        val files = dependency.resolve().takeIf { it.isNotEmpty() } ?: continue
+        val files = dependency.resolve().filter { it !in existingFiles }.takeIf { it.isNotEmpty() } ?: continue
+        existingFiles.addAll(files)
         val library = PLibrary(dependency.name, classes = files.toList())
         deferred += PDependency.ModuleLibrary(library)
     }
