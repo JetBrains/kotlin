@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.serialization.JpsModelSerializationDataService
-import org.jetbrains.kotlin.incremental.storage.SourceFileToPathConverter
+import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import java.io.File
 
 private const val PROJECT_DIR_PLACEHOLDER = "${'$'}PROJECT_DIR$"
 
-internal class JpsSourceFileToPathConverter(jpsProject: JpsProject) : SourceFileToPathConverter {
+internal class JpsFileToPathConverter(jpsProject: JpsProject) : FileToPathConverter {
     private val baseDirPath = JpsModelSerializationDataService
         .getBaseDirectory(jpsProject)?.canonicalFile?.invariantSeparatorsPath
 
