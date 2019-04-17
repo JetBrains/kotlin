@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -21,8 +20,6 @@ import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
-import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.types.Variance
 
 fun deserializeClassToSymbol(
     classId: ClassId,
@@ -46,15 +43,13 @@ fun deserializeClassToSymbol(
         Flags.IS_DATA.get(classProto.flags),
         Flags.IS_INLINE_CLASS.get(classProto.flags)
     ).apply {
-        for (typeParameter in classProto.typeParameterList) {
-            typeParameters += createTypeParameterSymbol(nameResolver.getName(typeParameter.name), session).fir
-        }
-        //addAnnotationsFrom(classProto) ? TODO
 
         val context =
             parentContext?.childContext(classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable))
                 ?: FirDeserializationContext
                     .createForClass(classId, classProto, nameResolver, session)
+        typeParameters += context.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
+        //addAnnotationsFrom(classProto) ? TODO
 
         val typeDeserializer = context.typeDeserializer
         val classDeserializer = context.memberDeserializer
@@ -91,8 +86,3 @@ fun deserializeClassToSymbol(
     }
 }
 
-private fun createTypeParameterSymbol(name: Name, session: FirSession): FirTypeParameterSymbol {
-    val firSymbol = FirTypeParameterSymbol()
-    FirTypeParameterImpl(session, null, firSymbol, name, variance = Variance.INVARIANT, isReified = false)
-    return firSymbol
-}

@@ -195,12 +195,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
     }
 
-    private fun createTypeParameterSymbol(name: Name): FirTypeParameterSymbol {
-        val firSymbol = FirTypeParameterSymbol()
-        FirTypeParameterImpl(c.session, null, firSymbol, name, variance = Variance.INVARIANT, isReified = false)
-        return firSymbol
-    }
-
     private fun valueParameters(
         valueParameters: List<ProtoBuf.ValueParameter>
     ): List<FirValueParameter> {
