@@ -29,5 +29,5 @@ fun testWithoutInference(col: MutableCollection<Int>) {
     
     doAction { col.add(2) }
     
-    val <!UNUSED_VARIABLE!>u<!>: Unit = <!TYPE_MISMATCH!>col.<!NI;TYPE_MISMATCH!>add(2)<!><!>
+    val <!UNUSED_VARIABLE!>u<!>: Unit = <!TYPE_MISMATCH!>col.add(2)<!>
 }

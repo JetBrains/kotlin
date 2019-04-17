@@ -12,7 +12,7 @@ fun foo(): String? {
     run {
         if (true) return@run
 
-        if (true) return <!TYPE_MISMATCH, TYPE_MISMATCH!>Obj()<!> // correct error, type check against return type of function "foo"
+        if (true) return <!TYPE_MISMATCH!>Obj()<!> // correct error, type check against return type of function "foo"
     }
 
     run {

@@ -12,7 +12,7 @@ fun <T : CharSequence?> foo(x: T) {
         if (<!SENSELESS_COMPARISON!>x != null<!>) {}
 
         y1 = <!DEBUG_INFO_SMARTCAST!>x<!>
-        y2 = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+        y2 = <!TYPE_MISMATCH!>x<!>
 
         <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(<!NI;DEBUG_INFO_SMARTCAST!>x<!>)
         bar1<CharSequence>(<!DEBUG_INFO_SMARTCAST!>x<!>)
@@ -31,7 +31,7 @@ fun <T : CharSequence?> foo(x: T) {
 
     if (x is CharSequence) {
         y1 = <!DEBUG_INFO_SMARTCAST!>x<!>
-        y2 = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+        y2 = <!TYPE_MISMATCH!>x<!>
 
         bar1(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)

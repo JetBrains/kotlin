@@ -23,23 +23,23 @@ fun test() {
     val platformJ = J.staticJ
 
     if (platformNN) {}
-    if (<!NI;TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!>) {}
+    if (<!TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!>) {}
     if (platformJ) {}
 
     while (platformNN) {}
-    while (<!NI;TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!>) {}
+    while (<!TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!>) {}
     while (platformJ) {}
 
     do {} while (platformNN)
-    do {} while (<!NI;TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!>)
+    do {} while (<!TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!>)
     do {} while (platformJ)
 
     platformNN && false
-    <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!> && false
+    <!TYPE_MISMATCH!>platformN<!> && false
     platformJ && false
 
     platformNN || false
-    <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>platformN<!> || false
+    <!TYPE_MISMATCH!>platformN<!> || false
     platformJ || false
 
     !platformNN

@@ -22,8 +22,8 @@ fun bar(aList: List<A>) {
         b checkType { _<String>() }
     }
 
-    aList.foo { (<!NI;TYPE_MISMATCH, OI;COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>a: String<!>, b) ->
-        <!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!> <!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>checkType<!> { <!NI;UNRESOLVED_REFERENCE!>_<!><Int>() }
+    aList.foo { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>a: String<!>, b) ->
+        a checkType { _<Int>() }
         b checkType { _<String>() }
     }
 
