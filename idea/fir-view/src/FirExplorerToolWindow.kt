@@ -242,7 +242,7 @@ class FirExplorerToolWindow(private val project: Project, private val toolWindow
 
         override fun update(presentation: PresentationData) {
             super.update(presentation)
-            presentation.setIcon(AllIcons.General.Recursive)
+            presentation.setIcon(AllIcons.Actions.ShowAsTree)
         }
 
         override fun getChildren(): Array<SimpleNode> {
