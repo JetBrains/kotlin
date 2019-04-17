@@ -325,7 +325,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     ktFile,
                     filteredDiagnostics,
                     diagnosticToExpectedDiagnostic,
-                    { file -> file.text },
+                    com.intellij.util.Function { file -> file.text },
                     uncheckedDiagnostics,
                     withNewInferenceDirective,
                     renderDiagnosticMessages

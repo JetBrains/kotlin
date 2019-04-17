@@ -418,7 +418,7 @@ object CheckerTestUtil {
             psiFile,
             diagnostics,
             emptyMap(),
-            { it.text },
+            com.intellij.util.Function { it.text },
             emptyList(),
             false,
             false
@@ -565,9 +565,9 @@ object CheckerTestUtil {
     ): List<AbstractDiagnosticDescriptor> {
         val validDiagnostics = diagnostics.filter { actualDiagnostic -> actualDiagnostic.diagnostic.isValid }
         val diagnosticDescriptors = groupDiagnosticsByTextRange(validDiagnostics, uncheckedDiagnostics)
-        diagnosticDescriptors.sortWith { d1: AbstractDiagnosticDescriptor, d2: AbstractDiagnosticDescriptor ->
+        diagnosticDescriptors.sortWith(Comparator { d1: AbstractDiagnosticDescriptor, d2: AbstractDiagnosticDescriptor ->
             if (d1.start != d2.start) d1.start - d2.start else d2.end - d1.end
-        }
+        })
         return diagnosticDescriptors
     }
 
