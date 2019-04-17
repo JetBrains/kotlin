@@ -106,6 +106,7 @@ class PostponedArgumentsAnalyzer(
                 c.getBuilder(),
                 it,
                 lambda.returnType.let(::substitute),
+                lambda.atom.returnTypeRef, // TODO: proper ref
                 checkerSink,
                 false,
                 { atom = it },

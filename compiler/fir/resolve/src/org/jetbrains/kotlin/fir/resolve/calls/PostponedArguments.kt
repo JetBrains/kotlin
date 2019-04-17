@@ -15,6 +15,7 @@ fun preprocessLambdaArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: FirAnonymousFunction,
     expectedType: ConeKotlinType?,
+    expectedTypeRef: FirTypeRef,
     acceptLambdaAtoms: (PostponedResolvedAtomMarker) -> Unit,
     forceResolution: Boolean = false
 ) {
@@ -22,7 +23,9 @@ fun preprocessLambdaArgument(
         //return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType)
     }
 
-    val resolvedArgument = extractLambdaInfoFromFunctionalType(expectedType, argument) ?: extraLambdaInfo(expectedType, argument, csBuilder)
+    val resolvedArgument =
+        extractLambdaInfoFromFunctionalType(expectedType, expectedTypeRef, argument)
+            ?: extraLambdaInfo(expectedType, expectedTypeRef, argument, csBuilder)
 
     if (expectedType != null) {
 //        val lambdaType = createFunctionType(
@@ -58,7 +61,19 @@ private val ConeKotlinType.isSuspendFunctionType: Boolean
         }
     }
 
-private val ConeKotlinType.receiverType: ConeKotlinType? get() = null
+private fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef): ConeKotlinType? {
+    if (isFunctionalTypeWithReceiver(expectedTypeRef)) {
+        return (this.typeArguments.first() as ConeTypedProjection).type
+    }
+    return null
+}
+
+private fun isFunctionalTypeWithReceiver(typeRef: FirTypeRef) =
+    typeRef.annotations.any {
+        val coneTypeSafe = it.annotationTypeRef.coneTypeSafe<ConeClassType>() ?: return@any false
+        coneTypeSafe.lookupTag.classId.asString() == "kotlin/ExtensionFunctionType"
+    }
+
 private val ConeKotlinType.returnType: ConeKotlinType
     get() {
         require(this is ConeClassType)
@@ -81,6 +96,7 @@ private val FirAnonymousFunction.receiverType get() = receiverTypeRef?.coneTypeS
 
 private fun extraLambdaInfo(
     expectedType: ConeKotlinType?,
+    expectedTypeRef: FirTypeRef,
     argument: FirAnonymousFunction,
     csBuilder: ConstraintSystemBuilder
 ): ResolvedLambdaAtom {
@@ -93,7 +109,7 @@ private fun extraLambdaInfo(
 
     val typeVariable = TypeVariableForLambdaReturnType(argument, "_L")
 
-    val receiverType = null//argumentAsFunctionExpression?.receiverType
+    val receiverType = argumentAsFunctionExpression?.receiverType
     val returnType =
         argumentAsFunctionExpression?.returnType
             ?: expectedType?.typeArguments?.singleOrNull()?.safeAs<ConeTypedProjection>()?.type?.takeIf { isFunctionSupertype }
@@ -107,12 +123,16 @@ private fun extraLambdaInfo(
     return ResolvedLambdaAtom(argument, isSuspend, receiverType, parameters, returnType, typeVariable.takeIf { newTypeVariableUsed })
 }
 
-private fun extractLambdaInfoFromFunctionalType(expectedType: ConeKotlinType?, argument: FirAnonymousFunction): ResolvedLambdaAtom? {
+private fun extractLambdaInfoFromFunctionalType(
+    expectedType: ConeKotlinType?,
+    expectedTypeRef: FirTypeRef,
+    argument: FirAnonymousFunction
+): ResolvedLambdaAtom? {
     if (expectedType == null || !expectedType.isBuiltinFunctionalType) return null
     val parameters = extractLambdaParameters(expectedType, argument)
 
     val argumentAsFunctionExpression = argument//.safeAs<FunctionExpression>()
-    val receiverType = argumentAsFunctionExpression?.receiverType ?: expectedType.receiverType
+    val receiverType = argumentAsFunctionExpression?.receiverType ?: expectedType.receiverType(expectedTypeRef)
     val returnType = argumentAsFunctionExpression?.returnType ?: expectedType.returnType
 
     return ResolvedLambdaAtom(

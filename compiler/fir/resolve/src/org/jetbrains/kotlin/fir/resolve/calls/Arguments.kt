@@ -27,6 +27,7 @@ fun resolveArgumentExpression(
     csBuilder: ConstraintSystemBuilder,
     argument: FirExpression,
     expectedType: ConeKotlinType,
+    expectedTypeRef: FirTypeRef,
     sink: CheckerSink,
     isReceiver: Boolean,
     acceptLambdaAtoms: (PostponedResolvedAtomMarker) -> Unit,
@@ -42,7 +43,7 @@ fun resolveArgumentExpression(
             typeProvider
         )
         // TODO:!
-        is FirAnonymousFunction -> preprocessLambdaArgument(csBuilder, argument, expectedType, acceptLambdaAtoms)
+        is FirAnonymousFunction -> preprocessLambdaArgument(csBuilder, argument, expectedType, expectedTypeRef, acceptLambdaAtoms)
         // TODO:!
         is FirCallableReferenceAccess -> Unit
         // TODO:!
@@ -51,6 +52,7 @@ fun resolveArgumentExpression(
             csBuilder,
             argument.expression,
             expectedType,
+            expectedTypeRef,
             sink,
             isReceiver,
             acceptLambdaAtoms,
@@ -60,6 +62,7 @@ fun resolveArgumentExpression(
             csBuilder,
             argument.expression,
             expectedType,
+            expectedTypeRef,
             sink,
             isReceiver,
             acceptLambdaAtoms,
@@ -120,6 +123,7 @@ internal fun Candidate.resolveArgument(
         this.system.getBuilder(),
         argument,
         expectedType,
+        parameter.returnTypeRef,
         sink,
         isReceiver,
         { this.postponedAtoms += it },
