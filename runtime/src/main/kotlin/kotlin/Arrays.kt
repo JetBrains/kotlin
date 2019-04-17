@@ -11,6 +11,8 @@ package kotlin
 import kotlin.internal.PureReifiable
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.InlineConstructor
+import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.TypedIntrinsic
 
 /**
  * An array of bytes.
@@ -509,8 +511,8 @@ public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> 
 /**
  * Returns an array containing the specified elements.
  */
-@Suppress("UNCHECKED_CAST")
-public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
+@TypedIntrinsic(IntrinsicType.IDENTITY)
+public external inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T>
 
 @SymbolName("Kotlin_emptyArray")
 external public fun <T> emptyArray(): Array<T>
