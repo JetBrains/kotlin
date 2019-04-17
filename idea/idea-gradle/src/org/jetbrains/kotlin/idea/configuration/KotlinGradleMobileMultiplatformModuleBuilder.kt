@@ -56,6 +56,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
         val androidMain = src.createKotlinSampleFileWriter(mainSourceName, jvmTargetName, languageName = "java")
         val androidTest = src.createKotlinSampleFileWriter(mainTestName, languageName = "java", fileName = "SampleTestsAndroid.kt")
 
+        val appInfo = appDir.createChildData(appDir,"Info.plist").bufferedWriter()
         val androidLocalProperties = rootDir.createChildData(this, "local.properties").bufferedWriter()
         val androidRoot = src.findChild(mainSourceName)!!
         val androidManifest = androidRoot.createChildData(this, "AndroidManifest.xml").bufferedWriter()
@@ -68,6 +69,8 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
         val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName, nativeTargetName)
         val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsIOS.kt")
+
+        val xcodeConfigurator = XcodeProjectConfigurator()
 
         try {
             commonMain.write(
@@ -269,14 +272,18 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
 </android.support.constraint.ConstraintLayout>
             """.trimIndent()
             )
+
+            appInfo.write(xcodeConfigurator.templatePlist("""<key>CFBundlePackageType</key>
+<string>FMWK</string>"""))
+
         } finally {
             listOf(
-                commonMain, commonTest, androidMain, androidTest, nativeMain, nativeTest,
+                commonMain, commonTest, androidMain, androidTest, nativeMain, nativeTest, appInfo,
                 androidLocalProperties, androidManifest, androidStrings, androidStyles, androidActivityMain
             ).forEach(BufferedWriter::close)
         }
 
-        XcodeProjectConfigurator().createSkeleton(rootDir)
+        xcodeConfigurator.createSkeleton(rootDir)
     }
 
 
