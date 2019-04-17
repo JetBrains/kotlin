@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.internal.statistic.beans.UsageDescriptor
 import com.intellij.internal.statistic.utils.getEnumUsage
 import com.intellij.openapi.project.Project
@@ -18,7 +19,7 @@ class KotlinFormatterUsageCollector {
     fun getProjectUsages(project: Project): Set<UsageDescriptor> {
         val usedFormatter = getKotlinFormatterKind(project)
 
-        val settings = CodeStyleSettingsManager.getSettings(project)
+        val settings = CodeStyle.getSettings(project)
         val kotlinCommonSettings = settings.kotlinCommonSettings
         val kotlinCustomSettings = settings.kotlinCustomSettings
 
@@ -54,7 +55,7 @@ class KotlinFormatterUsageCollector {
             val isProject = CodeStyleSettingsManager.getInstance(project).USE_PER_PROJECT_SETTINGS
             val isDefaultOfficialCodeStyle = isDefaultOfficialCodeStyle
 
-            val settings = CodeStyleSettingsManager.getSettings(project)
+            val settings = CodeStyle.getSettings(project)
             val kotlinCommonSettings = settings.kotlinCommonSettings
             val kotlinCustomSettings = settings.kotlinCustomSettings
 

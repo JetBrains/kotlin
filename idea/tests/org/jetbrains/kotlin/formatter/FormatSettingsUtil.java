@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.formatter;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.LightPlatformTestCase;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
@@ -17,7 +17,7 @@ public class FormatSettingsUtil {
     }
 
     public static CodeStyleSettings getSettings() {
-        return CodeStyleSettingsManager.getSettings(LightPlatformTestCase.getProject());
+        return CodeStyle.getSettings(LightPlatformTestCase.getProject());
     }
 
     public static SettingsConfigurator createConfigurator(String fileText, CodeStyleSettings settings) {

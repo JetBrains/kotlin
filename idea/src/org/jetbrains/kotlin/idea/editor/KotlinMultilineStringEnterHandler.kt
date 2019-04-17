@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.editor
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate.Result
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
@@ -25,16 +26,13 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.refactoring.hostEditor
 import org.jetbrains.kotlin.idea.refactoring.project
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
@@ -136,7 +134,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
             getMarginCharFromTrimMarginCallsInChain(literal) ?: getMarginCharFromLiteral(literal)
 
         runWriteAction {
-            val settings = MultilineSettings(file.project)
+            val settings = MultilineSettings(file)
 
             val caretMarker = document.createRangeMarker(offset, offset)
             caretMarker.isGreedyToRight = true
@@ -247,9 +245,8 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
 
         const val MULTILINE_QUOTE = "\"\"\""
 
-        class MultilineSettings(project: Project) {
-            private val kotlinIndentOptions =
-                CodeStyleSettingsManager.getInstance(project).currentSettings.getIndentOptions(KotlinFileType.INSTANCE)
+        class MultilineSettings(file: PsiFile) {
+            private val kotlinIndentOptions = CodeStyle.getIndentOptions(file)
 
             private val useTabs = kotlinIndentOptions.USE_TAB_CHARACTER
             private val tabSize = kotlinIndentOptions.TAB_SIZE

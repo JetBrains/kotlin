@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.maven
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -276,7 +277,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
     }
 
     fun testImportObsoleteCodeStyle() {
-        Assert.assertNull(CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults())
+        Assert.assertNull(CodeStyle.getSettings(myProject).kotlinCodeStyleDefaults())
 
         importProject(
             """
@@ -292,12 +293,12 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertEquals(
             KotlinObsoleteCodeStyle.CODE_STYLE_ID,
-            CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults()
+            CodeStyle.getSettings(myProject).kotlinCodeStyleDefaults()
         )
     }
 
     fun testImportOfficialCodeStyle() {
-        Assert.assertNull(CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults())
+        Assert.assertNull(CodeStyle.getSettings(myProject).kotlinCodeStyleDefaults())
 
         importProject(
             """
@@ -313,7 +314,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         Assert.assertEquals(
             KotlinStyleGuideCodeStyle.CODE_STYLE_ID,
-            CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults()
+            CodeStyle.getSettings(myProject).kotlinCodeStyleDefaults()
         )
     }
 

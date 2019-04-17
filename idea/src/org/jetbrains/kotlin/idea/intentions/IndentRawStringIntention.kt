@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
@@ -29,7 +30,7 @@ class IndentRawStringIntention : SelfTargetingIntention<KtStringTemplateExpressi
     override fun applyTo(element: KtStringTemplateExpression, editor: Editor?) {
         val file = element.containingKtFile
         val project = file.project
-        val indentOptions = CodeStyleSettingsManager.getInstance(project).currentSettings.getIndentOptions(KotlinFileType.INSTANCE)
+        val indentOptions = CodeStyle.getIndentOptions(file)
         val parentIndent = CodeStyleManager.getInstance(project).getLineIndent(file, element.parent.startOffset) ?: ""
         val indent = if (indentOptions.USE_TAB_CHARACTER) "$parentIndent\t" else "$parentIndent${" ".repeat(indentOptions.INDENT_SIZE)}"
 

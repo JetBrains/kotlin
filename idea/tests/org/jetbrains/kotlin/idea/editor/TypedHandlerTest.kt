@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.editor
 
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import com.intellij.application.options.CodeStyle
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
@@ -874,7 +874,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
 
     private fun enableSmartEnterWithTabs(): () -> Unit = {
         val project = LightPlatformTestCase.getProject()
-        val indentOptions = CodeStyleSettingsManager.getInstance(project).currentSettings.getIndentOptions(KotlinFileType.INSTANCE)
+        val indentOptions = CodeStyle.getSettings(project).getIndentOptions(KotlinFileType.INSTANCE)
         indentOptions.USE_TAB_CHARACTER = true
         indentOptions.SMART_TABS = true
     }
@@ -897,7 +897,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         } finally {
             if (settingsModifier != null) {
                 val project = LightPlatformTestCase.getProject()
-                CodeStyleSettingsManager.getSettings(project).clearCodeStyleSettings()
+                CodeStyle.getSettings(project).clearCodeStyleSettings()
             }
         }
     }

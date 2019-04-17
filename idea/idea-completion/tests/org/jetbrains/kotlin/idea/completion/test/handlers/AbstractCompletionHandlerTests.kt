@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.idea.completion.test.handlers
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
@@ -28,9 +27,8 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
     protected open fun doTest(testPath: String) {
         setUpFixture(testPath)
 
-        val settingManager = CodeStyleSettingsManager.getInstance(project)
-        val tempSettings = settingManager.currentSettings.clone()
-        settingManager.setTemporarySettings(tempSettings)
+        val tempSettings = CodeStyle.getSettings(project).clone()
+        CodeStyle.setTemporarySettings(project, tempSettings)
         try {
             val fileText = FileUtil.loadFile(File(testPath))
             assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"));
@@ -49,7 +47,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
             val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
             val kotlinStyleSettings = KotlinCodeStyleSettings.getInstance(project)
-            val commonStyleSettings = CodeStyleSettingsManager.getSettings(project).getCommonSettings(KotlinLanguage.INSTANCE)
+            val commonStyleSettings = CodeStyle.getLanguageSettings(file)
             for (line in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, CODE_STYLE_SETTING_PREFIX)) {
                 val index = line.indexOfOrNull('=') ?: error("Invalid code style setting '$line': '=' expected")
                 val settingName = line.substring(0, index).trim()
@@ -68,9 +66,8 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
             }
 
             doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, File(testPath).name + ".after")
-        }
-        finally {
-            settingManager.dropTemporarySettings()
+        } finally {
+            CodeStyle.dropTemporarySettings(project)
             tearDownFixture()
         }
     }
