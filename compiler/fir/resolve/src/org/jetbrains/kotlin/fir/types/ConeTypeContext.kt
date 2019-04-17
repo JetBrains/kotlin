@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.calls.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.withArguments
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
@@ -367,9 +371,26 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
 class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, override val session: FirSession) :
     AbstractTypeCheckerContext(), ConeTypeContext {
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
+        require(type is ConeKotlinType)
+        val declaration = when (type) {
+            is ConeClassType -> type.lookupTag.toSymbol(session)?.firUnsafe<FirRegularClass>()
+            else -> null
+        }
+
+        val substitutor = if (declaration != null) {
+            val substitution =
+                declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
+                    parameter.symbol as ConeTypeParameterSymbol to ((argument as? ConeTypedProjection)?.type ?: TODO("ANY?"))
+                }
+            ConeSubstitutorByMap(substitution)
+        } else {
+            ConeSubstitutor.Empty
+        }
         return object : SupertypesPolicy.DoCustomTransform() {
             override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
-                return type.lowerBoundIfFlexible() //TODO
+                val lowerBound = type.lowerBoundIfFlexible()
+                require(lowerBound is ConeKotlinType)
+                return substitutor.substituteOrSelf(lowerBound) as SimpleTypeMarker
             }
 
         }
