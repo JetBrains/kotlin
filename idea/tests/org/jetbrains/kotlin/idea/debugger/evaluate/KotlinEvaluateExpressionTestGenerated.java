@@ -421,6 +421,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/typeParameterRef.kt");
         }
 
+        @TestMetadata("typedArray.kt")
+        public void testTypedArray() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/typedArray.kt");
+        }
+
         @TestMetadata("unboxParam.kt")
         public void testUnboxParam() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/unboxParam.kt");

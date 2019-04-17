@@ -444,13 +444,24 @@ class JDIEval(
                         "(L${OBJECT.internalName};[L${OBJECT.internalName};)L${OBJECT.internalName};",
                         true
                 ),
-                listOf(instance, *args.map { it.asValue() }.toTypedArray())
+                listOf(instance, mirrorOfArgs(args))
         )
 
         if (methodDesc.returnType.sort != Type.OBJECT && methodDesc.returnType.sort != Type.ARRAY && methodDesc.returnType.sort != Type.VOID) {
             return unboxType(invocationResult, methodDesc.returnType)
         }
         return invocationResult
+    }
+
+    private fun mirrorOfArgs(args: List<jdi_Value?>): Value {
+        val arrayObject = newArray(Type.getType("[" + OBJECT.descriptor), args.size)
+
+        args.forEachIndexed { index, value ->
+            val indexValue = vm.mirrorOf(index).asValue()
+            setArrayElement(arrayObject, indexValue, value.asValue())
+        }
+
+        return arrayObject
     }
 
     private fun List<jdi_Value?>.disableCollection() {
