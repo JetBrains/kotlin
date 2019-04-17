@@ -230,7 +230,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
                 SourceElement.NO_SOURCE
         )
 
-        val valueParameters = initMethod.valueParameters.map {
+        val valueParameters = constructor.valueParameters.map {
             val descriptor = ValueParameterDescriptorImpl(
                     resultDescriptor,
                     null,
