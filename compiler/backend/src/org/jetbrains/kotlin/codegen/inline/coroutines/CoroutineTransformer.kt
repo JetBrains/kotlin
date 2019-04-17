@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -37,14 +36,14 @@ class CoroutineTransformer(
         // See innerObjectRetransformation.kt
         if (inliningContext.callSiteInfo.isInlineOrInsideInline) return false
         if (isContinuationNotLambda()) return false
-        val crossinlineParam = crossinlineLambda() ?: return false
+        val crossinlineParam = crossinlineLambda()
         if (inliningContext.isInliningLambda && !inliningContext.isContinuation) return false
         return when {
             isSuspendFunction(node) -> true
             isSuspendLambda(node) -> {
                 if (isStateMachine(node)) return false
                 val functionDescriptor =
-                    crossinlineParam.invokeMethodDescriptor.containingDeclaration as? FunctionDescriptor ?: return true
+                    crossinlineParam?.invokeMethodDescriptor?.containingDeclaration as? FunctionDescriptor ?: return true
                 !functionDescriptor.isInline
             }
             else -> false
@@ -65,9 +64,11 @@ class CoroutineTransformer(
     private fun isSuspendLambda(node: MethodNode) = isResumeImpl(node)
 
     fun newMethod(node: MethodNode): DeferredMethodVisitor {
-        val element = crossinlineLambda()?.functionWithBodyOrCallableReference.sure {
-            "crossinline lambda should have element"
-        }
+        // Find ANY element to report error about suspension point in monitor on.
+        val element = crossinlineLambda()?.functionWithBodyOrCallableReference
+            ?: inliningContext.root.sourceCompilerForInline.callElement as? KtElement
+            ?: error("crossinline lambda should have element")
+
         return when {
             isResumeImpl(node) -> {
                 assert(!isStateMachine(node)) {

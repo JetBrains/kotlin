@@ -99,7 +99,7 @@ class IrInlineCodegen(
             parameter.type.isExtensionFunctionType
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
-            closureInfo.lambda = lambda
+            closureInfo.functionalArgument = lambda
             expressionMap[closureInfo.index] = lambda
         }
     }
