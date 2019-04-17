@@ -60,13 +60,11 @@ internal val ClassDescriptor.isArray: Boolean
 internal val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
-private val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
-
 /**
  * @return `konan.internal` member scope
  */
 internal val KonanBuiltIns.kotlinNativeInternal: MemberScope
-    get() = this.builtInsModule.getPackage(kotlinNativeInternalPackageName).memberScope
+    get() = this.builtInsModule.getPackage(RuntimeNames.kotlinNativeInternalPackageName).memberScope
 
 internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
 

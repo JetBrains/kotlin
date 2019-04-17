@@ -10,4 +10,5 @@ object RuntimeNames {
     val cCall = FqName("kotlinx.cinterop.internal.CCall")
     val independent = FqName("kotlin.native.internal.Independent")
     val filterExceptions = FqName("kotlin.native.internal.FilterExceptions")
+    val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
 }

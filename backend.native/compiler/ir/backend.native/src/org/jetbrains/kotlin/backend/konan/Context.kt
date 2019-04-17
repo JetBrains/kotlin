@@ -10,7 +10,6 @@ import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
@@ -209,6 +208,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     override val configuration get() = config.configuration
+
+    override val internalPackageFqn: FqName = RuntimeNames.kotlinNativeInternalPackageName
 
     val phaseConfig = config.phaseConfig
 
