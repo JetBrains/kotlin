@@ -23,7 +23,11 @@ internal abstract class BaseOutput {
 /** JsName used to make the declaration available outside of module to test it */
 @JsName("NodeJsOutput")
 internal class NodeJsOutput(val outputStream: dynamic) : BaseOutput() {
-    override fun print(message: Any?) = outputStream.write(String(message))
+    override fun print(message: Any?) {
+        // TODO: Using local variable because of bug in block decomposition lowering in IR backend
+        val messageString = String(message)
+        outputStream.write(messageString)
+    }
 }
 
 /** JsName used to make the declaration available outside of module to test it */
