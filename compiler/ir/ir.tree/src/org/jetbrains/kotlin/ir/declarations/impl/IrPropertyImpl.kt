@@ -39,7 +39,7 @@ class IrPropertyImpl(
     override val isVar: Boolean = symbol.descriptor.isVar,
     override val isConst: Boolean = symbol.descriptor.isConst,
     override val isLateinit: Boolean = symbol.descriptor.isLateInit,
-    override val isDelegated: Boolean = symbol.descriptor.isDelegated,
+    @Suppress("DEPRECATION") override val isDelegated: Boolean = symbol.descriptor.isDelegated,
     override val isExternal: Boolean = symbol.descriptor.isEffectivelyExternal()
 ) : IrDeclarationBase(startOffset, endOffset, origin),
     IrProperty {
@@ -69,6 +69,7 @@ class IrPropertyImpl(
         isExternal = isExternal
     )
 
+    @Suppress("DEPRECATION")
     @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,
@@ -86,6 +87,7 @@ class IrPropertyImpl(
         isExternal = descriptor.isEffectivelyExternal()
     )
 
+    @Suppress("DEPRECATION")
     @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,
@@ -94,6 +96,7 @@ class IrPropertyImpl(
         descriptor: PropertyDescriptor
     ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
 
+    @Suppress("DEPRECATION")
     @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,
@@ -106,6 +109,7 @@ class IrPropertyImpl(
         this.backingField = backingField
     }
 
+    @Suppress("DEPRECATION")
     @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,

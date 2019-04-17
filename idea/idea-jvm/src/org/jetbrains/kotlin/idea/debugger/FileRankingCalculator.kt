@@ -122,8 +122,6 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
         if (function !is KtConstructor<*> && method.name() != descriptor.name.asString())
             return LOW
 
-        val typeMapper = makeTypeMapper(bindingContext)
-
         return collect(
             method.isConstructor && function is KtConstructor<*>,
             method.isAbstract && descriptor.modality == Modality.ABSTRACT,

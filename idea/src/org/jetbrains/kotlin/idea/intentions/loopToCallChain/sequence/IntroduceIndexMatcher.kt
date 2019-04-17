@@ -105,10 +105,13 @@ object IntroduceIndexMatcher : TransformationMatcher {
     }
 
     private fun isAccessedAfter(variableDescriptor: VariableDescriptor, instruction: Instruction, loop: KtForExpression): Boolean {
-        return !traverseFollowingInstructions(instruction) { instruction ->
+        return !traverseFollowingInstructions(instruction) {
             when {
-                !loop.isAncestor(instruction.blockScope.block, strict = true) -> TraverseInstructionResult.SKIP // we are outside the loop or going to the next iteration
-                instruction.isReadOfVariable(variableDescriptor) -> TraverseInstructionResult.HALT
+                !loop.isAncestor(
+                    it.blockScope.block,
+                    strict = true
+                ) -> TraverseInstructionResult.SKIP // we are outside the loop or going to the next iteration
+                it.isReadOfVariable(variableDescriptor) -> TraverseInstructionResult.HALT
                 else -> TraverseInstructionResult.CONTINUE
             }
         }

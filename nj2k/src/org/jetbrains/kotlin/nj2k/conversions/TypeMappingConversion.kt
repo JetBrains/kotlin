@@ -122,7 +122,6 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
         val newFqName = typeElement?.let { kotlinCollectionClassName(it) }
             ?: kotlinStandardType()
             ?: fqName
-            ?: return this
         return context.symbolProvider.provideByFqName(newFqName)
     }
 

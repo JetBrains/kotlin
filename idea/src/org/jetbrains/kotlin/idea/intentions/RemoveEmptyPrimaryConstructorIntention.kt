@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
+@Suppress("DEPRECATION")
 class RemoveEmptyPrimaryConstructorInspection : IntentionBasedInspection<KtPrimaryConstructor>(
     RemoveEmptyPrimaryConstructorIntention::class
 ), CleanupLocalInspectionTool {

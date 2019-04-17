@@ -37,6 +37,7 @@ class ScriptContentLoader(private val project: Project) {
                     scriptDefinition.acceptedAnnotations.find { ann ->
                         psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
                     }?.let {
+                        @Suppress("UNCHECKED_CAST")
                         constructAnnotation(
                             psiAnn,
                             classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>,

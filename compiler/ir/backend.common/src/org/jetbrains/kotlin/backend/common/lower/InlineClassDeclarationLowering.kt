@@ -183,31 +183,35 @@ class InlineClassLowering(val context: BackendContext) {
         override fun lower(irFile: IrFile) {
             irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
 
-                override fun visitCall(call: IrCall): IrExpression {
-                    call.transformChildrenVoid(this)
-                    val function = call.symbol.owner
+                override fun visitCall(expression: IrCall): IrExpression {
+                    expression.transformChildrenVoid(this)
+                    val function = expression.symbol.owner
                     if (function.parent !is IrClass ||
                         function.isStaticMethodOfClass ||
                         !function.parentAsClass.isInline ||
                         (function is IrSimpleFunction && !function.isReal) ||
                         (function is IrConstructor && function.isPrimary)
                     ) {
-                        return call
+                        return expression
                     }
 
-                    return irCall(call, getOrCreateStaticMethod(function), dispatchReceiverAsFirstArgument = (function is IrSimpleFunction))
+                    return irCall(
+                        expression,
+                        getOrCreateStaticMethod(function),
+                        dispatchReceiverAsFirstArgument = (function is IrSimpleFunction)
+                    )
                 }
 
-                override fun visitDelegatingConstructorCall(call: IrDelegatingConstructorCall): IrExpression {
-                    call.transformChildrenVoid(this)
-                    val function = call.symbol.owner
+                override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                    expression.transformChildrenVoid(this)
+                    val function = expression.symbol.owner
                     val klass = function.parentAsClass
                     return when {
-                        !klass.isInline -> call
-                        function.isPrimary -> irCall(call, function)
-                        else -> irCall(call, getOrCreateStaticMethod(function)).apply {
-                            (0 until call.valueArgumentsCount).forEach {
-                                putValueArgument(it, call.getValueArgument(it)!!)
+                        !klass.isInline -> expression
+                        function.isPrimary -> irCall(expression, function)
+                        else -> irCall(expression, getOrCreateStaticMethod(function)).apply {
+                            (0 until expression.valueArgumentsCount).forEach {
+                                putValueArgument(it, expression.getValueArgument(it)!!)
                             }
                         }
                     }

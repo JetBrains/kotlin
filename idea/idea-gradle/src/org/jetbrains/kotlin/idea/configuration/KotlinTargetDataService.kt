@@ -34,7 +34,7 @@ class KotlinTargetDataService : AbstractProjectDataService<KotlinTargetData, Voi
                 it.outputPath = archiveFile.parent
                 for (moduleId in targetData.moduleIds) {
                     val compilationModuleDataNode = nodeToImport.parent?.findChildModuleById(moduleId) ?: continue
-                    val compilationData = compilationModuleDataNode.data ?: continue
+                    val compilationData = compilationModuleDataNode.data
                     val kotlinSourceSet = compilationModuleDataNode.kotlinSourceSet ?: continue
                     if (kotlinSourceSet.isTestModule) continue
                     val moduleToPackage = modelsProvider.findIdeModule(compilationData) ?: continue

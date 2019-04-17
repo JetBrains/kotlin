@@ -52,6 +52,7 @@ object JvmArrayVariableInLoopAssignmentChecker : AdditionalTypeChecker {
         val resolvedCall = lhsExpression.getResolvedCall(c.trace.bindingContext) ?: return
         val variableDescriptor = resolvedCall.resultingDescriptor as? LocalVariableDescriptor ?: return
         if (variableDescriptor is SyntheticFieldDescriptor) return
+        @Suppress("DEPRECATION")
         if (variableDescriptor.isDelegated) return
 
         val variableType = variableDescriptor.returnType

@@ -53,6 +53,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         if (callInfo !is PSIErrorCallInfo<*>) {
             throw AssertionError("Error call info for $callInfo should be instance of PSIErrorCallInfo")
         }
+        @Suppress("UNCHECKED_CAST")
         errorCallsInfo.add(callInfo as PSIErrorCallInfo<D>)
     }
 

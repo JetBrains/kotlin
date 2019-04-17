@@ -166,7 +166,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeSyntheticBody(proto: KotlinIr.IrSyntheticBody, start: Int, end: Int): IrSyntheticBody {
-        val kind = when (proto.kind) {
+        val kind = when (proto.kind!!) {
             KotlinIr.IrSyntheticBodyKind.ENUM_VALUES -> IrSyntheticBodyKind.ENUM_VALUES
             KotlinIr.IrSyntheticBodyKind.ENUM_VALUEOF -> IrSyntheticBodyKind.ENUM_VALUEOF
         }
@@ -652,7 +652,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeConst(proto: KotlinIr.IrConst, start: Int, end: Int, type: IrType): IrExpression =
-        when (proto.valueCase) {
+        when (proto.valueCase!!) {
             NULL
             -> IrConstImpl.constNull(start, end, type)
             BOOLEAN
@@ -678,7 +678,7 @@ abstract class IrModuleDeserializer(
         }
 
     private fun deserializeOperation(proto: KotlinIr.IrOperation, start: Int, end: Int, type: IrType): IrExpression =
-        when (proto.operationCase) {
+        when (proto.operationCase!!) {
             BLOCK
             -> deserializeBlock(proto.block, start, end, type)
             BREAK
@@ -766,11 +766,12 @@ abstract class IrModuleDeserializer(
         val name = deserializeName(proto.name)
         val variance = deserializeIrTypeVariance(proto.variance)
 
-        val parameter = symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-            symbol.descriptor, { symbol ->
-                IrTypeParameterImpl(start, end, origin, symbol, name, proto.index, proto.isReified, variance)
-            }
-        )
+        val parameter = symbolTable.declareGlobalTypeParameter(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
+            symbol.descriptor
+        ) {
+            IrTypeParameterImpl(start, end, origin, it, name, proto.index, proto.isReified, variance)
+        }
 
         val superTypes = proto.superTypeList.map { deserializeIrType(it) }
         parameter.superTypes.addAll(superTypes)
@@ -1162,7 +1163,7 @@ abstract class IrModuleDeserializer(
 
         val declarator = proto.declarator
 
-        val declaration: IrDeclaration = when (declarator.declaratorCase) {
+        val declaration: IrDeclaration = when (declarator.declaratorCase!!) {
             IR_ANONYMOUS_INIT
             -> deserializeIrAnonymousInit(declarator.irAnonymousInit, start, end, origin)
             IR_CONSTRUCTOR

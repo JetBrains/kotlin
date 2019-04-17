@@ -216,7 +216,7 @@ open class OverloadingConflictResolver<C : Any>(
             }
         }
         if (result == null) return null
-        if (any { it != result && isNotWorse(it, result!!) }) {
+        if (any { it != result && isNotWorse(it, result) }) {
             return null
         }
         return result

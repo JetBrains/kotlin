@@ -967,7 +967,7 @@ open class IrModuleSerializer(
     }
 
     private fun serializeIrProperty(property: IrProperty): KotlinIr.IrProperty {
-        val index = declarationTable.uniqIdByDeclaration(property)
+        declarationTable.uniqIdByDeclaration(property)
 
         val proto = KotlinIr.IrProperty.newBuilder()
             .setIsDelegated(property.isDelegated)

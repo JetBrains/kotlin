@@ -439,11 +439,11 @@ class CallCompleter(
         }
 
         var shouldBeMadeNullable = false
-        expressions.asReversed().forEach { expression ->
-            if (!(expression is KtParenthesizedExpression || expression is KtLabeledExpression || expression is KtAnnotatedExpression)) {
-                shouldBeMadeNullable = hasNecessarySafeCall(expression, trace)
+        expressions.asReversed().forEach { ktExpression ->
+            if (!(ktExpression is KtParenthesizedExpression || ktExpression is KtLabeledExpression || ktExpression is KtAnnotatedExpression)) {
+                shouldBeMadeNullable = hasNecessarySafeCall(ktExpression, trace)
             }
-            BindingContextUtils.updateRecordedType(updatedType, expression, trace, shouldBeMadeNullable)
+            BindingContextUtils.updateRecordedType(updatedType, ktExpression, trace, shouldBeMadeNullable)
         }
         return trace.getType(argumentExpression)
     }

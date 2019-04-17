@@ -508,7 +508,7 @@ class MoveConflictChecker(
 
         for (memberToCheck in membersToCheck) {
             for (reference in ReferencesSearch.search(memberToCheck)) {
-                val element = reference.element ?: continue
+                val element = reference.element
                 val usageModule = ModuleUtilCore.findModuleForPsiElement(element) ?: continue
                 if (usageModule != targetModule && targetModule !in usageModule.implementedModules && !isToBeMoved(element)) {
                     val container = element.getUsageContext()

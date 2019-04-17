@@ -17,7 +17,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
 ) : CompilerPhase<Context, Input, Output> {
 
     override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
-        var currentState = phaserState as PhaserState<Any?>
+        @Suppress("UNCHECKED_CAST") var currentState = phaserState as PhaserState<Any?>
         var result = phases.first().invoke(phaseConfig, currentState, context, input)
         for ((previous, next) in phases.zip(phases.drop(1))) {
             if (next !is SameTypeCompilerPhase<*, *>) {
@@ -27,6 +27,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
             currentState.stickyPostconditions.addAll(previous.stickyPostconditions)
             result = next.invoke(phaseConfig, currentState, context, result)
         }
+        @Suppress("UNCHECKED_CAST")
         return result as Output
     }
 
@@ -36,6 +37,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
     override val stickyPostconditions get() = phases.last().stickyPostconditions
 }
 
+@Suppress("UNCHECKED_CAST")
 infix fun <Context : CommonBackendContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.then(
     other: CompilerPhase<Context, Mid, Output>
 ): CompilerPhase<Context, Input, Output> {

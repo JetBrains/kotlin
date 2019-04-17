@@ -28,6 +28,7 @@ abstract class AbstractKotlinTypeAliasByExpansionShortNameIndexTest : KotlinLigh
     }
 
     override fun tearDown() {
+        @Suppress("UNCHECKED_CAST")
         (this::scope as KMutableProperty0<GlobalSearchScope?>).set(null)
         super.tearDown()
     }

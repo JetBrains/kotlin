@@ -85,6 +85,7 @@ class IrLocalDelegatedPropertyImpl(
         descriptor.name, type, descriptor.isVar
     )
 
+    @Suppress("DEPRECATION")
     @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,

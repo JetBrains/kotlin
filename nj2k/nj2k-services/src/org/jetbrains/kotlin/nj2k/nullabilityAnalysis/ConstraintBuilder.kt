@@ -14,32 +14,32 @@ internal class ConstraintBuilder(val boundTypeStorage: BoundTypeStorage) {
 
     internal fun getConstraints(): List<Constraint> = constraints
 
-    inline fun KtExpression.addSubtypeNullabilityConstraint(typeVariable: TypeVariable, cameFrom: ConstraintCameFrom) {
+    fun KtExpression.addSubtypeNullabilityConstraint(typeVariable: TypeVariable, cameFrom: ConstraintCameFrom) {
         addSubtypeNullabilityConstraint(TypeVariableBoundType(typeVariable), cameFrom)
     }
 
-    inline fun KtExpression.addEqualsNullabilityConstraint(nullability: Nullability, cameFrom: ConstraintCameFrom) {
+    fun KtExpression.addEqualsNullabilityConstraint(nullability: Nullability, cameFrom: ConstraintCameFrom) {
         val boundType = boundTypeStorage.boundTypeFor(this).safeAs<TypeVariableBoundType>()
             ?.withForcedNullability(getForcedNullability())
             ?: return
         constraints += EqualConstraint(boundType.bound, LiteralBound(nullability), cameFrom)
     }
 
-    inline fun TypeVariable.addEqualsNullabilityConstraint(other: BoundType, cameFrom: ConstraintCameFrom) {
+    fun TypeVariable.addEqualsNullabilityConstraint(other: BoundType, cameFrom: ConstraintCameFrom) {
         TypeVariableBoundType(this).isTheSameType(other, cameFrom)
     }
 
-    inline fun KtExpression.addSubtypeNullabilityConstraint(upperTypeExpression: KtExpression, cameFrom: ConstraintCameFrom) {
+    fun KtExpression.addSubtypeNullabilityConstraint(upperTypeExpression: KtExpression, cameFrom: ConstraintCameFrom) {
         boundTypeStorage.boundTypeFor(this).subtypeOf(boundTypeStorage.boundTypeFor(upperTypeExpression), cameFrom)
     }
 
-    inline fun KtExpression.addSubtypeNullabilityConstraint(upperBoundType: BoundType, cameFrom: ConstraintCameFrom) {
+    fun KtExpression.addSubtypeNullabilityConstraint(upperBoundType: BoundType, cameFrom: ConstraintCameFrom) {
         boundTypeStorage.boundTypeFor(this)
             .withForcedNullability(getForcedNullability())
             .subtypeOf(upperBoundType, cameFrom)
     }
 
-    inline fun TypeVariable.subtypeOf(other: BoundType, cameFrom: ConstraintCameFrom) {
+    fun TypeVariable.subtypeOf(other: BoundType, cameFrom: ConstraintCameFrom) {
         TypeVariableBoundType(this).subtypeOf(other, cameFrom)
     }
 

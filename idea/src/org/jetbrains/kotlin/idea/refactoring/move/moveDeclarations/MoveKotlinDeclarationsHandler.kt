@@ -202,7 +202,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
     ): Boolean {
         val elementsToMove = element.unwrapped?.let { arrayOf(it) } ?: PsiElement.EMPTY_ARRAY
-        val targetContainer = dataContext?.let { dataContext -> LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext) }
+        val targetContainer = dataContext?.let { context -> LangDataKeys.TARGET_PSI_ELEMENT.getData(context) }
         return canMove(elementsToMove, targetContainer, true) && doMoveWithCheck(project, elementsToMove, targetContainer, null, editor)
     }
 

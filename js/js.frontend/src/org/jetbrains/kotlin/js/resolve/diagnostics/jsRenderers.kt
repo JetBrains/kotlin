@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 
 object RenderFirstLineOfElementText : DiagnosticParameterRenderer<PsiElement> {
-    override fun render(element: PsiElement, context: RenderingContext): String {
-        val text = element.text
+    override fun render(obj: PsiElement, renderingContext: RenderingContext): String {
+        val text = obj.text
         val index = text.indexOf('\n')
         return if (index == -1) text else text.substring(0, index) + "..."
     }
@@ -32,10 +32,10 @@ object RenderFirstLineOfElementText : DiagnosticParameterRenderer<PsiElement> {
 abstract class JsCallDataRenderer : DiagnosticParameterRenderer<JsCallData> {
     protected abstract fun format(data: JsCallDataWithCode): String
 
-    override fun render(data: JsCallData, context: RenderingContext): String =
-            when (data) {
-                is JsCallDataWithCode -> format(data)
-                else -> data.message
+    override fun render(obj: JsCallData, renderingContext: RenderingContext): String =
+            when (obj) {
+                is JsCallDataWithCode -> format(obj)
+                else -> obj.message
             }
 }
 

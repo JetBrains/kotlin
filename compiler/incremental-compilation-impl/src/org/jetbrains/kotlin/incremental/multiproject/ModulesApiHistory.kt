@@ -53,9 +53,8 @@ abstract class ModulesApiHistoryBase(protected val modulesInfo: IncrementalModul
         }
 
         val classFileDirs = classFiles.groupBy { it.parentFile }
-        for ((dir, files) in classFileDirs) {
-            val historyEither = getBuildHistoryForDir(dir)
-            when (historyEither) {
+        for (dir in classFileDirs.keys) {
+            when (val historyEither = getBuildHistoryForDir(dir)) {
                 is Either.Success<Set<File>> -> result.addAll(historyEither.value)
                 is Either.Error -> return historyEither
             }
@@ -107,13 +106,13 @@ class ModulesApiHistoryJvm(modulesInfo: IncrementalModuleInfo) : ModulesApiHisto
 
         val classFileDirs = classFiles.filter { it.exists() && it.parentFile != null }.groupBy { it.parentFile }
         val result = HashSet<File>()
-        for ((dir, files) in classFileDirs) {
-            val historyEither = getBuildHistoryForDir(dir)
-            when (historyEither) {
+        for (dir in classFileDirs.keys) {
+            when (val historyEither = getBuildHistoryForDir(dir)) {
                 is Either.Success<Set<File>> -> result.addAll(historyEither.value)
                 is Either.Error -> return historyEither
             }
         }
+
         return Either.Success(result)
     }
 }

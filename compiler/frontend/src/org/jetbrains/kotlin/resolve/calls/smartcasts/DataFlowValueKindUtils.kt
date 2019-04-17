@@ -41,6 +41,7 @@ internal fun VariableDescriptor.variableKind(
         return propertyKind(usageModule)
     }
 
+    @Suppress("DEPRECATION")
     if (this is LocalVariableDescriptor && this.isDelegated) {
         // Local delegated property: normally unstable, but can be treated as stable in legacy mode
         return if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnLocalDelegatedProperty))

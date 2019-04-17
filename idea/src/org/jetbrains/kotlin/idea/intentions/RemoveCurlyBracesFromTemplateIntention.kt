@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.core.dropBraces
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 
+@Suppress("DEPRECATION")
 class RemoveCurlyBracesFromTemplateInspection :
     IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention::class)
 

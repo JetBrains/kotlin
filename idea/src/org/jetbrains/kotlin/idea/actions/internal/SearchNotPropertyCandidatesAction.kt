@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 class SearchNotPropertyCandidatesAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e?.project!!
+        val project = e.project!!
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) as? KtFile ?: return
 
         val desc = psiFile.findModuleDescriptor()
@@ -116,15 +116,15 @@ class SearchNotPropertyCandidatesAction : AnAction() {
 
 
         var i = 0
-        resultDescriptors.forEach { desc ->
-            progress("Step 2: ${i++} of ${resultDescriptors.size}", "$desc")
-            val source = DescriptorToSourceUtilsIde.getAllDeclarations(project, desc)
+        resultDescriptors.forEach { descriptor ->
+            progress("Step 2: ${i++} of ${resultDescriptors.size}", "$descriptor")
+            val source = DescriptorToSourceUtilsIde.getAllDeclarations(project, descriptor)
                                  .filterIsInstance<PsiMethod>()
                                  .firstOrNull() ?: return@forEach
             val abstract = source.modifierList.hasModifierProperty(PsiModifier.ABSTRACT)
             if (!abstract) {
                 if (!source.isTrivial()) {
-                    descriptorToPsiBinding[desc] = source
+                    descriptorToPsiBinding[descriptor] = source
                 }
             }
         }

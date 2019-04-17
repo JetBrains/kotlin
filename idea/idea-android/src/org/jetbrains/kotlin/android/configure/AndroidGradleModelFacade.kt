@@ -33,7 +33,7 @@ class AndroidGradleModelFacade : KotlinGradleModelFacade {
     }
 
     override fun getDependencyModules(ideModule: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>> {
-        val ideProject = ideModule.parent as DataNode<ProjectData>
+        @Suppress("UNCHECKED_CAST") val ideProject = ideModule.parent as DataNode<ProjectData>
         ExternalSystemApiUtil.find(ideModule, AndroidProjectKeys.JAVA_MODULE_MODEL)?.let { javaModuleModel ->
             val moduleNames = javaModuleModel.data.javaModuleDependencies.map { it.moduleName }.toHashSet()
             return findModulesByNames(moduleNames, gradleIdeaProject, ideProject)
@@ -43,6 +43,7 @@ class AndroidGradleModelFacade : KotlinGradleModelFacade {
             val projects = androidModel.data.mainArtifact.dependencies.projects
             val projectIds = libraries.mapNotNull { it.projectSafe } + projects
             return projectIds.mapNotNullTo(LinkedHashSet()) { projectId ->
+                @Suppress("UNCHECKED_CAST")
                 ExternalSystemApiUtil.findFirstRecursively(ideProject) {
                     (it.data as? ModuleData)?.id == projectId
                 } as DataNode<ModuleData>?

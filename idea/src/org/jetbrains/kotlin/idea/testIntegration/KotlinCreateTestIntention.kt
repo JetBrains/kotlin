@@ -163,7 +163,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                     val generatedFile = generatedClass.containingFile as? PsiJavaFile ?: return@runWhenSmart
 
                     if (generatedClass.language == JavaLanguage.INSTANCE) {
-                        project.executeCommand("Convert class '${generatedClass.name}' to Kotlin", this) {
+                        project.executeCommand<Unit>("Convert class '${generatedClass.name}' to Kotlin", this) {
                             runWriteAction {
                                 generatedClass.methods.forEach { it.throwsList.referenceElements.forEach { referenceElement -> referenceElement.delete() } }
                             }
@@ -181,6 +181,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                                         .forEach { it.j2k()?.let { declaration -> existingClass.addDeclaration(declaration) } }
                                     generatedClass.delete()
                                 }
+
                                 NavigationUtil.activateFileWithPsiElement(existingClass)
                             } else {
                                 with(PsiDocumentManager.getInstance(project)) {

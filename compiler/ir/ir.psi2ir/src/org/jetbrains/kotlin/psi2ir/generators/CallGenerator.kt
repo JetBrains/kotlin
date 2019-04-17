@@ -172,7 +172,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         val irType = descriptor.type.toIrType()
 
         return if (getMethodDescriptor == null) {
-            call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+            call.callReceiver.call { dispatchReceiverValue, _ ->
                 val fieldSymbol = context.symbolTable.referenceField(descriptor.original)
                 IrGetFieldImpl(
                     startOffset, endOffset,

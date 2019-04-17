@@ -259,7 +259,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         }
 
         collector.addMessage(library.name!! + " library was created")
-        return library!!
+        return library
     }
 
     private fun isProjectLibraryPresent(project: Project): Boolean {
@@ -397,14 +397,14 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         val project = module.project
         val collector = createConfigureKotlinNotificationCollector(project)
 
-        for (library in findAllUsedLibraries(project).keySet()) {
-            val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library) ?: continue
+        for (lib in findAllUsedLibraries(project).keySet()) {
+            val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(lib) ?: continue
 
-            val model = library.modifiableModel
+            val model = lib.modifiableModel
             val libFilesDir = VfsUtilCore.virtualToIoFile(runtimeJar).parent
 
             for (libraryJarDescriptor in libraryJarDescriptors) {
-                if (libraryJarDescriptor.findExistingJar(library) != null) continue
+                if (libraryJarDescriptor.findExistingJar(lib) != null) continue
 
                 val libFile = libraryJarDescriptor.getPathInPlugin()
                 if (!libFile.exists()) continue

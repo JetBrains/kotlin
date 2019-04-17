@@ -171,6 +171,7 @@ fun <R : JKTreeElement, T> applyRecursive(
             val child = iter.next()
 
             if (child is List<*>) {
+                @Suppress("UNCHECKED_CAST")
                 iter.set(applyRecursiveToList(element, child as List<JKTreeElement>, iter, data, func))
             } else if (child is JKTreeElement) {
                 val newChild = func(child, data)

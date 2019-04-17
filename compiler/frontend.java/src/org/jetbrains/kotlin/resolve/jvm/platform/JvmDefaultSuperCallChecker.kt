@@ -20,7 +20,8 @@ class JvmDefaultSuperCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val jvmDefaultMode = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
         if (jvmDefaultMode.isEnabled) return
-        val superExpression = getSuperCallExpression(resolvedCall.call) ?: return
+        if (getSuperCallExpression(resolvedCall.call) == null) return
+
         val resultingDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
         if (!resultingDescriptor.hasJvmDefaultAnnotation()) return
 

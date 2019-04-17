@@ -154,8 +154,15 @@ object CallableReferenceTranslator {
             }
         }
 
-        val getter = translateForPropertyAccessor(call, expression, descriptor, context, receiver, false) { context, call, _, receiverParam ->
-            CallTranslator.translateGet(context, call, receiverParam)
+        val getter = translateForPropertyAccessor(
+            call,
+            expression,
+            descriptor,
+            context,
+            receiver,
+            false
+        ) { translationContext, resolvedCall, _, receiverParam ->
+            CallTranslator.translateGet(translationContext, resolvedCall, receiverParam)
         }
 
         val setter = if (isSetterVisible(descriptor, context)) {

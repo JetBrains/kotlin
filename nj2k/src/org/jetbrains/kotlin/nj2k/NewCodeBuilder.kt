@@ -400,7 +400,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
             printer.printWithNoIndent(" fun ")
             ktFunction.typeParameterList.accept(this)
 
-            elementInfoStorage.getOrCreateInfoForElement(ktFunction)?.also {
+            elementInfoStorage.getOrCreateInfoForElement(ktFunction).let {
                 printer.printWithNoIndent(it.render())
             }
             ktFunction.name.accept(this)
@@ -656,7 +656,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
 
         private fun renderType(type: JKType, owner: JKTreeElement?) {
             if (type is JKNoTypeImpl) return
-            elementInfoStorage.getOrCreateInfoForElement(type)?.also {
+            elementInfoStorage.getOrCreateInfoForElement(type).let {
                 printer.print(it.render())
             }
             when (type) {
@@ -941,6 +941,8 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
                     JKClassLiteralExpression.LiteralType.KOTLIN_CLASS -> printer.printWithNoIndent("class")
                     JKClassLiteralExpression.LiteralType.JAVA_CLASS -> printer.printWithNoIndent("class.java")
                     JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS -> printer.printWithNoIndent("class.javaPrimitiveType")
+                    JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE -> {
+                    }
                 }
             }
         }
@@ -973,14 +975,14 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
     }
 }
 
-private inline fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
+private fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
     val head = this.firstOrNull()
     val tail = if (size <= 1) null else subList(1, size)
     return head to tail
 }
 
 
-private inline fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKType): Boolean {
+private fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKType): Boolean {
     return when (type) {
         is JKClassType -> {
             val symbol = type.classReference as? JKClassSymbol ?: return false

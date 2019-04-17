@@ -41,7 +41,7 @@ import java.util.*
 object SuperDeclarationMarkerTooltip : Function<PsiElement, String> {
     override fun `fun`(element: PsiElement): String? {
         val ktDeclaration = element.getParentOfType<KtDeclaration>(false) ?: return null
-        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(ktDeclaration!!)
+        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(ktDeclaration)
         if (overriddenDescriptors.isEmpty()) return ""
 
         val isAbstract = elementDescriptor!!.modality == Modality.ABSTRACT

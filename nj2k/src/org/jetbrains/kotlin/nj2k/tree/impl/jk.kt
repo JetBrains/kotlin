@@ -217,8 +217,7 @@ class JKStarProjectionTypeImpl : JKStarProjectionType
 fun JKType.fqName(): String =
     when (this) {
         is JKClassType -> {
-            val target = classReference?.target
-            when (target) {
+            when (val target = classReference.target) {
                 is KtClass -> target.fqName?.asString() ?: throw RuntimeException("FqName can not be calculated")
                 is PsiClass -> target.qualifiedName ?: throw RuntimeException("FqName can not be calculated")
                 else -> TODO(target.toString())
@@ -473,8 +472,7 @@ class PsiOwnerImpl(override var psi: PsiElement? = null) : PsiOwner
 val JKElement.psi: PsiElement?
     get() = (this as? PsiOwner)?.psi
 
-fun <Elem : PsiElement> JKElement.psi(): Elem? =
-    (this as? PsiOwner)?.psi as? Elem
+inline fun <reified Elem : PsiElement> JKElement.psi(): Elem? = (this as? PsiOwner)?.psi as? Elem
 
 class JKTypeParameterListImpl(typeParameters: List<JKTypeParameter> = emptyList()) : JKTypeParameterList, JKBranchElementBase() {
     override var typeParameters by children(typeParameters)

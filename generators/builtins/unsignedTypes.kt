@@ -371,7 +371,6 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             UnsignedType.UBYTE, UnsignedType.USHORT -> out.println("toInt().toString()")
             UnsignedType.UINT -> out.println("toLong().toString()")
             UnsignedType.ULONG -> out.println("ulongToString(data)")
-            else -> error(type)
         }
 
         out.println()

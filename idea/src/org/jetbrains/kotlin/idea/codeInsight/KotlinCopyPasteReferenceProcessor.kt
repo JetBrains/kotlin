@@ -150,8 +150,8 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     ) {
         if (PsiTreeUtil.getNonStrictParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
-        element.forEachDescendantOfType<KtElement>(canGoInside = { it::class.java as Class<*> !in IGNORE_REFERENCES_INSIDE }) { element ->
-            val reference = element.mainReference ?: return@forEachDescendantOfType
+        element.forEachDescendantOfType<KtElement>(canGoInside = { it::class.java as Class<*> !in IGNORE_REFERENCES_INSIDE }) { ktElement ->
+            val reference = ktElement.mainReference ?: return@forEachDescendantOfType
 
             val descriptors = resolveReference(reference, bindingContext)
             //check whether this reference is unambiguous
@@ -168,9 +168,9 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
 
                 val fqName = descriptor.importableFqName!!
                 val kind = KotlinReferenceData.Kind.fromDescriptor(descriptor) ?: continue
-                val isQualifiable = KotlinReferenceData.isQualifiable(element, descriptor)
-                val relativeStart = element.range.start - startOffset
-                val relativeEnd = element.range.end - startOffset
+                val isQualifiable = KotlinReferenceData.isQualifiable(ktElement, descriptor)
+                val relativeStart = ktElement.range.start - startOffset
+                val relativeEnd = ktElement.range.end - startOffset
                 add(KotlinReferenceData(relativeStart, relativeEnd, fqName.asString(), isQualifiable, kind))
             }
         }

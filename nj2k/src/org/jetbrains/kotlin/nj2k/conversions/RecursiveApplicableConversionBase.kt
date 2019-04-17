@@ -23,7 +23,5 @@ abstract class RecursiveApplicableConversionBase : MatchBasedConversion() {
 
     abstract fun applyToElement(element: JKTreeElement): JKTreeElement
 
-    inline fun <T : JKTreeElement> recurse(element: T): T {
-        return applyRecursive(element, ::applyToElement)
-    }
+    fun <T : JKTreeElement> recurse(element: T): T = applyRecursive(element, ::applyToElement)
 }

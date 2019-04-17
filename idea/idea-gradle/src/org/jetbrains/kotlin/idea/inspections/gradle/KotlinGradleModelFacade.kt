@@ -38,7 +38,7 @@ class DefaultGradleModelFacade : KotlinGradleModelFacade {
     }
 
     override fun getDependencyModules(ideModule: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>> {
-        val ideProject = ideModule.parent as DataNode<ProjectData>
+        @Suppress("UNCHECKED_CAST") val ideProject = ideModule.parent as DataNode<ProjectData>
         val dependencyModuleNames =
             ExternalSystemApiUtil.getChildren(ideModule, ProjectKeys.MODULE_DEPENDENCY).map { it.data.target.externalName }.toHashSet()
         return findModulesByNames(dependencyModuleNames, gradleIdeaProject, ideProject)

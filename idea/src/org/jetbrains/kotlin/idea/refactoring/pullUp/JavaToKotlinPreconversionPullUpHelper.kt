@@ -68,7 +68,7 @@ class JavaToKotlinPreconversionPullUpHelper(
 
     private fun collectFieldReferencesToEncapsulate(member: PsiField) {
         val helper = EncapsulateFieldHelper.getHelper(member.language) ?: return
-        val fieldName = member.name!!
+        val fieldName = member.name
         val getterName = JvmAbi.getterName(fieldName)
         val setterName = JvmAbi.setterName(fieldName)
         val getter = helper.generateMethodPrototype(member, getterName, true)

@@ -16,8 +16,6 @@ fun IntermediateStreamCall.withArgs(args: List<CallArgument>) =
 fun TerminatorStreamCall.withArgs(args: List<CallArgument>) =
     TerminatorStreamCallImpl(name, args, typeBefore, resultType, textRange)
 
-fun StreamCall.typeBefore() =
-    if (StreamCall@ this is TypeBeforeAware) StreamCall@ this.typeBefore else KotlinSequenceTypes.ANY
+fun StreamCall.typeBefore() = if (this is TypeBeforeAware) this.typeBefore else KotlinSequenceTypes.ANY
 
-fun StreamCall.typeAfter() =
-    if (StreamCall@ this is TypeAfterAware) StreamCall@ this.typeAfter else KotlinSequenceTypes.ANY
+fun StreamCall.typeAfter() = if (this is TypeAfterAware) this.typeAfter else KotlinSequenceTypes.ANY

@@ -278,7 +278,7 @@ open class KotlinIntroduceParameterHandler(
             ?: Collections.emptyList()
 
         val occurrencesToReplace = if (expression is KtProperty) {
-            ReferencesSearch.search(expression).mapNotNullTo(SmartList(expression.toRange())) { it.element?.toRange() }
+            ReferencesSearch.search(expression).mapNotNullTo(SmartList(expression.toRange())) { it.element.toRange() }
         }
         else {
             expression.toRange()

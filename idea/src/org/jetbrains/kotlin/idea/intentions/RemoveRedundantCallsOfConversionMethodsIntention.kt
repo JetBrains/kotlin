@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isFlexible
 
+@Suppress("DEPRECATION")
 class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtQualifiedExpression>(
     RemoveRedundantCallsOfConversionMethodsIntention::class
 ) {

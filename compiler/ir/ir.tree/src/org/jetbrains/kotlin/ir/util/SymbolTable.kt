@@ -334,7 +334,7 @@ open class SymbolTable : ReferenceSymbolTable {
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
-        isDelegated: Boolean = descriptor.isDelegated,
+        @Suppress("DEPRECATION") isDelegated: Boolean = descriptor.isDelegated,
         propertyFactory: (IrPropertySymbol) -> IrProperty = { symbol ->
             IrPropertyImpl(startOffset, endOffset, origin, symbol, isDelegated = isDelegated).apply {
                 metadata = MetadataSource.Property(symbol.descriptor)

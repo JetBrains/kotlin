@@ -474,7 +474,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     }
 
     private fun addReceiverParameter(callable: KtCallableDeclaration, method: KtUltraLightMethod) {
-        val receiver = callable.receiverTypeReference ?: return
+        if (callable.receiverTypeReference == null) return
         method.delegate.addParameter(KtUltraLightReceiverParameter(callable, support, method))
     }
 

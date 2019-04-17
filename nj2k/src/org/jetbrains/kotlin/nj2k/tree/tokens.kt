@@ -25,7 +25,7 @@ interface JKNonCodeElementsListOwner {
     var rightNonCodeElements: List<JKNonCodeElement>
 }
 
-inline fun JKNonCodeElementsListOwner.takeNonCodeElementsFrom(other: JKNonCodeElementsListOwner) {
+fun JKNonCodeElementsListOwner.takeNonCodeElementsFrom(other: JKNonCodeElementsListOwner) {
     leftNonCodeElements = other.leftNonCodeElements
     rightNonCodeElements = other.rightNonCodeElements
 }
@@ -43,7 +43,7 @@ fun JKTreeElement.commentsFromInside(): List<JKCommentElement> {
 inline fun <reified T : JKNonCodeElementsListOwner> T.withNonCodeElementsFrom(other: JKNonCodeElementsListOwner): T =
     also { it.takeNonCodeElementsFrom(other) }
 
-inline fun JKNonCodeElementsListOwner.clearNonCodeElements() {
+fun JKNonCodeElementsListOwner.clearNonCodeElements() {
     leftNonCodeElements = emptyList()
     rightNonCodeElements = emptyList()
 }

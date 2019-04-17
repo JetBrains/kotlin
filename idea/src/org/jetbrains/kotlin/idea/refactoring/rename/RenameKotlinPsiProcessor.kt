@@ -103,8 +103,8 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     }
 
     override fun getElementToSearchInStringsAndComments(element: PsiElement): PsiElement? {
-        val unwrapped = element?.unwrapped ?: return null
-        if ((unwrapped is KtDeclaration) && KtPsiUtil.isLocal(unwrapped as KtDeclaration)) return null
+        val unwrapped = element.unwrapped ?: return null
+        if ((unwrapped is KtDeclaration) && KtPsiUtil.isLocal(unwrapped)) return null
         return element
     }
 
@@ -185,7 +185,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
                     }
                 }
                 else {
-                    ref.element?.getStrictParentOfType<KtImportDirective>()?.let { importDirective ->
+                    ref.element.getStrictParentOfType<KtImportDirective>()?.let { importDirective ->
                         val fqName = importDirective.importedFqName!!
                         val newFqName = fqName.parent().child(Name.identifier(newName))
                         val importList = importDirective.parent as KtImportList

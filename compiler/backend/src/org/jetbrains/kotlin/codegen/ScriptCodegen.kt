@@ -234,7 +234,7 @@ class ScriptCodegen private constructor(
                         hasMain = true
                     }
                 }
-                is KtProperty, is KtNamedFunction, is KtTypeAlias -> genSimpleMember(declaration)
+                is KtProperty, is KtTypeAlias -> genSimpleMember(declaration)
                 is KtClassOrObject -> genClassOrObject(declaration)
                 is KtDestructuringDeclaration -> for (entry in declaration.entries) {
                     genSimpleMember(entry)

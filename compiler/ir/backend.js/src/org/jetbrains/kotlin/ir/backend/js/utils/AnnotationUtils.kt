@@ -21,6 +21,7 @@ object JsAnnotations {
     val jsQualifierFqn = FqName("kotlin.js.JsQualifier")
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun IrCall.getSingleConstStringArgument() =
     (getValueArgument(0) as IrConst<String>).value
 

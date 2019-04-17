@@ -84,22 +84,28 @@ object LambdaItems {
     }
 
     private fun createLookupElement(
-            functionType: KotlinType,
-            functionExpectedInfos: List<ExpectedInfo>,
-            signaturePresentation: LambdaSignatureTemplates.SignaturePresentation,
-            explicitParameterTypes: Boolean
+        functionType: KotlinType,
+        functionExpectedInfos: List<ExpectedInfo>,
+        signaturePresentation: LambdaSignatureTemplates.SignaturePresentation,
+        explicitParameterTypes: Boolean
     ): LookupElement {
         val lookupString = LambdaSignatureTemplates.lambdaPresentation(functionType, signaturePresentation)
         return LookupElementBuilder.create(lookupString)
-                .withInsertHandler({ context, lookupElement ->
-                                       val offset = context.startOffset
-                                       val placeholder = "{}"
-                                       context.document.replaceString(offset, context.tailOffset, placeholder)
-                                       val placeholderRange = TextRange(offset, offset + placeholder.length)
-                                       LambdaSignatureTemplates.insertTemplate(context, placeholderRange, functionType, explicitParameterTypes, signatureOnly = false)
-                                   })
-                .suppressAutoInsertion()
-                .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA)
-                .addTailAndNameSimilarity(functionExpectedInfos.filter { it.fuzzyType?.type == functionType })
+            .withInsertHandler { context, _ ->
+                val offset = context.startOffset
+                val placeholder = "{}"
+                context.document.replaceString(offset, context.tailOffset, placeholder)
+                val placeholderRange = TextRange(offset, offset + placeholder.length)
+                LambdaSignatureTemplates.insertTemplate(
+                    context,
+                    placeholderRange,
+                    functionType,
+                    explicitParameterTypes,
+                    signatureOnly = false
+                )
+            }
+            .suppressAutoInsertion()
+            .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA)
+            .addTailAndNameSimilarity(functionExpectedInfos.filter { it.fuzzyType?.type == functionType })
     }
 }

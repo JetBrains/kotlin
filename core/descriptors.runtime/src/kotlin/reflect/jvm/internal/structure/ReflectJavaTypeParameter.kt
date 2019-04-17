@@ -31,6 +31,7 @@ class ReflectJavaTypeParameter(
             return bounds
         }
 
+    @Suppress("USELESS_CAST")
     override val element: AnnotatedElement?
         // TypeVariable is AnnotatedElement only in JDK8
         get() = typeVariable as? AnnotatedElement

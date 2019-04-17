@@ -229,7 +229,7 @@ object KotlinJars {
             })) {
             throw FileNotFoundException("Cannot find kotlin compiler jar, set kotlin.compiler.classpath property to proper location")
         }
-        return classpath!!
+        return classpath
     }
 
     fun getLib(propertyName: String, jarName: String, markerClass: KClass<*>, classLoader: ClassLoader? = null): File? =

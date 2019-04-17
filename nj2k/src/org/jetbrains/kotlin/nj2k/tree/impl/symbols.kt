@@ -178,6 +178,7 @@ class JKMultiverseMethodSymbol(override val target: PsiMethod, private val symbo
 class JKMultiverseFunctionSymbol(override val target: KtFunction, private val symbolProvider: JKSymbolProvider) : JKMethodSymbol {
     override val receiverType: JKType?
         get() = target.receiverTypeReference?.toJK(symbolProvider)
+    @Suppress("UNCHECKED_CAST")
     override val parameterTypes: List<JKType>?
         get() = target.valueParameters.map { parameter ->
             val type = parameter.typeReference?.toJK(symbolProvider)

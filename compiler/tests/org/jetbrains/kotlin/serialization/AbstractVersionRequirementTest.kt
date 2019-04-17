@@ -37,8 +37,8 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
             val descriptor = module.findUnambiguousDescriptorByFqName(fqName)
 
             val requirement = when (descriptor) {
-                is DeserializedMemberDescriptor -> descriptor.versionRequirements.single()
-                is DeserializedClassDescriptor -> descriptor.versionRequirements.single()
+                is DeserializedMemberDescriptor -> descriptor.versionRequirements.singleOrNull()
+                is DeserializedClassDescriptor -> descriptor.versionRequirements.singleOrNull()
                 else -> throw AssertionError("Unknown descriptor: $descriptor")
             } ?: throw AssertionError("No VersionRequirement for $descriptor")
 

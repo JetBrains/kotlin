@@ -30,7 +30,7 @@ fun JpsModuleSourceRoot.getMigratedSourceRootTypeWithProperties(): Pair<JpsModul
     val currentRootType = rootType
     @Suppress("UNCHECKED_CAST")
     val newSourceRootType: JpsModuleSourceRootType<JpsElement> = when (currentRootType) {
-        JavaSourceRootType.SOURCE -> SourceKotlinRootType
+        JavaSourceRootType.SOURCE -> SourceKotlinRootType as JpsModuleSourceRootType<JpsElement>
         JavaSourceRootType.TEST_SOURCE -> TestSourceKotlinRootType
         JavaResourceRootType.RESOURCE -> ResourceKotlinRootType
         JavaResourceRootType.TEST_RESOURCE -> TestResourceKotlinRootType

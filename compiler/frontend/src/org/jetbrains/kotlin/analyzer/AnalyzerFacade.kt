@@ -121,6 +121,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
 
+    @Suppress("UNCHECKED_CAST")
     private val moduleInfoToResolvableInfo: Map<M, M> =
         modules.flatMap { module -> module.flatten().map { modulePart -> modulePart to module } }.toMap() as Map<M, M>
 
@@ -326,6 +327,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
                 yield(moduleDescriptor.builtIns.builtInsModule)
             }
             for (dependency in module.dependencies()) {
+                @Suppress("UNCHECKED_CAST")
                 yield(resolverForProject.descriptorForModule(dependency as M))
             }
             if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.LAST) {
@@ -337,12 +339,16 @@ class LazyModuleDependencies<M : ModuleInfo>(
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
 
     override val expectedByDependencies by storageManager.createLazyValue {
-        module.expectedBy.map { resolverForProject.descriptorForModule(it as M) }
+        module.expectedBy.map {
+            @Suppress("UNCHECKED_CAST")
+            resolverForProject.descriptorForModule(it as M)
+        }
     }
 
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
         get() =
             module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
+                @Suppress("UNCHECKED_CAST")
                 resolverForProject.descriptorForModule(it as M)
             }
 

@@ -25,8 +25,6 @@ class ImportStorage {
             return true
         }
 
-        inline fun isImportNeeded(fqName: String): Boolean =
-            isImportNeeded(FqName(fqName))
-
+        fun isImportNeeded(fqName: String): Boolean = isImportNeeded(FqName(fqName))
     }
 }

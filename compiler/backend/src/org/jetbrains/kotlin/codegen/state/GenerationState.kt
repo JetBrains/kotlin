@@ -278,8 +278,8 @@ class GenerationState private constructor(
                         ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it
                 }
             )
-            .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { builderFactory, extension ->
-                extension.interceptClassBuilderFactory(builderFactory, bindingContext, diagnostics)
+            .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { classBuilderFactory, extension ->
+                extension.interceptClassBuilderFactory(classBuilderFactory, bindingContext, diagnostics)
             }
 
         this.factory = ClassFileFactory(this, interceptedBuilderFactory)

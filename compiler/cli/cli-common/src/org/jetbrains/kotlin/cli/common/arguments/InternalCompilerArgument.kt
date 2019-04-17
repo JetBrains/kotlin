@@ -59,7 +59,7 @@ class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeat
             return null
         }
 
-        val colon = tail.getOrNull(0) ?: return reportAndReturnNull("Incorrect internal argument syntax, missing colon: $wholeArgument")
+        tail.getOrNull(0) ?: return reportAndReturnNull("Incorrect internal argument syntax, missing colon: $wholeArgument")
 
         val modificator = tail.getOrNull(1)
         val languageFeatureState = when (modificator) {

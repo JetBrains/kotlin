@@ -336,4 +336,5 @@ class KotlinFacetEditorGeneralTab(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 val <T> ComboBox<T>.selectedItemTyped: T? get() = selectedItem as T?

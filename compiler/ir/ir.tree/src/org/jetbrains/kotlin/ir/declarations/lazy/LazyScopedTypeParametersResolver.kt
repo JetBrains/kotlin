@@ -33,6 +33,6 @@ class LazyScopedTypeParametersResolver(private val symbolTable: ReferenceSymbolT
             parent.typeParameters.firstOrNull {
                 it.descriptor == typeParameterDescriptor
             }?.symbol
-        } ?: null
+        }
     }
 }

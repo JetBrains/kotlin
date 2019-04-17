@@ -57,7 +57,7 @@ class IrLazyProperty(
         isVar = symbol.descriptor.isVar,
         isConst = symbol.descriptor.isConst,
         isLateinit = symbol.descriptor.isLateInit,
-        isDelegated = symbol.descriptor.isDelegated,
+        isDelegated = @Suppress("DEPRECATION") symbol.descriptor.isDelegated,
         isExternal = symbol.descriptor.isEffectivelyExternal(),
         stubGenerator = stubGenerator,
         typeTranslator = typeTranslator,

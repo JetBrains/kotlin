@@ -234,7 +234,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val functionPsi = functionUsageInfo.element ?: return
 
         for (reference in findReferences(functionPsi)) {
-            val element = reference.element ?: continue
+            val element = reference.element
 
             when {
                 reference is KtInvokeFunctionReference || reference is KtArrayAccessReference -> {

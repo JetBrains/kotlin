@@ -62,8 +62,8 @@ class LazyPackageMemberScope(
         // No extra properties
     }
 
-    override fun recordLookup(name: Name, from: LookupLocation) {
-        c.lookupTracker.record(from, thisDescriptor, name)
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        c.lookupTracker.record(location, thisDescriptor, name)
     }
 
     override fun getClassifierNames(): Set<Name>? = declarationProvider.getDeclarationNames()

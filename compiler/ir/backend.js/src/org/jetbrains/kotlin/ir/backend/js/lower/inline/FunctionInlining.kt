@@ -176,8 +176,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
                 }
             }
 
-            val sourceFile = callee.file
-
             val transformer = ParameterSubstitutor()
             statements.transform { it.transform(transformer, data = null) }
             statements.addAll(0, evaluationStatements)

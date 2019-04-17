@@ -111,7 +111,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             when (dependency) {
                 is ExternalProjectDependency -> {
                     if (dependency.configurationName == Dependency.DEFAULT_CONFIGURATION) {
-                        val targetModuleNode = ExternalSystemApiUtil.findFirstRecursively(ideProject) {
+                        @Suppress("UNCHECKED_CAST") val targetModuleNode = ExternalSystemApiUtil.findFirstRecursively(ideProject) {
                             (it.data as? ModuleData)?.id == dependency.projectPath
                         } as DataNode<ModuleData>? ?: return@mapNotNullTo null
                         ExternalSystemApiUtil.findAll(targetModuleNode, GradleSourceSetData.KEY)
@@ -278,6 +278,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
         val fullModuleId = compositePrefix + moduleId
 
+        @Suppress("UNCHECKED_CAST")
         return ideProject.children.find { (it.data as? ModuleData)?.id == fullModuleId } as DataNode<ModuleData>?
     }
 }

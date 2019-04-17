@@ -60,7 +60,7 @@ data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: K
 
     override val originalElement: KtDeclaration? by lazyPub {
         val desc = MapPsiToAsmDesc.typeDesc(psiField.type)
-        val signature = MemberSignature.fromFieldNameAndDesc(psiField.name!!, desc)
+        val signature = MemberSignature.fromFieldNameAndDesc(psiField.name, desc)
         findDeclarationInCompiledFile(file, psiField, signature)
     }
 }

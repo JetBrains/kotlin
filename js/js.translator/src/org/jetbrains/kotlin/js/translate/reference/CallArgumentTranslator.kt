@@ -246,7 +246,7 @@ class CallArgumentTranslator private constructor(
             val concatExpression = concatArgumentsIfNeeded(concatArguments, varargElementType, false)
             concatExpression
         } else {
-            val arg = ArrayFIF.unsignedPrimitiveToSigned(varargElementType)?.let {type ->
+            val arg = ArrayFIF.unsignedPrimitiveToSigned(varargElementType)?.let { _ ->
                 JsInvocation(JsNameRef("unbox", list[0]))
             } ?: list[0]
             JsAstUtils.invokeMethod(arg, "slice")

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.nj2k.tree.JKElement
 import org.jetbrains.kotlin.nj2k.tree.impl.JKElementBase
 import org.jetbrains.kotlin.nj2k.tree.withNonCodeElementsFrom
 
+@Suppress("UNCHECKED_CAST")
 fun <T : JKElement> T.copyTree(): T =
     when (this) {
         is JKElementBase ->

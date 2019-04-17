@@ -48,7 +48,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
         val srcDir = testDataPath + "${getTestName(true)}/$name"
-        val moduleWithSrcRootSet = createModuleFromTestData(srcDir, name, StdModuleTypes.JAVA, true)!!
+        val moduleWithSrcRootSet = createModuleFromTestData(srcDir, name, StdModuleTypes.JAVA, true)
         if (hasTestRoot) {
             addRoot(
                 moduleWithSrcRootSet,

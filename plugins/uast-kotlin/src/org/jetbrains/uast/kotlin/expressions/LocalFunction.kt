@@ -1,6 +1,7 @@
 package org.jetbrains.uast.kotlin.expressions
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiVariable
 import org.jetbrains.kotlin.psi.KtFunction
@@ -11,9 +12,9 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 
 internal class KotlinLocalFunctionUVariable(
-        val function: KtFunction,
-        override val psi: PsiVariable,
-        givenParent: UElement?
+    val function: KtFunction,
+    override val psi: PsiVariable,
+    givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UVariableExPlaceHolder, PsiVariable by psi {
 
     override val javaPsi = psi
@@ -25,6 +26,13 @@ internal class KotlinLocalFunctionUVariable(
     override val typeReference: UTypeReferenceExpression? = null
     override val uastAnchor: UElement? = null
     override val annotations: List<UAnnotation> = emptyList()
+    override fun getOriginalElement(): PsiElement {
+        return psi.originalElement
+    }
+
+    override fun getInitializer(): PsiExpression? {
+        return psi.initializer
+    }
 }
 
 

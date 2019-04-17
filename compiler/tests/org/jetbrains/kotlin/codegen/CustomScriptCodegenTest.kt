@@ -78,9 +78,11 @@ class CustomScriptCodegenTest : CodegenTestCase() {
 
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun Class<*>.safeGetAnnotation(ann: KClass<out Annotation>): Annotation? =
     getAnnotation(classLoader.loadClass(ann.qualifiedName) as Class<Annotation>)
 
+@Suppress("UNCHECKED_CAST")
 private fun java.lang.reflect.Constructor<*>.safeGetAnnotation(ann: KClass<out Annotation>): Annotation? =
     getAnnotation(this.declaringClass.classLoader.loadClass(ann.qualifiedName) as Class<Annotation>)
 

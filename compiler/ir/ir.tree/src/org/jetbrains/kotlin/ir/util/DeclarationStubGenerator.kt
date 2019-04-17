@@ -93,7 +93,7 @@ class DeclarationStubGenerator(
         val origin = computeOrigin(descriptor)
         return symbolTable.declareProperty(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original,
-            isDelegated = descriptor.isDelegated
+            isDelegated = @Suppress("DEPRECATION") descriptor.isDelegated
         ) {
             deserializer?.findDeserializedDeclaration(descriptor)
                 ?: IrLazyProperty(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, bindingContext)

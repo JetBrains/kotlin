@@ -19,5 +19,5 @@ open class ScriptTemplateAdditionalCompilerArgumentsProvider(val arguments: Iter
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScriptTemplateAdditionalCompilerArguments(
     val arguments: Array<String> = [],
-    val provider: KClass<out ScriptTemplateAdditionalCompilerArgumentsProvider> = ScriptTemplateAdditionalCompilerArgumentsProvider::class
+    @Suppress("DEPRECATION") val provider: KClass<out ScriptTemplateAdditionalCompilerArgumentsProvider> = ScriptTemplateAdditionalCompilerArgumentsProvider::class
 )

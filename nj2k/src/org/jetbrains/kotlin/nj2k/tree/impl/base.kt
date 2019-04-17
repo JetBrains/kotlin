@@ -16,10 +16,12 @@ import kotlin.reflect.KProperty
 
 private class JKChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKBranchElementBase, T> {
     override operator fun getValue(thisRef: JKBranchElementBase, property: KProperty<*>): T {
+        @Suppress("UNCHECKED_CAST")
         return thisRef.children[value] as T
     }
 
     override operator fun setValue(thisRef: JKBranchElementBase, property: KProperty<*>, value: T) {
+        @Suppress("UNCHECKED_CAST")
         (thisRef.children[this.value] as T).detach(thisRef)
         thisRef.children[this.value] = value
         value.attach(thisRef)
@@ -28,10 +30,12 @@ private class JKChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKBranc
 
 private class JKListChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKBranchElementBase, List<T>> {
     override operator fun getValue(thisRef: JKBranchElementBase, property: KProperty<*>): List<T> {
+        @Suppress("UNCHECKED_CAST")
         return thisRef.children[value] as List<T>
     }
 
     override operator fun setValue(thisRef: JKBranchElementBase, property: KProperty<*>, value: List<T>) {
+        @Suppress("UNCHECKED_CAST")
         (thisRef.children[this.value] as List<T>).forEach { it.detach(thisRef) }
         thisRef.children[this.value] = value
         value.forEach { it.attach(thisRef) }
@@ -98,6 +102,7 @@ abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
 
     protected inline fun forEachChild(block: (JKTreeElement) -> Unit) {
         children.forEach {
+            @Suppress("UNCHECKED_CAST")
             if (it is JKTreeElement)
                 block(it)
             else
@@ -120,6 +125,7 @@ abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
     final override var children: MutableList<Any> = mutableListOf()
         private set
 
+    @Suppress("UNCHECKED_CAST")
     override fun copy(): JKTreeElement {
         val cloned = super.copy() as JKBranchElementBase
         val deepClonedChildren =

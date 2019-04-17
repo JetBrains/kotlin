@@ -48,7 +48,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             val pathsString = outputFiles.joinToString { it.relativePath }
             assertNotNull("Couldn't find class file for pattern $classFileRegex in: $pathsString", outputFile)
 
-            val actualLocalVariables = readLocalVariable(ClassReader(outputFile!!.asByteArray()), methodName)
+            val actualLocalVariables = readLocalVariable(ClassReader(outputFile.asByteArray()), methodName)
 
             doCompare(wholeFile, files.single().content, actualLocalVariables)
         } catch (e: Throwable) {

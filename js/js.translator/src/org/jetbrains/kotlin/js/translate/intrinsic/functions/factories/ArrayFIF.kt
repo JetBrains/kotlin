@@ -46,7 +46,7 @@ import java.util.*
 
 object ArrayFIF : CompositeFIF() {
     @JvmField
-    val GET_INTRINSIC = intrinsify { callInfo, arguments, context ->
+    val GET_INTRINSIC = intrinsify { callInfo, arguments, _ ->
         assert(arguments.size == 1) { "Array get expression must have one argument." }
         val (indexExpression) = arguments
         JsArrayAccess(callInfo.dispatchReceiver, indexExpression)

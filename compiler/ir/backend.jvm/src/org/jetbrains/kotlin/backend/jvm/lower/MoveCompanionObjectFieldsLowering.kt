@@ -212,10 +212,10 @@ private class FieldReplacer(val replacementMap: Map<IrFieldSymbol, IrFieldSymbol
         } ?: super.visitGetField(expression)
 
     override fun visitSetField(expression: IrSetField): IrExpression =
-        replacementMap[expression.symbol]?.let { newSymbol ->
+        replacementMap[expression.symbol]?.let { _ ->
             IrSetFieldImpl(
                 expression.startOffset, expression.endOffset,
-                replacementMap[expression.symbol]!!,
+                replacementMap.getValue(expression.symbol),
                 /* receiver = */ null,
                 visitExpression(expression.value),
                 expression.type,

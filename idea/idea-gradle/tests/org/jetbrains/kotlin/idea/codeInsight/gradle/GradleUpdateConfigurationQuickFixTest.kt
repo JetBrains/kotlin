@@ -42,6 +42,7 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
 
     override fun tearDownFixtures() {
         codeInsightTestFixture.tearDown()
+        @Suppress("UNCHECKED_CAST")
         (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
         myTestFixture = null
     }

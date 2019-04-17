@@ -96,19 +96,19 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
     }
 
     fun visitVarInsn(opcode: Int, `var`: Int, mv: InstructionAdapter) {
-        var opcode = opcode
         val remapInfo = remap(`var`)
         val value = remapInfo.value
         if (value is StackValue.Local) {
             val isStore = isStoreInstruction(opcode)
-            if (remapInfo.parameterInfo != null) {
+            val localOpcode = if (remapInfo.parameterInfo != null) {
                 //All remapped value parameters can't be rewritten except case of default ones.
                 //On remapping default parameter to actual value there is only one instruction that writes to it according to mask value
                 //but if such parameter remapped then it passed and this mask branch code never executed
                 //TODO add assertion about parameter default value: descriptor is required
-                opcode = value.type.getOpcode(if (isStore) Opcodes.ISTORE else Opcodes.ILOAD)
-            }
-            mv.visitVarInsn(opcode, value.index)
+                value.type.getOpcode(if (isStore) Opcodes.ISTORE else Opcodes.ILOAD)
+            } else opcode
+            
+            mv.visitVarInsn(localOpcode, value.index)
             if (remapInfo.parameterInfo != null && !isStore) {
                 StackValue.coerce(value.type, remapInfo.parameterInfo.type, mv)
             }

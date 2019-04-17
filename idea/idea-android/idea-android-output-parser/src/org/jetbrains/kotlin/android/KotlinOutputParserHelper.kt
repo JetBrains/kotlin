@@ -57,8 +57,8 @@ fun parse(lineText: String, reader: OutputLineReader, messages: MutableList<Mess
                 val column = if (matcher.groupCount() >= 2) matcher.group(2)?.toInt() ?: 1 else 1
 
                 if (line != null) {
-                    val position = SourceFilePosition(file, SourcePosition(line, column, column))
-                    return addMessage(Message(getMessageKind(severity), message.trim(), position), messages)
+                    val filePosition = SourceFilePosition(file, SourcePosition(line, column, column))
+                    return addMessage(Message(getMessageKind(severity), message.trim(), filePosition), messages)
                 }
             }
 

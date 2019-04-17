@@ -57,9 +57,10 @@ interface IReplStageState<T> {
 
     fun getNextLineNo(): Int = history.peek()?.id?.no?.let { it + 1 } ?: REPL_CODE_LINE_FIRST_NO // TODO: it should be more robust downstream (e.g. use atomic)
 
+    @Suppress("UNCHECKED_CAST")
     fun <StateT : IReplStageState<*>> asState(target: Class<out StateT>): StateT =
-            if (target.isAssignableFrom(this::class.java)) this as StateT
-            else throw IllegalArgumentException("$this is not an expected instance of IReplStageState")
+        if (target.isAssignableFrom(this::class.java)) this as StateT
+        else throw IllegalArgumentException("$this is not an expected instance of IReplStageState")
 }
 
 

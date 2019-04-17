@@ -128,7 +128,7 @@ class NavigationToSingleJarInMultipleLibrariesTest : AbstractNavigationWithMulti
 abstract class AbstractNavigationWithMultipleLibrariesTest : ModuleTestCase() {
     abstract val testDataPath: String
 
-    protected fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)!!
+    protected fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)
 
     protected fun checkReferencesInModule(module: Module, libraryName: String, expectedFileName: String) {
         checkAnnotatedCode(findSourceFile(module), File(testDataPath + expectedFileName)) {

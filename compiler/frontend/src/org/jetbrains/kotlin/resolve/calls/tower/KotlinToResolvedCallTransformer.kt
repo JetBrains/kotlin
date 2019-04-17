@@ -117,6 +117,7 @@ class KotlinToResolvedCallTransformer(
 
                     forwardCallToInferenceSession(baseResolvedCall, context, stub, tracingStrategy)
 
+                    @Suppress("UNCHECKED_CAST")
                     return stub as ResolvedCall<D>
                 }
 
@@ -131,7 +132,8 @@ class KotlinToResolvedCallTransformer(
                     }
                 }
 
-                val resolvedCall = ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.diagnostics) as ResolvedCall<D>
+                @Suppress("UNCHECKED_CAST") val resolvedCall =
+                    ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.diagnostics) as ResolvedCall<D>
                 forwardCallToInferenceSession(baseResolvedCall, context, resolvedCall, tracingStrategy)
 
                 resolvedCall
@@ -580,6 +582,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     override val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
         get() = resolvedCallAtom.argumentMappingByOriginal
 
+    @Suppress("UNCHECKED_CAST")
     override fun getCandidateDescriptor(): D = resolvedCallAtom.candidateDescriptor as D
     override fun getResultingDescriptor(): D = resultingDescriptor
     override fun getExtensionReceiver(): ReceiverValue? = extensionReceiver
@@ -639,6 +642,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
             }
         }
 
+        @Suppress("UNCHECKED_CAST")
         resultingDescriptor = run {
             val candidateDescriptor = resolvedCallAtom.candidateDescriptor
             val containsCapturedTypes = resolvedCallAtom.candidateDescriptor.returnType?.contains { it is NewCapturedType } ?: false

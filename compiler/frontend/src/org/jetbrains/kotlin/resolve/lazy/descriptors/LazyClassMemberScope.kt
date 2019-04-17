@@ -464,8 +464,8 @@ open class LazyClassMemberScope(
         descriptor.returnType = c.wrappedTypeFactory.createDeferredType(trace, { thisDescriptor.defaultType })
     }
 
-    override fun recordLookup(name: Name, from: LookupLocation) {
-        c.lookupTracker.record(from, thisDescriptor, name)
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        c.lookupTracker.record(location, thisDescriptor, name)
     }
 
     // Do not add details here, they may compromise the laziness during debugging

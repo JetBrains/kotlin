@@ -39,7 +39,7 @@ class ScriptEngineV8 : ScriptEngine {
 
     private fun getGlobalPropertyNames(): List<String> {
         val v8Array = eval<V8Array>("Object.getOwnPropertyNames(this)")
-        val javaArray = V8ObjectUtils.toList(v8Array) as List<String>
+        @Suppress("UNCHECKED_CAST") val javaArray = V8ObjectUtils.toList(v8Array) as List<String>
         v8Array.release()
         return javaArray
     }

@@ -121,6 +121,7 @@ abstract class LexicalScopeStorage(
         val result = ArrayList<TDescriptor>(1)
         var rest: IntList? = this
         do {
+            @Suppress("UNCHECKED_CAST")
             result.add(rest!!.last.descriptorByIndex() as TDescriptor)
             rest = rest.prev
         } while (rest != null)

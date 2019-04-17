@@ -61,5 +61,5 @@ class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
         }
     }
 
-    private fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)!!
+    private fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)
 }

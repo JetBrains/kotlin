@@ -19,7 +19,7 @@ data class FunctionInfo(val originalDescriptor: FunctionDescriptor, val superFun
 object UnknownNullability : JKElementInfo
 
 inline class JKElementInfoLabel(val label: String) {
-    inline fun render(): String = "/*@@$label@@*/"
+    fun render(): String = "/*@@$label@@*/"
 
     companion object {
         val LABEL_REGEX = """/\*@@(\w+)@@\*/""".toRegex()

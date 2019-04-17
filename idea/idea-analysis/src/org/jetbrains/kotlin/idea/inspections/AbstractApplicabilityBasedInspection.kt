@@ -33,6 +33,7 @@ abstract class AbstractApplicabilityBasedInspection<TElement: KtElement>(
                     super.visitKtElement(element)
 
                     if (!elementType.isInstance(element) || element.textLength == 0) return
+                    @Suppress("UNCHECKED_CAST")
                     visitTargetElement(element as TElement, holder, isOnTheFly)
                 }
             }

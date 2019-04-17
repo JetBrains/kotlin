@@ -123,8 +123,8 @@ class VariableOrParameterNameWithTypeCompletion(
                     val parameterType = descriptor.type
                     if (parameterType.isVisible(visibilityFilter)) {
                         val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), withType, lookupElementFactory)!!
-                        val (count, name) = lookupElementToCount[lookupElement] ?: Pair(0, name)
-                        lookupElementToCount[lookupElement] = Pair(count + 1, name)
+                        val (count, s) = lookupElementToCount[lookupElement] ?: Pair(0, name)
+                        lookupElementToCount[lookupElement] = Pair(count + 1, s)
                     }
                 }
             }

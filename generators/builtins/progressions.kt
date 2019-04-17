@@ -47,7 +47,6 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 "        if (isEmpty()) -1 else (31 * (31 * first + last) + step)"
             LONG ->
                 "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("first")} + ${hashLong("last")}) + ${hashLong("step")}).toInt()"
-            else -> throw IllegalArgumentException()
         }
 
         out.println(

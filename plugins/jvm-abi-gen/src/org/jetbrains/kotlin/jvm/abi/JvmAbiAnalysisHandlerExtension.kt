@@ -108,7 +108,7 @@ class JvmAbiAnalysisHandlerExtension(
 
             val visitor = InnerClassesCollectingVisitor()
             output.accept(visitor)
-            val outputInternalName = visitor.ownInternalName!!
+            val outputInternalName = visitor.ownInternalName
             internalNameToFile[outputInternalName] = output.file
             innerClasses[outputInternalName] = visitor.innerClasses
         }

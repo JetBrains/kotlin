@@ -273,8 +273,8 @@ class TypeInstantiationItems(
                 presentation.itemText = itemText
 
                 presentation.clearTail()
-                if (signatureText != null) {
-                    presentation.appendTailText(signatureText!!, false)
+                signatureText?.let {
+                    presentation.appendTailText(it, false)
                 }
                 presentation.appendTailText(" (" + DescriptorUtils.getFqName(classifier.containingDeclaration) + ")", true)
             }

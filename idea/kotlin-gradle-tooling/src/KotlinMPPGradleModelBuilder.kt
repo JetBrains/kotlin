@@ -178,7 +178,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val platform = KotlinPlatform.byId(platformId) ?: return null
         val disambiguationClassifier = getDisambiguationClassifier(gradleTarget) as? String
         val getPreset = targetClass.getMethodOrNull("getPreset")
-        var targetPresetName: String? = null
+        var targetPresetName: String?
         try {
             val targetPreset = getPreset?.invoke(gradleTarget)
             val getPresetName = targetPreset?.javaClass?.getMethodOrNull("getName")
@@ -315,7 +315,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val getOutputFile = compileKotlinTaskClass.getMethodOrNull("getOutputFile")
         val classesDirs = getClassesDirs(gradleOutput) as? FileCollection ?: return null
         val resourcesDir = getResourcesDir(gradleOutput) as? File ?: return null
-        val destinationDir =
+        @Suppress("UNCHECKED_CAST") val destinationDir =
             getDestinationDir?.invoke(compileKotlinTask) as? File
             //TODO: Hack for KotlinNativeCompile
                 ?: (getOutputFile?.invoke(compileKotlinTask) as? Property<File>)?.orNull?.parentFile

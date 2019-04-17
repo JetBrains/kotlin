@@ -360,7 +360,7 @@ class CallExpressionResolver(
                 initialDataFlowInfoForArguments = initialDataFlowInfoForArguments.disequate(
                     receiverDataFlowValue, DataFlowValue.nullValue(builtIns), languageVersionSettings
                 )
-            } else if (receiver is ReceiverValue) {
+            } else {
                 reportUnnecessarySafeCall(context.trace, receiver.type, callOperationNode, receiver)
             }
         }

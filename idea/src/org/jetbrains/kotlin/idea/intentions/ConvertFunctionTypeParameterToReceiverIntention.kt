@@ -196,7 +196,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                         }
 
                         usageLoop@ for (ref in callable.searchReferencesOrMethodReferences()) {
-                            val refElement = ref.element ?: continue
+                            val refElement = ref.element
                             when (ref) {
                                 is KtSimpleReference<*> -> processExternalUsage(conflicts, refElement, usages)
                                 is KtReference -> continue@usageLoop

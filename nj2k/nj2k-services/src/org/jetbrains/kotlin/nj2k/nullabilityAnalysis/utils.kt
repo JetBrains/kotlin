@@ -21,15 +21,15 @@ import org.jetbrains.kotlin.resolve.jvm.checkers.mustNotBeNull
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.util.javaslang.getOrNull
 
-internal inline fun KtExpression.deepestReceiver(): KtExpression =
+internal fun KtExpression.deepestReceiver(): KtExpression =
     generateSequence(this) {
         if (it is KtQualifiedExpression) it.receiverExpression else null
     }.last()
 
-internal inline fun KtExpression.isNullable(): Boolean =
+internal fun KtExpression.isNullable(): Boolean =
     getType(analyze())?.isNullable() != false
 
-internal inline fun KtExpression.getForcedNullability(): Nullability? {
+internal fun KtExpression.getForcedNullability(): Nullability? {
     val bindingContext = analyze()
     val type = this.getType(bindingContext) ?: return null
     if (!type.isNullable()) return Nullability.NOT_NULL

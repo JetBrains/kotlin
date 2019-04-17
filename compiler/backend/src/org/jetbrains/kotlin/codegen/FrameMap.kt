@@ -97,7 +97,7 @@ open class FrameMapBase<T : Any> {
         val descriptors = Lists.newArrayList<Trinity<T, Int, Int>>()
 
         for (descriptor0 in myVarIndex.keys()) {
-            val descriptor = descriptor0 as T
+            @Suppress("UNCHECKED_CAST") val descriptor = descriptor0 as T
             val varIndex = myVarIndex.get(descriptor)
             val varSize = myVarSizes.get(descriptor)
             descriptors.add(Trinity.create(descriptor, varIndex, varSize))

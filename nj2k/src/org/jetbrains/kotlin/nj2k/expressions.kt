@@ -327,7 +327,7 @@ fun stringLiteral(content: String, symbolProvider: JKSymbolProvider): JKExpressi
         val newlineSeparator = if (i == lines.size - 1) "" else "\\n"
         JKKtLiteralExpressionImpl("\"$line$newlineSeparator\"", JKLiteralExpression.LiteralType.STRING)
     }.reduce { acc: JKExpression, literalExpression: JKKtLiteralExpression ->
-        kotlinBinaryExpression(acc, literalExpression, JKKtSingleValueOperatorToken(KtTokens.PLUS), symbolProvider)!!
+        kotlinBinaryExpression(acc, literalExpression, JKKtSingleValueOperatorToken(KtTokens.PLUS), symbolProvider)
     }
 }
 
@@ -576,8 +576,7 @@ fun JKExpression.asLiteralTextWithPrefix(): String? =
         else -> null
     }
 
-inline fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? =
-    classBody.declarations.firstIsInstanceOrNull()
+fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? = classBody.declarations.firstIsInstanceOrNull()
 
 fun List<JKExpression>.toArgumentList(): JKArgumentList =
     JKArgumentListImpl(map { JKArgumentImpl(it) })
@@ -597,11 +596,11 @@ fun JKAnnotation.isVarargsArgument(index: Int): Boolean {
 fun JKExpression.asStatement(): JKExpressionStatement =
     JKExpressionStatementImpl(this)
 
-inline fun <T : JKExpression> T.nullIfStubExpression(): T? =
+fun <T : JKExpression> T.nullIfStubExpression(): T? =
     if (this is JKStubExpression) null
     else this
 
-inline fun JKExpression.qualified(qualifier: JKExpression?) =
+fun JKExpression.qualified(qualifier: JKExpression?) =
     if (qualifier != null && qualifier !is JKStubExpression) {
         JKQualifiedExpressionImpl(qualifier, JKJavaQualifierImpl.DOT, this)
     } else this

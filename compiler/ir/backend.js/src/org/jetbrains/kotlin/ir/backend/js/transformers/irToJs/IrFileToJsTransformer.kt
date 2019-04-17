@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.js.backend.ast.JsDeclarationScope
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
 class IrFileToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
-    override fun visitFile(declaration: IrFile, context: JsGenerationContext): JsStatement {
-        val fileContext = context.newDeclaration(JsDeclarationScope(context.currentScope, "scope for file ${declaration.path}"))
+    override fun visitFile(declaration: IrFile, data: JsGenerationContext): JsStatement {
+        val fileContext = data.newDeclaration(JsDeclarationScope(data.currentScope, "scope for file ${declaration.path}"))
         val block = fileContext.currentBlock
 
         declaration.declarations.forEach {

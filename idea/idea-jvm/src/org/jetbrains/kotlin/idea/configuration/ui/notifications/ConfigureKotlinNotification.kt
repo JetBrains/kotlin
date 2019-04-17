@@ -39,11 +39,11 @@ class ConfigureKotlinNotification(
         }
     }
 ) {
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is ConfigureKotlinNotification) return false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConfigureKotlinNotification) return false
 
-        if (content != o.content) return false
+        if (content != other.content) return false
 
         return true
     }

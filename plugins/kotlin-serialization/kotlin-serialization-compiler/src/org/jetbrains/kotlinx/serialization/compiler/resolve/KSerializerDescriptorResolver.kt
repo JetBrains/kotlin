@@ -350,14 +350,12 @@ object KSerializerDescriptorResolver {
         )
         val serializerClass = classDescriptor.getClassFromSerializationPackage(SerialEntityNames.KSERIALIZER_CLASS)
         assert(serializableDescriptor.declaredTypeParameters.size == typeParameters.size)
-        val args = serializableDescriptor.declaredTypeParameters.mapIndexed { index, param ->
-
-            val pType =
-                KotlinTypeFactory.simpleNotNullType(
-                    Annotations.EMPTY,
-                    serializerClass,
-                    listOf(TypeProjectionImpl(typeParameters[index].defaultType))
-                )
+        val args = List(serializableDescriptor.declaredTypeParameters.size) { index ->
+            val pType = KotlinTypeFactory.simpleNotNullType(
+                Annotations.EMPTY,
+                serializerClass,
+                listOf(TypeProjectionImpl(typeParameters[index].defaultType))
+            )
 
             ValueParameterDescriptorImpl(
                 constrDesc, null, index, Annotations.EMPTY, Name.identifier("$typeArgPrefix$index"), pType,

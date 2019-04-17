@@ -226,6 +226,7 @@ inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability)
         else -> TODO(this::class.toString())
     } as T
 
+@Suppress("UNCHECKED_CAST")
 fun <T : JKType> T.updateNullabilityRecursively(newNullability: Nullability): T =
     applyRecursive {
         when (it) {

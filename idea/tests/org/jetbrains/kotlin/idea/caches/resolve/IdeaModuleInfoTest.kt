@@ -432,7 +432,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         get() = LibraryInfo(project!!, this)
 
     private fun module(name: String, hasProductionRoot: Boolean = true, hasTestRoot: Boolean = true): Module {
-        return createModuleFromTestData(createTempDirectory()!!.absolutePath, name, StdModuleTypes.JAVA, false)!!.apply {
+        return createModuleFromTestData(createTempDirectory().absolutePath, name, StdModuleTypes.JAVA, false).apply {
             if (hasProductionRoot)
                 PsiTestUtil.addSourceContentToRoots(this, dir(), false)
             if (hasTestRoot)

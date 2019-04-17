@@ -102,17 +102,15 @@ open class KotlinUSimpleReferenceExpression(
                 null
             }
 
-            if (resolvedCall != null) {
-                if (access.isRead) {
-                    val getDescriptor = resultingDescriptor.getMethod
-                    KotlinAccessorCallExpression(psi, this, resolvedCall, getDescriptor, null).accept(visitor)
-                }
+            if (access.isRead) {
+                val getDescriptor = resultingDescriptor.getMethod
+                KotlinAccessorCallExpression(psi, this, resolvedCall, getDescriptor, null).accept(visitor)
+            }
 
-                if (access.isWrite && setterValue != null) {
-                    val setDescriptor = resultingDescriptor.setMethod
-                    if (setDescriptor != null) {
-                        KotlinAccessorCallExpression(psi, this, resolvedCall, setDescriptor, setterValue).accept(visitor)
-                    }
+            if (access.isWrite && setterValue != null) {
+                val setDescriptor = resultingDescriptor.setMethod
+                if (setDescriptor != null) {
+                    KotlinAccessorCallExpression(psi, this, resolvedCall, setDescriptor, setterValue).accept(visitor)
                 }
             }
         }

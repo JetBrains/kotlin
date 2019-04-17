@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.js.backend.ast.*
 
 fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
@@ -18,12 +20,12 @@ fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext
     return JsVars(JsVars.JsVar(name, jsInitializer))
 }
 
-fun <T : JsNode, D : JsGenerationContext> IrWhen.toJsNode(
-    tr: BaseIrElementToJsNodeTransformer<T, D>,
-    data: D,
+fun <T : JsNode> IrWhen.toJsNode(
+    tr: BaseIrElementToJsNodeTransformer<T, JsGenerationContext>,
+    data: JsGenerationContext,
     node: (JsExpression, T, T?) -> T
 ): T? =
-    branches.foldRight<IrBranch, T?>(null) { br, n ->
+    branches.foldRight(null) { br, n ->
         val body = br.result.accept(tr, data)
         if (isElseBranch(br)) body
         else {
@@ -118,9 +120,7 @@ object JsAstUtils {
         thenStatement: JsStatement,
         elseStatement: JsStatement? = null
     ): JsIf {
-        var elseStatement = elseStatement
-        elseStatement = if (elseStatement != null) deBlockIfPossible(elseStatement) else null
-        return JsIf(ifExpression, deBlockIfPossible(thenStatement), elseStatement)
+        return JsIf(ifExpression, deBlockIfPossible(thenStatement), elseStatement?.let { deBlockIfPossible(it) })
     }
 
     fun and(op1: JsExpression, op2: JsExpression): JsBinaryOperation {

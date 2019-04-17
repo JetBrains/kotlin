@@ -96,7 +96,7 @@ class IrInlineCodegen(
 
     private fun rememberClosure(irReference: IrFunctionReference, type: Type, parameter: ValueParameterDescriptor): LambdaInfo {
         //assert(InlineUtil.isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
-        val expression = irReference.symbol.owner as IrFunction
+        val expression = irReference.symbol.owner
         return IrExpressionLambdaImpl(
             irReference, expression, typeMapper, parameter.isCrossinline, false/*TODO*/,
             parameter.type.isExtensionFunctionType

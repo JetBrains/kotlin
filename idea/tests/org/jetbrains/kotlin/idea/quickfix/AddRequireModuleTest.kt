@@ -13,7 +13,7 @@ import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTestCase() {
-    private val messageM2 = QuickFixBundle.message("module.info.add.requires.name", "M_TWO")!!
+    private val messageM2 = QuickFixBundle.message("module.info.add.requires.name", "M_TWO")
 
     override fun setUp() {
         super.setUp()
@@ -72,7 +72,7 @@ class KotlinAddRequiredModuleTest : KotlinLightJava9ModulesCodeInsightFixtureTes
                 MAIN)
         myFixture.configureFromExistingVirtualFile(editedFile)
 
-        findActionAndExecute(QuickFixBundle.message("module.info.add.requires.name", "java.logging")!!)
+        findActionAndExecute(QuickFixBundle.message("module.info.add.requires.name", "java.logging"))
 
         assertNoErrors()
         checkModuleInfo(

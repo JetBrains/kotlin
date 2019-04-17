@@ -112,7 +112,7 @@ private class TypeTreeVisitor(val elementUtils: Elements, val trees: Trees, val 
         val newVisibility = if (node.sym.getKind() == ElementKind.FIELD) {
             val flags = node.modifiers.getFlags()
 
-            node.sym.constValue?.let { constValue ->
+            node.sym.constValue?.let { _ ->
                 constantTreeVisitor.scan(trees.getPath(compilationUnit, node.init), null)
             }
             if (flags.contains(Modifier.PRIVATE)) Visibility.NON_ABI else Visibility.ABI

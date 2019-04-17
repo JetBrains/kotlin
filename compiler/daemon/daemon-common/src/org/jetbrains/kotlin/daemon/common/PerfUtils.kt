@@ -134,7 +134,8 @@ class DummyProfiler : Profiler {
     override fun getCounters(): Map<Any?, PerfCounters> = mapOf(null to SimplePerfCounters())
     override fun getTotalCounters(): PerfCounters = SimplePerfCounters()
 
-    override final inline fun <R> withMeasure(obj: Any?, body: () -> R): R = body()
+    @Suppress("OVERRIDE_BY_INLINE")
+    override inline fun <R> withMeasure(obj: Any?, body: () -> R): R = body()
 }
 
 
@@ -149,17 +150,20 @@ abstract class TotalProfiler : Profiler {
 
 
 class WallTotalProfiler : TotalProfiler() {
-    override final inline fun <R> withMeasure(obj: Any?, body: () -> R): R = withMeasureWallTime(total, body)
+    @Suppress("OVERRIDE_BY_INLINE")
+    override inline fun <R> withMeasure(obj: Any?, body: () -> R): R = withMeasureWallTime(total, body)
 }
 
 
 class WallAndThreadTotalProfiler : TotalProfiler() {
-    override final inline fun <R> withMeasure(obj: Any?, body: () -> R): R = withMeasureWallAndThreadTimes(total, threadMXBean, body)
+    @Suppress("OVERRIDE_BY_INLINE")
+    override inline fun <R> withMeasure(obj: Any?, body: () -> R): R = withMeasureWallAndThreadTimes(total, threadMXBean, body)
 }
 
 
 class WallAndThreadAndMemoryTotalProfiler(val withGC: Boolean) : TotalProfiler() {
-    override final inline fun <R> withMeasure(obj: Any?, body: () -> R): R = withMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean, body)
+    @Suppress("OVERRIDE_BY_INLINE")
+    override inline fun <R> withMeasure(obj: Any?, body: () -> R): R = withMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean, body)
 }
 
 
@@ -169,6 +173,7 @@ class WallAndThreadByClassProfiler() : TotalProfiler() {
 
     override fun getCounters(): Map<Any?, PerfCounters> = counters
 
-    override final inline fun <R> withMeasure(obj: Any?, body: () -> R): R =
-            withMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean, body)
+    @Suppress("OVERRIDE_BY_INLINE")
+    override inline fun <R> withMeasure(obj: Any?, body: () -> R): R =
+        withMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean, body)
 }

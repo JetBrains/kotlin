@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
+@Suppress("DEPRECATION")
 class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteralExpression>(ObjectLiteralToLambdaIntention::class) {
     override fun problemHighlightType(element: KtObjectLiteralExpression): ProblemHighlightType {
         val (_, baseType, singleFunction) = extractData(element) ?: return super.problemHighlightType(element)

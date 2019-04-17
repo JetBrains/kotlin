@@ -106,7 +106,6 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
         // TODO relies on ControlFlowInformationProvider, get rid of it
         val isUsedAsExpression = get(BindingContext.USED_AS_EXPRESSION, expression) ?: false
-        val isExhaustive = expression.isExhaustiveWhen()
 
         val resultType = when {
             isUsedAsExpression -> inferredType.toIrType()

@@ -137,6 +137,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         constructor: TypeConstructor
     ): List<SimpleType> {
         return AbstractTypeChecker.run {
+            @Suppress("UNCHECKED_CAST")
             findCorrespondingSupertypes(baseType, constructor) as List<SimpleType>
         }
     }

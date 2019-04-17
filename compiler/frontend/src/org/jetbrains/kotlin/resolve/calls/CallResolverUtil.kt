@@ -145,7 +145,7 @@ fun isBinaryRemOperator(call: Call): Boolean {
     val operator = callElement.operationToken
     if (operator !is KtToken) return false
 
-    val name = OperatorConventions.getNameForOperationSymbol(operator, true, true)
+    val name = OperatorConventions.getNameForOperationSymbol(operator, true, true) ?: return false
     return name in OperatorConventions.REM_TO_MOD_OPERATION_NAMES.keys
 }
 

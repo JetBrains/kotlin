@@ -168,12 +168,12 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
     }
 
+    @Suppress("UNREACHABLE_CODE")
     private fun canSkipStackSpillingOnInline(methodNode: MethodNode): Boolean {
-        // Temporary disable this optimization until
+        // TODO: Temporary disable this optimization until
         // https://issuetracker.google.com/issues/68796377 is fixed
         // or until d8 substitute dex
         return false
-
         // Stack spilling before inline function 'f' call is required if:
         //  - 'f' is a suspend function
         //  - 'f' has try-catch blocks

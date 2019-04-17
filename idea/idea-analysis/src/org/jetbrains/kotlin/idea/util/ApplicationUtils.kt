@@ -40,7 +40,7 @@ fun <T> Project.executeWriteCommand(name: String, groupId: Any? = null, command:
 }
 
 fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -> T): T {
-    var result: T = null as T
+    @Suppress("UNCHECKED_CAST") var result: T = null as T
     CommandProcessor.getInstance().executeCommand(this, { result = command() }, name, groupId)
     @Suppress("USELESS_CAST")
     return result as T

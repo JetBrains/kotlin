@@ -28,6 +28,7 @@ object EditCommaSeparatedListHelper {
         return addItemBefore(list, allItems, item, null, prefix)
     }
 
+    @Suppress("UNCHECKED_CAST")
     @JvmOverloads
     fun <TItem : KtElement> addItemAfter(
         list: KtElement,

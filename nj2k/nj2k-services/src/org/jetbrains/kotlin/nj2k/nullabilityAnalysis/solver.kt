@@ -30,13 +30,13 @@ internal class Solver(
         }
 
     fun solveConstraints(constraints: List<Constraint>) {
-        val constraints = constraints.toMutableList()
+        val mutableConstraints = constraints.toMutableList()
         var currentStep = ConstraintCameFrom.values().first()
 
         var i = 0
         do {
             var somethingChanged = false
-            with(constraints) {
+            with(mutableConstraints) {
                 printDebugInfo(i)
                 somethingChanged = handleConstraintsWithNullableLowerBound(currentStep) || somethingChanged
                 somethingChanged = handleConstraintsWithNotNullUpperBound(currentStep) || somethingChanged
@@ -53,7 +53,7 @@ internal class Solver(
                 }
             }
             if (!somethingChanged) {
-                val typeVariable = constraints.getTypeVariableAsEqualsOrUpperBound()
+                val typeVariable = mutableConstraints.getTypeVariableAsEqualsOrUpperBound()
                 if (typeVariable != null) {
                     typeVariable.setNullabilityIfNotFixed(Nullability.NOT_NULL)
                     somethingChanged = true

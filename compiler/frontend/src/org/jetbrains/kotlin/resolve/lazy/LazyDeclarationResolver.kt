@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager
 import javax.inject.Inject
 
-open class LazyDeclarationResolver @Deprecated("") constructor(
+open class LazyDeclarationResolver constructor(
     globalContext: GlobalContext,
     delegationTrace: BindingTrace,
     private val topLevelDescriptorProvider: TopLevelDescriptorProvider,

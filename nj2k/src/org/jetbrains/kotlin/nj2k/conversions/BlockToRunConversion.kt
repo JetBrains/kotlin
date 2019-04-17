@@ -16,8 +16,7 @@ class BlockToRunConversion(private val context: NewJ2kConverterContext) : Recurs
         if (element.parent !is JKBlock) return recurse(element)
 
         val parentDeclaration = element.parentOfType<JKDeclaration>() ?: return recurse(element)
-        val psiContext = parentDeclaration.psi ?: return recurse(element)
-
+        if (parentDeclaration.psi == null) return recurse(element)
 
         element.invalidate()
         val lambda = JKLambdaExpressionImpl(

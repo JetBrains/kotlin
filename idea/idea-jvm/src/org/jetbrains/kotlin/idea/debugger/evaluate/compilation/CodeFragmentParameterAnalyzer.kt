@@ -294,6 +294,7 @@ class CodeFragmentParameterAnalyzer(
             is ValueDescriptor -> {
                 parameters.getOrPut(target) {
                     val type = target.type
+                    @Suppress("DEPRECATION")
                     val kind = if (target is LocalVariableDescriptor && target.isDelegated) Kind.DELEGATED else Kind.ORDINARY
                     Smart(Dumb(kind, target.name.asString()), type, target)
                 }

@@ -166,6 +166,7 @@ class SyntheticClassOrObjectDescriptor(
 
         override fun getPsiOrParent() = _parent.psiOrParent
         override fun getParent() = _parent.psiOrParent
+        @Suppress("USELESS_ELVIS")
         override fun getContainingKtFile() =
         // in theory `containingKtFile` is `@NotNull` but in practice EA-114080
             _parent.containingKtFile ?: throw IllegalStateException("containingKtFile was null for $_parent of ${_parent.javaClass}")

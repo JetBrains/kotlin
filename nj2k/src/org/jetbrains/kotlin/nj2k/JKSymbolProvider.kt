@@ -84,6 +84,7 @@ class JKSymbolProvider {
         }
 
     fun transferSymbol(to: JKDeclaration, from: JKDeclaration) = symbolsByJK[from]?.also {
+        @Suppress("UNCHECKED_CAST")
         it as JKUniverseSymbol<JKTreeElement>
         it.target = to
         symbolsByJK[to] = it

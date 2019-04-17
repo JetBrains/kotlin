@@ -175,7 +175,11 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
 
         override fun isAvailable(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
             assert(startElement == endElement)
-            return intention.applicabilityRange(startElement as TElement) != null && additionalChecker(startElement, this@IntentionBasedInspection)
+            @Suppress("UNCHECKED_CAST")
+            return intention.applicabilityRange(startElement as TElement) != null && additionalChecker(
+                startElement,
+                this@IntentionBasedInspection
+            )
         }
 
         override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
@@ -190,6 +194,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
 
             val editor = startElement.findExistingEditor()
             editor?.caretModel?.moveToOffset(startElement.textOffset)
+            @Suppress("UNCHECKED_CAST")
             intention.applyTo(startElement as TElement, editor)
         }
     }

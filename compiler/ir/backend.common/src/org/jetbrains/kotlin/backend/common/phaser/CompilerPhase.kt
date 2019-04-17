@@ -78,6 +78,7 @@ abstract class AbstractNamedPhaseWrapper<in Context : CommonBackendContext, Inpu
         if (this is SameTypeCompilerPhase<*, *> &&
             this !in phaseConfig.enabled
         ) {
+            @Suppress("UNCHECKED_CAST")
             return input as Output
         }
 
@@ -121,7 +122,7 @@ abstract class AbstractNamedPhaseWrapper<in Context : CommonBackendContext, Inpu
             for (post in postconditions) post(output)
             for (post in stickyPostconditions) post(output)
             if (phaseConfig.checkStickyConditions && this is SameTypeCompilerPhase<*, *>) {
-                val phaserStateO = phaserState as PhaserState<Output>
+                @Suppress("UNCHECKED_CAST") val phaserStateO = phaserState as PhaserState<Output>
                 for (post in phaserStateO.stickyPostconditions) post(output)
             }
         }

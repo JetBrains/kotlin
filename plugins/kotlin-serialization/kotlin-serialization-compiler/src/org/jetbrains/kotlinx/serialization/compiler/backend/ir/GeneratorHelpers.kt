@@ -475,7 +475,7 @@ interface IrBuilderExtension {
             compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
         if (serializerClassOriginal == null) {
             if (genericIndex == null) return null
-            val thiz = enclosingGenerator.irClass.thisReceiver!!
+
             val prop = enclosingGenerator.localSerializersFieldsDescriptors[genericIndex]
             return irGetField(irGet(dispatchReceiverParameter), compilerContext.localSymbolTable.referenceField(prop).owner)
         }

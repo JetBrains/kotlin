@@ -149,12 +149,13 @@ private class JvmDeclared(val textToContain: String, vararg jvmClasses: KClass<o
 }
 
 fun <T> assertMatches(elements: Collection<T>, vararg conditions: (T) -> Boolean) {
-    val matchResult = matchElementsToConditions(elements, conditions.toList())
-    when (matchResult) {
+    when (val matchResult = matchElementsToConditions(elements, conditions.toList())) {
         is MatchResult.UnmatchedCondition ->
             throw AssertionError("no one matches the ${matchResult.condition}, elements = ${elements.joinToString { it.toString() }}")
         is MatchResult.UnmatchedElements ->
             throw AssertionError("elements ${matchResult.elements.joinToString { it.toString() }} wasn't matched by any condition")
+        is MatchResult.Matched -> {
+        }
     }
 }
 

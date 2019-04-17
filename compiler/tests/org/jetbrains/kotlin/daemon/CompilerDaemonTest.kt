@@ -579,11 +579,11 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                             ParallelStartParams.performCompilation -> {
                                 val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
                                 KotlinCompilerClient.compile(
-                                        compileServiceSession!!.compileService,
-                                        compileServiceSession.sessionId,
-                                        CompileService.TargetPlatform.JVM,
-                                        arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
-                                        PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true))
+                                    compileServiceSession.compileService,
+                                    compileServiceSession.sessionId,
+                                    CompileService.TargetPlatform.JVM,
+                                    arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                                    PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true))
                             }
                             else -> 0 // compilation skipped, assuming - successful
                         }

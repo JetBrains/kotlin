@@ -94,7 +94,7 @@ abstract class AbstractAsyncStackTraceTest : KotlinDebuggerTestBase() {
 
             @Suppress("UNCHECKED_CAST")
             val variablesField = item.javaClass.declaredFields.first { !Modifier.isStatic(it.modifiers) && it.type == List::class.java }
-            val variables = variablesField.getSafe(item) as? List<JavaValue>
+            @Suppress("UNCHECKED_CAST") val variables = variablesField.getSafe(item) as? List<JavaValue>
             if (variables != null) {
                 for (variable in variables) {
                     val descriptor = variable.descriptor
