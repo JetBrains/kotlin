@@ -271,7 +271,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
             TypeSubstitutorMarker {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
                 val new = map[type.typeConstructor()] ?: return null
-                return new as ConeKotlinType
+                return makeNullableIfNeed(type.isMarkedNullable, new as ConeKotlinType)
             }
         }
     }
