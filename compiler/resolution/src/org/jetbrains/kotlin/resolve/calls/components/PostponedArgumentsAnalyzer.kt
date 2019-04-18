@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
@@ -68,15 +71,31 @@ class PostponedArgumentsAnalyzer(
 
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
-        val receiver = lambda.receiver?.let(::substitute)
-        val parameters = lambda.parameters.map(::substitute)
+        fun expectedOrActualType(expected: UnwrappedType?, actual: UnwrappedType?): UnwrappedType? {
+            val expectedSubstituted = expected?.let(::substitute)
+            return if (expectedSubstituted != null && c.canBeProper(expectedSubstituted)) expectedSubstituted else actual?.let(::substitute)
+        }
+
+        val builtIns = c.getBuilder().builtIns
+
+        // Expected type has a higher priority against which lambda should be analyzed
+        // Mostly, this is needed to report more specific diagnostics on lambda parameters
+        val receiver = expectedOrActualType(lambda.expectedType.receiver(), lambda.receiver)
+
+        val expectedParameters = lambda.expectedType.valueParameters()
+
+        val parameters =
+            expectedParameters?.mapIndexed { index, expected ->
+                expectedOrActualType(expected, lambda.parameters.getOrNull(index)) ?: builtIns.nothingType
+            } ?: lambda.parameters.map(::substitute)
+
         val rawReturnType = lambda.returnType
 
         val expectedTypeForReturnArguments = when {
             c.canBeProper(rawReturnType) -> substitute(rawReturnType)
 
             // For Unit-coercion
-            c.hasUpperOrEqualUnitConstraint(rawReturnType) -> lambda.returnType.builtIns.unitType
+            c.hasUpperOrEqualUnitConstraint(rawReturnType) -> builtIns.unitType
 
             else -> null
         }
@@ -120,5 +139,17 @@ class PostponedArgumentsAnalyzer(
                 c.getBuilder().addEqualityConstraint(variable.defaultType(c), resultType, CoroutinePosition())
             }
         }
+    }
+
+    private fun UnwrappedType?.receiver(): UnwrappedType? {
+        return forFunctionalType { getReceiverTypeFromFunctionType()?.unwrap() }
+    }
+
+    private fun UnwrappedType?.valueParameters(): List<UnwrappedType>? {
+        return forFunctionalType { getValueParameterTypesFromFunctionType().map { it.type.unwrap() } }
+    }
+
+    private inline fun <T> UnwrappedType?.forFunctionalType(f: UnwrappedType.() -> T?): T? {
+        return if (this?.isBuiltinFunctionalType == true) f(this) else null
     }
 }

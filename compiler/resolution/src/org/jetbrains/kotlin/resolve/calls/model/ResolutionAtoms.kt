@@ -94,7 +94,8 @@ class ResolvedLambdaAtom(
     val receiver: UnwrappedType?,
     val parameters: List<UnwrappedType>,
     val returnType: UnwrappedType,
-    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
+    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?,
+    val expectedType: UnwrappedType?
 ) : PostponedResolvedAtom() {
     lateinit var resultArguments: List<KotlinCallArgument>
         private set
