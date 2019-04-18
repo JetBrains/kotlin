@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-draft
- * PLACES: constant-literals, integer-literals, binary-integer-literals -> paragraph 1 -> sentence 2
+ * PLACE: constant-literals, integer-literals, binary-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 4
  * DESCRIPTION: Binary integer literals with underscore symbol before the first digit (it's considered as identifiers).
  */

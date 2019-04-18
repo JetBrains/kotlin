@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-draft
- * PLACES: constant-literals, integer-literals, hexadecimal-integer-literals -> paragraph 1 -> sentence 2
+ * PLACE: constant-literals, integer-literals, hexadecimal-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: Hexadecimal integer literals with underscore breaking the prefix (in it).
  */
