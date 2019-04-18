@@ -511,7 +511,8 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             is FirExpression -> statement
             else -> null
         }
-        (resultExpression?.resultType as? FirResolvedTypeRef)?.let { block.resultType = it }
+        block.resultType = (resultExpression?.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(session, null, "No type for block")
+
         return block.compose()
     }
 
