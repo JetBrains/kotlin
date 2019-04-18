@@ -11,22 +11,25 @@ import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfigurationKeys
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
-import kotlin.script.experimental.util.PropertiesCollection
 
 @Deprecated("use the same definitions from kotlin.script.experimental.jvm package", level = DeprecationLevel.WARNING)
-interface JvmScriptEvaluationConfigurationKeys
+interface JvmScriptEvaluationConfigurationKeys : kotlin.script.experimental.jvm.JvmScriptEvaluationConfigurationKeys
 
+@Suppress("DEPRECATION")
 @Deprecated("use the same definitions from kotlin.script.experimental.jvm package", level = DeprecationLevel.WARNING)
-open class JvmScriptEvaluationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptEvaluationConfigurationKeys {
+open class JvmScriptEvaluationConfigurationBuilder
+    : kotlin.script.experimental.jvm.JvmScriptEvaluationConfigurationBuilder(), JvmScriptEvaluationConfigurationKeys {
 
     companion object : JvmScriptEvaluationConfigurationBuilder()
 }
 
+@Suppress("DEPRECATION")
 @Deprecated("use the same definitions from kotlin.script.experimental.jvm package", level = DeprecationLevel.ERROR)
 val JvmScriptEvaluationConfigurationKeys.baseClassLoader get() = ScriptEvaluationConfiguration.jvm.baseClassLoader
 
+@Suppress("DEPRECATION")
 @Deprecated("use the same definitions from kotlin.script.experimental.jvm package", level = DeprecationLevel.ERROR)
-val ScriptEvaluationConfigurationKeys.jvm get() = ScriptEvaluationConfiguration.jvm
+val ScriptEvaluationConfigurationKeys.jvm get() = JvmScriptEvaluationConfigurationBuilder()
 
 @Deprecated("use the same definitions from kotlin.script.experimental.jvm package", level = DeprecationLevel.ERROR)
 open class BasicJvmScriptEvaluator : kotlin.script.experimental.jvm.BasicJvmScriptEvaluator()
