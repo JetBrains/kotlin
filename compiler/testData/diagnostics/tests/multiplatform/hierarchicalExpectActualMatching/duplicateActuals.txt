@@ -1,0 +1,80 @@
+// -- Module: <common> --
+package
+
+
+
+// -- Module: <js> --
+package
+
+package foo {
+
+    public final actual class ExplicitlyDuplicatedByMiddleAndJs {
+        public constructor ExplicitlyDuplicatedByMiddleAndJs()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final actual class ImplicitlyDuplicatedByMiddleAndJs {
+        public constructor ImplicitlyDuplicatedByMiddleAndJs()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <jvm> --
+package
+
+package foo {
+
+    public final actual class ExplicitlyDuplicatedByMiddleAndJvm {
+        public constructor ExplicitlyDuplicatedByMiddleAndJvm()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class ImplicitlyDuplicatedByMiddleAndJvm {
+        public constructor ImplicitlyDuplicatedByMiddleAndJvm()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <jvmAndJs> --
+package
+
+package foo {
+
+    public final actual class ExplicitlyDuplicatedByMiddleAndJs {
+        public constructor ExplicitlyDuplicatedByMiddleAndJs()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final actual class ExplicitlyDuplicatedByMiddleAndJvm {
+        public constructor ExplicitlyDuplicatedByMiddleAndJvm()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class ImplicitlyDuplicatedByMiddleAndJs {
+        public constructor ImplicitlyDuplicatedByMiddleAndJs()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final actual class ImplicitlyDuplicatedByMiddleAndJvm {
+        public constructor ImplicitlyDuplicatedByMiddleAndJvm()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

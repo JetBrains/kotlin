@@ -13608,6 +13608,34 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/hierarchicalExpectActualMatching")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class HierarchicalExpectActualMatching extends AbstractDiagnosticsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInHierarchicalExpectActualMatching() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hierarchicalExpectActualMatching"), Pattern.compile("^(.*)\\.kts?$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("diamondActualizationOk.kt")
+                public void testDiamondActualizationOk() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hierarchicalExpectActualMatching/diamondActualizationOk.kt");
+                }
+
+                @TestMetadata("duplicateActuals.kt")
+                public void testDuplicateActuals() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hierarchicalExpectActualMatching/duplicateActuals.kt");
+                }
+
+                @TestMetadata("partialActualization.kt")
+                public void testPartialActualization() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hierarchicalExpectActualMatching/partialActualization.kt");
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/inlineClasses")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

@@ -214,7 +214,6 @@ fun createContainerToResolveCommonCode(
 
     configureCommonSpecificComponents()
     useInstance(metadataPartProvider)
-    useInstance(ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractor.DEFAULT)
 
     val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
         ?: error("No MetadataFinderFactory in project")

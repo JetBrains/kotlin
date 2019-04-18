@@ -56,10 +56,11 @@ open class ExpectedActualDeclarationChecker(
         }
     }
 
-    class ActualAnnotationArgumentExtractorClashResolver : PlatformExtensionsClashResolver.PreferNonDefault<ActualAnnotationArgumentExtractor>(
-        ActualAnnotationArgumentExtractor.DEFAULT,
-        ActualAnnotationArgumentExtractor::class.java
-    )
+    class ActualAnnotationArgumentExtractorClashResolver :
+        PlatformExtensionsClashResolver.PreferNonDefault<ActualAnnotationArgumentExtractor>(
+            ActualAnnotationArgumentExtractor.DEFAULT,
+            ActualAnnotationArgumentExtractor::class.java
+        )
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
@@ -114,28 +115,36 @@ open class ExpectedActualDeclarationChecker(
             .mapNotNull { ExpectedActualResolver.findActualForExpected(descriptor, it) }
             .ifEmpty { return }
             .fold(LinkedHashMap<Compatibility, List<MemberDescriptor>>()) { resultMap, partialMap ->
-                resultMap.apply { putAll(partialMap) }
+                resultMap.merge(partialMap)
             }
 
+        // Only strong incompatibilities, but this is an OptionalExpectation -- don't report it
         if (compatibility.allStrongIncompatibilities() && isOptionalAnnotationClass(descriptor)) return
 
-        val shouldReportError =
-            compatibility.allStrongIncompatibilities() ||
-                    Compatible !in compatibility && descriptor.hasNoActualWithDiagnostic(compatibility)
+        // Several compatible actuals on one path: report AMBIGUIOUS_ACTUALS here
+        if (Compatible in compatibility && compatibility[Compatible]!!.size > 1) {
+            trace.report(Errors.AMBIGUOUS_ACTUALS.on(reportOn, descriptor, compatibility[Compatible]!!.map { it.module }))
+            return
+        }
 
-        if (shouldReportError) {
+        // Only strong incompatibilities, or error won't be reported on actual: report NO_ACTUAL_FOR_EXPECT here
+        if (compatibility.allStrongIncompatibilities() ||
+            Compatible !in compatibility && descriptor.hasNoActualWithDiagnostic(compatibility)
+        ) {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
             trace.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, path, incompatibility))
-        } else {
-            val actualMembers = compatibility.asSequence()
-                .filter { (compatibility, _) ->
-                    compatibility is Compatible || (compatibility is Incompatible && compatibility.kind != Compatibility.IncompatibilityKind.STRONG)
-                }.flatMap { it.value.asSequence() }
-
-            expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
+            return
         }
+
+        // Here we have exactly one compatible actual and/or some weakly incompatible. In either case, we don't report anything on expect
+        val actualMembers = compatibility.asSequence()
+            .filter { (compatibility, _) ->
+                compatibility is Compatible || (compatibility is Incompatible && compatibility.kind != Compatibility.IncompatibilityKind.STRONG)
+            }.flatMap { it.value.asSequence() }
+
+        expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
     }
 
     private fun MemberDescriptor.hasNoActualWithDiagnostic(
@@ -334,5 +343,14 @@ open class ExpectedActualDeclarationChecker(
 
         fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
             this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
+
+        private fun <K, V> LinkedHashMap<K, List<V>>.merge(other: Map<K, List<V>>): LinkedHashMap<K, List<V>> {
+            for ((key, newValue) in other) {
+                val oldValue = this[key] ?: emptyList()
+                this[key] = oldValue + newValue
+            }
+
+            return this
+        }
     }
 }

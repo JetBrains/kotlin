@@ -49,6 +49,11 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         runTest("compiler/testData/multiplatform/createImplClassInPlatformModule/");
     }
 
+    @TestMetadata("danglingActual")
+    public void testDanglingActual() throws Exception {
+        runTest("compiler/testData/multiplatform/danglingActual/");
+    }
+
     @TestMetadata("explicitActualOnOverrideOfAbstractMethod")
     public void testExplicitActualOnOverrideOfAbstractMethod() throws Exception {
         runTest("compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/");
@@ -363,6 +368,19 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
         public void testAllFilesPresentInCreateImplClassInPlatformModule() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/createImplClassInPlatformModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/danglingActual")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DanglingActual extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDanglingActual() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/danglingActual"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
     }
 

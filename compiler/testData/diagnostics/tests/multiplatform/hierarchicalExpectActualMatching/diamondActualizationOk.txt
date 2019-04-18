@@ -1,0 +1,47 @@
+// -- Module: <bottom> --
+package
+
+package foo {
+    public fun foo(/*0*/ t: foo.Top): kotlin.Unit
+
+    public final actual class C {
+        public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <left> --
+package
+
+package foo {
+
+    public final actual class Top {
+        public constructor Top()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun fromLeft(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <right> --
+package
+
+package foo {
+
+    public final actual class Top {
+        public constructor Top()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun fromRight(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+
+// -- Module: <top> --
+package

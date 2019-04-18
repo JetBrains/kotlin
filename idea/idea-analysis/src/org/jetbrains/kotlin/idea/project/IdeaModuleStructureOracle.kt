@@ -17,7 +17,7 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
     }
 
     override fun findAllActualizationPaths(module: ModuleDescriptor): List<ModulePath> {
-        val currentPath: Queue<ModuleDescriptor> = LinkedList()
+        val currentPath: Stack<ModuleDescriptor> = Stack()
 
         return sequence<ModulePath> {
             yieldPathsFromSubgraph(module, currentPath, getChilds = { it.implementingDescriptors })
@@ -25,7 +25,7 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
     }
 
     override fun findAllExpectedByPaths(module: ModuleDescriptor): List<ModulePath> {
-        val currentPath: Queue<ModuleDescriptor> = LinkedList()
+        val currentPath: Stack<ModuleDescriptor> = Stack()
 
         return sequence<ModulePath> {
             yieldPathsFromSubgraph(module, currentPath, getChilds = { it.expectedByModules })
@@ -34,17 +34,20 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
 
     private suspend fun SequenceScope<ModulePath>.yieldPathsFromSubgraph(
         root: ModuleDescriptor,
-        currentPath: Queue<ModuleDescriptor>,
+        currentPath: Stack<ModuleDescriptor>,
         getChilds: (ModuleDescriptor) -> List<ModuleDescriptor>
     ) {
-        currentPath.offer(root)
+        currentPath.push(root)
 
         val childs = getChilds(root)
-        if (childs.isEmpty())
+        if (childs.isEmpty()) {
             yield(ModulePath(currentPath.toList()))
-        else
-            childs.forEach { yieldPathsFromSubgraph(it, currentPath, getChilds) }
+        } else {
+            childs.forEach {
+                yieldPathsFromSubgraph(it, currentPath, getChilds)
+            }
+        }
 
-        currentPath.poll()
+        currentPath.pop()
     }
 }

@@ -155,8 +155,8 @@ object ExpectedActualResolver {
         return classifiers
     }
 
-    private fun <T : DeclarationDescriptor> Iterable<T>.onlyFromThis(module: ModuleDescriptor): List<T> =
-        filter { it.module == module }
+    private fun <T : DeclarationDescriptor> Iterable<T>.onlyFromThis(module: ModuleDescriptor): List<T> = this.toList()
+//        filter { it.module == module }
 
     sealed class Compatibility {
         // For IncompatibilityKind.STRONG `actual` declaration is considered as overload and error reports on expected declaration

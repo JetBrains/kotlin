@@ -284,6 +284,7 @@ public class DefaultErrorMessages {
                 MODULE_PATH, PlatformIncompatibilityDiagnosticRenderer.TEXT);
         MAP.put(ACTUAL_WITHOUT_EXPECT, "{0} has no corresponding expected declaration{1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 PlatformIncompatibilityDiagnosticRenderer.TEXT);
+        MAP.put(AMBIGUOUS_ACTUALS, "{0} has several compatible actual declarations in modules {1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM, commaSeparated(MODULE));
 
         MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "Actual class ''{0}'' has no corresponding members for expected class members:{1}",
                 NAME, IncompatibleExpectedActualClassScopesRenderer.TEXT);
