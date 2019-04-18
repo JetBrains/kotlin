@@ -16,16 +16,18 @@
 
 package org.jetbrains.kotlin.nj2k
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.SdkModificator
+import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
+import com.intellij.psi.codeStyle.JavaCodeStyleSettings
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.AfterClass
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.test.AfterTest
 
 abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterSingleFileTest() {
     override fun compareResults(expectedFile: File, actual: String) {
@@ -35,13 +37,36 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
         }
     }
 
+    override fun setUp() {
+        super.setUp()
+        JavaCodeStyleSettings.getInstance(project).USE_EXTERNAL_ANNOTATIONS = true
+    }
+
+    override fun tearDown() {
+        JavaCodeStyleSettings.getInstance(project).USE_EXTERNAL_ANNOTATIONS = false
+        super.tearDown()
+    }
+
     override fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
         return NewJavaToKotlinConverter(project, settings, IdeaJavaToKotlinServices)
-            .filesToKotlin(listOf(file), NewJ2kPostProcessor(true, settings)).results.single()
+            .filesToKotlin(listOf(file), NewJ2kPostProcessor(true)).results.single()
     }
 
     override fun provideExpectedFile(javaPath: String): File =
         File(javaPath.replace(".java", ".new.kt")).takeIf { it.exists() }
             ?: super.provideExpectedFile(javaPath)
+
+    override fun getProjectDescriptor(): KotlinWithJdkAndRuntimeLightProjectDescriptor =
+        object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
+            override fun getSdk(): Sdk? {
+                val sdk = super@AbstractNewJavaToKotlinConverterSingleFileTest.getProjectDescriptor().sdk ?: return null
+                runWriteAction {
+                    val modificator: SdkModificator = sdk.sdkModificator
+                    JavaSdkImpl.attachJdkAnnotations(modificator)
+                    modificator.commitChanges()
+                }
+                return sdk
+            }
+        }
 }
