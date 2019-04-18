@@ -3,6 +3,7 @@ public final class EpamKt$box$1$doResume$$inlined$zip$1 {
     synthetic final field $source1: MyDeferred
     synthetic final field $source2: MyDeferred
     field L$0: java.lang.Object
+    field L$1: java.lang.Object
     inner class EpamKt$box$1$doResume$$inlined$zip$1
     public method <init>(p0: MyDeferred, p1: MyDeferred, p2: kotlin.coroutines.experimental.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): kotlin.coroutines.experimental.Continuation
@@ -46,9 +47,12 @@ public final class EpamKt$zip$1 {
     synthetic final field $source1: MyDeferred
     synthetic final field $source2: MyDeferred
     synthetic final field $zipper: kotlin.jvm.functions.Function2
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
     inner class EpamKt$zip$1
     public method <init>(p0: kotlin.jvm.functions.Function2, p1: MyDeferred, p2: MyDeferred, p3: kotlin.coroutines.experimental.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): kotlin.coroutines.experimental.Continuation
+    public final @org.jetbrains.annotations.Nullable method doResume$$forInline(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
     public final method invoke(p0: java.lang.Object): java.lang.Object
 }
