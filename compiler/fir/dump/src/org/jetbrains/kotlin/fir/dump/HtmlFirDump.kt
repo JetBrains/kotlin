@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
@@ -266,7 +267,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
         require(inModule)
 
         val dumpOutput = index.files[file] ?: error("No location for ${file.name}")
-        val dumper = HtmlFirDump(LinkResolver(dumpOutput))
+        val dumper = HtmlFirDump(LinkResolver(dumpOutput), file.fileSession)
         val builder = StringBuilder()
         dumper.generate(file, builder)
 
@@ -321,9 +322,9 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
                     super.visitRegularClass(regularClass)
                 }
 
-                fun indexDeclaration(callableDeclaration: FirCallableDeclaration) {
-                    symbols[callableDeclaration.symbol] = location
-                    symbolIds[callableDeclaration.symbol] = symbolCounter++
+                fun indexDeclaration(symbolOwner: FirSymbolOwner<*>) {
+                    symbols[symbolOwner.symbol] = location
+                    symbolIds[symbolOwner.symbol] = symbolCounter++
                 }
 
                 override fun visitVariable(variable: FirVariable) {
@@ -341,6 +342,11 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
                     super.visitNamedFunction(namedFunction)
                 }
 
+                override fun visitTypeParameter(typeParameter: FirTypeParameter) {
+                    indexDeclaration(typeParameter)
+                    super.visitTypeParameter(typeParameter)
+                }
+
                 override fun visitProperty(property: FirProperty) {
                     indexDeclaration(property)
                     super.visitProperty(property)
@@ -356,7 +362,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
     }
 }
 
-class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver) {
+class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver, private val session: FirSession) {
 
 
     fun generate(element: FirFile, builder: StringBuilder) {
@@ -681,7 +687,11 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is ConeClassErrorType -> error { +type.reason }
             is ConeClassType -> generate(type)
             is ConeAbbreviatedType -> inlineUnsupported(type)
-            is ConeTypeParameterType -> resolved { +type.lookupTag.name.asString() }
+            is ConeTypeParameterType -> resolved {
+                symbolRef(type.lookupTag.toSymbol(session)) {
+                    simpleName(type.lookupTag.name)
+                }
+            }
             is ConeTypeVariableType -> resolved { +type.lookupTag.name.asString() }
             is ConeFlexibleType -> resolved { generate(type) }
             is ConeCapturedType -> inlineUnsupported(type)
@@ -763,7 +773,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             if (it.isReified) {
                 keyword("reified ")
             }
-            simpleName(it.name)
+            symbolAnchor(it.symbol) {
+                simpleName(it.name)
+            }
             if (it.bounds.isNotEmpty()) {
                 +": "
                 generateList(it.bounds) { bound ->
