@@ -577,21 +577,8 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 generate(it)
             }
         }
-        if (klass.declarations.isNotEmpty()) {
-            +" {"
-            br
 
-            withIdentLevel {
-                for (declaration in klass.declarations) {
-                    generate(declaration)
-                    line {}
-                }
-            }
-
-
-            inl()
-            +"}"
-        }
+        generateDeclarations(klass)
         br
 
     }
@@ -837,6 +824,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(statement: FirStatement) {
         when (statement) {
+            is FirAnonymousObject -> generate(statement, isStatement = true)
             is FirAnonymousFunction -> generate(statement, isStatement = true)
             is FirWhileLoop -> generate(statement)
             is FirWhenExpression -> generate(statement, isStatement = true)
@@ -998,7 +986,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(tryExpression: FirTryExpression, isStatement: Boolean) {
-        generateMultiLineExpression(!isStatement) {
+        generateMultiLineExpression(isStatement) {
             iline {
                 keyword("try ")
                 generateBlockIfAny(tryExpression.tryBlock)
@@ -1087,6 +1075,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(expression: FirExpression) {
         exprType(expression.typeRef) {
             when (expression) {
+                is FirAnonymousObject -> generate(expression)
                 is FirUnitExpression -> generate(expression)
                 is FirStringConcatenationCall -> generate(expression)
                 is FirAnonymousFunction -> generate(expression, isStatement = false)
@@ -1162,6 +1151,40 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             generateBlockContent(block)
         }
         +"}"
+    }
+
+    private fun FlowContent.generate(anonymousObject: FirAnonymousObject, isStatement: Boolean = false) {
+        generateMultiLineExpression(isStatement) {
+            iline {
+                keyword("object ")
+                val superTypeRefs = anonymousObject.superTypeRefs
+                if (superTypeRefs.isNotEmpty()) {
+                    +": "
+                    generateList(superTypeRefs) {
+                        generate(it)
+                    }
+                }
+                generateDeclarations(anonymousObject)
+            }
+        }
+    }
+
+    private fun FlowContent.generateDeclarations(declarationContainer: FirDeclarationContainer) {
+        if (declarationContainer.declarations.isNotEmpty()) {
+            +" {"
+            br
+
+            withIdentLevel {
+                for (declaration in declarationContainer.declarations) {
+                    generate(declaration)
+                    line {}
+                }
+            }
+
+
+            inl()
+            +"}"
+        }
     }
 
     private fun FlowContent.generate(function: FirNamedFunction) {
