@@ -32,17 +32,25 @@ inline fun inlineMe3(crossinline c: suspend () -> Unit) = suspend {
 import test.InlineMeKt;
 import helpers.CoroutineUtilKt;
 import helpers.EmptyContinuation;
+import kotlin.jvm.functions.Function1;
+import COROUTINES_PACKAGE.Continuation;
 import kotlin.Unit;
 
 public class A {
+    static Function1<Continuation<? super Unit>, Object> callback = new Function1<Continuation<? super Unit>, Object>() {
+        @Override
+        public Object invoke(Continuation<? super Unit> continuation) {
+            return CoroutineUtilKt.getStateMachineChecker().suspendHere(continuation);
+        }
+    };
     public static Object call() {
-        return InlineMeKt.inlineMe((continuation) -> CoroutineUtilKt.getStateMachineChecker().suspendHere(continuation));
+        return InlineMeKt.inlineMe(callback);
     }
     public static Object call2() {
-        return InlineMeKt.inlineMe2((continuation) -> CoroutineUtilKt.getStateMachineChecker().suspendHere(continuation));
+        return InlineMeKt.inlineMe2(callback);
     }
     public static Object call3() {
-        return InlineMeKt.inlineMe3((continuation) -> CoroutineUtilKt.getStateMachineChecker().suspendHere(continuation));
+        return InlineMeKt.inlineMe3(callback);
     }
 }
 
