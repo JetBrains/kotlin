@@ -28,7 +28,7 @@ import org.gradle.kotlin.dsl.task
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
 
-fun Project.projectTest(taskName: String = "test", parallel: Boolean = true, body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
+fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
     doFirst {
         val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet()
         val patterns = filter.includePatterns + commandLineIncludePatterns
