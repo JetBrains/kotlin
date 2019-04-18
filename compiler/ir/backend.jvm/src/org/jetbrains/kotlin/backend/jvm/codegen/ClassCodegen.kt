@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.ASM_TYPE
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
@@ -42,7 +41,6 @@ open class ClassCodegen protected constructor(
     val context: JvmBackendContext,
     private val parentClassCodegen: ClassCodegen? = null
 ) : InnerClassConsumer {
-
     private val innerClasses = mutableListOf<IrClass>()
 
     val state = context.state
@@ -51,22 +49,14 @@ open class ClassCodegen protected constructor(
 
     val descriptor = irClass.descriptor
 
-    private val isAnonymous = irClass.isAnonymousObject
+    val type: Type = typeMapper.mapClass(irClass)
 
-    val type: Type = if (isAnonymous)
-        state.bindingContext.get(ASM_TYPE, descriptor)!!
-    else typeMapper.mapClass(irClass)
-
-    private val sourceManager = context.psiSourceManager
-
-    private val fileEntry = sourceManager.getFileEntry(irClass.fileParent)
-
-    val psiElement = irClass.descriptor.psiElement
+    private val fileEntry = context.psiSourceManager.getFileEntry(irClass.fileParent)
 
     val visitor: ClassBuilder = createClassBuilder()
 
     open fun createClassBuilder() = state.factory.newVisitor(
-        OtherOrigin(psiElement, descriptor),
+        OtherOrigin(descriptor.psiElement, descriptor),
         type,
         listOf(File(fileEntry.name))
     )
@@ -86,7 +76,7 @@ open class ClassCodegen protected constructor(
         val signature = getSignature(irClass, type, superClassInfo, typeMapper)
 
         visitor.defineClass(
-            psiElement,
+            descriptor.psiElement,
             state.classFileVersion,
             irClass.flags,
             signature.name,
@@ -320,7 +310,7 @@ open class ClassCodegen protected constructor(
             if (containingDeclaration is IrFunction) {
                 val method = typeMapper.mapAsmMethod(containingDeclaration)
                 visitor.visitOuterClass(outerClassName, method.name, method.descriptor)
-            } else if (isAnonymous) {
+            } else if (irClass.isAnonymousObject) {
                 visitor.visitOuterClass(outerClassName, null, null)
             }
         }
