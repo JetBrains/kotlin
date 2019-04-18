@@ -41,9 +41,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.isOverridable
@@ -65,11 +63,15 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 private fun PsiElement.processHierarchyDownward(scope: SearchScope, processor: PsiElement.() -> Unit) {
     processor()
@@ -84,7 +86,7 @@ private fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor
     DescriptorUtils
         .getAllOverriddenDescriptors(descriptor)
         .asSequence()
-        .mapNotNull { it.source.getPsi() }
+        .mapNotNull { it.originalSource.getPsi() }
         .filter { scope.contains(it) }
         .toList()
         .forEach(processor)
@@ -219,7 +221,7 @@ class InflowSlicer(
         if (hasDelegateExpression()) {
             val getter = (unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter
             val delegateGetterResolvedCall = getter?.let { bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it] }
-            delegateGetterResolvedCall?.resultingDescriptor?.source?.getPsi()?.passToProcessor()
+            delegateGetterResolvedCall?.resultingDescriptor?.originalSource?.getPsi()?.passToProcessor()
             return
         }
 
@@ -270,7 +272,8 @@ class InflowSlicer(
                 refElement is KtExpression -> {
                     val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return@body
                     val resolvedCall = callElement.resolveToCall() ?: return@body
-                    when (val resolvedArgument = resolvedCall.valueArguments[parameterDescriptor] ?: return@body) {
+                    val valueArguments = resolvedCall.originalValueArguments
+                    when (val resolvedArgument = valueArguments[parameterDescriptor] ?: return@body) {
                         is DefaultValueArgument -> defaultValue
                         is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
                         else -> null
@@ -338,7 +341,7 @@ class InflowSlicer(
                     return
                 }
                 val accessedDescriptor = createdAt.target.accessedDescriptor ?: return
-                val accessedDeclaration = accessedDescriptor.source.getPsi() ?: return
+                val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return
                 if (accessedDescriptor is SyntheticFieldDescriptor) {
                     val property = accessedDeclaration as? KtProperty ?: return
                     if (accessedDescriptor.propertyDescriptor.setter?.isDefault != false) {
@@ -358,7 +361,7 @@ class InflowSlicer(
                 MagicKind.BOUND_CALLABLE_REFERENCE, MagicKind.UNBOUND_CALLABLE_REFERENCE -> {
                     val callableRefExpr = expressionValue.element as? KtCallableReferenceExpression ?: return
                     val referencedDescriptor = analyze()[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
-                    val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
+                    val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi() ?: return
                     referencedDeclaration.passToProcessor(parentUsage.lambdaLevel - 1)
                 }
                 else -> return
@@ -370,7 +373,7 @@ class InflowSlicer(
                 if (resultingDescriptor is FunctionInvokeDescriptor) {
                     (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression?.passToProcessorAsValue(parentUsage.lambdaLevel + 1)
                 } else {
-                    resultingDescriptor.source.getPsi()?.processHierarchyDownwardAndPass()
+                    resultingDescriptor.originalSource.getPsi()?.processHierarchyDownwardAndPass()
                 }
             }
         }
@@ -505,12 +508,12 @@ class OutflowSlicer(
     private fun KtExpression.processExpression() {
         processPseudocodeUsages { pseudoValue, instr ->
             when (instr) {
-                is WriteValueInstruction -> instr.target.accessedDescriptor?.source?.getPsi()?.passToProcessor()
+                is WriteValueInstruction -> instr.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
                 is CallInstruction -> {
                     if (parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
                         instr.element.passToProcessor(parentUsage.lambdaLevel - 1)
                     } else {
-                        instr.arguments[pseudoValue]?.source?.getPsi()?.passToProcessor()
+                        instr.arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
                     }
                 }
                 is ReturnValueInstruction -> instr.subroutine.passToProcessor()
@@ -536,3 +539,26 @@ class OutflowSlicer(
         }
     }
 }
+
+private val DeclarationDescriptorWithSource.originalSource: SourceElement
+    get() {
+        var descriptor = this
+        while (descriptor.original != descriptor) {
+            descriptor = descriptor.original
+        }
+        return descriptor.source
+    }
+
+private val ResolvedCall<*>.originalValueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>
+    get() = when (this) {
+        is NewResolvedCallImpl<*> -> LinkedHashMap<ValueParameterDescriptor, ResolvedValueArgument>().also {
+            for ((valueParameter, argument) in valueArguments) {
+                var parameter = valueParameter
+                while (parameter != parameter.original) {
+                    parameter = parameter.original
+                }
+                it[parameter] = argument
+            }
+        }
+        else -> valueArguments
+    }
