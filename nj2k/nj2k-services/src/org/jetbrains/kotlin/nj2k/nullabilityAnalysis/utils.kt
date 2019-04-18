@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
-import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.resolve.jvm.checkers.mustNotBeNull
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.util.javaslang.getOrNull
 
 internal inline fun KtExpression.deepestReceiver(): KtExpression =
@@ -26,28 +29,31 @@ internal inline fun KtExpression.deepestReceiver(): KtExpression =
 internal inline fun KtExpression.isNullable(): Boolean =
     getType(analyze())?.isNullable() != false
 
-
 internal inline fun KtExpression.getForcedNullability(): Nullability? {
     val bindingContext = analyze()
     val type = this.getType(bindingContext) ?: return null
     if (!type.isNullable()) return Nullability.NOT_NULL
 
     //TODO better way of getting DataFlowValueFactoryImpl
-    val dataInfo = DataFlowValueFactoryImpl(LanguageVersionSettingsImpl.DEFAULT)
+    val dataFlowValue = DataFlowValueFactoryImpl(LanguageVersionSettingsImpl.DEFAULT)
         .createDataFlowValue(
             this,
             type,
             bindingContext,
             getResolutionFacade().moduleDescriptor
         )
-    val nullability =
-        analyze()[BindingContext.EXPRESSION_TYPE_INFO, this]?.dataFlowInfo?.completeNullabilityInfo?.get(dataInfo)?.getOrNull()
-    return if (nullability == org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL) {
-        Nullability.NOT_NULL
-    } else null
-
+    val dataFlowInfo = analyze()[BindingContext.EXPRESSION_TYPE_INFO, this]?.dataFlowInfo ?: return null
+    return when {
+        dataFlowInfo.completeNullabilityInfo.get(dataFlowValue)?.getOrNull() ==
+                org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL -> Nullability.NOT_NULL
+        type.isExternallyAnnotatedNotNull(dataFlowInfo, dataFlowValue) -> Nullability.NOT_NULL
+        else -> null
+    }
 }
 
+
+private fun KotlinType.isExternallyAnnotatedNotNull(dataFlowInfo: DataFlowInfo, dataFlowValue: DataFlowValue): Boolean=
+    mustNotBeNull()?.isFromJava == true && dataFlowInfo.getStableNullability(dataFlowValue).canBeNull()
 
 private fun IElementType.isEqualsToken() =
     this == KtTokens.EQEQ
