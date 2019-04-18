@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.idea.actions.internal.benchmark
 
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBTextField
-import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.randomElement
 import org.jetbrains.kotlin.idea.completion.CompletionBenchmarkSink
@@ -39,7 +36,10 @@ import kotlin.properties.Delegates
 
 class TopLevelCompletionBenchmarkAction : AbstractCompletionBenchmarkAction() {
 
-    override fun createBenchmarkScenario(project: Project, benchmarkSink: CompletionBenchmarkSink.Impl): AbstractCompletionBenchmarkScenario? {
+    override fun createBenchmarkScenario(
+        project: Project,
+        benchmarkSink: CompletionBenchmarkSink.Impl
+    ): AbstractCompletionBenchmarkScenario? {
 
         val settings = showSettingsDialog() ?: return null
 
@@ -85,19 +85,22 @@ class TopLevelCompletionBenchmarkAction : AbstractCompletionBenchmarkAction() {
         dialogBuilder.centerPanel(jPanel)
         if (!dialogBuilder.showAndGet()) return null
 
-        return Settings(cSeed.text.toLong(),
-                        cLines.text.toInt(),
-                        cFiles.text.toInt())
+        return Settings(
+            cSeed.text.toLong(),
+            cLines.text.toInt(),
+            cFiles.text.toInt()
+        )
     }
 
 }
 
 internal class TopLevelCompletionBenchmarkScenario(
-        val files: List<KtFile>,
-        val settings: TopLevelCompletionBenchmarkAction.Settings,
-        project: Project, benchmarkSink: CompletionBenchmarkSink.Impl,
-        random: Random) : AbstractCompletionBenchmarkScenario(project, benchmarkSink, random) {
-    suspend override fun doBenchmark() {
+    val files: List<KtFile>,
+    val settings: TopLevelCompletionBenchmarkAction.Settings,
+    project: Project, benchmarkSink: CompletionBenchmarkSink.Impl,
+    random: Random
+) : AbstractCompletionBenchmarkScenario(project, benchmarkSink, random) {
+    override suspend fun doBenchmark() {
 
         val allResults = mutableListOf<Result>()
         files.forEach { file ->
@@ -108,8 +111,8 @@ internal class TopLevelCompletionBenchmarkScenario(
             }
 
             run {
-                val classes = file.collectDescendantsOfType<KtClassOrObject> { it.getBody() != null }
-                val body = classes.randomElement(random)?.getBody() ?: return@run
+                val classes = file.collectDescendantsOfType<KtClassOrObject> { it.body != null }
+                val body = classes.randomElement(random)?.body ?: return@run
                 val offset = body.endOffset - 1
                 allResults += typeAtOffsetAndGetResult("fun Str", offset, file)
             }

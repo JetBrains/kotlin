@@ -19,7 +19,7 @@ import com.intellij.util.TimeoutUtil
 import java.util.*
 import kotlin.random.Random
 
-class DumbModeTrembleAction: DumbAwareAction() {
+class DumbModeTrembleAction : DumbAwareAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
 

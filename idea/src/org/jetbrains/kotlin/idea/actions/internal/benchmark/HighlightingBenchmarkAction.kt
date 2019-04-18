@@ -56,7 +56,7 @@ class HighlightingBenchmarkAction : AnAction() {
 
         fun collectFiles(): List<KtFile>? {
 
-            val ktFiles = collectSuitableKotlinFiles(project, { it.getLineCount() >= settings.lines })
+            val ktFiles = collectSuitableKotlinFiles(project) { it.getLineCount() >= settings.lines }
 
             if (ktFiles.size < settings.files) {
                 AbstractCompletionBenchmarkAction.showPopup(project, "Number of attempts > then files in project, ${ktFiles.size}")
@@ -81,15 +81,14 @@ class HighlightingBenchmarkAction : AnAction() {
             try {
                 delay(100)
                 ktFiles
-                        .shuffledSequence(random)
-                        .take(settings.files)
-                        .forEach { file ->
-                            results += openFileAndMeasureTimeToHighlight(file, project, finishListener)
-                        }
+                    .shuffledSequence(random)
+                    .take(settings.files)
+                    .forEach { file ->
+                        results += openFileAndMeasureTimeToHighlight(file, project, finishListener)
+                    }
 
                 saveResults(results, project)
-            }
-            finally {
+            } finally {
                 connection.disconnect()
                 finishListener.channel.close()
             }
@@ -188,10 +187,10 @@ class HighlightingBenchmarkAction : AnAction() {
         val severityRegistrar = SeverityRegistrar.getSeverityRegistrar(project)
 
         val maxSeverity = model.allHighlighters
-                .mapNotNull { highlighter ->
-                    val info = highlighter.errorStripeTooltip as? HighlightInfo ?: return@mapNotNull null
-                    info.severity
-                }.maxWith(Comparator { o1, o2 -> severityRegistrar.compare(o1, o2) })
+            .mapNotNull { highlighter ->
+                val info = highlighter.errorStripeTooltip as? HighlightInfo ?: return@mapNotNull null
+                info.severity
+            }.maxWith(Comparator { o1, o2 -> severityRegistrar.compare(o1, o2) })
         return Result.Success(location, lines, analysisTime, maxSeverity?.myName ?: "clean")
     }
 

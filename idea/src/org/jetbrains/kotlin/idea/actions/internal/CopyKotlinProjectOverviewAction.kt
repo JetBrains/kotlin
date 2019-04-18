@@ -39,7 +39,7 @@ class CopyKotlinProjectOverviewAction : AnAction() {
             val clipboard = Toolkit.getDefaultToolkit().systemClipboard
             clipboard.setContents(StringSelection(result), EmptyClipboardOwner.INSTANCE)
         } catch (_: IndexNotReadyException) {
-            DumbService.getInstance(project).showDumbModeNotification("Can't finish while indexing is in progress");
+            DumbService.getInstance(project).showDumbModeNotification("Can't finish while indexing is in progress")
         }
     }
 
