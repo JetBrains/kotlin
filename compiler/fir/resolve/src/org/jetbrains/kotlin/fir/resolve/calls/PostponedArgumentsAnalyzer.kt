@@ -35,7 +35,7 @@ interface LambdaAnalyzer {
 class PostponedArgumentsAnalyzer(
     val lambdaAnalyzer: LambdaAnalyzer,
     val typeProvider: (FirExpression) -> FirTypeRef?,
-    val session: FirSession
+    val components: InferenceComponents
 ) {
 
     fun analyze(
@@ -68,7 +68,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ResolvedLambdaAtom//,
         //diagnosticHolder: KotlinDiagnosticsHolder
     ) {
-        val unitType = Unit(session.service()).constructType(emptyArray(), false)
+        val unitType = Unit(components.session.service()).constructType(emptyArray(), false)
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
 
@@ -98,7 +98,7 @@ class PostponedArgumentsAnalyzer(
 
         returnArguments.forEach { c.addSubsystemFromExpression(it) }
 
-        val checkerSink: CheckerSink = CheckerSinkImpl()
+        val checkerSink: CheckerSink = CheckerSinkImpl(components)
 
         val subResolvedKtPrimitives = returnArguments.map {
             var atom: PostponedResolvedAtomMarker? = null

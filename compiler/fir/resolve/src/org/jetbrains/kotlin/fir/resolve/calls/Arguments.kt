@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -118,7 +120,7 @@ internal fun Candidate.resolveArgument(
     sink: CheckerSink
 ) {
 
-    val expectedType = prepareExpectedType(argument, parameter)
+    val expectedType = prepareExpectedType(sink.components.session, argument, parameter)
     resolveArgumentExpression(
         this.system.getBuilder(),
         argument,
@@ -131,14 +133,26 @@ internal fun Candidate.resolveArgument(
     )
 }
 
-private fun Candidate.prepareExpectedType(argument: FirExpression, parameter: FirValueParameter): ConeKotlinType {
-    val expectedType = argument.getExpectedType(parameter/*, LanguageVersionSettings*/)
+private fun Candidate.prepareExpectedType(session: FirSession, argument: FirExpression, parameter: FirValueParameter): ConeKotlinType {
+    val expectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
     return this.substitutor.substituteOrSelf(expectedType)
 }
 
-internal fun FirExpression.getExpectedType(parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/) =
+internal fun FirExpression.getExpectedType(
+    session: FirSession,
+    parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/
+) =
 //    if (this.isSpread || this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings)) {
 //        parameter.type.unwrap()
 //    } else {
-    parameter.returnTypeRef.coneTypeUnsafe()//?.varargElementType?.unwrap() ?: parameter.type.unwrap()
+    if (parameter.isVararg) {
+        parameter.returnTypeRef.coneTypeUnsafe().varargElementType(session)
+    } else {
+        parameter.returnTypeRef.coneTypeUnsafe()
+    }//?.varargElementType?.unwrap() ?: parameter.type.unwrap()
 //    }
+
+
+private fun ConeKotlinType.varargElementType(session: FirSession): ConeKotlinType {
+    return this.arrayElementType(session) ?: error("Failed to extract! ${this.render()}!")
+}

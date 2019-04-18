@@ -3,7 +3,7 @@ FILE: default.kt
     }
     public final fun bar(first: R|kotlin/Int|, second: R|kotlin/Double| = Double(2.71), third: R|kotlin/Boolean|, fourth: R|kotlin/String| = String()): R|kotlin/Unit| {
     }
-    public final fun baz(x: R|kotlin/Int|, vararg y: R|kotlin/String|, z: R|kotlin/Boolean| = Boolean(false)): R|kotlin/Unit| {
+    public final fun baz(x: R|kotlin/Int|, vararg y: R|kotlin/Array<kotlin/String>|, z: R|kotlin/Boolean| = Boolean(false)): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
         R|/foo|(Int(1))

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.scopes.addImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.createArrayOf
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -87,4 +89,23 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
     override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
         return FirSpecificTypeResolverTransformer(towerScope, FirPosition.OTHER, session).transformTypeRef(typeRef, data)
     }
+
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+
+        val valueParameter = super.transformValueParameter(valueParameter, data).single as FirValueParameter
+
+        if (valueParameter.isVararg) {
+            val returnTypeRef = valueParameter.returnTypeRef
+            val returnType = returnTypeRef.coneTypeUnsafe()
+            valueParameter.transformReturnTypeRef(
+                StoreType,
+                valueParameter.returnTypeRef.withReplacedConeType(
+                    session,
+                    returnType.createArrayOf(session)
+                )
+            )
+        }
+        return valueParameter.compose()
+    }
+
 }
