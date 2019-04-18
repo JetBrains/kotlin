@@ -45,7 +45,11 @@ open class ConeTypeVariable(name: String) : TypeVariableMarker {
 }
 
 class InferenceComponents(val ctx: TypeSystemInferenceExtensionContextDelegate) {
-    private val approximator = object : AbstractTypeApproximator(ctx) {}
+    private val approximator = object : AbstractTypeApproximator(ctx) {
+        override fun createErrorType(message: String): SimpleTypeMarker {
+            return ConeClassErrorType(message)
+        }
+    }
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle(ctx)
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle)
     private val injector = ConstraintInjector(incorporator, approximator)

@@ -103,7 +103,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     }
 
     override fun KotlinTypeMarker.typeDepth(): Int {
-        require(this is ConeKotlinType)
+        require(this is ConeKotlinType) {
+            "Incorrect type of class ${this::class.java}: $this"
+        }
         return when (this) {
             is ConeFlexibleType -> Math.max(lowerBound.typeDepthSimple(), upperBound.typeDepthSimple())
             else -> typeDepthSimple()
