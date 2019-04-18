@@ -15,9 +15,8 @@ val shrink =
 
 val jarBaseName = property("archivesBaseName") as String
 
-val fatJarContents by configurations.creating
 val proguardLibraryJars by configurations.creating
-val fatJar by configurations.creating
+
 val default by configurations
 val runtimeJar by configurations.creating
 
@@ -34,15 +33,15 @@ val projectsDependencies = listOf(
 dependencies {
     projectsDependencies.forEach {
         compileOnly(project(it))
-        fatJarContents(project(it)) { isTransitive = false }
+        embedded(project(it)) { isTransitive = false }
         testCompile(project(it))
     }
     compileOnly("org.apache.ivy:ivy:2.4.0")
     runtime(project(":kotlin-compiler-embeddable"))
     runtime(project(":kotlin-scripting-compiler-embeddable"))
     runtime(project(":kotlin-reflect"))
-    fatJarContents("org.apache.ivy:ivy:2.4.0")
-    fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    embedded("org.apache.ivy:ivy:2.4.0")
+    embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
                               firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),
                               toolsJar()))
@@ -63,14 +62,14 @@ val mainKtsRootPackage = "org.jetbrains.kotlin.mainKts"
 val mainKtsRelocatedDepsRootPackage = "$mainKtsRootPackage.relocatedDeps"
 
 val packJar by task<ShadowJar> {
-    configurations = listOf(fatJar)
+    configurations = emptyList()
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDir = File(buildDir, "libs")
 
     setupPublicJar(project.the<BasePluginConvention>().archivesBaseName, "before-proguard")
 
     from(mainSourceSet.output)
-    from(fatJarContents)
+    from(project.configurations.embedded)
 
     // don't add this files to resources classpath to avoid IDE exceptions on kotlin project
     from("jar-resources")
