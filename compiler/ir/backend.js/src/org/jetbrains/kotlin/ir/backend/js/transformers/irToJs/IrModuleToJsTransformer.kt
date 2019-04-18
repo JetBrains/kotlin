@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -18,7 +19,9 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class IrModuleToJsTransformer(
-    private val backendContext: JsIrBackendContext
+    private val backendContext: JsIrBackendContext,
+    private val mainFunction: IrSimpleFunction?,
+    private val mainArguments: List<String>?
 ) : BaseIrElementToJsNodeTransformer<JsNode, Nothing?> {
 
     val moduleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
@@ -166,6 +169,7 @@ class IrModuleToJsTransformer(
                 statements += importStatements
                 statements += moduleBody
                 statements += exportStatements
+                statements += generateCallToMain(rootContext)
                 statements += JsReturn(internalModuleName.makeRef())
             }
         }
@@ -179,6 +183,27 @@ class IrModuleToJsTransformer(
         )
 
         return program
+    }
+
+    private fun generateMainArguments(mainFunction: IrSimpleFunction, rootContext: JsGenerationContext): List<JsExpression> {
+        val mainArguments = this.mainArguments!!
+        val mainArgumentsArray =
+            if (mainFunction.valueParameters.isNotEmpty()) JsArrayLiteral(mainArguments.map { JsStringLiteral(it) }) else null
+
+        val continuation = if (mainFunction.isSuspend) {
+            val emptyContinuationField = backendContext.coroutineEmptyContinuation.owner
+            rootContext.getNameForField(emptyContinuationField).makeRef()
+        } else null
+
+        return listOfNotNull(mainArgumentsArray, continuation)
+    }
+
+    private fun generateCallToMain(rootContext: JsGenerationContext): List<JsStatement> {
+        if (mainArguments == null) return emptyList() // in case `NO_MAIN` and `main(..)` exists
+        return mainFunction?.let {
+            val jsName = rootContext.getNameForStaticFunction(it)
+            listOf(JsInvocation(jsName.makeRef(), generateMainArguments(it, rootContext)).makeStmt())
+        } ?: emptyList()
     }
 
     private fun generateImportStatements(

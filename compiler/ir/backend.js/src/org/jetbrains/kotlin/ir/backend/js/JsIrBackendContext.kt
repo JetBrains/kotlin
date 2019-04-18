@@ -224,6 +224,7 @@ class JsIrBackendContext(
         }
 
     val coroutineGetContextJs = symbolTable.referenceSimpleFunction(getJsInternalFunction(GET_COROUTINE_CONTEXT_NAME))
+    val coroutineEmptyContinuation = symbolTable.referenceField(getProperty(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal", "EmptyContinuation"))))
 
     val coroutineContextProperty: PropertyDescriptor
         get() {
@@ -283,11 +284,17 @@ class JsIrBackendContext(
     private fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
         memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
 
+    private fun findProperty(memberScope: MemberScope, name: Name): List<PropertyDescriptor> =
+        memberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND).toList()
+
     internal fun getJsInternalClass(name: String): ClassDescriptor =
         findClass(internalPackage.memberScope, Name.identifier(name))
 
     internal fun getClass(fqName: FqName): ClassDescriptor =
         findClass(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
+
+    internal fun getProperty(fqName: FqName): PropertyDescriptor =
+        findProperty(module.getPackage(fqName.parent()).memberScope, fqName.shortName()).single()
 
     private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
 

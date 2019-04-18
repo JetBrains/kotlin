@@ -96,7 +96,8 @@ abstract class BasicIrBoxTest(
                 configuration = config.configuration,
                 phaseConfig = config.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jsPhases),
                 immediateDependencies = dependencies,
-                allDependencies = allDependencies
+                allDependencies = allDependencies,
+                mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null }
             )
 
             val wrappedCode = wrapWithModuleEmulationMarkers(jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
