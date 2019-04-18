@@ -281,6 +281,22 @@ fun testVarargs() {
                     0.1.toFloat(), 0.2, true, false
             ).formatted
     )
+
+    assertEquals(
+            "1 2 3",
+            TestVarargs(
+                    format = "%d %d %d",
+                    args = *arrayOf(1, 2, 3)
+            ).formatted
+    )
+
+    assertEquals(
+            "4 5 6",
+            TestVarargs(
+                    args = *arrayOf(4, *arrayOf(5, 6)),
+                    format = "%d %d %d"
+            ).formatted
+    )
 }
 
 private class MyException : Throwable()

@@ -85,6 +85,10 @@ internal abstract class BaseInteropIrTransformer(private val context: Context) :
 
             override fun reportError(location: IrElement, message: String): Nothing =
                     context.reportCompilationError(message, irFile, location)
+
+            override fun throwCompilerError(element: IrElement?, message: String): Nothing {
+                error(irFile, element, message)
+            }
         }
     }
 
