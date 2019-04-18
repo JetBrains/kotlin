@@ -469,8 +469,10 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 val delegatedSelfType = enumEntry.toDelegatedSelfType(firEnumEntry)
                 val delegatedSuperType = enumEntry.extractSuperTypeListEntriesTo(firEnumEntry, delegatedSelfType)
                 for (declaration in enumEntry.declarations) {
-                    firEnumEntry.declarations += declaration.toFirDeclaration(
-                        delegatedSuperType, delegatedSelfType, enumEntry, hasPrimaryConstructor = true
+                    firEnumEntry.addDeclaration(
+                        declaration.toFirDeclaration(
+                            delegatedSuperType, delegatedSelfType, enumEntry, hasPrimaryConstructor = true
+                        )
                     )
                 }
                 firEnumEntry
@@ -536,14 +538,16 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 if (primaryConstructor != null && firPrimaryConstructor != null) {
                     primaryConstructor.valueParameters.zip(firPrimaryConstructor.valueParameters).forEach { (ktParameter, firParameter) ->
                         if (ktParameter.hasValOrVar()) {
-                            firClass.declarations += ktParameter.toFirProperty(firParameter)
+                            firClass.addDeclaration(ktParameter.toFirProperty(firParameter))
                         }
                     }
                 }
 
                 for (declaration in classOrObject.declarations) {
-                    firClass.declarations += declaration.toFirDeclaration(
-                        delegatedSuperType, delegatedSelfType, classOrObject, hasPrimaryConstructor = primaryConstructor != null
+                    firClass.addDeclaration(
+                        declaration.toFirDeclaration(
+                            delegatedSuperType, delegatedSelfType, classOrObject, hasPrimaryConstructor = primaryConstructor != null
+                        )
                     )
                 }
 

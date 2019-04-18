@@ -64,7 +64,7 @@ fun deserializeClassToSymbol(
         }
 
         // TODO: properties
-        declarations += classProto.functionList.map(classDeserializer::loadFunction)
+        addDeclarations(classProto.functionList.map(classDeserializer::loadFunction))
 
         val delegatedSelfType = FirResolvedTypeRefImpl(
             session,
@@ -77,12 +77,18 @@ fun deserializeClassToSymbol(
             isMarkedNullable = false,
             annotations = emptyList()
         )
-        declarations += classProto.constructorList.map { classDeserializer.loadConstructor(it, delegatedSelfType) }
+        addDeclarations(
+            classProto.constructorList.map {
+                classDeserializer.loadConstructor(it, delegatedSelfType)
+            }
+        )
 
-        declarations += classProto.nestedClassNameList.mapNotNull { nestedNameId ->
-            val nestedClassId = classId.createNestedClassId(Name.identifier(nameResolver.getString(nestedNameId)))
-            deserializeNestedClass(nestedClassId, context)?.fir
-        }
+        addDeclarations(
+            classProto.nestedClassNameList.mapNotNull { nestedNameId ->
+                val nestedClassId = classId.createNestedClassId(Name.identifier(nameResolver.getString(nestedNameId)))
+                deserializeNestedClass(nestedClassId, context)?.fir
+            }
+        )
     }
 }
 

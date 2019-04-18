@@ -43,6 +43,9 @@ class FirJavaClass(
 
     override val declarations = mutableListOf<FirDeclaration>()
 
+    override val companionObject: FirRegularClass?
+        get() = null
+
     override fun replaceSupertypes(newSupertypes: List<FirTypeRef>): FirRegularClass {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSupertypes)

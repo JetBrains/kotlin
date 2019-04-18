@@ -46,6 +46,19 @@ open class FirClassImpl(
 
     override val declarations = mutableListOf<FirDeclaration>()
 
+    override var companionObject: FirRegularClass? = null
+
+    fun addDeclaration(declaration: FirDeclaration) {
+        declarations += declaration
+        if (companionObject == null && declaration is FirRegularClass && declaration.isCompanion) {
+            companionObject = declaration
+        }
+    }
+
+    fun addDeclarations(declarations: Collection<FirDeclaration>) {
+        declarations.forEach(this::addDeclaration)
+    }
+
     override fun replaceSupertypes(newSupertypes: List<FirTypeRef>): FirRegularClass {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSupertypes)
@@ -58,6 +71,7 @@ open class FirClassImpl(
 
         // Transform declarations in last turn
         declarations.transformInplace(transformer, data)
+        companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.isCompanion }
         return result
     }
 }

@@ -24,6 +24,8 @@ interface FirRegularClass : FirClass, @VisitedSupertype FirClassLikeDeclaration,
 
     val isInline: Boolean get() = status.isInline
 
+    val companionObject: FirRegularClass?
+
     override val symbol: FirClassSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
