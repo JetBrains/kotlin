@@ -1,0 +1,8 @@
+fun test() {
+    <caret>use("")
+    foo()
+}
+
+fun use(s: String) {}
+
+fun foo() {}

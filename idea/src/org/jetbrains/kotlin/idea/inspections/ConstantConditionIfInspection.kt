@@ -10,6 +10,8 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
@@ -17,10 +19,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockO
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -157,27 +156,79 @@ private fun KtExpression.enumEntry(): KtEnumEntry? {
 }
 
 fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boolean, keepBraces: Boolean = false) {
-    val lastExpression = when {
-        branch !is KtBlockExpression -> replaced(branch)
+    val caretModel = findExistingEditor()?.caretModel
+
+    val subjectVariable = (this as? KtWhenExpression)?.subjectVariable?.let { it ->
+        if (it.annotationEntries.isNotEmpty()) return@let it
+        val initializer = it.initializer ?: return@let it
+        val references = ReferencesSearch.search(it, LocalSearchScope(this)).toList()
+        when (references.size) {
+            0 -> when (initializer) {
+                is KtSimpleNameExpression, is KtStringTemplateExpression, is KtConstantExpression -> null
+                else -> it
+            }
+            1 -> {
+                references.firstOrNull()?.element?.replace(initializer)
+                null
+            }
+            else -> it
+        }
+    }
+    val wrapSubjectVariableByRun = if (subjectVariable != null) {
+        val subjectVariableName = subjectVariable.nameAsName
+        val parentBlock = getStrictParentOfType<KtBlockExpression>()
+        parentBlock?.anyDescendantOfType<KtProperty> { it != subjectVariable && it.nameAsName == subjectVariableName } == true
+    } else {
+        false
+    }
+
+    val factory = KtPsiFactory(this)
+    val parent = this.parent
+    val replaced = when {
+        branch !is KtBlockExpression -> {
+            if (subjectVariable != null) {
+                if (isUsedAsExpression || wrapSubjectVariableByRun) {
+                    replaced(KtPsiFactory(this).createExpressionByPattern("run { $0\n$1 }", subjectVariable, branch))
+                } else {
+                    parent.addBefore(subjectVariable, this).also {
+                        parent.addAfter(factory.createNewLine(), it)
+                        replaced(branch)
+                    }
+                }
+            } else {
+                replaced(branch)
+            }
+        }
         isUsedAsExpression -> {
-            val factory = KtPsiFactory(this)
+            if (subjectVariable != null) {
+                branch.addAfter(factory.createNewLine(), branch.addBefore(subjectVariable, branch.statements.firstOrNull()))
+            }
             replaced(factory.createExpressionByPattern("run $0", branch.text))
         }
         else -> {
             val firstChildSibling = branch.firstChild.nextSibling
             val lastChild = branch.lastChild
-            if (firstChildSibling != lastChild) {
+            val replaced = if (firstChildSibling != lastChild) {
                 if (keepBraces) {
                     parent.addAfter(branch, this)
                 } else {
-                    parent.addRangeAfter(firstChildSibling, lastChild.prevSibling, this)
+                    if (subjectVariable != null && wrapSubjectVariableByRun) {
+                        branch.addAfter(subjectVariable, branch.lBrace)
+                        parent.addAfter(KtPsiFactory(this).createExpression("run ${branch.text}"), this)
+                    } else {
+                        parent.addRangeAfter(firstChildSibling, lastChild.prevSibling, this)
+                        subjectVariable?.let { parent.addBefore(subjectVariable, this) }
+                    }
                 }
+            } else {
+                null
             }
             delete()
-            null
+            replaced
         }
     }
 
-    val caretModel = branch.findExistingEditor()?.caretModel
-    caretModel?.moveToOffset(lastExpression?.startOffset ?: return)
+    if (replaced != null) {
+        caretModel?.moveToOffset(replaced.startOffset)
+    }
 }

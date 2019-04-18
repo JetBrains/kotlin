@@ -1,0 +1,10 @@
+fun hasAnnotation() {
+    <caret>@Bar val a = create()
+    use(a)
+}
+
+fun create(): String = ""
+
+fun use(s: String) {}
+
+annotation class Bar
