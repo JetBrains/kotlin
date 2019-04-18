@@ -7,8 +7,9 @@ of cross-platform game and multimedia applications.
 Install SDL2 development files (see https://www.libsdl.org/download-2.0.php). For Mac -
 copy `SDL2.framework` to `$HOME/Library/Frameworks`. For Debian-like Linux -
 use `apt-get install libsdl2-dev`.
-For Windows - `pacman -S mingw-w64-x86_64-SDL2` in MinGW64 console, if you do
-not have MSYS2-MinGW64 installed - install it first as described in http://www.msys2.org
+For Windows - `pacman -S mingw-w64-x86_64-SDL2` in MinGW64 console
+or `pacman -S mingw-w64-i686-SDL2` in MinGW32 console. If you do not have MSYS2-MinGW64 (MSYS2-MinGW32)
+installed - install it first as described in http://www.msys2.org
 
 To build Tetris application for your host platform use `../gradlew assemble`.
 
