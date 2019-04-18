@@ -2116,26 +2116,46 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         with(functionGenerationContext) {
             val functionSymbol = function.symbol
-            return when {
-                functionSymbol == ib.eqeqeqSymbol -> icmpEq(args[0], args[1])
-                functionSymbol == ib.booleanNotSymbol -> icmpNe(args[0], kTrue)
-                functionSymbol.isComparisonFunction(ib.greaterFunByOperandType) -> {
-                    if (args[0].type.isFloatingPoint()) fcmpGt(args[0], args[1])
-                    else icmpGt(args[0], args[1])
+            return when (functionSymbol) {
+                ib.eqeqeqSymbol -> icmpEq(args[0], args[1])
+                ib.booleanNotSymbol -> icmpNe(args[0], kTrue)
+                else -> {
+                    val isFloatingPoint = args[0].type.isFloatingPoint()
+                    // LLVM does not distinguish between signed/unsigned integers, so we must check
+                    // the parameter type.
+                    val shouldUseUnsignedComparison = function.valueParameters[0].type.isChar()
+                    when {
+                        functionSymbol.isComparisonFunction(ib.greaterFunByOperandType) -> {
+                            when {
+                                isFloatingPoint -> fcmpGt(args[0], args[1])
+                                shouldUseUnsignedComparison -> icmpUGt(args[0], args[1])
+                                else -> icmpGt(args[0], args[1])
+                            }
+                        }
+                        functionSymbol.isComparisonFunction(ib.greaterOrEqualFunByOperandType) -> {
+                            when {
+                                isFloatingPoint -> fcmpGe(args[0], args[1])
+                                shouldUseUnsignedComparison -> icmpUGe(args[0], args[1])
+                                else -> icmpGe(args[0], args[1])
+                            }
+                        }
+                        functionSymbol.isComparisonFunction(ib.lessFunByOperandType) -> {
+                            when {
+                                isFloatingPoint -> fcmpLt(args[0], args[1])
+                                shouldUseUnsignedComparison -> icmpULt(args[0], args[1])
+                                else -> icmpLt(args[0], args[1])
+                            }
+                        }
+                        functionSymbol.isComparisonFunction(ib.lessOrEqualFunByOperandType) -> {
+                            when {
+                                isFloatingPoint -> fcmpLe(args[0], args[1])
+                                shouldUseUnsignedComparison -> icmpULe(args[0], args[1])
+                                else -> icmpLe(args[0], args[1])
+                            }
+                        }
+                        else -> TODO(function.name.toString())
+                    }
                 }
-                functionSymbol.isComparisonFunction(ib.greaterOrEqualFunByOperandType) -> {
-                    if (args[0].type.isFloatingPoint()) fcmpGe(args[0], args[1])
-                    else icmpGe(args[0], args[1])
-                }
-                functionSymbol.isComparisonFunction(ib.lessFunByOperandType) -> {
-                    if (args[0].type.isFloatingPoint()) fcmpLt(args[0], args[1])
-                    else icmpLt(args[0], args[1])
-                }
-                functionSymbol.isComparisonFunction(ib.lessOrEqualFunByOperandType) -> {
-                    if (args[0].type.isFloatingPoint()) fcmpLe(args[0], args[1])
-                    else icmpLe(args[0], args[1])
-                }
-                else -> TODO(function.name.toString())
             }
         }
     }
