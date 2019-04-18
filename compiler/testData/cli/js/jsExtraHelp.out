@@ -2,6 +2,8 @@ Usage: kotlinc-js <options> <source files>
 where advanced options include:
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
+  -Xir                       Use IR backend
+  -Xir-produce-only={ klib, js } Type of output to produce. Overrides -meta-info argument.
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type

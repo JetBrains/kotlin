@@ -567,8 +567,20 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
 
+        val libraryFilter: (File) -> Boolean
+
+        if ("-Xir" in args.freeArgs) {
+            logger.kotlinDebug("Using JS IR backend")
+            incremental = false
+
+            // TODO: Detect IR libraries
+            libraryFilter = { true }
+        } else {
+            libraryFilter = LibraryUtils::isKotlinJavascriptLibrary
+        }
+
         val dependencies = compileClasspath
-            .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
+            .filter(libraryFilter)
             .map { it.canonicalPath }
 
         args.libraries = (dependencies + listOfNotNull(friendDependency)).distinct().let {

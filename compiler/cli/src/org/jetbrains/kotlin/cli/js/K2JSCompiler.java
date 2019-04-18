@@ -84,6 +84,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static final Map<String, ModuleKind> moduleKindMap = new HashMap<>();
     private static final Map<String, SourceMapSourceEmbedding> sourceMapContentEmbeddingMap = new LinkedHashMap<>();
 
+    private K2JsIrCompiler irCompiler = null;
+
+    @NotNull
+    private K2JsIrCompiler getIrCompiler() {
+        if (irCompiler == null)
+            irCompiler = new K2JsIrCompiler();
+        return irCompiler;
+    }
+
     static {
         moduleKindMap.put(K2JsArgumentConstants.MODULE_PLAIN, ModuleKind.PLAIN);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_COMMONJS, ModuleKind.COMMON_JS);
@@ -162,6 +171,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @Nullable KotlinPaths paths
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+
+        if (arguments.getIrBackend()) {
+            return getIrCompiler().doExecute(arguments, configuration, rootDisposable, paths);
+        }
 
         if (arguments.getFreeArgs().isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
             if (arguments.getVersion()) {
@@ -362,6 +375,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull CompilerConfiguration configuration, @NotNull K2JSCompilerArguments arguments,
             @NotNull Services services
     ) {
+        if (arguments.getIrBackend()) {
+            getIrCompiler().setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
+            return;
+        }
+
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
         if (arguments.getTarget() != null) {
