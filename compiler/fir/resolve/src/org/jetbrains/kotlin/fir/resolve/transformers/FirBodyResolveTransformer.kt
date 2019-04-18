@@ -238,8 +238,10 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             }
             is FirSuperReference -> {
                 qualifiedAccessExpression.resultType =
-                        FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, "Unsupported: super type") //TODO
-
+                        callee.superTypeRef as? FirResolvedTypeRef ?:
+                        implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
+                            ?.boundSymbol?.fir?.superTypeRefs?.firstOrNull()
+                        ?: FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, "No super type")
             }
             is FirResolvedCallableReference -> {
                 if (qualifiedAccessExpression.typeRef !is FirResolvedTypeRef) {
