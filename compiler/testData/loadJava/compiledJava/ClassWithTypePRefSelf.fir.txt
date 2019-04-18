@@ -1,2 +1,2 @@
-public final class ClassWithTypePRefSelf<P> : R|java/lang/Object| {
+public final class ClassWithTypePRefSelf<P : R|java/lang/Enum<P>|> : R|java/lang/Object| {
 }

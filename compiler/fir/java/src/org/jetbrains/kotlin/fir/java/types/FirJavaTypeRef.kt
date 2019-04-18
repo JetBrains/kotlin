@@ -14,7 +14,7 @@ class FirJavaTypeRef(
     session: FirSession,
     annotations: List<FirAnnotationCall>,
     val type: JavaType
-) : FirUserTypeRefImpl(session, psi = null,isMarkedNullable = false) {
+) : FirUserTypeRefImpl(session, psi = null, isMarkedNullable = false) {
     init {
         this.annotations += annotations
     }

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
 
@@ -61,37 +58,48 @@ internal fun ClassId.toConeKotlinType(
     return ConeClassTypeImpl(lookupTag, typeArguments, isNullable)
 }
 
-internal fun FirTypeRef.toNotNullConeKotlinType(session: FirSession): ConeKotlinType =
+internal fun FirTypeRef.toNotNullConeKotlinType(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): ConeKotlinType =
     when (this) {
         is FirResolvedTypeRef -> type
         is FirJavaTypeRef -> {
             val javaType = type
-            javaType.toNotNullConeKotlinType(session)
+            javaType.toNotNullConeKotlinType(session, javaTypeParameterStack)
         }
         else -> ConeKotlinErrorType("Unexpected type reference in JavaClassUseSiteScope: ${this::class.java}")
     }
 
-internal fun JavaType?.toNotNullConeKotlinType(session: FirSession): ConeLookupTagBasedType {
-    return toConeKotlinTypeWithNullability(session, isNullable = false)
+internal fun JavaType?.toNotNullConeKotlinType(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): ConeLookupTagBasedType {
+    return toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false)
 }
 
-internal fun JavaType.toFirJavaTypeRef(session: FirSession): FirJavaTypeRef {
+internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterStack: JavaTypeParameterStack): FirJavaTypeRef {
     val annotations = (this as? JavaClassifierType)?.annotations.orEmpty()
-    return FirJavaTypeRef(session, annotations = annotations.map { it.toFirAnnotationCall(session) }, type = this)
-}
-
-internal fun JavaClassifierType.toFirResolvedTypeRef(session: FirSession): FirResolvedTypeRef {
-    val coneType = this.toConeKotlinTypeWithNullability(session, isNullable = false)
-    return FirResolvedTypeRefImpl(
-        session, psi = null, type = coneType,
-        isMarkedNullable = false, annotations = annotations.map { it.toFirAnnotationCall(session) }
+    return FirJavaTypeRef(
+        session,
+        annotations = annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }, type = this
     )
 }
 
-internal fun JavaType?.toConeKotlinTypeWithNullability(session: FirSession, isNullable: Boolean): ConeLookupTagBasedType {
+internal fun JavaClassifierType.toFirResolvedTypeRef(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): FirResolvedTypeRef {
+    val coneType = this.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false)
+    return FirResolvedTypeRefImpl(
+        session, psi = null, type = coneType, isMarkedNullable = false,
+        annotations = annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+    )
+}
+
+internal fun JavaType?.toConeKotlinTypeWithNullability(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack, isNullable: Boolean
+): ConeLookupTagBasedType {
     return when (this) {
         is JavaClassifierType -> {
-            toConeKotlinTypeWithNullability(session, isNullable)
+            toConeKotlinTypeWithNullability(session, isNullable, javaTypeParameterStack)
         }
         is JavaPrimitiveType -> {
             val primitiveType = type
@@ -107,8 +115,8 @@ internal fun JavaType?.toConeKotlinTypeWithNullability(session: FirSession, isNu
             if (componentType !is JavaPrimitiveType) {
                 val classId = StandardClassIds.Array
                 val argumentType = ConeFlexibleType(
-                    componentType.toConeKotlinTypeWithNullability(session, isNullable = false),
-                    componentType.toConeKotlinTypeWithNullability(session, isNullable = true)
+                    componentType.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false),
+                    componentType.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = true)
                 )
                 classId.toConeKotlinType(arrayOf(argumentType), isNullable)
             } else {
@@ -117,7 +125,7 @@ internal fun JavaType?.toConeKotlinTypeWithNullability(session: FirSession, isNu
                 classId.toConeKotlinType(emptyArray(), isNullable)
             }
         }
-        is JavaWildcardType -> bound?.toNotNullConeKotlinType(session) ?: run {
+        is JavaWildcardType -> bound?.toNotNullConeKotlinType(session, javaTypeParameterStack) ?: run {
             val classId = StandardClassIds.Any
             classId.toConeKotlinType(emptyArray(), isNullable)
         }
@@ -129,7 +137,9 @@ internal fun JavaType?.toConeKotlinTypeWithNullability(session: FirSession, isNu
     }
 }
 
-internal fun JavaClassifierType.toConeKotlinTypeWithNullability(session: FirSession, isNullable: Boolean): ConeLookupTagBasedType {
+internal fun JavaClassifierType.toConeKotlinTypeWithNullability(
+    session: FirSession, isNullable: Boolean, javaTypeParameterStack: JavaTypeParameterStack
+): ConeLookupTagBasedType {
     return when (val classifier = classifier) {
         is JavaClass -> {
             val classId = classifier.classId!!
@@ -137,29 +147,23 @@ internal fun JavaClassifierType.toConeKotlinTypeWithNullability(session: FirSess
             lookupTag.constructClassType(
                 typeArguments.mapIndexed { index, argument ->
                     argument.toConeProjection(
-                        session, null
+                        session, javaTypeParameterStack, null
                         //symbol.fir.typeParameters.getOrNull(index)
                     )
                 }.toTypedArray(), isNullable
             )
         }
         is JavaTypeParameter -> {
-            // TODO: it's unclear how to identify type parameter by the symbol
-            // TODO: some type parameter cache (provider?)
-            val symbol = createTypeParameterSymbol(session, classifier.name)
+            val symbol = javaTypeParameterStack[classifier]
             ConeTypeParameterTypeImpl(symbol, isNullable)
         }
         else -> ConeClassErrorType(reason = "Unexpected classifier: $classifier")
     }
 }
 
-internal fun createTypeParameterSymbol(session: FirSession, name: Name): FirTypeParameterSymbol {
-    val firSymbol = FirTypeParameterSymbol()
-    FirTypeParameterImpl(session, null, firSymbol, name, variance = INVARIANT, isReified = false)
-    return firSymbol
-}
-
-internal fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotationCall {
+internal fun JavaAnnotation.toFirAnnotationCall(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): FirAnnotationCall {
     return FirAnnotationCallImpl(
         session, psi = null, useSiteTarget = null,
         annotationTypeRef = FirResolvedTypeRefImpl(
@@ -171,28 +175,34 @@ internal fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotat
         )
     ).apply {
         for (argument in this@toFirAnnotationCall.arguments) {
-            arguments += argument.toFirExpression(session)
+            arguments += argument.toFirExpression(session, javaTypeParameterStack)
         }
     }
 }
 
-internal fun FirAbstractAnnotatedElement.addAnnotationsFrom(session: FirSession, javaAnnotationOwner: JavaAnnotationOwner) {
+internal fun FirAbstractAnnotatedElement.addAnnotationsFrom(
+    session: FirSession, javaAnnotationOwner: JavaAnnotationOwner, javaTypeParameterStack: JavaTypeParameterStack
+) {
     for (annotation in javaAnnotationOwner.annotations) {
-        annotations += annotation.toFirAnnotationCall(session)
+        annotations += annotation.toFirAnnotationCall(session, javaTypeParameterStack)
     }
 }
 
-internal fun JavaValueParameter.toFirValueParameters(session: FirSession): FirValueParameter {
+internal fun JavaValueParameter.toFirValueParameters(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): FirValueParameter {
     return FirJavaValueParameter(
         session, name ?: Name.special("<anonymous Java parameter>"),
-        returnTypeRef = type.toFirJavaTypeRef(session),
+        returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack),
         isVararg = isVararg
     ).apply {
-        addAnnotationsFrom(session, this@toFirValueParameters)
+        addAnnotationsFrom(session, this@toFirValueParameters, javaTypeParameterStack)
     }
 }
 
-internal fun JavaType?.toConeProjection(session: FirSession, boundTypeParameter: FirTypeParameter?): ConeKotlinTypeProjection {
+internal fun JavaType?.toConeProjection(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack, boundTypeParameter: FirTypeParameter?
+): ConeKotlinTypeProjection {
     return when (this) {
         null -> ConeStarProjection
         is JavaWildcardType -> {
@@ -202,7 +212,7 @@ internal fun JavaType?.toConeProjection(session: FirSession, boundTypeParameter:
             if (bound == null || parameterVariance != INVARIANT && parameterVariance != argumentVariance) {
                 ConeStarProjection
             } else {
-                val boundType = bound.toConeKotlinTypeWithNullability(session, isNullable = false)
+                val boundType = bound.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false)
                 if (argumentVariance == OUT_VARIANCE) {
                     ConeKotlinTypeProjectionOut(boundType)
                 } else {
@@ -210,12 +220,14 @@ internal fun JavaType?.toConeProjection(session: FirSession, boundTypeParameter:
                 }
             }
         }
-        is JavaClassifierType -> toConeKotlinTypeWithNullability(session, isNullable = false)
+        is JavaClassifierType -> toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false)
         else -> ConeClassErrorType("Unexpected type argument: $this")
     }
 }
 
-private fun JavaAnnotationArgument.toFirExpression(session: FirSession): FirExpression {
+private fun JavaAnnotationArgument.toFirExpression(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): FirExpression {
     // TODO: this.name
     return when (this) {
         is JavaLiteralAnnotationArgument -> {
@@ -233,7 +245,7 @@ private fun JavaAnnotationArgument.toFirExpression(session: FirSession): FirExpr
         }
         is JavaArrayAnnotationArgument -> FirArrayOfCallImpl(session, null).apply {
             for (element in getElements()) {
-                arguments += element.toFirExpression(session)
+                arguments += element.toFirExpression(session, javaTypeParameterStack)
             }
         }
         is JavaEnumValueAnnotationArgument -> {
@@ -256,9 +268,11 @@ private fun JavaAnnotationArgument.toFirExpression(session: FirSession): FirExpr
         }
         is JavaClassObjectAnnotationArgument -> FirGetClassCallImpl(session, null).apply {
             val referencedType = getReferencedType()
-            arguments += FirClassReferenceExpressionImpl(session, null, referencedType.toFirResolvedTypeRef(session))
+            arguments += FirClassReferenceExpressionImpl(
+                session, null, referencedType.toFirResolvedTypeRef(session, javaTypeParameterStack)
+            )
         }
-        is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall(session)
+        is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall(session, javaTypeParameterStack)
         else -> FirErrorExpressionImpl(session, null, "Unknown JavaAnnotationArgument: ${this::class.java}")
     }
 }
@@ -289,8 +303,10 @@ private fun Any?.createConstant(session: FirSession): FirExpression {
     }
 }
 
-private fun JavaType.toFirResolvedTypeRef(session: FirSession): FirResolvedTypeRef {
-    if (this is JavaClassifierType) return toFirResolvedTypeRef(session)
+private fun JavaType.toFirResolvedTypeRef(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): FirResolvedTypeRef {
+    if (this is JavaClassifierType) return toFirResolvedTypeRef(session, javaTypeParameterStack)
     return FirResolvedTypeRefImpl(
         session, psi = null, type = ConeClassErrorType("Unexpected JavaType: $this"),
         isMarkedNullable = false, annotations = emptyList()

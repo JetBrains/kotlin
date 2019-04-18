@@ -1,4 +1,4 @@
-public abstract interface GenericInterfaceParametersWithBounds<A, B> : R|java/lang/Object| {
+public abstract interface GenericInterfaceParametersWithBounds<A : R|java/lang/Comparable<A>|, R|java/lang/Cloneable|, B : R|java/util/List<A>|> : R|java/lang/Object| {
     public abstract operator fun method(a: R|kotlin/Array<ft<A, A?>>|, b: R|ft<B, B?>|!): R|kotlin/Unit|
 
 }

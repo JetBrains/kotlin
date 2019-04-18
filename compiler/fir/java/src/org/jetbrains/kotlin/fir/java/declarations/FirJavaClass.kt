@@ -13,11 +13,12 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
+import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 
-class FirJavaClass(
+class FirJavaClass internal constructor(
     session: FirSession,
     override val symbol: FirClassSymbol,
     name: Name,
@@ -25,7 +26,8 @@ class FirJavaClass(
     modality: Modality?,
     override val classKind: ClassKind,
     isTopLevel: Boolean,
-    isStatic: Boolean
+    isStatic: Boolean,
+    internal val javaTypeParameterStack: JavaTypeParameterStack
 ) : FirAbstractMemberDeclaration(
     session, psi = null, name = name,
     visibility = visibility, modality = modality,

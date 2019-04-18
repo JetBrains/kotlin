@@ -1,2 +1,2 @@
-public open class ClassWithTypePRefNext<R, P> : R|java/lang/Object| {
+public open class ClassWithTypePRefNext<R : R|java/lang/Iterable<P>|, P> : R|java/lang/Object| {
 }

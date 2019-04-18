@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
-import org.jetbrains.kotlin.fir.java.createTypeParameterSymbol
+import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.toConeProjection
@@ -51,8 +51,12 @@ internal class IndexedJavaTypeQualifiers(private val data: Array<JavaTypeQualifi
     val size: Int get() = data.size
 }
 
-internal fun FirJavaTypeRef.enhance(session: FirSession, qualifiers: IndexedJavaTypeQualifiers): FirResolvedTypeRef {
-    return type.enhancePossiblyFlexible(session, annotations, qualifiers, 0)
+internal fun FirJavaTypeRef.enhance(
+    session: FirSession,
+    javaTypeParameterStack: JavaTypeParameterStack,
+    qualifiers: IndexedJavaTypeQualifiers
+): FirResolvedTypeRef {
+    return type.enhancePossiblyFlexible(session, javaTypeParameterStack, annotations, qualifiers, 0)
 }
 
 // The index in the lambda is the position of the type component:
@@ -61,6 +65,7 @@ internal fun FirJavaTypeRef.enhance(session: FirSession, qualifiers: IndexedJava
 // For flexible types, both bounds are indexed in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`.
 private fun JavaType?.enhancePossiblyFlexible(
     session: FirSession,
+    javaTypeParameterStack: JavaTypeParameterStack,
     annotations: List<FirAnnotationCall>,
     qualifiers: IndexedJavaTypeQualifiers,
     index: Int
@@ -70,10 +75,10 @@ private fun JavaType?.enhancePossiblyFlexible(
     return when (type) {
         is JavaClassifierType -> {
             val lowerResult = type.enhanceInflexibleType(
-                session, annotations, arguments, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index
+                session, javaTypeParameterStack, annotations, arguments, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index
             )
             val upperResult = type.enhanceInflexibleType(
-                session, annotations, arguments, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index
+                session, javaTypeParameterStack, annotations, arguments, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index
             )
 
             FirResolvedTypeRefImpl(
@@ -83,7 +88,7 @@ private fun JavaType?.enhancePossiblyFlexible(
             )
         }
         else -> {
-            val enhanced = type.toNotNullConeKotlinType(session)
+            val enhanced = type.toNotNullConeKotlinType(session, javaTypeParameterStack)
             FirResolvedTypeRefImpl(session, psi = null, type = enhanced, isMarkedNullable = false, annotations = annotations)
         }
     }
@@ -125,6 +130,7 @@ private fun ClassId.mutableToReadOnly(): ClassId? {
 
 private fun JavaClassifierType.enhanceInflexibleType(
     session: FirSession,
+    javaTypeParameterStack: JavaTypeParameterStack,
     annotations: List<FirAnnotationCall>,
     arguments: List<JavaType?>,
     position: TypeComponentPosition,
@@ -143,8 +149,8 @@ private fun JavaClassifierType.enhanceInflexibleType(
             val kotlinClassId = mappedId ?: classId
             ConeClassLikeLookupTagImpl(kotlinClassId)
         }
-        is JavaTypeParameter -> createTypeParameterSymbol(session, classifier.name)
-        else -> return toNotNullConeKotlinType(session)
+        is JavaTypeParameter -> javaTypeParameterStack[classifier]
+        else -> return toNotNullConeKotlinType(session, javaTypeParameterStack)
     }
 
     val effectiveQualifiers = qualifiers(index)
@@ -156,10 +162,11 @@ private fun JavaClassifierType.enhanceInflexibleType(
             globalArgIndex++
             arg.toConeProjection(
                 session,
+                javaTypeParameterStack,
                 ((originalTag as? FirBasedSymbol<*>)?.fir as? FirCallableMemberDeclaration)?.typeParameters?.getOrNull(localArgIndex)
             )
         } else {
-            val argEnhancedTypeRef = arg.enhancePossiblyFlexible(session, annotations, qualifiers, globalArgIndex)
+            val argEnhancedTypeRef = arg.enhancePossiblyFlexible(session, javaTypeParameterStack, annotations, qualifiers, globalArgIndex)
             globalArgIndex += arg.subtreeSize()
             argEnhancedTypeRef.type.type.toTypeProjection(Variance.INVARIANT)
         }

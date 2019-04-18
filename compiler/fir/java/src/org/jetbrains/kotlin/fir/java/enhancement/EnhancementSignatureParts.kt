@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.resolvedFqName
+import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeWithNullability
 import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 internal class EnhancementSignatureParts(
     private val typeQualifierResolver: FirAnnotationTypeQualifierResolver,
     private val typeContainer: FirAnnotationContainer?,
+    private val javaTypeParameterStack: JavaTypeParameterStack,
     private val current: FirJavaTypeRef,
     private val fromOverridden: Collection<FirTypeRef>,
     private val isCovariant: Boolean,
@@ -54,7 +56,7 @@ internal class EnhancementSignatureParts(
             }
         }
 
-        val containsFunctionN = current.toNotNullConeKotlinType(session).contains {
+        val containsFunctionN = current.toNotNullConeKotlinType(session, javaTypeParameterStack).contains {
             if (it is ConeClassErrorType) false
             else {
                 val classId = it.lookupTag.classId
@@ -63,7 +65,7 @@ internal class EnhancementSignatureParts(
             }
         }
 
-        val enhancedCurrent = current.enhance(session, qualifiersWithPredefined ?: qualifiers)
+        val enhancedCurrent = current.enhance(session, javaTypeParameterStack, qualifiersWithPredefined ?: qualifiers)
         return PartEnhancementResult(
             enhancedCurrent, wereChanges = true, containsFunctionN = containsFunctionN
         )
@@ -100,7 +102,7 @@ internal class EnhancementSignatureParts(
                     if (arg is JavaWildcardType || arg == null) {
                         add(null)
                     } else {
-                        add(arg.toFirJavaTypeRef(context.session))
+                        add(arg.toFirJavaTypeRef(context.session, javaTypeParameterStack))
                     }
                 }
             } else if (type != null) {
@@ -148,8 +150,8 @@ internal class EnhancementSignatureParts(
             is FirJavaTypeRef -> {
                 Pair(
                     // TODO: optimize
-                    type.toConeKotlinTypeWithNullability(session, isNullable = false),
-                    type.toConeKotlinTypeWithNullability(session, isNullable = true)
+                    type.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false),
+                    type.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = true)
                 )
             }
             else -> return JavaTypeQualifiers.NONE

@@ -1,4 +1,4 @@
 public open class AllBoundsInWhen : R|java/lang/Object| {
-    public open operator fun foo(): R|kotlin/Unit|
+    public open operator fun <T : R|java/io/Serializable|> foo(): R|kotlin/Unit|
 
 }

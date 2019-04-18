@@ -15,6 +15,6 @@ public final enum class StaticMembersInEnum : R|java/lang/Enum<test/StaticMember
 
     public open static operator fun valueOf(x: R|kotlin/Int|): R|kotlin/Unit|
 
-    public open static operator fun valueOf(<anonymous Java parameter>: R|ft<java/lang/Class<ft<T, T?>>, java/lang/Class<ft<T, T?>>?>|!, <anonymous Java parameter>: R|ft<kotlin/String, kotlin/String?>|!): R|ft<T, T?>|!
+    public open static operator fun <T : R|java/lang/Enum<T>|> valueOf(<anonymous Java parameter>: R|ft<java/lang/Class<ft<T, T?>>, java/lang/Class<ft<T, T?>>?>|!, <anonymous Java parameter>: R|ft<kotlin/String, kotlin/String?>|!): R|ft<T, T?>|!
 
 }

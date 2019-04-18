@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -33,6 +35,9 @@ class JavaClassUseSiteScope(
 ) : FirAbstractProviderBasedScope(session, lookupInFir = true) {
     internal val symbol = klass.symbol
 
+    private val javaTypeParameterStack: JavaTypeParameterStack =
+        if (klass is FirJavaClass) klass.javaTypeParameterStack else JavaTypeParameterStack.EMPTY
+
     //base symbol as key, overridden as value
     private val overriddenByBase = mutableMapOf<ConeCallableSymbol, ConeFunctionSymbol?>()
 
@@ -54,7 +59,10 @@ class JavaClassUseSiteScope(
     }
 
     private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef) =
-        isEqualTypes(a.toNotNullConeKotlinType(session), b.toNotNullConeKotlinType(session))
+        isEqualTypes(
+            a.toNotNullConeKotlinType(session, javaTypeParameterStack),
+            b.toNotNullConeKotlinType(session, javaTypeParameterStack)
+        )
 
     private fun isOverriddenFunCheck(overriddenInJava: FirFunction, base: FirFunction): Boolean {
         val receiverTypeRef = (base as FirCallableMemberDeclaration).receiverTypeRef
