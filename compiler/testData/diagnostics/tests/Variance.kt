@@ -15,7 +15,7 @@ fun foo(c: Consumer<Int>, p: Producer<Int>, u: Usual<Int>) {
     val <!UNUSED_VARIABLE!>p2<!>: Producer<Int> = <!TYPE_MISMATCH!>p1<!>
 
     val u1: Usual<Any> = <!TYPE_MISMATCH!>u<!>
-    val <!UNUSED_VARIABLE!>u2<!>: Usual<Int> = <!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH!>u1<!>
+    val <!UNUSED_VARIABLE!>u2<!>: Usual<Int> = <!TYPE_MISMATCH!>u1<!>
 }
 
 //Arrays copy example
