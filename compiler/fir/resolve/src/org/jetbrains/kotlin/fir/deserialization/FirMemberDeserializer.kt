@@ -126,6 +126,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     fun loadTypeAlias(proto: ProtoBuf.TypeAlias): FirTypeAlias {
         val flags = proto.flags
         val name = c.nameResolver.getName(proto.name)
+        val local = c.childContext(proto.typeParameterList)
         return FirTypeAliasImpl(
             c.session,
             null,
@@ -137,11 +138,13 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             FirResolvedTypeRefImpl(
                 c.session,
                 null,
-                c.typeDeserializer.type(proto.underlyingType(c.typeTable)),
+                local.typeDeserializer.type(proto.underlyingType(c.typeTable)),
                 false,
                 emptyList() /* TODO */
             )
-        )
+        ).apply {
+            typeParameters += local.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
+        }
     }
 
     fun loadProperty(proto: ProtoBuf.Property): FirProperty {
