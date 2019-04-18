@@ -10,15 +10,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKExpressionStatementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldSymbol
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtThrowExpressionImpl
 
 
-class ArrayOperationsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class ArrayOperationsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKQualifiedExpression) return recurse(element)
         val selector = element.selector as? JKFieldAccessExpression ?: return recurse(element)

@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.load.java.NOT_NULL_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.NULLABLE_ANNOTATIONS
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKTypeElementImpl
 
 
-class JetbrainsNullableAnnotationsConverter(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class JetbrainsNullableAnnotationsConverter(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKAnnotationListOwner) return recurse(element)
 

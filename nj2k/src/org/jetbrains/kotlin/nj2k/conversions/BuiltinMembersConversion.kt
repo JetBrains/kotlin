@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class BuiltinMembersConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKExpression) return recurse(element)
         return recurse(element.convert() ?: element)

@@ -220,7 +220,7 @@ fun kotlinPostfixExpression(
 fun untilToExpression(
     from: JKExpression,
     to: JKExpression,
-    conversionContext: ConversionContext
+    conversionContext: NewJ2kConverterContext
 ): JKExpression =
     rangeExpression(
         from,
@@ -232,7 +232,7 @@ fun untilToExpression(
 fun downToExpression(
     from: JKExpression,
     to: JKExpression,
-    conversionContext: ConversionContext
+    conversionContext: NewJ2kConverterContext
 ): JKExpression =
     rangeExpression(
         from,
@@ -254,7 +254,7 @@ fun rangeExpression(
     from: JKExpression,
     to: JKExpression,
     operatorName: String,
-    conversionContext: ConversionContext
+    conversionContext: NewJ2kConverterContext
 ): JKExpression =
     JKBinaryExpressionImpl(
         from,
@@ -331,7 +331,7 @@ fun stringLiteral(content: String, symbolProvider: JKSymbolProvider): JKExpressi
     }
 }
 
-fun JKVariable.findUsages(scope: JKTreeElement, context: ConversionContext): List<JKFieldAccessExpression> {
+fun JKVariable.findUsages(scope: JKTreeElement, context: NewJ2kConverterContext): List<JKFieldAccessExpression> {
     val symbol = context.symbolProvider.provideUniverseSymbol(this)
     val usages = mutableListOf<JKFieldAccessExpression>()
     val searcher = object : RecursiveApplicableConversionBase() {
@@ -369,7 +369,7 @@ fun JKExpression.bangedBangedExpr(symbolProvider: JKSymbolProvider): JKExpressio
         JKKtOperatorImpl(KtTokens.EXCLEXCL, type(symbolProvider)!!)
     )
 
-fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: ConversionContext): Boolean =
+fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: NewJ2kConverterContext): Boolean =
     findUsages(scope, context).any {
         it.asAssignmentFromTarget() != null
                 || it.isInDecrementOrIncrement()

@@ -16,6 +16,6 @@ object JavaToKotlinConverterFactory {
     ): JavaToKotlinConverter =
         J2kConverterExtension.extension.createJavaToKotlinConverter(project, settings, services)
 
-    fun createPostProcessor(formatCode: Boolean, settings: ConverterSettings = ConverterSettings.defaultSettings): PostProcessor =
-        J2kConverterExtension.extension.createPostProcessor(formatCode, settings)
+    fun createPostProcessor(formatCode: Boolean): PostProcessor =
+        J2kConverterExtension.extension.createPostProcessor(formatCode)
 }

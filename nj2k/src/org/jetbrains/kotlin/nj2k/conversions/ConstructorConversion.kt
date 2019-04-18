@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtConstructorImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKStubExpressionImpl
 
-class ConstructorConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class ConstructorConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaMethod) return recurse(element)
         val outerClass = element.parentOfType<JKClass>() ?: return recurse(element)

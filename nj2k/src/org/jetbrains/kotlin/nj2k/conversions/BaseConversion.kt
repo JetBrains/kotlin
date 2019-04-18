@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 
 interface BatchBaseConversion {
-    fun runConversion(treeRoots: List<JKTreeElement>, context: ConversionContext): Boolean
+    fun runConversion(treeRoots: List<JKTreeElement>, context: NewJ2kConverterContext): Boolean
 }
 
 interface SequentialBaseConversion : BatchBaseConversion {
-    fun runConversion(treeRoot: JKTreeElement, context: ConversionContext): Boolean
+    fun runConversion(treeRoot: JKTreeElement, context: NewJ2kConverterContext): Boolean
 
-    override fun runConversion(treeRoots: List<JKTreeElement>, context: ConversionContext): Boolean {
+    override fun runConversion(treeRoots: List<JKTreeElement>, context: NewJ2kConverterContext): Boolean {
         return treeRoots.asSequence().map { runConversion(it, context) }.max() ?: false
     }
 }

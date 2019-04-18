@@ -51,7 +51,7 @@ class NewJavaToKotlinConverter(
         progress: ProgressIndicator
     ): FilesResult {
         val withProgressProcessor = WithProgressProcessor(progress, files)
-        val (results, externalCodeProcessing) = ApplicationManager.getApplication().runReadAction(Computable {
+        val (results, externalCodeProcessing, context) = ApplicationManager.getApplication().runReadAction(Computable {
             elementsToKotlin(files, withProgressProcessor)
         })
 
@@ -73,7 +73,7 @@ class NewJavaToKotlinConverter(
                 }
 
                 CommandProcessor.getInstance().runUndoTransparentAction {
-                    AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
+                    AfterConversionPass(project, postProcessor).run(kotlinFile, context, range = null)
                 }
 
                 kotlinFile.text
@@ -97,7 +97,7 @@ class NewJavaToKotlinConverter(
             element to treeBuilder.buildTree(element)
         }
 
-        val context = ConversionContext(
+        val context = NewJ2kConverterContext(
             symbolProvider,
             this,
             { it.containingFile in inputElements },
@@ -119,6 +119,6 @@ class NewJavaToKotlinConverter(
             )
         }
 
-        return Result(results, null)
+        return Result(results, null, context)
     }
 }

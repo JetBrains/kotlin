@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.jvmAnnotation
 import org.jetbrains.kotlin.nj2k.tree.*
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class DefaultArgumentsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
 
     private fun JKMethod.canNotBeMerged(): Boolean =
         modality == Modality.ABSTRACT

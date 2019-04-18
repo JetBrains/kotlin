@@ -40,7 +40,7 @@ import java.util.*
 interface PostProcessor {
     fun insertImport(file: KtFile, fqName: FqName)
 
-    fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?)
+    fun doAdditionalProcessing(file: KtFile, converterContext: ConverterContext?, rangeMarker: RangeMarker?)
 }
 
 enum class ParseContext {
@@ -55,10 +55,15 @@ interface ExternalCodeProcessing {
 
 data class ElementResult(val text: String, val importsToAdd: Set<FqName>, val parseContext: ParseContext)
 
-data class Result(val results: List<ElementResult?>, val externalCodeProcessing: ExternalCodeProcessing?)
+data class Result(
+    val results: List<ElementResult?>,
+    val externalCodeProcessing: ExternalCodeProcessing?,
+    val converterContext: ConverterContext?
+)
 
 data class FilesResult(val results: List<String>, val externalCodeProcessing: ExternalCodeProcessing?)
 
+interface ConverterContext
 
 abstract class JavaToKotlinConverter {
     protected abstract fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result
@@ -101,7 +106,7 @@ class OldJavaToKotlinConverter(
 
                 result!!.importsToAdd.forEach { postProcessor.insertImport(kotlinFile, it) }
 
-                AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
+                AfterConversionPass(project, postProcessor).run(kotlinFile, converterContext = null, range = null)
 
                 kotlinFile.text
             } catch (e: ProcessCanceledException) {
@@ -140,7 +145,7 @@ class OldJavaToKotlinConverter(
 
             val externalCodeProcessing = buildExternalCodeProcessing(usageProcessings, ::inConversionScope)
 
-            return Result(results, externalCodeProcessing)
+            return Result(results, externalCodeProcessing, null)
         } catch (e: ElementCreationStackTraceRequiredException) {
             // if we got this exception then we need to turn element creation stack traces on to get better diagnostic
             Element.saveCreationStacktraces = true

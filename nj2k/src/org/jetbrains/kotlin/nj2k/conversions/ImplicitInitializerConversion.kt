@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.findUsages
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-class ImplicitInitializerConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class ImplicitInitializerConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
 
     enum class InitializationState {
         INITIALIZED_IN_ALL_CONSTRUCTORS,

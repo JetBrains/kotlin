@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.JKJavaSynchronizedStatement
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.tree.withNonCodeElementsFrom
 
 
-class SynchronizedStatementConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class SynchronizedStatementConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaSynchronizedStatement) return recurse(element)
         element.invalidate()

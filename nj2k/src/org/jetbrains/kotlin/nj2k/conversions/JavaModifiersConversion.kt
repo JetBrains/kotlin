@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.annotationByFqName
 import org.jetbrains.kotlin.nj2k.jvmAnnotation
 import org.jetbrains.kotlin.nj2k.tree.*
 
-class JavaModifiersConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class JavaModifiersConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKModalityOwner && element is JKAnnotationListOwner) {
             val overrideAnnotation = element.annotationList.annotationByFqName("java.lang.Override")

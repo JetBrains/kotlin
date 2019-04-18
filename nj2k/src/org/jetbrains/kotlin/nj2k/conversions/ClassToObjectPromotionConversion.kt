@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.getCompanion
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationListImpl
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKClassImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKModalityModifierElementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
-class ClassToObjectPromotionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class ClassToObjectPromotionConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKClass && element.classKind == JKClass.ClassKind.CLASS) {
             val companion = element.getCompanion() ?: return recurse(element)

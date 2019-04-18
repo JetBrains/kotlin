@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.replace
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtInitDeclarationImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtPrimaryConstructorImpl
 
-class PrimaryConstructorDetectConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class PrimaryConstructorDetectConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKClass &&
             (element.classKind == JKClass.ClassKind.CLASS || element.classKind == JKClass.ClassKind.ENUM)

@@ -32,13 +32,12 @@ import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.j2k.ConverterContext
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
-import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.*
 
@@ -58,7 +57,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         PROCESS
     }
 
-    override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) =
+    override fun doAdditionalProcessing(file: KtFile, converterContext: ConverterContext?, rangeMarker: RangeMarker?) =
         runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
             do {
                 var modificationStamp: Long? = file.modificationStamp

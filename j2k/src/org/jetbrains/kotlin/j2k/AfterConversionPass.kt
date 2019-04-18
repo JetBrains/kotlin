@@ -21,7 +21,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtFile
 
 class AfterConversionPass(val project: Project, val postProcessor: PostProcessor) {
-    fun run(kotlinFile: KtFile, range: TextRange?) {
+    fun run(kotlinFile: KtFile, converterContext: ConverterContext?, range: TextRange?) {
         val rangeMarker = if (range != null) {
             val document = kotlinFile.viewProvider.document!!
             val marker = document.createRangeMarker(range.startOffset, range.endOffset)
@@ -32,6 +32,6 @@ class AfterConversionPass(val project: Project, val postProcessor: PostProcessor
             null
         }
 
-        postProcessor.doAdditionalProcessing(kotlinFile, rangeMarker)
+        postProcessor.doAdditionalProcessing(kotlinFile, converterContext, rangeMarker)
     }
 }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.kotlinTypeByName
 import org.jetbrains.kotlin.nj2k.tree.impl.*
@@ -240,7 +240,7 @@ fun <T : JKType> T.updateNullabilityRecursively(newNullability: Nullability): T 
         }
     } as T
 
-fun JKJavaMethod.returnTypeNullability(context: ConversionContext): Nullability =
+fun JKJavaMethod.returnTypeNullability(context: NewJ2kConverterContext): Nullability =
     context.typeFlavorCalculator.methodNullability(psi()!!)
 
 fun JKType.isCollectionType(symbolProvider: JKSymbolProvider): Boolean {

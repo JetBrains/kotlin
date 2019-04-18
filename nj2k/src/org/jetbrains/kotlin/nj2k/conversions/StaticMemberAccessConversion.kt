@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.j2k.getContainingClass
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asQualifierWithThisAsSelector
 import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.tree.*
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class StaticMemberAccessConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class StaticMemberAccessConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         val symbol =
             when (element) {

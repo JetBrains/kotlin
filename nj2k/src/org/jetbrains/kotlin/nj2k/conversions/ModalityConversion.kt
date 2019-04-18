@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
-class ModalityConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class ModalityConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         when (element) {
             is JKClass -> processClass(element)

@@ -13,6 +13,6 @@ class NewJ2kConverterExtension : J2kConverterExtension() {
     ): JavaToKotlinConverter =
         NewJavaToKotlinConverter(project, settings, services)
 
-    override fun createPostProcessor(formatCode: Boolean, settings: ConverterSettings): PostProcessor =
-        NewJ2kPostProcessor(formatCode, settings)
+    override fun createPostProcessor(formatCode: Boolean): PostProcessor =
+        NewJ2kPostProcessor(formatCode)
 }

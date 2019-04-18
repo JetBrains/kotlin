@@ -14,7 +14,7 @@ abstract class J2kConverterExtension : AbstractExtensionPointBean() {
         services: JavaToKotlinConverterServices
     ): JavaToKotlinConverter
 
-    abstract fun createPostProcessor(formatCode: Boolean, settings: ConverterSettings = ConverterSettings.defaultSettings): PostProcessor
+    abstract fun createPostProcessor(formatCode: Boolean): PostProcessor
 
 
     companion object {

@@ -84,7 +84,6 @@ import org.jetbrains.kotlin.idea.refactoring.rename.canonicalRender
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -643,7 +642,10 @@ fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boo
     return javaClass
 }
 
-fun PsiElement.j2kText(): String? {
+fun PsiElement.j2kText(): String? =
+    convertToKotlin()?.results?.single()?.text //TODO: insert imports
+
+fun PsiElement.convertToKotlin(): org.jetbrains.kotlin.j2k.Result? {
     if (language != JavaLanguage.INSTANCE) return null
 
     val j2kConverter =
@@ -652,7 +654,7 @@ fun PsiElement.j2kText(): String? {
             ConverterSettings.defaultSettings,
             IdeaJavaToKotlinServices
         )
-    return j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
+    return j2kConverter.elementsToKotlin(listOf(this))
 }
 
 fun PsiExpression.j2k(): KtExpression? {

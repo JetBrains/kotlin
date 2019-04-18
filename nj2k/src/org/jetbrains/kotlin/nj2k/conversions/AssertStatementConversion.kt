@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKExpressionStatementImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaOperatorImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKLambdaExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.toKtToken
 
 
-class AssertStatementConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class AssertStatementConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaAssertStatement) return recurse(element)
         val messageExpression =

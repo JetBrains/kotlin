@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.*
 import kotlin.math.abs
 
 
-class ForConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class ForConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     private val referenceSearcher: ReferenceSearcher
         get() = context.converter.converterServices.oldServices.referenceSearcher
 

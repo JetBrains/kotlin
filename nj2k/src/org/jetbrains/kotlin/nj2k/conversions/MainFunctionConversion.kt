@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.util.collectionUtils.concatInOrder
 
 
 //TODO temporary
-class MainFunctionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class MainFunctionConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKMethod) return recurse(element)
         if (element.isMainFunctionDeclaration()) {

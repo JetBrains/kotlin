@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationParameterImpl
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtLiteralExpressionImpl
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class JavaAnnotationsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class JavaAnnotationsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKAnnotationList) {
             for (annotation in element.annotations) {

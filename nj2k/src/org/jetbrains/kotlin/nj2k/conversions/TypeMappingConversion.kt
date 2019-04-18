@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.kotlinTypeByName
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicableConversionBase() {
+class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     private val typeFlavorCalculator = TypeFlavorCalculator(object : TypeFlavorConverterFacade {
         override val referenceSearcher: ReferenceSearcher
             get() = context.converter.converterServices.oldServices.referenceSearcher
