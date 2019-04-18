@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.AnalysisScope
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.Nullability
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.NullabilityAnalysisFacade
-import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.preapareTypeElementByMakingAllTypesNullable
+import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.prepareTypeElementByMakingAllTypesNullable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -23,8 +23,9 @@ abstract class AbstractNullabilityAnalysisTest : KotlinLightCodeInsightFixtureTe
         val text = FileUtil.loadFile(file, true)
         val ktFile = myFixture.configureByText("converterTestFile.kt", text) as KtFile
         NullabilityAnalysisFacade(
-            getTypeElementNullability = { Nullability.UNKNOWN },
-            prepareTypeElement = ::preapareTypeElementByMakingAllTypesNullable,
+            NewJ2kConverterContext.DUMMY,
+            getTypeElementNullability = { _, _ -> Nullability.UNKNOWN },
+            prepareTypeElement = ::prepareTypeElementByMakingAllTypesNullable,
             debugPrint = false
         )
             .fixNullability(AnalysisScope(ktFile))
