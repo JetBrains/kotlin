@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.hostManager
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
@@ -146,7 +147,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
             }
         } else {
             // A requested target doesn't require building a fat framework.
-            createSyncForRegularFramework(project, kotlinExtension, requestedBuildType, HostManager().targetByName(requestedTargetName))
+            createSyncForRegularFramework(project, kotlinExtension, requestedBuildType, project.hostManager.targetByName(requestedTargetName))
         }
     }
 

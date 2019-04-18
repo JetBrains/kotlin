@@ -58,7 +58,7 @@ open class KotlinNativeTargetConfigurator(
         producingTask: Task,
         copy: Boolean = false
     ) {
-        if (!compilation.target.konanTarget.enabledOnCurrentHost) {
+        if (!compilation.target.enabledOnCurrentHost) {
             return
         }
 
@@ -117,7 +117,7 @@ open class KotlinNativeTargetConfigurator(
             this.binary = binary
             group = BasePlugin.BUILD_GROUP
             description = "Links ${binary.outputKind.description} '${binary.name}' for a target '${target.name}'."
-            enabled = target.konanTarget.enabledOnCurrentHost
+            enabled = target.enabledOnCurrentHost
             destinationDir = binary.outputDirectory
             addCompilerPlugins()
 
@@ -171,7 +171,7 @@ open class KotlinNativeTargetConfigurator(
             group = BasePlugin.BUILD_GROUP
             description = "Compiles a klibrary from the '${compilation.name}' " +
                     "compilation for target '${compilation.platformType.name}'."
-            enabled = compilation.target.konanTarget.enabledOnCurrentHost
+            enabled = compilation.target.enabledOnCurrentHost
 
             destinationDir = klibOutputDirectory(compilation)
             addCompilerPlugins()
@@ -202,7 +202,7 @@ open class KotlinNativeTargetConfigurator(
                 description = "Generates Kotlin/Native interop library '${interop.name}' " +
                         "for compilation '${compilation.name}'" +
                         "of target '${konanTarget.name}'."
-                enabled = compilation.target.konanTarget.enabledOnCurrentHost
+                enabled = compilation.target.enabledOnCurrentHost
 
                 val interopOutput = project.files(outputFileProvider).builtBy(this)
                 with(compilation) {
