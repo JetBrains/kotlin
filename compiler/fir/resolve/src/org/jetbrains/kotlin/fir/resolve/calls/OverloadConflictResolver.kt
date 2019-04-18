@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.resolve.OverloadabilitySpecificityCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class ConeOverloadConflictResolver(
     val specificityComparator: TypeSpecificityComparator,
@@ -73,7 +77,8 @@ class ConeOverloadConflictResolver(
         return FlatSignature(
             call,
             function.typeParameters.map { it.symbol },
-            call.argumentMapping!!.map { it.value.returnTypeRef.coneTypeUnsafe() },
+            listOfNotNull<ConeKotlinType>(function.receiverTypeRef?.coneTypeUnsafe()) +
+                    call.argumentMapping!!.map { it.value.returnTypeRef.coneTypeUnsafe() },
             function.receiverTypeRef != null,
             function.valueParameters.any { it.isVararg },
             function.valueParameters.count { it.defaultValue != null },
@@ -199,8 +204,24 @@ class ConeOverloadConflictResolver(
 object NoSubstitutor : TypeSubstitutorMarker
 
 class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl) : SimpleConstraintSystem {
-    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker {
-        return NoSubstitutor
+    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker = with(context) {
+        val csBuilder = system.getBuilder()
+        val substitutionMap = typeParameters.associate {
+            require(it is FirTypeParameterSymbol)
+            val variable = TypeParameterBasedTypeVariable(it)
+            csBuilder.registerVariable(variable)
+
+
+            it to variable.defaultType
+        }
+        val substitutor = ConeSubstitutorByMap(substitutionMap.cast())
+        for (typeParameter in typeParameters) {
+            require(typeParameter is FirTypeParameterSymbol)
+            for (upperBound in typeParameter.fir.bounds) {
+                addSubtypeConstraint(substitutionMap[typeParameter]!!, substitutor.substituteOrSelf(upperBound.coneTypeUnsafe()))
+            }
+        }
+        return substitutor
     }
 
     override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker) {
@@ -208,6 +229,9 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl) : Simp
     }
 
     override fun hasContradiction(): Boolean = system.hasContradiction
+
+    override val captureFromArgument: Boolean
+        get() = true
 
     override val context: TypeSystemInferenceExtensionContext
         get() = system

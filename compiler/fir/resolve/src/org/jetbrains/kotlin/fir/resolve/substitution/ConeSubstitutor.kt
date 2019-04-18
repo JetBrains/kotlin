@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 
-interface ConeSubstitutor {
+interface ConeSubstitutor : TypeSubstitutorMarker {
     fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType
     fun substituteOrNull(type: ConeKotlinType): ConeKotlinType?
 
