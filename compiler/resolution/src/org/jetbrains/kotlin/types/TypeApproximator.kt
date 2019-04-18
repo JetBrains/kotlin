@@ -117,6 +117,8 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
     private val referenceApproximateToSuperType = this::approximateSimpleToSuperType
     private val referenceApproximateToSubType = this::approximateSimpleToSubType
 
+    open fun createErrorType(message: String): SimpleTypeMarker =
+        ErrorUtils.createErrorType(message)
 
 
     // null means that this input type is the result, i.e. input type not contains not-allowed kind of types
@@ -393,7 +395,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 //        val arguments = type.arguments
         if (typeConstructor.parametersCount() != type.argumentsCount()) {
             return if (conf.errorType) {
-                ErrorUtils.createErrorType("Inconsistent type: $type (parameters.size = ${typeConstructor.parametersCount()}, arguments.size = ${type.argumentsCount()})")
+                createErrorType("Inconsistent type: $type (parameters.size = ${typeConstructor.parametersCount()}, arguments.size = ${type.argumentsCount()})")
             } else type.defaultResult(toSuper)
         }
 
