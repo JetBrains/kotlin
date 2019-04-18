@@ -52,7 +52,7 @@ fun Project.resolveDependencies(
                 return true
             }
 
-            if (forTests) {
+            if (forTests && artifact.classifier == "tests") {
                 addSourceSet(SourceSet.TEST_SOURCE_SET_NAME, "test") || addSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, "src")
             } else {
                 addSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, "src")
