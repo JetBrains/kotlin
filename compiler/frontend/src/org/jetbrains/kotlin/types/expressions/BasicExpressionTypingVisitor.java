@@ -110,15 +110,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return qualifiedExpression.getOperationSign() == KtTokens.DOT &&
                    qualifiedExpression.getReceiverExpression() == KtPsiUtil.deparenthesize(expression);
         }
-        if (parent instanceof KtBinaryExpression) {
-            KtBinaryExpression binaryExpression = (KtBinaryExpression) parent;
-            if (!OperatorConventions.BINARY_OPERATION_NAMES.containsKey(binaryExpression.getOperationToken()) &&
-                !KtTokens.ALL_ASSIGNMENTS.contains(binaryExpression.getOperationToken())) {
-                return false;
-            }
-            return PsiTreeUtil.isAncestor(binaryExpression.getLeft(), expression, false);
+
+        return isLValue(expression, parent);
+    }
+
+    public static boolean isLValue(@NotNull KtSimpleNameExpression expression, @Nullable PsiElement parent) {
+        if (!(parent instanceof KtBinaryExpression)) {
+            return false;
         }
-        return false;
+
+        KtBinaryExpression binaryExpression = (KtBinaryExpression) parent;
+        if (!OperatorConventions.BINARY_OPERATION_NAMES.containsKey(binaryExpression.getOperationToken()) &&
+            !KtTokens.ALL_ASSIGNMENTS.contains(binaryExpression.getOperationToken())) {
+            return false;
+        }
+        return PsiTreeUtil.isAncestor(binaryExpression.getLeft(), expression, false);
     }
 
     private static boolean isDangerousWithNull(@NotNull KtSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
@@ -1463,7 +1469,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @NotNull
     private KotlinTypeInfo assignmentIsNotAnExpressionError(KtBinaryExpression expression, ExpressionTypingContext context) {
         facade.checkStatementType(expression, context);
-        context.trace.report(ASSIGNMENT_IN_EXPRESSION_CONTEXT.on(expression));
+        if (!context.isDebuggerContext) {
+            context.trace.report(ASSIGNMENT_IN_EXPRESSION_CONTEXT.on(expression));
+        }
         return TypeInfoFactoryKt.noTypeInfo(context);
     }
 

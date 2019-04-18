@@ -22,7 +22,8 @@ interface CodeFragmentParameter {
     class Smart(
         val dumb: Dumb,
         override val targetType: KotlinType,
-        override val targetDescriptor: DeclarationDescriptor
+        override val targetDescriptor: DeclarationDescriptor,
+        override val isLValue: Boolean = false
     ) : CodeFragmentParameter by dumb, CodeFragmentCodegenInfo.IParameter
 
     data class Dumb(

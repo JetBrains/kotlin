@@ -36,6 +36,7 @@ class CodeFragmentCodegenInfo(
     interface IParameter {
         val targetDescriptor: DeclarationDescriptor
         val targetType: KotlinType
+        val isLValue: Boolean
     }
 }
 
@@ -210,7 +211,7 @@ class CodeFragmentCodegen private constructor(
                 val asmType: Type
                 val stackValue: StackValue
 
-                val sharedAsmType = getSharedTypeIfApplicable(parameter.targetDescriptor, typeMapper)
+                val sharedAsmType = getSharedTypeIfApplicable(parameter, typeMapper)
                 if (sharedAsmType != null) {
                     asmType = sharedAsmType
                     val unwrappedType = typeMapper.mapType(parameter.targetType)
@@ -229,9 +230,15 @@ class CodeFragmentCodegen private constructor(
             return CalculatedCodeFragmentCodegenInfo(parameters, methodSignature.returnType)
         }
 
-        fun getSharedTypeIfApplicable(descriptor: DeclarationDescriptor, typeMapper: KotlinTypeMapper): Type? {
-            return when (descriptor) {
-                is LocalVariableDescriptor -> typeMapper.getSharedVarType(descriptor)
+        fun getSharedTypeIfApplicable(parameter: IParameter, typeMapper: KotlinTypeMapper): Type? {
+            return when (val descriptor = parameter.targetDescriptor) {
+                is LocalVariableDescriptor -> {
+                    var result = typeMapper.getSharedVarType(descriptor)
+                    if (result == null && parameter.isLValue) {
+                        result = StackValue.sharedTypeForType(typeMapper.mapType(descriptor.type))
+                    }
+                    result
+                }
                 else -> null
             }
         }

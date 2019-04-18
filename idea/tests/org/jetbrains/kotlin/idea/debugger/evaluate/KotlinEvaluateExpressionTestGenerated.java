@@ -1136,6 +1136,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/multipleBreakpointsAtLine.kt");
         }
 
+        @TestMetadata("mutations.kt")
+        public void testMutations() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/mutations.kt");
+        }
+
         @TestMetadata("nonCapturedVariables.kt")
         public void testNonCapturedVariables() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/nonCapturedVariables.kt");

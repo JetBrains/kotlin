@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.variables.EvaluatorValueConve
 import org.jetbrains.kotlin.idea.debugger.evaluate.variables.VariableFinder
 import org.jetbrains.kotlin.idea.debugger.safeLocation
 import org.jetbrains.kotlin.idea.debugger.safeMethod
+import org.jetbrains.kotlin.idea.debugger.safeVisibleVariableByName
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -287,18 +288,38 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             for (parameterType in compiledData.mainMethodSignature.parameterTypes) {
                 context.findClass(parameterType, classLoader)
             }
-            val args = calculateMainMethodCallArguments(context, compiledData)
-            block(args)
+
+            val variableFinder = VariableFinder(context)
+            val args = calculateMainMethodCallArguments(variableFinder, compiledData)
+
+            val result = block(args)
+
+            for (wrapper in variableFinder.refWrappers) {
+                updateLocalVariableValue(variableFinder.evaluatorValueConverter, wrapper)
+            }
+
+            return@executeWithBreakpointsDisabled result
         }
     }
 
-    private fun calculateMainMethodCallArguments(context: ExecutionContext, compiledData: CompiledDataDescriptor): List<Value?> {
+    private fun updateLocalVariableValue(converter: EvaluatorValueConverter, ref: VariableFinder.RefWrapper) {
+        val frameProxy = converter.context.frameProxy
+        val variable = frameProxy.safeVisibleVariableByName(ref.localVariableName) ?: return
+        val newValue = converter.unref(ref.wrapper)
+
+        try {
+            frameProxy.setValue(variable, newValue)
+        } catch (e: InvalidTypeException) {
+            LOG.error("Cannot update local variable value: expected type ${variable.type}, actual type ${newValue?.type()}", e)
+        }
+    }
+
+    private fun calculateMainMethodCallArguments(variableFinder: VariableFinder, compiledData: CompiledDataDescriptor): List<Value?> {
         val asmValueParameters = compiledData.mainMethodSignature.parameterTypes
         val valueParameters = compiledData.parameters
         require(asmValueParameters.size == valueParameters.size)
 
         val args = valueParameters.zip(asmValueParameters)
-        val variableFinder = VariableFinder(context)
 
         return args.map { (parameter, asmType) ->
             val result = variableFinder.find(parameter, asmType)
@@ -307,7 +328,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val name = parameter.debugString
 
                 fun isInsideDefaultInterfaceMethod(): Boolean {
-                    val method = context.frameProxy.safeLocation()?.safeMethod() ?: return false
+                    val method = variableFinder.context.frameProxy.safeLocation()?.safeMethod() ?: return false
                     val desc = method.signature()
                     return method.name().endsWith("\$default") && DEFAULT_METHOD_MARKERS.any { desc.contains("I${it.descriptor})") }
                 }
@@ -319,7 +340,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 } else if (parameter.kind == CodeFragmentParameter.Kind.ORDINARY && isInsideDefaultInterfaceMethod()) {
                     evaluationException("Parameter evaluation is not supported for '\$default' methods")
                 } else {
-                    throw VariableFinder.variableNotFound(context, buildString {
+                    throw VariableFinder.variableNotFound(variableFinder.context, buildString {
                         append("Cannot find local variable: name = '").append(name).append("', type = ").append(asmType.className)
                     })
                 }

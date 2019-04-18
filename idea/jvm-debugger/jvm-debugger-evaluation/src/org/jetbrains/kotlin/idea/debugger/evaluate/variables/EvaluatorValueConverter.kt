@@ -17,7 +17,7 @@ import com.sun.jdi.Type as JdiType
 import kotlin.jvm.internal.Ref
 
 @Suppress("SpellCheckingInspection")
-class EvaluatorValueConverter(private val context: ExecutionContext) {
+class EvaluatorValueConverter(val context: ExecutionContext) {
     private companion object {
         private val UNBOXING_METHOD_NAMES = mapOf(
             "java/lang/Boolean" to "booleanValue",
@@ -228,8 +228,11 @@ private fun unwrap(type: AsmType): AsmType {
 private val AsmType.isPrimitiveType: Boolean
     get() = sort != AsmType.OBJECT && sort != AsmType.ARRAY
 
-private val AsmType.isRefType: Boolean
+internal val AsmType.isRefType: Boolean
     get() = sort == AsmType.OBJECT && this in REF_TYPES
+
+internal val Value?.isRefType: Boolean
+    get() = this is ObjectReference && AsmType.getType(this.referenceType().signature()).isRefType
 
 private val AsmType.isBoxedType: Boolean
     get() = this in BOXED_TO_PRIMITIVE
