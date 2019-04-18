@@ -38,6 +38,18 @@ fun getScopeContainingBoth(scope1: DependencyScope, scope2: DependencyScope?): D
     return result
 }
 
+@Deprecated(
+    message = "This method does not set productionOnTest flag for created dependencies",
+    replaceWith = ReplaceWith("addModuleDependencyIfNeeded(rootModel, dependeeModule, testScope, false)")
+)
+fun addModuleDependencyIfNeeded(
+    rootModel: ModifiableRootModel,
+    dependeeModule: Module,
+    testScope: Boolean
+) {
+    addModuleDependencyIfNeeded(rootModel, dependeeModule, testScope, false)
+}
+
 fun addModuleDependencyIfNeeded(
     rootModel: ModifiableRootModel,
     dependeeModule: Module,
