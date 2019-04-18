@@ -529,7 +529,12 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         whenExpression.transformChildren(this, data)
         if (whenExpression.resultType !is FirResolvedTypeRef) {
             val type = commonSuperType(whenExpression.branches.mapNotNull {
-                it.result.resultType
+                val expression = it.result.statements.lastOrNull() as? FirExpression
+                if (expression != null) {
+                    (expression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(session, null, "No type for when branch result")
+                } else {
+                    FirImplicitUnitTypeRef(session, null)
+                }
             })
             if (type != null) whenExpression.resultType = type
         }
