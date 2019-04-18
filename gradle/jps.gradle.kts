@@ -60,6 +60,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
                         kotlinPluginJar()
 
+                        kotlinMainKtsJar()
+
                         kotlinImportsDumperCompilerPluginJar()
 
                         kotlinDaemonClientJar()
@@ -177,6 +179,9 @@ val jarArtifactProjects = listOf(
     "kotlin-main-kts",
     "kotlin-reflect"
 )
+
+fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinMainKtsJar() =
+    jarFromProject(project(":kotlin-main-kts"))
 
 fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinPluginJar() =
     jarFromProject(project(":prepare:idea-plugin"), "kotlin-plugin.jar")
