@@ -73,7 +73,7 @@ class ConeOverloadConflictResolver(
         return FlatSignature(
             call,
             function.typeParameters.map { it.symbol },
-            function.valueParameters.map { it.returnTypeRef.coneTypeUnsafe() },
+            call.argumentMapping!!.map { it.value.returnTypeRef.coneTypeUnsafe() },
             function.receiverTypeRef != null,
             function.valueParameters.any { it.isVararg },
             function.valueParameters.count { it.defaultValue != null },
