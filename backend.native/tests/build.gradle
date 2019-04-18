@@ -574,6 +574,12 @@ task unchecked_cast3(type: RunKonanTest) {
     source = "codegen/basics/unchecked_cast3.kt"
 }
 
+task unchecked_cast4(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
+    goldValue = "Ok\n"
+    source = "codegen/basics/unchecked_cast4.kt"
+}
+
 task null_check(type: RunKonanTest) {
     source = "codegen/basics/null_check.kt"
 }
