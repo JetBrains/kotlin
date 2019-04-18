@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -65,7 +63,7 @@ fun deserializeClassToSymbol(
 
         // TODO: properties
         addDeclarations(classProto.functionList.map(classDeserializer::loadFunction))
-
+        addDeclarations(classProto.propertyList.map(classDeserializer::loadProperty))
 
         addDeclarations(
             classProto.constructorList.map {

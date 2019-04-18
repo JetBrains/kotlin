@@ -11,6 +11,13 @@ public final data class DataClass : R|kotlin/Any| {
 
     public open fun toString(): R|kotlin/String|
 
+    public final var x: R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): kotlin/Unit
+
+    public final val z: R|kotlin/Double|
+        public get(): R|kotlin/Double|
+
     public constructor(x: R|kotlin/String|, z: R|kotlin/Double|): R|test/DataClass|
 
 }

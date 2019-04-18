@@ -1,4 +1,11 @@
 public open class WrongFieldMutability : R|kotlin/Any| {
+    public final val fooFinal: R|kotlin/String|?
+        public get(): R|kotlin/String|?
+
+    public final var fooNotFinal: R|kotlin/String|?
+        public get(): R|kotlin/String|?
+        public set(value: R|kotlin/String|?): kotlin/Unit
+
     public constructor(): R|test/WrongFieldMutability|
 
 }

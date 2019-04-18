@@ -5,6 +5,9 @@ public final inline class Z : R|kotlin/Any| {
 
     public open fun toString(): R|kotlin/String|
 
+    public final val value: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     internal constructor(value: R|kotlin/Int|): R|test/Z|
 
 }

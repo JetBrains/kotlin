@@ -1,4 +1,7 @@
 public abstract class ClassValAbstract : R|kotlin/Any| {
+    public abstract val a: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public constructor(): R|test/ClassValAbstract|
 
 }

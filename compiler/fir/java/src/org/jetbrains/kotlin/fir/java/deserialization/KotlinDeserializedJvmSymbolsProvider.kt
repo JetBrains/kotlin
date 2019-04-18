@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -52,6 +53,10 @@ class KotlinDeserializedJvmSymbolsProvider(
     private class PackagePartsCacheData(val proto: ProtoBuf.Package, val context: FirDeserializationContext) {
         val topLevelFunctionNameIndex by lazy {
             proto.functionList.withIndex()
+                .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
+        }
+        val topLevelPropertyNameIndex by lazy {
+            proto.propertyList.withIndex()
                 .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
         }
         val typeAliasNameIndex by lazy {
@@ -139,15 +144,25 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
     }
 
+    private fun loadFunctionsByName(part: PackagePartsCacheData, name: Name): List<FirCallableSymbol> {
+        val functionIds = part.topLevelFunctionNameIndex[name] ?: return emptyList()
+        return functionIds.map { part.proto.getFunction(it) }
+            .map {
+                part.context.memberDeserializer.loadFunction(it).symbol
+            }
+    }
+
+    private fun loadPropertiesByName(part: PackagePartsCacheData, name: Name): List<FirCallableSymbol> {
+        val propertyIds = part.topLevelPropertyNameIndex[name] ?: return emptyList()
+        return propertyIds.map { part.proto.getProperty(it) }
+            .map {
+                part.context.memberDeserializer.loadProperty(it).symbol
+            }
+    }
+
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
         return getPackageParts(packageFqName).flatMap { part ->
-            val functionIds = part.topLevelFunctionNameIndex[name] ?: return@flatMap emptyList()
-            functionIds.map { part.proto.getFunction(it) }
-                .map {
-                    part.context.memberDeserializer.loadFunction(it).symbol
-                }.filter { callableSymbol ->
-                    callableSymbol.callableId.callableName == name
-                }
+            loadFunctionsByName(part, name) + loadPropertiesByName(part, name)
         }
     }
 

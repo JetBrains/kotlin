@@ -1,6 +1,9 @@
 public open class ModalityOfFakeOverrides : R|java/util/AbstractList<kotlin/String>| {
     public open operator fun get(index: R|kotlin/Int|): R|kotlin/String|
 
+    public open val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public constructor(): R|test/ModalityOfFakeOverrides|
 
 }

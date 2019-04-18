@@ -1,4 +1,7 @@
 public final class TestingKotlinCollections : R|kotlin/Any| {
+    public final val arguments: R|kotlin/collections/Collection<kotlin/String>|
+        public get(): R|kotlin/collections/Collection<kotlin/String>|
+
     public constructor(arguments: R|kotlin/collections/Collection<kotlin/String>|): R|test/TestingKotlinCollections|
 
 }

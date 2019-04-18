@@ -1,4 +1,7 @@
 public final annotation class A : R|kotlin/Annotation| {
+    public final val s: R|kotlin/String|
+        public get(): R|kotlin/String|
+
     public constructor(s: R|kotlin/String|): R|test/A|
 
 }
@@ -7,11 +10,17 @@ public final class Outer : R|kotlin/Any| {
     public constructor(): R|test/Outer|
 
     public final inner class Inner : R|kotlin/Any| {
+        public final val y: R|kotlin/String|
+            public get(): R|kotlin/String|
+
         public constructor(y: R|kotlin/String|): R|test/Outer.Inner|
 
     }
 
     public final class Nested : R|kotlin/Any| {
+        public final val x: R|kotlin/String|
+            public get(): R|kotlin/String|
+
         public constructor(x: R|kotlin/String|): R|test/Outer.Nested|
 
     }

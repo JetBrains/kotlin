@@ -1,9 +1,15 @@
 public open class BaseClass : R|kotlin/Any| {
+    public open val shape: R|kotlin/String|
+        public get(): R|kotlin/String|
+
     public constructor(): R|test/BaseClass|
 
 }
 
 public open class Subclass : R|test/BaseClass| {
+    public open val shape: R|kotlin/String|
+        public get(): R|kotlin/String|
+
     public constructor(): R|test/Subclass|
 
 }

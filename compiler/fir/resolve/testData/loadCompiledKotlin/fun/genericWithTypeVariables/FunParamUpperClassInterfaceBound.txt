@@ -1,2 +1,1 @@
 public final fun <A : R|java/lang/Number|, R|java/io/Serializable|> tres(): R|kotlin/Int|
-

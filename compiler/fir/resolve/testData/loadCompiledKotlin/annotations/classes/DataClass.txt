@@ -9,6 +9,9 @@ public final data class My : R|kotlin/Any| {
 
     public open fun toString(): R|kotlin/String|
 
+    public final val x: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public constructor(x: R|kotlin/Int|): R|test/My|
 
 }

@@ -5,4 +5,3 @@ public final fun test2(): R|class error: createSuspendFunctionType not supported
 public final fun test3(): R|kotlin/collections/List<class error: createSuspendFunctionType not supported>|
 
 public final fun test4(): R|class error: createSuspendFunctionType not supported|
-

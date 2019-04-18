@@ -34,6 +34,9 @@ public abstract interface Collection<out E> : R|kotlin/collections/Iterable<E>| 
 
     public abstract operator fun iterator(): R|kotlin/collections/Iterator<E>|
 
+    public abstract val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
 }
 
 public abstract class DoubleIterator : R|kotlin/collections/Iterator<kotlin/Double>| {
@@ -96,6 +99,9 @@ public abstract interface List<out E> : R|kotlin/collections/Collection<E>| {
 
     public abstract fun subList(fromIndex: R|kotlin/Int|, toIndex: R|kotlin/Int|): R|kotlin/collections/List<E>|
 
+    public abstract val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
 }
 
 public abstract interface ListIterator<out T> : R|kotlin/collections/Iterator<T>| {
@@ -133,7 +139,25 @@ public abstract interface Map<K, out V> : R|kotlin/Any| {
 
     public abstract fun isEmpty(): R|kotlin/Boolean|
 
+    public abstract val entries: R|kotlin/collections/Set<kotlin/collections/Map.Entry<K, V>>|
+        public get(): R|kotlin/collections/Set<kotlin/collections/Map.Entry<K, V>>|
+
+    public abstract val keys: R|kotlin/collections/Set<K>|
+        public get(): R|kotlin/collections/Set<K>|
+
+    public abstract val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public abstract val values: R|kotlin/collections/Collection<V>|
+        public get(): R|kotlin/collections/Collection<V>|
+
     public abstract interface Entry<out K, out V> : R|kotlin/Any| {
+        public abstract val key: R|K|
+            public get(): R|K|
+
+        public abstract val value: R|V|
+            public get(): R|V|
+
     }
 
 }
@@ -218,6 +242,15 @@ public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
 
     public open fun remove(key: R|K|, value: R|V|): R|kotlin/Boolean|
 
+    public abstract val entries: R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
+        public get(): R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
+
+    public abstract val keys: R|kotlin/collections/MutableSet<K>|
+        public get(): R|kotlin/collections/MutableSet<K>|
+
+    public abstract val values: R|kotlin/collections/MutableCollection<V>|
+        public get(): R|kotlin/collections/MutableCollection<V>|
+
     public abstract interface MutableEntry<K, V> : R|kotlin/collections/Map.Entry<K, V>| {
         public abstract fun setValue(newValue: R|V|): R|V|
 
@@ -250,6 +283,9 @@ public abstract interface Set<out E> : R|kotlin/collections/Collection<E>| {
     public abstract fun isEmpty(): R|kotlin/Boolean|
 
     public abstract operator fun iterator(): R|kotlin/collections/Iterator<E>|
+
+    public abstract val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
 
 }
 

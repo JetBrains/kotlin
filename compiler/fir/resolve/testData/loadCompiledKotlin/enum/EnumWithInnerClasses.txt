@@ -1,6 +1,9 @@
 public final enum class Enum : R|kotlin/Enum<test/Enum>| {
     public final fun f(): R|kotlin/Int|
 
+    public final val c: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     private constructor(): R|test/Enum|
 
     public final inner class Inner : R|kotlin/Any| {

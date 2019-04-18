@@ -4,4 +4,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 }
 
 public abstract interface Trait : R|kotlin/Any| {
+    public abstract val property: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
 }

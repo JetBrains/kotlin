@@ -3,6 +3,9 @@ public final fun baz(): R|kotlin/Unit|
 public final fun foo(): R|kotlin/Unit|
 
 public final annotation class Anno : R|kotlin/Annotation| {
+    public final val t: R|kotlin/Array<out java/lang/annotation/ElementType>|
+        public get(): R|kotlin/Array<out java/lang/annotation/ElementType>|
+
     public constructor(vararg t: R|kotlin/Array<out java/lang/annotation/ElementType>|): R|test/Anno|
 
 }

@@ -2,7 +2,21 @@ public abstract interface Sub : R|test/Super1|, R|test/Super2| {
 }
 
 public abstract interface Super1 : R|kotlin/Any| {
+    public abstract val x: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public abstract var y: R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): kotlin/Unit
+
 }
 
 public abstract interface Super2 : R|kotlin/Any| {
+    public abstract var x: R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): kotlin/Unit
+
+    public abstract val y: R|kotlin/String|
+        public get(): R|kotlin/String|
+
 }

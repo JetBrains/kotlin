@@ -1,4 +1,7 @@
 public open class BaseClass : R|kotlin/Any| {
+    public final val exactly: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public constructor(): R|test/BaseClass|
 
 }

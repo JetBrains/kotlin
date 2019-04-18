@@ -1,4 +1,19 @@
 public final class ClassValParams : R|kotlin/Any| {
+    public final val pr1: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    internal final val pr2: R|kotlin/Int|
+        internal get(): R|kotlin/Int|
+
+    private final val pr3: R|kotlin/Long|
+        private get(): R|kotlin/Long|
+
+    protected final val pr4: R|java/util/Date|
+        protected get(): R|java/util/Date|
+
+    public final val pr5: R|kotlin/Any|
+        public get(): R|kotlin/Any|
+
     public constructor(pr1: R|kotlin/String|, pr2: R|kotlin/Int|, pr3: R|kotlin/Long|, pr4: R|java/util/Date|, pr5: R|kotlin/Any|, pr6: R|java/lang/Object|): R|test/ClassValParams|
 
 }

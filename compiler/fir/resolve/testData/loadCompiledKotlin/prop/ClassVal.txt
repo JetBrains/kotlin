@@ -1,4 +1,7 @@
 public final class ClassVal : R|kotlin/Any| {
+    public final val aa: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public constructor(): R|test/ClassVal|
 
 }

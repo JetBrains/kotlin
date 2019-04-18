@@ -1,4 +1,8 @@
 public open class NotNullField : R|kotlin/Any| {
+    public final var hi: R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): kotlin/Unit
+
     public constructor(): R|test/NotNullField|
 
 }

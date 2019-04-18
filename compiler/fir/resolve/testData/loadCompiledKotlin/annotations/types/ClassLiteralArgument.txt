@@ -12,6 +12,9 @@ public final class A : R|kotlin/Any| {
 }
 
 public final annotation class Ann : R|kotlin/Annotation| {
+    public final val klass: R|kotlin/reflect/KClass<*>|
+        public get(): R|kotlin/reflect/KClass<*>|
+
     public constructor(klass: R|kotlin/reflect/KClass<*>|): R|test/Ann|
 
 }

@@ -1,4 +1,24 @@
 public final class ClassVarParams : R|kotlin/Any| {
+    public final var pr1: R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): kotlin/Unit
+
+    internal final var pr2: R|kotlin/Int|
+        internal get(): R|kotlin/Int|
+        internal set(value: R|kotlin/Int|): kotlin/Unit
+
+    private final var pr3: R|kotlin/Long|
+        private get(): R|kotlin/Long|
+        private set(value: R|kotlin/Long|): kotlin/Unit
+
+    protected final var pr4: R|java/util/Date|
+        protected get(): R|java/util/Date|
+        protected set(value: R|java/util/Date|): kotlin/Unit
+
+    public final var pr5: R|kotlin/Any|
+        public get(): R|kotlin/Any|
+        public set(value: R|kotlin/Any|): kotlin/Unit
+
     public constructor(pr1: R|kotlin/String|, pr2: R|kotlin/Int|, pr3: R|kotlin/Long|, pr4: R|java/util/Date|, pr5: R|kotlin/Any|, pr6: R|java/lang/Object|): R|test/ClassVarParams|
 
 }

@@ -1,4 +1,12 @@
 public open class PropertySimpleType : R|kotlin/Any| {
+    public final var fieldOne: R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): kotlin/Unit
+
+    public final var fieldTwo: R|kotlin/String|?
+        public get(): R|kotlin/String|?
+        public set(value: R|kotlin/String|?): kotlin/Unit
+
     public constructor(): R|test/PropertySimpleType|
 
 }

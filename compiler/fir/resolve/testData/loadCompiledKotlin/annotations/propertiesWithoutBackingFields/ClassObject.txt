@@ -7,6 +7,9 @@ public final class Class : R|kotlin/Any| {
     public constructor(): R|test/Class|
 
     public final companion object Companion : R|kotlin/Any| {
+        public final val property: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
         private constructor(): R|test/Class.Companion|
 
     }

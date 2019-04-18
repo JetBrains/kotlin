@@ -1,4 +1,7 @@
 public final class ExtPropInClass : R|kotlin/Any| {
+    public final val R|kotlin/Int|.itIs: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public constructor(): R|test/ExtPropInClass|
 
 }

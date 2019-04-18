@@ -9,6 +9,12 @@ public final annotation class B : R|kotlin/Annotation| {
 }
 
 public final enum class E : R|kotlin/Enum<test/E>| {
+    public final val x: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public final val y: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     private constructor(x: R|kotlin/String|, y: R|kotlin/Int|): R|test/E|
 
 }

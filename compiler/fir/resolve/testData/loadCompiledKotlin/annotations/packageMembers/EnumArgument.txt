@@ -1,6 +1,9 @@
 public final fun foo(): R|kotlin/Unit|
 
 public final annotation class Anno : R|kotlin/Annotation| {
+    public final val t: R|java/lang/annotation/ElementType|
+        public get(): R|java/lang/annotation/ElementType|
+
     public constructor(t: R|java/lang/annotation/ElementType|): R|test/Anno|
 
 }

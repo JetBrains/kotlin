@@ -6,6 +6,12 @@ public final class MembersReferenceOuterTP<P> : R|kotlin/Any| {
 
         public final fun g(p: R|P|): R|P|
 
+        public final val v: R|P|
+            public get(): R|P|
+
+        public final val <Q : R|P|> R|Q|.w: R|Q|
+            public get(): R|Q|
+
         public constructor(): R|test/MembersReferenceOuterTP.Inner|
 
     }

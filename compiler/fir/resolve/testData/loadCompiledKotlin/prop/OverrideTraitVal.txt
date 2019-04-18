@@ -1,7 +1,13 @@
 public open class Subclass : R|test/Trait| {
+    public open val shape: R|kotlin/String|
+        public get(): R|kotlin/String|
+
     public constructor(): R|test/Subclass|
 
 }
 
 public abstract interface Trait : R|kotlin/Any| {
+    public abstract val shape: R|kotlin/String|
+        public get(): R|kotlin/String|
+
 }

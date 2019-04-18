@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -141,6 +142,40 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 emptyList() /* TODO */
             )
         )
+    }
+
+    fun loadProperty(proto: ProtoBuf.Property): FirProperty {
+        val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
+        val callableName = c.nameResolver.getName(proto.name)
+        val symbol = FirPropertySymbol(CallableId(c.packageFqName, c.relativeClassName, callableName))
+        val local = c.childContext(proto.typeParameterList)
+        val returnTypeRef = local.typeDeserializer.type(proto.returnType(c.typeTable)).toTypeRef()
+
+        val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else flags
+        val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else flags
+
+        return FirMemberPropertyImpl(
+            c.session,
+            null,
+            symbol,
+            callableName,
+            ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+            ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
+            Flags.IS_EXPECT_PROPERTY.get(flags),
+            false,
+            false,
+            Flags.IS_CONST.get(flags),
+            Flags.IS_LATEINIT.get(flags),
+            proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.toTypeRef(),
+            returnTypeRef,
+            Flags.IS_VAR.get(flags),
+            null,
+            FirDefaultPropertyGetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))),
+            FirDefaultPropertySetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))),
+            null
+        ).apply {
+            typeParameters += local.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
+        }
     }
 
     fun loadFunction(proto: ProtoBuf.Function): FirNamedFunction {

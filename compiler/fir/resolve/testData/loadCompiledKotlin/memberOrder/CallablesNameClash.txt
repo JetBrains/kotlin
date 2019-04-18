@@ -1,8 +1,14 @@
 public final fun a(): R|kotlin/Int|
 
+public final val a: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+
 public final fun b(): R|kotlin/Int|
 
 public final fun c(): R|kotlin/Int|
+
+public final val c: R|kotlin/Int|
+    public get(): R|kotlin/Int|
 
 public final class A : R|kotlin/Any| {
     public final fun a(): R|kotlin/Int|
@@ -10,6 +16,12 @@ public final class A : R|kotlin/Any| {
     public final fun b(): R|kotlin/Int|
 
     public final fun c(): R|kotlin/Int|
+
+    public final val a: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public final val c: R|kotlin/Int|
+        public get(): R|kotlin/Int|
 
     public constructor(): R|test/A|
 

@@ -1,2 +1,5 @@
 public abstract interface A : R|kotlin/Any| {
+    public open val v: R|kotlin/String|
+        public get(): R|kotlin/String|
+
 }

@@ -4,6 +4,9 @@ public final annotation class Anno : R|kotlin/Annotation| {
 }
 
 public final class Class : R|kotlin/Any| {
+    public final val property: R|kotlin/String|
+        public get(): R|kotlin/String|
+
     public constructor(): R|test/Class|
 
 }
