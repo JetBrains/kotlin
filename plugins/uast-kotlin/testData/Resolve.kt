@@ -11,6 +11,9 @@ fun bar() {
     listOf(A()).forEach { println(it) } // inline from stdlib
     listOf("").joinToString() // not inline from stdlib
     listOf("").size // property from stdlib
+    listOf("").indices // property from stdlib without backing method
+    val date: java.util.Date = java.util.Date()
+    date.time = 1000 // setter from Java
     listOf("").last() // overloaded extension from stdlib
     mutableMapOf(1 to "1").entries.first().setValue("123") // call on nested method in stdlib
     val intRange = 0L..3L

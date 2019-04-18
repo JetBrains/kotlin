@@ -17,18 +17,17 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -45,13 +44,27 @@ open class KotlinUSimpleReferenceExpression(
     private val resolvedDeclaration: PsiElement? by lz {
         psi.resolveCallToDeclaration()?.let { return@lz it }
 
-        val declarationDescriptor = psi.analyze()[BindingContext.REFERENCE_TARGET, psi] ?: return@lz null
+        var declarationDescriptor = psi.analyze()[BindingContext.REFERENCE_TARGET, psi] ?: return@lz null
+        if (declarationDescriptor is ImportedFromObjectCallableDescriptor<*>) {
+            declarationDescriptor = declarationDescriptor.callableFromObject
+        }
+        if (declarationDescriptor is SyntheticJavaPropertyDescriptor) {
+            declarationDescriptor = when (psi.readWriteAccess()) {
+                ReferenceAccess.WRITE, ReferenceAccess.READ_WRITE ->
+                    declarationDescriptor.setMethod ?: declarationDescriptor.getMethod
+                ReferenceAccess.READ -> declarationDescriptor.getMethod
+            }
+        }
 
         if (declarationDescriptor is PackageViewDescriptor) {
             return@lz JavaPsiFacade.getInstance(psi.project).findPackage(declarationDescriptor.fqName.asString())
         }
 
-        resolveToPsiClass(this, declarationDescriptor, psi)
+        resolveToPsiClass(this, declarationDescriptor, psi)?.let { return@lz it }
+        if (declarationDescriptor is DeclarationDescriptorWithSource) {
+            declarationDescriptor.source.getPsi()?.let { it.getMaybeLightElement() ?: it }?.let { return@lz it }
+        }
+        return@lz resolveDeserialized(psi, declarationDescriptor, psi.readWriteAccess())
     }
 
     override val identifier get() = psi.getReferencedName()
@@ -175,10 +188,6 @@ open class KotlinUSimpleReferenceExpression(
             val source = accessorDescriptor.toSource()
             return resolveSource(psi, accessorDescriptor, source)
         }
-    }
-
-    enum class ReferenceAccess(val isRead: Boolean, val isWrite: Boolean) {
-        READ(true, false), WRITE(false, true), READ_WRITE(true, true)
     }
 
     private fun KtExpression.readWriteAccess(): ReferenceAccess {

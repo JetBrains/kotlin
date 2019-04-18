@@ -15,13 +15,13 @@ UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifie
     UExpressionList (elvis) -> USimpleNameReferenceExpression (identifier = ?:) -> null: null
     UTypeReferenceExpression (name = java.util.List<? extends T>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> KotlinLightTypeParameter:T: T
-    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = listOf) -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = listOf) -> PsiMethod:listOf: listOf
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = at) -> LightVariableBuilder:at: at
     UTypeReferenceExpression (name = java.util.List<? extends java.lang.String>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
     ULocalVariable (name = tsl) -> UQualifiedReferenceExpression -> null: null
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = tl) -> LightVariableBuilder:tl: tl
-    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = map) -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = map) -> PsiMethod:map: map
         UBlockExpression -> UQualifiedReferenceExpression -> null: null
         UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = it) -> null: null
         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = toString) -> null: null
@@ -35,4 +35,4 @@ UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifie
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = parameterizedFoo) -> KtLightMethodImpl:parameterizedFoo: parameterizedFoo
     UTypeReferenceExpression (name = java.util.List<? extends java.lang.String>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
-    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = emptyList) -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = emptyList) -> PsiMethod:emptyList: emptyList

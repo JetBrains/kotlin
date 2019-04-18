@@ -27,4 +27,10 @@ class KotlinUastResolveEverythingTest : AbstractKotlinResolveEverythingTest() {
     @Test
     fun testTypeReferences() = doTest("TypeReferences")
 
+    @Test
+    fun testImports() = doTest("Imports")
+
+    @Test
+    fun testResolve() = doTest("Resolve")
+
 }
