@@ -824,6 +824,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(statement: FirStatement) {
         when (statement) {
+            is FirNamedFunction -> generate(statement)
             is FirAnonymousObject -> generate(statement, isStatement = true)
             is FirAnonymousFunction -> generate(statement, isStatement = true)
             is FirWhileLoop -> generate(statement)
@@ -1188,23 +1189,24 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(function: FirNamedFunction) {
-        iline {
-            declarationStatus(function.status)
-            keyword("fun ")
-            generateTypeParameters(function)
-            generateReceiver(function)
-            symbolRef(function.symbol) {
-                simpleName(function.name)
+        generateMultiLineExpression(isStatement = true) {
+            iline {
+                declarationStatus(function.status)
+                keyword("fun ")
+                generateTypeParameters(function)
+                generateReceiver(function)
+                symbolRef(function.symbol) {
+                    simpleName(function.name)
+                }
+                +"("
+                generateList(function.valueParameters) {
+                    generate(it)
+                }
+                +"): "
+                generate(function.returnTypeRef)
+                generateBlockIfAny(function.body)
             }
-            +"("
-            generateList(function.valueParameters) {
-                generate(it)
-            }
-            +"): "
-            generate(function.returnTypeRef)
-            generateBlockIfAny(function.body)
         }
-
     }
 
     private fun FlowContent.generate(function: FirConstructor) {
