@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformMo
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Test
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
 
     lateinit var sdkCreationChecker: KotlinSdkCreationChecker
@@ -28,13 +30,11 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
         super.tearDown()
     }
 
-    @Test
     fun testMobile() {
         // TODO: add import & tests here when we will be able to locate Android SDK automatically (see KT-27635)
         testImportFromBuilder(KotlinGradleMobileMultiplatformModuleBuilder(), performImport = false)
     }
 
-    @Test
     fun testMobileShared() {
         val builder = KotlinGradleMobileSharedMultiplatformModuleBuilder()
         val project = testImportFromBuilder(builder, "SampleTests", "SampleTestsJVM", metadataInside = true)
@@ -44,29 +44,24 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
         }
     }
 
-    @Test
     fun testNative() {
         val builder = KotlinGradleNativeMultiplatformModuleBuilder()
         val project = testImportFromBuilder(builder)
         runTaskInProject(project, builder.nativeTestName)
     }
 
-    @Test
     fun testShared() {
         val builder = KotlinGradleSharedMultiplatformModuleBuilder()
         val project = testImportFromBuilder(builder, "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true)
         runTaskInProject(project, builder.nativeTestName)
     }
 
-    @Test
     fun testSharedWithQualifiedName() {
         val builder = KotlinGradleSharedMultiplatformModuleBuilder()
         val project = testImportFromBuilder(builder, "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true, useQualifiedModuleNames = true)
         runTaskInProject(project, builder.nativeTestName)
     }
 
-
-    @Test
     fun testWeb() {
         testImportFromBuilder(KotlinGradleWebMultiplatformModuleBuilder(), "SampleTests", "SampleTestsJVM")
     }

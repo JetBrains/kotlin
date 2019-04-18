@@ -45,6 +45,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -66,7 +67,7 @@ import org.junit.AfterClass
 import org.junit.Assume.assumeTrue
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
-@RunWith(value = Parameterized::class)
+@RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
 abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
     protected var sdkCreationChecker : KotlinSdkCreationChecker? = null

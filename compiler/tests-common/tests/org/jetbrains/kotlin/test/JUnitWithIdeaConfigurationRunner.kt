@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test
 
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runners.BlockJUnit4ClassRunner
+import org.junit.runners.Parameterized
 
 class JUnit3WithIdeaConfigurationRunner(klass: Class<*>?) : JUnit38ClassRunner(klass) {
 
@@ -18,6 +19,15 @@ class JUnit3WithIdeaConfigurationRunner(klass: Class<*>?) : JUnit38ClassRunner(k
 }
 
 class JUnit4WithIdeaConfigurationRunner(klass: Class<*>?) : BlockJUnit4ClassRunner(klass) {
+
+    companion object {
+        init {
+            IdeaSystemPropertiesForParallelRunConfigurator.setProperties()
+        }
+    }
+}
+
+class JUnitParameterizedWithIdeaConfigurationRunner(klass: Class<*>?) : Parameterized(klass) {
 
     companion object {
         init {
