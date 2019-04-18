@@ -64,7 +64,7 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
             )
 
             val newBody = toBlockBody(initFunction)
-            newBody.patchDeclarationParents(initFunction)
+//            newBody.patchDeclarationParents(initFunction)
             initFunction.body = newBody
 
             lower(initFunction)

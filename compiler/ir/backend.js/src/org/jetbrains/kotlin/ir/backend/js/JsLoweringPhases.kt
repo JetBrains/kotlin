@@ -332,11 +332,8 @@ private val autoboxingTransformerPhase = makeJsModulePhase(
     description = "Insert box/unbox intrinsics"
 )
 
-private val blockDecomposerLoweringPhase = makeCustomJsModulePhase(
-    { context, module ->
-        BlockDecomposerLowering(context).lower(module)
-        module.patchDeclarationParents()
-    },
+private val blockDecomposerLoweringPhase = makeJsModulePhase(
+    ::BlockDecomposerLowering,
     name = "BlockDecomposerLowering",
     description = "Transform statement-like-expression nodes into pure-statement to make it easily transform into JS",
     prerequisite = setOf(typeOperatorLoweringPhase, suspendFunctionsLoweringPhase)
