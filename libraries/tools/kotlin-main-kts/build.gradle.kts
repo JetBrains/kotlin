@@ -71,6 +71,9 @@ val packJar by task<ShadowJar> {
     from(mainSourceSet.output)
     from(fatJarContents)
 
+    // don't add this files to resources classpath to avoid IDE exceptions on kotlin project
+    from("jar-resources")
+
     packagesToRelocate.forEach {
         relocate(it, "$mainKtsRelocatedDepsRootPackage.$it")
     }
