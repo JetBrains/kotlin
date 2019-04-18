@@ -59,7 +59,7 @@ class ConeOverloadConflictResolver(
         return FlatSignature(
             call,
             constructor.typeParameters.map { it.symbol },
-            constructor.valueParameters.map { it.returnTypeRef.coneTypeUnsafe() },
+            call.argumentMapping!!.map { it.value.returnTypeRef.coneTypeUnsafe() },
             //constructor.receiverTypeRef != null,
             false,
             constructor.valueParameters.any { it.isVararg },
