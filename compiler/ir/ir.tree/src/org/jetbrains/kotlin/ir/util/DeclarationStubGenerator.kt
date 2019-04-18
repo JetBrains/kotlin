@@ -113,13 +113,7 @@ class DeclarationStubGenerator(
 
         return symbolTable.declareField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original, descriptor.type.toIrType()) {
             deserializer?.findDeserializedDeclaration(referenced) as? IrField
-                ?: IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, descriptor.type.toIrType())
-        }.apply {
-            initializer = descriptor.compileTimeInitializer?.let {
-                IrExpressionBodyImpl(
-                    constantValueGenerator.generateConstantValueAsExpression(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it)
-                )
-            }
+                ?: IrLazyField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
         }
     }
 
