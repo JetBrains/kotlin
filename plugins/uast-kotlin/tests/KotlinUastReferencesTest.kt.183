@@ -19,13 +19,15 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.evaluateString
 import org.jetbrains.uast.toUElementOfType
 import org.junit.Test
+import org.junit.runner.RunWith
 import kotlin.test.fail
 
-
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinUastReferencesTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE

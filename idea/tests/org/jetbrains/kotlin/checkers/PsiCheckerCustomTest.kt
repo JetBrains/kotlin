@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.checkers
 
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
     fun testNoUnusedParameterWhenCustom() {
         val testAnnotation = "MyTestAnnotation"
