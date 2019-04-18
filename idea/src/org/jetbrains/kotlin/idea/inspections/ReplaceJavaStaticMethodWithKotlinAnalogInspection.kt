@@ -103,19 +103,19 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             "Short" to "Short",
             "Double" to "Double",
             "Float" to "Float"
-        ).flatMap {
+        ).flatMap { (javaPrimitive, kotlinPrimitive) ->
             listOf(
                 Replacement(
-                    "java.lang.${it.first}.toString",
+                    "java.lang.$javaPrimitive.toString",
                     "kotlin.text.toString",
                     toExtensionFunction = true
                 ) { call -> call.valueArguments.size == 2 },
                 Replacement(
-                    "java.lang.${it.first}.toString",
-                    "kotlin.primitives.${it.second}.toString",
+                    "java.lang.$javaPrimitive.toString",
+                    "kotlin.primitives.$kotlinPrimitive.toString",
                     toExtensionFunction = true
                 ) { call -> call.valueArguments.size == 1 },
-                Replacement("java.lang.${it.first}.compare", "kotlin.primitives.${it.second}.compareTo", toExtensionFunction = true)
+                Replacement("java.lang.$javaPrimitive.compare", "kotlin.primitives.$kotlinPrimitive.compareTo", toExtensionFunction = true)
             )
         }
 
