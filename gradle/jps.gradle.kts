@@ -59,6 +59,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     ideArtifacts {
                         generateIdeArtifacts(rootProject, this@ideArtifacts)
 
+                        kotlinPluginJar()
+
                         kotlinImportsDumperCompilerPluginJar()
 
                         kotlinDaemonClientJar()
@@ -177,6 +179,9 @@ val jarArtifactProjects = listOf(
     "kotlin-reflect"
 )
 
+fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinPluginJar() =
+    jarFromProject(project(":prepare:idea-plugin"), "kotlin-plugin.jar")
+
 fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinImportsDumperCompilerPluginJar() =
     jarFromProject(project(":kotlin-imports-dumper-compiler-plugin"))
 
@@ -203,15 +208,7 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
             }
 
             directory("lib") {
-                archive("kotlin-plugin.jar") {
-                    directory("META-INF") {
-                        file("${ideaPluginProject.buildDir}/tmp/jar/MANIFEST.MF")
-                    }
-
-                    file("${ideaPluginProject.rootDir}/resources/kotlinManifest.properties")
-                    
-                    jarContentsFromEmbeddedConfiguration(ideaPluginProject)
-                }
+                artifact("kotlin-plugin.jar")
 
                 directoryFromConfiguration(libraries)
 
@@ -223,8 +220,8 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
     }
 }
 
-fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project, configureAction: RecursiveArtifact.() -> Unit = {}) {
-    val jarName = project.name + ".jar"
+fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project, name: String? = null, configureAction: RecursiveArtifact.() -> Unit = {}) {
+    val jarName = name ?: project.name + ".jar"
     create(jarName) {
         archive(jarName) {
             directory("META-INF") {
