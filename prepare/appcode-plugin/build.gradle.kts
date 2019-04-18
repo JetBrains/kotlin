@@ -32,7 +32,11 @@ val preparePluginXml: Task by preparePluginXml(
 
 val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml), projectsToShadow)
 
-val platformDepsJar: Task by platformDepsJar("AppCode", appcodePlatformDepsDir)
+val platformDepsJar: Task by platformDepsJar(
+        "AppCode",
+        appcodePlatformDepsDir,
+        file("resources/platformDeps")
+)
 
 val appcodePlugin: Task by packageCidrPlugin(
         ultimatePath(":appcode-native"),

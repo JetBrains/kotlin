@@ -59,10 +59,30 @@ fun Project.pluginJar(
 }
 
 // Prepare patched "platformDeps" JAR file.
-fun Project.platformDepsJar(productName: String, platformDepsDir: File) = tasks.creating(Zip::class) {
+fun Project.platformDepsJar(
+        productName: String,
+        platformDepsDir: File,
+        platformDepsReplacementsDir: File
+) = tasks.creating(Zip::class) {
     archiveFileName.value = "kotlinNative-platformDeps-$productName.jar"
     destinationDirectory.value = file("$buildDir/$name")
-    from(zipTree(fileTree(platformDepsDir).matching { include(PLATFORM_DEPS_JAR_NAME) }.singleFile)) { exclude(PLUGIN_XML_PATH) }
+
+    val platformDepsReplacements = platformDepsReplacementsDir.walkTopDown()
+            .filter { it.isFile && it.length() > 0 }
+            .map { it.relativeTo(platformDepsReplacementsDir).path }
+            .toList()
+
+    inputs.property("${project.name}-$name-platformDepsReplacements-amount", platformDepsReplacements.size)
+
+    platformDepsReplacements.forEach {
+        from(platformDepsReplacementsDir) { include(it) }
+    }
+
+    from(zipTree(fileTree(platformDepsDir).matching { include(PLATFORM_DEPS_JAR_NAME) }.singleFile)) {
+        exclude(PLUGIN_XML_PATH)
+        platformDepsReplacements.forEach { exclude(it) }
+    }
+
     patchJavaXmls()
 }
 
