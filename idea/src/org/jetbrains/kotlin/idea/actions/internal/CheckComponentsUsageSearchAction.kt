@@ -39,12 +39,12 @@ import javax.swing.SwingUtilities
 
 class CheckComponentsUsageSearchAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val selectedFiles = selectedKotlinFiles(e).toList()
-        val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
+        val project = CommonDataKeys.PROJECT.getData(e.dataContext) ?: return
+        val selectedKotlinFiles = selectedKotlinFiles(e).toList()
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
                 {
-                    runReadAction { process(selectedFiles, project) }
+                    runReadAction { process(selectedKotlinFiles, project) }
                 },
                 "Checking Data Classes",
                 true,
@@ -105,7 +105,7 @@ class CheckComponentsUsageSearchAction : AnAction() {
         }
         else {
             e.presentation.isVisible = true
-            e.presentation.isEnabled = selectedKotlinFiles(e).any()
+            e.presentation.isEnabled = true
         }
     }
 
