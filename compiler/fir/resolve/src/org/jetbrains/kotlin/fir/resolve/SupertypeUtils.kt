@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.classId
-import org.jetbrains.kotlin.fir.declarations.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.superConeTypes
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.service
@@ -59,6 +56,13 @@ fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession, builder: Scope
     return symbolProvider.getClassUseSiteMemberScope(this.classId, useSiteSession, builder)!!
 }
 
+fun FirTypeAlias.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
+    val type = expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>()
+    return type.scope(useSiteSession, builder)?.let {
+        type.wrapSubstitutionScopeIfNeed(useSiteSession, it, this, builder)
+    }
+}
+
 fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
     return builder.getOrBuild(symbol, USE_SITE) {
         val superTypeScope = FirCompositeScope(mutableListOf())
@@ -81,13 +85,13 @@ fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder
 private fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteScope: FirScope,
-    regularClass: FirRegularClass,
+    declaration: FirClassLikeDeclaration,
     builder: ScopeSession
 ): FirScope {
     if (this.typeArguments.isEmpty()) return useSiteScope
-    return builder.getOrBuild(regularClass.symbol, SubstitutionScopeKey(this)) {
+    return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
         @Suppress("UNCHECKED_CAST")
-        val substitution = regularClass.typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
+        val substitution = declaration.typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
             typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
         }.filter { (_, type) -> type != null }.toMap() as Map<ConeTypeParameterSymbol, ConeKotlinType>
 

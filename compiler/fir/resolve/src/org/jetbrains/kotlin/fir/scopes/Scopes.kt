@@ -7,7 +7,19 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.ConeAbbreviatedType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun MutableList<FirScope>.addImportingScopes(file: FirFile, session: FirSession) {
     this += listOf(
@@ -23,4 +35,52 @@ fun MutableList<FirScope>.addImportingScopes(file: FirFile, session: FirSession)
 
 fun FirCompositeScope.addImportingScopes(file: FirFile, session: FirSession) {
     scopes.addImportingScopes(file, session)
+}
+
+private fun finalExpansionName(symbol: FirTypeAliasSymbol, session: FirSession): Name? {
+    val expandedType = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>()
+    return when (expandedType) {
+        is ConeAbbreviatedType ->
+            expandedType.abbreviationLookupTag.toSymbol(session)?.safeAs<FirTypeAliasSymbol>()?.let {
+                finalExpansionName(it, session)
+            }
+        else -> expandedType.lookupTag.classId.shortClassName
+    }
+
+}
+
+fun processConstructors(
+    matchedSymbol: ConeClassLikeSymbol?,
+    processor: (ConeFunctionSymbol) -> ProcessorAction,
+    session: FirSession,
+    scopeSession: ScopeSession,
+    name: Name
+): ProcessorAction {
+    try {
+        if (matchedSymbol != null) {
+            val scope = when (matchedSymbol) {
+                is FirTypeAliasSymbol -> matchedSymbol.fir.buildUseSiteScope(session, scopeSession)
+                is FirClassSymbol -> matchedSymbol.fir.buildUseSiteScope(session, scopeSession)
+                else -> null
+            }
+
+
+            val constructorName = when (matchedSymbol) {
+                is FirTypeAliasSymbol -> finalExpansionName(matchedSymbol, session) ?: return ProcessorAction.NEXT
+                else -> name
+            }
+
+            //TODO: why don't we use declared member scope at this point?
+            if (scope != null && scope.processFunctionsByName(
+                    constructorName,
+                    processor
+                ) == ProcessorAction.STOP
+            ) {
+                return ProcessorAction.STOP
+            }
+        }
+        return ProcessorAction.NEXT
+    } catch (e: Throwable) {
+        throw RuntimeException("While processing constructors", e)
+    }
 }

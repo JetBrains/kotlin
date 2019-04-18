@@ -8,14 +8,10 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.scopes.processConstructors
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -55,17 +51,17 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
             }
         } else {
             val matchedClass = provider.getClassLikeSymbolByFqName(ClassId(import.packageFqName, name))
-
-            if (matchedClass != null && matchedClass is FirClassSymbol) {
-                //TODO: why don't we use declared member scope at this point?
-                if (matchedClass.fir.buildUseSiteScope(session, scopeCache).processFunctionsByName(
-                        name,
-                        processor
-                    ) == ProcessorAction.STOP
-                ) {
-                    return ProcessorAction.STOP
-                }
+            if (processConstructors(
+                    matchedClass,
+                    processor,
+                    session,
+                    scopeCache,
+                    name
+                ).stop()
+            ) {
+                return ProcessorAction.STOP
             }
+
 
             val symbols = provider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
 

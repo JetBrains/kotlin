@@ -262,6 +262,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/this.kt");
         }
 
+        @TestMetadata("typeAliasConstructor.kt")
+        public void testTypeAliasConstructor() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/typeAliasConstructor.kt");
+        }
+
         @TestMetadata("vararg.kt")
         public void testVararg() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/vararg.kt");
