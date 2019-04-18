@@ -10,6 +10,14 @@ FILE: lambda.kt
         public? final? val y: Int = R|<local>/y|
             public? get(): Int
 
+        public final fun component1(): <implicit> {
+            ^component1 R|/Tuple.x|
+        }
+
+        public final fun component2(): <implicit> {
+            ^component2 R|/Tuple.y|
+        }
+
     }
     public? final? inline fun use(f: ( (Tuple) -> Int )): <implicit> {
         ^use f#(Tuple#(Int(1), Int(2)))

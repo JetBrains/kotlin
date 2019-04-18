@@ -13,6 +13,18 @@ FILE: destructuring.kt
         public? final? val third: String = R|<local>/third|
             public? get(): String
 
+        public final fun component1(): <implicit> {
+            ^component1 R|/Some.first|
+        }
+
+        public final fun component2(): <implicit> {
+            ^component2 R|/Some.second|
+        }
+
+        public final fun component3(): <implicit> {
+            ^component3 R|/Some.third|
+        }
+
     }
     public? final? fun foo(some: Some): kotlin/Unit {
         lval <destruct>: <implicit> = some#

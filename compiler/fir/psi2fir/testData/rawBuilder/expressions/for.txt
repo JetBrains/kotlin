@@ -35,6 +35,14 @@ FILE: for.kt
         public? final? val y: Int = R|<local>/y|
             public? get(): Int
 
+        public final fun component1(): <implicit> {
+            ^component1 R|/Some.x|
+        }
+
+        public final fun component2(): <implicit> {
+            ^component2 R|/Some.y|
+        }
+
     }
     public? final? fun baz(set: Set<Some>): kotlin/Unit {
         lval <range>: <implicit> = set#

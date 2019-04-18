@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -549,6 +550,48 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                             delegatedSuperType, delegatedSelfType, classOrObject, hasPrimaryConstructor = primaryConstructor != null
                         )
                     )
+                }
+
+                if (classOrObject.hasModifier(KtTokens.DATA_KEYWORD) && firPrimaryConstructor != null) {
+                    var componentIndex = 1
+                    val zippedParameters =
+                        classOrObject.primaryConstructorParameters.zip(firClass.declarations.filterIsInstance<FirProperty>())
+                    for ((ktParameter, firProperty) in zippedParameters) {
+                        if (!ktParameter.hasValOrVar()) continue
+                        val name = Name.identifier("component$componentIndex")
+                        componentIndex++
+                        val symbol = FirFunctionSymbol(callableIdForName(name))
+                        firClass.addDeclaration(
+                            FirMemberFunctionImpl(
+                                session, ktParameter, symbol, name,
+                                Visibilities.PUBLIC, Modality.FINAL,
+                                isExpect = false, isActual = false,
+                                isOverride = false, isOperator = false,
+                                isInfix = false, isInline = false,
+                                isTailRec = false, isExternal = false,
+                                isSuspend = false, receiverTypeRef = null,
+                                returnTypeRef = FirImplicitTypeRefImpl(session, ktParameter)
+                            ).apply {
+                                val componentFunction = this
+                                body = FirSingleExpressionBlock(
+                                    this@RawFirBuilder.session,
+                                    FirReturnExpressionImpl(
+                                        this@RawFirBuilder.session, ktParameter,
+                                        FirQualifiedAccessExpressionImpl(this@RawFirBuilder.session, ktParameter).apply {
+                                            val parameterName = ktParameter.nameAsSafeName
+                                            calleeReference = FirResolvedCallableReferenceImpl(
+                                                this@RawFirBuilder.session, ktParameter,
+                                                parameterName, firProperty.symbol
+                                            )
+                                        }
+                                    ).apply {
+                                        target = FirFunctionTarget(null)
+                                        target.bind(componentFunction)
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
 
                 firClass
