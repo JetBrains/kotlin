@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class KotlinDeserializedJvmSymbolsProvider(
     val session: FirSession,
@@ -44,11 +46,16 @@ class KotlinDeserializedJvmSymbolsProvider(
 ) : AbstractFirSymbolProvider() {
 
     private val classesCache = mutableMapOf<ClassId, FirClassSymbol>()
+    private val typeAliasCache = mutableMapOf<ClassId, FirTypeAliasSymbol?>()
     private val packagePartsCache = mutableMapOf<FqName, Collection<PackagePartsCacheData>>()
 
     private class PackagePartsCacheData(val proto: ProtoBuf.Package, val context: FirDeserializationContext) {
-        val topLevelNameIndex by lazy {
+        val topLevelFunctionNameIndex by lazy {
             proto.functionList.withIndex()
+                .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
+        }
+        val typeAliasNameIndex by lazy {
+            proto.typeAliasList.withIndex()
                 .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
         }
     }
@@ -91,8 +98,23 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
-        return findAndDeserializeClass(classId)
+        return findAndDeserializeClass(classId) ?: findAndDeserializeTypeAlias(classId)
     }
+
+    private fun findAndDeserializeTypeAlias(
+        classId: ClassId
+    ): FirTypeAliasSymbol? {
+        return typeAliasCache.getOrPut(classId) {
+            getPackageParts(classId.packageFqName).firstNotNullResult { part ->
+                val ids = part.typeAliasNameIndex[classId.shortClassName]
+                if (ids == null || ids.isEmpty()) return@firstNotNullResult null
+                val aliasProto = ids.map { part.proto.getTypeAlias(it) }.single()
+
+                part.context.memberDeserializer.loadTypeAlias(aliasProto).symbol
+            }
+        }
+    }
+
 
     private fun findAndDeserializeClass(
         classId: ClassId,
@@ -119,7 +141,7 @@ class KotlinDeserializedJvmSymbolsProvider(
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
         return getPackageParts(packageFqName).flatMap { part ->
-            val functionIds = part.topLevelNameIndex[name] ?: return@flatMap emptyList()
+            val functionIds = part.topLevelFunctionNameIndex[name] ?: return@flatMap emptyList()
             functionIds.map { part.proto.getFunction(it) }
                 .map {
                     part.context.memberDeserializer.loadFunction(it).symbol

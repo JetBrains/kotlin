@@ -122,6 +122,27 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return lowSixBits + rest
     }
 
+    fun loadTypeAlias(proto: ProtoBuf.TypeAlias): FirTypeAlias {
+        val flags = proto.flags
+        val name = c.nameResolver.getName(proto.name)
+        return FirTypeAliasImpl(
+            c.session,
+            null,
+            FirTypeAliasSymbol(ClassId(c.packageFqName, name)),
+            name,
+            ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+            Flags.IS_EXPECT_CLASS.get(flags),
+            false,
+            FirResolvedTypeRefImpl(
+                c.session,
+                null,
+                c.typeDeserializer.type(proto.underlyingType(c.typeTable)),
+                false,
+                emptyList() /* TODO */
+            )
+        )
+    }
+
     fun loadFunction(proto: ProtoBuf.Function): FirNamedFunction {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 

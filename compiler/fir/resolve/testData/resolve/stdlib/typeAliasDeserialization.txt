@@ -1,0 +1,5 @@
+FILE: typeAliasDeserialization.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval a: R|java/util/LinkedHashSet| = R|java/util/LinkedHashSet.LinkedHashSet|()
+        R|<local>/a|.<Inapplicable(INAPPLICABLE): [java/util/HashSet.add, java/util/AbstractCollection.add, java/util/Collection.add, java/util/Set.add]>#(String())
+    }

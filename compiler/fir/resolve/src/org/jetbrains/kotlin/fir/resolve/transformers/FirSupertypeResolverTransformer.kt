@@ -156,10 +156,13 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
                     sessionForSupertype
                         .getService(FirSymbolProvider::class)
                         .getClassLikeSymbolByFqName(superTypeClassId)
-                        ?.toFirClassLike() as? FirClass
+                        ?.toFirClassLike()
 
                 // TODO: this if is a temporary hack for built-in types (because we can't load file for them)
-                if (firClassForSupertype == null || firClassForSupertype.superTypeRefs.any { it !is FirResolvedTypeRef }) {
+                if (firClassForSupertype == null ||
+                    (firClassForSupertype is FirClass &&
+                            firClassForSupertype.superTypeRefs.any { it !is FirResolvedTypeRef })
+                ) {
                     val provider = sessionForSupertype.getService(FirProvider::class)
                     val firForSuperClassFile = provider.getFirClassifierContainerFile(superTypeClassId)
 
