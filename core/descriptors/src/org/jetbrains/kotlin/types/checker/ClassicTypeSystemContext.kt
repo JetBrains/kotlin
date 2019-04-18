@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.types.checker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExactAnnotation
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -341,6 +343,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
     override fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker {
         require(this is UnwrappedType, this::errorMessage)
         return this.replaceAnnotations(Annotations.EMPTY)
+    }
+
+    override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
+        require(this is UnwrappedType, this::errorMessage)
+        val annotationsWithoutExact = this.annotations.filterNot(AnnotationDescriptor::isExactAnnotation)
+        return this.replaceAnnotations(Annotations.create(annotationsWithoutExact))
     }
 
     override fun KotlinTypeMarker.hasExactAnnotation(): Boolean {

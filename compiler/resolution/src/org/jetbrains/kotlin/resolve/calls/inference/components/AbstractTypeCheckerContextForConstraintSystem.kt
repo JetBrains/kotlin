@@ -45,8 +45,8 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
         val hasExact = subType.isTypeVariableWithExact() || superType.isTypeVariableWithExact()
 
         // we should strip annotation's because we have incorporation operation and they should be not affected
-        val mySubType = if (hasExact) subType.removeAnnotations() else subType
-        val mySuperType = if (hasExact) superType.removeAnnotations() else superType
+        val mySubType = if (hasExact) subType.removeExactAnnotation() else subType
+        val mySuperType = if (hasExact) superType.removeExactAnnotation() else superType
 
         val result = internalAddSubtypeConstraint(mySubType, mySuperType)
         if (!hasExact) return result

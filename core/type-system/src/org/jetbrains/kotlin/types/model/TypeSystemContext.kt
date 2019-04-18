@@ -107,6 +107,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
 
     fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker
+    fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker
 
     fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker
 
