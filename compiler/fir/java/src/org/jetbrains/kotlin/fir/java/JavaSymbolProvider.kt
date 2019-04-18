@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -163,17 +164,24 @@ class JavaSymbolProvider(
                     for (javaConstructor in javaClass.constructors) {
                         val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
                         val constructorSymbol = FirFunctionSymbol(constructorId)
+                        val classTypeParameters = typeParameters.map {
+                            createTypeParameterSymbol(this@JavaSymbolProvider.session, it.name).fir
+                        }
+                        val constructorTypeParameters = javaConstructor.typeParameters.map {
+                            createTypeParameterSymbol(this@JavaSymbolProvider.session, it.name).fir
+                        }
+                        val typeParameters = classTypeParameters + constructorTypeParameters
                         val firJavaConstructor = FirJavaConstructor(
                             this@JavaSymbolProvider.session, constructorSymbol, javaConstructor.visibility,
                             FirResolvedTypeRefImpl(
                                 this@JavaSymbolProvider.session, null,
-                                firSymbol.constructType(emptyArray(), false),
+                                firSymbol.constructType(
+                                    classTypeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(), false
+                                ),
                                 false, emptyList()
                             )
                         ).apply {
-                            for (typeParameter in javaConstructor.typeParameters) {
-                                typeParameters += createTypeParameterSymbol(this@JavaSymbolProvider.session, typeParameter.name).fir
-                            }
+                            this.typeParameters += typeParameters
                             addAnnotationsFrom(this@JavaSymbolProvider.session, javaConstructor)
                             for (valueParameter in javaConstructor.valueParameters) {
                                 valueParameters += valueParameter.toFirValueParameters(this@JavaSymbolProvider.session)

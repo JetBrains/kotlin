@@ -1,4 +1,4 @@
 public open class ConstructorWithParentTypeParams<T> : R|java/lang/Object| {
-    public constructor(first: R|ft<T, T?>|!): R|test/ConstructorWithParentTypeParams|
+    public constructor(first: R|ft<T, T?>|!): R|test/ConstructorWithParentTypeParams<T>|
 
 }
