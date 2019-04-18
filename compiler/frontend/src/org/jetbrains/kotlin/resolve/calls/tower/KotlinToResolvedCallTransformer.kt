@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -527,18 +527,10 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
         nonTrivialUpdatedResultInfo = dataFlowInfo.and(kotlinCall.psiKotlinCall.resultDataFlowInfo)
     }
 
-    private fun argumentToParameterMap(
+    protected abstract fun argumentToParameterMap(
         resultingDescriptor: CallableDescriptor,
         valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>
-    ): Map<ValueArgument, ArgumentMatchImpl> =
-        LinkedHashMap<ValueArgument, ArgumentMatchImpl>().also { result ->
-            for (parameter in resultingDescriptor.valueParameters) {
-                val resolvedArgument = valueArguments[parameter] ?: continue
-                for (arguments in resolvedArgument.arguments) {
-                    result[arguments] = ArgumentMatchImpl(parameter).apply { recordMatchStatus(ArgumentMatchStatus.SUCCESS) }
-                }
-            }
-        }
+    ): Map<ValueArgument, ArgumentMatchImpl>
 
     private fun createValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> =
         LinkedHashMap<ValueParameterDescriptor, ResolvedValueArgument>().also { result ->
@@ -687,6 +679,50 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
             val expectedType = substitutor?.safeSubstitute(typeWithFreshVariables) ?: typeWithFreshVariables
             expedtedTypeForSamConvertedArgumentMap!![argument.psiCallArgument.valueArgument] = expectedType
         }
+    }
+
+    override fun argumentToParameterMap(
+        resultingDescriptor: CallableDescriptor,
+        valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>
+    ): Map<ValueArgument, ArgumentMatchImpl> {
+        val argumentErrors = collectErrorPositions()
+
+        return LinkedHashMap<ValueArgument, ArgumentMatchImpl>().also { result ->
+            for (parameter in resultingDescriptor.valueParameters) {
+                val resolvedArgument = valueArguments[parameter] ?: continue
+                for (argument in resolvedArgument.arguments) {
+                    val status = argumentErrors[argument]?.let {
+                        ArgumentMatchStatus.TYPE_MISMATCH
+                    } ?: ArgumentMatchStatus.SUCCESS
+                    result[argument] = ArgumentMatchImpl(parameter).apply { recordMatchStatus(status) }
+                }
+            }
+        }
+    }
+
+    private fun collectErrorPositions(): Map<ValueArgument, List<KotlinCallDiagnostic>> {
+        val result = mutableListOf<Pair<ValueArgument, KotlinCallDiagnostic>>()
+
+        fun ConstraintPosition.originalPosition(): ConstraintPosition =
+            if (this is IncorporationConstraintPosition) {
+                from.originalPosition()
+            } else {
+                this
+            }
+
+        diagnostics.forEach {
+            val position = when (it) {
+                is NewConstraintError -> it.position.originalPosition()
+                is CapturedTypeFromSubtyping -> it.position.originalPosition()
+                is ConstrainingTypeIsError -> it.position.originalPosition()
+                else -> null
+            } as? ArgumentConstraintPosition ?: return@forEach
+
+            val argument = position.argument.safeAs<PSIKotlinCallArgument>()?.valueArgument ?: return@forEach
+            result += argument to it
+        }
+
+        return result.groupBy({ it.first }) { it.second }
     }
 
     init {
