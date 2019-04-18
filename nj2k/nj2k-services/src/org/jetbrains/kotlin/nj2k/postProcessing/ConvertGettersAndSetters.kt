@@ -139,7 +139,7 @@ class ConvertGettersAndSetters : NewJ2kPostProcessing {
     private fun KtFunction.setterName() =
         name?.takeIf { JvmAbi.isSetterName(it) }
             ?.removePrefix("set")
-            ?.takeIf { it.first().isUpperCase() }
+            ?.takeIf { it.isNotEmpty() && it.first().isUpperCase() }
             ?.decapitalize()
             ?.escaped()
 
