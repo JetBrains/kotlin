@@ -9,12 +9,18 @@ import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.JKElementInfoLabel
+import org.jetbrains.kotlin.nj2k.asLabel
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-internal class ContextCreator(private val getNullability: (KtTypeElement) -> Nullability) {
+internal class ContextCreator(
+    private val conversionContext: NewJ2kConverterContext,
+    private val getNullability: (KtTypeElement, NewJ2kConverterContext) -> Nullability
+) {
 
     private fun KtCallableDeclaration.typeElement(): KtTypeElement? =
         typeReference?.typeElement
@@ -62,7 +68,7 @@ internal class ContextCreator(private val getNullability: (KtTypeElement) -> Nul
     }
 
     private fun KtTypeElement.asTypeVariable(): TypeVariable {
-        val nullability = getNullability(this)
+        val nullability = getNullability(this, conversionContext)
         val classReference: ClassReference = classReference()
         val typeParameters: List<TypeVariableTypeParameter> =
             typeArgumentsAsTypes.mapIndexed { index, typeRef ->
@@ -79,36 +85,38 @@ internal class ContextCreator(private val getNullability: (KtTypeElement) -> Nul
 }
 
 
-fun nullabilityByUndefinedNullabilityComment(typeElement: KtTypeElement): Nullability {
-    val undefinedNullabilityComment =
-        typeElement.parent?.safeAs<KtTypeReference>()?.getUndefinedNullabilityComment()?.also { it.delete() }
+fun nullabilityByUndefinedNullabilityComment(typeElement: KtTypeElement, context: NewJ2kConverterContext): Nullability {
+    val hasUndefinedNullabilityLabel =
+        typeElement.parent?.safeAs<KtTypeReference>()?.hasUndefinedNullabilityLabel(context) ?: false
     return when {
-        undefinedNullabilityComment != null -> Nullability.UNKNOWN
+        hasUndefinedNullabilityLabel -> Nullability.UNKNOWN
         typeElement is KtNullableType -> Nullability.NULLABLE
         else -> Nullability.NOT_NULL
     }
 }
 
 
-private fun KtElement.getUndefinedNullabilityComment(): PsiComment? =
-    prevSibling?.safeAs<PsiComment>()?.takeIf { it.text == UNDEFINED_NULLABILITY_COMMENT }
-        ?: parent?.safeAs<KtTypeProjection>()?.getUndefinedNullabilityComment()
+fun PsiElement.getLabel(): JKElementInfoLabel? =
+    prevSibling?.safeAs<PsiComment>()?.text?.asLabel()
+        ?: parent?.safeAs<KtTypeProjection>()?.getLabel()
 
+private fun KtTypeReference.hasUndefinedNullabilityLabel(context: NewJ2kConverterContext) =
+    getLabel()?.let { label ->
+        context.elementsInfoStorage.getInfoForLabel(label).orEmpty().contains(org.jetbrains.kotlin.nj2k.UnknownNullability)
+    } ?: false
 
-fun prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment(typeElement: KtTypeElement) {
-    val hasUndefinedNullabilityComment =
-        typeElement.parent?.safeAs<KtTypeReference>()?.getUndefinedNullabilityComment() != null
-    if (hasUndefinedNullabilityComment) {
+fun prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment(typeElement: KtTypeElement, context: NewJ2kConverterContext) {
+    val hasUndefinedNullabilityLabel =
+        typeElement.parent?.safeAs<KtTypeReference>()?.hasUndefinedNullabilityLabel(context) ?: false
+
+    if (hasUndefinedNullabilityLabel) {
         typeElement.changeNullability(toNullable = true)
     }
 }
 
-fun preapareTypeElementByMakingAllTypesNullable(typeElement: KtTypeElement) {
+fun prepareTypeElementByMakingAllTypesNullable(typeElement: KtTypeElement, conversionContext: NewJ2kConverterContext) {
     typeElement.changeNullability(toNullable = true)
 }
-
-
-internal const val UNDEFINED_NULLABILITY_COMMENT = "/*UNDEFINED*/"
 
 
 internal data class AnalysisContext(

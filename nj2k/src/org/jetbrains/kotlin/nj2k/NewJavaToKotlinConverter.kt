@@ -101,13 +101,14 @@ class NewJavaToKotlinConverter(
             symbolProvider,
             this,
             { it.containingFile in inputElements },
-            importStorage
+            importStorage,
+            JKElementInfoStorage()
         )
 
         ConversionsRunner.doApply(asts.mapNotNull { it.second }, context)
         val results = asts.map { (element, ast) ->
             if (ast == null) return@map null
-            val code = NewCodeBuilder().run { printCodeOut(ast) }
+            val code = NewCodeBuilder(context).run { printCodeOut(ast) }
             val parseContext = when (element) {
                 is PsiStatement, is PsiExpression -> ParseContext.CODE_BLOCK
                 else -> ParseContext.TOP_LEVEL

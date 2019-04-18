@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorWithCommentsPrinting
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class NewCodeBuilder {
-
+class NewCodeBuilder(context: NewJ2kConverterContext) {
+    private val elementInfoStorage = context.elementsInfoStorage
     val builder = StringBuilder()
     val printer = Printer(builder)
 
@@ -399,6 +399,10 @@ class NewCodeBuilder {
             renderModifiersList(ktFunction)
             printer.printWithNoIndent(" fun ")
             ktFunction.typeParameterList.accept(this)
+
+            elementInfoStorage.getOrCreateInfoForElement(ktFunction)?.also {
+                printer.printWithNoIndent(it.render())
+            }
             ktFunction.name.accept(this)
             renderTokenElement(ktFunction.leftParen)
             renderList(ktFunction.parameters) {
@@ -652,8 +656,8 @@ class NewCodeBuilder {
 
         private fun renderType(type: JKType, owner: JKTreeElement?) {
             if (type is JKNoTypeImpl) return
-            if (type.nullability == Nullability.Default) {
-                printer.print("/*UNDEFINED*/")
+            elementInfoStorage.getOrCreateInfoForElement(type)?.also {
+                printer.print(it.render())
             }
             when (type) {
                 is JKClassType -> {

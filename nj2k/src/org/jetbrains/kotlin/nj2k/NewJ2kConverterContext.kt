@@ -15,7 +15,7 @@ data class NewJ2kConverterContext(
     val converter: NewJavaToKotlinConverter,
     val inConversionContext: (PsiElement) -> Boolean,
     val importStorage: ImportStorage,
-    val elementsInfoStorage: ElementInfoStorage
+    val elementsInfoStorage: JKElementInfoStorage
 ) : ConverterContext {
     val project: Project get() = converter.project
     val typeFlavorCalculator = TypeFlavorCalculator(object : TypeFlavorConverterFacade {
@@ -40,7 +40,7 @@ data class NewJ2kConverterContext(
                 ),
                 { false },
                 ImportStorage(),
-                ElementInfoStorage()
+                JKElementInfoStorage()
             )
     }
 
