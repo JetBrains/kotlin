@@ -1,1 +1,2 @@
-public final fun funDefaultArg(p: R|kotlin/Int|, q: R|kotlin/Int|, r: R|kotlin/Int|): R|kotlin/Int|
+public final fun funDefaultArg(p: R|kotlin/Int|, q: R|kotlin/Int| = STUB, r: R|kotlin/Int| = STUB): R|kotlin/Int|
+

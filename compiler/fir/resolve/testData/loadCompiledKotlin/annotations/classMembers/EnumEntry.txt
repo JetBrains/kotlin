@@ -1,5 +1,5 @@
 public final annotation class Anno : R|kotlin/Annotation| {
-    public constructor(value: R|kotlin/String|, x: R|kotlin/Int|): R|test/Anno|
+    public constructor(value: R|kotlin/String| = STUB, x: R|kotlin/Int| = STUB): R|test/Anno|
 
 }
 

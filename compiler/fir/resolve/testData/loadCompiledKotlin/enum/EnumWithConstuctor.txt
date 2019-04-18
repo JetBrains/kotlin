@@ -1,4 +1,4 @@
 public final enum class En : R|kotlin/Enum<test/En>| {
-    private constructor(b: R|kotlin/Boolean|, i: R|kotlin/Int|): R|test/En|
+    private constructor(b: R|kotlin/Boolean| = STUB, i: R|kotlin/Int| = STUB): R|test/En|
 
 }

@@ -1,4 +1,4 @@
 public final class ClassWithConstructorWithValueParamWithDefaultValue : R|kotlin/Any| {
-    public constructor(p: R|kotlin/Int|): R|test/ClassWithConstructorWithValueParamWithDefaultValue|
+    public constructor(p: R|kotlin/Int| = STUB): R|test/ClassWithConstructorWithValueParamWithDefaultValue|
 
 }

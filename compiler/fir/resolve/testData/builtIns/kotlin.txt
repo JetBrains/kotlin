@@ -292,7 +292,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 }
 
 public final annotation class Deprecated : R|kotlin/Annotation| {
-    public constructor(message: R|kotlin/String|, replaceWith: R|kotlin/ReplaceWith|, level: R|kotlin/DeprecationLevel|): R|kotlin/Deprecated|
+    public constructor(message: R|kotlin/String|, replaceWith: R|kotlin/ReplaceWith| = STUB, level: R|kotlin/DeprecationLevel| = STUB): R|kotlin/Deprecated|
 
 }
 

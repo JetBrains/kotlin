@@ -1,7 +1,7 @@
 public final data class My : R|kotlin/Any| {
     public final operator fun component1(): R|kotlin/Int|
 
-    public final fun copy(x: R|kotlin/Int|): R|test/My|
+    public final fun copy(x: R|kotlin/Int| = STUB): R|test/My|
 
     public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
 

@@ -1,4 +1,4 @@
 public final class TestConstructor : R|kotlin/Any| {
-    public constructor(p: R|kotlin/Int|, s: R|kotlin/Int|): R|test/TestConstructor|
+    public constructor(p: R|kotlin/Int| = STUB, s: R|kotlin/Int|): R|test/TestConstructor|
 
 }

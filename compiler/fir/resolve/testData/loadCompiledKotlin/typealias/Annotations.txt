@@ -1,4 +1,4 @@
 public final annotation class Ann : R|kotlin/Annotation| {
-    public constructor(value: R|kotlin/String|): R|test/Ann|
+    public constructor(value: R|kotlin/String| = STUB): R|test/Ann|
 
 }

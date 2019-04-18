@@ -3,7 +3,7 @@ public final data class DataClass : R|kotlin/Any| {
 
     public final operator fun component2(): R|kotlin/Double|
 
-    public final fun copy(x: R|kotlin/String|, z: R|kotlin/Double|): R|test/DataClass|
+    public final fun copy(x: R|kotlin/String| = STUB, z: R|kotlin/Double| = STUB): R|test/DataClass|
 
     public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
 
