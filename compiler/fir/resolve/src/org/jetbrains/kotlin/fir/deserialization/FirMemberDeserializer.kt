@@ -163,12 +163,31 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
-    fun loadConstructor(proto: ProtoBuf.Constructor, delegatedSelfType: FirTypeRef): FirConstructor {
+    fun loadConstructor(proto: ProtoBuf.Constructor, klass: FirRegularClass): FirConstructor {
         val flags = proto.flags
         val relativeClassName = c.relativeClassName!!
         val symbol = FirFunctionSymbol(CallableId(c.packageFqName, relativeClassName, relativeClassName.shortName()))
         val local = c.childContext(emptyList())
         val isPrimary = !Flags.IS_SECONDARY.get(flags)
+
+        val typeParameters = klass.typeParameters.map {
+            FirTypeParameterImpl(c.session, null, FirTypeParameterSymbol(), it.name, Variance.INVARIANT, false).apply {
+                bounds.addAll(it.bounds)
+            }
+        }
+
+        val delegatedSelfType = FirResolvedTypeRefImpl(
+            c.session,
+            null,
+            ConeClassTypeImpl(
+                klass.symbol.toLookupTag(),
+                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(),
+                false
+            ),
+            isMarkedNullable = false,
+            annotations = emptyList()
+        )
+
         return if (isPrimary) {
             FirPrimaryConstructorImpl(
                 c.session,
@@ -192,6 +211,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 null
             )
         }.apply {
+            this.typeParameters += typeParameters
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
             annotations += getAnnotations(proto, flags, AnnotatedCallableKind.FUNCTION)
         }

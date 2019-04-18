@@ -1,4 +1,4 @@
 public open class PropertyComplexTypes<T> : R|kotlin/Any| {
-    public constructor(): R|test/PropertyComplexTypes<T>|
+    public constructor<T>(): R|test/PropertyComplexTypes<T>|
 
 }

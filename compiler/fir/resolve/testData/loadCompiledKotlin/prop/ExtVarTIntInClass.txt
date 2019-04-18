@@ -1,4 +1,4 @@
 public final class ExtValPIntInClass<P> : R|kotlin/Any| {
-    public constructor(): R|test/ExtValPIntInClass<P>|
+    public constructor<P>(): R|test/ExtValPIntInClass<P>|
 
 }

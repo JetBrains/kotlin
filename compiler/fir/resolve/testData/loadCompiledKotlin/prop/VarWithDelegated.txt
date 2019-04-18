@@ -8,6 +8,6 @@ public final class MyProperty<T> : R|kotlin/Any| {
 
     public final operator fun setValue(t: R|T|, p: R|kotlin/reflect/KProperty<*>|, i: R|kotlin/Int|): R|kotlin/Unit|
 
-    public constructor(): R|test/MyProperty<T>|
+    public constructor<T>(): R|test/MyProperty<T>|
 
 }

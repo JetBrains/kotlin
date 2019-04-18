@@ -1,4 +1,4 @@
 public final class ClassWithConstructorAndTypeParameter<P> : R|kotlin/Any| {
-    public constructor(): R|test/ClassWithConstructorAndTypeParameter<P>|
+    public constructor<P>(): R|test/ClassWithConstructorAndTypeParameter<P>|
 
 }

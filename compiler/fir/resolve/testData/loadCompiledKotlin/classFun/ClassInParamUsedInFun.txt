@@ -1,6 +1,6 @@
 public final class ClassParamUsedInFun<in T> : R|kotlin/Any| {
     public final fun f(t: R|T|): R|kotlin/Int|
 
-    public constructor(): R|test/ClassParamUsedInFun<T>|
+    public constructor<T>(): R|test/ClassParamUsedInFun<T>|
 
 }

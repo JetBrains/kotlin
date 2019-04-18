@@ -1,5 +1,5 @@
 public abstract class Aaa<P> : R|kotlin/Any| {
-    public constructor(): R|test/Aaa<P>|
+    public constructor<P>(): R|test/Aaa<P>|
 
 }
 

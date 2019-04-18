@@ -17,15 +17,15 @@ public final annotation class Ann : R|kotlin/Annotation| {
 }
 
 public final class Generic<T> : R|kotlin/Any| {
-    public constructor(): R|test/Generic<T>|
+    public constructor<T>(): R|test/Generic<T>|
 
 }
 
 public final class InnerGeneric<A, B> : R|kotlin/Any| {
-    public constructor(): R|test/InnerGeneric<A, B>|
+    public constructor<A, B>(): R|test/InnerGeneric<A, B>|
 
     public final inner class Inner<in C, D : R|A|> : R|kotlin/Any| {
-        public constructor(): R|test/InnerGeneric.Inner<C, D>|
+        public constructor<C, D : R|A|>(): R|test/InnerGeneric.Inner<C, D>|
 
     }
 

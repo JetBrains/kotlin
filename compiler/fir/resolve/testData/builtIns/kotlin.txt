@@ -49,7 +49,7 @@ public final class Array<T> : R|kotlin/Any| {
 
     public final operator fun set(index: R|kotlin/Int|, value: R|T|): R|kotlin/Unit|
 
-    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, T>|): R|kotlin/Array<T>|
+    public constructor<T>(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, T>|): R|kotlin/Array<T>|
 
 }
 
@@ -446,7 +446,7 @@ public abstract class Enum<E> : R|kotlin/Comparable<E>| {
 
     public open fun toString(): R|kotlin/String|
 
-    public constructor(name: R|kotlin/String|, ordinal: R|kotlin/Int|): R|kotlin/Enum<E>|
+    public constructor<E>(name: R|kotlin/String|, ordinal: R|kotlin/Int|): R|kotlin/Enum<E>|
 
     public final companion object Companion : R|kotlin/Any| {
         private constructor(): R|kotlin/Enum.Companion|

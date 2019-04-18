@@ -1,4 +1,4 @@
 public final class OneTypeParameterErased<P, Q> : R|kotlin/Any| {
-    public constructor(q: R|Q|): R|test/OneTypeParameterErased<P, Q>|
+    public constructor<P, Q>(q: R|Q|): R|test/OneTypeParameterErased<P, Q>|
 
 }

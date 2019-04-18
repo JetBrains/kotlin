@@ -66,20 +66,10 @@ fun deserializeClassToSymbol(
         // TODO: properties
         addDeclarations(classProto.functionList.map(classDeserializer::loadFunction))
 
-        val delegatedSelfType = FirResolvedTypeRefImpl(
-            session,
-            null,
-            ConeClassTypeImpl(
-                symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(),
-                false
-            ),
-            isMarkedNullable = false,
-            annotations = emptyList()
-        )
+
         addDeclarations(
             classProto.constructorList.map {
-                classDeserializer.loadConstructor(it, delegatedSelfType)
+                classDeserializer.loadConstructor(it, this)
             }
         )
 

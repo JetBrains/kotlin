@@ -1,7 +1,7 @@
 public open class Base<T> : R|kotlin/Any| {
     public final fun foo(): R|T|
 
-    public constructor(): R|test/Base<T>|
+    public constructor<T>(): R|test/Base<T>|
 
 }
 
