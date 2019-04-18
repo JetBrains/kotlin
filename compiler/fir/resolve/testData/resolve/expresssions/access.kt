@@ -10,15 +10,21 @@ class Foo {
 class Bar {
     val x = ""
 
+    // NB: unused
     fun Foo.abc() = x
 
     fun bar(): Bar = this
 
+    // NB: unused
     operator fun String.plus(bar: Bar): String {
         return ""
     }
 
+    // NB! abc() here is resolved to member Foo.abc(), and not to extension member of Bar
     fun Foo.check() = abc() + bar()
+
+    // NB! + here is resolved to member String.plus (not to extension member above)
+    fun Foo.check2() = "" + bar()
 }
 
 fun Foo.ext() = x

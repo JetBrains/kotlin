@@ -40,6 +40,10 @@ FILE: access.kt
             ^check R|/Foo.abc|().<Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|/bar|())
         }
 
+        public final fun R|Foo|.check2(): R|kotlin/String| {
+            ^check2 String().R|kotlin/String.plus|(R|/bar|())
+        }
+
     }
     public final fun R|Foo|.ext(): R|kotlin/Int| {
         ^ext R|/Foo.x|

@@ -1,0 +1,26 @@
+FILE: memberExtension.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(arg: R|Bar|): R|kotlin/Unit| {
+            R|<local>/arg|.R|/foo|()
+        }
+
+    }
+    public final fun R|Bar|.foo(): R|kotlin/Unit| {
+    }
+    public final class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|Foo|.foo(): R|kotlin/Unit| {
+        }
+
+        public final fun bar(arg: R|Foo|): R|kotlin/Unit| {
+            R|<local>/arg|.R|/Bar.foo|()
+        }
+
+    }

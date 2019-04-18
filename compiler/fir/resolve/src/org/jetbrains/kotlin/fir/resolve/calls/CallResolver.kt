@@ -146,8 +146,8 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
 // This is more like "dispatch receiver-based tower level"
 // Here we always have an explicit or implicit dispatch receiver, and can access members of its scope
 // (which is separated from currently accessible scope, see below)
-// So: dispatch receiver = given explicit or implicit receiver
-// So: extension receiver = NONE
+// So: dispatch receiver = given explicit or implicit receiver (always present)
+// So: extension receiver = either none, if dispatch receiver = explicit receiver, or given explicit receiver, otherwise
 class MemberScopeTowerLevel(
     session: FirSession,
     val dispatchReceiver: ReceiverValue
