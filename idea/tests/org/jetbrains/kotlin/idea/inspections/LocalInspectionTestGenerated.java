@@ -6275,6 +6275,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/asReceiver.kt");
         }
 
+        @TestMetadata("asReceiverProperty.kt")
+        public void testAsReceiverProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/asReceiverProperty.kt");
+        }
+
         @TestMetadata("companionCollision.kt")
         public void testCompanionCollision() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionCollision.kt");
@@ -6398,6 +6403,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("notApplicableAsReceiver.kt")
         public void testNotApplicableAsReceiver() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableAsReceiver.kt");
+        }
+
+        @TestMetadata("notApplicableAsReceiverProperty.kt")
+        public void testNotApplicableAsReceiverProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableAsReceiverProperty.kt");
         }
 
         @TestMetadata("notApplicableCollisionTopLevelClass.kt")
