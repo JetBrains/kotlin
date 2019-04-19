@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker;
 
-import java.util.Objects;
-
 /**
  * [ExtensionReceiver] is a receiver for pure `this` call inside lambda with receiver
  *
