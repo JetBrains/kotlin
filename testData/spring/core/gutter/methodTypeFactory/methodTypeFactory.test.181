@@ -1,9 +1,0 @@
-{
-    withRuntime: "true",
-    springConfig: ["config.xml"],
-    file: "Bean.kt",
-    icon: "FactoryMethodBean",
-    tooltip: "Navigate to the spring bean factory method declaration",
-    naming: "generic",
-    targets: ["factory-method"]
-}
