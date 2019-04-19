@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testing.internal
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -31,16 +32,24 @@ private val Project.allTestsTask: TaskHolder<AggregateTestReport>
         }
     }
 
-private fun cleanTaskName(taskName: String) = "clean" + taskName.capitalize()
+private fun cleanTaskName(taskName: String): String {
+    check(taskName.isNotEmpty())
+    return "clean" + taskName.capitalize()
+}
+
+private val Project.cleanAllTestTask: Task
+    get() = tasks.findByName(cleanTaskName(allTestsTask.name))
+        ?: tasks.create("clean", Task::class.java).also {
+            tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME).dependsOn(it)
+        }
 
 @Suppress("UnstableApiUsage")
 internal fun registerTestTask(taskHolder: TaskHolder<AbstractTestTask>) {
     val project = taskHolder.project
     val allTests = project.allTestsTask.doGetTask()
 
-    val tasks = project.tasks
-    tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(taskHolder.name)
-    tasks.maybeCreate(cleanTaskName(allTests.name)).dependsOn(cleanTaskName(taskHolder.name))
+    project.tasks.getByName(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(taskHolder.name)
+    project.cleanAllTestTask.dependsOn(cleanTaskName(taskHolder.name))
     allTests.dependsOn(taskHolder.name)
 
     taskHolder.configure { task ->
