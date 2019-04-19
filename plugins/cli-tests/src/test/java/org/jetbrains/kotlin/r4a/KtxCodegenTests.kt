@@ -401,9 +401,8 @@ class ModelClass() {
             val StringAmbient = Ambient.of<String> { "default" }
 
             @Composable fun Foo() {
-                <StringAmbient.Consumer> value ->
-                    <TextView id=$tvId text=value />
-                </StringAmbient.Consumer>
+                val value = +ambient(StringAmbient)
+                <TextView id=$tvId text=value />
             }
 
         """,
@@ -450,11 +449,9 @@ class ModelClass() {
 
             @Composable
             fun ConsumeBoth(id: Int) {
-                <A2.Consumer> notUsed ->
-                    <A1.Consumer> value ->
-                        <TextView id=id text=("" + value) />
-                    </A1.Consumer>
-                </A2.Consumer>
+                val notUsed = +ambient(A2)
+                val value = +ambient(A1)
+                <TextView id=id text=("" + value) />
             }
 
             """,
@@ -515,9 +512,8 @@ class ModelClass() {
             }
 
             @Composable fun Child() {
-                <StringAmbient.Consumer> value ->
-                    <TextView id=$tvId text=value />
-                </StringAmbient.Consumer>
+                val value = +ambient(StringAmbient)
+                <TextView id=$tvId text=value />
             }
 
             """,
@@ -574,9 +570,8 @@ class ModelClass() {
             }
 
             @Composable fun Child() {
-                <StringAmbient.Consumer> value ->
-                    <TextView id=$tvId text=value />
-                </StringAmbient.Consumer>
+                val value = +ambient(StringAmbient)
+                <TextView id=$tvId text=value />
             }
 
             """,
