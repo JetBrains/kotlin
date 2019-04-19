@@ -47,7 +47,7 @@ fun deserializeClassToSymbol(
                 ?: FirDeserializationContext
                     .createForClass(classId, classProto, nameResolver, session)
         typeParameters += context.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
-        //addAnnotationsFrom(classProto) ? TODO
+        annotations += context.annotationDeserializer.loadClassAnnotations(classProto)
 
         val typeDeserializer = context.typeDeserializer
         val classDeserializer = context.memberDeserializer
@@ -61,7 +61,6 @@ fun deserializeClassToSymbol(
             FirResolvedTypeRefImpl(session, null, it, false, emptyList())
         }
 
-        // TODO: properties
         addDeclarations(classProto.functionList.map(classDeserializer::loadFunction))
         addDeclarations(classProto.propertyList.map(classDeserializer::loadProperty))
 

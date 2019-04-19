@@ -12,9 +12,9 @@ public final fun doubleArrayOf(vararg elements: R|kotlin/DoubleArray|): R|kotlin
 
 public final inline fun <reified T> emptyArray(): R|kotlin/Array<T>|
 
-public final inline fun <reified T> enumValueOf(name: R|kotlin/String|): R|T|
+@R|kotlin/SinceKotlin|(version = String(1.1)) public final inline fun <reified T> enumValueOf(name: R|kotlin/String|): R|T|
 
-public final inline fun <reified T> enumValues(): R|kotlin/Array<T>|
+@R|kotlin/SinceKotlin|(version = String(1.1)) public final inline fun <reified T> enumValues(): R|kotlin/Array<T>|
 
 public final fun floatArrayOf(vararg elements: R|kotlin/FloatArray|): R|kotlin/FloatArray|
 
@@ -69,7 +69,7 @@ public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>| {
 
     private constructor(): R|kotlin/Boolean|
 
-    public final companion object Companion : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|(version = String(1.3)) public final companion object Companion : R|kotlin/Any| {
         private constructor(): R|kotlin/Boolean.Companion|
 
     }
@@ -133,17 +133,17 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>| {
 
     public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Int|
 
@@ -165,17 +165,17 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>| {
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
-    public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Int|
 
@@ -216,10 +216,10 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>| {
         public final const val MIN_VALUE: R|kotlin/Byte|
             public get(): R|kotlin/Byte|
 
-        public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Byte.Companion|
@@ -285,7 +285,7 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>| {
         public final const val MAX_SURROGATE: R|kotlin/Char|
             public get(): R|kotlin/Char|
 
-        public final const val MAX_VALUE: R|kotlin/Char|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val MAX_VALUE: R|kotlin/Char|
             public get(): R|kotlin/Char|
 
         public final const val MIN_HIGH_SURROGATE: R|kotlin/Char|
@@ -297,13 +297,13 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>| {
         public final const val MIN_SURROGATE: R|kotlin/Char|
             public get(): R|kotlin/Char|
 
-        public final const val MIN_VALUE: R|kotlin/Char|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val MIN_VALUE: R|kotlin/Char|
             public get(): R|kotlin/Char|
 
-        public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Char.Companion|
@@ -348,7 +348,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-public final annotation class Deprecated : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
     public final val level: R|kotlin/DeprecationLevel|
         public get(): R|kotlin/DeprecationLevel|
 
@@ -408,17 +408,17 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Double|
 
     public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Double|
 
@@ -432,17 +432,17 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Double|
 
     public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Double|
 
@@ -514,7 +514,7 @@ public final class DoubleArray : R|kotlin/Any| {
 
 }
 
-public final annotation class DslMarker : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = <Strange deserialized enum value: kotlin/annotation/AnnotationRetention.BINARY>#()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
     public constructor(): R|kotlin/DslMarker|
 
 }
@@ -545,7 +545,7 @@ public abstract class Enum<E> : R|kotlin/Comparable<E>| {
 
 }
 
-public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExtensionFunctionType|
 
 }
@@ -591,17 +591,17 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| 
 
     public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Float|
 
-    public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Float|
 
-    public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Float|
 
-    public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Float|
 
-    public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Float|
 
     public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Float|
 
@@ -615,17 +615,17 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| 
 
     public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Float|
 
-    public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Float|
 
-    public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Float|
 
-    public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Float|
 
-    public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Float|
 
     public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Float|
 
@@ -745,17 +745,17 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {
 
     public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final infix fun or(other: R|kotlin/Int|): R|kotlin/Int|
 
@@ -779,17 +779,17 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
-    public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final infix fun shl(bitCount: R|kotlin/Int|): R|kotlin/Int|
 
@@ -838,10 +838,10 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {
         public final const val MIN_VALUE: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Int.Companion|
@@ -911,17 +911,17 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>| {
 
     public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Long|
 
-    public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Long|
 
-    public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Long|
 
-    public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Long|
 
     public final infix fun or(other: R|kotlin/Long|): R|kotlin/Long|
 
@@ -945,17 +945,17 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>| {
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/LongRange|
 
-    public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Long|
 
-    public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Long|
 
-    public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Long|
 
     public final infix fun shl(bitCount: R|kotlin/Int|): R|kotlin/Long|
 
@@ -1004,10 +1004,10 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>| {
         public final const val MIN_VALUE: R|kotlin/Long|
             public get(): R|kotlin/Long|
 
-        public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Long.Companion|
@@ -1056,7 +1056,7 @@ public abstract class Number : R|kotlin/Any| {
 
 }
 
-public final annotation class ParameterName : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
     public final val name: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1064,12 +1064,12 @@ public final annotation class ParameterName : R|kotlin/Annotation| {
 
 }
 
-public final annotation class PublishedApi : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = <Strange deserialized enum value: kotlin/annotation/AnnotationRetention.BINARY>#()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class PublishedApi : R|kotlin/Annotation| {
     public constructor(): R|kotlin/PublishedApi|
 
 }
 
-public final annotation class ReplaceWith : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = <Strange deserialized enum value: kotlin/annotation/AnnotationRetention.BINARY>#()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ReplaceWith : R|kotlin/Annotation| {
     public final val expression: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1121,17 +1121,17 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| 
 
     public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Use rem(other) instead), replaceWith = @R|kotlin/ReplaceWith|(expression = String(rem(other))) , level = <Strange deserialized enum value: kotlin/DeprecationLevel.ERROR>#()) public final operator fun mod(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Int|
 
@@ -1153,17 +1153,17 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| 
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
-    public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Int|
 
@@ -1204,10 +1204,10 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| 
         public final const val MIN_VALUE: R|kotlin/Short|
             public get(): R|kotlin/Short|
 
-        public final const val SIZE_BITS: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final const val SIZE_BYTES: R|kotlin/Int|
+        @R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         private constructor(): R|kotlin/Short.Companion|
@@ -1232,7 +1232,7 @@ public final class ShortArray : R|kotlin/Any| {
 
 }
 
-public final annotation class SinceKotlin : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = <Strange deserialized enum value: kotlin/annotation/AnnotationRetention.BINARY>#()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class SinceKotlin : R|kotlin/Annotation| {
     public final val version: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1261,7 +1261,7 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
 }
 
-public final annotation class Suppress : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = <Strange deserialized enum value: kotlin/annotation/AnnotationRetention.SOURCE>#()) public final annotation class Suppress : R|kotlin/Annotation| {
     public final val names: R|kotlin/Array<out kotlin/String>|
         public get(): R|kotlin/Array<out kotlin/String>|
 
@@ -1293,7 +1293,7 @@ public final object Unit : R|kotlin/Any| {
 
 }
 
-public final annotation class UnsafeVariance : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = <Strange deserialized enum value: kotlin/annotation/AnnotationRetention.SOURCE>#()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class UnsafeVariance : R|kotlin/Annotation| {
     public constructor(): R|kotlin/UnsafeVariance|
 
 }

@@ -135,7 +135,7 @@ public abstract interface Map<K, out V> : R|kotlin/Any| {
 
     public abstract operator fun get(key: R|K|): R|V|
 
-    public open fun getOrDefault(key: R|K|, defaultValue: R|V|): R|V|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/PlatformDependent|() public open fun getOrDefault(key: R|K|, defaultValue: R|V|): R|V|
 
     public abstract fun isEmpty(): R|kotlin/Boolean|
 
@@ -240,7 +240,7 @@ public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
 
     public abstract fun remove(key: R|K|): R|V|
 
-    public open fun remove(key: R|K|, value: R|V|): R|kotlin/Boolean|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/PlatformDependent|() public open fun remove(key: R|K|, value: R|V|): R|kotlin/Boolean|
 
     public abstract val entries: R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
         public get(): R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
