@@ -2959,6 +2959,7 @@ task testing_stacktrace(type: RunStandaloneKonanTest) {
     source = "testing/stacktrace.kt"
     flags = ['-tr', '-ea']
     arguments = ["--ktest_logger=TEAMCITY", "--ktest_no_exit_code"]
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     // This test prints TeamCity service messages about failed test causing false negative failure at CI.
     // So we need to suppress printing these messages to stdout.
     printOutput = false
