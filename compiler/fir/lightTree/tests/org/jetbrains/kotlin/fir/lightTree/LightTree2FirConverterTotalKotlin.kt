@@ -28,7 +28,7 @@ import kotlin.system.measureNanoTime
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
 class LightTree2FirConverterTotalKotlin : AbstractRawFirBuilderTestCase() {
-    fun testTotalKotlinLight() {
+    private fun totalKotlinLight(onlyLightTree: Boolean) {
         val path = System.getProperty("user.dir")
         val root = File(path)
         var counter = 0
@@ -38,7 +38,7 @@ class LightTree2FirConverterTotalKotlin : AbstractRawFirBuilderTestCase() {
         val lexer = parserDefinition.createLexer(myProject)
         val lightTreeConverter = LightTree2Fir(true, parserDefinition, lexer)
 
-        println("light test")
+        if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
         println("BASE PATH: $path")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
@@ -47,8 +47,13 @@ class LightTree2FirConverterTotalKotlin : AbstractRawFirBuilderTestCase() {
 
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             time += measureNanoTime {
-                val firFile = lightTreeConverter.buildFirFile(text, file.name)
-                StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
+                if (onlyLightTree) {
+                    val lightTree = lightTreeConverter.buildLightTree(text)
+                    DebugUtil.lightTreeToString(lightTree, false)
+                } else {
+                    val firFile = lightTreeConverter.buildFirFile(text, file.name)
+                    StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
+                }
             }
 
             counter++
@@ -58,13 +63,13 @@ class LightTree2FirConverterTotalKotlin : AbstractRawFirBuilderTestCase() {
 
     }
 
-    fun testTotalKotlinPsi() {
+    private fun totalKotlinPsi(onlyPsi: Boolean) {
         val path = System.getProperty("user.dir")
         val root = File(path)
         var counter = 0
         var time = 0L
 
-        println("psi test")
+        if (onlyPsi) println("Psi generation") else println("Fir from Psi converter")
         println("BASE PATH: $path")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
@@ -74,8 +79,12 @@ class LightTree2FirConverterTotalKotlin : AbstractRawFirBuilderTestCase() {
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             time += measureNanoTime {
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
-                val firFile = ktFile.toFirFile(stubMode = true)
-                StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
+                if (onlyPsi) {
+                    DebugUtil.psiTreeToString(ktFile, false)
+                } else {
+                    val firFile = ktFile.toFirFile(stubMode = true)
+                    StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
+                }
             }
 
             counter++
@@ -83,5 +92,21 @@ class LightTree2FirConverterTotalKotlin : AbstractRawFirBuilderTestCase() {
         println("SUCCESS!")
         println("TIME PER FILE: ${(time / counter) * 1e-6} ms, COUNTER: $counter")
 
+    }
+
+    fun testTotalKotlinOnlyLightTree() {
+        totalKotlinLight(true)
+    }
+
+    fun testTotalKotlinOnlyPsi() {
+        totalKotlinPsi(true)
+    }
+
+    fun testTotalKotlinFirFromLightTree() {
+        totalKotlinLight(false)
+    }
+
+    fun testTotalKotlinFirFromPsi() {
+        totalKotlinPsi(false)
     }
 }
