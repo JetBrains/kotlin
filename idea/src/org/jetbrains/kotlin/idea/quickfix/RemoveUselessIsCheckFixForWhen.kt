@@ -29,8 +29,8 @@ class RemoveUselessIsCheckFixForWhen(element: KtWhenConditionIsPattern) : Kotlin
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val condition = element ?: return
-        val whenEntry = condition.parent as KtWhenEntry
-        val whenExpression = whenEntry.parent as KtWhenExpression
+        val whenEntry = condition.parent as? KtWhenEntry ?: return
+        val whenExpression = whenEntry.parent as? KtWhenExpression ?: return
 
         if (condition.isNegated) {
             condition.parent.delete()
