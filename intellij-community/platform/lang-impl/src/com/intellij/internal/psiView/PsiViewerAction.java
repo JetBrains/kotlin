@@ -31,11 +31,12 @@ import org.jetbrains.annotations.Nullable;
  * @author Konstantin Bulenkov
  */
 public class PsiViewerAction extends DumbAwareAction {
-
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     Editor editor = isForContext() ? e.getData(CommonDataKeys.EDITOR) : null;
-    new PsiViewerDialog(e.getProject(), editor).show();
+    Project project = e.getProject();
+    assert project != null;
+    new PsiViewerDialog(project, editor).show();
   }
 
   @Override
@@ -63,7 +64,6 @@ public class PsiViewerAction extends DumbAwareAction {
   }
 
   public static class ForContext extends PsiViewerAction {
-
     @Override
     protected boolean isForContext() {
       return true;
