@@ -30,19 +30,13 @@ val projectsToShadow by extra(listOf(
         ":idea:eval4j",
         ":idea:formatter",
         ":compiler:psi",
-        *if (project.findProperty("fir.enabled") == "true") {
-            arrayOf(
-                ":compiler:fir:cones",
-                ":compiler:fir:resolve",
-                ":compiler:fir:tree",
-                ":compiler:fir:java",
-                ":compiler:fir:psi2fir",
-                ":compiler:fir:fir2ir",
-                ":idea:fir-view"
-            )
-        } else {
-            emptyArray()
-        },
+        ":compiler:fir:cones",
+        ":compiler:fir:resolve",
+        ":compiler:fir:tree",
+        ":compiler:fir:java",
+        ":compiler:fir:psi2fir",
+        ":compiler:fir:fir2ir",
+        ":idea:fir-view",
         ":compiler:frontend",
         ":compiler:frontend.common",
         ":compiler:frontend.java",
