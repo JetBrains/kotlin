@@ -310,7 +310,7 @@ abstract class IrModuleDeserializer(
         val call = IrEnumConstructorCallImpl(
             start,
             end,
-            type,
+            builtIns.unitType,
             symbol,
             proto.memberAccess.typeArguments.typeArgumentList.size,
             proto.memberAccess.valueArgumentList.size
