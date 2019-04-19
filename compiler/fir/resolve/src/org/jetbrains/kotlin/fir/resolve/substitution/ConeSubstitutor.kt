@@ -57,7 +57,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor {
 
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
         val newType = substituteType(type)
-        return (newType ?: type).substituteRecursive() ?: newType
+        return (newType ?: type.substituteRecursive()) ?: newType
     }
 
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
@@ -78,10 +78,13 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor {
     }
 
     private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {
-        val newLowerBound = substituteOrNull(lowerBound) as ConeLookupTagBasedType?
-        val newUpperBound = substituteOrNull(upperBound) as ConeLookupTagBasedType?
+        val newLowerBound = substituteOrNull(lowerBound)
+        val newUpperBound = substituteOrNull(upperBound)
         if (newLowerBound != null || newUpperBound != null) {
-            return ConeFlexibleType(newLowerBound ?: lowerBound, newUpperBound ?: upperBound)
+            return ConeFlexibleType(
+                newLowerBound?.lowerBoundIfFlexible() ?: lowerBound,
+                newUpperBound?.upperBoundIfFlexible() ?: upperBound
+            )
         }
         return null
     }

@@ -86,12 +86,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
 
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
         require(this is ConeFlexibleType)
-        return this.upperBound
+        return this.upperBound as SimpleTypeMarker
     }
 
     override fun FlexibleTypeMarker.lowerBound(): SimpleTypeMarker {
         require(this is ConeFlexibleType)
-        return this.lowerBound
+        return this.lowerBound as SimpleTypeMarker
     }
 
     override fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker? {

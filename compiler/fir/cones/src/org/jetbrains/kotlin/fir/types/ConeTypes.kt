@@ -107,7 +107,7 @@ abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
 
 
 
-class ConeFlexibleType(val lowerBound: ConeLookupTagBasedType, val upperBound: ConeLookupTagBasedType) : ConeKotlinType(),
+class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
     FlexibleTypeMarker {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = emptyArray()
@@ -115,6 +115,9 @@ class ConeFlexibleType(val lowerBound: ConeLookupTagBasedType, val upperBound: C
     override val nullability: ConeNullability
         get() = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
 }
+
+fun ConeKotlinType.upperBoundIfFlexible() = (this as? ConeFlexibleType)?.upperBound ?: this
+fun ConeKotlinType.lowerBoundIfFlexible() = (this as? ConeFlexibleType)?.lowerBound ?: this
 
 class ConeCapturedTypeConstructor(val projection: ConeKotlinTypeProjection, var supertypes: List<ConeKotlinType>? = null) :
     TypeConstructorMarker {
