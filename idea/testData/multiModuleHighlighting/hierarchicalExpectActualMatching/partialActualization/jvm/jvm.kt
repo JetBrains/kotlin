@@ -1,9 +1,0 @@
-package foo
-
-actual class ExpectInCommonActualInPlatforms
-actual class ExpectInMiddleActualInPlatforms
-
-expect class ExpectInJvmWithoutActual
-
-expect class ExpectInJvmActualInJvm
-actual class ExpectInJvmActualInJvm

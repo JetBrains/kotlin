@@ -34,13 +34,33 @@ public class HierarchicalExpectActualTestGenerated extends AbstractHierarchicalE
         runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/diamondActualization/");
     }
 
-    @TestMetadata("duplicateActuals")
-    public void testDuplicateActuals() throws Exception {
-        runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/duplicateActuals/");
+    @TestMetadata("duplicateExpectsCompatible")
+    public void testDuplicateExpectsCompatible() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/duplicateExpectsCompatible/");
     }
 
-    @TestMetadata("partialActualization")
-    public void testPartialActualization() throws Exception {
-        runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/partialActualization/");
+    @TestMetadata("explicitlyDuplicatedActuals")
+    public void testExplicitlyDuplicatedActuals() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/explicitlyDuplicatedActuals/");
+    }
+
+    @TestMetadata("hierarcicalActualization")
+    public void testHierarcicalActualization() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/hierarcicalActualization/");
+    }
+
+    @TestMetadata("implicitlyDuplicatedActuals")
+    public void testImplicitlyDuplicatedActuals() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/implicitlyDuplicatedActuals/");
+    }
+
+    @TestMetadata("incompleteActualization")
+    public void testIncompleteActualization() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/incompleteActualization/");
+    }
+
+    @TestMetadata("splitActuals")
+    public void testSplitActuals() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/splitActuals/");
     }
 }

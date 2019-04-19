@@ -142,7 +142,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 fun Module.createFacet(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    implementedModuleName: String? = null
+    implementedModuleNames: List<String>? = null
 ) {
     WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
@@ -152,8 +152,8 @@ fun Module.createFacet(
                     modelsProvider.getModifiableRootModel(this@createFacet),
                     platformKind
             )
-            if (implementedModuleName != null) {
-                this.implementedModuleNames = listOf(implementedModuleName)
+            if (implementedModuleNames != null) {
+                this.implementedModuleNames = implementedModuleNames
             }
         }
         modelsProvider.commit()

@@ -96,6 +96,12 @@ open class ExpectedActualDeclarationChecker(
         trace: BindingTrace,
         expectActualTracker: ExpectActualTracker
     ) {
+        val paths = moduleStructureOracle.findAllActualizationPaths(descriptor.module)
+        val leafModulesToContainedPaths = paths
+            .groupBy { it.nodes.last() }
+            .mapValues { (_, paths) -> paths.flatMap { it.nodes }.distinct() }
+        for ()
+
         for (path in moduleStructureOracle.findAllActualizationPaths(descriptor.module)) {
             checkExpectedDeclarationHasActual(reportOn, descriptor, trace, path, expectActualTracker)
         }

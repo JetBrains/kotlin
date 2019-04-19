@@ -1,7 +1,0 @@
-package foo
-
-actual class ExpectInCommonActualInMiddle
-
-expect class ExpectInMiddleActualInPlatforms
-
-expect class ExpectInMiddleWithoutActual

@@ -1,0 +1,8 @@
+MODULE common { platform=[JVM, JS, Native]; root=common }
+MODULE jvmAndJs { platform=[JVM, JS]; root=jvmAndJs }
+MODULE jvm { platform=[JVM]; root=jvm }
+MODULE js { platform=[JS]; root=js }
+
+jvm -> jvmAndJs { kind=EXPECTED_BY }
+js -> jvmAndJs { kind=EXPECTED_BY }
+jvmAndJs -> common { kind=EXPECTED_BY }

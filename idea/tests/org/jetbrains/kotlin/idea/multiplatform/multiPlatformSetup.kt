@@ -40,6 +40,8 @@ fun AbstractMultiModuleTest.setupMppProjectFromTextFile(testRoot: File) {
     val dependeciesTxt = File(testRoot, "dependencies.txt")
     val projectModel = ProjectStructureParser(testRoot).parse(dependeciesTxt.readText())
 
+    check(projectModel.modules.isNotEmpty()) { "No modules were parsed from dependencies.txt" }
+
     doSetup(projectModel)
 }
 
@@ -56,7 +58,7 @@ fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
     }.toMap()
 
     for ((resolveModule, ideaModule) in resolveModulesToIdeaModules.entries) {
-        resolveModule.dependencies.filter { it.kind == ResolveDependency.Kind.DEPENDENCY }.forEach {
+        resolveModule.dependencies.forEach {
             when (val to = it.to) {
                 FullJdk -> ConfigLibraryUtil.configureSdk(module, PluginTestCaseBase.addJdk(testRootDisposable) {
                     PluginTestCaseBase.jdk(TestJdkKind.FULL_JDK)
@@ -73,7 +75,7 @@ fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
         val platform = resolveModule.platform
         ideaModule.createFacet(
             platform,
-            implementedModuleName = resolveModule.dependencies.singleOrNull { it.kind == ResolveDependency.Kind.EXPECTED_BY }?.to?.name
+            implementedModuleNames = resolveModule.dependencies.filter { it.kind == ResolveDependency.Kind.EXPECTED_BY }.map { it.to.name }
         )
         ideaModule.enableMultiPlatform()
     }
@@ -122,7 +124,7 @@ private fun AbstractMultiModuleTest.doSetupProject(rootInfos: List<RootInfo>) {
             else -> {
                 val commonModuleId = ModuleId(name, DefaultBuiltInPlatforms.commonPlatform)
 
-                module.createFacet(platform, implementedModuleName = commonModuleId.ideaModuleName())
+                module.createFacet(platform, implementedModuleNames = listOf(commonModuleId.ideaModuleName()))
                 module.enableMultiPlatform()
 
                 modulesById[commonModuleId]?.let { commonModule ->

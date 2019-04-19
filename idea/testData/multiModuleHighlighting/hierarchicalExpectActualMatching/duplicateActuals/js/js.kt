@@ -1,4 +1,0 @@
-package foo
-
-actual class ExplicitlyDuplicatedByMiddleAndJs
-actual class ImplicitlyDuplicatedByMiddleAndJs
