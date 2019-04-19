@@ -225,7 +225,7 @@ internal class KtUltraLightParameterForSource(
     override fun isVarArgs(): Boolean = kotlinOrigin.isVarArg && method.parameterList.parameters.last() == this
 
     override fun setName(@NonNls name: String): PsiElement {
-        (kotlinOrigin as? KtVariableDeclaration)?.setName(name)
+        kotlinOrigin.setName(name)
         return this
     }
 }
