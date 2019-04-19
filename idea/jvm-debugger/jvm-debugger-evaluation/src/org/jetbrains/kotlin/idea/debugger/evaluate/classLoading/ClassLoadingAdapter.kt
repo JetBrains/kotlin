@@ -65,6 +65,12 @@ interface ClassLoadingAdapter {
         private fun analyzeClass(classToLoad: ClassToLoad, info: ClassInfoForEvaluator): ClassInfoForEvaluator {
             val classNode = ClassNode().apply { ClassReader(classToLoad.bytes).accept(this, 0) }
 
+            for (method in classNode.methods) {
+                if ((method.access and Opcodes.ACC_SYNCHRONIZED) != 0) {
+                    return info.copy(containsCodeUnsupportedInEval4J = true)
+                }
+            }
+
             val methodToRun = classNode.methods.single { it.name == GENERATED_FUNCTION_NAME }
 
             val visitedLabels = hashSetOf<Label>()
