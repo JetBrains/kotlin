@@ -700,6 +700,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/coroutineContextLambda.kt");
             }
 
+            @TestMetadata("coroutineContextWithoutSuspend.kt")
+            public void testCoroutineContextWithoutSuspend() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/coroutineContextWithoutSuspend.kt");
+            }
+
             @TestMetadata("defaultImplsMangling.kt")
             public void testDefaultImplsMangling() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/defaultImplsMangling.kt");

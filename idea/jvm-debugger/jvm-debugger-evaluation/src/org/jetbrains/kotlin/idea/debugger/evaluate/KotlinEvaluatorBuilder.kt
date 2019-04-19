@@ -333,7 +333,9 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     return method.name().endsWith("\$default") && DEFAULT_METHOD_MARKERS.any { desc.contains("I${it.descriptor})") }
                 }
 
-                if (parameter in compiledData.crossingBounds) {
+                if (parameter.kind == CodeFragmentParameter.Kind.COROUTINE_CONTEXT) {
+                    evaluationException("'coroutineContext' is not available")
+                } else if (parameter in compiledData.crossingBounds) {
                     evaluationException("'$name' is not captured")
                 } else if (parameter.kind == CodeFragmentParameter.Kind.FIELD_VAR) {
                     evaluationException("Cannot find the backing field '${parameter.name}'")
