@@ -9,6 +9,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.LibraryData
+import com.intellij.openapi.externalSystem.model.project.LibraryDependencyData
+import com.intellij.openapi.externalSystem.model.project.LibraryLevel
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.IdeUIModifiableModelsProvider
@@ -35,6 +37,7 @@ import org.jetbrains.plugins.gradle.model.ExternalLibraryDependency
 import org.jetbrains.plugins.gradle.model.ExternalMultiLibraryDependency
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
+import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
 
@@ -177,19 +180,58 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
     }
 }
 
-internal object KotlinNativeLibrariesNameFixer {
-    // Gradle IDE plugin creates `LibraryData` nodes with internal name consisting of two parts:
-    // - mandatory "Gradle: " prefix
-    // - and library name
-    // Then internal name is propagated to IDE `Library` object, and is displayed in IDE as "Gradle: <LIBRARY_NAME>".
-    // KotlinNativeLibrariesNameFixer removes "Gradle: " prefix from all `LibraryData` nodes representing KLIBs.
-    fun applyTo(ownerNode: DataNode<GradleSourceSetData>) {
-        for (libraryDependency in ExternalSystemApiUtil.findAll(ownerNode, ProjectKeys.LIBRARY_DEPENDENCY)) {
-            val libraryData = libraryDependency.data.target
+/**
+ * Gradle IDE plugin creates [LibraryData] nodes with internal name consisting of two parts:
+ * - mandatory "Gradle: " prefix
+ * - and library name
+ * Then internal name is propagated to IDE [Library] object, and is displayed in IDE as "Gradle: <LIBRARY_NAME>".
+ * [KotlinNativeLibrariesFixer] removes "Gradle: " prefix from all [LibraryData] items representing KLIBs to make them
+ * look more friendly.
+ *
+ * Also, [KotlinNativeLibrariesFixer] makes sure that all KLIBs from Kotlin/Native distribution are added to IDE project model
+ * as project-level libraries. This is necessary until the appropriate fix in IDEA will be implemented (for details see IDEA-211451).
+ */
+internal object KotlinNativeLibrariesFixer {
+    fun applyTo(ownerNode: DataNode<GradleSourceSetData>, ideProject: DataNode<ProjectData>) {
+        for (libraryDependencyNode in ExternalSystemApiUtil.findAll(ownerNode, ProjectKeys.LIBRARY_DEPENDENCY)) {
+            val libraryData = libraryDependencyNode.data.target
+
+            // Only KLIBs from Kotlin/Native distribution can have such prefix:
             if (libraryData.internalName.startsWith("$GRADLE_LIBRARY_PREFIX$KOTLIN_NATIVE_LIBRARY_PREFIX")) {
-                libraryData.internalName = libraryData.internalName.substringAfter(GRADLE_LIBRARY_PREFIX)
+                fixLibraryName(libraryData)
+                addLibraryToProjectModel(libraryData, ideProject)
+                fixLibraryDependencyLevel(libraryDependencyNode)
             }
         }
+    }
+
+    private fun fixLibraryName(libraryData: LibraryData) {
+        libraryData.internalName = libraryData.internalName.substringAfter(GRADLE_LIBRARY_PREFIX)
+    }
+
+    private fun addLibraryToProjectModel(libraryData: LibraryData, ideProject: DataNode<ProjectData>) {
+        GradleProjectResolverUtil.linkProjectLibrary(ideProject, libraryData)
+    }
+
+    private fun fixLibraryDependencyLevel(oldDependencyNode: DataNode<LibraryDependencyData>) {
+        val oldDependency = oldDependencyNode.data
+        if (oldDependency.level == LibraryLevel.PROJECT) return // nothing to do
+
+        val newDependency = LibraryDependencyData(oldDependency.ownerModule, oldDependency.target, LibraryLevel.PROJECT).apply {
+            scope = oldDependency.scope
+            order = oldDependency.order
+            isExported = oldDependency.isExported
+        }
+
+        val parentNode = oldDependencyNode.parent ?: return
+        val childNodes = oldDependencyNode.children
+
+        val newDependencyNode = parentNode.createChild(oldDependencyNode.key, newDependency)
+        for (child in childNodes) {
+            newDependencyNode.addChild(child)
+        }
+
+        oldDependencyNode.clear(true)
     }
 }
 

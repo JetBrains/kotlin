@@ -356,7 +356,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         preprocessDependencies(substitutedDependencies),
                         ideProject
                     )
-                    KotlinNativeLibrariesNameFixer.applyTo(dataNode)
+                    KotlinNativeLibrariesFixer.applyTo(dataNode, ideProject)
                     for (sourceSet in compilation.sourceSets) {
                         if (sourceSet.fullName() == compilation.fullName()) continue
                         val targetDataNode = getSiblingKotlinModuleData(sourceSet, gradleModule, ideModule, resolverCtx) ?: continue
