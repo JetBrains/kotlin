@@ -4,27 +4,27 @@ import junit.framework.TestCase
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
-import com.intellij.mock.MockProject
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.testFramework.KtPlatformTestUtil
-import org.jetbrains.kotlin.codegen.CodegenTestFiles
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.utils.rethrow
-import org.jetbrains.kotlin.TestsCompilerError
-import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.com.intellij.mock.MockProject
+import org.jetbrains.kotlin.com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil
 import org.junit.After
 import java.net.URLClassLoader
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 
 private const val KOTLIN_RUNTIME_VERSION = "1.3.11"
 
@@ -89,7 +89,7 @@ abstract class AbstractCompilerTest : TestCase() {
     protected fun createEnvironment(): KotlinCoreEnvironment {
         val classPath = createClasspath()
 
-        val configuration = KotlinTestUtils.newConfiguration()
+        val configuration = newConfiguration()
         configuration.addJvmClasspathRoots(classPath)
 
         return KotlinCoreEnvironment.createForTests(
@@ -121,16 +121,6 @@ abstract class AbstractCompilerTest : TestCase() {
         javaClassesOutputDirectory?.let { files.add(it) }
         additionalDependencies?.let { files.addAll(it) }
 
-        val environment = myEnvironment ?: error("Environment not initialized")
-        val externalImportsProvider = ScriptDependenciesProvider.getInstance(environment.project)
-        if (externalImportsProvider != null) {
-            environment.getSourceFiles().forEach { file ->
-                externalImportsProvider.getScriptDependencies(file)?.let {
-                    files.addAll(it.classpath)
-                }
-            }
-        }
-
         try {
             return files.map { it.toURI().toURL() }.toTypedArray()
         } catch (e: MalformedURLException) {
@@ -148,7 +138,7 @@ abstract class AbstractCompilerTest : TestCase() {
                     NoScopeRecordCliBindingTrace()
                 )
                 generationState.factory.also { classFileFactory = it }
-            } catch (e: TestsCompiletimeError) {
+            } catch (e: TestsCompilerError) {
                 if (reportProblems) {
                     e.original.printStackTrace()
                     System.err.println("Generating instructions as text...")
@@ -179,9 +169,33 @@ abstract class AbstractCompilerTest : TestCase() {
     }
 
     protected fun getTestName(lowercaseFirstLetter: Boolean): String =
-        getTestName(this.name, lowercaseFirstLetter)
-    protected fun getTestName(name: String?, lowercaseFirstLetter: Boolean): String =
-        name ?: KtPlatformTestUtil.getTestName(name!!, lowercaseFirstLetter)
+        getTestName(this.name ?: "", lowercaseFirstLetter)
+    protected fun getTestName(name: String, lowercaseFirstLetter: Boolean): String {
+        val trimmedName = StringUtil.trimStart(name, "test")
+        return if (StringUtil.isEmpty(trimmedName)) "" else lowercaseFirstLetter(
+            trimmedName,
+            lowercaseFirstLetter
+        )
+    }
+
+    protected fun lowercaseFirstLetter(name: String, lowercaseFirstLetter: Boolean): String =
+        if (lowercaseFirstLetter && !isMostlyUppercase(name))
+            Character.toLowerCase(name[0]) + name.substring(1)
+        else name
+
+    protected fun isMostlyUppercase(name: String): Boolean {
+        var uppercaseChars = 0
+        for (i in 0 until name.length) {
+            if (Character.isLowerCase(name[i])) {
+                return false
+            }
+            if (Character.isUpperCase(name[i])) {
+                uppercaseChars++
+                if (uppercaseChars >= 3) return true
+            }
+        }
+        return false
+    }
 
     inner class TestDisposable : Disposable {
 
@@ -195,7 +209,7 @@ abstract class AbstractCompilerTest : TestCase() {
     }
 
     companion object {
-        val homeDir by lazy { File(KotlinTestUtils.getHomeDirectory()).absolutePath }
+        val homeDir by lazy { File(computeHomeDirectory()).absolutePath }
         val projectRoot by lazy { File(homeDir, "../../../../..").absolutePath }
 
         fun kotlinRuntimeJar(module: String) = File(
@@ -207,4 +221,41 @@ abstract class AbstractCompilerTest : TestCase() {
             System.setProperty("idea.home", homeDir)
         }
     }
+}
+
+private fun computeHomeDirectory(): String {
+    val userDir = System.getProperty("user.dir")
+    val dir = File(userDir ?: ".")
+    return FileUtil.toCanonicalPath(dir.absolutePath)
+}
+
+private const val TEST_MODULE_NAME = "test-module"
+
+fun newConfiguration(): CompilerConfiguration {
+    val configuration = CompilerConfiguration()
+    configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME)
+
+    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, object : MessageCollector {
+        override fun clear() {}
+
+        override fun report(
+            severity: CompilerMessageSeverity,
+            message: String,
+            location: CompilerMessageLocation?
+        ) {
+            if (severity === CompilerMessageSeverity.ERROR) {
+                val prefix = if (location == null)
+                    ""
+                else
+                    "(" + location.path + ":" + location.line + ":" + location.column + ") "
+                throw AssertionError(prefix + message)
+            }
+        }
+
+        override fun hasErrors(): Boolean {
+            return false
+        }
+    })
+
+    return configuration
 }
