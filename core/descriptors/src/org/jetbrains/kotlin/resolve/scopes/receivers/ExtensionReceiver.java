@@ -54,9 +54,6 @@ public class ExtensionReceiver extends AbstractReceiverValue implements Implicit
     @NotNull
     @Override
     public ReceiverValue replaceType(@NotNull KotlinType newType) {
-        if (NewKotlinTypeChecker.INSTANCE.equalTypes(receiverType, newType)) {
-            return this;
-        }
         return new ExtensionReceiver(descriptor, newType, getOriginal());
     }
 
