@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -80,7 +82,13 @@ class CheckIrElementVisitor(
             IrConstKind.Double -> irBuiltIns.doubleType
         }
 
-        expression.ensureTypeIs(naturalType)
+        if (expression.type.isUnsigned()) {
+            // TODO: There are no unsigned builtins.
+            // And the CONST kind for an unsigned is signed.
+        } else {
+            expression.ensureTypeIs(naturalType)
+        }
+
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation) {
@@ -131,7 +139,14 @@ class CheckIrElementVisitor(
         }
 
         val returnType = expression.symbol.owner.returnType
-        expression.ensureTypeIs(returnType)
+        // TODO: We don't have the proper type substitution yet, so skip generics for now.
+        if (returnType is IrSimpleType &&
+            returnType.classifier is IrClassSymbol &&
+            returnType.arguments.isEmpty()
+        ) {
+
+            expression.ensureTypeIs(returnType)
+        }
 
         expression.superQualifierSymbol?.ensureBound(expression)
     }
@@ -216,15 +231,17 @@ class CheckIrElementVisitor(
             // (including FAKE_OVERRIDE ones).
 
             val allDescriptors = declaration.descriptor.unsubstitutedMemberScope
-                    .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
+                .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
 
             val presentDescriptors = declaration.declarations.map { it.descriptor }
 
             val missingDescriptors = allDescriptors - presentDescriptors
 
             if (missingDescriptors.isNotEmpty()) {
-                reportError(declaration, "Missing declarations for descriptors:\n" +
-                        missingDescriptors.joinToString("\n"))
+                reportError(
+                    declaration, "Missing declarations for descriptors:\n" +
+                            missingDescriptors.joinToString("\n: ")
+                )
             }
         }
     }
