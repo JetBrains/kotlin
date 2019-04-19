@@ -121,7 +121,7 @@ open class RegressionsReporter : DefaultTask() {
         val changesList = getCommits("id:$buildId", user, password)
         val changesInfo = "*Changes* in branch *$branch:*\n" + buildString {
             changesList.commits.forEach {
-                append("        - Change ${it.revision} by <@${it.developer}> (details: ${it.webUrlWithDescription})\n")
+                append("        - Change ${it.revision} by ${it.developer} (details: ${it.webUrlWithDescription})\n")
             }
         }
 
