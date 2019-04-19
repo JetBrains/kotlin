@@ -45,6 +45,7 @@ import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
 import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.patterns.KotlinFunctionPattern
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -282,7 +283,7 @@ class KotlinLanguageInjector(
         for (reference in callee.references) {
             ProgressManager.checkCanceled()
 
-            val resolvedTo = reference.resolve()
+            val resolvedTo = allowResolveInWriteAction { reference.resolve() }
             if (resolvedTo is PsiMethod) {
                 val injectionForJavaMethod = injectionForJavaMethod(argument, resolvedTo)
                 if (injectionForJavaMethod != null) {
@@ -311,7 +312,9 @@ class KotlinLanguageInjector(
         val annotationEntry = argument.parent.parent as? KtCallElement ?: return null
         if (!fastCheckInjectionsExists(annotationEntry)) return null
         val calleeExpression = annotationEntry.calleeExpression ?: return null
-        val callee = getNameReference(calleeExpression)?.mainReference?.resolve()
+        val callee = getNameReference(calleeExpression)?.mainReference?.let { reference ->
+            allowResolveInWriteAction { reference.resolve() }
+        }
         when (callee) {
             is PsiClass -> {
                 val psiClass = callee as? PsiClass ?: return null
@@ -357,8 +360,10 @@ class KotlinLanguageInjector(
         // Found psi element after resolve can be obtained from compiled declaration but annotations parameters are lost there.
         // Search for original descriptor from reference.
         val ktReference = reference as? KtReference ?: return null
-        val bindingContext = ktReference.element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-        val functionDescriptor = ktReference.resolveToDescriptors(bindingContext).singleOrNull() as? FunctionDescriptor ?: return null
+        val functionDescriptor = allowResolveInWriteAction {
+            val bindingContext = ktReference.element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+            ktReference.resolveToDescriptors(bindingContext).singleOrNull() as? FunctionDescriptor
+        } ?: return null
 
         val parameterDescriptor = functionDescriptor.valueParameters.getOrNull(argumentIndex) ?: return null
         return injectionInfoByAnnotation(parameterDescriptor)
