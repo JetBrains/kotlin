@@ -24654,6 +24654,36 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/unsignedTypes/signedToUnsignedLiteralConversion.kt");
         }
 
+        @TestMetadata("unsignedIntCompare_jvm16.kt")
+        public void testUnsignedIntCompare_jvm16() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare_jvm16.kt");
+        }
+
+        @TestMetadata("unsignedIntCompare_jvm18.kt")
+        public void testUnsignedIntCompare_jvm18() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare_jvm18.kt");
+        }
+
+        @TestMetadata("unsignedIntDivide_jvm16.kt")
+        public void testUnsignedIntDivide_jvm16() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntDivide_jvm16.kt");
+        }
+
+        @TestMetadata("unsignedIntDivide_jvm18.kt")
+        public void testUnsignedIntDivide_jvm18() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntDivide_jvm18.kt");
+        }
+
+        @TestMetadata("unsignedIntRemainder_jvm16.kt")
+        public void testUnsignedIntRemainder_jvm16() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntRemainder_jvm16.kt");
+        }
+
+        @TestMetadata("unsignedIntRemainder_jvm18.kt")
+        public void testUnsignedIntRemainder_jvm18() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntRemainder_jvm18.kt");
+        }
+
         @TestMetadata("unsignedLiteralsForMaxLongValue.kt")
         public void testUnsignedLiteralsForMaxLongValue() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsForMaxLongValue.kt");
@@ -24662,6 +24692,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("unsignedLiteralsWithSignedOverflow.kt")
         public void testUnsignedLiteralsWithSignedOverflow() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsWithSignedOverflow.kt");
+        }
+
+        @TestMetadata("unsignedLongCompare_jvm16.kt")
+        public void testUnsignedLongCompare_jvm16() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongCompare_jvm16.kt");
+        }
+
+        @TestMetadata("unsignedLongCompare_jvm18.kt")
+        public void testUnsignedLongCompare_jvm18() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongCompare_jvm18.kt");
         }
 
         @TestMetadata("unsignedLongDivide_jvm16.kt")

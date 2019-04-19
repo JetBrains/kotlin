@@ -41,6 +41,7 @@ public class IntrinsicMethods {
     private static final FqName KOTLIN_JVM = new FqName("kotlin.jvm");
     /* package */ static final FqNameUnsafe RECEIVER_PARAMETER_FQ_NAME = new FqNameUnsafe("T");
 
+    private static final FqNameUnsafe KOTLIN_UINT = new FqNameUnsafe("kotlin.UInt");
     private static final FqNameUnsafe KOTLIN_ULONG = new FqNameUnsafe("kotlin.ULong");
 
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
@@ -162,13 +163,29 @@ public class IntrinsicMethods {
         declareArrayMethods();
 
         if (jvmTarget.compareTo(JvmTarget.JVM_1_8) >= 0) {
-            Java8ULongDivide java8ULongDivide = new Java8ULongDivide();
-            Java8ULongRemainder java8ULongRemainder = new Java8ULongRemainder();
+            Java8UIntDivide java8UIntDivide = new Java8UIntDivide();
+            intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "div", 1, java8UIntDivide);
+            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintDivide", 2, java8UIntDivide);
 
+            Java8UIntRemainder java8UIntRemainder = new Java8UIntRemainder();
+            intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "rem", 1, java8UIntRemainder);
+            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintRemainder", 2, java8UIntRemainder);
+
+            Java8UIntCompare java8UIntCompare = new Java8UIntCompare();
+            intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "compareTo", 1, java8UIntCompare);
+            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintCompare", 2, java8UIntCompare);
+
+            Java8ULongDivide java8ULongDivide = new Java8ULongDivide();
             intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "div", 1, java8ULongDivide);
-            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "rem", 1, java8ULongRemainder);
             intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongDivide", 2, java8ULongDivide);
+
+            Java8ULongRemainder java8ULongRemainder = new Java8ULongRemainder();
+            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "rem", 1, java8ULongRemainder);
             intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongRemainder", 2, java8ULongRemainder);
+
+            Java8ULongCompare java8ULongCompare = new Java8ULongCompare();
+            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "compareTo", 1, java8ULongCompare);
+            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongCompare", 2, java8ULongCompare);
         }
     }
 
