@@ -93,6 +93,7 @@ enum class LanguageFeature(
     NoConstantValueAttributeForNonConstVals(KOTLIN_1_4, kind = BUG_FIX),
     WarningOnMainUnusedParameter(KOTLIN_1_4),
     PolymorphicSignature(KOTLIN_1_4),
+    GenerateNullChecksForGenericTypeReturningFunctions(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitConcurrentHashMapContains(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitTypeParametersForLocalVariables(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses(KOTLIN_1_4, kind = BUG_FIX),

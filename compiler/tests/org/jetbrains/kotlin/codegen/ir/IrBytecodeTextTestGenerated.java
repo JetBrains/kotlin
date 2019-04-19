@@ -2099,6 +2099,29 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class GenericTypeReturnNullCheck extends AbstractIrBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInGenericTypeReturnNullCheck() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("assertionOnSameDescriptors.kt")
+        public void testAssertionOnSameDescriptors() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/assertionOnSameDescriptors.kt");
+        }
+
+        @TestMetadata("assertionOnlyOnGetValue.kt")
+        public void testAssertionOnlyOnGetValue() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/assertionOnlyOnGetValue.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/hashCode")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

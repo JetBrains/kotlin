@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -734,6 +735,14 @@ class PsiInlineCodegen(
             performInline(resolvedCall?.typeArguments, callDefault, codegen)
         } finally {
             state.globalInlineContext.exitFromInliningOf(resolvedCall)
+        }
+
+        if (resolvedCall != null) {
+            generateNullCheckOnCallSite(
+                JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_GENERIC_CALL,
+                resolvedCall.call.callElement,
+                codegen
+            )
         }
     }
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 import org.jetbrains.org.objectweb.asm.Type
 
 enum class ValueKind {
@@ -37,6 +38,14 @@ interface CallGenerator {
                 callableMethod.genInvokeInstruction(codegen.v)
             } else {
                 (callableMethod as CallableMethod).genInvokeDefaultInstruction(codegen.v)
+            }
+
+            if (resolvedCall != null) {
+                generateNullCheckOnCallSite(
+                    JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_GENERIC_CALL,
+                    resolvedCall.call.callElement,
+                    codegen
+                )
             }
         }
 

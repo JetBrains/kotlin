@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -46,6 +47,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.generateNullCheckOnCallSite;
 import static org.jetbrains.kotlin.codegen.FunctionCodegen.processInterfaceMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
@@ -609,6 +611,11 @@ public class PropertyCodegen {
             Type asmType = signature.getReturnType();
             KotlinType kotlinReturnType = propertyAccessorDescriptor.getOriginal().getReturnType();
             lastValue.put(asmType, kotlinReturnType, v);
+            generateNullCheckOnCallSite(
+                    JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_DELEGATES,
+                    resolvedCall.getCall().getCallElement(),
+                    codegen
+            );
             v.areturn(asmType);
         }
     }

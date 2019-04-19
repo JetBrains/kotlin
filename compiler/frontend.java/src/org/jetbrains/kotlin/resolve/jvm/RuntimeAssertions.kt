@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.isNullableUnderlyingType
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.isClassType
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: String) {
@@ -77,7 +79,7 @@ class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: Strin
     }
 }
 
-private val KtExpression.textForRuntimeAssertionInfo
+private val KtElement.textForRuntimeAssertionInfo
     get() = StringUtil.trimMiddle(text, 50)
 
 class RuntimeAssertionsDataFlowExtras(
@@ -110,6 +112,33 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
         }
     }
 
+}
+
+object RuntimeAssertionsOnGenericTypeReturningFunctionsCallChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        val unsubstitutedReturnType = resolvedCall.candidateDescriptor.original.returnType ?: return
+        val inferredReturnType = resolvedCall.resultingDescriptor.returnType ?: return
+        val isEnabledGeneratingNullChecksOnCallSite =
+            context.languageVersionSettings.supportsFeature(LanguageFeature.GenerateNullChecksForGenericTypeReturningFunctions)
+
+        if (isEnabledGeneratingNullChecksOnCallSite &&
+            unsubstitutedReturnType.isTypeParameter() &&
+            unsubstitutedReturnType.isNullable() &&
+            !inferredReturnType.isNullable()
+        ) {
+            val callElement = resolvedCall.call.callElement
+            val assertionInfo = RuntimeAssertionInfo(needNotNullAssertion = true, message = callElement.textForRuntimeAssertionInfo)
+
+            context.trace.record(
+                when (context.scope.kind) {
+                    LexicalScopeKind.PROPERTY_DELEGATE_METHOD -> JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_DELEGATES
+                    else -> JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_GENERIC_CALL
+                },
+                callElement,
+                assertionInfo
+            )
+        }
+    }
 }
 
 object RuntimeAssertionsOnExtensionReceiverCallChecker : CallChecker {

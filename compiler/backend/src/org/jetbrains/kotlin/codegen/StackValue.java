@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -50,6 +51,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.generateNullCheckOnCallSite;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_CALLABLE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.RECURSIVE_SUSPEND_CALLABLE_REFERENCE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -1689,6 +1691,13 @@ public abstract class StackValue {
                 }
                 else {
                     getter.genInvokeInstruction(v);
+                    if (resolvedCall != null) {
+                        generateNullCheckOnCallSite(
+                                JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_GENERIC_CALL,
+                                resolvedCall.getCall().getCallElement(),
+                                codegen
+                        );
+                    }
                 }
 
                 Type typeOfValueOnStack = getter.getReturnType();
