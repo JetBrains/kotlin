@@ -16,6 +16,7 @@
       <element id="module-output" name="kotlin.core.metadata.jvm.main" />
       <element id="module-output" name="kotlin.core.metadata.main" />
       <element id="module-output" name="kotlin.core.util.runtime.main" />
+      <element id="module-output" name="kotlin.core.type-system.main" />
     </root>
   </artifact>
 </component>
