@@ -8,4 +8,3 @@ public class Testing {
 
 // EXIST: getValInNested
 // EXIST: funInNested
-// LIGHT_CLASS: mockLib.foo.LibClass
