@@ -167,13 +167,6 @@ open class RegressionsReporter : DefaultTask() {
                 val channel = session.findChannelByName(buildProperties.getProperty("konan-channel-name"))
                 session.sendMessage(channel, message)
             }
-        } else {
-            changesList.commits.filter { it.developer in slackUsers }. map { it.developer }
-                    .toSet().forEach {
-                        val slackUser = session.findUserByUserName(slackUsers[it])
-                        session.sendMessageToUser(slackUser, message, null)
-
-                    }
         }
         session.disconnect()
     }
