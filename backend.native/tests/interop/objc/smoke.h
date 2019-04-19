@@ -160,3 +160,19 @@ NSObject* createNSObject() {
 -(instancetype)initWithValue:(int)value NS_DESIGNATED_INITIALIZER;
 +(instancetype)createWithValue:(int)value;
 @end;
+
+@interface MultipleInheritanceClashBase : NSObject
+@property (nonnull) MultipleInheritanceClashBase* delegate;
+@end;
+
+@protocol MultipleInheritanceClash
+@optional
+@property (nullable) id<MultipleInheritanceClash> delegate;
+@end;
+
+@interface MultipleInheritanceClash1 : MultipleInheritanceClashBase <MultipleInheritanceClash>
+@end;
+
+@interface MultipleInheritanceClash2 : MultipleInheritanceClashBase <MultipleInheritanceClash>
+@property MultipleInheritanceClashBase* delegate;
+@end;

@@ -885,6 +885,8 @@ class StubGenerator(
             if (configuration.library.language == Language.OBJECTIVE_C) {
                 add("CONFLICTING_OVERLOADS")
                 add("RETURN_TYPE_MISMATCH_ON_INHERITANCE")
+                add("PROPERTY_TYPE_MISMATCH_ON_INHERITANCE") // Multiple-inheriting property with conflicting types
+                add("VAR_TYPE_MISMATCH_ON_INHERITANCE") // Multiple-inheriting mutable property with conflicting types
                 add("RETURN_TYPE_MISMATCH_ON_OVERRIDE")
                 add("WRONG_MODIFIER_CONTAINING_DECLARATION") // For `final val` in interface.
                 add("PARAMETER_NAME_CHANGED_ON_OVERRIDE")

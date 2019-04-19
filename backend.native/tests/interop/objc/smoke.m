@@ -155,3 +155,12 @@ static CustomRetainMethodsImpl* retainedCustomRetainMethodsImpl;
     return [[self alloc] initWithValue:value];
 }
 @end;
+
+@implementation MultipleInheritanceClashBase
+@end;
+
+@implementation MultipleInheritanceClash1
+@end;
+
+@implementation MultipleInheritanceClash2
+@end;
