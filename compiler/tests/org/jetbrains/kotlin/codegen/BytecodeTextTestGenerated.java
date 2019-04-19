@@ -2046,6 +2046,180 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class GenericTypeReturnNullCheck extends AbstractBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInGenericTypeReturnNullCheck() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallSite extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCallSite() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("anonymousFunction.kt")
+            public void testAnonymousFunction() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/anonymousFunction.kt");
+            }
+
+            @TestMetadata("callableReference.kt")
+            public void testCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/callableReference.kt");
+            }
+
+            @TestMetadata("inlineFunction.kt")
+            public void testInlineFunction() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/inlineFunction.kt");
+            }
+
+            @TestMetadata("inlineFunctionWithReifiedTypeArgument.kt")
+            public void testInlineFunctionWithReifiedTypeArgument() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/inlineFunctionWithReifiedTypeArgument.kt");
+            }
+
+            @TestMetadata("inlineFunctionWithoutNull.kt")
+            public void testInlineFunctionWithoutNull() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/inlineFunctionWithoutNull.kt");
+            }
+
+            @TestMetadata("inlineProperty.kt")
+            public void testInlineProperty() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/inlineProperty.kt");
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/lambda.kt");
+            }
+
+            @TestMetadata("simpleFunction.kt")
+            public void testSimpleFunction() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/simpleFunction.kt");
+            }
+
+            @TestMetadata("simpleFunctionThroughInlineProperty.kt")
+            public void testSimpleFunctionThroughInlineProperty() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/simpleFunctionThroughInlineProperty.kt");
+            }
+
+            @TestMetadata("simpleProperty.kt")
+            public void testSimpleProperty() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/simpleProperty.kt");
+            }
+
+            @TestMetadata("typeParameterFromClass.kt")
+            public void testTypeParameterFromClass() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/typeParameterFromClass.kt");
+            }
+
+            @TestMetadata("typeParameterFromParentFunction.kt")
+            public void testTypeParameterFromParentFunction() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/typeParameterFromParentFunction.kt");
+            }
+
+            @TestMetadata("withInferring.kt")
+            public void testWithInferring() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/withInferring.kt");
+            }
+
+            @TestMetadata("withInferringToDefinitelyNotNullT.kt")
+            public void testWithInferringToDefinitelyNotNullT() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/withInferringToDefinitelyNotNullT.kt");
+            }
+
+            @TestMetadata("withInferringToFlexible.kt")
+            public void testWithInferringToFlexible() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/withInferringToFlexible.kt");
+            }
+
+            @TestMetadata("withInferringToNotNullT.kt")
+            public void testWithInferringToNotNullT() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/withInferringToNotNullT.kt");
+            }
+
+            @TestMetadata("withInferringToNullable.kt")
+            public void testWithInferringToNullable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/withInferringToNullable.kt");
+            }
+
+            @TestMetadata("withInferringToNullableT.kt")
+            public void testWithInferringToNullableT() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/withInferringToNullableT.kt");
+            }
+
+            @TestMetadata("withInferringToT.kt")
+            public void testWithInferringToT() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/callSite/withInferringToT.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Delegation extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDelegation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("delegationByExtensionFunction.kt")
+            public void testDelegationByExtensionFunction() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation/delegationByExtensionFunction.kt");
+            }
+
+            @TestMetadata("delegationByExtensionFunctionT.kt")
+            public void testDelegationByExtensionFunctionT() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation/delegationByExtensionFunctionT.kt");
+            }
+
+            @TestMetadata("delegationByExtensionProperty.kt")
+            public void testDelegationByExtensionProperty() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation/delegationByExtensionProperty.kt");
+            }
+
+            @TestMetadata("delegationByExtensionPropertyT.kt")
+            public void testDelegationByExtensionPropertyT() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation/delegationByExtensionPropertyT.kt");
+            }
+
+            @TestMetadata("delegationByFunction.kt")
+            public void testDelegationByFunction() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation/delegationByFunction.kt");
+            }
+
+            @TestMetadata("delegationByFunctionT.kt")
+            public void testDelegationByFunctionT() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation/delegationByFunctionT.kt");
+            }
+
+            @TestMetadata("delegationByInlineMap.kt")
+            public void testDelegationByInlineMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation/delegationByInlineMap.kt");
+            }
+
+            @TestMetadata("delegationByProperty.kt")
+            public void testDelegationByProperty() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/genericTypeReturnNullCheck/delegation/delegationByProperty.kt");
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/hashCode")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

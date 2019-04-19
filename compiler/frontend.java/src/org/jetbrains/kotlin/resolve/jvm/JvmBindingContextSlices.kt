@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice
 import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
 import org.jetbrains.kotlin.util.slicedMap.Slices
@@ -38,6 +40,10 @@ object JvmBindingContextSlices {
 
     @JvmField
     val LOAD_FROM_JAVA_SIGNATURE_ERRORS: WritableSlice<DeclarationDescriptor, List<String>> = Slices.createCollectiveSlice()
+
+    @JvmField
+    val RUNTIME_NOT_NULL_ASSERTION_ON_CALL_SITE: WritableSlice<CallableDescriptor, KotlinType> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
 
     init {
         BasicWritableSlice.initSliceDebugNames(JvmBindingContextSlices::class.java)

@@ -281,6 +281,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var allowNoSourceFiles: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xgenerate-null-checks-for-generic-type-returning-functions",
+        description = "Enable null check generation for generic functions with non-null return type"
+    )
+    var generateNullChecksForGenericTypeReturningFunctions: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
@@ -305,6 +311,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         val result = super.configureLanguageFeatures(collector)
         if (strictJavaNullabilityAssertions) {
             result[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
+        }
+        if (generateNullChecksForGenericTypeReturningFunctions) {
+            result[LanguageFeature.GenerateNullChecksForGenericTypeReturningFunctions] = LanguageFeature.State.ENABLED
         }
         return result
     }

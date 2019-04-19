@@ -11437,6 +11437,250 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/genericTypeReturnNullCheck")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class GenericTypeReturnNullCheck extends AbstractIrBlackBoxCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInGenericTypeReturnNullCheck() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/genericTypeReturnNullCheck"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallSite extends AbstractIrBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCallSite() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("anonymousFunction.kt")
+            public void testAnonymousFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/anonymousFunction.kt");
+            }
+
+            @TestMetadata("callableReference.kt")
+            public void testCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/callableReference.kt");
+            }
+
+            @TestMetadata("callableReferenceAsFunctionalType.kt")
+            public void testCallableReferenceAsFunctionalType() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/callableReferenceAsFunctionalType.kt");
+            }
+
+            @TestMetadata("functionWithGenericUpperBoundForTypeParameter1.kt")
+            public void testFunctionWithGenericUpperBoundForTypeParameter1() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/functionWithGenericUpperBoundForTypeParameter1.kt");
+            }
+
+            @TestMetadata("functionWithGenericUpperBoundForTypeParameter2.kt")
+            public void testFunctionWithGenericUpperBoundForTypeParameter2() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/functionWithGenericUpperBoundForTypeParameter2.kt");
+            }
+
+            @TestMetadata("inlineFunction.kt")
+            public void testInlineFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/inlineFunction.kt");
+            }
+
+            @TestMetadata("inlineFunctionWithGenericUpperBoundForTypeParameter1.kt")
+            public void testInlineFunctionWithGenericUpperBoundForTypeParameter1() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/inlineFunctionWithGenericUpperBoundForTypeParameter1.kt");
+            }
+
+            @TestMetadata("inlineFunctionWithGenericUpperBoundForTypeParameter2.kt")
+            public void testInlineFunctionWithGenericUpperBoundForTypeParameter2() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/inlineFunctionWithGenericUpperBoundForTypeParameter2.kt");
+            }
+
+            @TestMetadata("inlineFunctionWithGenericUpperBoundForTypeParameter3.kt")
+            public void testInlineFunctionWithGenericUpperBoundForTypeParameter3() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/inlineFunctionWithGenericUpperBoundForTypeParameter3.kt");
+            }
+
+            @TestMetadata("inlineFunctionWithGenericUpperBoundForTypeParameter4.kt")
+            public void testInlineFunctionWithGenericUpperBoundForTypeParameter4() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/inlineFunctionWithGenericUpperBoundForTypeParameter4.kt");
+            }
+
+            @TestMetadata("inlineFunctionWithReifiedTypeArgument.kt")
+            public void testInlineFunctionWithReifiedTypeArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/inlineFunctionWithReifiedTypeArgument.kt");
+            }
+
+            @TestMetadata("inlineFunctionWithoutNull.kt")
+            public void testInlineFunctionWithoutNull() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/inlineFunctionWithoutNull.kt");
+            }
+
+            @TestMetadata("inlineProperty.kt")
+            public void testInlineProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/inlineProperty.kt");
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/lambda.kt");
+            }
+
+            @TestMetadata("simpleFunction.kt")
+            public void testSimpleFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/simpleFunction.kt");
+            }
+
+            @TestMetadata("simpleFunctionThroughInlineProperty.kt")
+            public void testSimpleFunctionThroughInlineProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/simpleFunctionThroughInlineProperty.kt");
+            }
+
+            @TestMetadata("simpleProperty.kt")
+            public void testSimpleProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/simpleProperty.kt");
+            }
+
+            @TestMetadata("twoGenericFunctions.kt")
+            public void testTwoGenericFunctions() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/twoGenericFunctions.kt");
+            }
+
+            @TestMetadata("twoInlineGenericFunction.kt")
+            public void testTwoInlineGenericFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/twoInlineGenericFunction.kt");
+            }
+
+            @TestMetadata("twoInlineGenericFunctionReifiedTypeArgument.kt")
+            public void testTwoInlineGenericFunctionReifiedTypeArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/twoInlineGenericFunctionReifiedTypeArgument.kt");
+            }
+
+            @TestMetadata("typeParameterFromClass.kt")
+            public void testTypeParameterFromClass() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/typeParameterFromClass.kt");
+            }
+
+            @TestMetadata("typeParameterFromOuterClass.kt")
+            public void testTypeParameterFromOuterClass() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/typeParameterFromOuterClass.kt");
+            }
+
+            @TestMetadata("typeParameterFromParentFunction.kt")
+            public void testTypeParameterFromParentFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/typeParameterFromParentFunction.kt");
+            }
+
+            @TestMetadata("withInferring.kt")
+            public void testWithInferring() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withInferring.kt");
+            }
+
+            @TestMetadata("withInferringToDefinitelyNotNullT.kt")
+            public void testWithInferringToDefinitelyNotNullT() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withInferringToDefinitelyNotNullT.kt");
+            }
+
+            @TestMetadata("withInferringToFlexible.kt")
+            public void testWithInferringToFlexible() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withInferringToFlexible.kt");
+            }
+
+            @TestMetadata("withInferringToFlexibleT.kt")
+            public void testWithInferringToFlexibleT() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withInferringToFlexibleT.kt");
+            }
+
+            @TestMetadata("withInferringToNotNullT.kt")
+            public void testWithInferringToNotNullT() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withInferringToNotNullT.kt");
+            }
+
+            @TestMetadata("withInferringToNullable.kt")
+            public void testWithInferringToNullable() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withInferringToNullable.kt");
+            }
+
+            @TestMetadata("withInferringToNullableT.kt")
+            public void testWithInferringToNullableT() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withInferringToNullableT.kt");
+            }
+
+            @TestMetadata("withInferringToT.kt")
+            public void testWithInferringToT() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withInferringToT.kt");
+            }
+
+            @TestMetadata("withInferringUsingProperty.kt")
+            public void testWithInferringUsingProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withInferringUsingProperty.kt");
+            }
+
+            @TestMetadata("withUpperBoundForTypeParameter.kt")
+            public void testWithUpperBoundForTypeParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/callSite/withUpperBoundForTypeParameter.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Delegation extends AbstractIrBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDelegation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("delegationByExtensionFunction.kt")
+            public void testDelegationByExtensionFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation/delegationByExtensionFunction.kt");
+            }
+
+            @TestMetadata("delegationByExtensionFunctionT.kt")
+            public void testDelegationByExtensionFunctionT() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation/delegationByExtensionFunctionT.kt");
+            }
+
+            @TestMetadata("delegationByExtensionProperty.kt")
+            public void testDelegationByExtensionProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation/delegationByExtensionProperty.kt");
+            }
+
+            @TestMetadata("delegationByExtensionPropertyT.kt")
+            public void testDelegationByExtensionPropertyT() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation/delegationByExtensionPropertyT.kt");
+            }
+
+            @TestMetadata("delegationByFunction.kt")
+            public void testDelegationByFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation/delegationByFunction.kt");
+            }
+
+            @TestMetadata("delegationByFunctionT.kt")
+            public void testDelegationByFunctionT() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation/delegationByFunctionT.kt");
+            }
+
+            @TestMetadata("delegationByInlineMap.kt")
+            public void testDelegationByInlineMap() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation/delegationByInlineMap.kt");
+            }
+
+            @TestMetadata("delegationByProperty.kt")
+            public void testDelegationByProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation/delegationByProperty.kt");
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/hashPMap")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

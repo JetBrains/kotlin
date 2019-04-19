@@ -21,6 +21,8 @@ where advanced options include:
                              Do not enable scripting plugin by default
   -Xdisable-standard-script  Disable standard kotlin script support
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
+  -Xgenerate-null-checks-for-generic-type-returning-functions
+                             Enable generating of null checks in JVM bytecode for functions returning a generic type, in places where a not-null type is expected
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjava-package-prefix      Package prefix for Java files

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
@@ -659,4 +661,19 @@ private fun generateLambdaForRunSuspend(
 
     lambdaBuilder.done()
     return lambdaBuilder.thisName
+}
+
+fun generateNullCheckOnCallSite(descriptor: CallableDescriptor?, v: InstructionAdapter, bindingContext: BindingContext) {
+    bindingContext.get(
+        JvmBindingContextSlices.RUNTIME_NOT_NULL_ASSERTION_ON_CALL_SITE,
+        descriptor?.original ?: return
+    ) ?: return
+
+    val notNullLabel = Label()
+    v.run {
+        dup()
+        ifnonnull(notNullLabel)
+        invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "throwNpe", "()V", false)
+        mark(notNullLabel)
+    }
 }

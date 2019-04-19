@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -38,6 +39,12 @@ interface CallGenerator {
             } else {
                 (callableMethod as CallableMethod).genInvokeDefaultInstruction(codegen.v)
             }
+
+            generateNullCheckOnCallSite(
+                resolvedCall?.run { (candidateDescriptor as? PropertyDescriptor)?.getter ?: candidateDescriptor },
+                codegen.v,
+                codegen.bindingContext
+            )
         }
 
         override fun processAndPutHiddenParameters(justProcess: Boolean) {

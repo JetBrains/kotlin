@@ -92,6 +92,7 @@ class IrInlineCodegen(
     override fun genCall(callableMethod: Callable, callDefault: Boolean, codegen: ExpressionCodegen, expression: IrMemberAccessExpression) {
         val typeArguments = expression.descriptor.typeParameters.keysToMap { expression.getTypeArgumentOrDefault(it) }
         performInline(typeArguments, callDefault, codegen)
+        generateNullCheckOnCallSite(expression.descriptor, codegen.mv, codegen.context.state.bindingContext)
     }
 
     private fun rememberClosure(irReference: IrFunctionReference, type: Type, parameter: ValueParameterDescriptor): LambdaInfo {

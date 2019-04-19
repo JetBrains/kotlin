@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.generateNullCheckOnCallSite;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_CALLABLE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.RECURSIVE_SUSPEND_CALLABLE_REFERENCE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -1689,6 +1690,7 @@ public abstract class StackValue {
                 }
                 else {
                     getter.genInvokeInstruction(v);
+                    generateNullCheckOnCallSite(getterDescriptor, v, codegen.getBindingContext());
                 }
 
                 Type typeOfValueOnStack = getter.getReturnType();

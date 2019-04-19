@@ -51,6 +51,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         SuperCallWithDefaultArgumentsChecker(),
         ProtectedSyntheticExtensionCallChecker,
         RuntimeAssertionsOnExtensionReceiverCallChecker,
+        RuntimeAssertionsOnGenericTypeReturningFunctionsCallChecker,
         ApiVersionIsAtLeastArgumentsChecker,
         InconsistentOperatorFromJavaCallChecker
     ),

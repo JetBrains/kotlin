@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.isClassType
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: String) {
@@ -110,6 +111,28 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
         }
     }
 
+}
+
+object RuntimeAssertionsOnGenericTypeReturningFunctionsCallChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        val candidateDescriptor = resolvedCall.candidateDescriptor
+        val unsubstitutedReturnType = candidateDescriptor.original.returnType ?: return
+        val inferredReturnType = (resolvedCall.resultingDescriptor ?: candidateDescriptor).returnType ?: return
+        val isEnabledGeneratingNullChecksOnCallSite =
+            context.languageVersionSettings.supportsFeature(LanguageFeature.GenerateNullChecksForGenericTypeReturningFunctions)
+
+        if (isEnabledGeneratingNullChecksOnCallSite &&
+            unsubstitutedReturnType.isTypeParameter() &&
+            unsubstitutedReturnType.isNullable() &&
+            !inferredReturnType.isNullable()
+        ) {
+            context.trace.record(
+                JvmBindingContextSlices.RUNTIME_NOT_NULL_ASSERTION_ON_CALL_SITE,
+                ((candidateDescriptor as? PropertyDescriptor)?.getter ?: candidateDescriptor).original,
+                inferredReturnType
+            )
+        }
+    }
 }
 
 object RuntimeAssertionsOnExtensionReceiverCallChecker : CallChecker {
