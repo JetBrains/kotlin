@@ -11,7 +11,11 @@ import org.gradle.api.tasks.testing.AbstractTestTask
  * Experimental test reporting for Intellij Ultimate only
  */
 internal fun ijListenTestTask(task: AbstractTestTask) {
-    Class.forName("org.jetbrains.kotlin.gradle.testing.internal.IjTestListener")
-        ?.getMethod("attachTo")
-        ?.invoke(null, task)
+    try {
+        Class.forName("org.jetbrains.kotlin.gradle.testing.internal.IjTestListener")
+            ?.getMethod("attachTo")
+            ?.invoke(null, task)
+    } catch (e: ClassNotFoundException) {
+
+    }
 }
