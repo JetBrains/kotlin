@@ -326,6 +326,7 @@ object CheckerTestUtil {
             return false
         if (expected.parameters == null)
             return true
+
         if (actual.parameters == null || expected.parameters.size != actual.parameters.size)
             return false
 
@@ -512,33 +513,15 @@ object CheckerTestUtil {
 
                 for (diagnostic in diagnostics) {
                     val expectedDiagnostic = diagnosticToExpectedDiagnostic[diagnostic]
-                    if (expectedDiagnostic != null) {
-                        val actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic)
+                    val actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic)
+
+                    if (expectedDiagnostic != null || !hasExplicitDefinitionOnlyOption(diagnostic)) {
+                        val shouldRenderParameters =
+                            renderDiagnosticMessages || expectedDiagnostic?.parameters != null
+
                         diagnosticsAsText.add(
-                            if (compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic))
-                                expectedDiagnostic.asString() else actualTextDiagnostic.asString()
+                            actualTextDiagnostic.asString(withNewInferenceDirective, shouldRenderParameters)
                         )
-                    } else if (!hasExplicitDefinitionOnlyOption(diagnostic)) {
-                        val diagnosticText = StringBuilder()
-                        if (withNewInferenceDirective && diagnostic.inferenceCompatibility.abbreviation != null) {
-                            diagnosticText.append(diagnostic.inferenceCompatibility.abbreviation)
-                            diagnosticText.append(";")
-                        }
-                        if (diagnostic.platform != null) {
-                            diagnosticText.append(diagnostic.platform)
-                            diagnosticText.append(":")
-                        }
-                        diagnosticText.append(diagnostic.name)
-                        if (renderDiagnosticMessages) {
-                            val textDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic)
-                            if (textDiagnostic.parameters != null) {
-                                diagnosticText
-                                    .append("(")
-                                    .append(textDiagnostic.parameters.joinToString(", "))
-                                    .append(")")
-                            }
-                        }
-                        diagnosticsAsText.add(diagnosticText.toString())
                     }
                 }
             }
