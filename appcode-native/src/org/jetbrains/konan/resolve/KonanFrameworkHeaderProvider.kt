@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.debugger.readAction
 
 class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
     init {
-        registerProvider(CustomHeaderProvider.HeaderSearchStage.BEFORE_LIBRARIES) { headerName, configuration ->
+        registerProvider(HeaderSearchStage.BEFORE_LIBRARIES) { headerName, configuration ->
             val buildConfiguration = XcodeMetaData.getBuildConfigurationFor(configuration)
             OCLog.LOG.assertTrue(buildConfiguration != null)
             return@registerProvider getHeader(headerName, buildConfiguration!!)
@@ -92,7 +92,7 @@ class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
     }
 
     private fun LocalFramework.isKonanFramework(): Boolean {
-        //todo implement correct check
+        //todo[medvedev] implement correct check
         return name.contains("Kotlin")
 //        return XcodeMetaData.asXCResolveConfiguration(configuration)?.buildConfiguration?.declaredBuildSettingValues?.getString("KOTLIN_NATIVE_PRESET") != null
     }

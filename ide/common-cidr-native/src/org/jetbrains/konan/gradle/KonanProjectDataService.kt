@@ -115,4 +115,26 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
             ApplicationManager.getApplication().invokeLater { runManager.selectedConfiguration = finalRunConfigurationToSelect }
         }
     }
+
+    companion object {
+        @JvmStatic
+        fun forEachKonanProject(
+            project: Project,
+            consumer: (konanModel: KonanModel, moduleNode: DataNode<ModuleData>, rootProjectPath: String) -> Unit
+        ) {
+            for (projectInfo in ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID)) {
+                val projectStructure = projectInfo.externalProjectStructure ?: continue
+                val projectData = projectStructure.data
+                val rootProjectPath = projectData.linkedExternalProjectPath
+                val modulesNodes = ExternalSystemApiUtil.findAll(projectStructure, ProjectKeys.MODULE)
+                for (moduleNode in modulesNodes) {
+                    val projectNode = ExternalSystemApiUtil.find(moduleNode, KonanProjectResolver.KONAN_MODEL_KEY)
+                    if (projectNode != null) {
+                        val konanProject = projectNode.data
+                        consumer(konanProject, moduleNode, rootProjectPath)
+                    }
+                }
+            }
+        }
+    }
 }

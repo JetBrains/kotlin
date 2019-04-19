@@ -40,6 +40,7 @@
     <symbolTableProvider implementation="org.jetbrains.konan.resolve.KonanBridgeSymbolTableProvider" order="before OCSymbolTableProvider"/>
     <symbolTableProvider implementation="org.jetbrains.konan.resolve.KotlinSymbolTableProvider"/>
     <customHeaderProvider implementation="org.jetbrains.konan.resolve.KonanFrameworkHeaderProvider"/>
+    <serializerProvider implementation="org.jetbrains.konan.resolve.symbols.KotlinSerializer"/>
   </extensions>
 
   <application-components>
