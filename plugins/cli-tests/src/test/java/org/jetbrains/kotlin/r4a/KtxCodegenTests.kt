@@ -488,25 +488,18 @@ class ModelClass() {
         val tvId = 345
         var text = "Hello, world!"
 
-        // NOTE(lmr): The fact that "bust" is needed here is actually an issue with the fact that
-        // changes to providers don't invalidate consumers from other composers via Ambient.Portal.
-        // When that gets fixed, we should update this test to show that.
         compose(
             """
             val StringAmbient = Ambient.of<String> { "default" }
 
-            fun buildPortal() = effectOf<Ambient.Reference> {
-                context.buildReference()
-            }
-
             @Composable fun App(value: String) {
                 <StringAmbient.Provider value>
-                    <Parent bust=Math.random() />
+                    <Parent />
                 </StringAmbient.Provider>
             }
 
-            @Composable fun Parent(bust: Double) {
-                val ambientRef = +buildPortal()
+            @Composable fun Parent() {
+                val compositionRef = +compositionReference()
                 val viewRef = +memo { Ref<LinearLayout>() }
 
                 <LinearLayout id=$llId ref=viewRef />
@@ -514,14 +507,14 @@ class ModelClass() {
                 +onCommit {
                     R4a.composeInto(
                         container = viewRef.value ?: error("No View Ref!"),
-                        parent = ambientRef
+                        parent = compositionRef
                     ) {
-                        <Child bust=Math.random() />
+                        <Child />
                     }
                 }
             }
 
-            @Composable fun Child(bust: Double) {
+            @Composable fun Child() {
                 <StringAmbient.Consumer> value ->
                     <TextView id=$tvId text=value />
                 </StringAmbient.Consumer>
@@ -554,37 +547,33 @@ class ModelClass() {
         val tvId = 345
         var text = "Hello, world!"
 
-        // NOTE(lmr): The fact that "bust" is needed here is actually an issue with the fact that
-        // changes to providers don't invalidate consumers from other composers via Ambient.Portal.
-        // When that gets fixed, we should update this test to show that.
         compose(
             """
             val StringAmbient = Ambient.of<String> { "default" }
 
             @Composable fun App(value: String) {
                 <StringAmbient.Provider value>
-                    <Parent bust=Math.random() />
+                    <Parent />
                 </StringAmbient.Provider>
             }
 
-            @Composable fun Parent(bust: Double) {
-                <Ambient.Portal> ambientRef ->
-                    val viewRef = +memo { Ref<LinearLayout>() }
+            @Composable fun Parent() {
+                val compositionRef = +compositionReference()
+                val viewRef = +memo { Ref<LinearLayout>() }
 
-                    <LinearLayout id=$llId ref=viewRef />
+                <LinearLayout id=$llId ref=viewRef />
 
-                    +onCommit {
-                        R4a.composeInto(
-                            container = viewRef.value ?: error("No View Ref!"),
-                            parent = ambientRef
-                        ) {
-                            <Child bust=Math.random() />
-                        }
+                +onCommit {
+                    R4a.composeInto(
+                        container = viewRef.value ?: error("No View Ref!"),
+                        parent = compositionRef
+                    ) {
+                        <Child />
                     }
-                </Ambient.Portal>
+                }
             }
 
-            @Composable fun Child(bust: Double) {
+            @Composable fun Child() {
                 <StringAmbient.Consumer> value ->
                     <TextView id=$tvId text=value />
                 </StringAmbient.Consumer>
@@ -681,10 +670,6 @@ class ModelClass() {
 
         compose(
             """
-                fun buildPortal() = effectOf<Ambient.Reference> {
-                    context.buildReference()
-                }
-
                 fun <T> refFor() = memo { Ref<T>() }
 
                 val textAmbient = Ambient.of { "default" }
@@ -695,7 +680,7 @@ class ModelClass() {
                 }
 
                 @Composable fun PortalTest() {
-                    val portal = +buildPortal()
+                    val portal = +compositionReference()
                     val ref = +refFor<LinearLayout>()
                     <DisplayTest id=$outerId />
 
