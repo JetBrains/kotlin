@@ -1,7 +1,7 @@
 package foo
 
-actual class ExpectInCommonActualInJvm
-actual class ExpectInMiddleActualInJs
+actual class ExpectInCommonActualInPlatforms
+actual class ExpectInMiddleActualInPlatforms
 
 expect class ExpectInJvmWithoutActual
 

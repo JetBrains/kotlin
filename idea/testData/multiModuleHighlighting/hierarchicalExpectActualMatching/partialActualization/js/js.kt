@@ -1,10 +1,10 @@
 package foo
 
-actual class ExpectInCommonActualInJs
-actual class ExpectInMiddleActualInJs
+actual class ExpectInCommonActualInPlatforms
+
+actual class ExpectInMiddleActualInPlatforms
 
 expect class ExpectInJsWithoutActual
-
 
 expect class ExpectInJsActualInJs
 actual class ExpectInJsActualInJs

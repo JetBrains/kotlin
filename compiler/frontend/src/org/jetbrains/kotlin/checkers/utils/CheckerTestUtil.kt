@@ -428,12 +428,12 @@ object CheckerTestUtil {
         psiFile: PsiFile,
         diagnostics: Collection<ActualDiagnostic>,
         diagnosticToExpectedDiagnostic: Map<AbstractTestDiagnostic, TextDiagnostic>,
-        getFileText: com.intellij.util.Function<PsiFile, String>,
+        getFileText: (PsiFile) -> String,
         uncheckedDiagnostics: Collection<PositionalTextDiagnostic>,
         withNewInferenceDirective: Boolean,
         renderDiagnosticMessages: Boolean
     ): StringBuffer {
-        val text = getFileText.`fun`(psiFile)
+        val text = getFileText(psiFile)
         val result = StringBuffer()
         val diagnosticsFiltered = diagnostics.filter { actualDiagnostic -> psiFile == actualDiagnostic.file }
         if (diagnosticsFiltered.isEmpty() && uncheckedDiagnostics.isEmpty()) {
