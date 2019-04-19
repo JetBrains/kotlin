@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.LibraryTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.types.Variance
 
 class Fir2IrDeclarationStorage(
     private val session: FirSession,
@@ -43,8 +41,6 @@ class Fir2IrDeclarationStorage(
     private val classCache = mutableMapOf<FirRegularClass, IrClass>()
 
     private val typeParameterCache = mutableMapOf<FirTypeParameter, IrTypeParameter>()
-
-    private val libraryTypeParameterCache = mutableMapOf<LibraryTypeParameterSymbol, IrTypeParameter>()
 
     private val functionCache = mutableMapOf<FirNamedFunction, IrSimpleFunction>()
 
@@ -411,24 +407,6 @@ class Fir2IrDeclarationStorage(
 
     fun getIrTypeParameterSymbol(firTypeParameterSymbol: FirTypeParameterSymbol): IrTypeParameterSymbol {
         val irTypeParameter = getIrTypeParameter(firTypeParameterSymbol.fir)
-        return irSymbolTable.referenceTypeParameter(irTypeParameter.descriptor)
-    }
-
-    fun getIrTypeParameterSymbol(typeParameterSymbol: LibraryTypeParameterSymbol): IrTypeParameterSymbol {
-        val irTypeParameter = libraryTypeParameterCache.getOrPut(typeParameterSymbol) {
-            val descriptor = WrappedTypeParameterDescriptor()
-            val origin = IrDeclarationOrigin.DEFINED
-            irSymbolTable.declareGlobalTypeParameter(-1, -1, origin, descriptor) { symbol ->
-                IrTypeParameterImpl(
-                    -1, -1, origin, symbol,
-                    typeParameterSymbol.name, -1,
-                    false,
-                    Variance.INVARIANT
-                ).apply {
-                    descriptor.bind(this)
-                }
-            }
-        }
         return irSymbolTable.referenceTypeParameter(irTypeParameter.descriptor)
     }
 
