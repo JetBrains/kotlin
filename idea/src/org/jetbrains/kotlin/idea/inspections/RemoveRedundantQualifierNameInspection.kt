@@ -59,7 +59,7 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
 }
 
 private tailrec fun KtDotQualifiedExpression.firstExpressionWithoutReceiver(): KtDotQualifiedExpression? =
-    if ((getQualifiedElementSelector()?.mainReference?.resolve() as? KtFunction)?.receiverTypeReference == null) this
+    if ((getQualifiedElementSelector()?.mainReference?.resolve() as? KtCallableDeclaration)?.receiverTypeReference == null) this
     else (receiverExpression as? KtDotQualifiedExpression)?.firstExpressionWithoutReceiver()
 
 private tailrec fun <T : KtElement> T.firstApplicableExpression(validator: T.() -> T?, generator: T.() -> T?): T? =
