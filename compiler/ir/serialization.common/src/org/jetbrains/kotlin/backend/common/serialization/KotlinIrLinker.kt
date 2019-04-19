@@ -464,7 +464,7 @@ abstract class KotlinIrLinker(
     ): IrModuleFragment {
         val deserializerForModule = deserializersForModules.getOrPut(moduleDescriptor) {
             val proto = ProtoModule.parseFrom(byteArray.codedInputStream, newInstance())
-            IrDeserializerForModule(moduleDescriptor, proto, DeserializationStrategy.ALL)
+            IrDeserializerForModule(moduleDescriptor, proto, deserializationStrategy)
         }
         // The IrModule and its IrFiles have been created during module initialization.
         return deserializerForModule.module
@@ -478,13 +478,16 @@ abstract class KotlinIrLinker(
             // TODO: consider skip deserializing explicitly exported declarations for libraries.
             // Now it's not valid because of all dependencies that must be computed.
             val deserializationStrategy =
-//                if (exportedDependencies.contains(moduleDescriptor)) {
+                if (exportedDependencies.contains(moduleDescriptor)) {
                     DeserializationStrategy.ALL
-//                } else {
-//                    DeserializationStrategy.EXPLICITLY_EXPORTED
-//                }
+                } else {
+                    DeserializationStrategy.EXPLICITLY_EXPORTED
+                }
             deserializeIrModuleHeader(moduleDescriptor, header, deserializationStrategy)
         }
+
+    fun deserializeFullModule(moduleDescriptor: ModuleDescriptor): IrModuleFragment =
+        deserializeIrModuleHeader(moduleDescriptor, moduleDescriptor.irHeader!!, DeserializationStrategy.ALL)
 }
 
 enum class DeserializationStrategy {

@@ -155,7 +155,7 @@ private fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deseria
     Psi2IrTranslator(languageVersionSettings, configuration).generateModuleFragment(this, files, deserializer)
 
 
-private fun loadKlibMetadataParts(
+fun loadKlibMetadataParts(
     moduleId: KotlinLibrary
 ): JsKlibMetadataParts {
     return JsKlibMetadataSerializationUtil.readModuleAsProto(moduleId.moduleHeaderData)
@@ -163,7 +163,7 @@ private fun loadKlibMetadataParts(
 
 val ModuleDescriptor.kotlinLibrary get() = this.getCapability(JS_KLIBRARY_CAPABILITY)!!
 
-private fun loadKlibMetadata(
+fun loadKlibMetadata(
     parts: JsKlibMetadataParts,
     moduleId: KotlinLibrary,
     isBuiltIn: Boolean,
