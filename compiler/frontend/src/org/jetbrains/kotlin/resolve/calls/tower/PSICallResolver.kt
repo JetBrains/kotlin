@@ -270,7 +270,9 @@ class PSICallResolver(
             if (resolvedCalls.first().status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
                 tracingStrategy.cannotCompleteResolve(trace, resolvedCalls)
             } else {
-                tracingStrategy.ambiguity(trace, resolvedCalls)
+                if (!resolvedCalls.all { it.isNewNotCompleted() }) {
+                    tracingStrategy.ambiguity(trace, resolvedCalls)
+                }
             }
         }
         return ManyCandidates(resolvedCalls)
