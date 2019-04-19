@@ -1,9 +1,8 @@
 package org.jetbrains.kotlin.r4a
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
 import junit.framework.TestCase
-import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
+import org.jetbrains.kotlin.com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtxElement
@@ -11,7 +10,7 @@ import org.jetbrains.kotlin.r4a.analysis.R4AWritableSlices
 import org.jetbrains.kotlin.r4a.ast.ResolvedKtxElementCall
 import org.jetbrains.kotlin.r4a.ast.print
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import kotlin.reflect.KClass
 
 abstract class AbstractResolvedKtxCallsTest : AbstractCodegenTest() {
 
@@ -19,7 +18,6 @@ abstract class AbstractResolvedKtxCallsTest : AbstractCodegenTest() {
         val (text, carets) = extractCarets(srcText)
 
         val environment = myEnvironment ?: error("Environment not initialized")
-        setupLanguageVersionSettingsForCompilerTests(srcText, environment)
 
         val ktFile = KtPsiFactory(environment.project).createFile(text)
         val bindingContext = JvmResolveUtil.analyze(ktFile, environment).bindingContext
@@ -69,4 +67,9 @@ abstract class AbstractResolvedKtxCallsTest : AbstractCodegenTest() {
         val cachedCall = bindingContext[R4AWritableSlices.RESOLVED_KTX_CALL, expression]
         return Pair(element, cachedCall)
     }
+}
+private inline fun <reified T : PsiElement> PsiElement.parentOfType(): T? = parentOfType(T::class)
+
+private fun <T : PsiElement> PsiElement.parentOfType(vararg classes: KClass<out T>): T? {
+    return PsiTreeUtil.getParentOfType(this, *classes.map { it.java }.toTypedArray())
 }

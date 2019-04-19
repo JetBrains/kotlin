@@ -8,8 +8,6 @@ import android.widget.TextView
 import com.google.r4a.Component
 import com.google.r4a.CompositionContext
 import com.google.r4a.composer
-import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -17,6 +15,7 @@ import org.robolectric.annotation.Config
 import java.io.File
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.robolectric.Robolectric
@@ -471,8 +470,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     private var testLocalUnique = 0
-    private var classesDirectory = KotlinTestUtils.tmpDir(
-        "kotlin-${testLocalUnique++}-classes"
+    private var classesDirectory = tmpDir("kotlin-${testLocalUnique++}-classes"
     )
 
     override val additionalPaths: List<File> = listOf(classesDirectory)
@@ -540,4 +538,8 @@ class MultiCompositionTest(val composable: () -> Unit, val advance: () -> Unit) 
         block(activity)
         return ActiveTest(activity)
     }
+}
+
+private fun tmpDir(name: String): File {
+    return FileUtil.createTempDirectory(name, "", false).canonicalFile
 }

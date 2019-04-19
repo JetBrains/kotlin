@@ -29,11 +29,7 @@ dependencies {
     testImplementation(JUNIT)
     testImplementation(ROBOLECTRIC)
 
-    testImplementation("org.jetbrains.kotlin:kotlin-compiler:$R4A_VERSION")
-    testImplementation("org.jetbrains.kotlin:kotlin-tests-common:$R4A_VERSION")
-    testImplementation("org.jetbrains.kotlin:kotlin-idea-rt:$R4A_VERSION")
-    testImplementation("org.jetbrains.kotlin:kotlin-java-impl:$R4A_VERSION")
-    testRuntimeOnly("org.jetbrains.kotlin:kotlin-idea:$R4A_VERSION")
+    testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$R4A_VERSION")
 
     testImplementation(project(":compose-runtime"))
     testImplementation(project(":ui-android-view-non-ir"))

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 import org.jetbrains.kotlin.diagnostics.RenderedDiagnostic
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractR4aDiagnosticsTest : AbstractCompilerTest() {
@@ -24,7 +23,7 @@ abstract class AbstractR4aDiagnosticsTest : AbstractCompilerTest() {
     fun doTest(expectedText: String, environment: KotlinCoreEnvironment) {
         val diagnosedRanges: MutableList<DiagnosedRange> = ArrayList()
         val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges)
-        val file = KotlinTestUtils.createFile("test.kt", clearText, environment.project)
+        val file = createFile("test.kt", clearText, environment.project)
         val files = listOf(file)
 
         // Use the JVM version of the analyzer to allow using classes in .jar files
@@ -97,7 +96,7 @@ abstract class AbstractR4aDiagnosticsTest : AbstractCompilerTest() {
         }
 
         // Throw an error if anything was found that was not expected
-        if (message.length > 0) throw Exception("Mismatched errors:\n" + message.toString())
+        if (message.length > 0) throw Exception("Mismatched errors:\n$message")
     }
 }
 
