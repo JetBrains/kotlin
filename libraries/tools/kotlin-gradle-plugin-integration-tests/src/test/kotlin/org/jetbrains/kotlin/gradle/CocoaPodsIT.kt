@@ -98,7 +98,7 @@ class CocoaPodsIT : BaseGradleIT() {
             // Check that a project with CocoaPods interop fails to be built from command line.
             build(":kotlin-library:build") {
                 assertFailed()
-                // TODO: Test message for KT-31062.
+                assertContains("Cannot perform cinterop processing for pod_dependency: cannot determine headers location.")
             }
 
             // Check that a project without CocoaPods interop can be built from command line.

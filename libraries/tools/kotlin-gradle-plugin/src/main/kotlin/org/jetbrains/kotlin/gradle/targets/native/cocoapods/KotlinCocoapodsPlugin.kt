@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
-import org.jetbrains.kotlin.gradle.tasks.DefFileTask
-import org.jetbrains.kotlin.gradle.tasks.DummyFrameworkTask
-import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
-import org.jetbrains.kotlin.gradle.tasks.PodspecTask
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Family
@@ -190,7 +187,8 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
             kotlinExtension.supportedTargets().all { target ->
                 target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.create(pod.name) { interop ->
 
-                    project.tasks.getByPath(interop.interopProcessingTaskName).dependsOn(defTask)
+                    val interopTask = project.tasks.getByPath(interop.interopProcessingTaskName)
+                    interopTask.dependsOn(defTask)
                     interop.defFile = defTask.outputFile
                     interop.packageName = "cocoapods.${pod.moduleName}"
 
@@ -205,6 +203,27 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
                     project.findProperty(FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
                         interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
                     }
+
+                    // Show a human-readable error messages if the interop is created
+                    // but there are no parameters set by Xcode or manually by user (KT-31062).
+                    interopTask.doFirst { _ ->
+                        val hasCompilerOpts = interop.compilerOpts.isNotEmpty()
+                        val hasHeaderSearchPath = interop.includeDirs.let {
+                            !it.headerFilterDirs.isEmpty || !it.allHeadersDirs.isEmpty
+                        }
+
+                        check(hasCompilerOpts || hasHeaderSearchPath) {
+                            """
+                                |Cannot perform cinterop processing for ${pod.name}: cannot determine headers location.
+                                |
+                                |Probably the build is executed from command line.
+                                |Note that a Kotlin/Native module using CocoaPods dependencies can be built only from Xcode.
+                                |
+                                |See details at https://kotlinlang.org/docs/reference/native/cocoapods.html#interoperability.
+                            """.trimMargin()
+                        }
+                    }
+
                 }
             }
         }
