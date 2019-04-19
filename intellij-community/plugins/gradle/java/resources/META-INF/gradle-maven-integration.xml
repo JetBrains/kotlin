@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<idea-plugin>
+  <depends optional="true" config-file="gradle-maven-groovy-integration.xml">org.intellij.groovy</depends>
+</idea-plugin>

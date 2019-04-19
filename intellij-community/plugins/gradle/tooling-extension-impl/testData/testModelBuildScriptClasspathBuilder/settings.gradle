@@ -1,0 +1,6 @@
+//noinspection GrPackage
+
+include 'moduleWithoutAdditionalClasspath'
+include 'moduleWithAdditionalClasspath'
+include 'baseModule'
+include 'baseModule:moduleWithInheritedClasspath'

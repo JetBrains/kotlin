@@ -1,0 +1,10 @@
+
+allprojects { project ->
+  if (project.name == 'buildSrc') {
+    apply plugin: 'groovy'
+    dependencies {
+      compile gradleApi()
+      compile localGroovy()
+    }
+  }
+}

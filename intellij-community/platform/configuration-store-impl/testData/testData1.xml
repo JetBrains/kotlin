@@ -1,0 +1,65 @@
+<state>
+  <component name="CopyrightManager">
+    <copyright>
+      <option name="myName" value="Foo"/>
+      <option name="notice" value="where"/>
+    </copyright>
+  </component>
+  <component name="GreclipseSettings">
+    <option name="greclipsePath" value="foo"/>
+  </component>
+  <component name="InspectionProjectProfileManager">
+    <profile version="1.0">
+      <option name="myName" value="Project Default"/>
+      <inspection_tool class="AntDuplicateTargetsInspection" enabled="false" level="ERROR" enabled_by_default="false"/>
+      <inspection_tool class="AntMissingPropertiesFileInspection" enabled="false" level="ERROR" enabled_by_default="false"/>
+      <inspection_tool class="AntResolveInspection" enabled="false" level="ERROR" enabled_by_default="false"/>
+      <inspection_tool class="ArgNamesErrorsInspection" enabled="false" level="ERROR" enabled_by_default="false"/>
+      <inspection_tool class="ArgNamesWarningsInspection" enabled="false" level="WARNING" enabled_by_default="false"/>
+      <inspection_tool class="AroundAdviceStyleInspection" enabled="false" level="WARNING" enabled_by_default="false"/>
+      <inspection_tool class="DeclareParentsInspection" enabled="false" level="ERROR" enabled_by_default="false"/>
+      <inspection_tool class="EmptyEventHandler" enabled="false" level="WARNING" enabled_by_default="false"/>
+      <inspection_tool class="PointcutMethodStyleInspection" enabled="false" level="WARNING" enabled_by_default="false"/>
+    </profile>
+    <version value="1.0"/>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false"/>
+  <component name="masterDetails">
+    <states>
+      <state key="Copyright.UI">
+        <settings>
+          <last-edited>Foo</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2"/>
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.4</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2"/>
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://USER_HOME$/PycharmProjects/ttt002/.idea/ttt002.iml"
+              filepath="USER_HOME$/PycharmProjects/ttt002/.idea/ttt002.iml"/>
+    </modules>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel"/>
+    <property name="settings.editor.splitter.proportion" value="0.2"/>
+  </component>
+</state>

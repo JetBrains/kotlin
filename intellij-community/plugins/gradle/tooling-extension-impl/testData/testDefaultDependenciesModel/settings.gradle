@@ -1,0 +1,4 @@
+//noinspection GrPackage
+
+include 'dependencyProject'
+include 'dependentProject'
