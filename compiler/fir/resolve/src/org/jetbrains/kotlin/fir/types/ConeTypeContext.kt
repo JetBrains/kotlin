@@ -354,7 +354,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         TODO("not implemented")
     }
 
+    override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
+        TODO("not implemented")
+    }
 
+    override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
+        TODO("not implemented")
+    }
 
 }
 
