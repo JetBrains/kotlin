@@ -501,7 +501,7 @@ class ModelClass() {
 
                 <LinearLayout id=$llId ref=viewRef />
 
-                +onCommit {
+                +onPreCommit {
                     R4a.composeInto(
                         container = viewRef.value ?: error("No View Ref!"),
                         parent = compositionRef
@@ -559,7 +559,7 @@ class ModelClass() {
 
                 <LinearLayout id=$llId ref=viewRef />
 
-                +onCommit {
+                +onPreCommit {
                     R4a.composeInto(
                         container = viewRef.value ?: error("No View Ref!"),
                         parent = compositionRef
@@ -1234,7 +1234,7 @@ class ModelClass() {
                 fun Counter(log: StringBuilder) {
                     <Observe>
                         var count = +state { 0 }
-                        +onCommit {
+                        +onPreCommit {
                             log.append("a")
                         }
                         +onActive {
@@ -1276,7 +1276,7 @@ class ModelClass() {
                 import androidx.ui.androidview.adapters.*
 
                 fun printer(log: StringBuilder, str: String) = effectOf<Unit> {
-                    +onCommit {
+                    +onPreCommit {
                         log.append(str)
                     }
                 }
