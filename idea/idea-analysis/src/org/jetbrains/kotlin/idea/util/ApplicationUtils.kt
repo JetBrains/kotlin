@@ -45,10 +45,3 @@ fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -
     @Suppress("USELESS_CAST")
     return result as T
 }
-
-/**
- * ProgressManager.getProgressIndicator() is nullable in 181 and dynamic again in 182
- * BUNCH: 181
- */
-@Suppress("IncompatibleAPI")
-val ProgressManager.progressIndicatorNullable: ProgressIndicator? get() = progressIndicator

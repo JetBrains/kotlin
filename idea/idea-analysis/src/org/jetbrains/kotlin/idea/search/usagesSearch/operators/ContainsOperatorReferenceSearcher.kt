@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 class ContainsOperatorReferenceSearcher(
     targetFunction: PsiElement,
     searchScope: SearchScope,
-    consumer: ExecutorProcessor<PsiReference>,
+    consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
     options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtOperationReferenceExpression>(

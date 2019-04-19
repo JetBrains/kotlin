@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperator
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
-import org.jetbrains.kotlin.idea.util.compat.psiSearchHelperInstance
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -103,7 +102,7 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
         // properties can be referred by component1/component2, which is too expensive to search, don't analyze them
         if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return false
 
-        val psiSearchHelper = psiSearchHelperInstance(declaration.project)
+        val psiSearchHelper = PsiSearchHelper.getInstance(declaration.project)
         val useScope = declaration.useScope
         val name = declaration.name ?: return false
         val restrictedScope = if (useScope is GlobalSearchScope) {

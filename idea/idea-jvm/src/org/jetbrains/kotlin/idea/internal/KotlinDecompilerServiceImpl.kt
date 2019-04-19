@@ -57,7 +57,7 @@ class KotlinDecompilerServiceImpl : KotlinDecompilerService {
 
             val decompiler = BaseDecompiler(bytecodeProvider, resultSaver, options, IdeaLogger())
             for (path in bytecodeMap.keys) {
-                decompiler.addSpaceEx(path, true)
+                decompiler.addSource(path)
             }
             decompiler.decompileContext()
             return resultSaver.resultText

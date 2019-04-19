@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.j2k.ConverterSettings
@@ -122,7 +121,7 @@ class JavaToKotlinAction : AnAction() {
                 converterResult = converter.filesToKotlin(
                     javaFiles,
                     JavaToKotlinConverterFactory.createPostProcessor(formatCode = true),
-                    progress = ProgressManager.getInstance().progressIndicatorNullable!!
+                    progress = ProgressManager.getInstance().progressIndicator!!
                 )
             }
 
@@ -143,7 +142,7 @@ class JavaToKotlinAction : AnAction() {
                             {
                                 runReadAction {
                                     externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(
-                                        ProgressManager.getInstance().progressIndicatorNullable!!
+                                        ProgressManager.getInstance().progressIndicator!!
                                     )
                                 }
                             },

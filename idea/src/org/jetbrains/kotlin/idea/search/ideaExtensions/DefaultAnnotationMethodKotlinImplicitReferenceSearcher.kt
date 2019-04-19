@@ -24,7 +24,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiUtil
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -39,7 +39,7 @@ class DefaultAnnotationMethodKotlinImplicitReferenceSearcher :
     private val PsiMethod.isDefaultAnnotationMethod: Boolean
         get() = PsiUtil.isAnnotationMethod(this) && name == PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME && parameterList.parametersCount == 0
 
-    private fun createReferenceProcessor(consumer: ExecutorProcessor<PsiReference>) = object : ReadActionProcessor<PsiReference>() {
+    private fun createReferenceProcessor(consumer: Processor<in PsiReference>) = object : ReadActionProcessor<PsiReference>() {
         override fun processInReadAction(reference: PsiReference): Boolean {
             if (reference !is KtSimpleNameReference) return true
             val annotationEntry = reference.expression.getParentOfTypeAndBranch<KtAnnotationEntry> { typeReference } ?: return true
@@ -49,7 +49,7 @@ class DefaultAnnotationMethodKotlinImplicitReferenceSearcher :
         }
     }
 
-    override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: ExecutorProcessor<PsiReference>) {
+    override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
         runReadAction {
             val method = queryParameters.method
             if (!method.isDefaultAnnotationMethod) return@runReadAction null

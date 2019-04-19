@@ -24,6 +24,7 @@ import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.util.Processor
 import com.intellij.util.containers.nullize
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.*
@@ -77,13 +77,13 @@ class KotlinReferencesSearchParameters(
 ) : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer)
 
 class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
-    override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: ExecutorProcessor<PsiReference>) {
+    override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
         val processor = QueryProcessor(queryParameters, consumer)
         runReadAction { processor.processInReadAction() }
         processor.executeLongRunningTasks()
     }
 
-    private class QueryProcessor(val queryParameters: ReferencesSearch.SearchParameters, val consumer: ExecutorProcessor<PsiReference>) {
+    private class QueryProcessor(val queryParameters: ReferencesSearch.SearchParameters, val consumer: Processor<in PsiReference>) {
 
         private val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions ?: Empty
 

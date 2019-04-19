@@ -335,8 +335,6 @@ open class DelegatingProgressIndicator : WrappedProgressIndicator, StandardProgr
     }
 
     constructor() {
-        // BUNCH: 181
-        @Suppress("IncompatibleAPI")
         val indicator: ProgressIndicator? = ProgressManager.getInstance().progressIndicator
         delegate = indicator ?: EmptyProgressIndicator()
     }

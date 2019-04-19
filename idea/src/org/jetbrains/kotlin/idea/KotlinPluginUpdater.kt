@@ -273,16 +273,11 @@ class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) 
                 }
 
                 if (prepareResult) {
-                    val pluginDescriptor = pluginDownloader.descriptor
-                    // BUNCH: 181 Not null since 182.
-                    @Suppress("SENSELESS_COMPARISON")
-                    if (pluginDescriptor != null) {
-                        installed = true
-                        pluginDownloader.install()
+                    installed = true
+                    pluginDownloader.install()
 
-                        ApplicationManager.getApplication().invokeLater {
-                            PluginManagerMain.notifyPluginsUpdated(null)
-                        }
+                    ApplicationManager.getApplication().invokeLater {
+                        PluginManagerMain.notifyPluginsUpdated(null)
                     }
                 }
 

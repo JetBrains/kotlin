@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
+import com.intellij.codeInsight.Nullability
 import com.intellij.ide.util.treeView.AbstractTreeStructure
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.psi.PsiElement
@@ -27,8 +28,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.slicer.compat.PsiElement_N183_NN191
-import org.jetbrains.kotlin.idea.util.compat.Nullability
-import org.jetbrains.kotlin.idea.util.compat.SliceNullnessAnalyzerBaseEx
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPlainWithEscapes
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -50,8 +49,8 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
 
     val leafAnalyzer by lazy { SliceLeafAnalyzer(LEAF_ELEMENT_EQUALITY, this) }
     val nullnessAnalyzer: SliceNullnessAnalyzerBase by lazy {
-        object : SliceNullnessAnalyzerBaseEx(LEAF_ELEMENT_EQUALITY, this) {
-            override fun checkNullabilityEx(element: PsiElement?): Nullability {
+        object : SliceNullnessAnalyzerBase(LEAF_ELEMENT_EQUALITY, this) {
+            override fun checkNullability(element: PsiElement?): Nullability {
                 val types = when (element) {
                     is KtCallableDeclaration -> listOfNotNull((element.resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType)
                     is KtDeclaration -> emptyList()

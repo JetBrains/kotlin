@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.idea.references.KtForLoopInReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.psi.KtElement
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 class IteratorOperatorReferenceSearcher(
     targetFunction: PsiElement,
     searchScope: SearchScope,
-    consumer: ExecutorProcessor<PsiReference>,
+    consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
     options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtForExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("in")) {
