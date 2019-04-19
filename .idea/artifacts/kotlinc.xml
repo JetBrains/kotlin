@@ -7,7 +7,7 @@
       </element>
       <element id="directory" name="lib">
         <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar" />
-        <element id="file-copy" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/ideaIC/183.5153.4/artifacts/lib/trove4j.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/ideaIC/191.6707.61/artifacts/lib/trove4j.jar" />
         <element id="archive" name="allopen-compiler-plugin.jar">
           <element id="module-output" name="kotlin.kotlin-allopen-compiler-plugin.main" />
           <element id="directory" name="META-INF">
