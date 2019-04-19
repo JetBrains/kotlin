@@ -11,21 +11,20 @@ import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootGroup
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
-
 open class KotlinNativeGradleConfigurator : KotlinWithGradleConfigurator() {
-    override fun getKotlinPluginExpression(forKotlinDsl: Boolean): String {
-        return ""
-    }
+    override fun getKotlinPluginExpression(forKotlinDsl: Boolean): String = ""
 
     override fun getStatus(moduleSourceRootGroup: ModuleSourceRootGroup): ConfigureKotlinStatus {
-        if (moduleSourceRootGroup.sourceRootModules.any(::hasKotlinNativeRuntimeInScope)) {
+        if (!isApplicable(moduleSourceRootGroup.baseModule))
+            return ConfigureKotlinStatus.NON_APPLICABLE
+
+        if (moduleSourceRootGroup.sourceRootModules.any(::hasKotlinNativeRuntimeInScope))
             return ConfigureKotlinStatus.CONFIGURED
-        }
+
         return ConfigureKotlinStatus.NON_APPLICABLE
     }
 
-    override val kotlinPluginName: String
-        get() = ""
+    override val kotlinPluginName: String get() = ""
 
     override val name: String get() = NAME
 
