@@ -107,6 +107,7 @@ val jvmPhases = namedIrFilePhase(
             jvmTypeOperatorLoweringPhase then
             flattenStringConcatenationPhase then
             foldConstantLoweringPhase then
+            computeStringTrimPhase then
             jvmBuiltinOptimizationLoweringPhase then
             additionalClassAnnotationPhase then
 
