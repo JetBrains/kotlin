@@ -520,7 +520,7 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
 
     /**
      * Visits the name of the type alias, if this type's classifier is a type alias. Note that all types are expanded for metadata produced
-     * by the Kotlin compiler, so the the type with a type alias classifier may only appear in a call to [visitAbbreviatedType].
+     * by the Kotlin compiler, so the type with a type alias classifier may only appear in a call to [visitAbbreviatedType].
      *
      * @param name the name of the type alias
      */
