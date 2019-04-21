@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.ComboboxSpeedSearch;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SortedComboBoxModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -118,7 +118,7 @@ public final class ModuleDescriptionsComboBox extends ComboBox<ModuleDescription
     return selected != null ? selected.getName() : null;
   }
 
-  private static class ModuleDescriptionListCellRenderer extends ListCellRendererWrapper<ModuleDescription> {
+  private static class ModuleDescriptionListCellRenderer extends SimpleListCellRenderer<ModuleDescription> {
     private final String myEmptySelectionText;
 
     ModuleDescriptionListCellRenderer() {
@@ -130,20 +130,20 @@ public final class ModuleDescriptionsComboBox extends ComboBox<ModuleDescription
     }
 
     @Override
-    public void customize(JList list, ModuleDescription moduleDescription, int index, boolean selected, boolean hasFocus) {
-      if (moduleDescription == null) {
+    public void customize(JList<? extends ModuleDescription> list, ModuleDescription value, int index, boolean selected, boolean hasFocus) {
+      if (value == null) {
         setText(myEmptySelectionText);
       }
       else {
-        if (moduleDescription instanceof LoadedModuleDescription) {
-          setIcon(ModuleType.get(((LoadedModuleDescription)moduleDescription).getModule()).getIcon());
+        if (value instanceof LoadedModuleDescription) {
+          setIcon(ModuleType.get(((LoadedModuleDescription)value).getModule()).getIcon());
           setForeground(null);
         }
         else {
           setIcon(AllIcons.Modules.UnloadedModule);
           setForeground(JBColor.RED);
         }
-        setText(moduleDescription.getName());
+        setText(value.getName());
       }
     }
   }

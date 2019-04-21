@@ -21,7 +21,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.ui.ComboboxSpeedSearch;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SpeedSearchComparator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,16 +32,13 @@ import java.awt.event.KeyEvent;
 
 public class TemplateKindCombo extends ComboboxWithBrowseButton {
   public TemplateKindCombo() {
-    //noinspection unchecked
-    getComboBox().setRenderer(new ListCellRendererWrapper() {
-      @Override
-      public void customize(final JList list, final Object value, final int index, final boolean selected, final boolean cellHasFocus) {
-        if (value instanceof Trinity) {
-          setText((String)((Trinity)value).first);
-          setIcon ((Icon)((Trinity)value).second);
+    getComboBox().setRenderer(
+      SimpleListCellRenderer.<Trinity<String, Icon, String>>create((label, value, index) -> {
+        if (value != null) {
+          label.setText(value.first);
+          label.setIcon(value.second);
         }
-      }
-    });
+      }));
 
     new ComboboxSpeedSearch(getComboBox()) {
       @Override

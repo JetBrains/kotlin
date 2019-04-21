@@ -14,11 +14,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.ColorPanel;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.BitUtil;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.FontUtil;
+import com.intellij.util.Functions;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -60,7 +61,7 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
     map.put(ApplicationBundle.message("combobox.effect.bold.dottedline"), EffectType.BOLD_DOTTED_LINE);
     myEffectsMap = Collections.unmodifiableMap(map);
   }
-  private JComboBox myEffectsCombo;
+  private JComboBox<String> myEffectsCombo;
 
   private JBCheckBox myCbBold;
   private JBCheckBox myCbItalic;
@@ -75,15 +76,8 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
     add(myPanel, BorderLayout.CENTER);
 
     setBorder(JBUI.Borders.empty(4, 0, 4, 4));
-    //noinspection unchecked
     myEffectsCombo.setModel(new CollectionComboBoxModel<>(ContainerUtil.newArrayList(myEffectsMap.keySet())));
-    //noinspection unchecked
-    myEffectsCombo.setRenderer(new ListCellRendererWrapper<String>() {
-      @Override
-      public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
-        setText(value != null ? value : "<invalid>");
-      }
-    });
+    myEffectsCombo.setRenderer(SimpleListCellRenderer.create("<invalid>", Functions.id()));
 
     ActionListener actionListener = e -> {
       if (myUiEventsEnabled) {

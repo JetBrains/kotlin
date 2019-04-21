@@ -13,7 +13,7 @@ import com.intellij.packaging.elements.PackagingElementResolvingContext;
 import com.intellij.packaging.impl.elements.ManifestFileUtil;
 import com.intellij.ui.ComboboxSpeedSearch;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +78,10 @@ public class JarArtifactFromModulesDialog extends DialogWrapper {
     for (Module module : modules) {
       myModuleComboBox.addItem(module);
     }
-    myModuleComboBox.setRenderer(new ModuleListRenderer());
+    myModuleComboBox.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      label.setIcon(value != null ? ModuleType.get(value).getIcon() : null);
+      label.setText(value != null ? value.getName() : "<All Modules>");
+    }));
     new ComboboxSpeedSearch(myModuleComboBox) {
       @Override
       protected String getElementText(Object element) {
@@ -142,19 +145,5 @@ public class JarArtifactFromModulesDialog extends DialogWrapper {
   @Override
   protected String getHelpId() {
     return "reference.project.structure.artifacts.jar.from.module";
-  }
-
-  private static class ModuleListRenderer extends ListCellRendererWrapper<Module> {
-    @Override
-    public void customize(JList list, Module value, int index, boolean selected, boolean hasFocus) {
-      if (value != null) {
-        setIcon(ModuleType.get(value).getIcon());
-        setText(value.getName());
-      }
-      else {
-        setText("<All Modules>");
-        setIcon(null);
-      }
-    }
   }
 }

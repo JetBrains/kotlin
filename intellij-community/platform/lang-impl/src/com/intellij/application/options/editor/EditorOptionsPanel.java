@@ -36,7 +36,7 @@ import com.intellij.openapi.vcs.VcsApplicationSettings;
 import com.intellij.openapi.vcs.impl.LineStatusTrackerSettingListener;
 import com.intellij.profile.codeInspection.ui.ErrorOptionsProvider;
 import com.intellij.profile.codeInspection.ui.ErrorOptionsProviderEP;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
@@ -92,7 +92,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   private JBCheckBox   myCbShowQuickDocOnMouseMove;
   private JBLabel      myQuickDocDelayLabel;
   private JTextField   myQuickDocDelayTextField;
-  private JComboBox    myRichCopyColorSchemeComboBox;
+  private JComboBox<String> myRichCopyColorSchemeComboBox;
   private JCheckBox    myShowInlineDialogForCheckBox;
   private JCheckBox    myCbEnableRichCopyByDefault;
   private JCheckBox    myShowLSTInGutterCheckBox;
@@ -133,19 +133,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
     myCbRenameLocalVariablesInplace.setVisible(OptionsApplicabilityFilter.isApplicable(OptionId.RENAME_IN_PLACE));
 
-    myRichCopyColorSchemeComboBox.setRenderer(new ListCellRendererWrapper<String>() {
-      @Override
-      public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
-        final String textToUse;
-        if (RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value)) {
-          textToUse = ACTIVE_COLOR_SCHEME;
-        }
-        else {
-          textToUse = value;
-        }
-        setText(textToUse);
-      }
-    });
+    myRichCopyColorSchemeComboBox.setRenderer(SimpleListCellRenderer.create("", value ->
+      RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? ACTIVE_COLOR_SCHEME : value));
 
     initQuickDocProcessing();
     initSoftWrapsSettingsProcessing();

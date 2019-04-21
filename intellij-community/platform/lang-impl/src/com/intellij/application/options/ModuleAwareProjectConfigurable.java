@@ -97,8 +97,8 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     }
     final Splitter splitter = new Splitter(false, 0.25f);
     CollectionListModel<Module> listDataModel = new CollectionListModel<>(modules);
-    final JBList moduleList = new JBList(listDataModel);
-    new ListSpeedSearch(moduleList, (Function<Object, String>)o -> {
+    final JBList<Module> moduleList = new JBList<>(listDataModel);
+    new ListSpeedSearch<>(moduleList, (Function<Object, String>)o -> {
       if (o == null) {
         return getProjectConfigurableItemName();
       }
@@ -142,7 +142,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     moduleList.addListSelectionListener(new ListSelectionListener() {
       @Override
       public void valueChanged(ListSelectionEvent e) {
-        final Module value = (Module)moduleList.getSelectedValue();
+        final Module value = moduleList.getSelectedValue();
         layout.show(cardPanel, value == null ? PROJECT_ITEM_KEY : value.getName());
       }
     });

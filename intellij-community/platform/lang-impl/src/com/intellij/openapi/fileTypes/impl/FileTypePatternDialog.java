@@ -15,11 +15,11 @@
  */
 package com.intellij.openapi.fileTypes.impl;
 
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.TemplateLanguageFileType;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
+import com.intellij.ui.SimpleListCellRenderer;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class FileTypePatternDialog {
   private JTextField myPatternField;
-  private JComboBox myLanguageCombo;
+  private JComboBox<Language> myLanguageCombo;
   private JLabel myTemplateDataLanguageButton;
   private JPanel myMainPanel;
 
@@ -40,25 +40,22 @@ public class FileTypePatternDialog {
     myPatternField.setText(initialPatterns);
 
     if (fileType instanceof TemplateLanguageFileType) {
-      final DefaultComboBoxModel model = (DefaultComboBoxModel) myLanguageCombo.getModel();
+      DefaultComboBoxModel<Language> model = (DefaultComboBoxModel<Language>)myLanguageCombo.getModel();
       model.addElement(null);
-      final List<Language> languages = TemplateDataLanguageMappings.getTemplateableLanguages();
-      Collections.sort(languages, (o1, o2) -> o1.getID().compareTo(o2.getID()));
+      List<Language> languages = TemplateDataLanguageMappings.getTemplateableLanguages();
+      Collections.sort(languages, Comparator.comparing(Language::getID));
       for (Language language : languages) {
         model.addElement(language);
       }
-      myLanguageCombo.setRenderer(new ListCellRendererWrapper() {
-        @Override
-        public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-          setText(value == null ? "" : ((Language) value).getDisplayName());
-          if (value != null) {
-            final FileType type = ((Language)value).getAssociatedFileType();
-            if (type != null) {
-              setIcon(type.getIcon());
-            }
+      myLanguageCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+        label.setText(value == null ? "" : value.getDisplayName());
+        if (value != null) {
+          FileType type = value.getAssociatedFileType();
+          if (type != null) {
+            label.setIcon(type.getIcon());
           }
         }
-      });
+      }));
       myLanguageCombo.setSelectedItem(templateDataLanguage);
     } else {
       myLanguageCombo.setVisible(false);

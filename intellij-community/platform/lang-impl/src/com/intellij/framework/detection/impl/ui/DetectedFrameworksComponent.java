@@ -18,11 +18,11 @@ package com.intellij.framework.detection.impl.ui;
 import com.intellij.framework.detection.DetectedFrameworkDescription;
 import com.intellij.framework.detection.DetectionExcludesConfiguration;
 import com.intellij.framework.detection.FrameworkDetectionContext;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.EnumComboBoxModel;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.util.Consumer;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -41,7 +41,7 @@ public class DetectedFrameworksComponent {
   private JPanel myMainPanel;
   private final DetectedFrameworksTree myTree;
   private JPanel myTreePanel;
-  private JComboBox myGroupByComboBox;
+  private JComboBox<GroupByOption> myGroupByComboBox;
   private JLabel myDescriptionLabel;
   private JPanel myOptionsPanel;
 
@@ -55,7 +55,7 @@ public class DetectedFrameworksComponent {
     };
     myTreePanel.add(ScrollPaneFactory.createScrollPane(myTree), BorderLayout.CENTER);
     myGroupByComboBox.setModel(new EnumComboBoxModel<>(GroupByOption.class));
-    myGroupByComboBox.setRenderer(new GroupByListCellRenderer());
+    myGroupByComboBox.setRenderer(SimpleListCellRenderer.create("", value -> StringUtil.toLowerCase(value.name())));
     myGroupByComboBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -102,21 +102,4 @@ public class DetectedFrameworksComponent {
   }
 
   public enum GroupByOption { TYPE, DIRECTORY }
-
-  private static class GroupByListCellRenderer extends ListCellRendererWrapper<GroupByOption> {
-    GroupByListCellRenderer() {
-      super();
-    }
-
-    @Override
-    public void customize(JList list,
-                          GroupByOption value,
-                          int index,
-                          boolean selected,
-                          boolean hasFocus) {
-      if (value != null) {
-        setText(value.name().toLowerCase());
-      }
-    }
-  }
 }

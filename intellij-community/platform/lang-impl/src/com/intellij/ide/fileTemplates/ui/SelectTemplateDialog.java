@@ -26,7 +26,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.FixedSizeButton;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.ui.ComboboxSpeedSearch;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
@@ -37,7 +37,7 @@ import java.awt.event.ActionListener;
  * @author: MYakovlev
  */
 public class SelectTemplateDialog extends DialogWrapper{
-  private ComboBox myCbxTemplates;
+  private ComboBox<FileTemplate> myCbxTemplates;
   private FileTemplate mySelectedTemplate;
   private final Project myProject;
   private final PsiDirectory myDirectory;
@@ -90,15 +90,12 @@ public class SelectTemplateDialog extends DialogWrapper{
           return element instanceof FileTemplate ? ((FileTemplate)element).getName() : null;
         }
       };
-      myCbxTemplates.setRenderer(new ListCellRendererWrapper<FileTemplate>() {
-        @Override
-        public void customize(JList list, FileTemplate fileTemplate, int index, boolean selected, boolean hasFocus) {
-          if (fileTemplate != null) {
-            setIcon(FileTemplateUtil.getIcon(fileTemplate));
-            setText(fileTemplate.getName());
-          }
+      myCbxTemplates.setRenderer(SimpleListCellRenderer.create((label, fileTemplate, index) -> {
+        if (fileTemplate != null) {
+          label.setIcon(FileTemplateUtil.getIcon(fileTemplate));
+          label.setText(fileTemplate.getName());
         }
-      });
+      }));
     }
     else{
       Object selected = myCbxTemplates.getSelectedItem();

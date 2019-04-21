@@ -13,7 +13,7 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiManager;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,12 +65,7 @@ public class JavaCompilersTab extends CompositeConfigurable<Configurable> implem
       myContentPanel.add(configurables.get(i).createComponent(), compilers.get(i).getId());
     }
     myCompiler.setModel(new DefaultComboBoxModel<>(new Vector<>(compilers)));
-    myCompiler.setRenderer(new ListCellRendererWrapper<BackendCompiler>() {
-      @Override
-      public void customize(final JList list, final BackendCompiler value, final int index, final boolean selected, final boolean hasFocus) {
-        setText(value != null ? value.getPresentableName() : "");
-      }
-    });
+    myCompiler.setRenderer(SimpleListCellRenderer.create("", BackendCompiler::getPresentableName));
     myCompiler.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

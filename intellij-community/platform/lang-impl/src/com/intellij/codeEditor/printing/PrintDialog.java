@@ -439,7 +439,7 @@ class PrintDialog extends DialogWrapper {
     panel.add(new MyLabel(CodeEditorBundle.message("print.header.placement.combobox")), gbConstraints);
     linePlacementCombo.addItem(PrintSettings.HEADER);
     linePlacementCombo.addItem(PrintSettings.FOOTER);
-    linePlacementCombo.setRenderer(new MappingListCellRenderer(linePlacementCombo.getRenderer(), PLACEMENT_MAP));
+    linePlacementCombo.setRenderer(new MappingListCellRenderer(PLACEMENT_MAP));
     gbConstraints.gridx = 1;
     gbConstraints.weightx = 0;
     panel.add(linePlacementCombo, gbConstraints);
@@ -451,7 +451,7 @@ class PrintDialog extends DialogWrapper {
     gbConstraints.gridx = 3;
     gbConstraints.weightx = 0;
     panel.add(new MyLabel(CodeEditorBundle.message("print.header.alignment.combobox")), gbConstraints);
-    linePlacementCombo.setRenderer(new MappingListCellRenderer(linePlacementCombo.getRenderer(), ALIGNMENT_MAP));
+    linePlacementCombo.setRenderer(new MappingListCellRenderer(ALIGNMENT_MAP));
     lineAlignmentCombo.addItem(PrintSettings.LEFT);
     lineAlignmentCombo.addItem(PrintSettings.CENTER);
     lineAlignmentCombo.addItem(PrintSettings.RIGHT);

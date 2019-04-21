@@ -337,15 +337,12 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
     }
 
     myFileTypeComboBox.setModel(new CollectionComboBoxModel<>(ContainerUtil.newArrayList(mySourceWrappers), lastUsed));
-    myFileTypeComboBox.setRenderer(new ListCellRendererWrapper<PsiViewerSourceWrapper>() {
-      @Override
-      public void customize(JList list, PsiViewerSourceWrapper value, int index, boolean selected, boolean hasFocus) {
-        if (value != null) {
-          setText(value.getText());
-          setIcon(value.getIcon());
-        }
+    myFileTypeComboBox.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      if (value != null) {
+        label.setText(value.getText());
+        label.setIcon(value.getIcon());
       }
-    });
+    }));
     new ComboboxSpeedSearch(myFileTypeComboBox) {
       @Override
       protected String getElementText(Object element) {
@@ -377,19 +374,9 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
       myFileTypeComboBox.setSelectedIndex(0);
     }
 
-    myDialectComboBox.setRenderer(new ListCellRendererWrapper<Language>() {
-      @Override
-      public void customize(final JList list, final Language value, final int index, final boolean selected, final boolean hasFocus) {
-        setText(value != null ? value.getDisplayName() : "<default>");
-      }
-    });
+    myDialectComboBox.setRenderer(SimpleListCellRenderer.create("(none)", value -> value.getDisplayName()));
     myDialectComboBox.addFocusListener(new AutoExpandFocusListener(myDialectComboBox));
-    myExtensionComboBox.setRenderer(new ListCellRendererWrapper<String>() {
-      @Override
-      public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
-        if (value != null) setText("." + value);
-      }
-    });
+    myExtensionComboBox.setRenderer(SimpleListCellRenderer.create("", value -> "." + value));
     myExtensionComboBox.addFocusListener(new AutoExpandFocusListener(myExtensionComboBox));
 
     final ViewerTreeStructure psiTreeStructure = getTreeStructure();

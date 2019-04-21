@@ -15,10 +15,11 @@
  */
 package com.intellij.application.options.codeStyle.arrangement.component;
 
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.psi.codeStyle.arrangement.model.ArrangementAtomMatchCondition;
 import com.intellij.psi.codeStyle.arrangement.model.ArrangementMatchCondition;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementSettingsToken;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +28,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -34,20 +36,14 @@ import java.util.List;
  */
 public class ArrangementComboBoxUiComponent extends AbstractArrangementUiComponent {
   
-  @NotNull private final JComboBox myComboBox;
+  private final JComboBox<ArrangementSettingsToken> myComboBox;
 
-  @SuppressWarnings("unchecked")
   public ArrangementComboBoxUiComponent(@NotNull List<? extends ArrangementSettingsToken> tokens) {
     super(tokens);
     ArrangementSettingsToken[] tokensArray = tokens.toArray(new ArrangementSettingsToken[0]);
-    Arrays.sort(tokensArray, (t1, t2) -> t1.getRepresentationValue().compareTo(t2.getRepresentationValue()));
-    myComboBox = new JComboBox(tokensArray);
-    myComboBox.setRenderer(new ListCellRendererWrapper() {
-      @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        setText(((ArrangementSettingsToken)value).getRepresentationValue());
-      }
-    });
+    Arrays.sort(tokensArray, Comparator.comparing(ArrangementSettingsToken::getRepresentationValue));
+    myComboBox = new ComboBox<>(tokensArray);
+    myComboBox.setRenderer(SimpleListCellRenderer.create("", ArrangementSettingsToken::getRepresentationValue));
     myComboBox.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
@@ -57,10 +53,10 @@ public class ArrangementComboBoxUiComponent extends AbstractArrangementUiCompone
       }
     });
     int minWidth = 0;
-    ListCellRenderer renderer = myComboBox.getRenderer();
-    JBList dummyList = new JBList();
+    JBList<ArrangementSettingsToken> dummyList = new JBList<>();
     for (int i = 0, max = myComboBox.getItemCount(); i < max; i++) {
-      Component rendererComponent = renderer.getListCellRendererComponent(dummyList, myComboBox.getItemAt(i), i, false, true);
+      Component rendererComponent = myComboBox.getRenderer().getListCellRendererComponent(
+        dummyList, myComboBox.getItemAt(i), i, false, true);
       minWidth = Math.max(minWidth, rendererComponent.getPreferredSize().width);
     }
     myComboBox.setPreferredSize(new Dimension(minWidth * 5 / 3, myComboBox.getPreferredSize().height));

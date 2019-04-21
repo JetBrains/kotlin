@@ -11,8 +11,8 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.ScrollingUtil;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBPanel;
@@ -196,15 +196,12 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
     new ListCellRenderer<Trinity<String, Icon, String>>() {
 
       private final ListCellRenderer<Trinity<String, Icon, String>> delegateRenderer =
-        new ListCellRendererWrapper<Trinity<String, Icon, String>>() {
-          @Override
-          public void customize(JList list, Trinity<String, Icon, String> value, int index, boolean selected, boolean hasFocus) {
-            if (value != null) {
-              setText(value.first);
-              setIcon(value.second);
-            }
+        SimpleListCellRenderer.create((label, value, index) -> {
+          if (value != null) {
+            label.setText(value.first);
+            label.setIcon(value.second);
           }
-        };
+        });
 
       @Override
       public Component getListCellRendererComponent(JList<? extends Trinity<String, Icon, String>> list,

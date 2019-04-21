@@ -8,7 +8,7 @@ import com.intellij.openapi.application.ApplicationBundle.message
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.ui.ListCellRendererWrapper
+import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.components.Label
 import com.intellij.ui.layout.*
 import javax.swing.*
@@ -35,7 +35,17 @@ class EditorTabsConfigurable : BoundConfigurable("Editor Tabs", "reference.setti
           cell {
             Label(message("combobox.editor.tab.placement"))()
             myEditorTabPlacement = comboBox(DefaultComboBoxModel<Int>(tabPlacements), uiSettings::editorTabPlacement,
-                     renderer = MyTabsPlacementComboBoxRenderer()).component
+                     renderer = SimpleListCellRenderer.create<Int> { label, value, _ ->
+                       val text = when (value) {
+                         UISettings.TABS_NONE -> message("combobox.tab.placement.none")
+                         SwingConstants.TOP -> message("combobox.tab.placement.top")
+                         SwingConstants.LEFT -> message("combobox.tab.placement.left")
+                         SwingConstants.BOTTOM -> message("combobox.tab.placement.bottom")
+                         SwingConstants.RIGHT -> message("combobox.tab.placement.right")
+                         else -> throw IllegalArgumentException("unknown tabPlacement: $value")
+                       }
+                       label.text = text
+                     }).component
           }
         }
         row {
@@ -127,21 +137,6 @@ class EditorTabsConfigurable : BoundConfigurable("Editor Tabs", "reference.setti
 
     if (uiSettingsChanged) {
       UISettings.instance.fireUISettingsChanged()
-    }
-  }
-
-  private class MyTabsPlacementComboBoxRenderer internal constructor() : ListCellRendererWrapper<Int>() {
-
-    override fun customize(list: JList<*>, value: Int, index: Int, selected: Boolean, hasFocus: Boolean) {
-      val text = when (value) {
-        UISettings.TABS_NONE -> message("combobox.tab.placement.none")
-        SwingConstants.TOP -> message("combobox.tab.placement.top")
-        SwingConstants.LEFT -> message("combobox.tab.placement.left")
-        SwingConstants.BOTTOM -> message("combobox.tab.placement.bottom")
-        SwingConstants.RIGHT -> message("combobox.tab.placement.right")
-        else -> throw IllegalArgumentException("unknown tabPlacement: $value")
-      }
-      setText(text)
     }
   }
 

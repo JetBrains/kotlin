@@ -22,7 +22,7 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.platform.WebProjectGenerator;
 import com.intellij.platform.templates.github.GithubTagInfo;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.ReloadableComboBoxPanel;
@@ -31,7 +31,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Sergey Simonchik
@@ -91,24 +94,20 @@ public class GithubProjectGeneratorPeer implements WebProjectGenerator.Generator
         return !oldTags.equals(newTags);
       }
 
-      @SuppressWarnings("unchecked")
       @NotNull
       @Override
-      protected JComboBox createValuesComboBox() {
-        JComboBox box = super.createValuesComboBox();
-        box.setRenderer(new ListCellRendererWrapper<GithubTagInfo>() {
-          @Override
-          public void customize(JList list, GithubTagInfo tag, int index, boolean selected, boolean hasFocus) {
-            final String text;
-            if (tag == null) {
-              text = isBackgroundJobRunning() ? "Loading..." : "Unavailable";
-            }
-            else {
-              text = tag.getName();
-            }
-            setText(text);
+      protected JComboBox<GithubTagInfo> createValuesComboBox() {
+        JComboBox<GithubTagInfo> box = super.createValuesComboBox();
+        box.setRenderer(SimpleListCellRenderer.create((label, tag, index) -> {
+          final String text;
+          if (tag == null) {
+            text = isBackgroundJobRunning() ? "Loading..." : "Unavailable";
           }
-        });
+          else {
+            text = tag.getName();
+          }
+          label.setText(text);
+        }));
 
         return box;
       }

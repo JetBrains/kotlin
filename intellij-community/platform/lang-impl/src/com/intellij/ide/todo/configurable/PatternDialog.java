@@ -29,7 +29,7 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.psi.search.TodoAttributes;
 import com.intellij.psi.search.TodoAttributesUtil;
 import com.intellij.psi.search.TodoPattern;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.FormBuilder;
@@ -66,13 +66,10 @@ class PatternDialog extends DialogWrapper {
     myIconComboBox = new ComboBox<>(new Icon[]{AllIcons.General.TodoDefault, AllIcons.General.TodoQuestion,
       AllIcons.General.TodoImportant});
     myIconComboBox.setSelectedItem(attrs.getIcon());
-    myIconComboBox.setRenderer(new ListCellRendererWrapper<Icon>() {
-      @Override
-      public void customize(JList list, Icon value, int index, boolean selected, boolean hasFocus) {
-        setIcon(value);
-        setText(" ");
-      }
-    });
+    myIconComboBox.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      label.setIcon(value);
+      label.setText(" ");
+    }));
     myCaseSensitiveCheckBox = new JBCheckBox(IdeBundle.message("checkbox.case.sensitive"), pattern.isCaseSensitive());
     myPatternStringField = new JBTextField(pattern.getPatternString());
 

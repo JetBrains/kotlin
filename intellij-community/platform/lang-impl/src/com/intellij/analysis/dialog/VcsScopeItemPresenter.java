@@ -7,7 +7,7 @@ import com.intellij.analysis.AnalysisScope;
 import com.intellij.analysis.AnalysisScopeBundle;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,21 +35,18 @@ public class VcsScopeItemPresenter implements ModelScopeItemPresenter {
   public List<JComponent> getAdditionalComponents(JRadioButton button, ModelScopeItem m) {
     VcsScopeItem model = (VcsScopeItem)m;
     ComboBox<String> myChangeLists = new ComboBox<>();
-    myChangeLists.setRenderer(new ListCellRendererWrapper<String>() {
-      @Override
-      public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
-        int availableWidth = myChangeLists.getWidth(); // todo, is it correct?
-        if (availableWidth <= 0) {
-          availableWidth = JBUI.scale(200);
-        }
-        if (list.getFontMetrics(list.getFont()).stringWidth(value) < availableWidth) {
-          setText(value);
-        }
-        else {
-          setText(StringUtil.trimLog(value, 50));
-        }
+    myChangeLists.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      int availableWidth = myChangeLists.getWidth(); // todo, is it correct?
+      if (availableWidth <= 0) {
+        availableWidth = JBUI.scale(200);
       }
-    });
+      if (label.getFontMetrics(label.getFont()).stringWidth(value) < availableWidth) {
+        label.setText(value);
+      }
+      else {
+        label.setText(StringUtil.trimLog(value, 50));
+      }
+    }));
 
     myChangeLists.setModel(model.getChangeListsModel());
     myChangeLists.setEnabled(button.isSelected());

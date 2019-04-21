@@ -16,7 +16,7 @@
 package com.intellij.refactoring.ui;
 
 import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.IJSwingUtilities;
 import com.intellij.util.ui.DialogUtil;
 import com.intellij.util.ui.UpDownHandler;
@@ -65,13 +65,8 @@ public class ComboBoxVisibilityPanel<V> extends VisibilityPanelBase<V> {
     DialogUtil.registerMnemonic(myLabel, myComboBox);
   }
 
-  protected ListCellRendererWrapper getRenderer() {
-    return new ListCellRendererWrapper() {
-      @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        setText(myNamesMap.get(value));
-      }
-    };
+  protected ListCellRenderer<?> getRenderer() {
+    return SimpleListCellRenderer.<V>create("", myNamesMap::get);
   }
 
   public ComboBoxVisibilityPanel(String name, V[] options) {

@@ -26,9 +26,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.ScreenUtil;
 import com.intellij.ui.SideBorder;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.usages.UsageView;
 import com.intellij.util.DocumentUtil;
@@ -186,15 +186,12 @@ public class ImplementationViewComponent extends JPanel {
   }
 
   private void updateRenderer(final Project project) {
-    myFileChooser.setRenderer(new ListCellRendererWrapper<FileDescriptor>() {
-      @Override
-      public void customize(JList list, FileDescriptor value, int index, boolean selected, boolean hasFocus) {
-        final VirtualFile file = value.myFile;
-        setIcon(getIconForFile(file, project));
-        setForeground(FileStatusManager.getInstance(project).getStatus(file).getColor());
-        setText(value.myPresentableText);
-      }
-    });
+    myFileChooser.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      VirtualFile file = value.myFile;
+      label.setIcon(getIconForFile(file, project));
+      label.setForeground(FileStatusManager.getInstance(project).getStatus(file).getColor());
+      label.setText(value.myPresentableText);
+    }));
   }
 
   @TestOnly

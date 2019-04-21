@@ -28,12 +28,15 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.pom.NonNavigatable;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManagerUtil;
 import com.intellij.ui.content.MessageView;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
+import com.intellij.util.NotNullFunction;
+import com.intellij.util.SmartList;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.MessageCategory;
@@ -257,17 +260,10 @@ public class ExecutionHelper {
       final Icon icon = DefaultRunExecutor.getRunExecutorInstance().getIcon();
       JBPopupFactory.getInstance()
         .createPopupChooserBuilder(ContainerUtil.newArrayList(consoles))
-        .setRenderer(new ListCellRendererWrapper<RunContentDescriptor>() {
-          @Override
-          public void customize(final JList list,
-                                final RunContentDescriptor value,
-                                final int index,
-                                final boolean selected,
-                                final boolean hasFocus) {
-            setText(value.getDisplayName());
-            setIcon(icon);
-          }
-        })
+        .setRenderer(SimpleListCellRenderer.<RunContentDescriptor>create((label, value, index) -> {
+          label.setText(value.getDisplayName());
+          label.setIcon(icon);
+        }))
         .setTitle(selectDialogTitle)
         .setItemChosenCallback(descriptor -> {
           descriptorConsumer.consume(descriptor);
