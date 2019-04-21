@@ -46,7 +46,7 @@ public class FileNameIndexServiceImpl implements FileNameIndexService {
   }
 
   @Override
-  public void processAllFileNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, IdFilter filter) {
+  public void processAllFileNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, IdFilter filter) {
     myIndex.processAllKeys(FilenameIndexImpl.NAME, processor, scope, filter);
   }
 

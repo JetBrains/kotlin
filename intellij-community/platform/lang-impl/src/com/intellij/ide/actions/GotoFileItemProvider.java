@@ -114,7 +114,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
    * Invoke contributors directly, as multi-threading isn't of much value in Goto File,
    * and filling {@link ContributorsBasedGotoByModel#myContributorToItsSymbolsMap} is expensive for the default contributor.
    */
-  private void processNames(Processor<String> nameProcessor) {
+  private void processNames(Processor<? super String> nameProcessor) {
     List<ChooseByNameContributor> contributors = DumbService.getDumbAwareExtensions(myProject, ChooseByNameContributor.FILE_EP_NAME);
     for (ChooseByNameContributor contributor : contributors) {
       if (contributor instanceof DefaultFileNavigationContributor) {
