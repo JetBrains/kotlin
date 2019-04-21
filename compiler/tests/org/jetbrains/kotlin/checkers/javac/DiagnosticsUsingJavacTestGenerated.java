@@ -10534,6 +10534,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/FunctionPlaceholder.kt");
                 }
 
+                @TestMetadata("inferTypeFromUnresolvedArgument.kt")
+                public void testInferTypeFromUnresolvedArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/inferTypeFromUnresolvedArgument.kt");
+                }
+
                 @TestMetadata("NoAmbiguityForDifferentFunctionTypes.kt")
                 public void testNoAmbiguityForDifferentFunctionTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/NoAmbiguityForDifferentFunctionTypes.kt");

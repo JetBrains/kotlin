@@ -735,6 +735,8 @@ public interface Errors {
     DiagnosticFactory0<KtParameter> CANNOT_INFER_PARAMETER_TYPE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER = DiagnosticFactory1.create(ERROR);
+
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_CANNOT_CAPTURE_TYPES = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR = DiagnosticFactory1.create(ERROR);

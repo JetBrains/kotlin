@@ -101,7 +101,10 @@ class CapturedTypeFromSubtyping(
     val position: ConstraintPosition
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
 
-class NotEnoughInformationForTypeParameter(val typeVariable: TypeVariableMarker) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+class NotEnoughInformationForTypeParameter(
+    val typeVariable: TypeVariableMarker,
+    val resolvedAtom: ResolvedAtom
+) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
 
 class ConstrainingTypeIsError(
     val typeVariable: TypeVariableMarker,

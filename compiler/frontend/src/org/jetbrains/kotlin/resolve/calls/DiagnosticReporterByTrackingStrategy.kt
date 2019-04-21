@@ -32,7 +32,8 @@ class DiagnosticReporterByTrackingStrategy(
     val constantExpressionEvaluator: ConstantExpressionEvaluator,
     val context: BasicCallResolutionContext,
     val psiKotlinCall: PSIKotlinCall,
-    val dataFlowValueFactory: DataFlowValueFactory
+    val dataFlowValueFactory: DataFlowValueFactory,
+    val allDiagnostics: List<KotlinCallDiagnostic>
 ) : DiagnosticReporter {
     private val trace = context.trace as TrackingBindingTrace
     private val tracingStrategy: TracingStrategy get() = psiKotlinCall.tracingStrategy
@@ -244,6 +245,18 @@ class DiagnosticReporterByTrackingStrategy(
                         )
                     )
                 }
+            }
+
+            NotEnoughInformationForTypeParameter::class.java -> {
+                val error = diagnostic as NotEnoughInformationForTypeParameter
+                val call = error.resolvedAtom.atom?.safeAs<PSIKotlinCall>()?.psiCall ?: call
+                val expression = call.calleeExpression ?: return
+                val typeVariableName = when (val typeVariable = error.typeVariable) {
+                    is TypeVariableFromCallableDescriptor -> typeVariable.originalTypeParameter.name.asString()
+                    is TypeVariableForLambdaReturnType -> "return type of lambda"
+                    else -> error("Unsupported type variable: $typeVariable")
+                }
+                trace.report(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(expression, typeVariableName))
             }
         }
     }

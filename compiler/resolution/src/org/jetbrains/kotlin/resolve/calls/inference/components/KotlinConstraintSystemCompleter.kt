@@ -87,7 +87,7 @@ class KotlinConstraintSystemCompleter(
                 fixVariable(c, topLevelType, variableWithConstraints, postponedKtPrimitives)
 
                 if (!variableForFixation.hasProperConstraint) {
-                    c.addError(NotEnoughInformationForTypeParameter(variableWithConstraints.typeVariable))
+                    c.addError(NotEnoughInformationForTypeParameter(variableWithConstraints.typeVariable, topLevelAtoms.first()))
                 }
                 continue
             }

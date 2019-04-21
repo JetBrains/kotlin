@@ -423,13 +423,21 @@ class KotlinToResolvedCallTransformer(
     ) {
         val trackingTrace = TrackingBindingTrace(trace)
         val newContext = context.replaceBindingTrace(trackingTrace)
-        val diagnosticReporter =
-            DiagnosticReporterByTrackingStrategy(constantExpressionEvaluator, newContext, completedCallAtom.atom.psiKotlinCall, context.dataFlowValueFactory)
 
         val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
         additionalDiagnosticReporter.reportAdditionalDiagnostics(completedCallAtom, resultingDescriptor, diagnosticHolder, diagnostics)
 
-        for (diagnostic in diagnostics + diagnosticHolder.getDiagnostics()) {
+        val allDiagnostics = diagnostics + diagnosticHolder.getDiagnostics()
+
+        val diagnosticReporter = DiagnosticReporterByTrackingStrategy(
+            constantExpressionEvaluator,
+            newContext,
+            completedCallAtom.atom.psiKotlinCall,
+            context.dataFlowValueFactory,
+            allDiagnostics
+        )
+
+        for (diagnostic in allDiagnostics) {
             trackingTrace.reported = false
             diagnostic.report(diagnosticReporter)
 
