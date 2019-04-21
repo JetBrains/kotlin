@@ -100,15 +100,12 @@
         <list>
           <Problem reference="com.intellij.util.JdomKt#element" reason="Removed in 191" />
           <Problem reference="com.intellij.util.AstLoadingFilter" reason="Absent in 181. Almost all methods were renamed in 183. Use org.jetbrains.kotlin.util.AstLoadingFilter instead." />
-          <Problem reference="com.intellij.psi.search.PsiSearchHelper#getInstance" reason="Absent in 181. Use psiSearchHelperInstance() instead." />
           <Problem reference="com.intellij.codeInspection.reference.RefFile#getPsiElement" reason="Absent in 182. Use psiFile extension instead." />
           <Problem reference="com.intellij.execution.JavaRunConfigurationExtensionManager#getInstance" reason="Can't be used in Kotlin, because method was replaced with property after J2K in 183. Use JavaRunConfigurationExtensionManagerUtil instead." />
           <Problem reference="org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler#addSpace" reason="Method was replaced with outher methods in 182. Use addSpaceEx instead." />
           <Problem reference="com.intellij.execution.configurations.RunConfigurationBase" reason="Generalized in 183. Use RunConfigurationBaseAny instead in signatures." />
           <Problem reference="com.intellij.execution.configurations.LocatableConfigurationBase" reason="Generalized in 183. Use LocatableConfigurationBaseAny instead in signatures." />
           <Problem reference="com.intellij.execution.configurations.ModuleBasedConfiguration" reason="Generalized in 183. Use ModuleBasedConfigurationElement instead." />
-          <Problem reference="com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture" reason="Absent in &lt;= 181. Use org.jetbrains.kotlin.test.HierarchyViewTestFixture instead." />
-          <Problem reference="org.jetbrains.kotlin.test.HierarchyViewTestFixtureCompat" reason="Do not use the wrapper for 181 directly. Use org.jetbrains.kotlin.test.HierarchyViewTestFixture instead." />
           <Problem reference="com.intellij.psi.codeStyle.CodeStyleSettingsProvider" reason="Additional method is introduced in 183 instead of deprecated one. Use CodeStyleSettingsProviderCompat instead." />
           <Problem reference="com.intellij.openapi.ui.popup.PopupChooserBuilder#PopupChooserBuilder(javax.swing.JList)" reason="Generified in 182. Use PopupChooserBuilderWrapper instead." />
           <Problem reference="com.intellij.openapi.editor.event.EditorFactoryListener" reason="Default implementations were added in 183. Use EditorFactoryListenerWrapper for inheritance instead." />
@@ -116,9 +113,6 @@
           <Problem reference="com.intellij.psi.search.PsiSearchHelper.SERVICE" reason="Deprecated since 182. Use psiSearchHelperInstance() instead." />
           <Problem reference="org.jetbrains.kotlin.idea.reporter.ITNReporterCompat#submit" reason="parentComponent is nullable in AS" />
           <Problem reference="com.intellij.diagnostic.ITNReporter#submit" reason="parentComponent is nullable in AS" />
-          <Problem reference="com.intellij.testFramework.PlatformTestCase#createModuleAt" reason="Not static anymore in 181 after 7dacf096c47d2125e17031c71a037b63ab00ec53" />
-          <Problem reference="com.intellij.testFramework.PlatformTestCase#doCreateRealModuleIn" reason="Not static anymore in 181 after 7dacf096c47d2125e17031c71a037b63ab00ec53" />
-          <Problem reference="com.intellij.openapi.progress.ProgressManager#getProgressIndicator" reason="Nullable in 181. Temporary use progressIndicatorNullable instead." />
           <Problem reference="com.intellij.codeInspection.dataFlow.Nullness" reason="Deprecated since 182. Use org.jetbrains.kotlin.idea.util.compat.Nullability instead." />
         </list>
       </option>
@@ -273,7 +267,7 @@
       <option name="ignoreAnonymousClassMethods" value="false" />
     </inspection_tool>
     <inspection_tool class="MissingRecentApi" enabled="true" level="ERROR" enabled_by_default="true">
-      <option name="sinceBuildString" value="181.3" />
+      <option name="sinceBuildString" value="182.0" />
       <option name="untilBuildString" value="192.SNAPSHOT" />
     </inspection_tool>
     <inspection_tool class="MisspelledCompareTo" enabled="true" level="WARNING" enabled_by_default="true" />
