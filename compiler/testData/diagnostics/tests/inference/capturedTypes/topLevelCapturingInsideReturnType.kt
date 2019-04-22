@@ -1,12 +1,11 @@
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-class Inv<T, K>
+class Inv2<T, K>
 
-fun <K> createInv(): Inv<*, K> = TODO()
+fun <K> createInv(): Inv2<*, K> = TODO()
 
-fun <T> foo(i: Inv<T, String>) {}
+fun <T> foo(i: Inv2<T, String>) {}
 
 fun foo() {
-    foo(<!NEW_INFERENCE_ERROR!>createInv()<!>)
+    foo(createInv())
 }

@@ -118,6 +118,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
 
     fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker
+    fun CapturedTypeMarker.captureStatus(): CaptureStatus
 
     fun KotlinTypeMarker.isNullableType(): Boolean
 

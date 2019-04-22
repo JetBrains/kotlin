@@ -307,9 +307,7 @@ internal fun createSimplePSICallArgument(
         ExpressionReceiver.create(ktExpression, baseType, bindingContext),
         languageVersionSettings,
         dataFlowValueFactory
-    ).let {
-        if (onlyResolvedCall == null) it.prepareReceiverRegardingCaptureTypes() else it
-    }
+    ).prepareReceiverRegardingCaptureTypes()
 
     return if (onlyResolvedCall == null) {
         ExpressionKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast)

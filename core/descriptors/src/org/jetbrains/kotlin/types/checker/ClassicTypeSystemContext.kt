@@ -370,6 +370,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         return this.constructor.projection
     }
 
+    override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
+        require(this is NewCapturedType, this::errorMessage)
+        return this.captureStatus
+    }
+
     override fun KotlinTypeMarker.isNullableType(): Boolean {
         require(this is KotlinType, this::errorMessage)
         return TypeUtils.isNullableType(this)

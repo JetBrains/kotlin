@@ -9795,6 +9795,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/expectedTypeMismatchWithInVariance.kt");
             }
 
+            @TestMetadata("kt25302.kt")
+            public void testKt25302() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/kt25302.kt");
+            }
+
             @TestMetadata("kt2570.kt")
             public void testKt2570() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/kt2570.kt");
