@@ -4,7 +4,7 @@ package com.intellij.build.output
 import java.io.Closeable
 
 abstract class LineProcessor : Appendable, Closeable {
-  private var lineBuilder: StringBuilder? = null
+  private var lineBuilder: StringBuilder? = StringBuilder()
 
   abstract fun process(line: String)
 
@@ -21,9 +21,7 @@ abstract class LineProcessor : Appendable, Closeable {
   }
 
   override fun append(c: Char): LineProcessor {
-    if (lineBuilder == null) {
-      lineBuilder = StringBuilder()
-    }
+    if (lineBuilder == null) throw IllegalStateException("The line processor was closed")
     if (c == '\n') {
       flushBuffer()
     }
@@ -34,11 +32,14 @@ abstract class LineProcessor : Appendable, Closeable {
   }
 
   override fun close() {
-    flushBuffer()
+    if (lineBuilder != null) {
+      flushBuffer()
+      lineBuilder = null
+    }
   }
 
   private fun flushBuffer() {
-    val line = lineBuilder?.toString() ?: return
+    val line = lineBuilder!!.toString()
     lineBuilder!!.setLength(0)
     process(line)
   }

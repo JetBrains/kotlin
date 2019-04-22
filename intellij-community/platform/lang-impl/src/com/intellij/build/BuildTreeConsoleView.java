@@ -187,15 +187,12 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private ExecutionNode getOrMaybeCreateParentNode(@NotNull BuildEvent event) {
     ExecutionNode parentNode = event.getParentId() == null ? null : nodesMap.get(event.getParentId());
     if (event instanceof MessageEvent) {
-      if (parentNode == getBuildProgressRootNode()) {
-        parentNode = getRootElement();
-      }
       parentNode = createMessageParentNodes((MessageEvent)event, parentNode);
     }
     return parentNode;
   }
 
-  public void onEventInternal(@NotNull BuildEvent event) {
+  private void onEventInternal(@NotNull BuildEvent event) {
     final ExecutionNode parentNode = getOrMaybeCreateParentNode(event);
     final Object eventId = event.getId();
     ExecutionNode currentNode = nodesMap.get(eventId);
@@ -388,15 +385,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
     String group = messageEvent.getGroup();
     String groupNodeId = group.hashCode() + messageEventParentId.toString();
-    ExecutionNode messagesGroupNode =
-      getOrCreateMessagesNode(messageEvent, groupNodeId, parentNode, null, group, null, null, nodesMap, myProject);
-
-    EventResult groupNodeResult = messagesGroupNode.getResult();
     final MessageEvent.Kind eventKind = messageEvent.getKind();
-    if (!(groupNodeResult instanceof MessageEventResult) ||
-        ((MessageEventResult)groupNodeResult).getKind().compareTo(eventKind) > 0) {
-      messagesGroupNode.setResult((MessageEventResult)() -> eventKind);
-    }
     if (messageEvent instanceof FileMessageEvent) {
       FilePosition filePosition = ((FileMessageEvent)messageEvent).getFilePosition();
       String filePath = FileUtil.toSystemIndependentName(filePosition.getFile().getPath());
@@ -409,7 +398,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
       String fileNodeId = groupNodeId + filePath;
       relativePath = StringUtil.isEmpty(parentsPath) ? filePath : FileUtil.getRelativePath(parentsPath, filePath, '/');
-      parentNode = getOrCreateMessagesNode(messageEvent, fileNodeId, messagesGroupNode, relativePath, null,
+      parentNode = getOrCreateMessagesNode(messageEvent, fileNodeId, parentNode, relativePath,
                                            () -> {
                                              VirtualFile file = VfsUtil.findFileByIoFile(filePosition.getFile(), false);
                                              if (file != null) {
@@ -417,9 +406,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
                                              }
                                              return null;
                                            }, messageEvent.getNavigatable(myProject), nodesMap, myProject);
-    }
-    else {
-      parentNode = messagesGroupNode;
     }
 
     if (eventKind == MessageEvent.Kind.ERROR || eventKind == MessageEvent.Kind.WARNING) {
@@ -492,7 +478,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
                                                        String nodeId,
                                                        ExecutionNode parentNode,
                                                        String nodeName,
-                                                       String nodeTitle,
                                                        @Nullable Supplier<? extends Icon> iconProvider,
                                                        @Nullable Navigatable navigatable,
                                                        Map<Object, ExecutionNode> nodesMap,
@@ -501,7 +486,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     if (node == null) {
       node = new ExecutionNode(project, parentNode);
       node.setName(nodeName);
-      node.setTitle(nodeTitle);
       node.setAutoExpandNode(true);
       node.setStartTime(messageEvent.getEventTime());
       node.setEndTime(messageEvent.getEventTime());

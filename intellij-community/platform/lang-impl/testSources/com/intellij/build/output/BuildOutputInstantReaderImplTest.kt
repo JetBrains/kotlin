@@ -82,7 +82,7 @@ ${trashOut.prependIndent("        ")}
 
         """.trimIndent()
       )
-      .close()
+      .closeAndGetFuture().get()
 
     Assert.assertEquals(trashOut + '\n' + trashOut, unparsedLines.joinToString(separator = "\n"))
     Assert.assertEquals("""

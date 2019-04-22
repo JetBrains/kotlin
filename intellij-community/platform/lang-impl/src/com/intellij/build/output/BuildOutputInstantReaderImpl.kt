@@ -7,27 +7,37 @@ import com.intellij.openapi.diagnostic.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.future.future
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
 import java.io.Closeable
 import java.util.*
+import java.util.concurrent.Future
 
 /**
  * @author Vladislav.Soroka
  */
 open class BuildOutputInstantReaderImpl(private val buildId: Any,
-                                   buildProgressListener: BuildProgressListener,
-                                   parsers: List<BuildOutputParser>) : BuildOutputInstantReader, Closeable, Appendable {
-  private val job: Job
-  private val channel = Channel<String>()
-  private val receivedLinesBuffer = LinkedList<String>()
-  private var currentIndex = -1
+                                        buildProgressListener: BuildProgressListener,
+                                        parsers: List<BuildOutputParser>) : BuildOutputInstantReader, Closeable, Appendable {
+  private val readJob: Job
+  private val appendParentJob: Job = Job()
+  private val outputLinesChannel = Channel<String>()
 
-  private val lineProcessor: LineProcessor
+  private val readLinesBuffer = LinkedList<String>()
+  private var readLinesBufferPosition = -1
+  private val appendedLineProcessor: LineProcessor
 
   init {
-    val thisReader = this
-    job = GlobalScope.launch(start = CoroutineStart.LAZY) {
+    readJob = createReadJob(buildProgressListener, this, parsers)
+    val appendScope = CoroutineScope(Dispatchers.Default + appendParentJob)
+    appendedLineProcessor = MyLineProcessor(readJob, appendScope, outputLinesChannel)
+  }
+
+  private fun createReadJob(buildProgressListener: BuildProgressListener,
+                            reader: BuildOutputInstantReaderImpl,
+                            parsers: List<BuildOutputParser>): Job {
+    return CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {
       var lastMessage: BuildEvent? = null
       val messageConsumer = { event: BuildEvent ->
         //do not add duplicates, e.g. sometimes same messages can be added both to stdout and stderr
@@ -38,27 +48,14 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
       }
 
       while (true) {
-        val line = thisReader.readLine() ?: break
+        val line = reader.readLine() ?: break
         if (line.isBlank()) continue
 
         for (parser in parsers) {
-          if (parser.parse(line, BuildOutputInstantReaderWrapper(thisReader), messageConsumer)) {
-            break
-          }
+          val readerWrapper = BuildOutputInstantReaderWrapper(reader)
+          if (parser.parse(line, readerWrapper, messageConsumer)) break
+          readerWrapper.pushBackReadLines()
         }
-      }
-    }
-
-    lineProcessor = object : LineProcessor() {
-      override fun process(line: String) {
-        if (job.isCompleted) {
-          LOG.warn("Build output reader closed")
-          return
-        }
-        if (!job.isActive) {
-          job.start()
-        }
-        runBlocking { channel.send(line) }
       }
     }
   }
@@ -68,51 +65,57 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
   }
 
   override fun append(csq: CharSequence): BuildOutputInstantReaderImpl {
-    lineProcessor.append(csq)
+    appendedLineProcessor.append(csq)
     return this
   }
 
   override fun append(csq: CharSequence, start: Int, end: Int): BuildOutputInstantReaderImpl {
-    lineProcessor.append(csq, start, end)
+    appendedLineProcessor.append(csq, start, end)
     return this
   }
 
   override fun append(c: Char): BuildOutputInstantReaderImpl {
-    lineProcessor.append(c)
+    appendedLineProcessor.append(c)
     return this
   }
 
   override fun close() {
-    runBlocking {
-      lineProcessor.close()
-      channel.close()
-      job.cancelAndJoin()
+    closeAndGetFuture()
+  }
+
+  fun closeAndGetFuture(): Future<Unit> {
+    appendedLineProcessor.close()
+    outputLinesChannel.close()
+    return CoroutineScope(Dispatchers.Default).future {
+      appendParentJob.children.forEach { it.join() }
+      appendParentJob.cancelAndJoin()
+      readJob.cancelAndJoin()
     }
   }
 
   override fun readLine(): String? {
-    if (currentIndex < -1) {
+    if (readLinesBufferPosition < -1) {
       LOG.error("Wrong buffered output lines index")
-      currentIndex = -1
+      readLinesBufferPosition = -1
     }
 
-    if (receivedLinesBuffer.size > currentIndex + 1) {
-      currentIndex++
-      return receivedLinesBuffer[currentIndex]
+    if (readLinesBuffer.size > readLinesBufferPosition + 1) {
+      readLinesBufferPosition++
+      return readLinesBuffer[readLinesBufferPosition]
     }
     val line = runBlocking {
       try {
-        channel.receive()
+        outputLinesChannel.receive()
       }
       catch (e: ClosedReceiveChannelException) {
         null
       }
     } ?: return null
-    receivedLinesBuffer.addLast(line)
-    currentIndex++
-    if (receivedLinesBuffer.size > getMaxLinesBufferSize()) {
-      receivedLinesBuffer.removeFirst()
-      currentIndex--
+    readLinesBuffer.addLast(line)
+    readLinesBufferPosition++
+    if (readLinesBuffer.size > getMaxLinesBufferSize()) {
+      readLinesBuffer.removeFirst()
+      readLinesBufferPosition--
     }
     return line
   }
@@ -120,11 +123,27 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
   override fun pushBack() = pushBack(1)
 
   override fun pushBack(numberOfLines: Int) {
-    currentIndex -= numberOfLines
+    readLinesBufferPosition -= numberOfLines
   }
 
   override fun getCurrentLine(): String? {
-    return if (currentIndex >= 0 && receivedLinesBuffer.size > currentIndex) receivedLinesBuffer[currentIndex] else null
+    return if (readLinesBufferPosition >= 0 && readLinesBuffer.size > readLinesBufferPosition) readLinesBuffer[readLinesBufferPosition] else null
+  }
+
+  private class MyLineProcessor(private val job: Job,
+                                private val scope: CoroutineScope,
+                                private val channel: Channel<String>) : LineProcessor() {
+    @ExperimentalCoroutinesApi
+    override fun process(line: String) {
+      if (job.isCompleted) {
+        LOG.warn("Build output reader closed")
+        return
+      }
+      if (!job.isActive) {
+        job.start()
+      }
+      scope.launch(start = CoroutineStart.UNDISPATCHED) { channel.send(line) }
+    }
   }
 
   private class BuildOutputInstantReaderWrapper(private val reader: BuildOutputInstantReaderImpl) : BuildOutputInstantReader {
@@ -141,11 +160,15 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
     override fun pushBack() = pushBack(1)
 
     override fun pushBack(numberOfLines: Int) {
-      if (numberOfLines > linesRead) {
+      val numberToPushBack = if (numberOfLines > linesRead) linesRead else numberOfLines
+      linesRead -= numberToPushBack
+      reader.pushBack(numberToPushBack)
+    }
+
+    fun pushBackReadLines() {
+      if (linesRead != 0) {
         reader.pushBack(linesRead)
-      }
-      else {
-        reader.pushBack(numberOfLines)
+        linesRead = 0
       }
     }
 
