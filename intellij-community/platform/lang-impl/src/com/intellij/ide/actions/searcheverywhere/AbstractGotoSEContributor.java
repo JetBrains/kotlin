@@ -76,15 +76,16 @@ public abstract class AbstractGotoSEContributor<Filter> implements SearchEverywh
                             @NotNull Processor<? super Object> consumer) {
     if (myProject == null) return; //nothing to search
     if (!isEmptyPatternSupported() && pattern.isEmpty()) return;
-    if (!isDumbModeSupported() && DumbService.getInstance(myProject).isDumb()) return;
-
-    FilteringGotoByModel<Filter> model = createModel(myProject);
-    if (filter != null) {
-      model.setFilterItems(filter.getSelectedElements());
-    }
 
     ProgressIndicatorUtils.yieldToPendingWriteActions();
     ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(() -> {
+      if (!isDumbModeSupported() && DumbService.getInstance(myProject).isDumb()) return;
+
+      FilteringGotoByModel<Filter> model = createModel(myProject);
+      if (filter != null) {
+        model.setFilterItems(filter.getSelectedElements());
+      }
+
       if (progressIndicator.isCanceled()) return;
 
       PsiElement context = psiContext != null && psiContext.isValid() ? psiContext : null;
