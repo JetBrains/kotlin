@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -154,7 +152,7 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType, irBuiltIns: IrBuilt
             startOffset, endOffset,
             irBuiltIns.unitType,
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-            irBuiltIns.unitType, irBuiltIns.unitType.classifierOrFail,
+            irBuiltIns.unitType,
             this
         )
 }
@@ -167,7 +165,7 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns)
             startOffset, endOffset,
             irBuiltIns.unitType,
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-            irBuiltIns.unitType, irBuiltIns.unitType.classifierOrFail,
+            irBuiltIns.unitType,
             this
         )
 }

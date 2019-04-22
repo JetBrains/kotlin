@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -113,7 +112,7 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
                     receiver.startOffset, receiver.endOffset,
                     context.irBuiltIns.unitType,
                     IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-                    context.irBuiltIns.unitType, context.irBuiltIns.unitType.classifierOrFail,
+                    context.irBuiltIns.unitType,
                     receiver
                 )
 

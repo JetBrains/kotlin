@@ -207,12 +207,11 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     private fun generateIsPatternCondition(irSubject: IrVariable, ktCondition: KtWhenConditionIsPattern): IrExpression {
         val typeOperand = getOrFail(BindingContext.TYPE, ktCondition.typeReference)
         val irTypeOperand = typeOperand.toIrType()
-        val typeSymbol = irTypeOperand.classifierOrNull ?: throw AssertionError("Not a classifier type: $typeOperand")
         val irInstanceOf = IrTypeOperatorCallImpl(
             ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
             context.irBuiltIns.booleanType,
             IrTypeOperator.INSTANCEOF,
-            irTypeOperand, typeSymbol,
+            irTypeOperand,
             irSubject.defaultLoad()
         )
         return if (ktCondition.isNegated)

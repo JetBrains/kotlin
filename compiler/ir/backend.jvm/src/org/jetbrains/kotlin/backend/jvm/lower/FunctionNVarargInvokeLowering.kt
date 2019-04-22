@@ -19,14 +19,16 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.filterDeclarations
 import org.jetbrains.kotlin.ir.util.findDeclaration
@@ -110,7 +112,6 @@ private class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : Cl
                                 backendContext.irBuiltIns.anyNType,
                                 IrTypeOperator.CAST,
                                 target.returnType,
-                                target.returnType.classifierOrFail,
                                 irCall(target).apply {
                                     dispatchReceiver = irGet(dispatchReceiverParameter!!)
                                     target.valueParameters.forEachIndexed { i, irValueParameter ->

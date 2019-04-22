@@ -618,7 +618,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.type.remapType(),
             expression.operator,
             expression.typeOperand.remapType(),
-            symbolRemapper.getReferencedClassifier(expression.typeOperandClassifier),
             expression.argument.transform()
         )
 

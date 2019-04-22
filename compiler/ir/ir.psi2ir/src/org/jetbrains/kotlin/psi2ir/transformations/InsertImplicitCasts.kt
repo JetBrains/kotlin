@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi2ir.transformations
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -32,119 +31,151 @@ import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
     element.transformChildren(
-        InsertImplicitCasts(context.builtIns, context.irBuiltIns, context.typeTranslator, context.extensions.samConversion),
+        InsertImplicitCasts(context.irBuiltIns, context.typeTranslator),
         null
     )
 }
 
 open class InsertImplicitCasts(
-    private val builtIns: KotlinBuiltIns,
     private val irBuiltIns: IrBuiltIns,
-    private val typeTranslator: TypeTranslator,
-    private val samConversion: GeneratorExtensions.SamConversion
+    private val typeTranslator: TypeTranslator
 ) : IrElementTransformerVoid() {
 
-//    override fun visitCallableReference(expression: IrCallableReference): IrExpression =
-//        expression.transformPostfix {
-//            transformReceiverArguments()
-//        }
-
-
-    private fun getDeclarationSideTypeParameters(declaration: IrFunction): List<IrTypeParameterSymbol> {
-        return run {
-            declaration.typeParameters + if (declaration is IrConstructor) declaration.parentAsClass.typeParameters else emptyList()
-        }.map { it.symbol }
+    private fun getDeclarationTypeParameters(declaration: IrFunction): List<IrTypeParameterSymbol> {
+        return (declaration.typeParameters + if (declaration is IrConstructor) declaration.parentAsClass.typeParameters else emptyList())
+            .map { it.symbol }
     }
 
-    private fun getTypeSideTypeParameters(declaration: IrFunction): List<IrTypeParameterSymbol> {
-        return declaration.dispatchReceiverParameter?.run {
-            extractTypeParameters(declaration.parentAsClass).map { it.symbol }
-        } ?: emptyList()
+    private fun getDispatchReceiverTypeParameters(declaration: IrDeclaration): List<IrTypeParameterSymbol> {
+        val classWithTypeParameters =
+            if (declaration.isNonStaticMemberDeclaration())
+                declaration.parentAsClass
+            else
+                return emptyList()
+
+        return extractTypeParameters(classWithTypeParameters).map { it.symbol }
     }
 
-    private fun getTypeArguments(expression: IrMemberAccessExpression, declarationTypeParameters: List<IrTypeParameterSymbol>): List<IrTypeArgument> {
+    private fun IrDeclaration.isNonStaticMemberDeclaration() =
+        this is IrFunction && dispatchReceiverParameter != null ||
+                this is IrField && !isStatic
 
-        val expressionTypeArguments =
-            declarationTypeParameters.map { p -> makeTypeProjection(expression.getTypeArgument(p.owner.index)!!, p.owner.variance) }
-
-        val receiverTypeArguments = expression.dispatchReceiver?.type?.let { (it as? IrSimpleType)?.arguments } ?: emptyList()
-
-        return expressionTypeArguments + receiverTypeArguments
-    }
-
-    private fun IrType.substitute(typeParameters: List<IrTypeParameterSymbol>, typeArguments: List<IrTypeArgument>): IrType {
-        return IrTypeSubstitutor(typeParameters.distinct(), typeArguments, irBuiltIns).substitute(this)
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        return expression.transformPostfix {
-            val declaration = symbol.owner
-            val dTypeParameters = getDeclarationSideTypeParameters(declaration)
-            val cTypeParameters = getTypeSideTypeParameters(declaration)
-            val typeArguments = getTypeArguments(expression, dTypeParameters)
-            dispatchReceiver = dispatchReceiver?.cast(declaration.dispatchReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments))
-            extensionReceiver = extensionReceiver?.cast(declaration.extensionReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments))
+    private fun getTypeArguments(
+        expression: IrExpression,
+        declarationTypeParameters: List<IrTypeParameterSymbol>
+    ): List<IrTypeArgument> =
+        when (expression) {
+            is IrMemberAccessExpression -> {
+                val expressionTypeArguments = declarationTypeParameters.map { p ->
+                    makeTypeProjection(expression.getTypeArgument(p.owner.index)!!, p.owner.variance)
+                }
+                val receiverTypeArguments = expression.dispatchReceiver.getTypeArgumentsForReceiver()
+                expressionTypeArguments + receiverTypeArguments
+            }
+            is IrFieldAccessExpression -> {
+                expression.receiver.getTypeArgumentsForReceiver()
+            }
+            else -> {
+                throw AssertionError("Unexpected expression: ${expression.render()}")
+            }
         }
+
+    private fun IrExpression?.getTypeArgumentsForReceiver(): List<IrTypeArgument> {
+        if (this == null) return emptyList()
+        val expressionType = type as? IrSimpleType ?: return emptyList()
+        return expressionType.arguments
     }
 
-    override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-        return expression.transformPostfix {
-            val dispatchReceiver = expression.run { getter?.owner?.dispatchReceiverParameter ?: setter?.owner?.dispatchReceiverParameter }
-            val extensionReceiver = expression.run { getter?.owner?.extensionReceiverParameter ?: setter?.owner?.extensionReceiverParameter }
+    private fun IrType.substitute(typeParameters: List<IrTypeParameterSymbol>, typeArguments: List<IrTypeArgument>): IrType =
+        IrTypeSubstitutor(typeParameters.distinct(), typeArguments, irBuiltIns).substitute(this)
+
+    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression =
+        expression.transformPostfix {
+            val declaration = symbol.owner
+            val declarationTypeParameters = getDeclarationTypeParameters(declaration)
+            val dispatchReceiverTypeParameters = getDispatchReceiverTypeParameters(declaration)
+            val typeParameters = declarationTypeParameters + dispatchReceiverTypeParameters
+            val typeArguments = getTypeArguments(expression, declarationTypeParameters)
+            dispatchReceiver = dispatchReceiver?.cast(
+                declaration.dispatchReceiverParameter?.type?.substitute(typeParameters, typeArguments)
+            )
+            extensionReceiver = extensionReceiver?.cast(
+                declaration.extensionReceiverParameter?.type?.substitute(typeParameters, typeArguments)
+            )
+        }
+
+    override fun visitPropertyReference(expression: IrPropertyReference): IrExpression =
+        expression.transformPostfix {
+            val dispatchReceiver = expression.run {
+                getter?.owner?.dispatchReceiverParameter
+                    ?: setter?.owner?.dispatchReceiverParameter
+            }
+            val extensionReceiver = expression.run {
+                getter?.owner?.extensionReceiverParameter
+                    ?: setter?.owner?.extensionReceiverParameter
+            }
             this.dispatchReceiver = this.dispatchReceiver?.cast(dispatchReceiver?.type)
             this.extensionReceiver = this.extensionReceiver?.cast(extensionReceiver?.type)
         }
-    }
 
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
-        return expression.transformPostfix {
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression =
+        expression.transformPostfix {
             val declaration = expression.getter.owner
-            val dTypeParameters = getDeclarationSideTypeParameters(declaration)
-            val cTypeParameters = getTypeSideTypeParameters(declaration)
-            val typeArguments = getTypeArguments(expression, dTypeParameters)
+            val declarationTypeParameters = getDeclarationTypeParameters(declaration)
+            val receiverTypeParameters = getDispatchReceiverTypeParameters(declaration)
+            val typeParameters = declarationTypeParameters + receiverTypeParameters
+            val typeArguments = getTypeArguments(expression, declarationTypeParameters)
             dispatchReceiver = dispatchReceiver?.cast(
-                declaration.dispatchReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments)
+                declaration.dispatchReceiverParameter?.run {
+                    type.substitute(typeParameters, typeArguments)
+                }
             )
             extensionReceiver = extensionReceiver?.cast(
-                declaration.extensionReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments)
+                declaration.extensionReceiverParameter?.run {
+                    type.substitute(typeParameters, typeArguments)
+                }
             )
         }
-    }
 
     private fun IrMemberAccessExpression.transformReceiverArguments() {
         val declaration = (this as IrFunctionAccessExpression).symbol.owner
-        val dTypeParameters = getDeclarationSideTypeParameters(declaration)
-        val cTypeParameters = getTypeSideTypeParameters(declaration)
-        val typeArguments = getTypeArguments(this, dTypeParameters)
+        val declarationTypeParameters = getDeclarationTypeParameters(declaration)
+        val receiverTypeParameters = getDispatchReceiverTypeParameters(declaration)
+        val typeParameters = declarationTypeParameters + receiverTypeParameters
+        val typeArguments = getTypeArguments(this, declarationTypeParameters)
+
         dispatchReceiver = dispatchReceiver?.cast(
-            declaration.dispatchReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments)
+            declaration.dispatchReceiverParameter?.run {
+                type.substitute(typeParameters, typeArguments)
+            }
         )
         extensionReceiver = extensionReceiver?.cast(
-            declaration.extensionReceiverParameter?.type?.substitute(dTypeParameters + cTypeParameters, typeArguments)
+            declaration.extensionReceiverParameter?.run {
+                type.substitute(typeParameters, typeArguments)
+            }
         )
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression =
-        with (expression as IrFunctionAccessExpression) {
+        with(expression as IrFunctionAccessExpression) {
             val declaration = symbol.owner
-            val dTypeParameters = getDeclarationSideTypeParameters(declaration)
-            val cTypeParameters = getTypeSideTypeParameters(declaration)
-            val typeArguments = getTypeArguments(expression, dTypeParameters)
+            val declarationTypeParameters = getDeclarationTypeParameters(declaration)
+            val receiverTypeParameters = getDispatchReceiverTypeParameters(declaration)
+            val typeArguments = getTypeArguments(expression, declarationTypeParameters)
+            val typeParameters = declarationTypeParameters + receiverTypeParameters
             transformPostfix {
                 transformReceiverArguments()
                 for (index in declaration.valueParameters.indices) {
                     val argument = getValueArgument(index) ?: continue
-                    val parameterType = declaration.valueParameters[index].type.substitute(dTypeParameters + cTypeParameters, typeArguments)
+                    val parameterType = declaration.valueParameters[index].type.substitute(typeParameters, typeArguments)
                     putValueArgument(index, argument.cast(parameterType))
                 }
             }
@@ -189,9 +220,29 @@ open class InsertImplicitCasts(
             value = value.cast(expression.symbol.owner.type)
         }
 
+    override fun visitGetField(expression: IrGetField): IrExpression =
+        expression.transformPostfix {
+            val declaration = expression.symbol.owner
+            val receiverTypeParameters = getDispatchReceiverTypeParameters(declaration)
+            val typeArguments = getTypeArguments(expression, receiverTypeParameters)
+            receiver = receiver?.cast(
+                declaration.parentAsClass.thisReceiver?.run {
+                    type.substitute(receiverTypeParameters, typeArguments)
+                }
+            )
+        }
+
     override fun visitSetField(expression: IrSetField): IrExpression =
         expression.transformPostfix {
-            value = value.cast(expression.symbol.owner.type)
+            val declaration = expression.symbol.owner
+            val receiverTypeParameters = getDispatchReceiverTypeParameters(declaration)
+            val typeArguments = getTypeArguments(expression, receiverTypeParameters)
+            receiver = receiver?.cast(
+                declaration.parentAsClass.thisReceiver?.run {
+                    type.substitute(receiverTypeParameters, typeArguments)
+                }
+            )
+            value = value.cast(expression.symbol.owner.type.substitute(receiverTypeParameters, typeArguments))
         }
 
     override fun visitVariable(declaration: IrVariable): IrVariable =
@@ -248,13 +299,15 @@ open class InsertImplicitCasts(
             finallyExpression = finallyExpression?.coerceToUnit()
         }
 
-    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression =
-        when (expression.operator) {
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        expression.transformChildren()
+        return when (expression.operator) {
             IrTypeOperator.IMPLICIT_CAST ->
                 expression.argument.cast(expression.typeOperand)
             else ->
                 super.visitTypeOperator(expression)
         }
+    }
 
     override fun visitVararg(expression: IrVararg): IrExpression =
         expression.transformPostfix {
@@ -333,7 +386,7 @@ open class InsertImplicitCasts(
             endOffset,
             targetType,
             typeOperator,
-            targetType, targetType.classifierOrFail,
+            targetType,
             this
         )
     }
@@ -341,19 +394,6 @@ open class InsertImplicitCasts(
     protected open fun IrExpression.coerceToUnit(): IrExpression {
         return coerceToUnitIfNeeded(type, irBuiltIns)
     }
-
-    protected fun getKotlinType(irExpression: IrExpression) =
-        irExpression.type.originalKotlinType!!
-
-    private fun KotlinType.isBuiltInIntegerType(): Boolean =
-        KotlinBuiltIns.isByte(this) ||
-                KotlinBuiltIns.isShort(this) ||
-                KotlinBuiltIns.isInt(this) ||
-                KotlinBuiltIns.isLong(this) ||
-                KotlinBuiltIns.isUByte(this) ||
-                KotlinBuiltIns.isUShort(this) ||
-                KotlinBuiltIns.isUInt(this) ||
-                KotlinBuiltIns.isULong(this)
 
     private fun IrType.isBuiltInIntegerType(): Boolean =
         isByte() || isShort() || isInt() || isLong() ||

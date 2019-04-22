@@ -316,7 +316,7 @@ fun IrBuilderWithScope.typeOperator(
     typeOperator: IrTypeOperator,
     typeOperand: IrType
 ) =
-    IrTypeOperatorCallImpl(startOffset, endOffset, resultType, typeOperator, typeOperand, typeOperand.classifierOrFail, argument)
+    IrTypeOperatorCallImpl(startOffset, endOffset, resultType, typeOperator, typeOperand, argument)
 
 fun IrBuilderWithScope.irIs(argument: IrExpression, type: IrType) =
     typeOperator(context.irBuiltIns.booleanType, argument, IrTypeOperator.INSTANCEOF, type)
@@ -325,10 +325,10 @@ fun IrBuilderWithScope.irNotIs(argument: IrExpression, type: IrType) =
     typeOperator(context.irBuiltIns.booleanType, argument, IrTypeOperator.NOT_INSTANCEOF, type)
 
 fun IrBuilderWithScope.irAs(argument: IrExpression, type: IrType) =
-    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, type, type.classifierOrFail, argument)
+    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, type, argument)
 
 fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: IrType) =
-    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, type.classifierOrFail, argument)
+    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, argument)
 
 fun IrBuilderWithScope.irInt(value: Int) =
     IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)

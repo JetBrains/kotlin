@@ -688,6 +688,13 @@ private fun IrDeclaration.renderDeclarationParentFqn(sb: StringBuilder) {
 
 fun IrType.render() = RenderIrElementVisitor().renderType(this)
 
+fun IrTypeArgument.render() =
+    when (this) {
+        is IrStarProjection -> "*"
+        is IrTypeProjection -> "$variance ${type.render()}"
+        else -> throw AssertionError("Unexpected IrTypeArgument: $this")
+    }
+
 internal inline fun <T> StringBuilder.appendListWith(
     list: List<T>,
     prefix: String,

@@ -75,7 +75,6 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             targetType,
             IrTypeOperator.SAM_CONVERSION,
             targetType,
-            targetType.classifierOrFail,
             statementGenerator.castArgumentToFunctionalInterfaceForSamType(
                 call.irValueArgumentsByIndex[0]!!,
                 targetKotlinType

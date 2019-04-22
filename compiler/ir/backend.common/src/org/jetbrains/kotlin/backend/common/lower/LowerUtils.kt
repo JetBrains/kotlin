@@ -121,7 +121,8 @@ fun IrBuilderWithScope.irCatch(catchParameter: IrVariable) =
 fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
     IrTypeOperatorCallImpl(
         startOffset, endOffset, context.irBuiltIns.unitType,
-        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.irBuiltIns.unitType, context.irBuiltIns.unitClass, arg
+        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.irBuiltIns.unitType,
+        arg
     )
 
 open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {

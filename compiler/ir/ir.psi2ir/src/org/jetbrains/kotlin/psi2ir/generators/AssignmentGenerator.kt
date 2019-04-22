@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.psi2ir.unwrappedSetMethod
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -301,6 +302,12 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             }
         }
 
+    private fun PropertyDescriptor.unwrapPropertyDescriptor() =
+        when (this) {
+            is PropertyImportedFromObject -> callableFromObject
+            else -> this
+        }
+
     private fun createPropertyLValue(
         ktExpression: KtExpression,
         descriptor: PropertyDescriptor,
@@ -311,8 +318,9 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     ): PropertyLValueBase {
         val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
 
-        val getterDescriptor = descriptor.unwrappedGetMethod
-        val setterDescriptor = descriptor.unwrappedSetMethod
+        val unwrappedPropertyDescriptor = descriptor.unwrapPropertyDescriptor()
+        val getterDescriptor = unwrappedPropertyDescriptor.unwrappedGetMethod
+        val setterDescriptor = unwrappedPropertyDescriptor.unwrappedSetMethod
 
         val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
         val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
@@ -341,7 +349,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 context,
                 scope,
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
-                context.symbolTable.referenceField(descriptor),
+                context.symbolTable.referenceField(unwrappedPropertyDescriptor.original),
                 propertyIrType,
                 propertyReceiver,
                 superQualifierSymbol

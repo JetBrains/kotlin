@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -140,6 +140,19 @@ private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverVal
     return generateThisReceiver(ktReceiver.startOffsetSkippingComments, ktReceiver.endOffset, type, classDescriptor)
 }
 
+fun IrExpression.implicitCastTo(expectedType: IrType?): IrExpression {
+    if (expectedType == null) return this
+
+    return IrTypeOperatorCallImpl(
+        startOffset, endOffset,
+        expectedType,
+        IrTypeOperator.IMPLICIT_CAST,
+        expectedType
+    ).also {
+        it.argument = this
+    }
+}
+
 fun StatementGenerator.generateBackingFieldReceiver(
     startOffset: Int,
     endOffset: Int,
@@ -167,8 +180,7 @@ fun StatementGenerator.generateCallReceiver(
             assert(dispatchReceiver == null) {
                 "Call for member imported from object $calleeDescriptor has non-null dispatch receiver $dispatchReceiver"
             }
-            dispatchReceiverValue =
-                generateReceiverForCalleeImportedFromObject(startOffset, endOffset, calleeDescriptor)
+            dispatchReceiverValue = generateReceiverForCalleeImportedFromObject(startOffset, endOffset, calleeDescriptor)
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
         }
         is TypeAliasConstructorDescriptor -> {
@@ -291,15 +303,7 @@ fun StatementGenerator.castArgumentToFunctionalInterfaceForSamType(
     val kotlinFunctionType = samConversion.getFunctionTypeForSAMClass(samClassDescriptor)
     val irFunctionType = context.typeTranslator.translateType(kotlinFunctionType)
 
-    return IrTypeOperatorCallImpl(
-        irExpression.startOffset, irExpression.endOffset,
-        irFunctionType,
-        IrTypeOperator.IMPLICIT_CAST,
-        irFunctionType
-    ).apply {
-        argument = irExpression
-        typeOperandClassifier = irFunctionType.classifierOrFail
-    }
+    return irExpression.implicitCastTo(irFunctionType)
 }
 
 fun Generator.getSuperQualifier(resolvedCall: ResolvedCall<*>): ClassDescriptor? {
@@ -429,7 +433,6 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
         val originalArgument = call.irValueArgumentsByIndex[i] ?: continue
 
         val targetType = underlyingParameterType.toIrType()
-        val targetClassifier = targetType.classifierOrFail
 
         call.irValueArgumentsByIndex[i] =
             IrTypeOperatorCallImpl(
@@ -437,7 +440,6 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
                 targetType,
                 IrTypeOperator.SAM_CONVERSION,
                 targetType,
-                targetClassifier,
                 castArgumentToFunctionalInterfaceForSamType(originalArgument, underlyingParameterType)
             )
     }

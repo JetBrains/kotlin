@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.referenceClassifier
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -104,7 +103,6 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return IrTypeOperatorCallImpl(
             expression.startOffsetSkippingComments, expression.endOffset, resultType.toIrType(), irOperator, rhsType.toIrType(),
-            context.symbolTable.referenceClassifier(rhsType.constructor.declarationDescriptor!!),
             expression.left.genExpr()
         )
     }
@@ -117,7 +115,6 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         return IrTypeOperatorCallImpl(
             expression.startOffsetSkippingComments, expression.endOffset, context.irBuiltIns.booleanType, irOperator,
             againstType.toIrType(),
-            context.symbolTable.referenceClassifier(againstType.constructor.declarationDescriptor!!),
             expression.leftHandSide.genExpr()
         )
     }

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.toBuilder
+import org.jetbrains.kotlin.ir.util.render
 
 
 class IrTypeSubstitutor(
@@ -16,6 +18,16 @@ class IrTypeSubstitutor(
     typeArguments: List<IrTypeArgument>,
     private val irBuiltIns: IrBuiltIns
 ) {
+    init {
+        assert(typeParameters.size == typeArguments.size) {
+            "Unexpected number of type arguments: ${typeArguments.size}\n" +
+                    "Type parameters are:\n" +
+                    typeParameters.joinToString(separator = "\n") { it.owner.render() } +
+                    "Type arguments are:\n" +
+                    typeArguments.joinToString(separator = "\n") { it.render() }
+        }
+    }
+
     private val substitution = typeParameters.zip(typeArguments).toMap()
 
     private fun IrType.typeParameterConstructor(): IrTypeParameterSymbol? {
@@ -23,16 +35,17 @@ class IrTypeSubstitutor(
         else null
     }
 
+    private fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument =
+        substitution[typeParameter]
+            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.owner.render()}")
+
     fun substitute(type: IrType): IrType {
         if (substitution.isEmpty()) return type
 
         return type.typeParameterConstructor()?.let {
-            // check whether it's T or T?
-            val isNullable = type.isMarkedNullable()
-            val typeArgument = substitution.getValue(it)
-            when (typeArgument) {
-                is IrStarProjection -> if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
-                is IrTypeProjection -> with(typeArgument.type) { if (isNullable) makeNullable() else makeNotNull() }
+            when (val typeArgument = getSubstitutionArgument(it)) {
+                is IrStarProjection -> irBuiltIns.anyNType // TODO upper bound for T
+                is IrTypeProjection -> typeArgument.type.run { if (type.isMarkedNullable()) makeNullable() else this }
                 else -> error("unknown type argument")
             }
         } ?: substituteType(type)
@@ -61,7 +74,7 @@ class IrTypeSubstitutor(
         if (type is IrSimpleType) {
             val classifier = type.classifier
             if (classifier is IrTypeParameterSymbol) {
-                val newArgument = substitution.getValue(classifier)
+                val newArgument = getSubstitutionArgument(classifier)
                 return if (newArgument is IrTypeProjection) {
                     makeTypeProjection(newArgument.type, typeArgument.variance)
                 } else newArgument
