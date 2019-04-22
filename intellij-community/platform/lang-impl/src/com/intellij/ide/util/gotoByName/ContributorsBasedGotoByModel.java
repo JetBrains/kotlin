@@ -60,8 +60,6 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
   }
 
   private final ConcurrentMap<ChooseByNameContributor, TIntHashSet> myContributorToItsSymbolsMap = ContainerUtil.newConcurrentMap();
-  private volatile IdFilter myIdFilter;
-  private volatile boolean myIdFilterForLibraries;
 
   @Override
   public void processNames(final Processor<? super String> nameProcessor, final boolean checkBoxState) {
@@ -125,14 +123,7 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
   }
 
   IdFilter getIdFilter(boolean withLibraries) {
-    IdFilter idFilter = myIdFilter;
-
-    if (idFilter == null || myIdFilterForLibraries != withLibraries) {
-      idFilter = IdFilter.getProjectIdFilter(myProject, withLibraries);
-      myIdFilter = idFilter;
-      myIdFilterForLibraries = withLibraries;
-    }
-    return idFilter;
+    return IdFilter.getProjectIdFilter(myProject, withLibraries);
   }
 
   @NotNull
