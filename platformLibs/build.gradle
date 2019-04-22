@@ -32,10 +32,9 @@ private ArrayList<DefFile> targetDefFiles(KonanTarget  target) {
     file("src/platform/${getVisibleName(target.family)}")
             .listFiles()
             .findAll { it.name.endsWith(".def") }
-            // The libz.a/libz.so and zlib.h are missing in raspberrypi and mips sysroots.
+            // The libz.a/libz.so and zlib.h are missing in MIPS sysroots.
             // Just workaround it until we have sysroots corrected.
-            .findAll { ! ((target instanceof KonanTarget.LINUX_ARM32_HFP ||
-                           target instanceof KonanTarget.LINUX_MIPS32 || 
+            .findAll { ! ((target instanceof KonanTarget.LINUX_MIPS32 ||
                            target instanceof KonanTarget.LINUX_MIPSEL32) && it.name == 'zlib.def') }
             .collect { TargetDefFileKt.DefFile(it, target) }
 }
