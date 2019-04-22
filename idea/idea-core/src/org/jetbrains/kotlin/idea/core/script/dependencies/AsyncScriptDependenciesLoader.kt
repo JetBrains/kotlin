@@ -74,6 +74,8 @@ class AsyncScriptDependenciesLoader internal constructor(project: Project) : Scr
 
     private fun runDependenciesUpdate(file: VirtualFile) {
         val scriptDef = runReadAction { file.findScriptDefinition(project) } ?: return
+
+        debug(file) { "start async dependencies loading" }
         // runBlocking is using there to avoid loading dependencies asynchronously
         // because it leads to starting more than one gradle daemon in case of resolving dependencies in build.gradle.kts
         // It is more efficient to use one hot daemon consistently than multiple daemon in parallel
@@ -84,6 +86,9 @@ class AsyncScriptDependenciesLoader internal constructor(project: Project) : Scr
                 t.asResolveFailure(scriptDef)
             }
         }
+
+        debug(file) { "finish async dependencies loading" }
+
         processResult(result, file, scriptDef)
     }
 
@@ -139,6 +144,8 @@ class AsyncScriptDependenciesLoader internal constructor(project: Project) : Scr
 
         fun addTask(file: VirtualFile) {
             if (sequenceOfFiles.contains(file)) return
+
+            debug(file) { "added to update queue" }
 
             sequenceOfFiles.add(file)
 

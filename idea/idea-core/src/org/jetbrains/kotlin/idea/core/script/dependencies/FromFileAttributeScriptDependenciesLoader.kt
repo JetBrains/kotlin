@@ -17,6 +17,7 @@ class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDepend
 
     override fun loadDependencies(file: VirtualFile) {
         val deserializedDependencies = file.scriptDependencies ?: return
+        debug(file) { "dependencies from fileAttributes = $deserializedDependencies" }
         saveToCache(file, deserializedDependencies)
     }
 

@@ -18,7 +18,9 @@ class SyncScriptDependenciesLoader internal constructor(project: Project) : Scri
 
     override fun loadDependencies(file: VirtualFile) {
         val scriptDef = file.findScriptDefinition(project) ?: return
+        debug(file) { "start sync dependencies loading" }
         val result = contentLoader.loadContentsAndResolveDependencies(scriptDef, file)
+        debug(file) { "finish sync dependencies loading" }
         processResult(result, file, scriptDef)
     }
 
