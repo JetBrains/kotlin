@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeEditor.printing;
 
 import com.intellij.application.options.CodeStyle;
@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -454,18 +455,16 @@ class TextPainter extends BasePainter {
     boolean wasDrawn = false;
 
     String headerText1 = myPrintSettings.FOOTER_HEADER_TEXT1;
-    if (headerText1 != null && headerText1.length() > 0 &&
-        PrintSettings.HEADER.equals(myPrintSettings.FOOTER_HEADER_PLACEMENT1)) {
+    if (!StringUtil.isEmpty(headerText1) && myPrintSettings.FOOTER_HEADER_PLACEMENT1 == PrintSettings.Placement.Header) {
       h = drawHeaderOrFooterLine(g, x, y, w, headerText1, myPrintSettings.FOOTER_HEADER_ALIGNMENT1);
       wasDrawn = true;
       y += h;
     }
 
     String headerText2 = myPrintSettings.FOOTER_HEADER_TEXT2;
-    if (headerText2 != null && headerText2.length() > 0 &&
-        PrintSettings.HEADER.equals(myPrintSettings.FOOTER_HEADER_PLACEMENT2)) {
-      if (PrintSettings.LEFT.equals(myPrintSettings.FOOTER_HEADER_ALIGNMENT1) &&
-          PrintSettings.RIGHT.equals(myPrintSettings.FOOTER_HEADER_ALIGNMENT2) &&
+    if (!StringUtil.isEmpty(headerText1) && myPrintSettings.FOOTER_HEADER_PLACEMENT2 == PrintSettings.Placement.Header) {
+      if (myPrintSettings.FOOTER_HEADER_ALIGNMENT1 == PrintSettings.Alignment.Left &&
+          myPrintSettings.FOOTER_HEADER_ALIGNMENT2 == PrintSettings.Alignment.Right &&
           wasDrawn) {
         y -= h;
       }
@@ -485,18 +484,16 @@ class TextPainter extends BasePainter {
     double h = 0;
     y -= lineMetrics.getHeight();
     String headerText2 = myPrintSettings.FOOTER_HEADER_TEXT2;
-    if (headerText2 != null && headerText2.length() > 0 &&
-        PrintSettings.FOOTER.equals(myPrintSettings.FOOTER_HEADER_PLACEMENT2)) {
+    if (!StringUtil.isEmpty(headerText2) && myPrintSettings.FOOTER_HEADER_PLACEMENT2 == PrintSettings.Placement.Footer) {
       h = drawHeaderOrFooterLine(g, x, y, w, headerText2, myPrintSettings.FOOTER_HEADER_ALIGNMENT2);
       wasDrawn = true;
     }
 
     String headerText1 = myPrintSettings.FOOTER_HEADER_TEXT1;
-    if (headerText1 != null && headerText1.length() > 0 &&
-        PrintSettings.FOOTER.equals(myPrintSettings.FOOTER_HEADER_PLACEMENT1)) {
+    if (!StringUtil.isEmpty(headerText1) && myPrintSettings.FOOTER_HEADER_PLACEMENT1 == PrintSettings.Placement.Footer) {
       y -= lineMetrics.getHeight();
-      if (PrintSettings.LEFT.equals(myPrintSettings.FOOTER_HEADER_ALIGNMENT1) &&
-          PrintSettings.RIGHT.equals(myPrintSettings.FOOTER_HEADER_ALIGNMENT2) &&
+      if (myPrintSettings.FOOTER_HEADER_ALIGNMENT1 == PrintSettings.Alignment.Left &&
+          myPrintSettings.FOOTER_HEADER_ALIGNMENT2 == PrintSettings.Alignment.Right &&
           wasDrawn) {
         y += h;
       }
@@ -506,8 +503,7 @@ class TextPainter extends BasePainter {
     return wasDrawn ? clip.getY() + clip.getHeight() - y + lineMetrics.getHeight() / 4 : 0;
   }
 
-  private double drawHeaderOrFooterLine(Graphics2D g, double x, double y, double w, String headerText,
-                                        String alignment) {
+  private double drawHeaderOrFooterLine(Graphics2D g, double x, double y, double w, String headerText, PrintSettings.Alignment alignment) {
     FontRenderContext fontRenderContext = g.getFontRenderContext();
     LineMetrics lineMetrics = getHeaderFooterLineMetrics(g);
     float lineHeight = lineMetrics.getHeight();
@@ -518,12 +514,10 @@ class TextPainter extends BasePainter {
       float descent = lineMetrics.getDescent();
       double width = myHeaderFont.getStringBounds(headerText, fontRenderContext).getWidth() + getCharWidth(g);
       float yPos = (float) (lineHeight - descent + y);
-      if (PrintSettings.LEFT.equals(alignment)) {
-        drawStringToGraphics(g, headerText, x, yPos);
-      } else if (PrintSettings.CENTER.equals(alignment)) {
-        drawStringToGraphics(g, headerText, (float) (x + (w - width) / 2), yPos);
-      } else if (PrintSettings.RIGHT.equals(alignment)) {
-        drawStringToGraphics(g, headerText, (float) (x + w - width), yPos);
+      switch (alignment) {
+        case Left: drawStringToGraphics(g, headerText, x, yPos); break;
+        case Center: drawStringToGraphics(g, headerText, (float) (x + (w - width) / 2), yPos); break;
+        case Right: drawStringToGraphics(g, headerText, (float) (x + w - width), yPos); break;
       }
     }
     return lineHeight;
