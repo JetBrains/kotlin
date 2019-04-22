@@ -7,14 +7,6 @@
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
                         area="IDEA_PROJECT"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.androidDexer"
-                        interface="org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.AndroidDexer"
-                        area="IDEA_PROJECT"/>
-
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.android.model.androidModuleInfoProvider"
-                        interface="org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider"
-                        area="IDEA_MODULE"/>
-
         <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindResolution"
                         interface="org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution"/>
 
@@ -94,12 +86,12 @@
 
         <j2kConverterExtension implementation="org.jetbrains.kotlin.idea.j2k.OldJ2kConverterExtension"/>
         <j2kConverterExtension implementation="org.jetbrains.kotlin.nj2k.NewJ2kConverterExtension"/>
-    </extensions>
+     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
         <registryKey key="kotlin.use.new.j2k"
-                     description="Use new Java to Kotlin Converter (experimental)"
-                     defaultValue="false"
-                     restartRequired="false"/>
+                             description="Use new Java to Kotlin Converter (experimental)"
+                             defaultValue="false"
+                             restartRequired="false"/>
     </extensions>
 </idea-plugin>

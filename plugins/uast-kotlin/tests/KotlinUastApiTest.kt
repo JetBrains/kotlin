@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UInjectionHost
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.env.kotlin.findElementByText
 import org.jetbrains.uast.test.env.kotlin.findElementByTextFromPsi
@@ -216,21 +217,21 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     fun testWhenStringLiteral() {
         doTest("WhenStringLiteral") { _, file ->
 
-            file.findElementByTextFromPsi<ULiteralExpression>("abc").let { literalExpression ->
+            file.findElementByTextFromPsi<UInjectionHost>("\"abc\"").let { literalExpression ->
                 val psi = literalExpression.psi!!
-                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                Assert.assertTrue(psi is KtStringTemplateExpression)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findElementByTextFromPsi<ULiteralExpression>("def").let { literalExpression ->
+            file.findElementByTextFromPsi<UInjectionHost>("\"def\"").let { literalExpression ->
                 val psi = literalExpression.psi!!
-                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                Assert.assertTrue(psi is KtStringTemplateExpression)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findElementByTextFromPsi<ULiteralExpression>("def1").let { literalExpression ->
+            file.findElementByTextFromPsi<UInjectionHost>("\"def1\"").let { literalExpression ->
                 val psi = literalExpression.psi!!
-                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                Assert.assertTrue(psi is KtStringTemplateExpression)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, UBlockExpression::class.java)
             }
 
@@ -546,6 +547,21 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             assertEquals("UReferenceExpression", receiver.asLogString())
             val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
             assertEquals("ULambdaExpression", uParameter.asLogString())
+        }
+    }
+
+    @Test
+    fun testMethodReturnTypeReference() {
+        doTest("Elvis") { _, file ->
+            assertEquals(
+                "UTypeReferenceExpression (name = java.lang.String)",
+                file.findElementByTextFromPsi<UMethod>("fun foo(bar: String): String? = null").returnTypeReference?.asLogString()
+            )
+            assertEquals(
+                null,
+                file.findElementByTextFromPsi<UMethod>("fun bar() = 42").returnTypeReference?.asLogString()
+            )
+
         }
     }
 

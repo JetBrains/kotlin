@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.UastQualifiedExpressionAccessType
@@ -36,4 +37,10 @@ class KotlinUQualifiedReferenceExpression(
 
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name
+
+    override val referenceNameElement: UElement?
+        get() = when (val selector = selector) {
+            is UCallExpression -> selector.methodIdentifier
+            else -> super.referenceNameElement
+        }
 }

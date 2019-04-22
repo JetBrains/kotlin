@@ -9,6 +9,7 @@ import org.jetbrains.uast.evaluation.UEvaluationState
 import org.jetbrains.uast.kotlin.KotlinBinaryOperators
 import org.jetbrains.uast.kotlin.KotlinPostfixOperators
 import org.jetbrains.uast.values.*
+import org.jetbrains.uast.evaluation.to
 
 class KotlinEvaluatorExtension : AbstractEvaluatorExtension(KotlinLanguage.INSTANCE) {
 

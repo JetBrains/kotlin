@@ -16,6 +16,7 @@ messages/**)
 
 -dontnote **
 -dontwarn com.intellij.util.ui.IsRetina*
+-dontwarn com.intellij.util.ui.UIUtilities
 -dontwarn com.intellij.util.RetinaImage*
 -dontwarn apple.awt.*
 -dontwarn dk.brics.automaton.*
@@ -201,7 +202,6 @@ messages/**)
 -keep class org.jetbrains.org.objectweb.asm.tree.FieldNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.ParameterNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.TypeAnnotationNode { *; }
--keep class org.jetbrains.org.objectweb.asm.tree.InsnList { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureReader { *; }
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureVisitor { *; }

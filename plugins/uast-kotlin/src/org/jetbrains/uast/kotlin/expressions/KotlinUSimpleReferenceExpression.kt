@@ -71,6 +71,8 @@ open class KotlinUSimpleReferenceExpression(
         visitor.afterVisitSimpleNameReferenceExpression(this)
     }
 
+    override val referenceNameElement: UElement? by lz { psi.getIdentifier()?.toUElement() }
+
     private fun visitAccessorCalls(visitor: UastVisitor) {
         // Visit Kotlin get-set synthetic Java property calls as function calls
         val bindingContext = psi.analyze()

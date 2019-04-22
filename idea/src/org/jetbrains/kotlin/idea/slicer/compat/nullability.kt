@@ -8,4 +8,4 @@ package org.jetbrains.kotlin.idea.slicer.compat
 import com.intellij.psi.PsiElement
 
 // BUNCH: 183
-internal typealias PsiElement_N183_NN191 = PsiElement?
+internal typealias PsiElement_N183_NN191 = PsiElement

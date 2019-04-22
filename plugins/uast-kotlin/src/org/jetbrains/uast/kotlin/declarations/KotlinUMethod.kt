@@ -107,7 +107,7 @@ open class KotlinUMethod(
                 KotlinUBlockExpression.KotlinLazyUBlockExpression(this, { block ->
                     val implicitReturn = KotlinUImplicitReturnExpression(block)
                     val uBody = getLanguagePlugin().convertElement(bodyExpression, implicitReturn) as? UExpression
-                        ?: return@KotlinLazyUBlockExpression emptyList()
+                            ?: return@KotlinLazyUBlockExpression emptyList()
                     listOf(implicitReturn.apply { returnExpression = uBody })
                 })
 
@@ -122,6 +122,12 @@ open class KotlinUMethod(
     override fun getBody(): PsiCodeBlock? = super<UAnnotationMethod>.getBody()
 
     override fun getOriginalElement(): PsiElement? = super<UAnnotationMethod>.getOriginalElement()
+
+    override val returnTypeReference: UTypeReferenceExpression? by lz {
+        (sourcePsi as? KtCallableDeclaration)?.typeReference?.let {
+            LazyKotlinUTypeReferenceExpression(it, this) { javaPsi.returnType ?: UastErrorType }
+        }
+    }
 
     override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
 

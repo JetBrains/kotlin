@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.maven
 
-import com.intellij.openapi.util.AsyncResult
+import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.idea.maven.model.MavenArtifact
 import org.jetbrains.idea.maven.project.MavenProject
 import org.jetbrains.idea.maven.project.MavenProjectsManager
@@ -17,5 +17,5 @@ fun scheduleArtifactsDownloading(
     toBeDownloaded: List<MavenArtifact>
 ) {
     //true, false, AsyncResult()
-    projectsManager.scheduleArtifactsDownloading(projects, toBeDownloaded, true, false, AsyncResult())
+    projectsManager.scheduleArtifactsDownloading(projects, toBeDownloaded, true, false, AsyncPromise())
 }
