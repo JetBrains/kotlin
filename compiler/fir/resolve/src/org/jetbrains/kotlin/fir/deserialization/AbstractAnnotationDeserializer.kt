@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
-class FirAnnotationDeserializer(
+abstract class AbstractAnnotationDeserializer(
     private val session: FirSession,
     private val nameResolver: NameResolver
 ) {
-    private val protocol = BuiltInSerializerProtocol
+    protected val protocol = BuiltInSerializerProtocol
 
     fun loadClassAnnotations(classProto: ProtoBuf.Class): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) return emptyList()
@@ -65,13 +65,9 @@ class FirAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it) }
     }
 
-    fun loadTypeAnnotations(typeProto: ProtoBuf.Type): List<FirAnnotationCall> {
-        if (!Flags.HAS_ANNOTATIONS.get(typeProto.flags)) return emptyList()
-        val annotations = typeProto.getExtension(protocol.typeAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it) }
-    }
+    abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type): List<FirAnnotationCall>
 
-    private fun deserializeAnnotation(proto: ProtoBuf.Annotation): FirAnnotationCall {
+    fun deserializeAnnotation(proto: ProtoBuf.Annotation): FirAnnotationCall {
         val classId = nameResolver.getClassId(proto.id)
         val lookupTag = ConeClassLikeLookupTagImpl(classId)
         val symbol = lookupTag.toSymbol(session)
@@ -126,12 +122,12 @@ class FirAnnotationDeserializer(
             CLASS -> FirGetClassCallImpl(session, null).apply {
                 val classId = nameResolver.getClassId(value.classId)
                 val lookupTag = ConeClassLikeLookupTagImpl(classId)
-                val symbol = lookupTag.toSymbol(this@FirAnnotationDeserializer.session) ?: return null
+                val symbol = lookupTag.toSymbol(this@AbstractAnnotationDeserializer.session) ?: return null
                 val referencedType = symbol.constructType(emptyArray(), isNullable = false)
                 arguments += FirClassReferenceExpressionImpl(
-                    this@FirAnnotationDeserializer.session, null,
+                    this@AbstractAnnotationDeserializer.session, null,
                     FirResolvedTypeRefImpl(
-                        this@FirAnnotationDeserializer.session, null, referencedType,
+                        this@AbstractAnnotationDeserializer.session, null, referencedType,
                         isMarkedNullable = false, annotations = emptyList()
                     )
                 )
@@ -141,11 +137,11 @@ class FirAnnotationDeserializer(
                 val entryName = nameResolver.getName(value.enumValueId)
                 val entryClassId = classId.createNestedClassId(entryName)
                 val entryLookupTag = ConeClassLikeLookupTagImpl(entryClassId)
-                val entrySymbol = entryLookupTag.toSymbol(this@FirAnnotationDeserializer.session)
+                val entrySymbol = entryLookupTag.toSymbol(this@AbstractAnnotationDeserializer.session)
                 this.calleeReference = entrySymbol?.let {
-                    FirResolvedCallableReferenceImpl(this@FirAnnotationDeserializer.session, null, entryName, it)
+                    FirResolvedCallableReferenceImpl(this@AbstractAnnotationDeserializer.session, null, entryName, it)
                 } ?: FirErrorNamedReference(
-                    this@FirAnnotationDeserializer.session, null,
+                    this@AbstractAnnotationDeserializer.session, null,
                     errorReason = "Strange deserialized enum value: $classId.$entryName"
                 )
             }

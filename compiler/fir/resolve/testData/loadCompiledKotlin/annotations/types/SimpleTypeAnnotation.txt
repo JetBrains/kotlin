@@ -1,10 +1,10 @@
-public final annotation class A : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) public final annotation class A : R|kotlin/Annotation| {
     public constructor(): R|test/A|
 
 }
 
 public final class SimpleTypeAnnotation : R|kotlin/Any| {
-    public final fun foo(x: R|kotlin/ranges/IntRange|): R|kotlin/Int|
+    public final fun foo(x: @R|test/A|() R|kotlin/ranges/IntRange|): @R|test/A|() R|kotlin/Int|
 
     public constructor(): R|test/SimpleTypeAnnotation|
 

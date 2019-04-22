@@ -37,6 +37,7 @@ class FirDeserializationContext(
     val packageFqName: FqName,
     val relativeClassName: FqName?,
     val typeDeserializer: FirTypeDeserializer,
+    val annotationDeserializer: AbstractAnnotationDeserializer,
     val components: FirDeserializationComponents
 ) {
     fun childContext(
@@ -48,23 +49,23 @@ class FirDeserializationContext(
         FirTypeDeserializer(
             session, nameResolver, typeTable, typeParameterProtos, typeDeserializer
         ),
-        components
+        annotationDeserializer, components
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
-
-    val annotationDeserializer: FirAnnotationDeserializer = FirAnnotationDeserializer(session, nameResolver)
 
     companion object {
         fun createForPackage(
             fqName: FqName,
             packageProto: ProtoBuf.Package,
             nameResolver: NameResolver,
-            session: FirSession
+            session: FirSession,
+            annotationDeserializer: AbstractAnnotationDeserializer
         ) = createRootContext(
             nameResolver,
             TypeTable(packageProto.typeTable),
             session,
+            annotationDeserializer,
             fqName,
             relativeClassName = null,
             typeParameterProtos = emptyList()
@@ -74,11 +75,13 @@ class FirDeserializationContext(
             classId: ClassId,
             classProto: ProtoBuf.Class,
             nameResolver: NameResolver,
-            session: FirSession
+            session: FirSession,
+            annotationDeserializer: AbstractAnnotationDeserializer
         ) = createRootContext(
             nameResolver,
             TypeTable(classProto.typeTable),
             session,
+            annotationDeserializer,
             classId.packageFqName,
             classId.relativeClassName,
             classProto.typeParameterList
@@ -88,6 +91,7 @@ class FirDeserializationContext(
             nameResolver: NameResolver,
             typeTable: TypeTable,
             session: FirSession,
+            annotationDeserializer: AbstractAnnotationDeserializer,
             packageFqName: FqName,
             relativeClassName: FqName?,
             typeParameterProtos: List<ProtoBuf.TypeParameter>
@@ -105,6 +109,7 @@ class FirDeserializationContext(
                     typeParameterProtos,
                     null
                 ),
+                annotationDeserializer,
                 FirDeserializationComponents()
             )
         }

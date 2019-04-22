@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
+import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.*
@@ -65,7 +66,10 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
         val classDataFinder = ProtoBasedClassDataFinder(packageProto, nameResolver, version) { SourceElement.NO_SOURCE }
 
         private val memberDeserializer by lazy {
-            FirDeserializationContext.createForPackage(fqName, packageProto.`package`, nameResolver, session).memberDeserializer
+            FirDeserializationContext.createForPackage(
+                fqName, packageProto.`package`, nameResolver, session,
+                FirBuiltinAnnotationDeserializer(session, nameResolver)
+            ).memberDeserializer
         }
 
         val lookup = mutableMapOf<ClassId, FirClassSymbol>()

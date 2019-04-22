@@ -100,7 +100,10 @@ class KotlinDeserializedJvmSymbolsProvider(
 
             PackagePartsCacheData(
                 packageProto,
-                FirDeserializationContext.createForPackage(packageFqName, packageProto, nameResolver, session)
+                FirDeserializationContext.createForPackage(
+                    packageFqName, packageProto, nameResolver, session,
+                    JvmBinaryAnnotationDeserializer(session, nameResolver)
+                )
             )
         }
     }
@@ -272,7 +275,6 @@ class KotlinDeserializedJvmSymbolsProvider(
         return loadAnnotation(annotationClassId, result)
     }
 
-
     private fun findAndDeserializeClass(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
@@ -299,7 +301,11 @@ class KotlinDeserializedJvmSymbolsProvider(
 
                 val symbol = FirClassSymbol(classId)
                 deserializeClassToSymbol(
-                    classId, classProto, symbol, nameResolver, session, parentContext,
+                    classId, classProto, symbol, nameResolver, session,
+                    parentContext ?: FirDeserializationContext.createForClass(
+                        classId, classProto, nameResolver, session,
+                        JvmBinaryAnnotationDeserializer(session, nameResolver)
+                    ),
                     this::findAndDeserializeClass
                 )
                 val annotations = mutableListOf<FirAnnotationCall>()
