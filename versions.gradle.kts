@@ -111,7 +111,8 @@ rootProject.extra["clionPluginZipPath"] = clionPluginZipPath
 rootProject.extra["clionCustomPluginRepoUrl"] = cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath)
 
 fun cidrProductFriendlyVersion(productName: String, productVersion: String): String {
-    val productBranch = productVersion.substringBefore('.').toInt()
+    val productBranch = productVersion.substringBefore('.').toIntOrNull()
+            ?: error("Invalid product version format: $productVersion")
     val year = 2000 + productBranch / 10
     val majorRelease = productBranch % 10
 
