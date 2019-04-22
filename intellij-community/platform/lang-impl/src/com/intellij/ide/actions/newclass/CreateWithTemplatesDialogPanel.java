@@ -10,13 +10,15 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollingUtil;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBPanel;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.ui.components.fields.ExtendableTextComponent;
+import com.intellij.ui.components.fields.ExtendableTextField;
 import com.intellij.util.BooleanFunction;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.JBUI;
@@ -34,7 +36,7 @@ import static com.intellij.ide.ui.laf.darcula.DarculaUIUtil.Outline;
 
 public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposable {
 
-  private final JBTextField myNameField;
+  private final ExtendableTextField myNameField;
   private final JList<Trinity<String, Icon, String>> myTemplatesList;
 
   private JBPopup myErrorPopup;
@@ -44,6 +46,7 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
 
   public CreateWithTemplatesDialogPanel(@NotNull List<Trinity<String, Icon, String>> templates, @Nullable String selectedItem) {
     super(new BorderLayout());
+    setBackground(JBUI.CurrentTheme.NewClassDialog.panelBackground());
 
     myNameField = createNameField();
     myTemplatesList = createTemplatesList(templates);
@@ -54,7 +57,14 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
 
     selectTemplate(selectedItem);
     add(myNameField, BorderLayout.NORTH);
-    add(myTemplatesList, BorderLayout.CENTER);
+
+    JBScrollPane scrollPane = new JBScrollPane(myTemplatesList);
+    scrollPane.setBorder(JBUI.Borders.empty());
+    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    Box listHolder = new Box(BoxLayout.Y_AXIS);
+    listHolder.setBorder(JBUI.Borders.emptyTop(JBUI.CurrentTheme.NewClassDialog.fieldsSeparatorWidth()));
+    listHolder.add(scrollPane);
+    add(listHolder, BorderLayout.CENTER);
   }
 
   public JTextField getNameField() {
@@ -100,8 +110,8 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
   }
 
   @NotNull
-  private JBTextField createNameField() {
-    JBTextField res = new JBTextField();
+  private ExtendableTextField createNameField() {
+    ExtendableTextField res = new ExtendableTextField();
 
     Dimension minSize = res.getMinimumSize();
     Dimension prefSize = res.getPreferredSize();
@@ -111,13 +121,10 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
     res.setPreferredSize(prefSize);
     res.setColumns(30);
 
-    JBColor borderColor = JBColor.namedColor(
-      "TextField.borderColor",
-      JBColor.namedColor("Component.borderColor", new JBColor(0xbdbdbd, 0x646464))
-    );
-    Border border = JBUI.Borders.customLine(borderColor, 1, 0, 1, 0);
+    Border border = JBUI.Borders.customLine(JBUI.CurrentTheme.NewClassDialog.bordersColor(), 1, 0, 1, 0);
     Border errorBorder = new ErrorBorder(res.getBorder());
     res.setBorder(JBUI.Borders.merge(border, errorBorder, false));
+    res.setBackground(JBUI.CurrentTheme.NewClassDialog.searchFieldBackground());
 
     res.putClientProperty("StatusVisibleFunction", (BooleanFunction<JBTextField>) field -> field.getText().isEmpty());
     res.getEmptyText().setText(IdeBundle.message("action.create.new.class.name.field"));
@@ -144,36 +151,36 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
   private JBList<Trinity<String, Icon, String>> createTemplatesList(@NotNull List<Trinity<String, Icon, String>> templates) {
     JBList<Trinity<String, Icon, String>> list = new JBList<>(templates);
     MouseAdapter mouseListener = new MouseAdapter() {
-      // to avoid selection item under mouse when dialog appears (IDEA-209879)
-      private boolean isFirstEvent = true;
-
-      @Override
-      public void mouseMoved(MouseEvent e) {
-        if (isFirstEvent) {
-          isFirstEvent = false;
-          return;
-        }
-        selectItem(e.getPoint());
-      }
-
       @Override
       public void mouseClicked(MouseEvent e) {
-        selectItem(e.getPoint());
-        if (myApplyAction != null) myApplyAction.consume(e);
-      }
-
-      private void selectItem(Point point) {
-        int index = list.locationToIndex(point);
-        if (index >= 0) {
-          list.setSelectedIndex(index);
-        }
+        if (myApplyAction != null && e.getClickCount() > 1) myApplyAction.consume(e);
       }
     };
-    list.addMouseMotionListener(mouseListener);
+
     list.addMouseListener(mouseListener);
     list.setCellRenderer(LIST_RENDERER);
     list.setFocusable(false);
+    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+    list.addListSelectionListener(e -> {
+      Trinity<String, Icon, String> selectedValue = list.getSelectedValue();
+      if (selectedValue != null) {
+        setTextFieldIcon(selectedValue.second);
+      }
+    });
+
+    Border border = JBUI.Borders.merge(
+      JBUI.Borders.emptyLeft(JBUI.scale(5)),
+      JBUI.Borders.customLine(JBUI.CurrentTheme.NewClassDialog.bordersColor(), 1, 0, 0, 0),
+      true
+    );
+    list.setBorder(border);
     return list;
+  }
+
+  private void setTextFieldIcon(Icon icon) {
+    myNameField.setExtensions(new TemplateIconExtension(icon));
+    myNameField.repaint();
   }
 
   private void selectTemplate(@Nullable String selectedItem) {
@@ -214,6 +221,22 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
         return delegate;
       }
     };
+
+  private static class TemplateIconExtension implements ExtendableTextComponent.Extension {
+    private final Icon icon;
+
+    private TemplateIconExtension(Icon icon) {this.icon = icon;}
+
+    @Override
+    public Icon getIcon(boolean hovered) {
+      return icon;
+    }
+
+    @Override
+    public boolean isIconBeforeText() {
+      return true;
+    }
+  }
 
   private static class ErrorBorder implements Border {
     private final Border errorDelegateBorder;
