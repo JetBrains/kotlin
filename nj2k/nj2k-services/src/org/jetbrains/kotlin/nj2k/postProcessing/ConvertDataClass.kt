@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -76,13 +75,10 @@ class ConvertDataClass : NewJ2kPostProcessing {
                 constructorParameter.rename(property.name!!)
                 val propertyCommentSaver = CommentSaver(property, saveLineBreaks = true)
                 if (property.modifierList != null) {
-                    val annotationEntries = constructorParameter.annotationEntries.map { it.copied() }
                     constructorParameter.setModifierList(property.modifierList!!)
                     constructorParameter.annotationEntries.forEach { it.delete() }
-                    for (annotationEntry in annotationEntries) {
-                        constructorParameter.addAnnotationEntry(annotationEntry).also { entry ->
-                            entry.addUseSiteTarget(AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER, element.project)
-                        }
+                    for (entry in constructorParameter.annotationEntries) {
+                        entry.addUseSiteTarget(AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER, element.project)
                     }
                 }
 
@@ -95,7 +91,7 @@ class ConvertDataClass : NewJ2kPostProcessing {
                 }
                 property.delete()
                 statement.delete()
-                propertyCommentSaver.restore(constructorParameter, forceAdjustIndent = true)
+                propertyCommentSaver.restore(constructorParameter, forceAdjustIndent = false)
             }
             for (initBlock in element.getAnonymousInitializers()) {
                 if ((initBlock.body as KtBlockExpression).statements.isEmpty()) {
