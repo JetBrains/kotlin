@@ -22,10 +22,13 @@ import java.util.Iterator;
 import java.util.List;
 
 public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
+  private static final Key<Integer> CARET_SHIFT = Key.create("tab.out.caret.shift");
+
   @Override
-  public void registerEmptyScope(@NotNull Editor editor, int offset) {
+  public void registerEmptyScope(@NotNull Editor editor, int offset, int caretShift) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     assert !editor.isDisposed() : "Disposed editor";
+    assert caretShift > 0 : "Caret shift must be positive";
 
     if (!CodeInsightSettings.getInstance().TAB_EXITS_BRACKETS_AND_QUOTES) return;
 
@@ -37,35 +40,35 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
     if (!(editor instanceof EditorImpl)) return;
 
     Tracker tracker = Tracker.forEditor((EditorImpl)editor, true);
-    tracker.registerScope(offset);
+    tracker.registerScope(offset, caretShift);
   }
 
   @Override
   public boolean hasScopeEndingAt(@NotNull Editor editor, int offset) {
-    return checkOrRemoveScopeEndingAt(editor, offset, false);
+    return checkOrRemoveScopeEndingAt(editor, offset, false) > 0;
   }
 
   @Override
-  public boolean removeScopeEndingAt(@NotNull Editor editor, int offset) {
+  public int removeScopeEndingAt(@NotNull Editor editor, int offset) {
     return checkOrRemoveScopeEndingAt(editor, offset, true);
   }
 
-  private static boolean checkOrRemoveScopeEndingAt(@NotNull Editor editor, int offset, boolean removeScope) {
+  private static int checkOrRemoveScopeEndingAt(@NotNull Editor editor, int offset, boolean removeScope) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
-    if (!CodeInsightSettings.getInstance().TAB_EXITS_BRACKETS_AND_QUOTES) return false;
+    if (!CodeInsightSettings.getInstance().TAB_EXITS_BRACKETS_AND_QUOTES) return 0;
 
     if (editor instanceof EditorWindow) {
       DocumentWindow documentWindow = ((EditorWindow)editor).getDocument();
       offset = documentWindow.injectedToHost(offset);
       editor = ((EditorWindow)editor).getDelegate();
     }
-    if (!(editor instanceof EditorImpl)) return false;
+    if (!(editor instanceof EditorImpl)) return 0;
 
     Tracker tracker = Tracker.forEditor((EditorImpl)editor, false);
-    if (tracker == null) return false;
+    if (tracker == null) return 0;
 
-    return tracker.hasScopeEndingAt(offset, removeScope);
+    return tracker.getCaretShiftForScopeEndingAt(offset, removeScope);
   }
 
   private static class Tracker extends DocumentBulkUpdateListener.Adapter implements DocumentListener {
@@ -98,24 +101,26 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
       return result;
     }
 
-    private void registerScope(int offset) {
+    private void registerScope(int offset, int caretShift) {
       RangeMarker marker = myEditor.getDocument().createRangeMarker(offset, offset);
       marker.setGreedyToLeft(true);
       marker.setGreedyToRight(true);
+      if (caretShift > 1) marker.putUserData(CARET_SHIFT, caretShift);
       getCurrentScopes(true).add(marker);
     }
 
-    private boolean hasScopeEndingAt(int offset, boolean remove) {
+    private int getCaretShiftForScopeEndingAt(int offset, boolean remove) {
       List<RangeMarker> scopes = getCurrentScopes(false);
-      if (scopes == null) return false;
+      if (scopes == null) return 0;
       for (Iterator<RangeMarker> it = scopes.iterator(); it.hasNext(); ) {
         RangeMarker scope = it.next();
         if (offset == scope.getEndOffset()) {
           if (remove) it.remove();
-          return true;
+          Integer caretShift = scope.getUserData(CARET_SHIFT);
+          return caretShift == null ? 1 : caretShift;
         }
       }
-      return false;
+      return 0;
     }
 
     @Override
