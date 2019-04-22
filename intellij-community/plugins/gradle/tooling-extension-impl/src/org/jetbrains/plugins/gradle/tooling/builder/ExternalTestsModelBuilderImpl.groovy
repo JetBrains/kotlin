@@ -22,8 +22,14 @@ class ExternalTestsModelBuilderImpl implements ModelBuilderService {
   @Override
   Object buildAll(String modelName, Project project) {
     def defaultTestsModel = new DefaultExternalTestsModel()
-    defaultTestsModel.sourceTestMappings = getMapping(project)
+    if (javaPluginIsApplied(project)) {
+      defaultTestsModel.sourceTestMappings = getMapping(project)
+    }
     return defaultTestsModel
+  }
+
+  private static boolean javaPluginIsApplied(Project project) {
+    return project.pluginManager.findPlugin('java-base') != null
   }
 
   private static List<ExternalTestSourceMapping> getMapping(Project project) {
@@ -33,7 +39,7 @@ class ExternalTestsModelBuilderImpl implements ModelBuilderService {
         taskToClassesDirs[task] = getClassesDirs(task)
       }
     }
-    if (!project.hasProperty("sourceSets") || !isSourceSetContainer(project.sourceSets) ) return Collections.emptyList()
+    if (!project.hasProperty("sourceSets")) return Collections.emptyList()
     def sourceSetContainer = project.sourceSets as SourceSetContainer
     if (sourceSetContainer == null) return Collections.emptyList()
     def classesDirToSourceDirs = new LinkedHashMap<String, Set<String>>()
@@ -68,15 +74,6 @@ class ExternalTestsModelBuilderImpl implements ModelBuilderService {
       testSourceMappings.add(defaultExternalTestSourceMapping)
     }
     return testSourceMappings
-  }
-
-  private static boolean isSourceSetContainer(Object object) {
-    try {
-      object as SourceSetContainer
-      return true;
-    } catch (Throwable ignore) {
-    }
-    return false;
   }
 
   @SuppressWarnings("GrDeprecatedAPIUsage")
