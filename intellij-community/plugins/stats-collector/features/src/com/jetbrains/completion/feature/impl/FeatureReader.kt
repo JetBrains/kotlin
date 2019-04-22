@@ -17,16 +17,6 @@
 package com.jetbrains.completion.feature.impl
 
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-
-
-typealias DoubleFeatureInfo = Map<String, Double>
-typealias CategoricalFeatureInfo = Map<String, Set<String>>
-typealias BinaryFeatureInfo = Map<String, Map<String, Double>>
-typealias IgnoredFeatureInfo = Set<String>
-
-
 object FeatureUtils {
     const val UNDEFINED: String = "UNDEFINED"
     const val INVALID_CACHE: String = "INVALID_CACHE"
@@ -73,55 +63,4 @@ object FeatureUtils {
             "prox_$key" to value
         }.toMap()
     }
-}
-
-
-object FeatureReader {
-    private val gson = Gson()
-
-    fun completionFactors(): CompletionFactors {
-        val text = fileContent("features/all_features.json")
-        val typeToken = object : TypeToken<List<String>>() {}
-        val features = gson.fromJson<List<String>>(text, typeToken.type)
-
-        return CompletionFactors(features.toSet())
-    }
-
-    fun binaryFactors(): BinaryFeatureInfo {
-        val text = fileContent("features/binary.json")
-        val typeToken = object : TypeToken<BinaryFeatureInfo>() {}
-        return gson.fromJson<BinaryFeatureInfo>(text, typeToken.type)
-    }
-
-    fun categoricalFactors(): CategoricalFeatureInfo {
-        val text = fileContent("features/categorical.json")
-        val typeToken = object : TypeToken<CategoricalFeatureInfo>() {}
-        return gson.fromJson<CategoricalFeatureInfo>(text, typeToken.type)
-    }
-
-
-    fun doubleFactors(): DoubleFeatureInfo {
-        val text = fileContent("features/float.json")
-        val typeToken = object : TypeToken<DoubleFeatureInfo>() {}
-        return gson.fromJson<DoubleFeatureInfo>(text, typeToken.type)
-    }
-
-    fun featuresOrder(): Map<String, Int> {
-        val text = fileContent("features/final_features_order.txt")
-
-        var index = 0
-        val map = mutableMapOf<String, Int>()
-        text.split("\n").forEach {
-            val featureName = it.trim()
-            map[featureName] = index++
-        }
-
-        return map
-    }
-
-    private fun fileContent(fileName: String): String {
-        val fileStream = FeatureReader.javaClass.classLoader.getResourceAsStream(fileName)
-        return fileStream.reader().readText()
-    }
-
 }
