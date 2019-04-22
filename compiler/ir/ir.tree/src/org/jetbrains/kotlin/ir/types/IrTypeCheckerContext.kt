@@ -55,4 +55,9 @@ class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemCo
     override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext {
         return IrTypeCheckerContext(irBuiltIns)
     }
+
+    override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
+        // TODO remove 'Exact' annotation only
+        return removeAnnotations()
+    }
 }
