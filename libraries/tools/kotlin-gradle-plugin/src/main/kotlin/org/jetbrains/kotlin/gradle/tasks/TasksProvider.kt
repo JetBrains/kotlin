@@ -53,16 +53,16 @@ internal fun <T : Task> Project.createOrRegisterTask(name: String, type: Class<T
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration.
  */
-internal fun <T : Task> locateTask(project: Project, name: String, type: Class<T>): TaskHolder<T>? =
+internal inline fun <reified T : Task> Project.locateTask(name: String): TaskHolder<T>? =
     if (canLocateTask) {
         try {
-            TaskProviderHolder(name, project, project.tasks.named(name, type))
+            TaskProviderHolder(name, this, tasks.named(name, T::class.java))
         } catch (e: UnknownTaskException) {
             null
         }
     } else {
-        project.tasks.findByName(name)?.let {
-            check(type.isInstance(it))
+        tasks.findByName(name)?.let {
+            check(T::class.java.isInstance(it))
 
             @Suppress("UNCHECKED_CAST")
             LegacyTaskHolder(it as T)
@@ -74,7 +74,7 @@ internal fun <T : Task> locateTask(project: Project, name: String, type: Class<T
  * with [name], type [T] and initialization script [body]
  */
 internal inline fun <reified T : Task> Project.locateOrRegisterTask(name: String, noinline body: (T) -> (Unit)): TaskHolder<T> {
-    return locateTask(project, name, T::class.java) ?: registerTask(project, name, T::class.java, body)
+    return project.locateTask(name) ?: registerTask(project, name, T::class.java, body)
 }
 
 internal open class KotlinTasksProvider(val targetName: String) {

@@ -46,8 +46,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     }
 
 
-    abstract protected fun configureArchivesAndComponent(target: KotlinTargetType)
-    abstract protected fun configureTest(target: KotlinTargetType)
+    protected abstract fun configureArchivesAndComponent(target: KotlinTargetType)
+    protected abstract fun configureTest(target: KotlinTargetType)
 
     private fun Project.registerOutputsForStaleOutputCleanup(kotlinCompilation: KotlinCompilation<*>) {
         val cleanTask = tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME) as Delete
