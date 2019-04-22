@@ -34,6 +34,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsCodeFragmentFilter;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.IncorrectOperationException;
@@ -177,6 +178,7 @@ public class ConfigureCodeStyleOnSelectedFragment implements IntentionAction, Lo
     private void applyFromUiToSettings() {
       try {
         myTabbedLanguagePanel.apply(mySettings);
+        CodeStyleSettingsManager.getInstance(myEditor.getProject()).notifyCodeStyleSettingsChanged();
       }
       catch (ConfigurationException e) {
         LOG.debug("Can not apply code style settings from context menu to project code style settings");
