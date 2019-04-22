@@ -222,12 +222,7 @@ class IrModuleToJsTransformer(
                 .forEach { declaration ->
                     val declName = getNameForExternalDeclaration(declaration)
                     importStatements.add(
-                        JsExpressionStatement(
-                            jsAssignment(
-                                declName.makeRef(),
-                                JsNameRef(declName, qualifiedReference)
-                            )
-                        )
+                        JsVars(JsVars.JsVar(declName, JsNameRef(declName, qualifiedReference)))
                     )
                 }
         }
