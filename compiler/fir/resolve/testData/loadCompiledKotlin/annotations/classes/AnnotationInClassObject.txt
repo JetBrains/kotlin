@@ -23,7 +23,7 @@ public final class A : R|kotlin/Any| {
 
 }
 
-public final class C : R|kotlin/Any| {
+@R|test/A.Companion.Anno1|() @R|test/A.Companion.B.Anno2|() public final class C : R|kotlin/Any| {
     public constructor(): R|test/C|
 
 }

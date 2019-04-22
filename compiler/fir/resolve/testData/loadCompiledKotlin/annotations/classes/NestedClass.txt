@@ -6,12 +6,12 @@ public final annotation class Anno : R|kotlin/Annotation| {
 public final class Class : R|kotlin/Any| {
     public constructor(): R|test/Class|
 
-    public final inner class Inner : R|kotlin/Any| {
+    @R|test/Anno|() public final inner class Inner : R|kotlin/Any| {
         public constructor(): R|test/Class.Inner|
 
     }
 
-    public final class Nested : R|kotlin/Any| {
+    @R|test/Anno|() public final class Nested : R|kotlin/Any| {
         public constructor(): R|test/Class.Nested|
 
     }

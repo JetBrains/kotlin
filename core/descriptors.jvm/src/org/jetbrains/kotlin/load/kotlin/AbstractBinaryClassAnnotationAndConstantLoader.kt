@@ -410,7 +410,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         val propertyConstants: Map<MemberSignature, C>
     )
 
-    private companion object {
+    companion object {
         val SPECIAL_ANNOTATIONS = listOf(
             JvmAnnotationNames.METADATA_FQ_NAME,
             JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,

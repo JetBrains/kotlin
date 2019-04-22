@@ -13,7 +13,7 @@ public final annotation class A3 : R|kotlin/Annotation| {
 
 }
 
-public final class Class : R|kotlin/Any| {
+@R|test/A1|() @R|test/A2|() @R|test/A3|() public final class Class : R|kotlin/Any| {
     public constructor(): R|test/Class|
 
 }

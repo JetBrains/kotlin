@@ -286,7 +286,7 @@ private fun <T> List<T>.createArrayOfCall(session: FirSession, @Suppress("UNUSED
     }
 }
 
-private fun Any?.createConstant(session: FirSession): FirExpression {
+internal fun Any?.createConstant(session: FirSession): FirExpression {
     return when (this) {
         is Byte -> FirConstExpressionImpl(session, null, IrConstKind.Byte, this)
         is Short -> FirConstExpressionImpl(session, null, IrConstKind.Short, this)

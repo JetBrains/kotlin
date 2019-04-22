@@ -9,7 +9,7 @@ public final class Class : R|kotlin/Any| {
     public final companion object Companion : R|kotlin/Any| {
         private constructor(): R|test/Class.Companion|
 
-        public final class Nested : R|kotlin/Any| {
+        @R|test/Anno|() public final class Nested : R|kotlin/Any| {
             public constructor(): R|test/Class.Companion.Nested|
 
         }

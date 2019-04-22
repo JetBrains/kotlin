@@ -1,17 +1,17 @@
-public final class Class : R|kotlin/Any| {
+@R|kotlin/Deprecated|(message = String(Class)) public final class Class : R|kotlin/Any| {
     public constructor(): R|test/Class|
 
-    public final companion object Companion : R|kotlin/Any| {
+    @R|kotlin/Deprecated|(message = String(companion object)) public final companion object Companion : R|kotlin/Any| {
         private constructor(): R|test/Class.Companion|
 
     }
 
-    public final inner class Inner : R|kotlin/Any| {
+    @R|kotlin/Deprecated|(message = String(Inner)) public final inner class Inner : R|kotlin/Any| {
         public constructor(): R|test/Class.Inner|
 
     }
 
-    public final class Nested : R|kotlin/Any| {
+    @R|kotlin/Deprecated|(message = String(Nested)) public final class Nested : R|kotlin/Any| {
         public constructor(): R|test/Class.Nested|
 
     }

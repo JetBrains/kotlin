@@ -22,7 +22,7 @@ public final annotation class CharAnno : R|kotlin/Annotation| {
 
 }
 
-public final class Class : R|kotlin/Any| {
+@R|test/IntAnno|(value = Int(42)) @R|test/ShortAnno|(value = Short(42)) @R|test/ByteAnno|(value = Byte(42)) @R|test/LongAnno|(value = Long(42)) @R|test/CharAnno|(value = Char(A)) @R|test/BooleanAnno|(value = Boolean(false)) @R|test/FloatAnno|(value = Float(3.14)) @R|test/DoubleAnno|(value = Double(3.14)) public final class Class : R|kotlin/Any| {
     public constructor(): R|test/Class|
 
 }

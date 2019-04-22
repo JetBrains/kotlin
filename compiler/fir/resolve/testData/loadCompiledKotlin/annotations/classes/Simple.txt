@@ -3,7 +3,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 
 }
 
-public final class X : R|kotlin/Any| {
+@R|test/Anno|() public final class X : R|kotlin/Any| {
     public constructor(): R|test/X|
 
 }

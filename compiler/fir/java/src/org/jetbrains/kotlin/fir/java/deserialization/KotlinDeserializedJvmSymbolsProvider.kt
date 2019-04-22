@@ -6,30 +6,39 @@
 package org.jetbrains.kotlin.fir.java.deserialization
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirNamedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.java.createConstant
 import org.jetbrains.kotlin.fir.java.topLevelName
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
-import org.jetbrains.kotlin.load.kotlin.findKotlinClass
+import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
@@ -37,6 +46,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -129,6 +139,140 @@ class KotlinDeserializedJvmSymbolsProvider(
         return JvmProtoBufUtil.readClassDataFrom(data, strings)
     }
 
+    private fun ConeClassifierSymbol?.toDefaultResolvedTypeRef(classId: ClassId): FirResolvedTypeRef {
+        return this?.let {
+            FirResolvedTypeRefImpl(
+                session, null, it.constructType(emptyList(), isNullable = false),
+                isMarkedNullable = false, annotations = emptyList()
+            )
+        } ?: FirErrorTypeRefImpl(session, null, "Symbol not found for $classId")
+
+    }
+
+    private fun loadAnnotation(
+        annotationClassId: ClassId, result: MutableList<FirAnnotationCall>
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+        val lookupTag = ConeClassLikeLookupTagImpl(annotationClassId)
+        val symbol = lookupTag.toSymbol(session)
+
+        return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+            private val argumentMap = mutableMapOf<Name, FirExpression>()
+
+            override fun visit(name: Name?, value: Any?) {
+                if (name != null) {
+                    argumentMap[name] = createConstant(value)
+                }
+            }
+
+            private fun ClassLiteralValue.toFirClassReferenceExpression(): FirClassReferenceExpression {
+                val literalLookupTag = ConeClassLikeLookupTagImpl(classId)
+                val literalSymbol = literalLookupTag.toSymbol(this@KotlinDeserializedJvmSymbolsProvider.session)
+                return FirClassReferenceExpressionImpl(
+                    this@KotlinDeserializedJvmSymbolsProvider.session, null,
+                    literalSymbol.toDefaultResolvedTypeRef(classId)
+                )
+            }
+
+            private fun ClassId.toEnumEntryReferenceExpression(name: Name): FirExpression {
+                return FirFunctionCallImpl(session, null).apply {
+                    val entryClassId = createNestedClassId(name)
+                    val entryLookupTag = ConeClassLikeLookupTagImpl(entryClassId)
+                    val entryClassSymbol = entryLookupTag.toSymbol(this@KotlinDeserializedJvmSymbolsProvider.session)
+                    val entryCallableSymbol =
+                        this@KotlinDeserializedJvmSymbolsProvider.session.service<FirSymbolProvider>().getClassDeclaredCallableSymbols(
+                            this@toEnumEntryReferenceExpression, name
+                        ).firstOrNull()
+
+                    this.calleeReference = when {
+                        entryClassSymbol != null && (entryClassSymbol as? FirClassSymbol)?.fir is FirEnumEntry -> {
+                            FirResolvedCallableReferenceImpl(
+                                this@KotlinDeserializedJvmSymbolsProvider.session, null, name, entryClassSymbol
+                            )
+                        }
+                        entryCallableSymbol != null -> {
+                            FirResolvedCallableReferenceImpl(
+                                this@KotlinDeserializedJvmSymbolsProvider.session, null, name, entryCallableSymbol
+                            )
+                        }
+                        else -> {
+                            FirErrorNamedReference(
+                                this@KotlinDeserializedJvmSymbolsProvider.session, null,
+                                errorReason = "Strange deserialized enum value: ${this@toEnumEntryReferenceExpression}.$name"
+                            )
+                        }
+                    }
+                }
+            }
+
+            override fun visitClassLiteral(name: Name, value: ClassLiteralValue) {
+                argumentMap[name] = FirGetClassCallImpl(session, null).apply {
+                    arguments += value.toFirClassReferenceExpression()
+                }
+            }
+
+            override fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name) {
+                argumentMap[name] = enumClassId.toEnumEntryReferenceExpression(enumEntryName)
+            }
+
+            override fun visitArray(name: Name): AnnotationArrayArgumentVisitor? {
+                return object : AnnotationArrayArgumentVisitor {
+                    private val elements = mutableListOf<FirExpression>()
+
+                    override fun visit(value: Any?) {
+                        elements.add(createConstant(value))
+                    }
+
+                    override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
+                        elements.add(enumClassId.toEnumEntryReferenceExpression(enumEntryName))
+                    }
+
+                    override fun visitClassLiteral(value: ClassLiteralValue) {
+                        elements.add(value.toFirClassReferenceExpression())
+                    }
+
+                    override fun visitEnd() {
+                        argumentMap[name] = FirArrayOfCallImpl(session, null).apply {
+                            arguments += elements
+                        }
+                    }
+                }
+            }
+
+            override fun visitAnnotation(name: Name, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                val list = mutableListOf<FirAnnotationCall>()
+                val visitor = loadAnnotation(classId, list)!!
+                return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                    override fun visitEnd() {
+                        visitor.visitEnd()
+                        argumentMap[name] = list.single()
+                    }
+                }
+            }
+
+            override fun visitEnd() {
+                result += FirAnnotationCallImpl(session, null, null, symbol.toDefaultResolvedTypeRef(annotationClassId)).apply {
+                    for ((name, expression) in argumentMap) {
+                        arguments += FirNamedArgumentExpressionImpl(
+                            this@KotlinDeserializedJvmSymbolsProvider.session, null, name, expression
+                        )
+                    }
+                }
+            }
+
+            private fun createConstant(value: Any?): FirExpression {
+                return value.createConstant(session)
+            }
+        }
+    }
+
+    private fun loadAnnotationIfNotSpecial(
+        annotationClassId: ClassId, result: MutableList<FirAnnotationCall>
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+        if (annotationClassId in AbstractBinaryClassAnnotationAndConstantLoader.SPECIAL_ANNOTATIONS) return null
+        return loadAnnotation(annotationClassId, result)
+    }
+
+
     private fun findAndDeserializeClass(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
@@ -158,6 +302,17 @@ class KotlinDeserializedJvmSymbolsProvider(
                     classId, classProto, symbol, nameResolver, session, parentContext,
                     this::findAndDeserializeClass
                 )
+                val annotations = mutableListOf<FirAnnotationCall>()
+                kotlinJvmBinaryClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
+                    override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                        return loadAnnotationIfNotSpecial(classId, annotations)
+                    }
+
+                    override fun visitEnd() {
+                    }
+
+                }, null)
+                (symbol.fir as FirAbstractAnnotatedElement).annotations += annotations
                 symbol
             }
         }

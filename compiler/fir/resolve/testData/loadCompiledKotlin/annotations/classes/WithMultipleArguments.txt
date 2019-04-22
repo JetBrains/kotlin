@@ -12,7 +12,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 
 }
 
-public final class Class : R|kotlin/Any| {
+@R|test/Anno|(int = Int(42), string = String(OK), double = Double(3.14)) public final class Class : R|kotlin/Any| {
     public constructor(): R|test/Class|
 
 }
