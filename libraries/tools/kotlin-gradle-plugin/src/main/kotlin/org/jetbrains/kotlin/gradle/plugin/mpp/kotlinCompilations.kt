@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.*
@@ -47,6 +48,9 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     @Suppress("UNCHECKED_CAST")
     override val compileKotlinTask: KotlinCompile<T>
         get() = (target.project.tasks.getByName(compileKotlinTaskName) as KotlinCompile<T>)
+
+    val compileKotlinTaskHolder: TaskHolder<KotlinCompile<T>>
+        get() = target.project.locateTask(compileKotlinTaskName)!!
 
     // Don't declare this property in the constructor to avoid NPE
     // when an overriding property of a subclass is accessed instead.
