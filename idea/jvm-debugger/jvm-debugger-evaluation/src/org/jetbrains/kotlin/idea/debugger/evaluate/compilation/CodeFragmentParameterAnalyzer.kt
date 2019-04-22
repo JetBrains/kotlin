@@ -75,6 +75,12 @@ class CodeFragmentParameterAnalyzer(
             }
 
             private fun processResolvedCall(resolvedCall: ResolvedCall<*>, expression: KtSimpleNameExpression) {
+                if (resolvedCall is VariableAsFunctionResolvedCall) {
+                    processResolvedCall(resolvedCall.functionCall, expression)
+                    processResolvedCall(resolvedCall.variableCall, expression)
+                    return
+                }
+
                 // Capture dispatch receiver for the extension callable
                 run {
                     val descriptor = resolvedCall.resultingDescriptor
@@ -84,7 +90,8 @@ class CodeFragmentParameterAnalyzer(
                         && extensionParameter != null && containingClass != null
                     ) {
                         if (containingClass.kind != ClassKind.OBJECT) {
-                            processDispatchReceiver(containingClass)
+                            val parameter = processDispatchReceiver(containingClass)
+                            checkBounds(descriptor, expression, parameter)
                         }
                     }
                 }
@@ -130,21 +137,16 @@ class CodeFragmentParameterAnalyzer(
 
                 // If a reference has receivers, we can calculate its value using them, no need to capture
                 if (!processed) {
-                    if (resolvedCall is VariableAsFunctionResolvedCall) {
-                        processResolvedCall(resolvedCall.functionCall, expression)
-                        processResolvedCall(resolvedCall.variableCall, expression)
-                    } else {
-                        processDescriptor(resolvedCall.resultingDescriptor, expression)
-                    }
+                    val descriptor = resolvedCall.resultingDescriptor
+                    val parameter = processDescriptor(descriptor, expression)
+                    checkBounds(descriptor, expression, parameter)
                 }
             }
 
-            private fun processDescriptor(descriptor: DeclarationDescriptor, expression: KtSimpleNameExpression) {
-                val parameter = processDebugLabel(descriptor)
+            private fun processDescriptor(descriptor: DeclarationDescriptor, expression: KtSimpleNameExpression): Smart? {
+                return processDebugLabel(descriptor)
                     ?: processCoroutineContextCall(descriptor)
                     ?: processSimpleNameExpression(descriptor, expression)
-
-                checkBounds(descriptor, expression, parameter)
             }
 
             override fun visitThisExpression(expression: KtThisExpression, data: Unit?): Void? {
