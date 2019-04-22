@@ -39,6 +39,12 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                             "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3",
                             "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3/arm-linux-gnueabihf")
 
+                KonanTarget.LINUX_ARM64 ->
+                    listOf("-target", targetArg!!,
+                            "--sysroot=$absoluteTargetSysRoot",
+                            "-I$absoluteTargetSysRoot/usr/include/c++/7",
+                            "-I$absoluteTargetSysRoot/usr/include/c++/7/aarch64-linux-gnu")
+
                 KonanTarget.LINUX_MIPS32 ->
                     listOf("-target", targetArg!!,
                             "--sysroot=$absoluteTargetSysRoot",
@@ -136,6 +142,13 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=32",
                         "-DKONAN_NO_UNALIGNED_ACCESS=1")
+
+            KonanTarget.LINUX_ARM64 ->
+                listOf("-DUSE_GCC_UNWIND=1",
+                        "-DKONAN_LINUX=1",
+                        "-DKONAN_ARM64=1",
+                        "-DUSE_ELF_SYMBOLS=1",
+                        "-DELFSIZE=64")
 
             KonanTarget.LINUX_MIPS32 ->
                 listOf("-DUSE_GCC_UNWIND=1",

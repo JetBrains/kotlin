@@ -53,6 +53,7 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
     object MINGW_X86 :      KonanTarget( "mingw_x86",       Family.MINGW,   Architecture.X86)
     object MINGW_X64 :      KonanTarget( "mingw_x64",       Family.MINGW,   Architecture.X64)
     object MACOS_X64 :      KonanTarget( "macos_x64",       Family.OSX,     Architecture.X64)
+    object LINUX_ARM64 :    KonanTarget( "linux_arm64",     Family.LINUX,   Architecture.ARM64)
     object LINUX_ARM32_HFP :KonanTarget( "linux_arm32_hfp", Family.LINUX,   Architecture.ARM32)
     object LINUX_MIPS32 :   KonanTarget( "linux_mips32",    Family.LINUX,   Architecture.MIPS32)
     object LINUX_MIPSEL32 : KonanTarget( "linux_mipsel32",  Family.LINUX,   Architecture.MIPSEL32)
@@ -135,7 +136,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
     private val predefinedTargets = listOf(
             ANDROID_ARM32, ANDROID_ARM64,
             IOS_ARM32, IOS_ARM64, IOS_X64,
-            LINUX_X64, LINUX_ARM32_HFP, LINUX_MIPS32, LINUX_MIPSEL32,
+            LINUX_X64, LINUX_ARM32_HFP, LINUX_ARM64, LINUX_MIPS32, LINUX_MIPSEL32,
             MINGW_X64, MINGW_X86,
             MACOS_X64,
             WASM32)
@@ -177,6 +178,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
         LINUX_X64 to setOf(
             LINUX_X64,
             LINUX_ARM32_HFP,
+            LINUX_ARM64,
             LINUX_MIPS32,
             LINUX_MIPSEL32,
             ANDROID_ARM32,
@@ -188,6 +190,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             MINGW_X86,
             LINUX_X64,
             LINUX_ARM32_HFP,
+            LINUX_ARM64,
             ANDROID_ARM32,
             // TODO: toolchain to be fixed for that to work.
             // ANDROID_ARM64,
@@ -200,6 +203,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             IOS_X64,
             LINUX_X64,
             LINUX_ARM32_HFP,
+            LINUX_ARM64,
             ANDROID_ARM32,
             ANDROID_ARM64,
             WASM32
