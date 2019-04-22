@@ -78,7 +78,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   boolean hasServices() {
-    for (ServiceViewContributor<?> contributor : ServiceModel.EP_NAME.getExtensions()) {
+    for (ServiceViewContributor<?> contributor : ServiceModel.getContributors()) {
       if (!contributor.getServices(myProject).isEmpty()) return true;
     }
     return false;
@@ -207,7 +207,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   private void loadViews() {
     myModel.getInvoker().invokeLater(() -> {
       Map<String, ServiceViewContributor> contributors = FactoryMap.create(className -> {
-        for (ServiceViewContributor<?> contributor : ServiceModel.EP_NAME.getExtensions()) {
+        for (ServiceViewContributor<?> contributor : ServiceModel.getContributors()) {
           if (className.equals(contributor.getClass().getName())) {
             return contributor;
           }
@@ -277,7 +277,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   private void registerActivateByContributorActions() {
-    for (ServiceViewContributor contributor : ServiceModel.EP_NAME.getExtensions()) {
+    for (ServiceViewContributor contributor : ServiceModel.getContributors()) {
       ActionManager actionManager = ActionManager.getInstance();
       String actionId = getActivateContributorActionId(contributor);
       if (actionId == null) continue;
@@ -581,7 +581,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   void splitByType() {
     myModel.getInvoker().invokeLater(() -> {
       List<ServiceViewContributor> contributors = new ArrayList<>();
-      for (ServiceViewContributor contributor : ServiceModel.EP_NAME.getExtensions()) {
+      for (ServiceViewContributor contributor : ServiceModel.getContributors()) {
         if (!contributor.getServices(myProject).isEmpty()) {
           contributors.add(contributor);
         }
@@ -778,7 +778,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     }
 
     private boolean select(@NotNull FileEditor editor) {
-      for (ServiceViewContributor extension : ServiceModel.EP_NAME.getExtensions()) {
+      for (ServiceViewContributor extension : ServiceModel.getContributors()) {
         if (!(extension instanceof ServiceViewFileEditorContributor)) continue;
         if (selectContributorNode(editor, (ServiceViewFileEditorContributor)extension, extension.getClass())) return true;
       }

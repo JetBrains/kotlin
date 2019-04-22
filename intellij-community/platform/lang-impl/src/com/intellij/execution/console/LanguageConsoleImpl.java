@@ -370,6 +370,10 @@ public class LanguageConsoleImpl extends ConsoleViewImpl implements LanguageCons
     EditorFactory editorFactory = EditorFactory.getInstance();
     editorFactory.releaseEditor(myHistoryViewer);
 
+    closeFile();
+  }
+
+  protected void closeFile() {
     if (getProject().isOpen()) {
       FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
       if (editorManager.isFileOpen(getVirtualFile())) {

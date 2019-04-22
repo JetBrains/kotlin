@@ -59,7 +59,7 @@ import java.util.*;
 /**
  * @author gregsh
  */
-public class ConsoleHistoryController {
+public class ConsoleHistoryController implements Disposable {
   private static final Logger LOG = Logger.getInstance("com.intellij.execution.console.ConsoleHistoryController");
 
   private final static Map<LanguageConsoleView, ConsoleHistoryController> ourControllers =
@@ -92,6 +92,10 @@ public class ConsoleHistoryController {
   @TestOnly
   public void setModel(@NotNull ConsoleHistoryModel model){
     myHelper = new ModelHelper(myHelper.myRootType, myHelper.myId, model);
+  }
+
+  @Override
+  public void dispose() {
   }
 
   //@Nullable
@@ -154,7 +158,8 @@ public class ConsoleHistoryController {
     ConsoleHistoryController original = ourControllers.put(myConsole, this);
     LOG.assertTrue(original == null,
                    "History controller already installed for: " + myConsole.getTitle());
-    Disposer.register(myConsole, new Disposable() {
+    Disposer.register(myConsole, this);
+    Disposer.register(this, new Disposable() {
       @Override
       public void dispose() {
         ConsoleHistoryController controller = getController(myConsole);
