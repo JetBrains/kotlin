@@ -1,18 +1,18 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.dsl
 
+import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.RunAll
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression
-import org.jetbrains.plugins.groovy.lang.resolve.api.GroovyProperty
-import org.jetbrains.plugins.groovy.util.ResolveTest
+import org.jetbrains.plugins.gradle.service.resolve.GradleTaskProperty
+import org.jetbrains.plugins.groovy.util.ExpressionTest
 import org.junit.Test
 
 import static org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.*
 
 @CompileStatic
-class GradleTasksTest extends GradleHighlightingBaseTest implements ResolveTest {
+class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTest {
 
   @Override
   protected List<String> getParentCalls() {
@@ -24,6 +24,8 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ResolveTest 
     importProject("apply plugin:'java'")
     new RunAll().append {
       'task via script'()
+    } append {
+      'task container vs task'()
     } append {
       'task via TaskContainer'()
     } append {
@@ -38,6 +40,12 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ResolveTest 
   void 'task via script'() {
     doTest('<caret>javadoc') {
       testTask('javadoc', GRADLE_API_TASKS_JAVADOC_JAVADOC)
+    }
+  }
+
+  void 'task container vs task'() {
+    doTest('<caret>tasks') {
+      referenceExpressionTest(PsiMethod, GRADLE_API_TASK_CONTAINER)
     }
   }
 
@@ -66,11 +74,7 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ResolveTest 
   }
 
   private void testTask(String name, String type) {
-    def expression = elementUnderCaret(GrReferenceExpression)
-    def results = expression.resolve(false)
-    assert results.size() == 1
-    def property = assertInstanceOf(results[0].element, GroovyProperty)
+    def property = referenceExpressionTest(GradleTaskProperty, type)
     assert property.name == name
-    assert expression.type.equalsToText(type)
   }
 }
