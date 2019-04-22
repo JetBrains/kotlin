@@ -76,6 +76,28 @@ interface JKMethodSymbol : JKNamedSymbol {
     val returnType: JKType?
 }
 
+val JKMethodSymbol.parameterNames: List<String>?
+    get() {
+        return when (this) {
+            is JKMultiverseFunctionSymbol -> target.valueParameters.map { it.name ?: return null }
+            is JKMultiverseMethodSymbol -> target.parameters.map { it.name ?: return null }
+            is JKUniverseMethodSymbol -> target.parameters.map { it.name.value }
+            is JKUnresolvedSymbol -> null
+            else -> null
+        }
+    }
+
+
+val JKMethodSymbol.isStatic: Boolean
+    get() = when (this) {
+        is JKMultiverseFunctionSymbol -> target.parent is KtObjectDeclaration
+        is JKMultiverseMethodSymbol -> target.hasModifierProperty(PsiModifier.STATIC)
+        is JKUniverseMethodSymbol -> target.parent?.parent?.safeAs<JKClass>()?.classKind == JKClass.ClassKind.COMPANION
+        is JKUnresolvedSymbol -> false
+        else -> false
+    }
+
+
 fun JKMethodSymbol.parameterTypesWithUnfoldedVarargs(): Sequence<JKType>? {
     val realParameterTypes = parameterTypes ?: return null
     if (realParameterTypes.isEmpty()) return emptySequence()

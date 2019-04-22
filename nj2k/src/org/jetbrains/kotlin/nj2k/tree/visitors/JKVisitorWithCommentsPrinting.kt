@@ -278,6 +278,14 @@ interface JKVisitorWithCommentsPrinting : JKVisitorVoid {
 
     fun visitExpressionRaw(expression: JKExpression) = visitTreeElementRaw(expression)
 
+    override fun visitMethodReferenceExpression(methodReferenceExpression: JKMethodReferenceExpression) {
+        printLeftNonCodeElements(methodReferenceExpression)
+        visitMethodReferenceExpressionRaw(methodReferenceExpression)
+        printRightNonCodeElements(methodReferenceExpression)
+    }
+
+    fun visitMethodReferenceExpressionRaw(methodReferenceExpression: JKMethodReferenceExpression) = visitExpressionRaw(methodReferenceExpression)
+
     override fun visitExpressionStatement(expressionStatement: JKExpressionStatement) {
         printLeftNonCodeElements(expressionStatement)
         visitExpressionStatementRaw(expressionStatement)

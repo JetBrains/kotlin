@@ -597,3 +597,11 @@ fun JKAnnotation.isVarargsArgument(index: Int): Boolean {
 fun JKExpression.asStatement(): JKExpressionStatement =
     JKExpressionStatementImpl(this)
 
+inline fun <T : JKExpression> T.nullIfStubExpression(): T? =
+    if (this is JKStubExpression) null
+    else this
+
+inline fun JKExpression.qualified(qualifier: JKExpression?) =
+    if (qualifier != null && qualifier !is JKStubExpression) {
+        JKQualifiedExpressionImpl(qualifier, JKJavaQualifierImpl.DOT, this)
+    } else this

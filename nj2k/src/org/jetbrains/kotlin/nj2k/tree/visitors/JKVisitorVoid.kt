@@ -71,6 +71,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitNameIdentifier(nameIdentifier: JKNameIdentifier, data: Nothing?) = visitNameIdentifier(nameIdentifier)
     fun visitExpression(expression: JKExpression) = visitTreeElement(expression, null)
     override fun visitExpression(expression: JKExpression, data: Nothing?) = visitExpression(expression)
+    fun visitMethodReferenceExpression(methodReferenceExpression: JKMethodReferenceExpression) = visitExpression(methodReferenceExpression, null)
+    override fun visitMethodReferenceExpression(methodReferenceExpression: JKMethodReferenceExpression, data: Nothing?) = visitMethodReferenceExpression(methodReferenceExpression)
     fun visitExpressionStatement(expressionStatement: JKExpressionStatement) = visitStatement(expressionStatement, null)
     override fun visitExpressionStatement(expressionStatement: JKExpressionStatement, data: Nothing?) = visitExpressionStatement(expressionStatement)
     fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement) = visitStatement(declarationStatement, null)

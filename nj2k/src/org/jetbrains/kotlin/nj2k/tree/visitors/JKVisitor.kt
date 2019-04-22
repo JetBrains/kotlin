@@ -37,6 +37,7 @@ interface JKVisitor<out R, in D> {
     fun visitIdentifier(identifier: JKIdentifier, data: D): R = visitTreeElement(identifier, data)
     fun visitNameIdentifier(nameIdentifier: JKNameIdentifier, data: D): R = visitIdentifier(nameIdentifier, data)
     fun visitExpression(expression: JKExpression, data: D): R = visitTreeElement(expression, data)
+    fun visitMethodReferenceExpression(methodReferenceExpression: JKMethodReferenceExpression, data: D): R = visitExpression(methodReferenceExpression, data)
     fun visitExpressionStatement(expressionStatement: JKExpressionStatement, data: D): R = visitStatement(expressionStatement, data)
     fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement, data: D): R = visitStatement(declarationStatement, data)
     fun visitOperatorExpression(operatorExpression: JKOperatorExpression, data: D): R = visitExpression(operatorExpression, data)

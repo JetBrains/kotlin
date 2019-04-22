@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.nj2k
 
+import com.intellij.codeInsight.daemon.impl.quickfix.AddTypeArgumentsFix
 import com.intellij.lang.jvm.JvmAnnotatedElement
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
@@ -27,12 +28,11 @@ import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiLabeledStatementImpl
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
+import com.intellij.psi.infos.MethodCandidateInfo
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -265,21 +264,32 @@ class JavaToJKTreeBuilder constructor(
                         else -> JKBlockStatementImpl(JKBodyStubImpl)
                     }
                 },
-                with(declarationMapper) { parameterList.parameters.map { it.toJK() } }
+                with(declarationMapper) { parameterList.parameters.map { it.toJK() } },
+                functionalType()
             ).also {
                 it.assignNonCodeElements(this)
             }
         }
 
-        private fun JKExpression.qualified(qualifier: JKExpression?) =
-            if (qualifier != null && qualifier !is JKStubExpression) {
-                JKQualifiedExpressionImpl(qualifier, JKJavaQualifierImpl.DOT, this)
-            } else this
+        private fun PsiMethodCallExpression.getExplicitTypeArguments(): PsiReferenceParameterList {
+            if (typeArguments.isNotEmpty()) return typeArgumentList
+
+            val resolveResult = resolveMethodGenerics()
+            if (resolveResult is MethodCandidateInfo && resolveResult.isApplicable) {
+                val method = resolveResult.element
+                if (method.isConstructor || !method.hasTypeParameters()) return typeArgumentList
+            }
+
+            return AddTypeArgumentsFix.addTypeArguments(this, null)
+                ?.safeAs<PsiMethodCallExpression>()
+                ?.typeArgumentList
+                ?: typeArgumentList
+        }
 
         //TODO mostly copied from old j2k, refactor
         fun PsiMethodCallExpression.toJK(): JKExpression {
             val arguments = argumentList
-            val typeArguments = typeArgumentList.toJK()
+            val typeArguments = getExplicitTypeArguments().toJK()
             val qualifier = methodExpression.qualifierExpression?.toJK()
             val target = methodExpression.resolve()
             val symbol = target?.let {
@@ -367,7 +377,30 @@ class JavaToJKTreeBuilder constructor(
             }
         }
 
+        fun PsiFunctionalExpression.functionalType(): JKTypeElement =
+            functionalInterfaceType?.toJK(symbolProvider)?.takeIf { type ->
+                type.safeAs<JKClassType>()?.classReference is JKMultiverseClassSymbol
+            }?.asTypeElement() ?: JKTypeElementImpl(JKNoTypeImpl)
+
+        fun PsiMethodReferenceExpression.toJK(): JKMethodReferenceExpression {
+            val symbol = symbolProvider.provideSymbol<JKNamedSymbol>(this).let { symbol ->
+                when {
+                    symbol.isUnresolved() && isConstructor -> JKUnresolvedClassSymbol(qualifier?.text ?: text)
+                    symbol.isUnresolved() && !isConstructor -> JKUnresolvedMethod(referenceName ?: text)
+                    else -> symbol
+                }
+            }
+
+            return JKMethodReferenceExpressionImpl(
+                qualifierExpression?.toJK() ?: JKStubExpressionImpl(),
+                symbol,
+                functionalType(),
+                isConstructor
+            )
+        }
+
         fun PsiReferenceExpression.toJK(): JKExpression {
+            if (this is PsiMethodReferenceExpression) return toJK()
             val target = resolve()
             if (target is KtLightClassForFacade
                 || target is KtLightClassForDecompiledDeclaration

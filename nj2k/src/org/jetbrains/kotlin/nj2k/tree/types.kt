@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.kotlinTypeByName
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClass
@@ -68,6 +68,7 @@ fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
         is JKLambdaExpression -> returnType.type
         is JKLabeledStatement ->
             statement.safeAs<JKExpressionStatement>()?.expression?.type(symbolProvider)
+        is JKMethodReferenceExpression -> JKNoTypeImpl //TODO
         else -> TODO(this::class.java.toString())
     }
 
