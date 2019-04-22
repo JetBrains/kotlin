@@ -422,8 +422,7 @@ val copyCompilerToIdeaPlugin by task<Copy> {
 
 val ideaPlugin by task<Task> {
     dependsOn(copyCompilerToIdeaPlugin)
-    val childIdeaPluginTasks = getTasksByName("ideaPlugin", true) - this@task
-    dependsOn(childIdeaPluginTasks)
+    dependsOn(":prepare:idea-plugin:ideaPlugin")
 }
 
 tasks {
