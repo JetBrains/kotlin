@@ -49,6 +49,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         return this.isError
     }
 
+    override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return ErrorUtils.isUninferredParameter(this)
+    }
+
     override fun SimpleTypeMarker.isStubType(): Boolean {
         require(this is SimpleType, this::errorMessage)
         return this is StubType

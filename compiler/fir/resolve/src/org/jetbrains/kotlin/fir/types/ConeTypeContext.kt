@@ -63,6 +63,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         return this is ConeClassErrorType || this is ConeKotlinErrorType || this.typeConstructor() is ErrorTypeConstructor
     }
 
+    override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
+        assert(this is ConeKotlinType)
+        return false // TODO
+    }
+
     override fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker? {
         assert(this is ConeKotlinType)
         return null // TODO

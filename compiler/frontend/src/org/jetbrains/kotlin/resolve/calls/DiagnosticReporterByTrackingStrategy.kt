@@ -229,6 +229,7 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, constraintError.upperKotlinType, constraintError.lowerKotlinType))
                 }
             }
+
             CapturedTypeFromSubtyping::class.java -> {
                 val capturedError = diagnostic as CapturedTypeFromSubtyping
                 val position = capturedError.position
@@ -248,6 +249,9 @@ class DiagnosticReporterByTrackingStrategy(
             }
 
             NotEnoughInformationForTypeParameter::class.java -> {
+                if (allDiagnostics.any {it is ConstrainingTypeIsError || it is NewConstraintError || it is WrongCountOfTypeArguments})
+                    return
+
                 val error = diagnostic as NotEnoughInformationForTypeParameter
                 val call = error.resolvedAtom.atom?.safeAs<PSIKotlinCall>()?.psiCall ?: call
                 val expression = call.calleeExpression ?: return
@@ -256,7 +260,7 @@ class DiagnosticReporterByTrackingStrategy(
                     is TypeVariableForLambdaReturnType -> "return type of lambda"
                     else -> error("Unsupported type variable: $typeVariable")
                 }
-                trace.report(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(expression, typeVariableName))
+                trace.reportDiagnosticOnce(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(expression, typeVariableName))
             }
         }
     }

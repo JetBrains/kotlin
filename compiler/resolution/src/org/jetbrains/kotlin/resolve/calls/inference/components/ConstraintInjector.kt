@@ -166,6 +166,11 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
                     ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
 
             var targetType = type
+            if (targetType.isUninferredParameter()) {
+                // there already should be an error, so there is no point in reporting one more
+                return
+            }
+
             if (targetType.isError()) {
                 c.addError(ConstrainingTypeIsError(typeVariable, targetType, position))
                 return

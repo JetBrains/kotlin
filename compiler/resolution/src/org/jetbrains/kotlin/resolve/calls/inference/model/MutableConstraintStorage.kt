@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -38,16 +35,22 @@ class MutableVariableWithConstraints(
     fun addConstraint(constraint: Constraint): Constraint? {
         val previousConstraintWithSameType = constraints.filter { it.typeHashCode == constraint.typeHashCode && it.type == constraint.type }
 
-        if (previousConstraintWithSameType.any { newConstraintIsUseless(it.kind, constraint.kind) }) {
+        if (previousConstraintWithSameType.any { previous -> newConstraintIsUseless(previous, constraint) })
             return null
+
+        val addAsEqualityConstraint = previousConstraintWithSameType.any { previous ->
+            when (previous.kind) {
+                ConstraintKind.LOWER -> constraint.kind.isUpper()
+                ConstraintKind.UPPER -> constraint.kind.isLower()
+                ConstraintKind.EQUALITY -> true
+            }
         }
 
-        val actualConstraint = if (previousConstraintWithSameType.isNotEmpty()) {
-            // i.e. previous is LOWER and new is UPPER or opposite situation
+        val actualConstraint = if (addAsEqualityConstraint)
             Constraint(ConstraintKind.EQUALITY, constraint.type, constraint.position, constraint.typeHashCode)
-        } else {
+        else
             constraint
-        }
+
         mutableConstraints.add(actualConstraint)
         simplifiedConstraints = null
         return actualConstraint
@@ -66,18 +69,47 @@ class MutableVariableWithConstraints(
         simplifiedConstraints = null
     }
 
-    private fun newConstraintIsUseless(oldKind: ConstraintKind, newKind: ConstraintKind) =
-        when (oldKind) {
+    private fun newConstraintIsUseless(old: Constraint, new: Constraint): Boolean {
+        // Constraints from declared upper bound are quite special -- they aren't considered as a proper ones
+        // In other words, user-defined constraints have "higher" priority and here we're trying not to loose them
+        if (old.position.from is DeclaredUpperBoundConstraintPosition && new.position.from !is DeclaredUpperBoundConstraintPosition)
+            return false
+
+        return when (old.kind) {
             ConstraintKind.EQUALITY -> true
-            ConstraintKind.LOWER -> newKind == ConstraintKind.LOWER
-            ConstraintKind.UPPER -> newKind == ConstraintKind.UPPER
+            ConstraintKind.LOWER -> new.kind.isLower()
+            ConstraintKind.UPPER -> new.kind.isUpper()
         }
+    }
 
     private fun simplifyConstraints(): List<Constraint> {
-        val equalityConstraints = mutableConstraints
+        val distinctConstraints = removeDuplicatesFromDeclaredUpperBoundConstraints(mutableConstraints)
+
+        val equalityConstraints = distinctConstraints
             .filter { it.kind == ConstraintKind.EQUALITY }
             .groupBy { it.typeHashCode }
-        return mutableConstraints.filter { isUsefulConstraint(it, equalityConstraints) }
+        return distinctConstraints.filter { isUsefulConstraint(it, equalityConstraints) }
+    }
+
+    private fun removeDuplicatesFromDeclaredUpperBoundConstraints(constraints: List<Constraint>): MutableList<Constraint> {
+        val currentConstraints = constraints.toMutableList()
+        val iterator = currentConstraints.iterator()
+        while (iterator.hasNext()) {
+            val potentialDuplicate = iterator.next()
+
+            if (potentialDuplicate.position.from !is DeclaredUpperBoundConstraintPosition) continue
+            val hasDuplicate = currentConstraints.any { other ->
+                potentialDuplicate !== other &&
+                        potentialDuplicate.typeHashCode == other.typeHashCode &&
+                        potentialDuplicate.type == other.type &&
+                        potentialDuplicate.kind == other.kind
+            }
+
+            if (hasDuplicate)
+                iterator.remove()
+        }
+
+        return currentConstraints
     }
 
     private fun isUsefulConstraint(constraint: Constraint, equalityConstraints: Map<Int, List<Constraint>>): Boolean {

@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -84,11 +86,11 @@ class KotlinConstraintSystemCompleter(
             if (variableForFixation.hasProperConstraint || completionMode == ConstraintSystemCompletionMode.FULL) {
                 val variableWithConstraints = c.notFixedTypeVariables.getValue(variableForFixation.variable)
 
-                fixVariable(c, topLevelType, variableWithConstraints, postponedKtPrimitives)
+                if (variableForFixation.hasProperConstraint)
+                    fixVariable(c, topLevelType, variableWithConstraints, postponedKtPrimitives)
+                else
+                    processVariableWhenNotEnoughInformation(c, variableWithConstraints, topLevelAtoms)
 
-                if (!variableForFixation.hasProperConstraint) {
-                    c.addError(NotEnoughInformationForTypeParameter(variableWithConstraints.typeVariable, topLevelAtoms.first()))
-                }
                 continue
             }
 
@@ -217,5 +219,52 @@ class KotlinConstraintSystemCompleter(
     ) {
         val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
         c.fixVariable(variableWithConstraints.typeVariable, resultType)
+    }
+
+    private fun processVariableWhenNotEnoughInformation(
+        c: Context,
+        variableWithConstraints: VariableWithConstraints,
+        topLevelAtoms: List<ResolvedAtom>
+    ) {
+        val typeVariable = variableWithConstraints.typeVariable
+
+        val resolvedAtom = findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
+        if (resolvedAtom != null) {
+            c.addError(NotEnoughInformationForTypeParameter(typeVariable, resolvedAtom))
+        }
+
+        val resultErrorType = if (typeVariable is TypeVariableFromCallableDescriptor)
+            ErrorUtils.createUninferredParameterType(typeVariable.originalTypeParameter)
+        else
+            ErrorUtils.createErrorType("Cannot infer type variable $typeVariable")
+
+        c.fixVariable(typeVariable, resultErrorType)
+    }
+
+    private fun findResolvedAtomBy(typeVariable: TypeVariableMarker, topLevelAtoms: List<ResolvedAtom>): ResolvedAtom? {
+        fun ResolvedAtom.check(): ResolvedAtom? {
+            val suitableCall = when (this) {
+                is ResolvedCallAtom -> typeVariable in substitutor.freshVariables
+                is ResolvedCallableReferenceAtom -> candidate?.freshSubstitutor?.freshVariables?.let { typeVariable in it } ?: false
+                is ResolvedLambdaAtom -> typeVariable == typeVariableForLambdaReturnType
+                else -> false
+            }
+
+            if (suitableCall) {
+                return this
+            }
+
+            subResolvedAtoms.forEach { subResolvedAtom ->
+                subResolvedAtom.check()?.let { result -> return@check result }
+            }
+
+            return null
+        }
+
+        for (topLevelAtom in topLevelAtoms) {
+            topLevelAtom.check()?.let { return it }
+        }
+
+        return null
     }
 }
