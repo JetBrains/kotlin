@@ -235,13 +235,8 @@ object NewJ2KPostProcessingRegistrar {
                 action.invoke(element.project, null, element.containingFile)
             },
 
-            registerDiagnosticBasedProcessing(Errors.SMARTCAST_IMPOSSIBLE) { element: PsiElement, diagnostic ->
-                val action =
-                    SmartCastImpossibleExclExclFixFactory.createActions(diagnostic).singleOrNull()
-                        ?: return@registerDiagnosticBasedProcessing
-                action.invoke(element.project, null, element.containingFile)
-            },
-
+            registerDiagnosticBasedProcessingWithFixFactory(MissingIteratorExclExclFixFactory, Errors.ITERATOR_ON_NULLABLE),
+            registerDiagnosticBasedProcessingWithFixFactory(SmartCastImpossibleExclExclFixFactory, Errors.SMARTCAST_IMPOSSIBLE),
             registerDiagnosticBasedProcessing(Errors.TYPE_MISMATCH) { element: PsiElement, diagnostic ->
                 val diagnosticWithParameters = diagnostic as? DiagnosticWithParameters2<KtExpression, KotlinType, KotlinType>
                     ?: return@registerDiagnosticBasedProcessing
@@ -256,19 +251,14 @@ object NewJ2KPostProcessingRegistrar {
                 }
             },
 
-            registerDiagnosticBasedProcessing(Errors.CAST_NEVER_SUCCEEDS) { element: KtSimpleNameExpression, diagnostic ->
-                val action =
-                    ReplacePrimitiveCastWithNumberConversionFix.createActionsForAllProblems(listOf(diagnostic)).singleOrNull()
-                        ?: return@registerDiagnosticBasedProcessing
-                action.invoke(element.project, null, element.containingKtFile)
-            },
-            registerDiagnosticBasedProcessing(Errors.RETURN_TYPE_MISMATCH_ON_OVERRIDE) { element: KtNamedDeclaration, diagnostic ->
-                val action =
-                    ChangeCallableReturnTypeFix.ReturnTypeMismatchOnOverrideFactory
-                        .createActionsForAllProblems(listOf(diagnostic)).singleOrNull()
-                        ?: return@registerDiagnosticBasedProcessing
-                action.invoke(element.project, null, element.containingKtFile)
-            },
+            registerDiagnosticBasedProcessingWithFixFactory(
+                ReplacePrimitiveCastWithNumberConversionFix.Factory,
+                Errors.CAST_NEVER_SUCCEEDS
+            ),
+            registerDiagnosticBasedProcessingWithFixFactory(
+                ChangeCallableReturnTypeFix.ReturnTypeMismatchOnOverrideFactory,
+                Errors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
+            ),
 
             RemoveRedundantTypeQualifierProcessing(),
             RemoveRedundantExpressionQualifierProcessing(),
@@ -287,34 +277,18 @@ object NewJ2KPostProcessingRegistrar {
                 }
             },
 
-            registerDiagnosticBasedProcessing<KtTypeProjection>(Errors.REDUNDANT_PROJECTION) { _, diagnostic ->
-                val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(diagnostic).single() as RemoveModifierFix
-                fix.invoke()
-            },
-
-            registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.VIRTUAL_MEMBER_HIDDEN) { element, diagnostic ->
-                val action = AddModifierFix
-                    .createFactory(KtTokens.OVERRIDE_KEYWORD)
-                    .createActions(diagnostic)
-                    .singleOrNull() ?: return@registerDiagnosticBasedProcessing
-                action.invoke(element.project, null, element.containingKtFile)
-            },
-
-            registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS) { _, diagnostic ->
-                val fix =
-                    RemoveModifierFix
-                        .createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD)
-                        .createActions(diagnostic).single() as RemoveModifierFix
-                fix.invoke()
-            },
-            registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_OBJECT) { _, diagnostic ->
-                val fix =
-                    RemoveModifierFix
-                        .createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD)
-                        .createActions(diagnostic).single() as RemoveModifierFix
-                fix.invoke()
-            },
-
+            registerDiagnosticBasedProcessingWithFixFactory(
+                RemoveModifierFix.createRemoveProjectionFactory(true),
+                Errors.REDUNDANT_PROJECTION
+            ),
+            registerDiagnosticBasedProcessingWithFixFactory(
+                AddModifierFix.createFactory(KtTokens.OVERRIDE_KEYWORD),
+                Errors.VIRTUAL_MEMBER_HIDDEN
+            ),
+            registerDiagnosticBasedProcessingWithFixFactory(
+                RemoveModifierFix.createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD),
+                Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, Errors.NON_FINAL_MEMBER_IN_OBJECT
+            ),
             registerDiagnosticBasedProcessingFactory(
                 Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
             ) { element: KtSimpleNameExpression, _: Diagnostic ->
@@ -468,6 +442,15 @@ object NewJ2KPostProcessingRegistrar {
             }
         }
     }
+
+    private inline fun registerDiagnosticBasedProcessingWithFixFactory(
+        fixFactory: KotlinIntentionActionsFactory,
+        vararg diagnosticFactory: DiagnosticFactory<*>
+    ): NewJ2kPostProcessing = registerDiagnosticBasedProcessing(*diagnosticFactory) { element: PsiElement, diagnostic: Diagnostic ->
+        fixFactory.createActions(diagnostic).singleOrNull()
+            ?.invoke(element.project, null, element.containingFile)
+    }
+
 
 
     private inline fun <reified TElement : PsiElement> registerDiagnosticBasedProcessing(
