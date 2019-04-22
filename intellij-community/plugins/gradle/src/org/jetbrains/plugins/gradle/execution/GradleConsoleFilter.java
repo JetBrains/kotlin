@@ -36,13 +36,14 @@ import java.io.File;
  * @author Vladislav.Soroka
  */
 public class GradleConsoleFilter implements Filter {
+  @Nullable
   private final Project myProject;
   private static final TextAttributes HYPERLINK_ATTRIBUTES =
     EditorColorsManager.getInstance().getGlobalScheme().getAttributes(CodeInsightColors.HYPERLINK_ATTRIBUTES);
   private String myFilteredFileName;
   private int myFilteredLineNumber;
 
-  public GradleConsoleFilter(Project project) {
+  public GradleConsoleFilter(@Nullable Project project) {
     myProject = project;
   }
 
@@ -104,9 +105,12 @@ public class GradleConsoleFilter implements Filter {
 
     int textStartOffset = entireLength - line.length() + filePrefix.length() + filePrefixIndex;
     int highlightEndOffset = textStartOffset + fileName.length();
-    OpenFileHyperlinkInfo info = new OpenFileHyperlinkInfo(myProject, file, Math.max(lineNumber - 1, 0));
+    OpenFileHyperlinkInfo info = null;
+    if (myProject != null) {
+      info = new OpenFileHyperlinkInfo(myProject, file, Math.max(lineNumber - 1, 0));
+    }
     TextAttributes attributes = HYPERLINK_ATTRIBUTES.clone();
-    if (!ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(file)) {
+    if (myProject != null && !ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(file)) {
       Color color = UIUtil.getInactiveTextColor();
       attributes.setForegroundColor(color);
       attributes.setEffectColor(color);

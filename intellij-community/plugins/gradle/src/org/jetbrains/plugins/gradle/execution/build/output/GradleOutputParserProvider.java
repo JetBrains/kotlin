@@ -24,10 +24,10 @@ public class GradleOutputParserProvider implements ExternalSystemOutputParserPro
   @Override
   public List<BuildOutputParser> getBuildOutputParsers(ExternalSystemTask task) {
     if (task.getId().getType().equals(ExternalSystemTaskType.RESOLVE_PROJECT)) {
-      return ContainerUtil.list(new GradleSyncOutputParser());
+      return ContainerUtil.list(new GradleSyncOutputParser(), new GradleBuildScriptErrorParser());
     }
     else {
-      return Collections.emptyList();
+      return ContainerUtil.list(new GradleBuildScriptErrorParser());
     }
   }
 }
