@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsSingleTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 
 open class KotlinJsTargetPreset(
@@ -42,4 +43,6 @@ class KotlinJsSingleTargetPreset(
 
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? = null
+
+    override fun createKotlinTargetConfigurator() = KotlinJsSingleTargetConfigurator(kotlinPluginVersion)
 }

@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 
-class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
-        KotlinTargetConfigurator<KotlinJsCompilation>(true, true, kotlinPluginVersion) {
+open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
+    KotlinTargetConfigurator<KotlinJsCompilation>(true, true, kotlinPluginVersion) {
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
@@ -35,20 +37,42 @@ class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
     }
 
     override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        val project = target.project
-        val npmProject = NpmProjectLayout[project]
-
         target.compilations.all { compilation ->
             if (isTestCompilation(compilation)) {
-                KotlinJsCompilationTestsConfigurator(compilation).configure()
-            } else {
-                KotlinWebpack.configure(compilation)
+                newTestsConfigurator(compilation).configure()
             }
         }
     }
+
+    internal open fun newTestsConfigurator(compilation: KotlinJsCompilation) =
+        KotlinJsCompilationTestsConfigurator(compilation)
 
     companion object {
         internal fun isTestCompilation(it: KotlinJsCompilation) =
             it.name == KotlinCompilation.TEST_COMPILATION_NAME
     }
+}
+
+class KotlinJsSingleTargetConfigurator(kotlinPluginVersion: String) :
+    KotlinJsTargetConfigurator(kotlinPluginVersion) {
+
+    override fun configureTarget(target: KotlinOnlyTarget<KotlinJsCompilation>) {
+        super.configureTarget(target)
+        configureApplication(target)
+    }
+
+    private fun configureApplication(target: KotlinOnlyTarget<KotlinJsCompilation>) {
+        target.compilations.all {
+            if (it.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+                KotlinWebpack.configure(it)
+            }
+        }
+    }
+
+    override fun newTestsConfigurator(compilation: KotlinJsCompilation) =
+        object : KotlinJsCompilationTestsConfigurator(compilation) {
+            override fun configureDefaultTestFramework(it: KotlinJsTest) {
+                it.useMocha { }
+            }
+        }
 }

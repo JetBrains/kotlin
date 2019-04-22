@@ -5,21 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import com.google.gson.stream.JsonWriter
 import org.gradle.api.DefaultTask
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.tasks.*
+import org.gradle.deployment.internal.Deployment
+import org.gradle.deployment.internal.DeploymentHandle
+import org.gradle.deployment.internal.DeploymentRegistry
+import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.gradle.process.internal.ExecHandleState
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
 import java.io.File
-import java.io.StringWriter
 import javax.inject.Inject
 
 open class KotlinWebpack : DefaultTask() {
@@ -39,9 +40,9 @@ open class KotlinWebpack : DefaultTask() {
         @OutputFile get() = project.buildDir.resolve("webpack.config.js")
 
     @Input
-    var saveConfigFileEffective: Boolean = true
+    var saveEvaluatedConfigFile: Boolean = true
 
-    open val configFileEffective: File
+    open val evaluatedConfigFile: File
         @OutputFile get() = project.buildDir.resolve("webpack.config.evaluated.js")
 
     open val outputPath: File
@@ -56,103 +57,54 @@ open class KotlinWebpack : DefaultTask() {
     open val reportDir: File
         @OutputDirectory get() = project.reportsDir.resolve("webpack").resolve(entry.nameWithoutExtension)
 
+    @Input
+    var bin: String = "webpack"
+
+    @Input
+    var devServer: KotlinWebpackConfig.DevServer? = null
+
+    internal fun createRunner() = KotlinWebpackRunner(
+        project,
+        configFile,
+        execHandleFactory,
+        bin,
+        KotlinWebpackConfig(
+            entry,
+            if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
+            outputPath,
+            configDirectory,
+            if (report) reportDir else null,
+            devServer
+        )
+    )
+
     @TaskAction
     fun execute() {
-        check(entry.isFile) {
-            "${this}: Entry file not existed \"$entry\""
-        }
+        val runner = createRunner()
 
-        NpmResolver.resolve(project)
-
-        val npmProjectLayout = NpmProjectLayout[project]
-
-        configFile.writeText(buildConfig())
-
-        val execFactory = execHandleFactory.newExec()
-        npmProjectLayout.useTool(
-            execFactory,
-            ".bin/webpack",
-            "--config", configFile.absolutePath
-        )
-        val exec = execFactory.build()
-        exec.start()
-        exec.waitForFinish()
-    }
-
-    private fun buildConfig(): String {
-        return buildString {
-            //language=JavaScript 1.8
-            append(
-                """ 
-    const config = {
-      mode: 'development',
-      entry: '${entry.canonicalPath}',
-      output: {
-        path: '${outputPath.canonicalPath}',
-        filename: '${entry.name}'
-      },
-      resolve: {
-        modules: [
-          "node_modules"
-        ]
-      },
-      plugins: [],
-      module: {
-        rules: []
-      }
-    };
-                    """
-            )
-
-            if (saveConfigFileEffective) {
-                //language=JavaScript 1.8
-                append(
-                    """
-    const util = require('util');
-    const fs = require("fs");
-    const evaluatedConfig = util.inspect(config, {showHidden: false, depth: null, compact: false});
-    fs.writeFile(${jsQuotedString(configFileEffective.canonicalPath)}, evaluatedConfig, (err) => {});                    
-                        """
-                )
+        if (project.gradle.startParameter.isContinuous) {
+            val deploymentRegistry = services.get(DeploymentRegistry::class.java)
+            val deploymentHandle = deploymentRegistry.get("webpack", Handle::class.java)
+            if (deploymentHandle == null) {
+                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner)
             }
-
-            if (report) {
-                //language=JavaScript 1.8
-                append(
-                    """
-    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; 
-    config.plugins.push(new BundleAnalyzerPlugin({
-            analyzerMode: "static",
-            reportFilename: "${entry.name}.report.html",
-            openAnalyzer: false,
-            generateStatsFile: true,
-            statsFilename: "${entry.name}.stats.json"
-        })
-    )                        
-                        """
-                )
-            }
-
-            loadConfigs(configDirectory)
-
-            append("module.exports = config")
+        } else {
+            runner.execute()
         }
     }
 
-    private fun jsQuotedString(str: String) = StringWriter().also {
-        JsonWriter(it).value(str)
-    }.toString()
+    internal open class Handle @Inject constructor(val runner: KotlinWebpackRunner) : DeploymentHandle {
+        var process: ExecHandle? = null
 
-    private fun StringBuilder.loadConfigs(confDir: File) {
-        if (confDir.isDirectory) confDir
-            .listFiles()
-            ?.toList()
-            ?.filter { it.name.endsWith(".js") }
-            ?.forEach {
-                append(it.readText())
-                appendln()
-                appendln()
-            }
+        override fun isRunning() = process != null
+
+        override fun start(deployment: Deployment) {
+            process = runner.start()
+        }
+
+        override fun stop() {
+            process?.abort()
+        }
     }
 
     companion object {
@@ -173,6 +125,27 @@ open class KotlinWebpack : DefaultTask() {
                 it.dependsOn(compileKotlinTask)
 
                 it.entry = npmProject.moduleOutput(compileKotlinTask)
+            }
+
+            compilation.dependencies {
+                runtimeOnly(npm("webpack-dev-server", "3.3.1"))
+            }
+
+            project.createOrRegisterTask<KotlinWebpack>("run") {
+                val compileKotlinTask = compilation.compileKotlinTask
+                compileKotlinTask as Kotlin2JsCompile
+
+                it.dependsOn(compileKotlinTask)
+
+                it.bin = "webpack-dev-server"
+                it.entry = npmProject.moduleOutput(compileKotlinTask)
+
+                val projectDir = compilation.target.project.projectDir.canonicalPath
+                it.devServer = KotlinWebpackConfig.DevServer(
+                    contentBase = listOf("$projectDir/src/main/resources")
+                )
+
+                it.outputs.upToDateWhen { false }
             }
         }
     }

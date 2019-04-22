@@ -71,6 +71,8 @@ class NpmProject(
         else NpmProject[parent].findModule(name, src)
     }
 
+    override fun toString() = "NpmProject($nodeWorkDir)"
+
     companion object {
         const val PACKAGE_JSON = "package.json"
         const val NODE_MODULES = "node_modules"
