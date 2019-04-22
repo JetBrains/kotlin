@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.callExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -33,7 +35,10 @@ class UnusedLambdaExpressionBodyInspection : AbstractKotlinInspection() {
                 return
             }
 
-            val descriptor = expression.getResolvedCall(context)?.resultingDescriptor ?: return
+            val resolvedCall = expression.getResolvedCall(context) ?: return
+            val descriptor = resolvedCall.resultingDescriptor.let {
+                if (resolvedCall is NewResolvedCallImpl || resolvedCall is NewVariableAsFunctionResolvedCallImpl) it.original else it
+            }
             if (!descriptor.returnsFunction()) {
                 return
             }
