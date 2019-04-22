@@ -34,6 +34,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import org.jdom.JDOMException;
@@ -117,7 +118,7 @@ public class InspectionApplication {
 
       Disposable disposable = Disposer.newDisposable();
       try {
-        run(FileUtilRt.toSystemIndependentName(myProjectPath), disposable);
+        run(FileUtilRt.toSystemIndependentName(PathUtil.getCanonicalPath(myProjectPath)), disposable);
       }
       finally {
         Disposer.dispose(disposable);
