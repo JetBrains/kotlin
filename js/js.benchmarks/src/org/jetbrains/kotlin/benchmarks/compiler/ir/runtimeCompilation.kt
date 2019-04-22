@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.benchmarks
+package org.jetbrains.kotlin.benchmarks.compiler.ir
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -40,8 +40,18 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.junit.Test
 import java.io.File
 
-class GenerateIrRuntime {
+import org.openjdk.jmh.annotations.*
+import org.openjdk.jmh.infra.Blackhole
+import org.openjdk.jmh.runner.Runner
+import org.openjdk.jmh.runner.RunnerException
+import org.openjdk.jmh.runner.options.Options
+import org.openjdk.jmh.runner.options.OptionsBuilder
+
+@State(Scope.Benchmark)
+open class GenerateIrRuntime {
+
     private val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
+
     private val logger = object : LoggingContext {
         override var inVerbosePhase = false
         override fun log(message: () -> String) {}
@@ -72,6 +82,7 @@ class GenerateIrRuntime {
 
     private val environment =
         KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+
     private val configuration = buildConfiguration(environment)
     private val project = environment.project
     private val phaseConfig = PhaseConfig(jsPhases)
@@ -81,7 +92,7 @@ class GenerateIrRuntime {
     private val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
 
 
-    fun createPsiFile(fileName: String): KtFile {
+    private fun createPsiFile(fileName: String): KtFile {
         val psiManager = PsiManager.getInstance(environment.project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
@@ -100,15 +111,15 @@ class GenerateIrRuntime {
     private val fullRuntimeSourceSet = createPsiFileFromDir("compiler/ir/serialization.js/build/fullRuntime/src")
     private val reducedRuntimeSourceSet = createPsiFileFromDir("compiler/ir/serialization.js/build/reducedRuntime/src")
 
-    @Test
-    fun runFullPipeline() {
-        repeat(1) {
-            compile(fullRuntimeSourceSet)
+    @Benchmark
+    fun runFullPipeline(bh: Blackhole) {
+        repeat(10) {
+            bh.consume(compile(fullRuntimeSourceSet))
         }
     }
 
-    @Test
-    fun runWithoutFrontEnd() {
+    @Benchmark
+    fun runWithoutFrontEnd(bh: Blackhole) {
         val files = fullRuntimeSourceSet
         val analysisResult = doFrontEnd(files)
 
@@ -119,45 +130,45 @@ class GenerateIrRuntime {
 
             val (module, symbolTable, irBuiltIns) = doDeserializeModule(moduleRef)
 
-            val jsProgram = doBackEnd(module, symbolTable, irBuiltIns)
+            bh.consume(doBackEnd(module, symbolTable, irBuiltIns))
         }
     }
 
-    @Test
-    fun runPsi2Ir() {
+    @Benchmark
+    fun runPsi2Ir(bh: Blackhole) {
         val files = fullRuntimeSourceSet
         val analysisResult = doFrontEnd(files)
 
         repeat(200) {
-            doPsi2Ir(files, analysisResult)
+            bh.consume(doPsi2Ir(files, analysisResult))
         }
     }
 
-    @Test
-    fun runSerialization() {
+    @Benchmark
+    fun runSerialization(bh: Blackhole) {
         val files = fullRuntimeSourceSet
         val analysisResult = doFrontEnd(files)
         val rawModuleFragment = doPsi2Ir(files, analysisResult)
 
         repeat(20) {
-            doSerializeModule(rawModuleFragment, analysisResult.bindingContext)
+            bh.consume(doSerializeModule(rawModuleFragment, analysisResult.bindingContext))
         }
     }
 
-    @Test
-    fun runDeserialization() {
-        val files = reducedRuntimeSourceSet
+    @Benchmark
+    fun runDeserialization(bh: Blackhole) {
+        val files = fullRuntimeSourceSet
         val analysisResult = doFrontEnd(files)
         val rawModuleFragment = doPsi2Ir(files, analysisResult)
         val moduleRef = doSerializeModule(rawModuleFragment, analysisResult.bindingContext)
 
         repeat(20) {
-            doDeserializeModule(moduleRef)
+            bh.consume(doDeserializeModule(moduleRef))
         }
     }
 
-    @Test
-    fun runDeserializationAndBackend() {
+    @Benchmark
+    fun runDeserializationAndBackend(bh: Blackhole) {
         val files = fullRuntimeSourceSet
         val analysisResult = doFrontEnd(files)
         val rawModuleFragment = doPsi2Ir(files, analysisResult)
@@ -165,7 +176,7 @@ class GenerateIrRuntime {
 
         repeat(100) {
             val (module, symbolTable, irBuiltIns) = doDeserializeModule(moduleRef)
-            doBackEnd(module, symbolTable, irBuiltIns)
+            bh.consume(doBackEnd(module, symbolTable, irBuiltIns))
         }
     }
 
@@ -232,9 +243,7 @@ class GenerateIrRuntime {
         )
     }
 
-    private data class DeserializedModuleInfo(val module: IrModuleFragment, val symbolTable: SymbolTable, val irBuiltIns: IrBuiltIns)
-
-    private fun doDeserializeModule(moduleRef: KlibModuleRef): DeserializedModuleInfo {
+    private fun doDeserializeModule(moduleRef: KlibModuleRef): Triple<IrModuleFragment, SymbolTable, IrBuiltIns> {
         val moduleDescriptor = doDeserializeModuleMetadata(moduleRef)
 
         val symbolTable = SymbolTable()
@@ -257,7 +266,7 @@ class GenerateIrRuntime {
 
         moduleFragment.patchDeclarationParents()
 
-        return DeserializedModuleInfo(moduleFragment, symbolTable, irBuiltIns)
+        return Triple(moduleFragment, symbolTable, irBuiltIns)
     }
 
     private fun doBackEnd(module: IrModuleFragment, symbolTable: SymbolTable, irBuiltIns: IrBuiltIns): JsProgram {
@@ -270,7 +279,7 @@ class GenerateIrRuntime {
         return module.accept(IrModuleToJsTransformer(context), null) as JsProgram
     }
 
-    fun compile(files: List<KtFile>): String {
+    private fun compile(files: List<KtFile>): String {
         val analysisResult = doFrontEnd(files)
 
         val rawModuleFragment = doPsi2Ir(files, analysisResult)
@@ -283,4 +292,16 @@ class GenerateIrRuntime {
 
         return jsProgram.toString()
     }
+
+
+    fun main(args: Array<String>) {
+        val opt = OptionsBuilder()
+            .include(GenerateIrRuntime::class.java.simpleName)
+            .build()
+
+        Runner(opt).run()
+    }
+
+
+
 }

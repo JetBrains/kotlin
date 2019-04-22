@@ -5,7 +5,7 @@
 
 allprojects {
     afterEvaluate {
-        configureJavaInstrumentation()
+//        configureJavaInstrumentation()
     }
 }
 
@@ -43,9 +43,11 @@ fun JavaCompile.instrumentClasses(instrumentatorClasspath: String) {
         )
     }
 
+    logger.info("XXXXXXXXXXXXXXXXXX------------------ Instrumentating... $instrumentatorClasspath, name $name")
     val sourceSet = project.sourceSets.single { it.compileJavaTaskName == name }
 
     val javaSourceDirectories = sourceSet.allJava.sourceDirectories.filter { it.exists() }
+
 
     ant.withGroovyBuilder {
         javaSourceDirectories.forEach { directory ->
