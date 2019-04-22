@@ -1,5 +1,5 @@
-// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
-// PROBLEM: none
+// COMPILER_ARGUMENTS: -XXLanguage:+NewInference
+// PROBLEM: Redundant lambda arrow
 // WITH_RUNTIME
 
 fun f(cbs: List<(Boolean) -> Unit>) {

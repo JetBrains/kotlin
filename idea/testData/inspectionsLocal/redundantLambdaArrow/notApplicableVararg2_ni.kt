@@ -1,11 +1,11 @@
-// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
-// PROBLEM: none
+// COMPILER_ARGUMENTS: -XXLanguage:+NewInference
+// PROBLEM: Redundant lambda arrow
 // WITH_RUNTIME
 
 fun main() {
     registerHandler(handlers = *arrayOf(
-        { _<caret> -> },
-        { it -> }
+        { _ -> },
+        { it<caret> -> }
     ))
 }
 

@@ -1,5 +1,5 @@
-// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
-// PROBLEM: none
+// COMPILER_ARGUMENTS: -XXLanguage:+NewInference
+// PROBLEM: Redundant lambda arrow
 class Foo<T>(val t: T)
 
 fun bar(foo: Foo<(Boolean) -> String>) {}
