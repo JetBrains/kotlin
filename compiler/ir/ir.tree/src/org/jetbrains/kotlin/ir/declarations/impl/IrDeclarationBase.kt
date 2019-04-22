@@ -31,7 +31,13 @@ abstract class IrDeclarationBase(
 ) : IrElementBase(startOffset, endOffset),
     IrDeclaration {
 
-    override lateinit var parent: IrDeclarationParent
+    private var _parent: IrDeclarationParent? = null
+    override var parent: IrDeclarationParent
+        get() = _parent
+            ?: throw IllegalStateException("Parent not initialized: $this")
+        set(v) {
+            _parent = v
+        }
 
     override val annotations: MutableList<IrConstructorCall> = ArrayList()
 
