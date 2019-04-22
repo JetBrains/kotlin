@@ -15,6 +15,7 @@ import com.intellij.debugger.jdi.GeneratedLocation
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.xdebugger.frame.XNamedValue
 import com.sun.jdi.*
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceProviderBase {
     private companion object {
         const val DEBUG_METADATA_KT = "kotlin.coroutines.jvm.internal.DebugMetadataKt"
+
+        private val LOG = Logger.getInstance(this::class.java)
 
         tailrec fun findBaseContinuationSuperSupertype(type: ClassType): ClassType? {
             if (type.name() == "kotlin.coroutines.jvm.internal.BaseContinuationImpl") {
@@ -34,10 +37,21 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
     }
 
     override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
-        return getAsyncStackTrace(stackFrame.stackFrameProxy, suspendContext)
+        return try {
+            getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext)
+        } catch (e: ObjectCollectedException) {
+            null
+        } catch (e: IncompatibleThreadStateException) {
+            null
+        } catch (e: VMDisconnectedException) {
+            null
+        } catch (e: EvaluateException) {
+            LOG.debug("Cannot evaluate async stack trace", e)
+            null
+        }
     }
 
-    fun getAsyncStackTrace(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
+    fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
         val location = frameProxy.location()
         if (!location.isInKotlinSources()) {
             return null

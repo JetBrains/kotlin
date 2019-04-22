@@ -62,7 +62,7 @@ abstract class AbstractAsyncStackTraceTest : KotlinDebuggerTestBase() {
             val frameProxy = this.frameProxy
             if (frameProxy != null) {
                 try {
-                    val stackTrace = asyncStackTraceProvider.getAsyncStackTrace(frameProxy, this)
+                    val stackTrace = asyncStackTraceProvider.getAsyncStackTraceSafe(frameProxy, this)
                     if (stackTrace != null && stackTrace.isNotEmpty()) {
                         print(renderAsyncStackTrace(stackTrace), ProcessOutputTypes.SYSTEM)
                     } else {
