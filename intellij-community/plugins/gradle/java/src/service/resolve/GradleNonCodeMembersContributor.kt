@@ -92,63 +92,6 @@ class GradleNonCodeMembersContributor : NonCodeMembersContributor() {
       if (!shouldSkipDeclarationsAndSetters(aClass.qualifiedName)) {
         processDeclarations(aClass, processor, state, place)
       }
-      if (state[DELEGATED_TYPE] == true) return
-      val propCandidate = place.references.singleOrNull()?.canonicalText ?: return
-      val domainObjectType = (qualifierType.superTypes.firstOrNull { it is PsiClassType } as? PsiClassType)?.parameters?.singleOrNull()
-                             ?: return
-      if (!InheritanceUtil.isInheritor(qualifierType, GRADLE_API_NAMED_DOMAIN_OBJECT_CONTAINER)) return
-
-      val classHint = processor.getHint(com.intellij.psi.scope.ElementClassHint.KEY)
-      val shouldProcessMethods = ResolveUtil.shouldProcessMethods(classHint)
-      val shouldProcessProperties = ResolveUtil.shouldProcessProperties(classHint)
-      if (GradleResolverUtil.canBeMethodOf(propCandidate, aClass)) return
-
-      val domainObjectFqn = TypesUtil.getQualifiedName(domainObjectType) ?: return
-      val javaPsiFacade = JavaPsiFacade.getInstance(place.project)
-      val domainObjectPsiClass = javaPsiFacade.findClass(domainObjectFqn, place.resolveScope) ?: return
-      if (GradleResolverUtil.canBeMethodOf(propCandidate, domainObjectPsiClass)) return
-      if (GradleResolverUtil.canBeMethodOf("get" + propCandidate.capitalize(), domainObjectPsiClass)) return
-      if (GradleResolverUtil.canBeMethodOf("set" + propCandidate.capitalize(), domainObjectPsiClass)) return
-
-      val closure = PsiTreeUtil.getParentOfType(place, GrClosableBlock::class.java)
-      val typeToDelegate = closure?.let { getDelegatesToInfo(it)?.typeToDelegate }
-      if (typeToDelegate != null) {
-        val fqNameToDelegate = TypesUtil.getQualifiedName(typeToDelegate) ?: return
-        val classToDelegate = javaPsiFacade.findClass(fqNameToDelegate, place.resolveScope) ?: return
-        if (classToDelegate !== aClass) {
-          val parent = place.parent
-          if (parent is GrMethodCall) {
-            if (canBeMethodOf(propCandidate, parent, typeToDelegate)) return
-          }
-        }
-      }
-
-      if (!shouldProcessMethods && shouldProcessProperties && place is GrReferenceExpression && place.parent !is GrApplicationStatement) {
-        val variable = GrLightField(propCandidate, domainObjectFqn, place)
-        place.putUserData(RESOLVED_CODE, true)
-        if (!processor.execute(variable, state)) return
-      }
-      if (shouldProcessMethods && place is GrReferenceExpression) {
-        val call = PsiTreeUtil.getParentOfType(place, GrMethodCall::class.java) ?: return
-        val args = call.argumentList
-        var argsCount = GradleResolverUtil.getGrMethodArumentsCount(args)
-        argsCount += call.closureArguments.size
-        argsCount++ // Configuration name is delivered as an argument.
-
-        // at runtime, see org.gradle.internal.metaobject.ConfigureDelegate.invokeMethod
-        val wrappedBase = GrLightMethodBuilder(place.manager, propCandidate).apply {
-          returnType = domainObjectType
-          containingClass = aClass
-          val closureParam = addAndGetOptionalParameter("configuration", GROOVY_LANG_CLOSURE)
-          closureParam.putUserData(DELEGATES_TO_TYPE_KEY, domainObjectFqn)
-          closureParam.putUserData(DELEGATES_TO_STRATEGY_KEY, Closure.DELEGATE_FIRST)
-
-          val method = aClass.findMethodsByName("create", true).firstOrNull { it.parameterList.parametersCount == argsCount }
-          if (method != null) navigationElement = method
-        }
-        place.putUserData(RESOLVED_CODE, true)
-        if (!processor.execute(wrappedBase, state)) return
-      }
     }
   }
 
