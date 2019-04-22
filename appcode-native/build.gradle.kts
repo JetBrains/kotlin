@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
 }
 
+val appcodeVersion: String by rootProject.extra
 val appcodeUnscrambledJarDir: File by rootProject.extra
 
 dependencies {
@@ -12,3 +13,5 @@ dependencies {
 }
 
 defaultSourceSets()
+
+enableTasksIfAtLeast(appcodeVersion, 191)

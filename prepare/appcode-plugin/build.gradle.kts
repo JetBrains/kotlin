@@ -54,3 +54,5 @@ val appcodeUpdatePluginsXml: Task by cidrUpdatePluginsXml(
         appcodePluginZipPath,
         appcodeCustomPluginRepoUrl
 )
+
+enableTasksIfAtLeast(appcodeVersion, 191)
