@@ -154,18 +154,6 @@ fun showConfigureKotlinNotificationIfNeeded(module: Module) {
     ConfigureKotlinNotificationManager.notify(module.project)
 }
 
-fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: List<Module> = emptyList()) {
-    val notificationState = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
-        ConfigureKotlinNotification.getNotificationState(project, excludeModules)
-    })
-
-    if (notificationState != null) {
-        ApplicationManager.getApplication().invokeLater {
-            ConfigureKotlinNotificationManager.notify(project, ConfigureKotlinNotification(project, excludeModules, notificationState))
-        }
-    }
-}
-
 fun isNotConfiguredNotificationRequired(moduleGroup: ModuleSourceRootGroup): Boolean {
     return !SuppressNotificationState.isKotlinNotConfiguredSuppressed(moduleGroup) && !isModuleConfigured(moduleGroup)
 }
@@ -240,8 +228,8 @@ fun getConfigurationPossibilitiesForConfigureNotification(
                     runnableConfigurators.add(configurator)
                 }
                 ConfigureKotlinStatus.CONFIGURED -> moduleAlreadyConfigured = true
+                }
             }
-        }
         if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(
                 moduleSourceRootGroup
             )
