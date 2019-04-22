@@ -359,11 +359,6 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/nonExistentClassWIthoutCorrection.kt");
     }
 
-    @TestMetadata("outProjection.kt")
-    public void testOutProjection() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/converter/outProjection.kt");
-    }
-
     @TestMetadata("primitiveTypes.kt")
     public void testPrimitiveTypes() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/primitiveTypes.kt");
