@@ -9834,6 +9834,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             public void testStarProjectionRegression() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/starProjectionRegression.kt");
             }
+
+            @TestMetadata("topLevelCapturingInsideReturnType.kt")
+            public void testTopLevelCapturingInsideReturnType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/topLevelCapturingInsideReturnType.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/inference/coercionToUnit")

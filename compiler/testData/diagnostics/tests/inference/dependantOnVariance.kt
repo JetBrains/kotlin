@@ -59,9 +59,9 @@ fun test1(int: Int, any: Any) {
     writeToMyList(getMyListToWriteTo(any), int)
     <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>writeToMyList<!>(getMyListToWriteTo(int), any)
 
-    readFromMyList(getMyListToWriteTo(any), any)
+    readFromMyList(<!NI;NEW_INFERENCE_ERROR!>getMyListToWriteTo(any)<!>, any)
 
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>writeToMyList<!>(getMyListToReadFrom(any), any)
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>writeToMyList<!>(<!NI;NEW_INFERENCE_ERROR!>getMyListToReadFrom(any)<!>, any)
 
     use(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13)
 }

@@ -230,9 +230,14 @@ class DiagnosticReporterByTrackingStrategy(
             }
             CapturedTypeFromSubtyping::class.java -> {
                 val capturedError = diagnostic as CapturedTypeFromSubtyping
-                (capturedError.position as? ArgumentConstraintPosition)?.let {
+                val position = capturedError.position
+                val argumentPosition =
+                    position.safeAs<ArgumentConstraintPosition>()
+                        ?: position.safeAs<IncorporationConstraintPosition>()?.from.safeAs<ArgumentConstraintPosition>()
+
+                argumentPosition?.let {
                     val expression = it.argument.psiExpression ?: return
-                    trace.report(
+                    trace.reportDiagnosticOnce(
                         NEW_INFERENCE_ERROR.on(
                             expression,
                             "Capture type from subtyping ${capturedError.constraintType} for variable ${capturedError.typeVariable}"

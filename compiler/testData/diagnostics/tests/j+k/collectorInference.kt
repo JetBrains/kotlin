@@ -7,8 +7,8 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 
 fun test(a: Stream<String>) {
-    a.collect(Collectors.toList()) checkType { _<MutableList<String>>() }
+    a.collect(<!NI;NEW_INFERENCE_ERROR!>Collectors.toList()<!>) checkType { _<MutableList<String>>() }
     // actually the inferred type is platform
-    a.collect(Collectors.toList()) checkType { _<List<String?>>() }
+    a.collect(<!NI;NEW_INFERENCE_ERROR!>Collectors.toList()<!>) checkType { _<List<String?>>() }
 }
 

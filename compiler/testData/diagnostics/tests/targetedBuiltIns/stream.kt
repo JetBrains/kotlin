@@ -8,6 +8,6 @@ interface A : Collection<String> {
 }
 
 fun foo(x: List<String>, y: A) {
-    x.stream().filter { it.length > 0 }.collect(Collectors.toList())
+    x.stream().filter { it.length > 0 }.collect(<!NI;NEW_INFERENCE_ERROR!>Collectors.toList()<!>)
     y.stream().filter { it.length > 0 }
 }
