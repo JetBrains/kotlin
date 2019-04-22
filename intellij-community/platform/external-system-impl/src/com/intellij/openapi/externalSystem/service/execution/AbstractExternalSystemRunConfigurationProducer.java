@@ -35,9 +35,9 @@ public abstract class AbstractExternalSystemRunConfigurationProducer extends Run
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(ExternalSystemRunConfiguration configuration,
-                                                  ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull ExternalSystemRunConfiguration configuration,
+                                                  @NotNull ConfigurationContext context,
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     Project project = getProjectFromContext(context);
     if (project == null) return false;
 

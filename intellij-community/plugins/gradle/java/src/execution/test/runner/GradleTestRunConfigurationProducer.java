@@ -77,9 +77,9 @@ public abstract class GradleTestRunConfigurationProducer extends RunConfiguratio
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(ExternalSystemRunConfiguration configuration,
-                                                  ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull ExternalSystemRunConfiguration configuration,
+                                                  @NotNull ConfigurationContext context,
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     if (!GradleConstants.SYSTEM_ID.equals(configuration.getSettings().getExternalSystemId())) return false;
 
     if (sourceElement.isNull()) return false;

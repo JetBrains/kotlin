@@ -183,7 +183,9 @@ public final class PatternGradleConfigurationProducer extends GradleTestRunConfi
     }
 
     @Override
-    protected boolean setupConfigurationFromContext(T configuration, ConfigurationContext context, Ref<PsiElement> sourceElement) {
+    protected boolean setupConfigurationFromContext(@NotNull T configuration,
+                                                    @NotNull ConfigurationContext context,
+                                                    @NotNull Ref<PsiElement> sourceElement) {
       return false;
     }
 

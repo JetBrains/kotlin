@@ -32,9 +32,9 @@ final class GradleGroovyScriptRunConfigurationProducer extends LazyRunConfigurat
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(ExternalSystemRunConfiguration configuration,
-                                                  ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull ExternalSystemRunConfiguration configuration,
+                                                  @NotNull ConfigurationContext context,
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     ExternalSystemTaskExecutionSettings taskExecutionSettings = configuration.getSettings();
     if (!GradleConstants.SYSTEM_ID.equals(taskExecutionSettings.getExternalSystemId())) return false;
 
