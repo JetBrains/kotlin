@@ -27,7 +27,7 @@ import org.jetbrains.plugins.groovy.lang.psi.impl.synthetic.GrLightVariable
 import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames.GROOVY_LANG_CLOSURE
 import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor
 import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil
-import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DELEGATES_TO_KEY
+import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DELEGATES_TO_TYPE_KEY
 import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DELEGATES_TO_STRATEGY_KEY
 import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.getDelegatesToInfo
 import org.jetbrains.plugins.groovy.lang.resolve.shouldProcessProperties
@@ -140,7 +140,7 @@ class GradleNonCodeMembersContributor : NonCodeMembersContributor() {
           returnType = domainObjectType
           containingClass = aClass
           val closureParam = addAndGetOptionalParameter("configuration", GROOVY_LANG_CLOSURE)
-          closureParam.putUserData(DELEGATES_TO_KEY, domainObjectFqn)
+          closureParam.putUserData(DELEGATES_TO_TYPE_KEY, domainObjectFqn)
           closureParam.putUserData(DELEGATES_TO_STRATEGY_KEY, Closure.DELEGATE_FIRST)
 
           val method = aClass.findMethodsByName("create", true).firstOrNull { it.parameterList.parametersCount == argsCount }
