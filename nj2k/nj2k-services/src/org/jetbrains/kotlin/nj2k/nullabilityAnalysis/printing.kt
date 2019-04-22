@@ -70,9 +70,13 @@ internal class Printer(private val analysisContext: AnalysisContext) {
 
 
 private class Namer(analysisContext: AnalysisContext) {
-    val names = analysisContext.typeElementToTypeVariable.values.mapIndexed { index, typeVariable ->
-        typeVariable to "T$index"
-    }.toMap()
+    val names = run {
+        val typeVariables = (analysisContext.typeElementToTypeVariable.values +
+                analysisContext.declarationToTypeVariable.values)
+        typeVariables.mapIndexed { index, typeVariable ->
+            typeVariable to "T$index"
+        }.toMap()
+    }
 
     fun name(typeVariable: TypeVariable): String =
         names.getValue(typeVariable)

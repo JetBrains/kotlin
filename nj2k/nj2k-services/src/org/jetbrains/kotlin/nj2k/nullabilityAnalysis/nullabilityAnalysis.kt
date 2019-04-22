@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 internal fun TypeVariable.changeNullability(toNullable: Boolean) {
-    typeElement.changeNullability(toNullable)
+    typeElement?.changeNullability(toNullable)
 }
 
 internal fun KtTypeElement.changeNullability(toNullable: Boolean) {
@@ -40,6 +40,7 @@ internal fun AnalysisContext.fixTypeVariablesNullability() {
     if (typeElementToTypeVariable.isEmpty()) return
 
     val deepComparator = Comparator<TypeVariable> { o1, o2 ->
+        if (o1.typeElement == null || o2.typeElement == null) return@Comparator -1
         if (o1.typeElement.isAncestor(o2.typeElement)) 1 else -1
     }
     for (typeVariableOwner in typeVariableOwners) {

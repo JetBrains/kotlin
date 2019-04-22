@@ -47,6 +47,11 @@ internal data class FunctionTarget(
     override val typeVariable: TypeVariable
 ) : DeclarationTypeVariableOwner
 
+internal data class LambdaTarget(
+    override val target: KtFunctionLiteral,
+    override val typeVariable: TypeVariable
+) : DeclarationTypeVariableOwner
+
 internal data class ParameterTarget(
     override val target: KtParameter,
     override val typeVariable: TypeVariable
@@ -112,7 +117,7 @@ internal class LiteralBoundType(val isNull: Boolean) : BoundType {
 
 
 internal class TypeVariable(
-    val typeElement: KtTypeElement,
+    val typeElement: KtTypeElement?,
     val classReference: ClassReference,
     val typeParameters: List<TypeVariableTypeParameter>,
     var nullability: Nullability

@@ -16,8 +16,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class BoundTypeStorage(private val analysisAnalysisContext: AnalysisContext, private val printConstraints: Boolean) {
@@ -34,10 +37,11 @@ internal class BoundTypeStorage(private val analysisAnalysisContext: AnalysisCon
                         expression.selectorExpression?.toBoundType(
                             boundTypeFor(expression.receiverExpression)
                         )
+                    is KtLabeledExpression -> expression.baseExpression?.let { boundTypeFor(it) }
+                    is KtLambdaExpression -> lambdaBoundType(expression)
                     else -> expression.getQualifiedExpressionForSelector()?.let { boundTypeFor(it) }
                 } ?: expression.toBoundType(null)
                 ?: LiteralBoundType(expression.isNullable())
-
 
             if (printConstraints) {
                 if (expression.getNextSiblingIgnoringWhitespace() !is PsiComment) {
@@ -47,8 +51,35 @@ internal class BoundTypeStorage(private val analysisAnalysisContext: AnalysisCon
                     expression.parent.addAfter(comment, expression)
                 }
             }
-            boundType
+            boundType.withForcedNullability(expression.getForcedNullability())
         }
+
+    private fun lambdaBoundType(lambda: KtLambdaExpression): BoundType? {
+        val builtIns = lambda.getType(lambda.analyze())?.builtIns ?: return null
+
+        val descriptor = builtIns.getFunction(lambda.valueParameters.size)
+        val parameterBoundTypes = lambda.valueParameters.map { parameter ->
+            parameter.typeReference?.typeElement?.let { typeElement ->
+                analysisAnalysisContext.typeElementToTypeVariable[typeElement]
+            }?.let {
+                BoundTypeTypeParameter(TypeVariableBoundType(it), Variance.IN_VARIANCE)
+            } ?: return null
+        }
+        val returnBoundType =
+            BoundTypeTypeParameter(
+                TypeVariableBoundType(
+                    analysisAnalysisContext.declarationToTypeVariable[lambda.functionLiteral] ?: return null
+                ),
+                Variance.OUT_VARIANCE
+            )
+        return GenericBoundType(
+            DescriptorClassReference(descriptor),
+            parameterBoundTypes + returnBoundType,
+            forcedNullabilityTo = null,
+            isNull = false
+        )
+    }
+
 
     fun boundTypeForType(
         type: KotlinType,
@@ -103,12 +134,13 @@ internal class BoundTypeStorage(private val analysisAnalysisContext: AnalysisCon
             ?.let { TypeVariableBoundType(it) }
     }
 
-    private fun KtExpression.toBoundType(contextBoundType: BoundType?): BoundType? {
-        toBoundTypeAsTypeVariable()?.also { return it }
-        toBoundTypeAsCallExpression(contextBoundType)?.also { return it }
-        toBoundTypeAsCastExpression()?.also { return it }
-        return null
-    }
+    private fun KtExpression.toBoundType(contextBoundType: BoundType?): BoundType? =
+        run {
+            toBoundTypeAsTypeVariable()?.also { return@run it }
+            toBoundTypeAsCallExpression(contextBoundType)?.also { return@run it }
+            toBoundTypeAsCastExpression()?.also { return@run it }
+            return@run null
+        }?.withForcedNullability(getForcedNullability())
 
     private fun KotlinType.toBoundType(
         contextBoundType: BoundType?,
