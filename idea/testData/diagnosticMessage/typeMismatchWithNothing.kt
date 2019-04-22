@@ -1,5 +1,6 @@
 // !DIAGNOSTICS_NUMBER: 1
 // !DIAGNOSTICS: TYPE_MISMATCH
+// !LANGUAGE: -NewInference
 
 package b
 
