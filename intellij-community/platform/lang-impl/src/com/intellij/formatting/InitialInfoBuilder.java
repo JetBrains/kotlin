@@ -280,17 +280,19 @@ public class InitialInfoBuilder {
       catch (Throwable ex) {
         // todo fix kotlin
         if ("org.jetbrains.kotlin.idea.formatter.KotlinBlock".equals(currentRoot.getClass().getName())) {
-          return;
-        }
-        // read-only blocks
-        String msg = "Unable to null elements of list I got from getSubBlocks(): " + subBlocks.getClass() +
-                     ". If you really want to return immutable list, please mark " + currentRoot.getClass() +
-                     " with 'ReadOnlyBlockContainer' interface";
-        if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
-          LOG.error(msg, ex);
+          // ignore
         }
         else {
-          LOG.warn(msg, ex);
+          // read-only blocks
+          String msg = "Unable to null elements of list I got from getSubBlocks(): " + subBlocks.getClass() +
+                       ". If you really want to return immutable list, please mark " + currentRoot.getClass() +
+                       " with 'ReadOnlyBlockContainer' interface";
+          if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
+            LOG.error(msg, ex);
+          }
+          else {
+            LOG.warn(msg, ex);
+          }
         }
       }
     }
