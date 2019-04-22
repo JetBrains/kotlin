@@ -4,6 +4,11 @@ package com.jetbrains.completion.ranker.metadata
 import com.jetbrains.completion.feature.ModelMetadataEx
 import com.jetbrains.completion.feature.ModelMetadataTest
 import com.jetbrains.completion.ranker.JavaCompletionRanker
+import com.jetbrains.completion.ranker.PythonCompletionRanker
+
+class PythonMetadataTest : ModelMetadataTest() {
+  override fun modelMetadata(): ModelMetadataEx = PythonCompletionRanker().modelMetadata
+}
 
 class JavaMetadataTest : ModelMetadataTest() {
   override fun modelMetadata(): ModelMetadataEx = JavaCompletionRanker().modelMetadata

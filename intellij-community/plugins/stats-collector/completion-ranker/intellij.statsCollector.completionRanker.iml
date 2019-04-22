@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="intellij.statsCollector.features" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
     <orderEntry type="library" name="completion-ranking-java" level="project" />
+    <orderEntry type="library" name="completion-ranking-python" level="project" />
   </component>
 </module>

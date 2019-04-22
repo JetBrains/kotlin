@@ -10,7 +10,8 @@ import com.jetbrains.completion.ranker.PythonCompletionRanker
 
 object RankingSupport {
   private val rankers: Map<String, LanguageRanker> = mapOf(
-    "java" to LanguageRanker(JavaCompletionRanker())
+    "java" to LanguageRanker(JavaCompletionRanker()),
+    "python" to LanguageRanker(PythonCompletionRanker())
   )
 
   fun getRanker(language: Language?): LanguageRanker? {
