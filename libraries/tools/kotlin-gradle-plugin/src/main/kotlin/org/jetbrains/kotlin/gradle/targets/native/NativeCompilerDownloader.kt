@@ -22,21 +22,34 @@ import java.io.File
 
 class NativeCompilerDownloader(
     val project: Project,
-    val compilerVersion: KonanVersion = project.konanVersion
+    private val compilerVersion: KonanVersion = project.konanVersion
 ) {
 
-    internal companion object {
-        val DEFAULT_KONAN_VERSION: KonanVersion by lazy {
+    companion object {
+        internal val DEFAULT_KONAN_VERSION: KonanVersion by lazy {
             KonanVersion.fromString(loadPropertyFromResources("project.properties", "kotlin.native.version"))
         }
-        const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
+
+        private const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
     }
+
+    val compilerDirectory: File
+        get() = DependencyDirectories.localKonanDir.resolve(dependencyNameWithVersion)
 
     private val logger: Logger
         get() = project.logger
 
     private val simpleOsName: String
         get() = HostManager.simpleOsName()
+
+    private val dependencyName: String
+        get() = "kotlin-native-$simpleOsName"
+
+    private val dependencyNameWithVersion: String
+        get() = "$dependencyName-$compilerVersion"
+
+    private val dependencyFileName: String
+        get() = "$dependencyNameWithVersion.$archiveExtension"
 
     private val useZip
         get() = HostManager.hostIsMingw
@@ -55,9 +68,9 @@ class NativeCompilerDownloader(
             project.tarTree(archive)
         }
 
-    private fun setupRepo(url: String): ArtifactRepository {
+    private fun setupRepo(repoUrl: String): ArtifactRepository {
         return project.repositories.ivy { repo ->
-            repo.setUrl(url)
+            repo.setUrl(repoUrl)
             repo.layout("pattern") {
                 val layout = it as IvyPatternRepositoryLayout
                 layout.artifact("[artifact]-[revision].[ext]")
@@ -73,40 +86,45 @@ class NativeCompilerDownloader(
     }
 
     private fun downloadAndExtract() {
-        val versionString = compilerVersion.toString()
-
-        val url = buildString {
+        val repoUrl = buildString {
             append("$BASE_DOWNLOAD_URL/")
             append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
-            append("$versionString/")
+            append("$compilerVersion/")
             append(simpleOsName)
         }
+        val dependencyUrl = "$repoUrl/$dependencyFileName"
 
-        val repo = setupRepo(url)
+        val repo = setupRepo(repoUrl)
 
         val compilerDependency = project.dependencies.create(
             mapOf(
-                "name" to "kotlin-native-$simpleOsName",
-                "version" to versionString,
+                "name" to dependencyName,
+                "version" to compilerVersion.toString(),
                 "ext" to archiveExtension
             )
         )
 
         val configuration = project.configurations.detachedConfiguration(compilerDependency)
-        val archive = configuration.files.single()
+        logger.lifecycle("\nPlease wait while Kotlin/Native compiler $compilerVersion is being installed.")
+
+        val suffix = project.probeRemoteFileLength(dependencyUrl, probingTimeoutMs = 200)?.let { " (${formatContentLength(it)})" }.orEmpty()
+        logger.lifecycle("Download $dependencyUrl$suffix")
+        val archive = logger.lifecycleWithDuration("Download $dependencyUrl finished,") {
+            configuration.files.single()
+        }
 
         logger.kotlinInfo("Using Kotlin/Native compiler archive: ${archive.absolutePath}")
-        logger.lifecycle("Unpacking Kotlin/Native compiler (version $versionString)...")
-        project.copy {
-            it.from(archiveFileTree(archive))
-            it.into(DependencyDirectories.localKonanDir)
+
+        logger.lifecycle("Unpack Kotlin/Native compiler to $compilerDirectory")
+        logger.lifecycleWithDuration("Unpack Kotlin/Native compiler to $compilerDirectory finished,") {
+            project.copy {
+                it.from(archiveFileTree(archive))
+                it.into(DependencyDirectories.localKonanDir)
+            }
         }
 
         removeRepo(repo)
     }
-
-    val compilerDirectory: File
-        get() = DependencyDirectories.localKonanDir.resolve("kotlin-native-$simpleOsName-$compilerVersion")
 
     fun downloadIfNeeded() {
         if (KonanCompilerRunner(project).classpath.isEmpty) {
