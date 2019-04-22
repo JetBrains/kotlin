@@ -1,4 +1,11 @@
 public final enum class Test : R|kotlin/Enum<test/Test>| {
     private constructor(a: R|kotlin/Int|): R|test/Test|
 
+    public? final enum entry A {
+    }
+
+    public? final enum entry B {
+    }
+
 }
+

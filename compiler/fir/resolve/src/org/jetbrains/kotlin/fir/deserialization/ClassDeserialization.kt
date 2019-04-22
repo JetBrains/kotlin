@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun deserializeClassToSymbol(
     classId: ClassId,
@@ -74,6 +75,15 @@ fun deserializeClassToSymbol(
             classProto.nestedClassNameList.mapNotNull { nestedNameId ->
                 val nestedClassId = classId.createNestedClassId(Name.identifier(nameResolver.getString(nestedNameId)))
                 deserializeNestedClass(nestedClassId, context)?.fir
+            }
+        )
+
+        addDeclarations(
+            classProto.enumEntryList.mapNotNull { enumEntryProto ->
+                val enumEntryName = nameResolver.getName(enumEntryProto.name)
+                val enumEntryId = classId.createNestedClassId(enumEntryName)
+                val deserializedClassSymbol = deserializeNestedClass(enumEntryId, context)
+                deserializedClassSymbol?.fir
             }
         )
     }

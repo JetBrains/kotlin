@@ -6,6 +6,9 @@ public final class AnnotationInAnnotationArguments : R|kotlin/Any| {
 public final enum class E : R|kotlin/Enum<test/E>| {
     private constructor(): R|test/E|
 
+    public? final enum entry ENTRY {
+    }
+
 }
 
 public final annotation class EnumOption : R|kotlin/Annotation| {

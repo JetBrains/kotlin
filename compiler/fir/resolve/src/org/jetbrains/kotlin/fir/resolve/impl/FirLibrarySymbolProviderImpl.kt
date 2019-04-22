@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.*
@@ -76,16 +77,29 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
             classId: ClassId,
             parentContext: FirDeserializationContext? = null
         ): FirClassSymbol? {
-            if (classId !in classDataFinder.allClassIds) return null
+            val classIdExists = classId in classDataFinder.allClassIds
+            val shouldBeEnumEntry = !classIdExists && classId.outerClassId in classDataFinder.allClassIds
+            if (!classIdExists && !shouldBeEnumEntry) return null
+            if (shouldBeEnumEntry) {
+                val outerClassData = classDataFinder.findClassData(classId.outerClassId!!)!!
+                val outerClassProto = outerClassData.classProto
+                if (outerClassProto.enumEntryList.none { nameResolver.getName(it.name) == classId.shortClassName }) {
+                    return null
+                }
+            }
             return lookup.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
-                val classData = classDataFinder.findClassData(classId)!!
-                val classProto = classData.classProto
+                if (shouldBeEnumEntry) {
+                    FirEnumEntryImpl(session, null, symbol, classId.shortClassName)
+                } else {
+                    val classData = classDataFinder.findClassData(classId)!!
+                    val classProto = classData.classProto
 
-                deserializeClassToSymbol(
-                    classId, classProto, symbol, nameResolver, session,
-                    parentContext,
-                    this::findAndDeserializeClass
-                )
+                    deserializeClassToSymbol(
+                        classId, classProto, symbol, nameResolver, session,
+                        parentContext,
+                        this::findAndDeserializeClass
+                    )
+                }
             }
         }
 

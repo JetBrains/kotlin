@@ -1,4 +1,29 @@
 public final enum class E : R|kotlin/Enum<test/E>| {
     private constructor(): R|test/E|
 
+    public? final enum entry ONE {
+    }
+
+    public? final enum entry TWO {
+    }
+
+    public? final enum entry THREE {
+    }
+
+    public? final enum entry FOUR {
+    }
+
+    public? final enum entry FIVE {
+    }
+
+    public? final enum entry SIX {
+    }
+
+    public? final enum entry SEVEN {
+    }
+
+    public? final enum entry EIGHT {
+    }
+
 }
+

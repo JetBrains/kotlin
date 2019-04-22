@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.java.topLevelName
@@ -26,10 +27,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -120,6 +123,11 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
     }
 
+    private fun KotlinJvmBinaryClass.readClassDataFrom(): Pair<JvmNameResolver, ProtoBuf.Class>? {
+        val data = classHeader.data ?: return null
+        val strings = classHeader.strings ?: return null
+        return JvmProtoBufUtil.readClassDataFrom(data, strings)
+    }
 
     private fun findAndDeserializeClass(
         classId: ClassId,
@@ -128,19 +136,30 @@ class KotlinDeserializedJvmSymbolsProvider(
         if (!hasTopLevelClassOf(classId)) return null
         return classesCache.getOrPut(classId) {
             //return null
-            val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
-            if (kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
+            val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId)
+            if (kotlinJvmBinaryClass == null) {
+                val outerClassId = classId.outerClassId ?: return null
+                val outerJvmBinaryClass = kotlinClassFinder.findKotlinClass(outerClassId) ?: return null
+                if (outerJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
+                val (nameResolver, outerClassProto) = outerJvmBinaryClass.readClassDataFrom() ?: return null
+                if (outerClassProto.enumEntryList.none { nameResolver.getName(it.name) == classId.shortClassName }) {
+                    return null
+                }
 
-            val data = kotlinJvmBinaryClass.classHeader.data ?: return null
-            val strings = kotlinJvmBinaryClass.classHeader.strings ?: return null
-            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+                val symbol = FirClassSymbol(classId)
+                FirEnumEntryImpl(session, null, symbol, classId.shortClassName)
+                symbol
+            } else {
+                if (kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
+                val (nameResolver, classProto) = kotlinJvmBinaryClass.readClassDataFrom() ?: return null
 
-            val symbol = FirClassSymbol(classId)
-            deserializeClassToSymbol(
-                classId, classProto, symbol, nameResolver, session, parentContext,
-                this::findAndDeserializeClass
-            )
-            symbol
+                val symbol = FirClassSymbol(classId)
+                deserializeClassToSymbol(
+                    classId, classProto, symbol, nameResolver, session, parentContext,
+                    this::findAndDeserializeClass
+                )
+                symbol
+            }
         }
     }
 

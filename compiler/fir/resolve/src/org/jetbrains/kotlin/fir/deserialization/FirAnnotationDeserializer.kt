@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -142,11 +139,10 @@ class FirAnnotationDeserializer(
             ENUM -> FirFunctionCallImpl(session, null).apply {
                 val classId = nameResolver.getClassId(value.classId)
                 val entryName = nameResolver.getName(value.enumValueId)
-                val callableSymbol =
-                    this@FirAnnotationDeserializer.session.service<FirSymbolProvider>().getClassDeclaredCallableSymbols(
-                        classId, entryName
-                    ).firstOrNull()
-                this.calleeReference = callableSymbol?.let {
+                val entryClassId = classId.createNestedClassId(entryName)
+                val entryLookupTag = ConeClassLikeLookupTagImpl(entryClassId)
+                val entrySymbol = entryLookupTag.toSymbol(this@FirAnnotationDeserializer.session)
+                this.calleeReference = entrySymbol?.let {
                     FirResolvedCallableReferenceImpl(this@FirAnnotationDeserializer.session, null, entryName, it)
                 } ?: FirErrorNamedReference(
                     this@FirAnnotationDeserializer.session, null,
