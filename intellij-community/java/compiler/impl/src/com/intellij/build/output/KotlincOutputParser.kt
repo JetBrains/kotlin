@@ -37,7 +37,7 @@ class KotlincOutputParser : BuildOutputParser {
 
       val fileExtension = file.extension.toLowerCase()
       if (!file.isFile || (fileExtension != "kt" && fileExtension != "java")) {
-        return addMessage(createMessage(reader.buildId, getMessageKind(severity), lineWoSeverity.amendNextLinesIfNeeded(reader), line),
+        return addMessage(createMessage(reader.parentEventId, getMessageKind(severity), lineWoSeverity.amendNextLinesIfNeeded(reader), line),
                           consumer)
       }
 
@@ -57,15 +57,15 @@ class KotlincOutputParser : BuildOutputParser {
           if (lineNumber != null) {
             val symbolNumberText = symbolNumber.toInt()
             return addMessage(createMessageWithLocation(
-              reader.buildId, getMessageKind(severity), message, path, lineNumber.toInt(), symbolNumberText, details), consumer)
+              reader.parentEventId, getMessageKind(severity), message, path, lineNumber.toInt(), symbolNumberText, details), consumer)
           }
         }
 
-        return addMessage(createMessage(reader.buildId, getMessageKind(severity), message, details), consumer)
+        return addMessage(createMessage(reader.parentEventId, getMessageKind(severity), message, details), consumer)
       }
       else {
         val text = lineWoSeverity.amendNextLinesIfNeeded(reader)
-        return addMessage(createMessage(reader.buildId, getMessageKind(severity), text, text), consumer)
+        return addMessage(createMessage(reader.parentEventId, getMessageKind(severity), text, text), consumer)
       }
     }
 
@@ -139,12 +139,12 @@ class KotlincOutputParser : BuildOutputParser {
     return true
   }
 
-  private fun createMessage(buildId: Any, messageKind: MessageEvent.Kind, text: String, detail: String): MessageEvent {
-    return MessageEventImpl(buildId, messageKind, COMPILER_MESSAGES_GROUP, text.trim(), detail)
+  private fun createMessage(parentId: Any, messageKind: MessageEvent.Kind, text: String, detail: String): MessageEvent {
+    return MessageEventImpl(parentId, messageKind, COMPILER_MESSAGES_GROUP, text.trim(), detail)
   }
 
   private fun createMessageWithLocation(
-    buildId: Any,
+    parentId: Any,
     messageKind: MessageEvent.Kind,
     text: String,
     file: String,
@@ -152,7 +152,7 @@ class KotlincOutputParser : BuildOutputParser {
     columnIndex: Int,
     detail: String
   ): FileMessageEventImpl {
-    return FileMessageEventImpl(buildId, messageKind, COMPILER_MESSAGES_GROUP, text.trim(), detail,
+    return FileMessageEventImpl(parentId, messageKind, COMPILER_MESSAGES_GROUP, text.trim(), detail,
                                 FilePosition(File(file), lineNumber - 1, columnIndex - 1))
   }
 

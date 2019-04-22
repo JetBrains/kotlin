@@ -37,7 +37,7 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
       parentId = reason.substringAfter("Execution failed for task '").substringBefore("'.")
     }
     else {
-      parentId = reader.buildId
+      parentId = reader.parentEventId
     }
     description.appendln(reason)
     loop@ while (true) {

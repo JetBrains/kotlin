@@ -17,7 +17,7 @@ import java.util.concurrent.Future
 /**
  * @author Vladislav.Soroka
  */
-open class BuildOutputInstantReaderImpl(private val buildId: Any,
+open class BuildOutputInstantReaderImpl(private val parentEventId: Any,
                                         buildProgressListener: BuildProgressListener,
                                         parsers: List<BuildOutputParser>) : BuildOutputInstantReader, Closeable, Appendable {
   private val readJob: Job
@@ -29,14 +29,14 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
   private val appendedLineProcessor: LineProcessor
 
   init {
-    readJob = createReadJob(buildProgressListener, this, parsers)
+    readJob = createReadJob(buildProgressListener, parsers)
     val appendScope = CoroutineScope(Dispatchers.Default + appendParentJob)
     appendedLineProcessor = MyLineProcessor(readJob, appendScope, outputLinesChannel)
   }
 
   private fun createReadJob(buildProgressListener: BuildProgressListener,
-                            reader: BuildOutputInstantReaderImpl,
                             parsers: List<BuildOutputParser>): Job {
+    val thisReader: BuildOutputInstantReader = this
     return CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {
       var lastMessage: BuildEvent? = null
       val messageConsumer = { event: BuildEvent ->
@@ -48,11 +48,11 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
       }
 
       while (true) {
-        val line = reader.readLine() ?: break
+        val line = thisReader.readLine() ?: break
         if (line.isBlank()) continue
 
         for (parser in parsers) {
-          val readerWrapper = BuildOutputInstantReaderWrapper(reader)
+          val readerWrapper = BuildOutputInstantReaderWrapper(thisReader)
           if (parser.parse(line, readerWrapper, messageConsumer)) break
           readerWrapper.pushBackReadLines()
         }
@@ -60,8 +60,8 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
     }
   }
 
-  override fun getBuildId(): Any {
-    return buildId
+  override fun getParentEventId(): Any {
+    return parentEventId
   }
 
   override fun append(csq: CharSequence): BuildOutputInstantReaderImpl {
@@ -146,10 +146,10 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
     }
   }
 
-  private class BuildOutputInstantReaderWrapper(private val reader: BuildOutputInstantReaderImpl) : BuildOutputInstantReader {
+  private class BuildOutputInstantReaderWrapper(private val reader: BuildOutputInstantReader) : BuildOutputInstantReader {
     private var linesRead = 0
 
-    override fun getBuildId(): Any = reader.buildId
+    override fun getParentEventId(): Any = reader.parentEventId
 
     override fun readLine(): String? {
       val line = reader.readLine()

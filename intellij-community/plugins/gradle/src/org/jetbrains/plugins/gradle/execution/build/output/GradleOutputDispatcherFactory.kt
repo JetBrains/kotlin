@@ -7,7 +7,6 @@ import com.intellij.build.events.StartEvent
 import com.intellij.build.output.BuildOutputInstantReaderImpl
 import com.intellij.build.output.BuildOutputParser
 import com.intellij.build.output.LineProcessor
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemOutputDispatcherFactory
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemOutputMessageDispatcher
 import org.gradle.api.logging.LogLevel
@@ -31,13 +30,11 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
     private val lineProcessor: LineProcessor
     private val myRootReader: BuildOutputInstantReaderImpl
     private var myCurrentReader: BuildOutputInstantReaderImpl
-    private val tasksOutputReaders: MutableMap<String, BuildOutputInstantReaderImpl>
-    private val tasksEventIds: MutableMap<String, Any>
+    private val tasksOutputReaders = mutableMapOf<String, BuildOutputInstantReaderImpl>()
+    private val tasksEventIds = mutableMapOf<String, Any>()
 
     init {
-      tasksOutputReaders = mutableMapOf()
-      tasksEventIds = mutableMapOf()
-      myRootReader = BuildOutputInstantReaderImpl(buildId, BuildProgressListener() {
+      myRootReader = BuildOutputInstantReaderImpl(buildId, BuildProgressListener {
         var buildEvent = it
         val parentId = buildEvent.parentId
         if (parentId != buildId && parentId is String) {
@@ -67,16 +64,10 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
     override fun onEvent(event: BuildEvent) {
       myBuildProgressListener.onEvent(event)
       if (event is StartEvent && event.parentId == buildId) {
-        val taskReader = tasksOutputReaders[event.message]
-        if (taskReader != null) { // multiple invocations of the same task during the build session
-          taskReader.close()
-        }
+        tasksOutputReaders[event.message]?.close() // multiple invocations of the same task during the build session
 
         val parentEventId = event.id
-        tasksOutputReaders[event.message] = BuildOutputInstantReaderImpl(buildId, BuildProgressListener() {
-          val buildEvent = if (it.parentId == buildId) BuildEventInvocationHandler.wrap(it, parentEventId) else it
-          myBuildProgressListener.onEvent(buildEvent)
-        }, parsers)
+        tasksOutputReaders[event.message] = BuildOutputInstantReaderImpl(parentEventId, myBuildProgressListener, parsers)
         tasksEventIds[event.message] = parentEventId
       }
     }
@@ -134,17 +125,13 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
 
       companion object {
         fun wrap(buildEvent: BuildEvent, parentEventId: Any): BuildEvent {
-          val classLoader = buildEvent.javaClass.getClassLoader()
-          val interfaces = buildEvent.javaClass.getInterfaces()
+          val classLoader = buildEvent.javaClass.classLoader
+          val interfaces = buildEvent.javaClass.interfaces
           val invocationHandler = BuildEventInvocationHandler(buildEvent, parentEventId)
           return Proxy.newProxyInstance(classLoader, interfaces, invocationHandler) as BuildEvent
         }
       }
     }
-  }
-
-  companion object {
-    private val LOG = logger<GradleOutputDispatcherFactory>()
   }
 }
 

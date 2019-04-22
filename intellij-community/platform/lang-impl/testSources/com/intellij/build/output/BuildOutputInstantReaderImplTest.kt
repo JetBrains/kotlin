@@ -104,7 +104,7 @@ ${trashOut.prependIndent("        ")}
           buf.append(nextLine).append('\n')
           nextLine = reader.readLine()
         }
-        messageConsumer.accept(MessageEventImpl(reader.buildId, kind, null, buf.toString().dropLast(1), null))
+        messageConsumer.accept(MessageEventImpl(reader.parentEventId, kind, null, buf.toString().dropLast(1), null))
         return@BuildOutputParser true
       }
       return@BuildOutputParser false

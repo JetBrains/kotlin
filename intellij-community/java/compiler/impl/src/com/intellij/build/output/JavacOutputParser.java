@@ -39,17 +39,17 @@ public class JavacOutputParser implements BuildOutputParser {
       if (part1.equalsIgnoreCase("error") /* jikes */ || part1.equalsIgnoreCase("Caused by")) {
         // +1 so we don't include the colon
         String text = line.substring(colonIndex1 + 1).trim();
-        messageConsumer.accept(new MessageEventImpl(reader.getBuildId(), MessageEvent.Kind.ERROR, COMPILER_MESSAGES_GROUP, text, line));
+        messageConsumer.accept(new MessageEventImpl(reader.getParentEventId(), MessageEvent.Kind.ERROR, COMPILER_MESSAGES_GROUP, text, line));
         return true;
       }
       if (part1.equalsIgnoreCase("warning")) {
         // +1 so we don't include the colon
         String text = line.substring(colonIndex1 + 1).trim();
-        messageConsumer.accept(new MessageEventImpl(reader.getBuildId(), MessageEvent.Kind.WARNING, COMPILER_MESSAGES_GROUP, text, line));
+        messageConsumer.accept(new MessageEventImpl(reader.getParentEventId(), MessageEvent.Kind.WARNING, COMPILER_MESSAGES_GROUP, text, line));
         return true;
       }
       if (part1.equalsIgnoreCase("javac")) {
-        messageConsumer.accept(new MessageEventImpl(reader.getBuildId(), MessageEvent.Kind.ERROR, COMPILER_MESSAGES_GROUP, line, line));
+        messageConsumer.accept(new MessageEventImpl(reader.getParentEventId(), MessageEvent.Kind.ERROR, COMPILER_MESSAGES_GROUP, line, line));
         return true;
       }
       if (part1.equalsIgnoreCase("Note")) {
@@ -60,7 +60,7 @@ public class JavacOutputParser implements BuildOutputParser {
           if (file.isFile()) {
             message = message.substring(javaFileExtensionIndex + ".java".length() + 1);
             String detailedMessage = amendNextInfoLinesIfNeeded(file.getPath() + ":\n" + message, reader);
-            messageConsumer.accept(new FileMessageEventImpl(reader.getBuildId(), MessageEvent.Kind.INFO, COMPILER_MESSAGES_GROUP,
+            messageConsumer.accept(new FileMessageEventImpl(reader.getParentEventId(), MessageEvent.Kind.INFO, COMPILER_MESSAGES_GROUP,
                                                             message, detailedMessage,
                                                             new FilePosition(file, 0, 0)));
             return true;
@@ -124,7 +124,7 @@ public class JavacOutputParser implements BuildOutputParser {
           if (column >= 0) {
             messageList = convertMessages(messageList);
             String msgText = StringUtil.join(messageList, SystemProperties.getLineSeparator());
-            messageConsumer.accept(new FileMessageEventImpl(reader.getBuildId(), kind, COMPILER_MESSAGES_GROUP, msgText, msgText,
+            messageConsumer.accept(new FileMessageEventImpl(reader.getParentEventId(), kind, COMPILER_MESSAGES_GROUP, msgText, msgText,
                                                             new FilePosition(file, lineNumber - 1, column)));
             return true;
           }
@@ -135,7 +135,7 @@ public class JavacOutputParser implements BuildOutputParser {
     }
 
     if (line.endsWith("java.lang.OutOfMemoryError")) {
-      messageConsumer.accept(new MessageEventImpl(reader.getBuildId(), MessageEvent.Kind.ERROR, COMPILER_MESSAGES_GROUP,
+      messageConsumer.accept(new MessageEventImpl(reader.getParentEventId(), MessageEvent.Kind.ERROR, COMPILER_MESSAGES_GROUP,
                                                   "Out of memory.", line));
       return true;
     }

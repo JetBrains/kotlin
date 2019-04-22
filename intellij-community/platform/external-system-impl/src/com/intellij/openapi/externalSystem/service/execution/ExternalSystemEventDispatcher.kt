@@ -16,7 +16,7 @@ import java.io.Closeable
  */
 @ApiStatus.Experimental
 class ExternalSystemEventDispatcher(task: ExternalSystemTask,
-                                    private val progressListener: BuildProgressListener?) : Closeable, Appendable, BuildProgressListener {
+                                    progressListener: BuildProgressListener?) : Closeable, Appendable, BuildProgressListener {
   private var outputMessageDispatcher: ExternalSystemOutputMessageDispatcher? = null
 
   init {
@@ -37,8 +37,8 @@ class ExternalSystemEventDispatcher(task: ExternalSystemTask,
           foundFactory = it
         }
       }
-      outputMessageDispatcher = foundFactory?.create(task.getId(), progressListener, buildOutputParsers)
-                                ?: DefaultOutputMessageDispatcher(task.getId(), progressListener, buildOutputParsers)
+      outputMessageDispatcher = foundFactory?.create(task.id, progressListener, buildOutputParsers)
+                                ?: DefaultOutputMessageDispatcher(task.id, progressListener, buildOutputParsers)
     }
   }
 
