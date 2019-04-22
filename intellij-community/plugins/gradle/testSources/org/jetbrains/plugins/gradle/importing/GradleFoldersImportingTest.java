@@ -44,6 +44,35 @@ import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.get
 public class GradleFoldersImportingTest extends GradleImportingTestCase {
 
   @Test
+  public void testUnsupportedTypesInDsl() throws Exception {
+    importProject(
+      new GradleBuildScriptBuilderEx().addPostfix(
+          "import org.gradle.api.internal.FactoryNamedDomainObjectContainer;",
+          "import org.gradle.internal.reflect.Instantiator;",
+          "class MyObj implements Named {",
+          "  String myName;",
+          "  public MyObj(String name) {",
+          "    myName = namse",
+          "  }",
+          "  ",
+          "  public String getName() {",
+          "    return myName",
+          "  }",
+          "}",
+          "project.extensions.create(",
+          "                \"sourceSets\",",
+          "                FactoryNamedDomainObjectContainer,",
+          "                MyObj,",
+          "                services.get(Instantiator),",
+          "               {action -> }",
+          "        ) ",
+          "sourceSets {",
+          " println \"Hello World!\"",
+          "}"
+      ).generate());
+  }
+
+  @Test
   public void testBaseJavaProject() throws Exception {
     getCurrentExternalProjectSettings().setDelegatedBuild(ThreeState.NO);
     createDefaultDirs();
