@@ -190,10 +190,11 @@ class JKParenthesizedExpressionImpl(expression: JKExpression) : JKParenthesizedE
     override var expression: JKExpression by child(expression)
 }
 
-class JKTypeCastExpressionImpl(override var expression: JKExpression, type: JKTypeElement) : JKTypeCastExpression, JKBranchElementBase(),
+class JKTypeCastExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKTypeCastExpression, JKBranchElementBase(),
     PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeCastExpression(this, data)
 
+    override var expression by child(expression)
     override var type by child(type)
 }
 
