@@ -12,10 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.LanguageVersion;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -64,14 +61,17 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
     }
 
     @NotNull
-    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion) {
+    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion, @NotNull Map<LanguageFeature, LanguageFeature.State> specificFeatures) {
         CompilerConfiguration configuration = getEnvironment().getConfiguration();
-        if (explicitLanguageVersion != null) {
-            CommonConfigurationKeysKt.setLanguageVersionSettings(
-                    configuration,
-                    new LanguageVersionSettingsImpl(explicitLanguageVersion, LanguageVersionSettingsImpl.DEFAULT.getApiVersion())
-            );
-        }
+        LanguageVersion languageVersion = explicitLanguageVersion == null
+                                          ? CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion()
+                                          : explicitLanguageVersion;
+
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
+                languageVersion,
+                LanguageVersionSettingsImpl.DEFAULT.getApiVersion(),
+                Collections.emptyMap(),
+                specificFeatures));
         return JvmResolveUtil.analyze(Collections.singleton(file), getEnvironment(), configuration);
     }
 
@@ -87,9 +87,10 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
 
         String explicitLanguageVersion = InTextDirectivesUtils.findStringWithPrefixes(fileData, "// LANGUAGE_VERSION:");
         LanguageVersion version = explicitLanguageVersion == null ? null : LanguageVersion.fromVersionString(explicitLanguageVersion);
+        Map<LanguageFeature, LanguageFeature.State> specificFeatures = parseLanguageFeatures(fileData);
 
         KtFile psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(getTestDataPath(), fileName), getProject());
-        AnalysisResult analysisResult = analyze(psiFile, version);
+        AnalysisResult analysisResult = analyze(psiFile, version, specificFeatures);
         BindingContext bindingContext = analysisResult.getBindingContext();
 
         List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics().all(), new Condition<Diagnostic>() {
@@ -121,6 +122,34 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
 
             index++;
         }
+    }
+
+    private Map<LanguageFeature, LanguageFeature.State> parseLanguageFeatures(String fileText) {
+        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(fileText, "// !LANGUAGE:");
+        Map<LanguageFeature, LanguageFeature.State> result = new HashMap<>();
+        for (String directive : directives) {
+            LanguageFeature.State state;
+            char sign = directive.charAt(0);
+            switch (sign) {
+                case '+':
+                    state = LanguageFeature.State.ENABLED;
+                    break;
+                case '-':
+                    state = LanguageFeature.State.DISABLED;
+                    break;
+                default:
+                    continue;
+            }
+            String featureName = directive.substring(1);
+            LanguageFeature feature;
+            try {
+                feature = LanguageFeature.fromString(featureName);
+            } catch (Exception e) {
+                continue;
+            }
+            result.put(feature, state);
+        }
+        return result;
     }
 
     private static int getDiagnosticNumber(Map<String, String> directives) {
