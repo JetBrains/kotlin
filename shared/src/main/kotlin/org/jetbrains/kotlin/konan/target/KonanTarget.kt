@@ -319,5 +319,20 @@ open class HostManager(protected val distribution: Distribution = Distribution()
     }
 }
 
+/**
+ * Name of a preset used in the 'kotlin-multiplatform' Gradle plugin to represent this target.
+ */
+val KonanTarget.presetName: String
+    get() = when (this) {
+        ANDROID_ARM32 -> "androidNativeArm32"
+        ANDROID_ARM64 -> "androidNativeArm64"
+        else -> evaluatePresetName(this.name)
+    }
+
+private fun evaluatePresetName(targetName: String): String {
+    val nameParts = targetName.split('_').mapNotNull { it.takeIf(String::isNotEmpty) }
+    return nameParts.asSequence().drop(1).joinToString("", nameParts.firstOrNull().orEmpty(), transform = String::capitalize)
+}
+
 class TargetSupportException (message: String = "", cause: Throwable? = null) : Exception(message, cause)
 
