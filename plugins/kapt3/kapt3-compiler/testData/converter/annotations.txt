@@ -28,9 +28,9 @@ public abstract @interface Anno2 {
 
     public abstract Colors[] colors() default {Colors.BLACK, Colors.WHITE};
 
-    public abstract java.lang.Class clazz();
+    public abstract java.lang.Class<?> clazz();
 
-    public abstract java.lang.Class[] classes();
+    public abstract java.lang.Class<?>[] classes();
 }
 
 ////////////////////

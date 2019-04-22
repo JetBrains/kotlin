@@ -4,7 +4,7 @@ import kotlin.reflect.KClass;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
 
-    public abstract java.lang.Class a();
+    public abstract java.lang.Class<java.lang.Object> a();
 }
 
 ////////////////////
