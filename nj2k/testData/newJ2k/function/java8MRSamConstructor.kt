@@ -1,7 +1,6 @@
 package test
 
 import javaApi.*
-import java.util.Collections
 
 internal class Test {
     fun memberFun(): Int {
@@ -9,7 +8,6 @@ internal class Test {
     }
 
     constructor(i: Int) : super() {}
-
     constructor() {}
 
     companion object {
@@ -29,17 +27,14 @@ internal class Test {
 }
 
 internal class Test2
-
 internal class Java8Class {
     private val field = Java8Class()
     private val h = MethodReferenceHelperClass()
-
     fun testStaticFunction() {
         val staticFunFromSameClass = JFunction0 { staticFun() }
         staticFunFromSameClass.foo()
         MethodReferenceHelperClass.staticFun0 { staticFun() }
         h.memberFun0 { staticFun() }
-
         val staticFunFromAnotherClass = JFunction0 { Test.staticFun() }
         staticFunFromAnotherClass.foo()
         MethodReferenceHelperClass.staticFun0 { Test.staticFun() }
@@ -47,10 +42,10 @@ internal class Java8Class {
     }
 
     fun testMemberFunctionThroughClass() {
-        val memberFunFromClass = JFunction2<Java8Class, Int> { it.memberFun() }
+        val memberFunFromClass: JFunction2<Java8Class, Int> = JFunction2 { obj: Java8Class -> obj.memberFun() }
         memberFunFromClass.foo(Java8Class())
-        MethodReferenceHelperClass.staticFun2(JFunction2<Java8Class, Int> { it.memberFun() })
-        h.memberFun2(JFunction2<Java8Class, Int> { it.memberFun() })
+        MethodReferenceHelperClass.staticFun2 { obj: Java8Class -> obj.memberFun() }
+        h.memberFun2 { obj: Java8Class -> obj.memberFun() }
     }
 
     fun testMemberFunctionThroughObject() {
@@ -87,27 +82,22 @@ internal class Java8Class {
         constructorSameClass.foo()
         MethodReferenceHelperClass.staticFun0 { Java8Class() }
         h.memberFun0 { Java8Class() }
-
-        val qualifiedConstructorSameClass = JFunction0 { test.Java8Class() }
+        val qualifiedConstructorSameClass = JFunction0 { Java8Class() }
         qualifiedConstructorSameClass.foo()
-        MethodReferenceHelperClass.staticFun0 { test.Java8Class() }
-        h.memberFun0 { test.Java8Class() }
-
+        MethodReferenceHelperClass.staticFun0 { Java8Class() }
+        h.memberFun0 { Java8Class() }
         val constructorAnotherClass = JFunction0 { Test() }
         constructorAnotherClass.foo()
         MethodReferenceHelperClass.staticFun0 { Test() }
         h.memberFun0 { Test() }
-
-        val constructorAnotherClassWithParam = JFunction2<Int, Test> { Test(it) }
+        val constructorAnotherClassWithParam: JFunction2<Int, Test> = JFunction2 { i: Int -> Test(i) }
         constructorAnotherClassWithParam.foo(1)
-        MethodReferenceHelperClass.staticFun2(JFunction2<Int, Test> { Test(it) })
-        h.memberFun2(JFunction2<Int, Test> { Test(it) })
-
-        val qualifiedConstructorAnotherClass = JFunction0 { test.Test() }
+        MethodReferenceHelperClass.staticFun2 { i: Int -> Test(i) }
+        h.memberFun2 { i: Int -> Test(i) }
+        val qualifiedConstructorAnotherClass = JFunction0 { Test() }
         qualifiedConstructorAnotherClass.foo()
-        MethodReferenceHelperClass.staticFun0 { test.Test() }
-        h.memberFun0 { test.Test() }
-
+        MethodReferenceHelperClass.staticFun0 { Test() }
+        h.memberFun0 { Test() }
         val constructorAnotherClassWithoutConstructor = JFunction0 { Test2() }
         constructorAnotherClassWithoutConstructor.foo()
         MethodReferenceHelperClass.staticFun0 { Test2() }
@@ -115,30 +105,28 @@ internal class Java8Class {
     }
 
     fun testLibraryFunctions() {
-        val memberFunFromClass = JFunction2<String, Int> { it.length }
+        val memberFunFromClass: JFunction2<String, Int> = JFunction2 { obj: String -> obj.length }
         memberFunFromClass.foo("str")
-
         Thread(Runnable { println() }).start()
         Runnable { println() }.run()
     }
 
     fun testOverloads() {
-        val constructorWithoutParams = JFunction1 { Test.testOverloads() }
+        val constructorWithoutParams: JFunction1<String> = JFunction1 { Test.testOverloads() }
         constructorWithoutParams.foo()
         MethodReferenceHelperClass.staticFun1 { Test.testOverloads() }
         h.memberFun1 { Test.testOverloads() }
-
-        val constructorWithParam = JFunction2<Int, String> { Test.testOverloads(it) }
+        val constructorWithParam: JFunction2<Int, String> = JFunction2 { i: Int -> Test.testOverloads(i) }
         constructorWithParam.foo(2)
-        MethodReferenceHelperClass.staticFun2(JFunction2<Int, String> { Test.testOverloads(it) })
-        h.memberFun2(JFunction2<Int, String> { Test.testOverloads(it) })
+        MethodReferenceHelperClass.staticFun2 { i: Int -> Test.testOverloads(i) }
+        h.memberFun2 { i: Int -> Test.testOverloads(i) }
     }
 
     fun testGenericFunctions() {
-        val emptyList = JFunction1<List<String>> { emptyList() }
+        val emptyList: JFunction1<kotlin.collections.List<String>> = JFunction1 { emptyList() }
         emptyList.foo()
-        MethodReferenceHelperClass.staticFun1(JFunction1<List<String>> { emptyList() })
-        h.memberFun1(JFunction1<List<String>> { emptyList() })
+        MethodReferenceHelperClass.staticFun1(JFunction1<kotlin.collections.List<String>> { emptyList() })
+        h.memberFun1(JFunction1<kotlin.collections.List<String>> { emptyList() })
     }
 
     fun memberFun(): Int {

@@ -1,2 +1,2 @@
-for (n in list!!) {
+for (n in list) {
 }

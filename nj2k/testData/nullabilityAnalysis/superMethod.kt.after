@@ -6,7 +6,7 @@ open class A () {
 }
 
 class B : A() {
-    override fun foo(x: Int?): Int? {
+    override fun foo(x: Int?): Int {
         return 1
     }
 }

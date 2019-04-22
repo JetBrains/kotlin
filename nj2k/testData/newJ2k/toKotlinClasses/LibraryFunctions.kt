@@ -10,7 +10,7 @@ class TestJava {
         fun main(args: Array<String>) {
             val x: List<String> = ArrayList()
             x.filter { o: String -> o == "a" }
-            val lazy: Lazy<String?> = lazy(LazyThreadSafetyMode.NONE) { "aaa" }
+            val lazy = lazy(LazyThreadSafetyMode.NONE) { "aaa" }
         }
     }
 }

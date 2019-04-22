@@ -1,5 +1,4 @@
 //file
-package test;
 
 class Test extends Base {
   @Override

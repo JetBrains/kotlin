@@ -1,5 +1,3 @@
-package demo;
-
 class Test {
   void test() {
     Integer i = Integer.valueOf(100);
