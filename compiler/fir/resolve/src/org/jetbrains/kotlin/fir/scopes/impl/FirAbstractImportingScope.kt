@@ -49,7 +49,7 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
             if (action.stop()) {
                 return ProcessorAction.STOP
             }
-        } else {
+        } else if (name.isSpecial || name.identifier.isNotEmpty()) {
             val matchedClass = provider.getClassLikeSymbolByFqName(ClassId(import.packageFqName, name))
             if (processConstructors(
                     matchedClass,
