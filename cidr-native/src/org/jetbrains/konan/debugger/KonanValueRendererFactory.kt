@@ -11,9 +11,9 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
 import com.jetbrains.cidr.execution.debugger.evaluation.ValueRendererFactory
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer
-import org.jetbrains.konan.util.CidrKotlinReleaseType.RELEASE
 import org.jetbrains.konan.util.getKotlinNativeHome
 import org.jetbrains.konan.util.getKotlinNativeVersion
+import org.jetbrains.kotlin.konan.MetaVersion
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -50,14 +50,15 @@ private fun initLLDBDriver(project: Project, driver: LLDBDriver) {
 }
 
 private fun getPrettyPrintersLocation(kotlinNativeHome: String): Path {
-    // For old versions of Kotlin/Native use improved pretty printers bundled with the plugin
-    val usePrettyPrintersFromPlugin = getKotlinNativeVersion(kotlinNativeHome)?.let { fullKotlinNativeVersion ->
-        val kotlinNativeVersion = fullKotlinNativeVersion.kotlinVersion
-        when {
-            // < 1.2
-            !kotlinNativeVersion.isAtLeast(1, 2) -> true
-            // == 1.2 && ! release
-            !kotlinNativeVersion.isAtLeast(1, 2, 1) && fullKotlinNativeVersion.releaseType != RELEASE -> true
+    // For versions of Kotlin/Native older than "1.2-release" use improved pretty printers bundled with the plugin
+    val usePrettyPrintersFromPlugin = getKotlinNativeVersion(kotlinNativeHome)?.run {
+        when (major) {
+            0 -> true
+            1 -> when (minor) {
+                0, 1 -> true
+                2 -> meta != MetaVersion.RELEASE
+                else -> false
+            }
             else -> false
         }
     } ?: false
@@ -65,10 +66,10 @@ private fun getPrettyPrintersLocation(kotlinNativeHome: String): Path {
     if (!usePrettyPrintersFromPlugin)
         return Paths.get(kotlinNativeHome, "tools", "konan_lldb.py")
 
-    val outOfPluginPrettyPrinters = createTempDir().toPath().resolve("konan_lldb.py")
-    outOfPluginPrettyPrinters.toFile().outputStream().use { outputStream ->
+    val outOfPluginPrettyPrinters = createTempDir().resolve("konan_lldb.py")
+    outOfPluginPrettyPrinters.outputStream().use { outputStream ->
         KonanValueRendererFactory::class.java.getResourceAsStream("/lldb/konan_lldb.py").copyTo(outputStream)
     }
 
-    return outOfPluginPrettyPrinters
+    return outOfPluginPrettyPrinters.toPath()
 }

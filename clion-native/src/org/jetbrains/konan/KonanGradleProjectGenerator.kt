@@ -43,7 +43,7 @@ class KonanGradleProjectGenerator : WebProjectTemplate<Any>() {
 
         val filesToOpen = mutableListOf<VirtualFile>()
         runWriteAction {
-            for (file in loadedTemplate?.extraFiles.orEmpty()) {
+            for (file in loadedTemplate?.templateFiles.orEmpty()) {
                 val vFile = file.create(baseDir)
                 if (file.openInEditor) filesToOpen += vFile
             }
