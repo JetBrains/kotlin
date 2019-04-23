@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.hints.presentation
 
+import com.intellij.codeInsight.hint.HintManager
+import com.intellij.codeInsight.hint.HintManagerImpl
 import com.intellij.codeInsight.hint.HintUtil
 import com.intellij.ide.ui.AntialiasingType
 import com.intellij.openapi.command.CommandProcessor
@@ -15,12 +17,10 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.util.Key
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
+import com.intellij.ui.LightweightHint
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import java.awt.Font
-import java.awt.FontMetrics
-import java.awt.Point
-import java.awt.RenderingHints
+import java.awt.*
 import java.awt.event.MouseEvent
 import java.awt.font.FontRenderContext
 import javax.swing.Icon
@@ -96,6 +96,61 @@ class PresentationFactory(val editor: EditorImpl) {
     val label = HintUtil.createInformationLabel(text)
     label.border = JBUI.Borders.empty(6, 6, 5, 6)
 
+  }
+
+  fun withTooltip(tooltip: String, base: InlayPresentation) {
+    if (tooltip.isEmpty()) return
+    else onHover(base, tooltipHandler(tooltip))
+  }
+
+  private fun showTooltip(editor: Editor, e: MouseEvent, text: String): LightweightHint {
+    val hint = run {
+      val label = HintUtil.createInformationLabel(text)
+      label.border = JBUI.Borders.empty(6, 6, 5, 6)
+      LightweightHint(label)
+    }
+
+    val constraint = HintManager.ABOVE
+
+    val point = run {
+      val pointOnEditor = locationAt(e, editor.contentComponent)
+      val p = HintManagerImpl.getHintPosition(hint, editor, editor.xyToVisualPosition(pointOnEditor), constraint)
+      p.x = e.xOnScreen - editor.contentComponent.topLevelAncestor.locationOnScreen.x
+      p
+    }
+
+    HintManagerImpl.getInstanceImpl().showEditorHint(hint, editor, point,
+                                                     HintManager.HIDE_BY_ANY_KEY
+                                                       or HintManager.HIDE_BY_TEXT_CHANGE
+                                                       or HintManager.HIDE_BY_SCROLLING,
+                                                     0,
+                                                     false,
+                                                     HintManagerImpl.createHintHint(editor, point, hint, constraint).setContentActive(false)
+    )
+
+    return hint
+  }
+
+  private fun tooltipHandler(tooltip: String) : (MouseEvent?) -> Unit {
+    var hint: LightweightHint? = null
+    return { event ->
+      when (event) {
+        null -> {
+          hint?.hide()
+          hint = null
+        }
+        else -> {
+          if (hint?.isVisible == true) {
+            hint = showTooltip(editor, event, tooltip)
+          }
+        }
+      }
+    }
+  }
+
+  private fun locationAt(e: MouseEvent, component: Component): Point  {
+    val pointOnScreen = component.locationOnScreen
+    return Point(e.xOnScreen - pointOnScreen.x, e.yOnScreen - pointOnScreen.y)
   }
 
   fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
