@@ -115,6 +115,8 @@ def t2_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be appli
 def t3 = task(description: 'oh', idt3)
 def t4 = task(description: 'hi', idt4, {})
 def t4_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], groovy.lang.Closure<java.lang.Void>, ?)'">(description: 'mark', {}, <warning descr="Cannot resolve symbol 'idt4_'">idt4_</warning>)</warning>
+def t5 = task idt5 << {}
+def t6 = task idt6 + {}
 
 def insideClosure = {
     def ct1 = task(cidt1)
@@ -123,6 +125,8 @@ def insideClosure = {
     def ct3 = task(description: 'oh', cidt3)
     def ct4 = task(description: 'hi', cidt4, {})
     def ct4_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], groovy.lang.Closure<java.lang.Void>, ?)'">(description: 'mark', {}, <warning descr="Cannot resolve symbol 'cidt4_'">cidt4_</warning>)</warning>
+    def ct5 = task cidt5 << {}
+    def ct6 = task cidt6 + {}
 }
 insideClosure()
 
@@ -133,6 +137,8 @@ def insideMethod() {
     def mt3 = task(description: 'oh', midt3)
     def mt4 = task(description: 'hi', midt4, {})
     def mt4_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], groovy.lang.Closure<java.lang.Void>, ?)'">(description: 'mark', {}, <warning descr="Cannot resolve symbol 'midt4_'">midt4_</warning>)</warning>
+    def mt5 = task midt5 << {}
+    def mt6 = task midt6 + {}
 }
 insideMethod()
 
