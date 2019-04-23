@@ -74,7 +74,7 @@ class KotlinJsSingleTargetConfigurator(kotlinPluginVersion: String) :
     override fun newTestsConfigurator(compilation: KotlinJsCompilation) =
         object : KotlinJsCompilationTestsConfigurator(compilation) {
             override fun configureDefaultTestFramework(it: KotlinJsTest) {
-                it.useMocha { }
+                it.useKarma { }
             }
         }
 }
