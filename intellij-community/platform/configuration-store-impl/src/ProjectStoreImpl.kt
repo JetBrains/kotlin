@@ -168,14 +168,14 @@ private class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(p
 }
 
 internal class PlatformLangProjectStoreClassProvider : ProjectStoreClassProvider {
-  override fun getProjectStoreClass(isDefaultProject: Boolean): Class<out IComponentStore> {
-    return if (isDefaultProject) DefaultProjectStoreImpl::class.java else ProjectWithModulesStoreImpl::class.java
+  override fun createStore(project: Project): IComponentStore {
+    return if (project.isDefault) DefaultProjectStoreImpl(project) else ProjectWithModulesStoreImpl(project)
   }
 }
 
 internal class PlatformProjectStoreClassProvider : ProjectStoreClassProvider {
-  override fun getProjectStoreClass(isDefaultProject: Boolean): Class<out IComponentStore> {
-    return if (isDefaultProject) DefaultProjectStoreImpl::class.java else ProjectStoreImpl::class.java
+  override fun createStore(project: Project): IComponentStore {
+    return if (project.isDefault) DefaultProjectStoreImpl(project) else ProjectStoreImpl(project)
   }
 }
 
