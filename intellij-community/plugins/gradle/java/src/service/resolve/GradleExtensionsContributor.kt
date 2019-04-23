@@ -65,20 +65,6 @@ class GradleExtensionsContributor : GradleMethodContextContributor {
       }
     }
 
-    if (place.text == "task" && place is GrReferenceExpression && place.parent is GrApplicationStatement) {
-      if (GradleResolverUtil.isLShiftElement(place.parent?.children?.getOrNull(1)?.firstChild)) {
-        val taskContainerClass = JavaPsiFacade.getInstance(place.project).findClass(GRADLE_API_TASK_CONTAINER, resolveScope) ?: return true
-        val returnClass = groovyPsiManager.createTypeByFQClassName(GRADLE_API_TASK, resolveScope) ?: return true
-        val methodBuilder = GrLightMethodBuilder(place.manager, "create").apply {
-          containingClass = taskContainerClass
-          returnType = returnClass
-        }
-        methodBuilder.addOptionalParameter("task", GRADLE_API_TASK)
-        place.putUserData(RESOLVED_CODE, true)
-        if (!processor.execute(methodBuilder, state)) return false
-      }
-    }
-
     if (place.getUserData(RESOLVED_CODE).let { it == null || !it }) {
       if (psiElement().withAncestor(2, groovyClosure().with(object : PatternCondition<GrClosableBlock?>("withDelegatesToInfo") {
         override fun accepts(t: GrClosableBlock, context: ProcessingContext?): Boolean {
