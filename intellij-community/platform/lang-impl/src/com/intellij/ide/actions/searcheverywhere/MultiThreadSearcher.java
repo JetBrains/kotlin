@@ -49,22 +49,12 @@ class MultiThreadSearcher implements SESearcher {
     myEqualityProvider = SEResultsEqualityProvider.composite(equalityProviders);
   }
 
-  /**
-   * Starts searching process with given search parameters
-   * @param contributorsAndLimits map of used searching contributors and maximum elements limit for them
-   * @param pattern search pattern
-   * @param useNonProjectItems flags indicating if non-projects items should be included in search results
-   * @param filterSupplier supplier of {@link SearchEverywhereContributorFilter}'s for different search contributors
-   * @return {@link ProgressIndicator} that could be used to track and/or cancel searching process
-   */
   @Override
-  public ProgressIndicator search(@NotNull Map<? extends SearchEverywhereContributor<?, ?>, Integer> contributorsAndLimits,
-                                  @NotNull String pattern,
-                                  boolean useNonProjectItems,
-                                  @NotNull Function<? super SearchEverywhereContributor<?, ?>, ? extends SearchEverywhereContributorFilter<?>> filterSupplier) {
+  public ProgressIndicator search(@NotNull Map<? extends SearchEverywhereContributor<?>, Integer> contributorsAndLimits,
+                                  @NotNull String pattern) {
     LOG.debug("Search started for pattern [", pattern, "]");
 
-    Collection<? extends SearchEverywhereContributor<?, ?>> contributors = contributorsAndLimits.keySet();
+    Collection<? extends SearchEverywhereContributor<?>> contributors = contributorsAndLimits.keySet();
     if (pattern.isEmpty()) {
       if (ApplicationManager.getApplication().isUnitTestMode()) {
         contributors = Collections.emptySet(); //empty search string is not allowed for tests
@@ -82,10 +72,9 @@ class MultiThreadSearcher implements SESearcher {
       accumulator = new FullSearchResultsAccumulator(contributorsAndLimits, myEqualityProvider, myListener,
                                                                                   myNotificationExecutor, indicatorWithCancelListener);
 
-      for (SearchEverywhereContributor<?, ?> contributor : contributors) {
-        SearchEverywhereContributorFilter<?> filter = filterSupplier.apply(contributor);
-        Runnable task = createSearchTask(pattern, useNonProjectItems, accumulator,
-                                         indicatorWithCancelListener, contributor, filter, () -> latch.countDown());
+      for (SearchEverywhereContributor<?> contributor : contributors) {
+        Runnable task = createSearchTask(pattern, accumulator,
+                                         indicatorWithCancelListener, contributor, () -> latch.countDown());
         ApplicationManager.getApplication().executeOnPooledThread(task);
       }
 
@@ -111,29 +100,16 @@ class MultiThreadSearcher implements SESearcher {
     return indicator;
   }
 
-  /**
-   * Starts process of expanding (search for more elements) specified contributors section (when user chose "more" item)
-   * @param alreadyFound map of already found items for all used search contributors
-   * @param pattern search pattern
-   * @param useNonProjectItems flags indicating if non-projects items should be included in search results
-   * @param contributor specifies {@link SearchEverywhereContributor} element which going to be expanded
-   * @param newLimit new maximum elements limit for expanded contributor
-   * @param filterSupplier supplier of {@link SearchEverywhereContributorFilter}'s for different search contributors
-   * @return {@link ProgressIndicator} that could be used to track and/or cancel searching process
-   */
   @Override
-  public ProgressIndicator findMoreItems(@NotNull Map<? extends SearchEverywhereContributor<?, ?>, Collection<SearchEverywhereFoundElementInfo>> alreadyFound,
+  public ProgressIndicator findMoreItems(@NotNull Map<? extends SearchEverywhereContributor<?>, Collection<SearchEverywhereFoundElementInfo>> alreadyFound,
                                          @NotNull String pattern,
-                                         boolean useNonProjectItems,
-                                         @NotNull SearchEverywhereContributor<?, ?> contributor,
-                                         int newLimit,
-                                         @NotNull Function<? super SearchEverywhereContributor<?, ?>, ? extends SearchEverywhereContributorFilter<?>> filterSupplier) {
-    SearchEverywhereContributorFilter<?> filter = filterSupplier.apply(contributor);
+                                         @NotNull SearchEverywhereContributor<?> contributor,
+                                         int newLimit) {
     ProgressIndicator indicator = new ProgressIndicatorBase();
     ResultsAccumulator accumulator = new ShowMoreResultsAccumulator(alreadyFound, myEqualityProvider, contributor, newLimit,
                                                                     myListener, myNotificationExecutor, indicator);
     indicator.start();
-    Runnable task = createSearchTask(pattern, useNonProjectItems, accumulator, indicator, contributor, filter, () -> indicator.stop());
+    Runnable task = createSearchTask(pattern, accumulator, indicator, contributor, () -> indicator.stop());
     ApplicationManager.getApplication().executeOnPooledThread(task);
 
     return indicator;
@@ -141,16 +117,14 @@ class MultiThreadSearcher implements SESearcher {
 
   @NotNull
   private static Runnable createSearchTask(String pattern,
-                                           boolean useNonProjectItems,
                                            ResultsAccumulator accumulator,
                                            ProgressIndicator indicator,
-                                           SearchEverywhereContributor<?, ?> contributor,
-                                           SearchEverywhereContributorFilter<?> filter,
+                                           SearchEverywhereContributor<?> contributor,
                                            Runnable finalCallback) {
     //noinspection unchecked
-    ContributorSearchTask<?, ?> task = new ContributorSearchTask<>(
-      (SearchEverywhereContributor<Object, Object>)contributor, pattern,
-      (SearchEverywhereContributorFilter<Object>)filter, useNonProjectItems, accumulator, indicator, finalCallback);
+    ContributorSearchTask<?> task = new ContributorSearchTask<>(
+      (SearchEverywhereContributor<Object>)contributor, pattern,
+      accumulator, indicator, finalCallback);
     return ConcurrencyUtil.underThreadNameRunnable("SE-SearchTask", task);
   }
 
@@ -169,26 +143,22 @@ class MultiThreadSearcher implements SESearcher {
     });
   }
 
-  private static class ContributorSearchTask<Item, Filter> implements Runnable {
+  private static class ContributorSearchTask<Item> implements Runnable {
 
     private final ResultsAccumulator myAccumulator;
     private final Runnable finishCallback;
 
-    private final SearchEverywhereContributor<Item, Filter> myContributor;
-    private final SearchEverywhereContributorFilter<Filter> filter;
+    private final SearchEverywhereContributor<Item> myContributor;
     private final String myPattern;
-    private final boolean myUseNonProjectItems;
     private final ProgressIndicator myIndicator;
 
-    private ContributorSearchTask(SearchEverywhereContributor<Item, Filter> contributor,
+    private ContributorSearchTask(SearchEverywhereContributor<Item> contributor,
                                   String pattern,
-                                  SearchEverywhereContributorFilter<Filter> filter,
-                                  boolean everywhere,
-                                  ResultsAccumulator accumulator, ProgressIndicator indicator, Runnable callback) {
+                                  ResultsAccumulator accumulator,
+                                  ProgressIndicator indicator,
+                                  Runnable callback) {
       myContributor = contributor;
       myPattern = pattern;
-      this.filter = filter;
-      myUseNonProjectItems = everywhere;
       myAccumulator = accumulator;
       myIndicator = indicator;
       finishCallback = callback;
@@ -204,7 +174,7 @@ class MultiThreadSearcher implements SESearcher {
           ProgressIndicator wrapperIndicator = new SensitiveProgressWrapper(myIndicator);
           try {
             ProgressManager.getInstance().runProcess(() -> myContributor.fetchElements(
-              myPattern, myUseNonProjectItems, filter, wrapperIndicator,
+              myPattern, wrapperIndicator,
               element -> {
                 try {
                   if (element == null) {
@@ -243,13 +213,13 @@ class MultiThreadSearcher implements SESearcher {
   }
 
   private static abstract class ResultsAccumulator {
-    protected final Map<SearchEverywhereContributor<?, ?>, Collection<SearchEverywhereFoundElementInfo>> sections;
+    protected final Map<SearchEverywhereContributor<?>, Collection<SearchEverywhereFoundElementInfo>> sections;
     protected final MultiThreadSearcher.Listener myListener;
     protected final Executor myNotificationExecutor;
     protected final SEResultsEqualityProvider myEqualityProvider;
     protected final ProgressIndicator myProgressIndicator;
 
-    ResultsAccumulator(Map<SearchEverywhereContributor<?, ?>, Collection<SearchEverywhereFoundElementInfo>> sections,
+    ResultsAccumulator(Map<SearchEverywhereContributor<?>, Collection<SearchEverywhereFoundElementInfo>> sections,
                        SEResultsEqualityProvider equalityProvider,
                        Listener listener,
                        Executor notificationExecutor,
@@ -288,25 +258,25 @@ class MultiThreadSearcher implements SESearcher {
       });
     }
 
-    public abstract boolean addElement(Object element, SearchEverywhereContributor<?, ?> contributor, int priority, ProgressIndicator indicator) throws InterruptedException;
-    public abstract void contributorFinished(SearchEverywhereContributor<?, ?> contributor);
-    public abstract void setContributorHasMore(SearchEverywhereContributor<?, ?> contributor, boolean hasMore);
+    public abstract boolean addElement(Object element, SearchEverywhereContributor<?> contributor, int priority, ProgressIndicator indicator) throws InterruptedException;
+    public abstract void contributorFinished(SearchEverywhereContributor<?> contributor);
+    public abstract void setContributorHasMore(SearchEverywhereContributor<?> contributor, boolean hasMore);
   }
 
   private static class ShowMoreResultsAccumulator extends ResultsAccumulator {
-    private final SearchEverywhereContributor<?, ?> myExpandedContributor;
+    private final SearchEverywhereContributor<?> myExpandedContributor;
     private final int myNewLimit;
     private volatile boolean hasMore;
 
-    ShowMoreResultsAccumulator(Map<? extends SearchEverywhereContributor<?, ?>, Collection<SearchEverywhereFoundElementInfo>> alreadyFound, SEResultsEqualityProvider equalityProvider,
-                               SearchEverywhereContributor<?, ?> contributor, int newLimit, Listener listener, Executor notificationExecutor, ProgressIndicator progressIndicator) {
+    ShowMoreResultsAccumulator(Map<? extends SearchEverywhereContributor<?>, Collection<SearchEverywhereFoundElementInfo>> alreadyFound, SEResultsEqualityProvider equalityProvider,
+                               SearchEverywhereContributor<?> contributor, int newLimit, Listener listener, Executor notificationExecutor, ProgressIndicator progressIndicator) {
       super(new ConcurrentHashMap<>(alreadyFound), equalityProvider, listener, notificationExecutor, progressIndicator);
       myExpandedContributor = contributor;
       myNewLimit = newLimit;
     }
 
     @Override
-    public boolean addElement(Object element, SearchEverywhereContributor<?, ?> contributor, int priority, ProgressIndicator indicator) {
+    public boolean addElement(Object element, SearchEverywhereContributor<?> contributor, int priority, ProgressIndicator indicator) {
       assert contributor == myExpandedContributor; // Only expanded contributor items allowed
 
       Collection<SearchEverywhereFoundElementInfo> section = sections.get(contributor);
@@ -336,28 +306,28 @@ class MultiThreadSearcher implements SESearcher {
     }
 
     @Override
-    public void setContributorHasMore(SearchEverywhereContributor<?, ?> contributor, boolean hasMore) {
+    public void setContributorHasMore(SearchEverywhereContributor<?> contributor, boolean hasMore) {
       assert contributor == myExpandedContributor; // Only expanded contributor items allowed
       this.hasMore = hasMore;
 
     }
 
     @Override
-    public void contributorFinished(SearchEverywhereContributor<?, ?> contributor) {
+    public void contributorFinished(SearchEverywhereContributor<?> contributor) {
       runInNotificationExecutor(() -> myListener.searchFinished(Collections.singletonMap(contributor, hasMore)));
     }
   }
 
   private static class FullSearchResultsAccumulator extends ResultsAccumulator {
 
-    private final Map<? extends SearchEverywhereContributor<?, ?>, Integer> sectionsLimits;
-    private final Map<? extends SearchEverywhereContributor<?, ?>, Condition> conditionsMap;
-    private final Map<SearchEverywhereContributor<?, ?>, Boolean> hasMoreMap = new ConcurrentHashMap<>();
-    private final Set<SearchEverywhereContributor<?, ?>> finishedContributorsSet = ContainerUtil.newConcurrentSet();
+    private final Map<? extends SearchEverywhereContributor<?>, Integer> sectionsLimits;
+    private final Map<? extends SearchEverywhereContributor<?>, Condition> conditionsMap;
+    private final Map<SearchEverywhereContributor<?>, Boolean> hasMoreMap = new ConcurrentHashMap<>();
+    private final Set<SearchEverywhereContributor<?>> finishedContributorsSet = ContainerUtil.newConcurrentSet();
     private final Lock lock = new ReentrantLock();
     private volatile boolean mySearchFinished = false;
 
-    FullSearchResultsAccumulator(Map<? extends SearchEverywhereContributor<?, ?>, Integer> contributorsAndLimits,
+    FullSearchResultsAccumulator(Map<? extends SearchEverywhereContributor<?>, Integer> contributorsAndLimits,
                                  SEResultsEqualityProvider equalityProvider, Listener listener, Executor notificationExecutor,
                                  ProgressIndicator progressIndicator) {
       super(contributorsAndLimits.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey(), entry -> new ArrayList<>(entry.getValue()))),
@@ -367,12 +337,12 @@ class MultiThreadSearcher implements SESearcher {
     }
 
     @Override
-    public void setContributorHasMore(SearchEverywhereContributor<?, ?> contributor, boolean hasMore) {
+    public void setContributorHasMore(SearchEverywhereContributor<?> contributor, boolean hasMore) {
       hasMoreMap.put(contributor, hasMore);
     }
 
     @Override
-    public boolean addElement(Object element, SearchEverywhereContributor<?, ?> contributor, int priority, ProgressIndicator indicator) throws InterruptedException {
+    public boolean addElement(Object element, SearchEverywhereContributor<?> contributor, int priority, ProgressIndicator indicator) throws InterruptedException {
       SearchEverywhereFoundElementInfo newElementInfo = new SearchEverywhereFoundElementInfo(element, priority, contributor);
       Condition condition = conditionsMap.get(contributor);
       Collection<SearchEverywhereFoundElementInfo> section = sections.get(contributor);
@@ -419,7 +389,7 @@ class MultiThreadSearcher implements SESearcher {
     }
 
     @Override
-    public void contributorFinished(SearchEverywhereContributor<?, ?> contributor) {
+    public void contributorFinished(SearchEverywhereContributor<?> contributor) {
       lock.lock();
       try {
         finishedContributorsSet.add(contributor);
@@ -455,7 +425,7 @@ class MultiThreadSearcher implements SESearcher {
       }
     }
 
-    private boolean isContributorFinished(SearchEverywhereContributor<?, ?> contributor) {
+    private boolean isContributorFinished(SearchEverywhereContributor<?> contributor) {
       if (finishedContributorsSet.contains(contributor)) {
         return true;
       }

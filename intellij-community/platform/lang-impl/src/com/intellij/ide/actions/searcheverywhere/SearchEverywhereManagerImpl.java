@@ -2,7 +2,6 @@
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.ide.actions.GotoActionBase;
-import com.intellij.ide.util.gotoByName.SearchEverywhereConfiguration;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -17,7 +16,6 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.ScreenUtil;
 import com.intellij.ui.SearchTextField;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +27,6 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static com.intellij.ide.actions.SearchEverywhereAction.SEARCH_EVERYWHERE_POPUP;
 
@@ -46,52 +43,41 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
 
   private final SearchHistoryList myHistoryList = new SearchHistoryList();
   private HistoryIterator myHistoryIterator;
+  private boolean myEverywhere;
 
   public SearchEverywhereManagerImpl(Project project) {
     myProject = project;
   }
 
   @Override
-  public void show(@NotNull String selectedContributorID, @Nullable String searchText, @NotNull AnActionEvent initEvent) {
+  public void show(@NotNull String contributorID, @Nullable String searchText, @NotNull AnActionEvent initEvent) {
     if (isShown()) {
       throw new IllegalStateException("Method should cannot be called whe popup is shown");
     }
 
     Project project = initEvent.getProject();
     Component contextComponent = initEvent.getData(PlatformDataKeys.CONTEXT_COMPONENT);
-    List<SearchEverywhereContributor> serviceContributors = Arrays.asList(
-      new TopHitSEContributor(project, contextComponent,
-                              s -> mySearchEverywhereUI.getSearchField().setText(s)),
+    List<SearchEverywhereContributor<?>> serviceContributors = Arrays.asList(
+      new TopHitSEContributor(project, contextComponent, s ->
+        mySearchEverywhereUI.getSearchField().setText(s)),
       new RecentFilesSEContributor(project, GotoActionBase.getPsiContext(initEvent)),
       new RunConfigurationsSEContributor(project, contextComponent, () -> mySearchEverywhereUI.getSearchField().getText())
     );
-    Map<String, SearchEverywhereContributorFilter<?>> filters = new HashMap<>();
-    List<SearchEverywhereContributor> contributors = new ArrayList<>(serviceContributors);
-    SearchEverywhereContributor.EP_NAME.getExtensionList().forEach(factory -> {
-      SearchEverywhereContributor contributor = factory.createContributor(initEvent);
-      filters.computeIfAbsent(contributor.getSearchProviderId(), s -> factory.createFilter(initEvent));
-      contributors.add(contributor);
-    });
+    List<SearchEverywhereContributor<?>> contributors = new ArrayList<>(serviceContributors);
+    for (SearchEverywhereContributorFactory<?> factory : SearchEverywhereContributor.EP_NAME.getExtensionList()) {
+      contributors.add(factory.createContributor(initEvent));
+    }
     Collections.sort(contributors, Comparator.comparingInt(SearchEverywhereContributor::getSortWeight));
-    Map<String, String> contributorsNames =
-      contributors.stream().collect(Collectors.toMap(c -> c.getSearchProviderId(), c -> c.getGroupName()));
 
-    filters.computeIfAbsent(ALL_CONTRIBUTORS_GROUP_ID, s ->
-      new PersistentSearchEverywhereContributorFilter<>(
-        ContainerUtil.map(contributors, c -> c.getSearchProviderId()),
-        SearchEverywhereConfiguration.getInstance(project),
-        id -> contributorsNames.get(id), id -> null)
-    );
+    mySearchEverywhereUI = createView(myProject, contributors);
+    mySearchEverywhereUI.switchToContributor(contributorID);
 
-    mySearchEverywhereUI = createView(myProject, contributors, filters);
-    mySearchEverywhereUI.switchToContributor(selectedContributorID);
-
-    myHistoryIterator = myHistoryList.getIterator(selectedContributorID);
+    myHistoryIterator = myHistoryList.getIterator(contributorID);
     //history could be suppressed by user for some reasons (creating promo video, conference demo etc.)
     boolean suppressHistory = "true".equals(System.getProperty("idea.searchEverywhere.noHistory", "false"));
     //or could be suppressed just for All tab in registry
     suppressHistory = suppressHistory ||
-                      (ALL_CONTRIBUTORS_GROUP_ID.equals(selectedContributorID) &&
+                      (ALL_CONTRIBUTORS_GROUP_ID.equals(contributorID) &&
                        Registry.is("search.everywhere.disable.history.for.all"));
 
     if (searchText == null && !suppressHistory) {
@@ -189,36 +175,39 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     return mySearchEverywhereUI != null && myBalloon != null && !myBalloon.isDisposed();
   }
 
+  @NotNull
   @Override
-  public String getShownContributorID() {
+  public String getSelectedContributorID() {
     checkIsShown();
     return mySearchEverywhereUI.getSelectedContributorID();
   }
 
   @Override
-  public void setShownContributor(@NotNull String contributorID) {
+  public void setSelectedContributor(@NotNull String contributorID) {
     checkIsShown();
-    if (!contributorID.equals(getShownContributorID())) {
+    if (!contributorID.equals(getSelectedContributorID())) {
       mySearchEverywhereUI.switchToContributor(contributorID);
     }
   }
 
   @Override
-  public boolean isShowNonProjectItems() {
+  public void toggleEverywhereFilter() {
     checkIsShown();
-    return mySearchEverywhereUI.isUseNonProjectItems();
+    mySearchEverywhereUI.toggleEverywhereFilter();
   }
 
   @Override
-  public void setShowNonProjectItems(boolean show) {
-    checkIsShown();
-    mySearchEverywhereUI.setUseNonProjectItems(show);
+  public boolean isEverywhere() {
+    return myEverywhere;
+  }
+
+  public void setEverywhere(boolean everywhere) {
+    myEverywhere = everywhere;
   }
 
   private SearchEverywhereUI createView(Project project,
-                                        List<SearchEverywhereContributor> contributors,
-                                        Map<String, SearchEverywhereContributorFilter<?>> contributorFilters) {
-    SearchEverywhereUI view = new SearchEverywhereUI(project, contributors, contributorFilters);
+                                        List<SearchEverywhereContributor<?>> contributors) {
+    SearchEverywhereUI view = new SearchEverywhereUI(project, contributors);
 
     view.setSearchFinishedHandler(() -> {
       if (isShown()) {

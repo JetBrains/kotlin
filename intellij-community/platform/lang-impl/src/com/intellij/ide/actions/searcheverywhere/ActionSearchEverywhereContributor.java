@@ -8,6 +8,7 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.ui.search.BooleanOptionDescription;
 import com.intellij.ide.util.gotoByName.GotoActionItemProvider;
 import com.intellij.ide.util.gotoByName.GotoActionModel;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -27,18 +28,22 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static com.intellij.openapi.keymap.KeymapUtil.getActiveKeymapShortcuts;
 import static com.intellij.openapi.keymap.KeymapUtil.getFirstKeyboardShortcutText;
 
-public class ActionSearchEverywhereContributor implements SearchEverywhereContributor<GotoActionModel.MatchedValue, Void> {
+public class ActionSearchEverywhereContributor implements SearchEverywhereContributor<GotoActionModel.MatchedValue> {
+
   private static final Logger LOG = Logger.getInstance(ActionSearchEverywhereContributor.class);
 
   private final Project myProject;
   private final Component myContextComponent;
   private final GotoActionModel myModel;
   private final GotoActionItemProvider myProvider;
+  private boolean myDisabledActions;
 
   public ActionSearchEverywhereContributor(Project project, Component contextComponent, Editor editor) {
     myProject = project;
@@ -61,7 +66,6 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
     return "Press " + altEnter + " to assign a shortcut";
   }
 
-  @Override
   public String includeNonProjectItemsText() {
     return IdeBundle.message("checkbox.disabled.included");
   }
@@ -78,8 +82,6 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
 
   @Override
   public void fetchElements(@NotNull String pattern,
-                            boolean everywhere,
-                            @Nullable SearchEverywhereContributorFilter<Void> filter,
                             @NotNull ProgressIndicator progressIndicator,
                             @NotNull Processor<? super GotoActionModel.MatchedValue> consumer) {
     if (StringUtil.isEmptyOrSpaces(pattern)) {
@@ -89,7 +91,7 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
     myProvider.filterElements(pattern, element -> {
       if (progressIndicator.isCanceled()) return false;
 
-      if (!everywhere &&
+      if (!myDisabledActions &&
           element.value instanceof GotoActionModel.ActionWrapper &&
           !((GotoActionModel.ActionWrapper)element.value).isAvailable()) {
         return true;
@@ -101,6 +103,23 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
       }
 
       return consumer.process(element);
+    });
+  }
+
+  @NotNull
+  @Override
+  public List<AnAction> getActions(@NotNull Disposable uiDisposable, @NotNull Runnable rebuildRunnable) {
+    return Collections.singletonList(new SearchEverywhereUI.CheckBoxAction(includeNonProjectItemsText()) {
+      @Override
+      public boolean isSelected(@NotNull AnActionEvent e) {
+        return myDisabledActions;
+      }
+
+      @Override
+      public void setSelected(@NotNull AnActionEvent e, boolean state) {
+        myDisabledActions = state;
+        rebuildRunnable.run();
+      }
     });
   }
 
@@ -193,20 +212,14 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
     });
   }
 
-  public static class Factory implements SearchEverywhereContributorFactory<GotoActionModel.MatchedValue, Void> {
+  public static class Factory implements SearchEverywhereContributorFactory<GotoActionModel.MatchedValue> {
     @NotNull
     @Override
-    public SearchEverywhereContributor<GotoActionModel.MatchedValue, Void> createContributor(@NotNull AnActionEvent initEvent) {
+    public SearchEverywhereContributor<GotoActionModel.MatchedValue> createContributor(@NotNull AnActionEvent initEvent) {
       return new ActionSearchEverywhereContributor(
         initEvent.getProject(),
         initEvent.getData(PlatformDataKeys.CONTEXT_COMPONENT),
         initEvent.getData(CommonDataKeys.EDITOR));
-    }
-
-    @Nullable
-    @Override
-    public SearchEverywhereContributorFilter<Void> createFilter(@NotNull AnActionEvent initEvent) {
-      return null;
     }
   }
 }

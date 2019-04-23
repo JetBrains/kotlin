@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class RunConfigurationsSEContributor implements SearchEverywhereContributor<ChooseRunConfigurationPopup.ItemWrapper, Void> {
+public class RunConfigurationsSEContributor implements SearchEverywhereContributor<ChooseRunConfigurationPopup.ItemWrapper> {
 
   private final SearchEverywhereCommandInfo RUN_COMMAND =
     new SearchEverywhereCommandInfo("run", IdeBundle.message("searcheverywhere.runconfigurations.command.run.description"), this);
@@ -68,12 +68,6 @@ public class RunConfigurationsSEContributor implements SearchEverywhereContribut
     return IdeBundle.message("searcheverywhere.run.configs.tab.name");
   }
 
-  @Nullable
-  @Override
-  public String includeNonProjectItemsText() {
-    return null;
-  }
-
   @Override
   public int getSortWeight() {
     return 350;
@@ -86,14 +80,13 @@ public class RunConfigurationsSEContributor implements SearchEverywhereContribut
 
   @Override
   public boolean processSelectedItem(@NotNull ChooseRunConfigurationPopup.ItemWrapper selected, int modifiers, @NotNull String searchText) {
-    ChooseRunConfigurationPopup.ItemWrapper itemWrapper = (ChooseRunConfigurationPopup.ItemWrapper)selected;
-    RunnerAndConfigurationSettings settings = ObjectUtils.tryCast(itemWrapper.getValue(), RunnerAndConfigurationSettings.class);
+    RunnerAndConfigurationSettings settings = ObjectUtils.tryCast(selected.getValue(), RunnerAndConfigurationSettings.class);
     if (settings != null) {
       int mode = getMode(searchText, modifiers);
       Executor executor = findExecutor(settings, mode);
       if (executor != null) {
         DataManager dataManager = DataManager.getInstance();
-        itemWrapper.perform(myProject, executor, dataManager.getDataContext(myContextComponent));
+        selected.perform(myProject, executor, dataManager.getDataContext(myContextComponent));
       }
     }
 
@@ -120,8 +113,6 @@ public class RunConfigurationsSEContributor implements SearchEverywhereContribut
 
   @Override
   public void fetchElements(@NotNull String pattern,
-                            boolean everywhere,
-                            @Nullable SearchEverywhereContributorFilter<Void> filter,
                             @NotNull ProgressIndicator progressIndicator,
                             @NotNull Processor<? super ChooseRunConfigurationPopup.ItemWrapper> consumer) {
 

@@ -29,7 +29,6 @@ import com.intellij.util.Processor;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.accessibility.Accessible;
 import javax.accessibility.AccessibleContext;
@@ -39,7 +38,7 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class TopHitSEContributor implements SearchEverywhereContributor<Object, Void> {
+public class TopHitSEContributor implements SearchEverywhereContributor<Object> {
 
   private final Collection<SearchTopHitProvider> myTopHitProviders = Arrays.asList(SearchTopHitProvider.EP_NAME.getExtensions());
 
@@ -66,11 +65,6 @@ public class TopHitSEContributor implements SearchEverywhereContributor<Object, 
   }
 
   @Override
-  public String includeNonProjectItemsText() {
-    return null;
-  }
-
-  @Override
   public int getSortWeight() {
     return 50;
   }
@@ -81,7 +75,7 @@ public class TopHitSEContributor implements SearchEverywhereContributor<Object, 
   }
 
   @Override
-  public void fetchElements(@NotNull String pattern, boolean everywhere, @Nullable SearchEverywhereContributorFilter<Void> filter,
+  public void fetchElements(@NotNull String pattern,
                             @NotNull ProgressIndicator progressIndicator, @NotNull Processor<? super Object> consumer) {
     fill(pattern, consumer);
   }
