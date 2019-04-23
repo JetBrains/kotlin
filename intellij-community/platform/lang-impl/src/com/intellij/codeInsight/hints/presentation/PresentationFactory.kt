@@ -98,9 +98,9 @@ class PresentationFactory(val editor: EditorImpl) {
 
   }
 
-  fun withTooltip(tooltip: String, base: InlayPresentation) {
-    if (tooltip.isEmpty()) return
-    else onHover(base, tooltipHandler(tooltip))
+  fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
+    tooltip.isEmpty() -> base
+    else -> onHover(base, tooltipHandler(tooltip))
   }
 
   private fun showTooltip(editor: Editor, e: MouseEvent, text: String): LightweightHint {
