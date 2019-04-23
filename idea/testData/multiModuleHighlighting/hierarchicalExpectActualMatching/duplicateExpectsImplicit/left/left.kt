@@ -1,0 +1,1 @@
+expect class <!AMBIGUOUS_ACTUALS("Class 'A'", "bottom.kt, right.kt")!>A<!>

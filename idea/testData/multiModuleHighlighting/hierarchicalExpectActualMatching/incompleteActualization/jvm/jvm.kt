@@ -1,0 +1,4 @@
+package foo
+
+actual class ExpectInCommonActualInJvmOnly
+actual class ExpectInMiddleActualInJvmOnly

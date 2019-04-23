@@ -1,0 +1,1 @@
+actual class <!AMBIGUOUS_EXPECTS("Actual class 'A'", "right, left")!>A<!>
