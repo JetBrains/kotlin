@@ -74,8 +74,6 @@ public class CodeInsightSettings implements PersistentStateComponent<Element>, C
   public boolean SHOW_INFERRED_ANNOTATIONS_INLINE;
 
 
-  public boolean SHOW_METHOD_CHAIN_TYPES_INLINE = true;
-
   public boolean SHOW_PARAMETER_NAME_HINTS_ON_COMPLETION;
   public boolean AUTO_POPUP_PARAMETER_INFO = true;
   public int PARAMETER_INFO_DELAY = 1000;

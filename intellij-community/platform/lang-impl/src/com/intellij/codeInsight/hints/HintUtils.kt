@@ -22,11 +22,13 @@ fun getHintProviders(): List<Pair<Language, InlayParameterHintsProvider>> {
 fun getBlackListInvalidLineNumbers(text: String): List<Int> {
   val rules = StringUtil.split(text, "\n", true, false)
   return rules
+    .asSequence()
     .mapIndexedNotNull { index, s -> index to s }
     .filter { it.second.isNotEmpty() }
     .map { it.first to MatcherConstructor.createMatcher(it.second) }
     .filter { it.second == null }
     .map { it.first }
+    .toList()
 }
 
 fun getLanguageForSettingKey(language: Language): Language {
