@@ -224,6 +224,9 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.stubs.elements.StubIndexService"
                         serviceImplementation="org.jetbrains.kotlin.idea.stubindex.IdeStubIndexService"/>
 
+    <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinReferenceProvidersService"
+                        serviceImplementation="org.jetbrains.kotlin.idea.references.KtIdeReferenceProviderService"/>
+
     <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
                         serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
 
@@ -523,15 +526,10 @@
 
     <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
 
-    <psi.referenceContributor language="kotlin" implementation="org.jetbrains.kotlin.idea.references.KotlinReferenceContributor"/>
     <psi.referenceContributor
         id="kotlinFilePathReferenceContributor"
         language="kotlin"
         implementation="org.jetbrains.kotlin.idea.references.KotlinFilePathReferenceContributor"/>
-    <psi.referenceContributor
-        id="kotlinDefaultAnnotationMethodImplicitReferenceContributor"
-        language="kotlin"
-        implementation="org.jetbrains.kotlin.idea.references.KotlinDefaultAnnotationMethodImplicitReferenceContributor"/>
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.idea.caches.KotlinPackageStatementPsiTreeChangePreprocessor"/>
 

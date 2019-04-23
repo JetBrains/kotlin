@@ -16,58 +16,58 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
-class KotlinDefaultAnnotationMethodImplicitReferenceContributor : AbstractKotlinReferenceContributor() {
-    class ReferenceImpl(private val argument: KtValueArgument) : PsiReference {
-        private fun resolveAnnotationCallee(): PsiElement? = argument.getStrictParentOfType<KtAnnotationEntry>()
-                ?.calleeExpression
-                ?.constructorReferenceExpression
-                ?.mainReference
-                ?.resolve()
+class ReferenceImpl(private val argument: KtValueArgument) : PsiReference {
+    private fun resolveAnnotationCallee(): PsiElement? = argument.getStrictParentOfType<KtAnnotationEntry>()
+        ?.calleeExpression
+        ?.constructorReferenceExpression
+        ?.mainReference
+        ?.resolve()
 
-        override fun getElement() = argument
+    override fun getElement() = argument
 
-        override fun getRangeInElement() = TextRange.EMPTY_RANGE
+    override fun getRangeInElement() = TextRange.EMPTY_RANGE
 
-        override fun resolve(): PsiElement? {
-            val annotationPsi = resolveAnnotationCallee() ?: return null
-            val name = PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME
-            return when (annotationPsi) {
-                is PsiClass -> {
-                    val signature = MethodSignatureUtil.createMethodSignature(
-                            name, PsiType.EMPTY_ARRAY, PsiTypeParameter.EMPTY_ARRAY, PsiSubstitutor.EMPTY
-                    )
-                    MethodSignatureUtil.findMethodBySignature(annotationPsi, signature, false)
-                }
-                is KtPrimaryConstructor -> annotationPsi.containingClassOrObject?.findPropertyByName(name) as? KtParameter
-                else -> null
+    override fun resolve(): PsiElement? {
+        val annotationPsi = resolveAnnotationCallee() ?: return null
+        val name = PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME
+        return when (annotationPsi) {
+            is PsiClass -> {
+                val signature = MethodSignatureUtil.createMethodSignature(
+                    name, PsiType.EMPTY_ARRAY, PsiTypeParameter.EMPTY_ARRAY, PsiSubstitutor.EMPTY
+                )
+                MethodSignatureUtil.findMethodBySignature(annotationPsi, signature, false)
             }
+            is KtPrimaryConstructor -> annotationPsi.containingClassOrObject?.findPropertyByName(name) as? KtParameter
+            else -> null
         }
-
-        override fun getCanonicalText() = PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME
-
-        override fun handleElementRename(newElementName: String): PsiElement {
-            val psiFactory = KtPsiFactory(argument)
-            val newArgument = psiFactory.createArgument(
-                    argument.getArgumentExpression(),
-                    Name.identifier(newElementName.quoteIfNeeded()),
-                    argument.getSpreadElement() != null
-            )
-            return argument.replaced(newArgument)
-        }
-
-        override fun bindToElement(element: PsiElement) = throw IncorrectOperationException("Not implemented")
-
-        override fun isReferenceTo(element: PsiElement): Boolean {
-            val unwrapped = element.unwrapped
-            return (unwrapped is PsiMethod || unwrapped is KtParameter) && unwrapped == resolve()
-        }
-
-        override fun getVariants() = ArrayUtil.EMPTY_OBJECT_ARRAY
-
-        override fun isSoft() = false
     }
 
-    override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+    override fun getCanonicalText() = PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME
+
+    override fun handleElementRename(newElementName: String): PsiElement {
+        val psiFactory = KtPsiFactory(argument)
+        val newArgument = psiFactory.createArgument(
+            argument.getArgumentExpression(),
+            Name.identifier(newElementName.quoteIfNeeded()),
+            argument.getSpreadElement() != null
+        )
+        return argument.replaced(newArgument)
+    }
+
+    override fun bindToElement(element: PsiElement) = throw IncorrectOperationException("Not implemented")
+
+    override fun isReferenceTo(element: PsiElement): Boolean {
+        val unwrapped = element.unwrapped
+        return (unwrapped is PsiMethod || unwrapped is KtParameter) && unwrapped == resolve()
+    }
+
+    override fun getVariants() = ArrayUtil.EMPTY_OBJECT_ARRAY
+
+    override fun isSoft() = false
+}
+
+internal class KotlinDefaultAnnotationMethodImplicitReferenceContributor : KotlinReferenceProviderContributor {
+    override fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar) {
         registrar.registerProvider<KtValueArgument> {
             if (it.isNamed()) return@registerProvider null
             val annotationEntry = it.getParentOfTypeAndBranch<KtAnnotationEntry> { valueArgumentList }

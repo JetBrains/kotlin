@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.idea.references.KotlinDefaultAnnotationMethodImplicitReferenceContributor.ReferenceImpl as ImplicitReference
+import org.jetbrains.kotlin.idea.references.ReferenceImpl as ImplicitReference
 
 class DefaultAnnotationMethodKotlinImplicitReferenceSearcher :
     QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
