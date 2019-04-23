@@ -30,7 +30,7 @@ interface NpmApi {
         allWorkspaces: Collection<NpmResolver.NpmPackage>
     ): Boolean = false
 
-    open fun getHoistGradleNodeModules(project: Project) = false
+    open fun shouldHoistGradleNodeModules(project: Project) = false
 
     companion object {
         fun resolveOperationDescription(packageManagerTitle: String): String =

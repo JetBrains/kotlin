@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.daemon.common.toHexString
+import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn.packageJsonHashFile
 
@@ -18,17 +19,24 @@ class YarnAvoidance(val project: Project) {
         if (packageJsonHashFile.exists()) packageJsonHashFile.readText() else null
     }
 
+    private val npmProject = project.npmProject
+    private val packageJsonFile = npmProject.packageJsonFile
+
     private val hash by lazy {
         val hasher = (project as ProjectInternal).services.get(FileHasher::class.java)
-        hasher.hash(project.npmProject.packageJsonFile).toByteArray().toHexString()
+        hasher.hash(packageJsonFile).toByteArray().toHexString()
     }
 
     val upToDate: Boolean
-        get() = prevHash == hash
+        get() = packageJsonFile.exists() &&
+                npmProject.nodeModulesDir.isDirectory &&
+                prevHash == hash
 
     fun commit() {
         if (!upToDate) {
-            project.packageJsonHashFile.writeText(hash)
+            val packageJsonHashFile = project.packageJsonHashFile
+            packageJsonHashFile.ensureParentDirsCreated()
+            packageJsonHashFile.writeText(hash)
         }
     }
 

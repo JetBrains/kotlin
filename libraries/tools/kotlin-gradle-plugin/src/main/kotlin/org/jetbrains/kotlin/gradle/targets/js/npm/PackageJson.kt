@@ -10,7 +10,8 @@ class PackageJson(
     var version: String
 ) {
     val empty: Boolean
-        get() = private == null &&
+        get() = main == null &&
+                private == null &&
                 workspaces == null &&
                 dependencies.isEmpty() &&
                 devDependencies.isEmpty()
