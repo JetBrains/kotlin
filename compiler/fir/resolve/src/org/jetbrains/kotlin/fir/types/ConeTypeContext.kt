@@ -130,6 +130,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         return when (this) {
             is ConeCapturedType -> constructor
             is ConeTypeVariableType -> this.lookupTag as ConeTypeVariableTypeConstructor // TODO: WTF
+            is ConeAbbreviatedType -> this.directExpansionType(session)?.typeConstructor()
+                ?: ErrorTypeConstructor("Failed to expand alias: ${this}")
             is ConeLookupTagBasedType -> this.lookupTag.toSymbol(session) ?: ErrorTypeConstructor("Unresolved: ${this.lookupTag}")
             else -> error("?: ${this}")
         }
@@ -341,9 +343,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         if (this is ConeCapturedType) return true
         if (this is ConeTypeVariableType) return false
         require(this is ConeLookupTagBasedType)
-        val symbol = this.lookupTag.toSymbol(session)
-        return symbol is FirClassSymbol ||
-                symbol is FirTypeParameterSymbol
+        val typeConstructor = this.typeConstructor()
+        return typeConstructor is FirClassSymbol ||
+                typeConstructor is FirTypeParameterSymbol
     }
 
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
