@@ -12,10 +12,12 @@ import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.impl.light.*
+import com.intellij.psi.search.SearchScope
 import com.intellij.util.BitUtil.isSet
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -25,10 +27,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtTypeParameter
-import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -90,32 +89,34 @@ internal fun <D, T> buildTypeParameterList(
     support: UltraLightSupport,
     typeParametersSupport: TypeParametersSupport<D, T>
 ): PsiTypeParameterList {
+
     val tpList = KotlinLightTypeParameterListBuilder(owner)
+
     for ((i, param) in typeParametersSupport.parameters(declaration).withIndex()) {
-        tpList.addParameter(object : LightTypeParameterBuilder(typeParametersSupport.name(param).orEmpty(), owner, i) {
-            private val superList: LightReferenceListBuilder by lazyPub {
-                val boundList =
-                    KotlinLightReferenceListBuilder(manager, PsiReferenceList.Role.EXTENDS_BOUNDS_LIST)
 
-                if (typeParametersSupport.hasNonTrivialBounds(declaration, param)) {
-                    val boundTypes = typeParametersSupport.asDescriptor(param)?.upperBounds.orEmpty()
-                        .mapNotNull { it.asPsiType(support, TypeMappingMode.DEFAULT, this) as? PsiClassType }
-                    val hasDefaultBound = boundTypes.size == 1 && boundTypes[0].equalsToText(CommonClassNames.JAVA_LANG_OBJECT)
-                    if (!hasDefaultBound) {
-                        boundTypes.forEach(boundList::addReference)
-                    }
-                }
-                boundList
+        val referenceListBuilder = { element: PsiElement ->
+            val boundList = KotlinLightReferenceListBuilder(element.manager, PsiReferenceList.Role.EXTENDS_BOUNDS_LIST)
+
+            if (typeParametersSupport.hasNonTrivialBounds(declaration, param)) {
+                val boundTypes = typeParametersSupport.asDescriptor(param)
+                    ?.upperBounds
+                    .orEmpty()
+                    .mapNotNull { it.asPsiType(support, TypeMappingMode.DEFAULT, element) as? PsiClassType }
+
+                val hasDefaultBound = boundTypes.size == 1 && boundTypes[0].equalsToText(CommonClassNames.JAVA_LANG_OBJECT)
+                if (!hasDefaultBound) boundTypes.forEach(boundList::addReference)
             }
+            boundList
+        }
 
-            override fun getExtendsList(): LightReferenceListBuilder = superList
+        val parameterName = typeParametersSupport.name(param).orEmpty()
 
-            override fun getParent(): PsiElement = tpList
-            override fun getContainingFile(): PsiFile = owner.containingFile
-        })
+        tpList.addParameter(KtUltraLightTypeParameter(parameterName, owner, tpList, i, referenceListBuilder))
     }
+
     return tpList
 }
+
 
 internal fun KtDeclaration.getKotlinType(): KotlinType? {
     val descriptor = resolve()

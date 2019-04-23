@@ -20,6 +20,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -137,8 +138,8 @@ fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
 val PsiElement.unwrapped: PsiElement?
     get() = when {
+        this is PsiElementWithOrigin<*> -> origin
         this is KtLightElement<*, *> -> kotlinOrigin
-        this is KtLightIdentifier -> origin
         this is KtLightElementBase -> kotlinOrigin
         else -> this
     }
