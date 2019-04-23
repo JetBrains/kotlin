@@ -192,7 +192,9 @@ class MemberScopeTowerLevel(
             TowerScopeLevel.Token.Functions -> processMembers(processor, explicitExtensionReceiver) { symbol ->
                 this.processFunctionsByName(name, symbol.cast())
             }
-            TowerScopeLevel.Token.Objects -> ProcessorAction.NEXT
+            TowerScopeLevel.Token.Objects -> processMembers(processor, explicitExtensionReceiver) { symbol ->
+                this.processClassifiersByNameWithAction(name, FirPosition.OTHER, symbol.cast())
+            }
         }
     }
 
