@@ -59,14 +59,11 @@ fun Project.pluginJar(
 }
 
 // Prepare patched "platformDeps" JAR file.
-fun Project.platformDepsJar(
-        productName: String,
-        platformDepsDir: File,
-        platformDepsReplacementsDir: File
-) = tasks.creating(Zip::class) {
+fun Project.platformDepsJar(productName: String, platformDepsDir: File) = tasks.creating(Zip::class) {
     archiveFileName.value = "kotlinNative-platformDeps-$productName.jar"
     destinationDirectory.value = file("$buildDir/$name")
 
+    val platformDepsReplacementsDir = file("resources/platformDeps")
     val platformDepsReplacements = platformDepsReplacementsDir.walkTopDown()
             .filter { it.isFile && it.length() > 0 }
             .map { it.relativeTo(platformDepsReplacementsDir).path }

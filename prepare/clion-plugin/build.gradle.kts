@@ -32,11 +32,7 @@ val preparePluginXml: Task by preparePluginXml(
 
 val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml), projectsToShadow)
 
-val platformDepsJar: Task by platformDepsJar(
-        "CLion",
-        clionPlatformDepsDir,
-        file("resources/platformDeps")
-)
+val platformDepsJar: Task by platformDepsJar("CLion", clionPlatformDepsDir)
 
 val clionPlugin: Task by packageCidrPlugin(
         ultimatePath(":clion-native"),
