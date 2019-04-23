@@ -41,8 +41,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     }
 
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
-        require(lowerBound is ConeLookupTagBasedType)
-        require(upperBound is ConeLookupTagBasedType)
+        require(lowerBound is ConeKotlinType)
+        require(upperBound is ConeKotlinType)
 
         return ConeFlexibleType(lowerBound, upperBound)
     }
