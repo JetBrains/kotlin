@@ -37,13 +37,10 @@ open class KotlinWebpack : DefaultTask() {
     open lateinit var entry: File
 
     open val configFile: File
-        @OutputFile get() = project.buildDir.resolve("webpack.config.js")
+        @OutputFile get() = project.npmProject.nodeWorkDir.resolve("webpack.config.js")
 
     @Input
     var saveEvaluatedConfigFile: Boolean = true
-
-    open val evaluatedConfigFile: File
-        @OutputFile get() = project.buildDir.resolve("webpack.config.evaluated.js")
 
     open val outputPath: File
         @OutputDirectory get() = project.buildDir.resolve("lib")
@@ -57,10 +54,14 @@ open class KotlinWebpack : DefaultTask() {
     open val reportDir: File
         @OutputDirectory get() = project.reportsDir.resolve("webpack").resolve(entry.nameWithoutExtension)
 
+    open val evaluatedConfigFile: File
+        @OutputFile get() = reportDir.resolve("webpack.config.evaluated.js")
+
     @Input
     var bin: String = "webpack"
 
     @Input
+    @Optional
     var devServer: KotlinWebpackConfig.DevServer? = null
 
     internal fun createRunner() = KotlinWebpackRunner(
@@ -125,6 +126,8 @@ open class KotlinWebpack : DefaultTask() {
                 it.dependsOn(compileKotlinTask)
 
                 it.entry = npmProject.moduleOutput(compileKotlinTask)
+
+                it.outputs.upToDateWhen { false }
             }
 
             compilation.dependencies {

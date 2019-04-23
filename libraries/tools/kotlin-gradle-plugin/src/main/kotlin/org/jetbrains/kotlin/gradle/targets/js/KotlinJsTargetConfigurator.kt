@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
 open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
     KotlinTargetConfigurator<KotlinJsCompilation>(true, true, kotlinPluginVersion) {
@@ -28,6 +28,8 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         super.configureCompilations(platformTarget)
 
         platformTarget.compilations.all {
+            platformTarget.project.npmProject.configureCompilation(it)
+
             it.compileKotlinTask.kotlinOptions {
                 moduleKind = "commonjs"
                 sourceMap = true

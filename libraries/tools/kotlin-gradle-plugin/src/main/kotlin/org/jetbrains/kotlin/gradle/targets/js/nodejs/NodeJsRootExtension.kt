@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import java.io.File
@@ -19,10 +20,7 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
 
     var nodeCommand = "node"
 
-    var npmCustomVersion: String? = null
-    var npmCommand = "npm"
-
-    var manageNodeModules: Boolean = false
+    var layout: NpmProjectLayout = NpmProjectLayout.ROOT_PROJECT_BUILD_DIR
     var packageManager: NpmApi = Yarn
 
     val nodeJsSetupTask: NodeJsSetupTask
@@ -51,7 +49,6 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
                 nodeDir = nodeDir,
                 nodeBinDir = nodeBinDir,
                 nodeExecutable = getExecutable("node", nodeCommand, "exe"),
-                npmExecutable = getExecutable("npm", npmCommand, "cmd"),
                 platformName = platform,
                 architectureName = architecture,
                 ivyDependency = getIvyDependency()

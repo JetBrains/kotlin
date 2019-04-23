@@ -8,23 +8,19 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
-import org.gradle.api.file.CopySpec
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
-internal class GradleNodeModules(val project: Project) : AutoCloseable {
+internal class GradleNodeModulesBuilder(val project: Project) : AutoCloseable {
     companion object {
         const val STATE_FILE_NAME = ".visited"
     }
 
     internal val dir = project.buildDir.resolve("node_modules_gradle")
-    private val nodeModulesDir = project.npmProject.nodeModulesDir
     private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "5")
     private val visited = mutableSetOf<ResolvedDependency>()
-    private val doLast = mutableListOf<() -> Unit>()
 
     val modules
         get() = cache.targets.map {
@@ -33,26 +29,13 @@ internal class GradleNodeModules(val project: Project) : AutoCloseable {
 
     fun visitCompilation(compilation: KotlinCompilation<KotlinCommonOptions>) {
         val project = compilation.target.project
-        val kotlin2JsCompile = compilation.compileKotlinTask as Kotlin2JsCompile
-
+        
         // classpath
-        compilation.relatedConfigurationNames.forEach {
-            val configuration = project.configurations.getByName(it)
+        compilation.relatedConfigurationNames.forEach { configurationName ->
+            val configuration = project.configurations.getByName(configurationName)
             if (configuration.isCanBeResolved) {
                 configuration.resolvedConfiguration.firstLevelModuleDependencies.forEach {
                     visitDependency(compilation, it)
-                }
-            }
-        }
-
-        // output
-        doLast.add {
-            // we should do it only after node package manger work (as it can clean files)
-            if (kotlin2JsCompile.state.executed) {
-                visitCompile(project, kotlin2JsCompile)
-            } else {
-                kotlin2JsCompile.doLast {
-                    visitCompile(project, kotlin2JsCompile)
                 }
             }
         }
@@ -82,37 +65,15 @@ internal class GradleNodeModules(val project: Project) : AutoCloseable {
         }
 
         artifacts.forEach { artifact ->
-            cache.getOrCompute(artifact.file) {
-                lazyDirName
-            }
-        }
-    }
-
-    private fun visitCompile(project: Project, kotlin2JsCompile: Kotlin2JsCompile) {
-        project.copy { copy ->
-            copy.from(kotlin2JsCompile.outputFile)
-            copy.from(kotlin2JsCompile.outputFile.path + ".map")
-            copy.into(nodeModulesDir)
-            copy.withSourceMapRewriter()
-        }
-    }
-
-    private fun CopySpec.withSourceMapRewriter() {
-        eachFile {
-            if (it.name.endsWith(".js.map")) {
-                it.filter(
-                    mapOf(
-                        "srcSourceRoot" to it.file.parentFile,
-                        "targetSourceRoot" to nodeModulesDir
-                    ),
-                    RewriteSourceMapFilterReader::class.java
-                )
+            if (artifact.id.componentIdentifier !is ProjectComponentIdentifier) {
+                cache.getOrCompute(artifact.file) {
+                    lazyDirName
+                }
             }
         }
     }
 
     override fun close() {
-        doLast.forEach { it() }
         cache.close()
     }
 }

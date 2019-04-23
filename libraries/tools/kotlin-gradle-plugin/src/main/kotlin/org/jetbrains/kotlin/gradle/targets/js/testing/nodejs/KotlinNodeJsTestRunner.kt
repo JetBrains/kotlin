@@ -54,7 +54,7 @@ class KotlinNodeJsTestRunner : KotlinJsTestFramework {
 
         val args = nodeJsArgs +
                 testRuntimeNodeModules.map {
-                    npmProjectLayout.findModule(it)
+                    npmProjectLayout.getModuleEntryPath(it)
                 } +
                 cliArgs.toList()
 

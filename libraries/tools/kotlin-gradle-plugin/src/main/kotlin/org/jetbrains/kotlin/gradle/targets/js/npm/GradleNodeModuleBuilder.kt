@@ -16,7 +16,7 @@ internal class GradleNodeModuleBuilder(
     val project: Project,
     val dependency: ResolvedDependency,
     val artifacts: Set<ResolvedArtifact>,
-    val cache: GradleNodeModules
+    val cache: GradleNodeModulesBuilder
 ) {
     var srcPackageJsonFile: File? = null
     val files = mutableListOf<File>()
