@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -70,4 +72,16 @@ fun FirTypeRef.resolvedTypeFromPrototype(
     return FirResolvedTypeRefImpl(
         session, psi, type, false, annotations
     )
+}
+
+fun FirTypeParameter.copy(
+    bounds: List<FirTypeRef> = this.bounds,
+    annotations: List<FirAnnotationCall> = this.annotations
+): FirTypeParameterImpl {
+    return FirTypeParameterImpl(
+        session, psi, symbol, name, variance, isReified
+    ).apply {
+        this.bounds += bounds
+        this.annotations += annotations
+    }
 }
