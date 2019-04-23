@@ -190,6 +190,17 @@ extra["compilerModules"] = arrayOf(
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:psi",
+        *if (project.findProperty("fir.enabled") == "true") {
+            arrayOf(
+                ":compiler:fir:cones",
+                ":compiler:fir:resolve",
+                ":compiler:fir:tree",
+                ":compiler:fir:psi2fir",
+                ":compiler:fir:fir2ir"
+            )
+        } else {
+            emptyArray()
+        },
         ":compiler:frontend",
         ":compiler:frontend.common",
         ":compiler:frontend.java",
@@ -223,12 +234,7 @@ extra["compilerModules"] = arrayOf(
         ":core:descriptors.jvm",
         ":core:deserialization",
         ":core:util.runtime",
-        ":core:type-system",
-        ":compiler:fir:cones",
-        ":compiler:fir:resolve",
-        ":compiler:fir:tree",
-        ":compiler:fir:psi2fir",
-        ":compiler:fir:fir2ir"
+        ":core:type-system"
 )
 
 val coreLibProjects = listOf(
