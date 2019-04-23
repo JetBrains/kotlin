@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
@@ -684,7 +685,13 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         when (type) {
             is ConeClassErrorType -> error { +type.reason }
             is ConeClassType -> generate(type)
-            is ConeAbbreviatedType -> inlineUnsupported(type)
+            is ConeAbbreviatedType -> resolved {
+                symbolRef(type.abbreviationLookupTag.toSymbol(session)) {
+                    simpleName(type.abbreviationLookupTag.name)
+                }
+                +" = "
+                generate(type.directExpansionType(session) ?: ConeKotlinErrorType("No expansion for type-alias"))
+            }
             is ConeTypeParameterType -> resolved {
                 symbolRef(type.lookupTag.toSymbol(session)) {
                     simpleName(type.lookupTag.name)
