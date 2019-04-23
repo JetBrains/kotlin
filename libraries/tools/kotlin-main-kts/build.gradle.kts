@@ -38,7 +38,8 @@ dependencies {
         testCompile(project(it))
     }
     compileOnly("org.apache.ivy:ivy:2.4.0")
-    runtime(project(":kotlin-compiler"))
+    runtime(project(":kotlin-compiler-embeddable"))
+    runtime(project(":kotlin-scripting-compiler-embeddable"))
     runtime(project(":kotlin-reflect"))
     fatJarContents("org.apache.ivy:ivy:2.4.0")
     fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
