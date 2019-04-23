@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 
 class JavaClassUseSiteScope(
@@ -39,45 +41,50 @@ class JavaClassUseSiteScope(
         if (klass is FirJavaClass) klass.javaTypeParameterStack else JavaTypeParameterStack.EMPTY
 
     //base symbol as key, overridden as value
-    private val overriddenByBase = mutableMapOf<ConeCallableSymbol, ConeFunctionSymbol?>()
+    internal val overriddenByBase = mutableMapOf<ConeCallableSymbol, ConeFunctionSymbol?>()
 
     private val context: ConeTypeContext = session.typeContext
 
-    private fun isEqualTypes(a: ConeKotlinType, b: ConeKotlinType): Boolean {
-        if (a is ConeFlexibleType) return isEqualTypes(a.lowerBound, b)
-        if (b is ConeFlexibleType) return isEqualTypes(a, b.lowerBound)
+    private fun isEqualTypes(a: ConeKotlinType, b: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
+        if (a is ConeFlexibleType) return isEqualTypes(a.lowerBound, b, substitutor)
+        if (b is ConeFlexibleType) return isEqualTypes(a, b.lowerBound, substitutor)
         with(context) {
-            if (a is ConeClassLikeType && b is ConeClassLikeType) {
-                val aId = a.lookupTag.classId
-                val bId = b.lookupTag.classId
-                val aMapped = JavaToKotlinClassMap.mapJavaToKotlin(aId.asSingleFqName()) ?: aId
-                val bMapped = JavaToKotlinClassMap.mapJavaToKotlin(bId.asSingleFqName()) ?: bId
-                return aMapped == bMapped
-            }
-            return isEqualTypeConstructors(a.typeConstructor(), b.typeConstructor())
+            return isEqualTypeConstructors(
+                substitutor.substituteOrSelf(a).typeConstructor(),
+                substitutor.substituteOrSelf(b).typeConstructor()
+            )
         }
     }
 
-    private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef) =
+    private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef, substitutor: ConeSubstitutor) =
         isEqualTypes(
             a.toNotNullConeKotlinType(session, javaTypeParameterStack),
-            b.toNotNullConeKotlinType(session, javaTypeParameterStack)
+            b.toNotNullConeKotlinType(session, javaTypeParameterStack),
+            substitutor
         )
 
     private fun isOverriddenFunCheck(overriddenInJava: FirFunction, base: FirFunction): Boolean {
+        overriddenInJava as FirCallableMemberDeclaration
         val receiverTypeRef = (base as FirCallableMemberDeclaration).receiverTypeRef
-        if (receiverTypeRef == null) {
-            return overriddenInJava.valueParameters.size == base.valueParameters.size &&
-                    overriddenInJava.valueParameters.zip(base.valueParameters).all { (memberParam, selfParam) ->
-                        isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef)
-                    }
-        } else {
-            if (overriddenInJava.valueParameters.size != base.valueParameters.size + 1) return false
-            val baseParameterTypes = listOf(receiverTypeRef) + base.valueParameters.map { it.returnTypeRef }
-            val javaParameterTypes = overriddenInJava.valueParameters.map { it.returnTypeRef }
-            return baseParameterTypes.zip(javaParameterTypes).all { (baseType, typeFromJava) ->
-                isEqualTypes(baseType, typeFromJava)
+        val baseParameterTypes = listOfNotNull(receiverTypeRef) + base.valueParameters.map { it.returnTypeRef }
+
+        if (overriddenInJava.valueParameters.size != baseParameterTypes.size) return false
+        if (overriddenInJava.typeParameters.size != base.typeParameters.size) return false
+
+        val types = base.typeParameters.map {
+            ConeTypeParameterTypeImpl(it.symbol, false)
+        }
+        val substitution = ConeSubstitutorByMap(overriddenInJava.typeParameters.map { it.symbol }.zip(types).toMap())
+        if (!overriddenInJava.typeParameters.zip(base.typeParameters).all { (a, b) ->
+                a.bounds.size == b.bounds.size && a.bounds.zip(b.bounds).all { (aBound, bBound) ->
+                    isEqualTypes(aBound, bBound, substitution)
+                }
             }
+        ) return false
+
+
+        return overriddenInJava.valueParameters.zip(baseParameterTypes).all { (paramFromJava, baseType) ->
+            isEqualTypes(paramFromJava.returnTypeRef, baseType, substitution)
         }
     }
 
@@ -88,11 +95,25 @@ class JavaClassUseSiteScope(
             return overriddenInJava.valueParameters.isEmpty()
         } else {
             if (overriddenInJava.valueParameters.size != 1) return false
-            return isEqualTypes(receiverTypeRef, overriddenInJava.valueParameters.single().returnTypeRef)
+            return isEqualTypes(receiverTypeRef, overriddenInJava.valueParameters.single().returnTypeRef, ConeSubstitutor.Empty)
         }
     }
 
-    internal fun ConeCallableSymbol.getOverridden(candidates: Set<ConeFunctionSymbol>): ConeCallableSymbol? {
+    internal fun bindOverrides(name: Name) {
+        val overrideCandidates = mutableSetOf<ConeFunctionSymbol>()
+        declaredMemberScope.processFunctionsByName(name) {
+            overrideCandidates += it
+            ProcessorAction.NEXT
+        }
+
+
+        superTypesScope.processFunctionsByName(name) {
+            it.getOverridden(overrideCandidates)
+            ProcessorAction.NEXT
+        }
+    }
+
+    private fun ConeCallableSymbol.getOverridden(candidates: Set<ConeFunctionSymbol>): ConeCallableSymbol? {
         if (overriddenByBase.containsKey(this)) return overriddenByBase[this]
 
         val overriding = when (this) {

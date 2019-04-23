@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.EnhancementSignatureParts
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.*
@@ -316,26 +317,17 @@ class JavaClassEnhancementScope(
         return signatureParts.type
     }
 
-    private val overriddenMemberCache = mutableMapOf<FirCallableMemberDeclaration, List<FirCallableMemberDeclaration>>()
+    private val overrideBindCache = mutableMapOf<Name, Map<ConeFunctionSymbol?, List<ConeCallableSymbol>>>()
 
     private fun FirCallableMemberDeclaration.overriddenMembers(): List<FirCallableMemberDeclaration> {
-        return overriddenMemberCache.getOrPut(this) {
-            val result = mutableListOf<FirCallableMemberDeclaration>()
-            if (this is FirNamedFunction) {
-                val superTypesScope = useSiteScope.superTypesScope
-                superTypesScope.processFunctionsByName(this.name) { basicFunctionSymbol ->
-                    val overriddenBy = with(useSiteScope) {
-                        basicFunctionSymbol.getOverridden(setOf(this@overriddenMembers.symbol as ConeFunctionSymbol))
-                    }
-                    val overriddenByFir = (overriddenBy as? FirFunctionSymbol)?.fir
-                    if (overriddenByFir === this@overriddenMembers) {
-                        result += (basicFunctionSymbol as FirFunctionSymbol).fir as FirCallableMemberDeclaration
-                    }
-                    ProcessorAction.NEXT
-                }
-            }
-            result
+        val backMap = overrideBindCache.getOrPut(this.name) {
+            useSiteScope.bindOverrides(this.name)
+            useSiteScope
+                .overriddenByBase
+                .toList()
+                .groupBy({ (_, key) -> key }, { (value) -> value })
         }
+        return backMap[this.symbol]?.map { it.firUnsafe() } ?: emptyList()
     }
 
     private sealed class TypeInSignature {
