@@ -65,11 +65,11 @@ fun FirTypeAlias.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSes
 
 fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
     return builder.getOrBuild(symbol, USE_SITE) {
-        val superTypeScope = FirCompositeScope(mutableListOf())
+
         val declaredScope = builder.getOrBuild(this.symbol, DECLARED) { FirClassDeclaredMemberScope(this) }
-        lookupSuperTypes(this, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
-            .mapNotNullTo(superTypeScope.scopes) { useSiteSuperType ->
-                if (useSiteSuperType is ConeClassErrorType) return@mapNotNullTo null
+        val scopes = lookupSuperTypes(this, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
+            .mapNotNull { useSiteSuperType ->
+                if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
                 val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
                 if (symbol is FirClassSymbol) {
                     val useSiteScope = symbol.fir.buildUseSiteScope(useSiteSession, builder)
@@ -78,7 +78,7 @@ fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder
                     null
                 }
             }
-        FirClassUseSiteScope(useSiteSession, superTypeScope, declaredScope)
+        FirClassUseSiteScope(useSiteSession, FirSuperTypeScope(useSiteSession, scopes), declaredScope)
     }
 }
 

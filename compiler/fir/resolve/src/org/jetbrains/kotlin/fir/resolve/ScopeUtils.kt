@@ -45,7 +45,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
     }
 }
 
-private fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
+fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteScope: FirScope,
     builder: ScopeSession
