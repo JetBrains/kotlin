@@ -1,7 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
 // IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 // MODULE: library
 // FILE: expected.kt

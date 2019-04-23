@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 
@@ -29,7 +30,11 @@ fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): 
             LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
         ),
         analysisFlags = mapOf(
-            AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
+            AnalysisFlags.useExperimental to listOf(
+                "kotlin.contracts.ExperimentalContracts",
+                "kotlin.Experimental",
+                "kotlin.ExperimentalMultiplatform"
+            ),
             AnalysisFlags.allowResultReturnType to true
         )
     )
@@ -49,10 +54,22 @@ fun createPsiFile(fileName: String): KtFile {
 }
 
 
-fun buildKLib(moduleName: String, sources: List<String>, outputPath: String, dependencies: List<KlibModuleRef>): KlibModuleRef {
+fun buildKLib(
+    moduleName: String,
+    sources: List<String>,
+    outputPath: String,
+    dependencies: List<KlibModuleRef>,
+    commonSources: List<String>
+): KlibModuleRef {
     return generateKLib(
         project = environment.project,
-        files = sources.map(::createPsiFile),
+        files = sources.map { source ->
+            val file = createPsiFile(source)
+            if (source in commonSources) {
+                file.isCommonSource = true
+            }
+            file
+        },
         configuration = buildConfiguration(environment, moduleName),
         immediateDependencies = dependencies,
         allDependencies = dependencies,
@@ -76,6 +93,7 @@ fun main(args: Array<String>) {
     val inputFiles = mutableListOf<String>()
     var outputPath: String? = null
     val dependencies = mutableListOf<String>()
+    val commonSources = mutableListOf<String>()
 
     var index = 0
     while (index < args.size) {
@@ -84,6 +102,7 @@ fun main(args: Array<String>) {
         when (arg) {
             "-o" -> outputPath = args[index++]
             "-d" -> dependencies += args[index++]
+            "-c" -> commonSources += args[index++]
             else -> inputFiles += arg
         }
     }
@@ -101,5 +120,5 @@ fun main(args: Array<String>) {
         KlibModuleRef(file.name.dropLast(4), file.parent)
     }
 
-    buildKLib(name.dropLast(4), listOfKtFilesFrom(inputFiles), File(outputPath).parent, dependencyKLibs)
+    buildKLib(name.dropLast(4), listOfKtFilesFrom(inputFiles), File(outputPath).parent, dependencyKLibs, listOfKtFilesFrom(commonSources))
 }
