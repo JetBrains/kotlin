@@ -40,7 +40,7 @@ data class NpmDependency(
         fun visit(item: NpmDependency) {
             if (item in visited) return
             visited.add(item)
-            item.tryFindNodeModule()?.let {
+            item.project.npmProject.findModuleEntry(item.key)?.let {
                 all.add(it)
             }
         }
@@ -50,7 +50,7 @@ data class NpmDependency(
         return all
     }
 
-    internal fun resolveProject(): NpmResolver.ResolvedProject? {
+    private fun resolveProject(): NpmResolver.ResolvedProject? {
         val result = NpmResolver.resolve(project)
 
         return when (result) {
@@ -70,15 +70,6 @@ data class NpmDependency(
                 result.resolution
             }
         }
-    }
-
-    private fun tryFindNodeModule(): File? {
-        var p = project
-        do {
-            val result = NpmProjectLayout[p].nodeModulesDir.resolve(key)
-            if (result.exists()) return result
-            p = project.parent ?: return null
-        } while (true)
     }
 
     val key: String = if (org == null) name else "@$org/$name"

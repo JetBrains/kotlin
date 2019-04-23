@@ -103,7 +103,7 @@ object Yarn : NpmApi {
             rootPackageJson.private = true
             rootPackageJson.workspaces = allWorkspaces
                 .filter { it.project != rootProject }
-                .map { it.project.projectDir.relativeTo(rootProject.rootDir).path }
+                .map { it.project.npmProject.nodeWorkDir.relativeTo(rootProject.npmProject.nodeWorkDir).path }
 
             return true
         }
@@ -111,7 +111,7 @@ object Yarn : NpmApi {
         return false
     }
 
-    override fun getHoistGradleNodeModules(project: Project): Boolean =
+    override fun shouldHoistGradleNodeModules(project: Project): Boolean =
         project.rootProject.yarn.useWorkspaces
 
     @Suppress("EXPOSED_PARAMETER_TYPE")

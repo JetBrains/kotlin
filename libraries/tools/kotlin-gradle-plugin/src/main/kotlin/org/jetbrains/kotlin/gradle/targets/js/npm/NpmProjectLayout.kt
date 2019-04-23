@@ -5,76 +5,59 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import groovy.transform.TailRecursive
 import org.gradle.api.Project
-import org.gradle.process.ExecSpec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import java.io.File
 
-class NpmProjectLayout(
-    val project: Project,
-    val nodeWorkDir: File,
-    val managed: Boolean
-) {
-    val nodeModulesDir
-        get() = nodeWorkDir.resolve(NODE_MODULES)
+enum class NpmProjectLayout {
+    PROJECT_DIR {
+        override val allowYarnWorkspaces: Boolean
+            get() = true
 
-    val packageJsonFile: File
-        get() {
-            return nodeWorkDir.resolve(PACKAGE_JSON)
-        }
+        override fun newNpmProject(project: Project) =
+            NpmProject(project, project.projectDir, searchInParents = true)
+    },
+    ROOT_PROJECT_BUILD_DIR {
+        override val allowYarnWorkspaces: Boolean
+            get() = true
 
-    fun useTool(exec: ExecSpec, tool: String, vararg args: String) {
-        NpmResolver.resolve(project)
+        override fun newNpmProject(project: Project): NpmProject {
+            val nodeJsWorldDir = project.rootProject.buildDir.resolve("nodejs-project")
 
-        exec.workingDir = nodeWorkDir
-        exec.executable = project.nodeJs.root.environment.nodeExecutable
-        exec.args = listOf(findModule(tool)) + args
-    }
-
-    @TailRecursive
-    fun findModule(name: String, src: NpmProjectLayout = this): String {
-        val file = nodeModulesDir.resolve(name)
-        if (file.isFile) return file.canonicalPath
-        if (file.isDirectory) {
-            val packageJsonFile = file.resolve("package.json")
-            val main: String = (if (packageJsonFile.isFile) {
-                val packageJson = packageJsonFile.reader().use {
-                    Gson().fromJson(it, JsonObject::class.java)
+            val workDir =
+                if (project == project.rootProject) nodeJsWorldDir
+                else {
+                    val projectPackage = project.path.removePrefix(":").replace(":", File.separator)
+                    nodeJsWorldDir.resolve("packages").resolve(projectPackage)
                 }
 
-                packageJson["main"] as? String? ?: packageJson["module"] as? String? ?: packageJson["browser"] as? String?
-            } else null) ?: "index.js"
+            return object : NpmProject(
+                project,
+                workDir,
+                searchInParents = true
+            ) {
+                override val compileOutputCopyDest: File?
+                    get() = nodeWorkDir
 
-            val mainFile = file.resolve(main)
-            if (mainFile.isFile) return mainFile.canonicalPath
+                override fun configureCompilation(compilation: KotlinJsCompilation) {
+//                    val moduleName = compilation.compileKotlinTask.moduleName
+//                    workDir.mkdirs()
+//                    compilation.kotlinOptions.outputFile = workDir.resolve("$moduleName.js").absolutePath
+                }
+
+//                override fun moduleOutput(compilationTask: Kotlin2JsCompile) =
+//                    compilationTask.outputFile
+            }
         }
+    },
+    BUILD_DIR {
+        override fun newNpmProject(project: Project) =
+            NpmProject(project, project.buildDir, searchInParents = false)
+    };
 
-        val parent = project.parent
-        return if (!managed || parent == null) error("Cannot find node module $name in $src")
-        else NpmProjectLayout[parent].findModule(name, src)
-    }
+    open val allowYarnWorkspaces: Boolean
+        get() = false
 
-    companion object {
-        const val PACKAGE_JSON = "package.json"
-        const val NODE_MODULES = "node_modules"
-
-        operator fun get(project: Project): NpmProjectLayout {
-            val nodeJsRootExtension = NodeJsPlugin.apply(project)
-
-            val manageNodeModules = nodeJsRootExtension.root.manageNodeModules
-
-            val nodeWorkDir =
-                if (manageNodeModules) project.projectDir
-                else project.buildDir
-
-            return NpmProjectLayout(project, nodeWorkDir, manageNodeModules)
-        }
-    }
+    abstract fun newNpmProject(project: Project): NpmProject
 }
-
-val Project.npmProject
-    get() = NpmProjectLayout[this]

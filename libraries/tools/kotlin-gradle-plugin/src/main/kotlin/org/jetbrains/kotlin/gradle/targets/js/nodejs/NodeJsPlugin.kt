@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Delete
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.NODE_JS
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 open class NodeJsPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -31,6 +32,17 @@ open class NodeJsPlugin : Plugin<Project> {
 
             it.doLast {
                 project.nodeJs.root.packageManager.cleanProject(project)
+            }
+
+            project.tasks.maybeCreate(BasePlugin.CLEAN_TASK_NAME).dependsOn(it)
+        }
+
+        project.tasks.create("cleanGradleNodeModules", Delete::class.java) {
+            it.description = "Deletes node_modules_gradle"
+            it.group = BasePlugin.BUILD_GROUP
+
+            it.doLast {
+                project.npmProject.gradleNodeModulesDir.deleteRecursively()
             }
 
             project.tasks.maybeCreate(BasePlugin.CLEAN_TASK_NAME).dependsOn(it)

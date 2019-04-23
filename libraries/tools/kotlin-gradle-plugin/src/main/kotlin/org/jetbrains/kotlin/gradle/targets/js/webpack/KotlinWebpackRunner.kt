@@ -13,6 +13,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.Project
+import org.gradle.process.ExecResult
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -26,9 +27,13 @@ internal class KotlinWebpackRunner(
     val bin: String,
     val config: KotlinWebpackConfig
 ) {
-    fun execute() {
+    fun execute(): ExecResult {
         val exec = start()
-        exec.waitForFinish()
+        val result = exec.waitForFinish()
+        check(result.exitValue == 0) {
+            "Webpack exited with non zero exit code (${result.exitValue})"
+        }
+        return result
     }
 
     fun start(): ExecHandle {
@@ -43,12 +48,13 @@ internal class KotlinWebpackRunner(
         config.save(configFile)
 
         val execFactory = execHandleFactory.newExec()
+
         val args = mutableListOf<String>("--config", configFile.absolutePath)
         if (config.showProgress) {
             args.add("--progress")
         }
 
-        npmProjectLayout.useTool(execFactory, ".bin/$bin")
+        npmProjectLayout.useTool(execFactory, ".bin/$bin", *args.toTypedArray())
         val exec = execFactory.build()
         exec.start()
         return exec
