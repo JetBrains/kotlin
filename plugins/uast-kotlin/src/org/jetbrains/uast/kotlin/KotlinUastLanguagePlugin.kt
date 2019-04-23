@@ -574,8 +574,11 @@ internal object KotlinConverter {
         expectedTypes: Array<out Class<out UElement>>
     ): Sequence<UElement> = expectedTypes.accommodate(
         alternative uParam@{
-            val ownerFunction = element.ownerFunction as? KtFunction ?: return@uParam null
-            val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return@uParam null
+            val lightMethod = when (val ownerFunction = element.ownerFunction) {
+                is KtFunction -> LightClassUtil.getLightClassMethod(ownerFunction)
+                is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(ownerFunction)
+                else -> null
+            } ?: return@uParam null
             val lightParameter = lightMethod.parameterList.parameters.find { it.name == element.name } ?: return@uParam null
             KotlinUParameter(lightParameter, element, givenParent)
         },

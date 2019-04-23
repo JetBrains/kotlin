@@ -474,8 +474,11 @@ internal object KotlinConverter {
                     }
 
                 is KtParameter -> el<UParameter> {
-                    val ownerFunction = original.ownerFunction as? KtFunction ?: return null
-                    val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return null
+                    val lightMethod = when (val ownerFunction = original.ownerFunction) {
+                        is KtFunction -> LightClassUtil.getLightClassMethod(ownerFunction)
+                        is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(ownerFunction)
+                        else -> null
+                    } ?: return null
                     val lightParameter = lightMethod.parameterList.parameters.find { it.name == original.name } ?: return null
                     KotlinUParameter(lightParameter, original, givenParent)
                 }
