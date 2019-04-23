@@ -1,4 +1,4 @@
-public open class NestedEnumArgument : R|java/lang/Object| {
+public open class NestedEnumArgument : R|kotlin/Any| {
     @R|test/NestedEnumArgument.Anno|(R|test/NestedEnumArgument.E.FIRST|()) public/*package*/ open operator fun foo(): R|kotlin/Unit|
 
 }

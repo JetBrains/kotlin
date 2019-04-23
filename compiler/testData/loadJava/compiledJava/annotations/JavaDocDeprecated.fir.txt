@@ -1,4 +1,4 @@
-public open class JavaDocDeprecated : R|java/lang/Object| {
+public open class JavaDocDeprecated : R|kotlin/Any| {
     public open operator fun getFoo(text: R|ft<kotlin/String, kotlin/String?>|!): R|ft<kotlin/String, kotlin/String?>|!
 
 }

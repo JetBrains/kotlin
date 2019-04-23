@@ -1,4 +1,4 @@
-public open class A : R|java/lang/Object| {
+public open class A : R|kotlin/Any| {
     public open operator fun foo(@R|kotlin/annotations/jvm/internal/DefaultNull|() i: R|ft<kotlin/Int, kotlin/Int?>|! = Null(null)): R|kotlin/Unit|
 
     public open operator fun bar(@R|kotlin/annotations/jvm/internal/DefaultNull|() a: R|ft<kotlin/Int, kotlin/Int?>|! = Null(null)): R|kotlin/Unit|
@@ -8,7 +8,7 @@ public open class A : R|java/lang/Object| {
     public open operator fun baz(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(42)) a: R|ft<kotlin/Int, kotlin/Int?>|! = Int(42)): R|kotlin/Unit|
 
 }
-public abstract interface AInt : R|java/lang/Object| {
+public abstract interface AInt : R|kotlin/Any| {
     public abstract operator fun foo(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(42)) i: R|ft<kotlin/Int, kotlin/Int?>|! = Int(42)): R|kotlin/Unit|
 
     public abstract operator fun bar(@R|kotlin/annotations/jvm/internal/DefaultNull|() a: R|ft<kotlin/Int, kotlin/Int?>|! = Null(null)): R|kotlin/Unit|

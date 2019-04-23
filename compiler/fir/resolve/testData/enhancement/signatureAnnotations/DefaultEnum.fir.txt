@@ -1,4 +1,4 @@
-public/*package*/ open class A : R|java/lang/Object| {
+public/*package*/ open class A : R|kotlin/Any| {
     public open operator fun a(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(HELLO)) arg: R|ft<Signs, Signs?>|! = R|/Signs.HELLO|): R|ft<Signs, Signs?>|!
 
     public open operator fun bar(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(X)) arg: R|ft<Signs, Signs?>|! = R|/Signs.X|): R|ft<Signs, Signs?>|!
@@ -8,12 +8,12 @@ public/*package*/ open class A : R|java/lang/Object| {
     public open operator fun bam(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Mixed, Mixed?>|! = R|/Mixed.NOT_ENTRY_EITHER|): R|ft<Mixed, Mixed?>|!
 
 }
-public final enum class Mixed : R|java/lang/Enum<Mixed>| {
+public final enum class Mixed : R|kotlin/Enum<Mixed>| {
     public final static val NOT_ENTRY_EITHER: R|ft<Mixed, Mixed?>|!
         public get(): R|ft<Mixed, Mixed?>|!
 
 }
-public final enum class Signs : R|java/lang/Enum<Signs>| {
+public final enum class Signs : R|kotlin/Enum<Signs>| {
     public final static val HELLO: R|ft<Signs, Signs?>|!
         public get(): R|ft<Signs, Signs?>|!
 

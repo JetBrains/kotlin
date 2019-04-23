@@ -1,2 +1,2 @@
-public abstract interface SubclassFromGenericAndNot : R|java/lang/Object| {
+public abstract interface SubclassFromGenericAndNot : R|kotlin/Any| {
 }

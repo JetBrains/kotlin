@@ -1,2 +1,2 @@
-public abstract interface InheritReadOnlinessOfArgument : R|java/lang/Object| {
+public abstract interface InheritReadOnlinessOfArgument : R|kotlin/Any| {
 }

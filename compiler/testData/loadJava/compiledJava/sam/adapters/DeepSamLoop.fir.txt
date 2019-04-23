@@ -1,2 +1,2 @@
-public abstract interface DeepSamLoop : R|java/lang/Object| {
+public abstract interface DeepSamLoop : R|kotlin/Any| {
 }

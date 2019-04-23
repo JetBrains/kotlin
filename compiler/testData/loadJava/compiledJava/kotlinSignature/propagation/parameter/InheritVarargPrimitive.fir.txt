@@ -1,2 +1,2 @@
-public abstract interface InheritVarargPrimitive : R|java/lang/Object| {
+public abstract interface InheritVarargPrimitive : R|kotlin/Any| {
 }

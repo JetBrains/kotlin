@@ -1,4 +1,4 @@
-public final class FinalFieldAsVal : R|java/lang/Object| {
+public final class FinalFieldAsVal : R|kotlin/Any| {
     public final val f: R|kotlin/Int|
         public get(): R|kotlin/Int|
 

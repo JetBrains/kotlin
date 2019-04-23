@@ -1,2 +1,2 @@
-public open class DeeplyInnerClass : R|java/lang/Object| {
+public open class DeeplyInnerClass : R|kotlin/Any| {
 }

@@ -1,2 +1,2 @@
-public final class FakeStaticOverrides : R|java/lang/Object| {
+public final class FakeStaticOverrides : R|kotlin/Any| {
 }

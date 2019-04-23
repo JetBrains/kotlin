@@ -1,4 +1,4 @@
-public open class ConstructorGenericSimple : R|java/lang/Object| {
+public open class ConstructorGenericSimple : R|kotlin/Any| {
     public constructor<P>(p: R|ft<P, P?>|!): R|test/ConstructorGenericSimple|
 
 }

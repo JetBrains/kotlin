@@ -1,4 +1,4 @@
-public open class NotNullMethod : R|java/lang/Object| {
+public open class NotNullMethod : R|kotlin/Any| {
     @R|org/jetbrains/annotations/NotNull|() public open operator fun hi(): R|kotlin/String|
 
 }

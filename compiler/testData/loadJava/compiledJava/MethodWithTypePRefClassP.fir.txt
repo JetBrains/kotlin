@@ -1,4 +1,4 @@
-public open class MethodWithTypePRefClassP<P> : R|java/lang/Object| {
+public open class MethodWithTypePRefClassP<P> : R|kotlin/Any| {
     public final operator fun <Q : R|P|> f(): R|kotlin/Unit|
 
 }

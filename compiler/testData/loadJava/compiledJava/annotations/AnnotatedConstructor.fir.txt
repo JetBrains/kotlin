@@ -1,4 +1,4 @@
-public open class AnnotatedConstructor : R|java/lang/Object| {
+public open class AnnotatedConstructor : R|kotlin/Any| {
     @R|test/AnnotatedConstructor.Anno|(String(constructor)) public constructor(): R|test/AnnotatedConstructor|
 
 }

@@ -1,2 +1,2 @@
-public abstract interface InheritProjectionKind : R|java/lang/Object| {
+public abstract interface InheritProjectionKind : R|kotlin/Any| {
 }

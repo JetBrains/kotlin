@@ -1,2 +1,2 @@
-public open class AnnotationTargets : R|java/lang/Object| {
+public open class AnnotationTargets : R|kotlin/Any| {
 }

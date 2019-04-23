@@ -1,2 +1,2 @@
-public abstract interface LoadIterableWithPropagation : R|java/lang/Object| {
+public abstract interface LoadIterableWithPropagation : R|kotlin/Any| {
 }

@@ -1,4 +1,4 @@
-public open class A<T> : R|java/lang/Object| {
+public open class A<T> : R|kotlin/Any| {
     public open operator fun foo(t: R|ft<T, T?>|!): R|ft<T, T?>|!
 
 }

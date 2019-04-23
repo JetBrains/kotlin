@@ -1,2 +1,2 @@
-public open class InnerClass : R|java/lang/Object| {
+public open class InnerClass : R|kotlin/Any| {
 }

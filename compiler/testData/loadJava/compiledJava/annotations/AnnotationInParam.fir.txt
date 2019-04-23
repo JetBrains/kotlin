@@ -1,2 +1,2 @@
-public abstract interface AnnotationInParam : R|java/lang/Object| {
+public abstract interface AnnotationInParam : R|kotlin/Any| {
 }

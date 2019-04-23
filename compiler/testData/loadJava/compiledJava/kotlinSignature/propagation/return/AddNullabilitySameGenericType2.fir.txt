@@ -1,2 +1,2 @@
-public abstract interface AddNullabilitySameGenericType2 : R|java/lang/Object| {
+public abstract interface AddNullabilitySameGenericType2 : R|kotlin/Any| {
 }

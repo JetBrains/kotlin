@@ -1,2 +1,2 @@
-public abstract interface HalfSubstitutedTypeParameters : R|java/lang/Object| {
+public abstract interface HalfSubstitutedTypeParameters : R|kotlin/Any| {
 }

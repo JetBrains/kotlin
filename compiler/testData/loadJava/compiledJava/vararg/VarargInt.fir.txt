@@ -1,4 +1,4 @@
-public open class VarargInt : R|java/lang/Object| {
+public open class VarargInt : R|kotlin/Any| {
     public open operator fun vararg(vararg p: R|kotlin/IntArray|): R|kotlin/Unit|
 
 }

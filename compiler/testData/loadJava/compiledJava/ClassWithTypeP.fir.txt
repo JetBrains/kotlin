@@ -1,2 +1,2 @@
-public final class ClassWithTypeP<P> : R|java/lang/Object| {
+public final class ClassWithTypeP<P> : R|kotlin/Any| {
 }

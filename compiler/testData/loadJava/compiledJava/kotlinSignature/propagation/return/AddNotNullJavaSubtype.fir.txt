@@ -1,2 +1,2 @@
-public abstract interface AddNotNullJavaSubtype : R|java/lang/Object| {
+public abstract interface AddNotNullJavaSubtype : R|kotlin/Any| {
 }

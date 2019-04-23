@@ -1,2 +1,2 @@
-public open class ClassObjectInParamVariance : R|java/lang/Object| {
+public open class ClassObjectInParamVariance : R|kotlin/Any| {
 }

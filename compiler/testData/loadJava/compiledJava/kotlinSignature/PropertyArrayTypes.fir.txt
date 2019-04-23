@@ -1,11 +1,11 @@
-public open class PropertyArrayTypes<T> : R|java/lang/Object| {
-    public open var arrayOfArrays: R|kotlin/Array<ft<kotlin/Array<ft<java/lang/String, java/lang/String?>>, kotlin/Array<ft<java/lang/String, java/lang/String?>>?>>|
-        public get(): R|kotlin/Array<ft<kotlin/Array<ft<java/lang/String, java/lang/String?>>, kotlin/Array<ft<java/lang/String, java/lang/String?>>?>>|
-        public set(value: R|kotlin/Array<ft<kotlin/Array<ft<java/lang/String, java/lang/String?>>, kotlin/Array<ft<java/lang/String, java/lang/String?>>?>>|): kotlin/Unit
+public open class PropertyArrayTypes<T> : R|kotlin/Any| {
+    public open var arrayOfArrays: R|kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<ft<kotlin/String, kotlin/String?>>?>>|
+        public get(): R|kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<ft<kotlin/String, kotlin/String?>>?>>|
+        public set(value: R|kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<ft<kotlin/String, kotlin/String?>>?>>|): kotlin/Unit
 
-    public open var array: R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|
-        public get(): R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|
-        public set(value: R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|): kotlin/Unit
+    public open var array: R|kotlin/Array<ft<kotlin/String, kotlin/String?>>|
+        public get(): R|kotlin/Array<ft<kotlin/String, kotlin/String?>>|
+        public set(value: R|kotlin/Array<ft<kotlin/String, kotlin/String?>>|): kotlin/Unit
 
     public open var genericArray: R|kotlin/Array<ft<T, T?>>|
         public get(): R|kotlin/Array<ft<T, T?>>|

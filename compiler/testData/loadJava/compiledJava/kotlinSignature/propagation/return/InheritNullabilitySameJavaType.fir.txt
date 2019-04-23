@@ -1,2 +1,2 @@
-public abstract interface InheritNullabilitySameJavaType : R|java/lang/Object| {
+public abstract interface InheritNullabilitySameJavaType : R|kotlin/Any| {
 }

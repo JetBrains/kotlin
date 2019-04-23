@@ -1,2 +1,2 @@
-public abstract interface TypeParamOfClassSubstituted : R|java/lang/Object| {
+public abstract interface TypeParamOfClassSubstituted : R|kotlin/Any| {
 }

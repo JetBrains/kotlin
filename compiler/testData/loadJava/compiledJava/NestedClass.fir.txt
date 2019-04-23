@@ -1,2 +1,2 @@
-public open class NestedClass : R|java/lang/Object| {
+public open class NestedClass : R|kotlin/Any| {
 }

@@ -1,2 +1,2 @@
-public abstract interface InheritedOverridden : R|java/lang/Object| {
+public abstract interface InheritedOverridden : R|kotlin/Any| {
 }

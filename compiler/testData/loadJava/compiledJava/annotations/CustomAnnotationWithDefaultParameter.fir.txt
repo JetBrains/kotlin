@@ -1,2 +1,2 @@
-public abstract interface CustomAnnotationWithDefaultParameter : R|java/lang/Object| {
+public abstract interface CustomAnnotationWithDefaultParameter : R|kotlin/Any| {
 }

@@ -1,2 +1,2 @@
-public abstract interface MutableToReadOnly : R|java/lang/Object| {
+public abstract interface MutableToReadOnly : R|kotlin/Any| {
 }

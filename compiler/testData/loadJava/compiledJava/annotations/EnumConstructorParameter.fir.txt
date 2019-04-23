@@ -1,4 +1,4 @@
-public final enum class EnumConstructorParameter : R|java/lang/Enum<test/EnumConstructorParameter>| {
+public final enum class EnumConstructorParameter : R|kotlin/Enum<test/EnumConstructorParameter>| {
     public final static val INSTANCE: R|ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>|!
         public get(): R|ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>|!
 

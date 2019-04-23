@@ -1,2 +1,2 @@
-public abstract interface SubstitutedSamInterfaceSubclassOfBuiltin : R|java/lang/Comparable<test/SubstitutedSamInterfaceSubclassOfBuiltin>| {
+public abstract interface SubstitutedSamInterfaceSubclassOfBuiltin : R|kotlin/Comparable<test/SubstitutedSamInterfaceSubclassOfBuiltin>| {
 }

@@ -1,4 +1,4 @@
-public open class Frame : R|java/lang/Object| {
+public open class Frame : R|kotlin/Any| {
     public/*package*/ open var accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
         public/*package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
         public/*package*/ set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit

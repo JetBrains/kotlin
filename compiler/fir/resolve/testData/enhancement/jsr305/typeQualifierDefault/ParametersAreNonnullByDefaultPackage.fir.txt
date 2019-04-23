@@ -1,4 +1,4 @@
-public open class A : R|java/lang/Object| {
+public open class A : R|kotlin/Any| {
     @R|javax/annotation/Nullable|() public open var field: R|kotlin/String|?
         public get(): R|kotlin/String|?
         public set(value: R|kotlin/String|?): kotlin/Unit
@@ -8,7 +8,7 @@ public open class A : R|java/lang/Object| {
     @R|javax/annotation/Nonnull|() public open operator fun bar(): R|kotlin/String|
 
 }
-public open class A2 : R|java/lang/Object| {
+public open class A2 : R|kotlin/Any| {
     @R|javax/annotation/Nullable|() public open var field: R|kotlin/String|?
         public get(): R|kotlin/String|?
         public set(value: R|kotlin/String|?): kotlin/Unit

@@ -1,4 +1,4 @@
-public abstract interface JavaBeanAbstractGetter : R|java/lang/Object| {
+public abstract interface JavaBeanAbstractGetter : R|kotlin/Any| {
     public abstract operator fun getRed(): R|kotlin/Int|
 
     public abstract operator fun getBlue(): R|kotlin/Int|

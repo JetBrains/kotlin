@@ -1,2 +1,2 @@
-public abstract interface SubstitutedSamInterface : R|java/util/Comparator<java/lang/String>| {
+public abstract interface SubstitutedSamInterface : R|java/util/Comparator<kotlin/String>| {
 }

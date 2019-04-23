@@ -1,2 +1,2 @@
-public abstract interface EmptyArrayInParam : R|java/lang/Object| {
+public abstract interface EmptyArrayInParam : R|kotlin/Any| {
 }

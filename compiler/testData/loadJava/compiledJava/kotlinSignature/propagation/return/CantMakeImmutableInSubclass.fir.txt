@@ -1,2 +1,2 @@
-public abstract interface CantMakeImmutableInSubclass : R|java/lang/Object| {
+public abstract interface CantMakeImmutableInSubclass : R|kotlin/Any| {
 }

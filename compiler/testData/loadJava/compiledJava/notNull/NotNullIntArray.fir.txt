@@ -1,4 +1,4 @@
-public open class NotNullIntArray : R|java/lang/Object| {
+public open class NotNullIntArray : R|kotlin/Any| {
     @R|org/jetbrains/annotations/NotNull|() public open operator fun hi(): R|kotlin/IntArray|
 
 }

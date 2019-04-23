@@ -1,4 +1,4 @@
-public open class AnnotatedMethod : R|java/lang/Object| {
+public open class AnnotatedMethod : R|kotlin/Any| {
     @R|test/AnnotatedMethod.Anno|(Int(42)) public open operator fun f(): R|kotlin/Unit|
 
 }

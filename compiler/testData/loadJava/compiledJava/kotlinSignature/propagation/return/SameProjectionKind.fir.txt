@@ -1,2 +1,2 @@
-public abstract interface SameProjectionKind : R|java/lang/Object| {
+public abstract interface SameProjectionKind : R|kotlin/Any| {
 }

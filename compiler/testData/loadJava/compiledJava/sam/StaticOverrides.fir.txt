@@ -1,2 +1,2 @@
-public final class StaticOverrides : R|java/lang/Object| {
+public final class StaticOverrides : R|kotlin/Any| {
 }

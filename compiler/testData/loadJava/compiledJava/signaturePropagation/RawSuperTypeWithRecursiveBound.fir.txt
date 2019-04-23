@@ -1,2 +1,2 @@
-public open class RawSuperTypeWithRecursiveBound : R|java/lang/Object| {
+public open class RawSuperTypeWithRecursiveBound : R|kotlin/Any| {
 }

@@ -1,2 +1,2 @@
-public abstract interface InheritReadOnlinessSameClass : R|java/lang/Object| {
+public abstract interface InheritReadOnlinessSameClass : R|kotlin/Any| {
 }

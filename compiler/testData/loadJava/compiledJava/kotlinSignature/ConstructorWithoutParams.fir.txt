@@ -1,4 +1,4 @@
-public open class ConstructorWithoutParams : R|java/lang/Object| {
+public open class ConstructorWithoutParams : R|kotlin/Any| {
     public constructor(): R|test/ConstructorWithoutParams|
 
 }

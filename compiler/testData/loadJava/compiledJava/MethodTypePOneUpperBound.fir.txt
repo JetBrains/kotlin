@@ -1,4 +1,4 @@
-public open class MethodTypePOneUpperBound : R|java/lang/Object| {
-    public open operator fun <T : R|java/lang/Cloneable|> bar(): R|kotlin/Unit|
+public open class MethodTypePOneUpperBound : R|kotlin/Any| {
+    public open operator fun <T : R|kotlin/Cloneable|> bar(): R|kotlin/Unit|
 
 }

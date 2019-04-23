@@ -1,2 +1,2 @@
-public abstract interface UseParameterAsUpperBound : R|java/lang/Object| {
+public abstract interface UseParameterAsUpperBound : R|kotlin/Any| {
 }

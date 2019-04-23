@@ -1,2 +1,2 @@
-public final class InheritMethodsDifferentReturnTypes : R|java/lang/Object| {
+public final class InheritMethodsDifferentReturnTypes : R|kotlin/Any| {
 }

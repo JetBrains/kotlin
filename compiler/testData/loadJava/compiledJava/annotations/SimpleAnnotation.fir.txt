@@ -1,2 +1,2 @@
-public abstract annotation class SimpleAnnotation : R|java/lang/annotation/Annotation| {
+public abstract annotation class SimpleAnnotation : R|kotlin/Annotation| {
 }

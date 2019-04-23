@@ -1,4 +1,4 @@
-public open class PrivateMembers : R|java/lang/Object| {
+public open class PrivateMembers : R|kotlin/Any| {
     private open var field: R|kotlin/Int|
         private get(): R|kotlin/Int|
         private set(value: R|kotlin/Int|): kotlin/Unit

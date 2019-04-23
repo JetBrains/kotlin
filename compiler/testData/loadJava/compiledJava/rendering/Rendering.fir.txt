@@ -1,2 +1,2 @@
-public open class Rendering : R|java/lang/Object| {
+public open class Rendering : R|kotlin/Any| {
 }

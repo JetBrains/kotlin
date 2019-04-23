@@ -1,2 +1,2 @@
-public abstract interface InheritedAndOverriddenAmbiguousAdapters : R|java/lang/Object| {
+public abstract interface InheritedAndOverriddenAmbiguousAdapters : R|kotlin/Any| {
 }

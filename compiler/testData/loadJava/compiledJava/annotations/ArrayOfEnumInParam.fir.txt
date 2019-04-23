@@ -1,2 +1,2 @@
-public abstract interface ArrayOfEnumInParam : R|java/lang/Object| {
+public abstract interface ArrayOfEnumInParam : R|kotlin/Any| {
 }

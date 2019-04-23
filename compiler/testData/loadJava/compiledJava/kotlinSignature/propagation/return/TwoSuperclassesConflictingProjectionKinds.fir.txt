@@ -1,2 +1,2 @@
-public abstract interface TwoSuperclassesConflictingProjectionKinds : R|java/lang/Object| {
+public abstract interface TwoSuperclassesConflictingProjectionKinds : R|kotlin/Any| {
 }

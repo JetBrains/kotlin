@@ -1,2 +1,2 @@
-public abstract interface TwoSuperclassesReturnSameJavaType : R|java/lang/Object| {
+public abstract interface TwoSuperclassesReturnSameJavaType : R|kotlin/Any| {
 }

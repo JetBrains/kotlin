@@ -1,2 +1,2 @@
-public open class Some : R|java/lang/Object| {
+public open class Some : R|kotlin/Any| {
 }

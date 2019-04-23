@@ -1,4 +1,4 @@
-public/*package*/ open class A : R|java/lang/Object| {
+public/*package*/ open class A : R|kotlin/Any| {
     public open operator fun emptyName(@R|kotlin/annotations/jvm/internal/ParameterName|(String()) first: R|ft<kotlin/String, kotlin/String?>|!, @R|kotlin/annotations/jvm/internal/ParameterName|(String(ok)) second: R|kotlin/Int|): R|kotlin/Unit|
 
     public open operator fun missingName(@R|kotlin/annotations/jvm/internal/ParameterName|() first: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|

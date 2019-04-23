@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
@@ -142,7 +143,9 @@ internal fun JavaClassifierType.toConeKotlinTypeWithNullability(
 ): ConeLookupTagBasedType {
     return when (val classifier = classifier) {
         is JavaClass -> {
-            val classId = classifier.classId!!
+            //val classId = classifier.classId!!
+            val classId = JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId!!
+
             val lookupTag = ConeClassLikeLookupTagImpl(classId)
             lookupTag.constructClassType(
                 typeArguments.mapIndexed { index, argument ->

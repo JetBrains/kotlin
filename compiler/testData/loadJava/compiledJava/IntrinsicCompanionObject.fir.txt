@@ -1,4 +1,4 @@
-public abstract interface IntrinsicCompanionObject : R|java/lang/Object| {
+public abstract interface IntrinsicCompanionObject : R|kotlin/Any| {
     public abstract operator fun testInt(i: R|ft<kotlin/Int.Companion, kotlin/Int.Companion?>|!): R|kotlin/Unit|
 
     public abstract operator fun testChar(c: R|ft<kotlin/Char.Companion, kotlin/Char.Companion?>|!): R|kotlin/Unit|

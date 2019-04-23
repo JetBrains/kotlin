@@ -1,2 +1,2 @@
-public abstract interface ArraysInSubtypes : R|java/lang/Object| {
+public abstract interface ArraysInSubtypes : R|kotlin/Any| {
 }

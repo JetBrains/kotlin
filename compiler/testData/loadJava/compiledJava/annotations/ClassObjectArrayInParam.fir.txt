@@ -1,2 +1,2 @@
-public open class ClassObjectArrayInParam : R|java/lang/Object| {
+public open class ClassObjectArrayInParam : R|kotlin/Any| {
 }

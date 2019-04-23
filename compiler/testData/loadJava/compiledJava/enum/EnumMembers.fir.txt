@@ -1,4 +1,4 @@
-public final enum class EnumMembers : R|java/lang/Enum<test/EnumMembers>| {
+public final enum class EnumMembers : R|kotlin/Enum<test/EnumMembers>| {
     public final static val FIRST: R|ft<test/EnumMembers, test/EnumMembers?>|!
         public get(): R|ft<test/EnumMembers, test/EnumMembers?>|!
 

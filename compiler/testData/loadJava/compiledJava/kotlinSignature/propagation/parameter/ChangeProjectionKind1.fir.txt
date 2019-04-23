@@ -1,2 +1,2 @@
-public abstract interface ChangeProjectionKind1 : R|java/lang/Object| {
+public abstract interface ChangeProjectionKind1 : R|kotlin/Any| {
 }

@@ -1,4 +1,4 @@
-public open class Simple : R|java/lang/Object| {
+public open class Simple : R|kotlin/Any| {
     @R|javax/annotation/Nullable|() public open var field: R|kotlin/String|?
         public get(): R|kotlin/String|?
         public set(value: R|kotlin/String|?): kotlin/Unit

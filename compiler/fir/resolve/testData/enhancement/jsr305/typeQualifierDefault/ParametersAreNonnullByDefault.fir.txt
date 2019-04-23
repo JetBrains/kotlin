@@ -1,4 +1,4 @@
-@R|javax/annotation/ParametersAreNonnullByDefault|() public open class A : R|java/lang/Object| {
+@R|javax/annotation/ParametersAreNonnullByDefault|() public open class A : R|kotlin/Any| {
     @R|javax/annotation/Nullable|() public open var field: R|kotlin/String|?
         public get(): R|kotlin/String|?
         public set(value: R|kotlin/String|?): kotlin/Unit

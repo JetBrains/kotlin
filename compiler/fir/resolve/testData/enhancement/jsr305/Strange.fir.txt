@@ -1,4 +1,4 @@
-public open class Strange : R|java/lang/Object| {
+public open class Strange : R|kotlin/Any| {
     @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.UNKNOWN|()) public open var field: R|ft<kotlin/String, kotlin/String?>|!
         public get(): R|ft<kotlin/String, kotlin/String?>|!
         public set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit

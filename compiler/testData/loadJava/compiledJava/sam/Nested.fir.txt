@@ -1,2 +1,2 @@
-public abstract interface Nested : R|java/lang/Object| {
+public abstract interface Nested : R|kotlin/Any| {
 }

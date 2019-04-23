@@ -1,4 +1,4 @@
-public final class Simple : R|java/lang/Object| {
+public final class Simple : R|kotlin/Any| {
     public constructor(): R|test/Simple|
 
 }

@@ -1,2 +1,2 @@
-public final class DifferentParametersCount : R|java/lang/Object| {
+public final class DifferentParametersCount : R|kotlin/Any| {
 }
