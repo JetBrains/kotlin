@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.checker.NewCapturedType
 
 class InsertExplicitTypeArgumentsIntention :
     SelfTargetingRangeIntention<KtCallExpression>(KtCallExpression::class.java, "Add explicit type arguments"), LowPriorityAction {
@@ -47,7 +48,7 @@ class InsertExplicitTypeArgumentsIntention :
 
             val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
             val typeArgs = resolvedCall.typeArguments
-            return typeArgs.isNotEmpty() && typeArgs.values.none { ErrorUtils.containsErrorType(it) || it is CapturedType }
+            return typeArgs.isNotEmpty() && typeArgs.values.none { ErrorUtils.containsErrorType(it) || it is CapturedType || it is NewCapturedType }
         }
 
         fun applyTo(element: KtCallElement, shortenReferences: Boolean = true) {

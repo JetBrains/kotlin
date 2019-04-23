@@ -90,6 +90,13 @@ open class TypeApproximatorConfiguration {
     object CapturedAndIntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
     }
+    object IntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+        override val integerLiteralType: Boolean get() = true
+        override val allFlexible: Boolean get() = true
+        override val intersection get() = ALLOWED
+        override val typeVariable: (TypeVariableTypeConstructor) -> Boolean get() = { true }
+        override val capturedType: (NewCapturedType) -> Boolean get() = { true }
+    }
 }
 
 
