@@ -44,7 +44,7 @@ object CheckerTestUtil {
     private const val IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE"
     private const val INDIVIDUAL_DIAGNOSTIC = """(\w+;)?(\w+:)?(\w+)(?:\(((?:".*?")(?:,\s*".*?")*)\))?"""
 
-    private val rangeStartOrEndPattern = Pattern.compile("(<!$INDIVIDUAL_DIAGNOSTIC(,\\s*$INDIVIDUAL_DIAGNOSTIC)*!>)|(<!>)")
+    internal val rangeStartOrEndPattern = Pattern.compile("(<!$INDIVIDUAL_DIAGNOSTIC(,\\s*$INDIVIDUAL_DIAGNOSTIC)*!>)|(<!>)")
     val individualDiagnosticPattern: Pattern = Pattern.compile(INDIVIDUAL_DIAGNOSTIC)
 
     fun getDiagnosticsIncludingSyntaxErrors(
@@ -328,6 +328,7 @@ object CheckerTestUtil {
             return false
         if (expected.parameters == null)
             return true
+
         if (actual.parameters == null || expected.parameters.size != actual.parameters.size)
             return false
 
@@ -420,7 +421,7 @@ object CheckerTestUtil {
             psiFile,
             diagnostics,
             emptyMap(),
-            com.intellij.util.Function { it.text },
+            { it.text },
             emptyList(),
             false,
             false
@@ -430,12 +431,12 @@ object CheckerTestUtil {
         psiFile: PsiFile,
         diagnostics: Collection<ActualDiagnostic>,
         diagnosticToExpectedDiagnostic: Map<AbstractTestDiagnostic, TextDiagnostic>,
-        getFileText: com.intellij.util.Function<PsiFile, String>,
+        getFileText: (PsiFile) -> String,
         uncheckedDiagnostics: Collection<PositionalTextDiagnostic>,
         withNewInferenceDirective: Boolean,
         renderDiagnosticMessages: Boolean
     ): StringBuffer {
-        val text = getFileText.`fun`(psiFile)
+        val text = getFileText(psiFile)
         val result = StringBuffer()
         val diagnosticsFiltered = diagnostics.filter { actualDiagnostic -> psiFile == actualDiagnostic.file }
         if (diagnosticsFiltered.isEmpty() && uncheckedDiagnostics.isEmpty()) {
@@ -514,33 +515,15 @@ object CheckerTestUtil {
 
                 for (diagnostic in diagnostics) {
                     val expectedDiagnostic = diagnosticToExpectedDiagnostic[diagnostic]
-                    if (expectedDiagnostic != null) {
-                        val actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic)
+                    val actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic)
+
+                    if (expectedDiagnostic != null || !hasExplicitDefinitionOnlyOption(diagnostic)) {
+                        val shouldRenderParameters =
+                            renderDiagnosticMessages || expectedDiagnostic?.parameters != null
+
                         diagnosticsAsText.add(
-                            if (compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic))
-                                expectedDiagnostic.asString() else actualTextDiagnostic.asString()
+                            actualTextDiagnostic.asString(withNewInferenceDirective, shouldRenderParameters)
                         )
-                    } else if (!hasExplicitDefinitionOnlyOption(diagnostic)) {
-                        val diagnosticText = StringBuilder()
-                        if (withNewInferenceDirective && diagnostic.inferenceCompatibility.abbreviation != null) {
-                            diagnosticText.append(diagnostic.inferenceCompatibility.abbreviation)
-                            diagnosticText.append(";")
-                        }
-                        if (diagnostic.platform != null) {
-                            diagnosticText.append(diagnostic.platform)
-                            diagnosticText.append(":")
-                        }
-                        diagnosticText.append(diagnostic.name)
-                        if (renderDiagnosticMessages) {
-                            val textDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic)
-                            if (textDiagnostic.parameters != null) {
-                                diagnosticText
-                                    .append("(")
-                                    .append(textDiagnostic.parameters.joinToString(", "))
-                                    .append(")")
-                            }
-                        }
-                        diagnosticsAsText.add(diagnosticText.toString())
                     }
                 }
             }

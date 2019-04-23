@@ -128,7 +128,7 @@ fun case_12(x: TypealiasString, y: TypealiasString) = <!DEBUG_INFO_EXPRESSION_TY
 fun case_13(x: otherpackage.EmptyClass13) =
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>if (<!SENSELESS_COMPARISON!>x != null<!>) {
         1
-    } else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & otherpackage.EmptyClass13"), NI;DEBUG_INFO_SMARTCAST!>x<!><!>
+    } else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & otherpackage.EmptyClass13"), DEBUG_INFO_SMARTCAST!>x<!><!>
 
 // TESTCASE NUMBER: 14
 class A14 {
