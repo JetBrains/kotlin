@@ -31,4 +31,19 @@ interface ConeTypeAliasLookupTag : ConeClassLikeLookupTag
 
 interface ConeClassLookupTag : ConeClassLikeLookupTag
 
-class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag
+class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeClassLikeLookupTagImpl
+
+        if (classId != other.classId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return classId.hashCode()
+    }
+}
