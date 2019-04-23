@@ -406,6 +406,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/unsafeCall.kt");
         }
 
+        @TestMetadata("valueParameterName.kt")
+        public void testValueParameterName() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/valueParameterName.kt");
+        }
+
         @TestMetadata("vars.kt")
         public void testVars() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/vars.kt");

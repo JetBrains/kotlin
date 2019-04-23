@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.idea.debugger
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider.Companion.isAcceptedAsCodeFragmentContext
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 fun getContextElement(elementAt: PsiElement?): PsiElement? {
     if (elementAt == null) return null
@@ -36,15 +36,21 @@ fun getContextElement(elementAt: PsiElement?): PsiElement? {
         elementAt.textOffset
     }
 
-    fun KtElement.takeIfAcceptedAsCodeFragmentContext() = takeIf { KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(it) }
+    val targetExpression = PsiTreeUtil.findElementOfClassAtOffset(containingFile, lineStartOffset, KtExpression::class.java, false)
 
-    PsiTreeUtil.findElementOfClassAtOffset(containingFile, lineStartOffset, KtExpression::class.java, false)
-        ?.takeIfAcceptedAsCodeFragmentContext()
-        ?.let { return CodeInsightUtils.getTopmostElementAtOffset(it, lineStartOffset, KtExpression::class.java) }
+    if (targetExpression != null) {
+        if (isAcceptedAsCodeFragmentContext(targetExpression)) {
+            return targetExpression
+        }
 
-    KotlinEditorTextProvider.findExpressionInner(elementAt, true)
-        ?.takeIfAcceptedAsCodeFragmentContext()
-        ?.let { return it }
+        KotlinEditorTextProvider.findExpressionInner(elementAt, true)
+            ?.takeIf { isAcceptedAsCodeFragmentContext(it) }
+            ?.let { return it }
+
+        targetExpression.parents
+            .firstOrNull { isAcceptedAsCodeFragmentContext(it) }
+            ?.let { return it }
+    }
 
     return containingFile
 }
