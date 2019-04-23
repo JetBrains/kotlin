@@ -14,6 +14,7 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.actions.BaseNavigateToSourceAction;
+import com.intellij.ide.actions.WindowAction;
 import com.intellij.ide.highlighter.ArchiveFileType;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.gotoByName.ChooseByNameBase;
@@ -104,7 +105,8 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     HintManagerImpl.ActionToIgnore.class,
     ScrollingUtil.ScrollingAction.class,
     SwingActionDelegate.class,
-    BaseNavigateToSourceAction.class
+    BaseNavigateToSourceAction.class,
+    WindowAction.class
   };
   private static final String[] ACTION_IDS_TO_IGNORE = {
     IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN,

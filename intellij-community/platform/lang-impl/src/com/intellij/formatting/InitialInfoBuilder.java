@@ -17,6 +17,7 @@
 package com.intellij.formatting;
 
 import com.intellij.formatting.engine.ExpandableIndent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -38,6 +39,7 @@ import java.util.Set;
  * The main idea of block wrapping is to associate information about {@link WhiteSpace white space before block} with the block itself.
  */
 public class InitialInfoBuilder {
+  private static final Logger LOG = Logger.getInstance(InitialInfoBuilder.class);
   private static final RangesAssert ASSERT = new RangesAssert();
   private static final boolean INLINE_TABS_ENABLED = "true".equalsIgnoreCase(System.getProperty("inline.tabs.enabled"));
 
@@ -46,7 +48,7 @@ public class InitialInfoBuilder {
   private final MultiMap<Alignment, Block> myBlocksToAlign = new MultiMap<>();
   private final Set<Alignment> myAlignmentsInsideRangeToModify = ContainerUtil.newHashSet();
   
-  private boolean myCollectAlignmentsInsideFormattingRange = false;
+  private boolean myCollectAlignmentsInsideFormattingRange;
 
   private final FormattingDocumentModel myModel;
   private final FormatTextRanges myAffectedRanges;
@@ -88,14 +90,14 @@ public class InitialInfoBuilder {
     myFormatterTagHandler = new FormatterTagHandler(settings);
   }
 
-  protected static InitialInfoBuilder prepareToBuildBlocksSequentially(
-    Block root, 
-    FormattingDocumentModel model, 
-    FormatProcessor.FormatOptions formatOptions, 
-    CodeStyleSettings settings, 
-    CommonCodeStyleSettings.IndentOptions options, 
-    @NotNull FormattingProgressCallback progressCallback) 
-  {
+  @NotNull
+  static InitialInfoBuilder prepareToBuildBlocksSequentially(
+    Block root,
+    FormattingDocumentModel model,
+    FormatProcessor.FormatOptions formatOptions,
+    CodeStyleSettings settings,
+    CommonCodeStyleSettings.IndentOptions options,
+    @NotNull FormattingProgressCallback progressCallback) {
     InitialInfoBuilder builder = new InitialInfoBuilder(root, model, formatOptions.myAffectedRanges, settings, options, formatOptions.myInterestingOffset, progressCallback);
     builder.setCollectAlignmentsInsideFormattingRange(formatOptions.myReformatContext);
     builder.buildFrom(root, 0, null, null, null);
@@ -237,16 +239,12 @@ public class InitialInfoBuilder {
       myRootBlockWrapper = wrappedRootBlock;
       myRootBlockWrapper.setIndent((IndentImpl)Indent.getNoneIndent());
     }
-    boolean blocksMayBeOfInterest = false;
 
     if (myPositionOfInterest != -1) {
       myResult.put(wrappedRootBlock, rootBlock);
-      blocksMayBeOfInterest = true;
     }
-    
-    final boolean blocksAreReadOnly = rootBlock instanceof ReadOnlyBlockContainer || blocksMayBeOfInterest;
-    
-    InitialInfoBuilderState state = new InitialInfoBuilderState(rootBlock, wrappedRootBlock, currentWrapParent, blocksAreReadOnly);
+
+    InitialInfoBuilderState state = new InitialInfoBuilderState(rootBlock, wrappedRootBlock, currentWrapParent);
     
     myStates.push(state);
     return wrappedRootBlock;
@@ -269,13 +267,6 @@ public class InitialInfoBuilder {
 
     if (wrapper.getIndent() == null) {
       wrapper.setIndent((IndentImpl)currentBlock.getIndent());
-    }
-    if (!state.readOnly) {
-      try {
-        subBlocks.set(currentBlockIndex, null); // to prevent extra strong refs during model building
-      } catch (Throwable ex) {
-        // read-only blocks
-      }
     }
     
     if (state.childBlockProcessed(currentBlock, wrapper, myOptions)) {

@@ -16,9 +16,6 @@
 
 package com.jetbrains.completion.feature
 
-import com.jetbrains.completion.feature.impl.FeatureInterpreterImpl
-import com.jetbrains.completion.feature.impl.FeatureManagerFactory
-import com.jetbrains.completion.feature.impl.FeatureReader
 import com.jetbrains.completion.feature.impl.FeatureUtils
 import org.junit.Assert
 import org.junit.Assert.*
@@ -27,19 +24,19 @@ import org.junit.Test
 /**
  * @author Vitaliy.Bibaev
  */
-class ModelMetadataTest {
+abstract class ModelMetadataTest {
     @Test
     fun `validate feature order`() {
-        val manager = featureManager()
+        val metadata = modelMetadata()
         val featureIndex: Map<String, Feature> = mutableMapOf<String, Feature>().apply {
-            manager.binaryFactors.forEach { put(it.name, it) }
-            manager.doubleFactors.forEach { put(it.name, it) }
-            manager.categoricalFactors.forEach { put(it.name, it) }
+            metadata.binary.forEach { put(it.name, it) }
+            metadata.float.forEach { put(it.name, it) }
+            metadata.categorical.forEach { put(it.name, it) }
         }
 
-        for ((name, order) in manager.featureOrder) {
+        for ((name, order) in metadata.featuresOrder) {
             val split = name.split('=')
-            if (split.size > 3) Assert.fail("line '$name' in feature order contains more than 1 symbol '='")
+            if (split.size > 3) fail("line '$name' in feature order contains more than 1 symbol '='")
             if (split.size == 2) {
                 val (featureName, value) = split
                 val feature = featureIndex[featureName]
@@ -78,11 +75,11 @@ class ModelMetadataTest {
 
     @Test
     fun `test all features have distinct names`() {
-        val manager = featureManager()
+        val metadata = modelMetadata()
         val featuresByName = mutableListOf<Feature>().apply {
-            addAll(manager.binaryFactors)
-            addAll(manager.doubleFactors)
-            addAll(manager.categoricalFactors)
+            addAll(metadata.binary)
+            addAll(metadata.float)
+            addAll(metadata.categorical)
         }.groupBy { it.name }
 
         var failed = false
@@ -99,30 +96,30 @@ class ModelMetadataTest {
 
     @Test
     fun `test features fill features array properly`() {
-        val manager = featureManager()
+        val metadata = modelMetadata()
         val revertedFeatureOrder = mutableMapOf<Int, Feature>()
         fun MutableMap<Int, Feature>.checkAndPut(index: Int, feature: Feature) {
             assertFeaturesNotStoreValueBySameIndex(index, put(index, feature), feature)
         }
-        for (feature in manager.binaryFactors) {
+        for (feature in metadata.binary) {
             revertedFeatureOrder.checkAndPut(feature.index, feature)
             revertedFeatureOrder.checkAndPut(feature.undefinedIndex, feature)
         }
 
-        for (feature in manager.doubleFactors) {
+        for (feature in metadata.float) {
             revertedFeatureOrder.checkAndPut(feature.index, feature)
             revertedFeatureOrder.checkAndPut(feature.undefinedIndex, feature)
         }
 
-        for (feature in manager.categoricalFactors) {
+        for (feature in metadata.categorical) {
             feature.categories.forEach {
                 revertedFeatureOrder.checkAndPut(feature.indexByCategory(it), feature)
             }
         }
 
-        assertEquals("features should totally cover the features array", manager.featureOrder.size, revertedFeatureOrder.size)
+        assertEquals("features should totally cover the features array", metadata.featuresOrder.size, revertedFeatureOrder.size)
         assertEquals(0, revertedFeatureOrder.keys.min())
-        assertEquals(manager.featureOrder.size - 1, revertedFeatureOrder.keys.max())
+        assertEquals(metadata.featuresOrder.size - 1, revertedFeatureOrder.keys.max())
     }
 
     private fun assertFeaturesNotStoreValueBySameIndex(index: Int, old: Feature?, new: Feature) {
@@ -131,6 +128,5 @@ class ModelMetadataTest {
         }
     }
 
-    private fun featureManager(): FeatureManager =
-            FeatureManagerFactory().createFeatureManager(FeatureReader, FeatureInterpreterImpl())
+    protected abstract fun modelMetadata(): ModelMetadataEx
 }

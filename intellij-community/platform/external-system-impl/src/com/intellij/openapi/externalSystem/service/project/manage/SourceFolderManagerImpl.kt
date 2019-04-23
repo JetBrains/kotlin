@@ -26,7 +26,6 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
 
   private var isDisposed = false
   private val mutex = Any()
-  private val postponedSourceFolderCreator = PostponedSourceFolderCreator()
   private val sourceFolders = PathPrefixTreeMapImpl<SourceFolderModel>()
   private val sourceFoldersByModule = THashMap<String, ModuleModel>()
 
@@ -63,8 +62,6 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
   override fun dispose() {
     assert(!isDisposed) { "Source folder manager already disposed" }
     isDisposed = true
-    val virtualFileManager = VirtualFileManager.getInstance()
-    virtualFileManager.removeVirtualFileListener(postponedSourceFolderCreator)
   }
 
   fun isDisposed() = isDisposed
@@ -131,6 +128,6 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
 
   init {
     val virtualFileManager = VirtualFileManager.getInstance()
-    virtualFileManager.addVirtualFileListener(postponedSourceFolderCreator, project)
+    virtualFileManager.addVirtualFileListener(PostponedSourceFolderCreator(), this)
   }
 }

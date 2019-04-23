@@ -1,18 +1,18 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.dsl
 
+import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.RunAll
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression
-import org.jetbrains.plugins.groovy.lang.resolve.api.GroovyProperty
-import org.jetbrains.plugins.groovy.util.ResolveTest
+import org.jetbrains.plugins.gradle.service.resolve.GradleTaskProperty
+import org.jetbrains.plugins.groovy.util.ExpressionTest
 import org.junit.Test
 
 import static org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.*
 
 @CompileStatic
-class GradleTasksTest extends GradleHighlightingBaseTest implements ResolveTest {
+class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTest {
 
   @Override
   protected List<String> getParentCalls() {
@@ -23,7 +23,15 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ResolveTest 
   void test() {
     importProject("apply plugin:'java'")
     new RunAll().append {
-      'task via script'()
+      'task ref'()
+    } append {
+      'task call'()
+    } append {
+      'task call delegate'()
+    } append {
+      'task container vs task ref'()
+    } append {
+      'task container vs task call'()
     } append {
       'task via TaskContainer'()
     } append {
@@ -35,9 +43,33 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ResolveTest 
     } run()
   }
 
-  void 'task via script'() {
+  void 'task ref'() {
     doTest('<caret>javadoc') {
       testTask('javadoc', GRADLE_API_TASKS_JAVADOC_JAVADOC)
+    }
+  }
+
+  void 'task call'() {
+    doTest('<caret>javadoc {}') {
+      methodCallTest(PsiMethod, GRADLE_API_TASKS_JAVADOC_JAVADOC)
+    }
+  }
+
+  void 'task call delegate'() {
+    doTest('javadoc { <caret> }') {
+      closureDelegateTest(GRADLE_API_TASKS_JAVADOC_JAVADOC, 1)
+    }
+  }
+
+  void 'task container vs task ref'() {
+    doTest('<caret>tasks') {
+      referenceExpressionTest(PsiMethod, GRADLE_API_TASK_CONTAINER)
+    }
+  }
+
+  void 'task container vs task call'() {
+    doTest('<caret>tasks {}') {
+      methodCallTest(PsiMethod, GRADLE_API_TASKS_DIAGNOSTICS_TASK_REPORT_TASK)
     }
   }
 
@@ -66,11 +98,7 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ResolveTest 
   }
 
   private void testTask(String name, String type) {
-    def expression = elementUnderCaret(GrReferenceExpression)
-    def results = expression.resolve(false)
-    assert results.size() == 1
-    def property = assertInstanceOf(results[0].element, GroovyProperty)
+    def property = referenceExpressionTest(GradleTaskProperty, type)
     assert property.name == name
-    assert expression.type.equalsToText(type)
   }
 }

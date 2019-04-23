@@ -6,7 +6,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
-import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_TASK_CONTAINER
+import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_PROJECT
+import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.TypesUtil.createType
 import org.jetbrains.plugins.groovy.lang.psi.impl.synthetic.GrLightMethodBuilder
 import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames.GROOVY_LANG_CLOSURE
@@ -15,9 +16,9 @@ import org.jetbrains.plugins.groovy.lang.resolve.getName
 import org.jetbrains.plugins.groovy.lang.resolve.shouldProcessMethods
 import org.jetbrains.plugins.groovy.lang.resolve.shouldProcessProperties
 
-class GradleTaskContainerContributor : NonCodeMembersContributor() {
+class GradleProjectExtensionContributor : NonCodeMembersContributor() {
 
-  override fun getParentClassName(): String? = GRADLE_API_TASK_CONTAINER
+  override fun getParentClassName(): String? = GRADLE_API_PROJECT
 
   override fun processDynamicElements(qualifierType: PsiType,
                                       aClass: PsiClass?,
@@ -26,34 +27,39 @@ class GradleTaskContainerContributor : NonCodeMembersContributor() {
                                       state: ResolveState) {
     if (qualifierType !is GradleProjectAwareType) return
 
-    val processProperties = processor.shouldProcessProperties()
     val processMethods = processor.shouldProcessMethods()
-    if (!processProperties && !processMethods) {
+    val processProperties = processor.shouldProcessProperties()
+    if (!processMethods && !processProperties) {
       return
     }
 
-    val file = place.containingFile ?: return
-    val data = GradleExtensionsContributor.getExtensionsFor(file) ?: return
+    val containingFile = place.containingFile
+    val extensionsData = GradleExtensionsContributor.getExtensionsFor(containingFile) ?: return
 
     val name = processor.getName(state)
-    val tasks = if (name == null) data.tasksMap.values else listOf(data.tasksMap[name] ?: return)
-    if (tasks.isEmpty()) return
+    val allExtensions = extensionsData.extensions
+    val extensions = if (name == null) allExtensions.values else listOf(allExtensions[name] ?: return)
+    if (extensions.isEmpty()) return
 
-    val manager = file.manager
-    val closureType = createType(GROOVY_LANG_CLOSURE, file)
+    val factory = GroovyPsiElementFactory.getInstance(containingFile.project)
+    val manager = containingFile.manager
 
-    for (task in tasks) {
-      val taskType = createType(task.typeFqn, file)
+    for (extension in extensions) {
+      val type = factory.createTypeElement(extension.rootTypeFqn, containingFile).type
       if (processProperties) {
-        val property = GradleTaskProperty(task, file)
-        if (!processor.execute(property, state)) return
+        val extensionProperty = GradleExtensionProperty(extension.name, type, containingFile)
+        if (!processor.execute(extensionProperty, state)) {
+          return
+        }
       }
       if (processMethods) {
-        val method = GrLightMethodBuilder(manager, task.name).apply {
-          returnType = taskType
-          addParameter("configuration", closureType)
+        val extensionMethod = GrLightMethodBuilder(manager, extension.name).apply {
+          returnType = type
+          addParameter("configuration", createType(GROOVY_LANG_CLOSURE, containingFile))
         }
-        if (!processor.execute(method, state)) return
+        if (!processor.execute(extensionMethod, state)) {
+          return
+        }
       }
     }
   }

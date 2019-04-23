@@ -58,6 +58,7 @@
     <variableEnhancer order="first" implementation="org.jetbrains.plugins.gradle.service.resolve.GradleClosureAsAnonymousParameterEnhancer"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleSettingsScriptContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleScriptMembersContributor"/>
+    <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleProjectExtensionContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleProjectMembersContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleDependencyHandlerContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleNonCodeMembersContributor"/>
@@ -66,10 +67,10 @@
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleConventionsContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleArtifactHandlerContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleTaskContainerContributor"/>
+    <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleNamedDomainCollectionContributor"/>
     <callTypeCalculator implementation="org.jetbrains.plugins.gradle.service.resolve.GradleProjectCallTypeCalculator"/>
     <callTypeCalculator implementation="org.jetbrains.plugins.gradle.service.resolve.GradleArtifactCallTypeCalculator"/>
     <delegatesToProvider implementation="org.jetbrains.plugins.gradle.service.resolve.GradleDelegatesToProvider"/>
-    <referenceTypeEnhancer implementation="org.jetbrains.plugins.gradle.service.resolve.NamedDomainObjectCollectionTypeEnhancer"/>
     <unresolvedHighlightFilter implementation="org.jetbrains.plugins.gradle.service.resolve.GradleUnresolvedReferenceFilter"/>
   </extensions>
 
