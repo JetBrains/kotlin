@@ -139,6 +139,11 @@ private fun ideaModelDependencies(
         }
         true
     }
+
+    // FIXME(dsavvinov): this is a dirty hack, import should provide dependencies properly
+    fun Module.toInfos() = correspondingModuleInfos().filter { !forProduction || it is ModuleProductionSourceInfo }
+    result.addAll(module.allImplementedModules.flatMap { it.toInfos() })
+
     return result.filterNot { it is LibraryInfo && !platform.canDependOn(it.platform) }
 }
 
