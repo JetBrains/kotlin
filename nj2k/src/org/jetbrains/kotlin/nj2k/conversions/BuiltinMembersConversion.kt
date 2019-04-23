@@ -70,13 +70,13 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
             when (from) {
                 is JKMethodCallExpression ->
                     JKKtCallExpressionImpl(
-                        context.symbolProvider.provideByFqNameMulti(fqName),
+                        context.symbolProvider.provideByFqName(fqName, true),
                         argumentsProvider(from::arguments.detached()),
                         from::typeArgumentList.detached()
                     ).withNonCodeElementsFrom(from)
                 is JKFieldAccessExpression ->
                     JKKtCallExpressionImpl(
-                        context.symbolProvider.provideByFqNameMulti(fqName),
+                        context.symbolProvider.provideByFqName(fqName, true),
                         JKArgumentListImpl(),
                         JKTypeArgumentListImpl()
                     ).withNonCodeElementsFrom(from)
@@ -91,11 +91,11 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
             when (from) {
                 is JKMethodCallExpression ->
                     JKFieldAccessExpressionImpl(
-                        context.symbolProvider.provideByFqNameMulti(fqName)
+                        context.symbolProvider.provideByFqName(fqName, true)
                     ).withNonCodeElementsFrom(from)
                 is JKFieldAccessExpression ->
                     JKFieldAccessExpressionImpl(
-                        context.symbolProvider.provideByFqNameMulti(fqName)
+                        context.symbolProvider.provideByFqName(fqName, true)
                     ).withNonCodeElementsFrom(from)
                 else -> error("Bad conversion")
             }
@@ -112,7 +112,7 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
                         arguments.first()::value.detached().parenthesizeIfBinaryExpression(),
                         JKKtQualifierImpl.DOT,
                         JKKtCallExpressionImpl(
-                            context.symbolProvider.provideByFqNameMulti(fqName),
+                            context.symbolProvider.provideByFqName(fqName, true),
                             JKArgumentListImpl(arguments.drop(1)),
                             from::typeArgumentList.detached()
                         )

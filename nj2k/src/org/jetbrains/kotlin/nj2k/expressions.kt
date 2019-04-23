@@ -517,7 +517,7 @@ fun runExpression(body: JKStatement, symbolProvider: JKSymbolProvider): JKExpres
         emptyList()
     )
     return JKKtCallExpressionImpl(
-        symbolProvider.provideByFqNameMulti("kotlin.run"),
+        symbolProvider.provideByFqName("kotlin.run", true),
         (listOf(lambda)).toArgumentList()
     )
 }
