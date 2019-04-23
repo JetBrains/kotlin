@@ -17,7 +17,6 @@
 package com.intellij.formatting;
 
 import com.intellij.formatting.engine.ExpandableIndent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
@@ -240,16 +239,12 @@ public class InitialInfoBuilder {
       myRootBlockWrapper = wrappedRootBlock;
       myRootBlockWrapper.setIndent((IndentImpl)Indent.getNoneIndent());
     }
-    boolean blocksMayBeOfInterest = false;
 
     if (myPositionOfInterest != -1) {
       myResult.put(wrappedRootBlock, rootBlock);
-      blocksMayBeOfInterest = true;
     }
-    
-    final boolean blocksAreReadOnly = rootBlock instanceof ReadOnlyBlockContainer || blocksMayBeOfInterest;
-    
-    InitialInfoBuilderState state = new InitialInfoBuilderState(rootBlock, wrappedRootBlock, currentWrapParent, blocksAreReadOnly);
+
+    InitialInfoBuilderState state = new InitialInfoBuilderState(rootBlock, wrappedRootBlock, currentWrapParent);
     
     myStates.push(state);
     return wrappedRootBlock;
@@ -272,29 +267,6 @@ public class InitialInfoBuilder {
 
     if (wrapper.getIndent() == null) {
       wrapper.setIndent((IndentImpl)currentBlock.getIndent());
-    }
-    if (!state.readOnly) {
-      try {
-        subBlocks.set(currentBlockIndex, null); // to prevent extra strong refs during model building
-      }
-      catch (Throwable ex) {
-        // todo fix kotlin
-        if ("org.jetbrains.kotlin.idea.formatter.KotlinBlock".equals(currentRoot.getClass().getName())) {
-          // ignore
-        }
-        else {
-          // read-only blocks
-          String msg = "Unable to null elements of list I got from getSubBlocks(): " + subBlocks.getClass() +
-                       ". If you really want to return immutable list, please mark " + currentRoot.getClass() +
-                       " with 'ReadOnlyBlockContainer' interface";
-          if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
-            LOG.error(msg, ex);
-          }
-          else {
-            LOG.warn(msg, ex);
-          }
-        }
-      }
     }
     
     if (state.childBlockProcessed(currentBlock, wrapper, myOptions)) {
