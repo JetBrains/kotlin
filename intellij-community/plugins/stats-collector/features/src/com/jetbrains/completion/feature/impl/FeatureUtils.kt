@@ -32,31 +32,11 @@ object FeatureUtils {
     fun getOtherCategoryFeatureName(name: String): String = "$name=$OTHER"
     fun getUndefinedFeatureName(name: String): String = "$name=$UNDEFINED"
 
-    fun prepareRevelanceMap(relevance: List<Pair<String, Any?>>, position: Int, prefixLength: Int, elementLength: Int)
-            : Map<String, Any> {
-        val relevanceMap = mutableMapOf<String, Any>()
-        for ((name, value) in relevance) {
-            if(value == null) continue
-            if (name == "proximity") {
-                val proximityMap = value.toString().toProximityMap()
-                relevanceMap.putAll(proximityMap)
-            } else {
-                relevanceMap[name] = value
-            }
-        }
-
-        relevanceMap["position"] = position
-        relevanceMap["query_length"] = prefixLength
-        relevanceMap["result_length"] = elementLength
-
-        return relevanceMap
-    }
-
     /**
      * Proximity features now came like [samePsiFile=true, openedInEditor=false], need to convert to proper map
      */
-    private fun String.toProximityMap(): Map<String, Any> {
-        val items = replace("[", "").replace("]", "").split(",")
+    fun asProximityMap(proximityValues: String): Map<String, Any> {
+        val items = proximityValues.replace("[", "").replace("]", "").split(",")
 
         return items.map {
             val (key, value) = it.trim().split("=")
