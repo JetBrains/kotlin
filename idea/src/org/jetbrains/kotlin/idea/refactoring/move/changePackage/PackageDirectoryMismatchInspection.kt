@@ -51,7 +51,7 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
                 }
                 val fqNameWithImplicitPrefix = file.parent?.getFqNameWithImplicitPrefix()
                 if (fqNameWithImplicitPrefix != null && fqNameWithImplicitPrefix != fqNameByDirectory) {
-                    fixes += ChangePackageFix("'${fqNameWithImplicitPrefix.asString()}'", fqNameWithImplicitPrefix)
+                    fixes += ChangePackageFix("'${fqNameWithImplicitPrefix!!.asString()}'", fqNameWithImplicitPrefix!!)
                 }
 
                 holder.registerProblem(

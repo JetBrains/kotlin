@@ -59,9 +59,9 @@ class MultipleArgumentsItemProvider(
         for (expectedInfo in expectedInfos) {
             val additionalData = expectedInfo.additionalData
             if (additionalData is ArgumentPositionData.Positional) {
-                val parameters = additionalData.function.valueParameters.drop(additionalData.argumentIndex)
+                val parameters = (additionalData as ArgumentPositionData.Positional).function.valueParameters.drop((additionalData as ArgumentPositionData.Positional).argumentIndex)
                 if (parameters.size > 1) {
-                    val tail = when (additionalData.callType) {
+                    val tail = when ((additionalData as ArgumentPositionData.Positional).callType) {
                         Call.CallType.ARRAY_GET_METHOD, Call.CallType.ARRAY_SET_METHOD -> Tail.RBRACKET
                         else -> Tail.RPARENTH
                     }
@@ -94,7 +94,7 @@ class MultipleArgumentsItemProvider(
                     if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
                         val offset = context.offsetMap.tryGetOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)
                         if (offset != null) {
-                            context.document.deleteString(context.tailOffset, offset)
+                            context.document.deleteString(context.tailOffset, offset!!)
                         }
                     }
 

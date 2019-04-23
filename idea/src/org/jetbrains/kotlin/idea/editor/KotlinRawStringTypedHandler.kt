@@ -45,16 +45,16 @@ class KotlinRawStringTypedHandler : TypedHandlerDelegate() {
         }
 
         val openQuote = file.findElementAt(offset - 2)
-        if (openQuote == null || openQuote !is LeafPsiElement || openQuote.elementType != KtTokens.OPEN_QUOTE) {
+        if (openQuote == null || openQuote !is LeafPsiElement || (openQuote as LeafPsiElement).elementType != KtTokens.OPEN_QUOTE) {
             return Result.CONTINUE
         }
 
         val closeQuote = file.findElementAt(offset - 1)
-        if (closeQuote == null || closeQuote !is LeafPsiElement || closeQuote.elementType != KtTokens.CLOSING_QUOTE) {
+        if (closeQuote == null || closeQuote !is LeafPsiElement || (closeQuote as LeafPsiElement).elementType != KtTokens.CLOSING_QUOTE) {
             return Result.CONTINUE
         }
 
-        if (closeQuote.text != "\"") {
+        if ((closeQuote as LeafPsiElement).text != "\"") {
             // Check it is not a multi-line quote
             return Result.CONTINUE
         }

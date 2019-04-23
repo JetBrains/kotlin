@@ -25,9 +25,9 @@ class KotlinDoubleNegationInspection : AbstractKotlinInspection(), CleanupLocalI
                 }
                 var parent = expression.parent
                 while (parent is KtParenthesizedExpression) {
-                    parent = parent.parent
+                    parent = (parent as KtParenthesizedExpression).parent
                 }
-                if (parent is KtPrefixExpression && parent.operationToken == KtTokens.EXCL) {
+                if (parent is KtPrefixExpression && (parent as KtPrefixExpression).operationToken == KtTokens.EXCL) {
                     holder.registerProblem(expression,
                                            "Redundant double negation",
                                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
@@ -46,9 +46,9 @@ class KotlinDoubleNegationInspection : AbstractKotlinInspection(), CleanupLocalI
         private fun applyFix(expression: KtPrefixExpression) {
             var parent = expression.parent
             while (parent is KtParenthesizedExpression) {
-                parent = parent.parent
+                parent = (parent as KtParenthesizedExpression).parent
             }
-            if (parent is KtPrefixExpression && parent.operationToken == KtTokens.EXCL) {
+            if (parent is KtPrefixExpression && (parent as KtPrefixExpression).operationToken == KtTokens.EXCL) {
                 expression.baseExpression?.let { parent.replaced(it) }
             }
         }

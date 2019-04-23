@@ -55,8 +55,8 @@ class ElementAndTextList() {
     fun process(processor: ElementsAndTextsProcessor) {
         elementsAndTexts.forEach {
             when (it) {
-                is PsiElement -> processor.processElement(it)
-                is String -> processor.processText(it)
+                is PsiElement -> processor.processElement(it as PsiElement)
+                is String -> processor.processText(it as String)
             }
         }
     }

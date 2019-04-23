@@ -69,7 +69,7 @@ class KotlinTestFinder : JavaTestFinder() {
                 if (eachClass.isAnnotationType || frameworks.isTestClass(eachClass)) continue
 
                 if (eachClass is KtLightClassForFacade) {
-                    eachClass.files.mapTo(classesWithWeights) { Pair.create(it, candidateNameWithWeight.second) }
+                    (eachClass as KtLightClassForFacade).files.mapTo(classesWithWeights) { Pair.create(it, candidateNameWithWeight.second) }
                 } else if (eachClass.isPhysical || eachClass is KtLightClassForSourceDeclaration) {
                     classesWithWeights.add(Pair.create(eachClass, candidateNameWithWeight.second))
                 }

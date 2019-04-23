@@ -56,10 +56,10 @@ fun createFileForDeclaration(module: Module, declaration: KtNamedDeclaration): K
         val existingFile = directory.findFile(fileNameWithExtension)
         val packageName =
             if (packageDirective?.packageNameExpression == null) directory.getPackage()?.qualifiedName
-            else packageDirective.fqName.asString()
+            else packageDirective!!.fqName.asString()
         if (existingFile is KtFile) {
-            val existingPackageDirective = existingFile.packageDirective
-            if (existingFile.declarations.isNotEmpty() &&
+            val existingPackageDirective = (existingFile as KtFile).packageDirective
+            if ((existingFile as KtFile).declarations.isNotEmpty() &&
                 existingPackageDirective?.fqName != packageDirective?.fqName
             ) {
                 val newName = KotlinNameSuggester.suggestNameByName(fileName) {
@@ -67,7 +67,7 @@ fun createFileForDeclaration(module: Module, declaration: KtNamedDeclaration): K
                 } + ".kt"
                 createKotlinFile(newName, directory, packageName)
             } else {
-                existingFile
+                existingFile as KtFile
             }
         } else {
             createKotlinFile(fileNameWithExtension, directory, packageName)
@@ -78,7 +78,7 @@ fun createFileForDeclaration(module: Module, declaration: KtNamedDeclaration): K
 fun KtPsiFactory.createClassHeaderCopyByText(originalClass: KtClassOrObject): KtClassOrObject {
     val text = originalClass.text
     return when (originalClass) {
-        is KtObjectDeclaration -> if (originalClass.isCompanion()) {
+        is KtObjectDeclaration -> if ((originalClass as KtObjectDeclaration).isCompanion()) {
             createCompanionObject(text)
         } else {
             createObject(text)
@@ -119,11 +119,11 @@ internal fun KtPsiFactory.generateClassOrObject(
                 }
 
     fun KtDeclaration.exists() =
-        missedDeclarations != null && missedDeclarations.none {
+        missedDeclarations != null && missedDeclarations!!.none {
             name == it.name && when (this) {
-                is KtConstructor<*> -> it is KtConstructor<*> && areCompatible(this, it)
-                is KtNamedFunction -> it is KtNamedFunction && areCompatible(this, it)
-                is KtProperty -> it is KtProperty || it is KtParameter && it.hasValOrVar()
+                is KtConstructor<*> -> it is KtConstructor<*> && areCompatible(this, it as KtConstructor<*>)
+                is KtNamedFunction -> it is KtNamedFunction && areCompatible(this, it as KtNamedFunction)
+                is KtProperty -> it is KtProperty || it is KtParameter && (it as KtParameter).hasValOrVar()
                 else -> this.javaClass == it.javaClass
             }
         }
@@ -173,15 +173,17 @@ internal fun KtPsiFactory.generateClassOrObject(
         if (generateExpectClass && !originalDeclaration.isEffectivelyActual()) continue
         val generatedDeclaration: KtDeclaration = when (originalDeclaration) {
             is KtClassOrObject -> {
-                generateClassOrObject(project, generateExpectClass, originalDeclaration, outerClasses + generatedClass)
+                generateClassOrObject(project, generateExpectClass, originalDeclaration as KtClassOrObject, outerClasses + generatedClass)
             }
             is KtCallableDeclaration -> {
                 when (originalDeclaration) {
                     is KtFunction -> generateFunction(
-                        project, generateExpectClass, originalDeclaration, descriptor as FunctionDescriptor, generatedClass, outerClasses
+                        project, generateExpectClass,
+                        originalDeclaration as KtFunction, descriptor as FunctionDescriptor, generatedClass, outerClasses
                     )
                     is KtProperty -> generateProperty(
-                        project, generateExpectClass, originalDeclaration, descriptor as PropertyDescriptor, generatedClass, outerClasses
+                        project, generateExpectClass,
+                        originalDeclaration as KtCallableDeclaration, descriptor as PropertyDescriptor, generatedClass, outerClasses
                     )
                     else -> continue@declLoop
                 }
@@ -201,13 +203,13 @@ internal fun KtPsiFactory.generateClassOrObject(
         }
     }
     val originalPrimaryConstructor = originalClass.primaryConstructor
-    if (generatedClass is KtClass && originalPrimaryConstructor != null && !originalPrimaryConstructor.exists()) {
-        val descriptor = originalPrimaryConstructor.toDescriptor()
+    if (generatedClass is KtClass && originalPrimaryConstructor != null && !originalPrimaryConstructor!!.exists()) {
+        val descriptor = originalPrimaryConstructor!!.toDescriptor()
         if (descriptor is FunctionDescriptor) {
             val expectedPrimaryConstructor = generateFunction(
-                project, generateExpectClass, originalPrimaryConstructor, descriptor, generatedClass, outerClasses
+                project, generateExpectClass, originalPrimaryConstructor!!, descriptor as FunctionDescriptor, generatedClass, outerClasses
             )
-            generatedClass.createPrimaryConstructorIfAbsent().replace(expectedPrimaryConstructor)
+            (generatedClass as KtClass).createPrimaryConstructorIfAbsent().replace(expectedPrimaryConstructor)
         }
     }
 

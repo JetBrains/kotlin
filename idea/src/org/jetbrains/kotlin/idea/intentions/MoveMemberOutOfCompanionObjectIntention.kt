@@ -52,15 +52,15 @@ class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention("
                     .mapNotNull { it.element }
                     .filter {
                         if (it !is KtElement) return@filter true
-                        val resolvedCall = it.resolveToCall() ?: return@filter false
+                        val resolvedCall = (it as KtElement).resolveToCall() ?: return@filter false
                         val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@filter false
                         if (dispatchReceiver !is ImplicitClassReceiver) return@filter true
                         it.parents
                             .filterIsInstance<KtClassOrObject>()
                             .none {
                                 val classDescriptor = it.resolveToDescriptorIfAny()
-                                if (classDescriptor != null && classDescriptor.isSubclassOf(targetClassDescriptor)) return@none true
-                                if (it.isTopLevel() || it is KtObjectDeclaration || (it is KtClass && !it.isInner())) return@filter true
+                                if (classDescriptor != null && classDescriptor!!.isSubclassOf(targetClassDescriptor)) return@none true
+                                if (it.isTopLevel() || it is KtObjectDeclaration || (it is KtClass && !(it as KtClass).isInner())) return@filter true
                                 false
                             }
                     }
@@ -89,8 +89,8 @@ class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention("
     override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
         if (element !is KtNamedFunction && element !is KtProperty && element !is KtClassOrObject) return null
         val container = element.containingClassOrObject
-        if (!(container is KtObjectDeclaration && container.isCompanion())) return null
-        val containingClassOrObject = container.containingClassOrObject ?: return null
+        if (!(container is KtObjectDeclaration && (container as KtObjectDeclaration).isCompanion())) return null
+        val containingClassOrObject = (container as KtObjectDeclaration).containingClassOrObject ?: return null
         if (containingClassOrObject.isInterfaceClass() && element.hasJvmFieldAnnotation()) return null
         return element.nameIdentifier?.textRange
     }

@@ -61,7 +61,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
         val elementAtCaret = file.findElementAt(editor.caretModel.offset) ?: return
         if (element !is KtElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.text}")
 
-        invokeChangeSignature(element, elementAtCaret, project, editor)
+        invokeChangeSignature(element as KtElement, elementAtCaret, project, editor)
     }
 
     override fun invoke(project: Project, elements: Array<PsiElement>, dataContext: DataContext?) {
@@ -69,7 +69,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
         if (element !is KtElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.text}")
 
         val editor = dataContext?.let { CommonDataKeys.EDITOR.getData(it) }
-        invokeChangeSignature(element, element, project, editor)
+        invokeChangeSignature(element as KtElement, element, project, editor)
     }
 
     override fun getTargetNotFoundMessage() =
@@ -84,13 +84,13 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
 
             if (elementParent is KtParameter) {
                 val primaryConstructor = PsiTreeUtil.getParentOfType(elementParent, KtPrimaryConstructor::class.java)
-                if (elementParent.hasValOrVar()
-                    && (elementParent.nameIdentifier === element || elementParent.valOrVarKeyword === element)
+                if ((elementParent as KtParameter).hasValOrVar()
+                    && ((elementParent as KtParameter).nameIdentifier === element || (elementParent as KtParameter).valOrVarKeyword === element)
                     && primaryConstructor != null
-                    && primaryConstructor.valueParameterList === elementParent.parent) return elementParent
+                    && primaryConstructor!!.valueParameterList === (elementParent as KtParameter).parent) return elementParent
             }
 
-            if (elementParent is KtSecondaryConstructor && elementParent.getConstructorKeyword() === element) return elementParent
+            if (elementParent is KtSecondaryConstructor && (elementParent as KtSecondaryConstructor).getConstructorKeyword() === element) return elementParent
 
             element.getStrictParentOfType<KtParameterList>()?.let { parameterList ->
                 return PsiTreeUtil.getParentOfType(parameterList, KtFunction::class.java, KtProperty::class.java, KtClass::class.java)
@@ -145,7 +145,8 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
 
             if (callableDescriptor.isDynamic()) {
                 if (editor != null) {
-                    CodeInsightUtils.showErrorHint(project, editor, "Change signature is not applicable to dynamically invoked functions", "Change Signature", null)
+                    CodeInsightUtils.showErrorHint(project,
+                                                   editor!!, "Change signature is not applicable to dynamically invoked functions", "Change Signature", null)
                 }
                 return
             }
@@ -155,35 +156,35 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
 
         private fun getDescriptor(bindingContext: BindingContext, element: PsiElement): DeclarationDescriptor? {
             val descriptor = when (element) {
-                is KtReferenceExpression -> bindingContext[BindingContext.REFERENCE_TARGET, element]
+                is KtReferenceExpression -> bindingContext[BindingContext.REFERENCE_TARGET, element as KtReferenceExpression]
                 else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]
             }
-            return if (descriptor is ClassDescriptor) descriptor.unsubstitutedPrimaryConstructor else descriptor
+            return if (descriptor is ClassDescriptor) (descriptor as ClassDescriptor).unsubstitutedPrimaryConstructor else descriptor
         }
 
         fun findDescriptor(element: PsiElement, project: Project, editor: Editor?, bindingContext: BindingContext): CallableDescriptor? {
             if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null
 
             var descriptor = getDescriptor(bindingContext, element)
-            if (descriptor is MemberDescriptor && descriptor.isActual) {
-                descriptor = descriptor.expectedDescriptor() ?: descriptor
+            if (descriptor is MemberDescriptor && (descriptor as MemberDescriptor).isActual) {
+                descriptor = (descriptor as MemberDescriptor).expectedDescriptor() ?: descriptor
             }
 
             return when (descriptor) {
                 is FunctionDescriptor -> {
-                    if (descriptor.valueParameters.any { it.varargElementType != null }) {
+                    if ((descriptor as FunctionDescriptor).valueParameters.any { it.varargElementType != null }) {
                         val message = KotlinRefactoringBundle.message("error.cant.refactor.vararg.functions")
                         CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
                         return null
                     }
 
-                    if (descriptor.kind === SYNTHESIZED) {
-                        val message = KotlinRefactoringBundle.message("cannot.refactor.synthesized.function", descriptor.name)
+                    if ((descriptor as FunctionDescriptor).kind === SYNTHESIZED) {
+                        val message = KotlinRefactoringBundle.message("cannot.refactor.synthesized.function", (descriptor as FunctionDescriptor).name)
                         CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
                         return null
                     }
 
-                    descriptor
+                    descriptor as FunctionDescriptor
                 }
 
                 is PropertyDescriptor, is ValueParameterDescriptor -> descriptor as CallableDescriptor

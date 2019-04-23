@@ -114,9 +114,9 @@ private class ReplaceWithStdLibFix(private val methodName: String, private val r
         val factory = KtPsiFactory(project)
         val newExpression = if (secondArg != null) {
             if (methodName == "sort") {
-                factory.createExpressionByPattern("$0.sortWith(Comparator $1)", firstArg, secondArg.text)
+                factory.createExpressionByPattern("$0.sortWith(Comparator $1)", firstArg, secondArg!!.text)
             } else {
-                factory.createExpressionByPattern("$0.$methodName($1)", firstArg, secondArg)
+                factory.createExpressionByPattern("$0.$methodName($1)", firstArg, secondArg!!)
             }
         } else {
             factory.createExpressionByPattern("$0.$methodName()", firstArg)

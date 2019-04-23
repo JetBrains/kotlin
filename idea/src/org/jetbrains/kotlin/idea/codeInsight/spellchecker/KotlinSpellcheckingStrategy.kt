@@ -34,7 +34,7 @@ class KotlinSpellcheckingStrategy : SpellcheckingStrategy() {
         return when (element) {
             is PsiComment -> super.getTokenizer(element)
             is KtParameter -> {
-                val function = (element.parent as? KtParameterList)?.parent as? KtNamedFunction
+                val function = ((element as KtParameter).parent as? KtParameterList)?.parent as? KtNamedFunction
                 when {
                     function?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true -> emptyTokenizer
                     else -> super.getTokenizer(element)
@@ -42,7 +42,7 @@ class KotlinSpellcheckingStrategy : SpellcheckingStrategy() {
             }
             is PsiNameIdentifierOwner -> {
                 when {
-                    element is KtModifierListOwner && element.hasModifier(KtTokens.OVERRIDE_KEYWORD) -> emptyTokenizer
+                    element is KtModifierListOwner && (element as KtModifierListOwner).hasModifier(KtTokens.OVERRIDE_KEYWORD) -> emptyTokenizer
                     else -> super.getTokenizer(element)
                 }
             }

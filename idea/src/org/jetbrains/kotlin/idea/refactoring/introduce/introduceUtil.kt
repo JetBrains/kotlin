@@ -67,7 +67,7 @@ fun selectElementsWithTargetSibling(
             return
         }
 
-        continuation(elements, outermostParent)
+        continuation(elements, outermostParent!!)
     }
 
     selectElementsWithTargetParent(operationName, editor, file, title, elementKinds, elementValidator, getContainers, ::onSelectionComplete)
@@ -132,7 +132,7 @@ fun selectElementsWithTargetParent(
     fun selectSingleElement() {
         selectElement(editor, file, false, elementKinds) { expr ->
             if (expr != null) {
-                selectTargetContainer(listOf(expr))
+                selectTargetContainer(listOf(expr!!))
             }
             else {
                 if (!editor.selectionModel.hasSelection()) {
@@ -176,7 +176,7 @@ fun findExpressionOrStringFragment(file: KtFile, startOffset: Int, endOffset: In
     val entry1 = file.findElementAt(startOffset)?.getNonStrictParentOfType<KtStringTemplateEntry>() ?: return null
     val entry2 = file.findElementAt(endOffset - 1)?.getNonStrictParentOfType<KtStringTemplateEntry>() ?: return null
 
-    if (entry1 == entry2 && entry1 is KtStringTemplateEntryWithExpression) return entry1.expression
+    if (entry1 == entry2 && entry1 is KtStringTemplateEntryWithExpression) return (entry1 as KtStringTemplateEntryWithExpression).expression
 
     val stringTemplate = entry1.parent as? KtStringTemplateExpression ?: return null
     if (entry2.parent != stringTemplate) return null
@@ -225,7 +225,7 @@ fun KtExpression.mustBeParenthesizedInInitializerPosition(): Boolean {
     return PsiChildRange(left, operationReference).any { (it is PsiWhiteSpace) && it.textContains('\n') }
 }
 
-fun isObjectOrNonInnerClass(e: PsiElement): Boolean = e is KtObjectDeclaration || (e is KtClass && !e.isInner())
+fun isObjectOrNonInnerClass(e: PsiElement): Boolean = e is KtObjectDeclaration || (e is KtClass && !(e as KtClass).isInner())
 
 fun <T : KtDeclaration> insertDeclaration(declaration: T, targetSibling: PsiElement): T {
     val targetParent = targetSibling.parent

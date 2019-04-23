@@ -30,7 +30,7 @@ class KotlinIfElseExpressionSurrounder(private val withBraces: Boolean) : Kotlin
 
     override fun getRange(editor: Editor, replaced: KtExpression): TextRange? {
         val expression = when (replaced) {
-            is KtParenthesizedExpression -> replaced.expression
+            is KtParenthesizedExpression -> (replaced as KtParenthesizedExpression).expression
             else -> replaced
         } as? KtIfExpression
 

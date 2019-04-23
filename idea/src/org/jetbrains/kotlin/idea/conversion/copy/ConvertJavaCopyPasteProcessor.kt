@@ -149,9 +149,9 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             val boundsAfterReplace =
                     runWriteAction {
                         val startOffset = bounds.startOffset
-                        document.replaceString(startOffset, bounds.endOffset, text)
+                        document.replaceString(startOffset, bounds.endOffset, text!!)
 
-                        val endOffsetAfterCopy = startOffset + text.length
+                        val endOffsetAfterCopy = startOffset + text!!.length
                         editor.caretModel.moveToOffset(endOffsetAfterCopy)
                         TextRange(startOffset, endOffsetAfterCopy)
                     }
@@ -250,11 +250,11 @@ internal fun ElementAndTextList.convertCodeToKotlin(project: Project): Conversio
 
             val result = results[resultIndex++]
             if (result != null) {
-                convertedCodeBuilder.append(result.text)
+                convertedCodeBuilder.append(result!!.text)
                 if (parseContext == null) { // use parse context of the first converted element as parse context for the whole text
-                    parseContext = result.parseContext
+                    parseContext = result!!.parseContext
                 }
-                importsToAdd.addAll(result.importsToAdd)
+                importsToAdd.addAll(result!!.importsToAdd)
             }
             else { // failed to convert element to Kotlin, insert "as is"
                 convertedCodeBuilder.append(originalText)
@@ -286,7 +286,7 @@ internal fun isNoConversionPosition(file: KtFile, offset: Int): Boolean {
 
     for (element in token.parentsWithSelf) {
         if (element is PsiComment) {
-            return element.node.elementType == KtTokens.EOL_COMMENT || offset != element.endOffset
+            return (element as PsiComment).node.elementType == KtTokens.EOL_COMMENT || offset != element.endOffset
         }
         if (element is KtStringTemplateEntryWithExpression) return false
         if (element is KtStringTemplateExpression) return true

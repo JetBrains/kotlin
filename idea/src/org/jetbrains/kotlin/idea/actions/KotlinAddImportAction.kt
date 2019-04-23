@@ -169,11 +169,11 @@ class KotlinAddImportAction internal constructor(
                 if (selectedValue == null || project.isDisposed) return null
 
                 if (finalChoice) {
-                    addImport(selectedValue)
+                    addImport(selectedValue!!)
                     return null
                 }
 
-                val toExclude = AddImportAction.getAllExcludableStrings(selectedValue.excludeFqNameCheck.asString())
+                val toExclude = AddImportAction.getAllExcludableStrings(selectedValue!!.excludeFqNameCheck.asString())
 
                 return object : BaseListPopupStep<String>(null, toExclude) {
                     override fun getTextFor(value: String): String {
@@ -217,7 +217,7 @@ class KotlinAddImportAction internal constructor(
                 if (importAlias != null || descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
                     if (element is KtSimpleNameExpression) {
                         if (importAlias != null) {
-                            importAlias.nameIdentifier?.copy()?.let { element.getIdentifier()?.replace(it) }
+                            importAlias!!.nameIdentifier?.copy()?.let { (element as KtSimpleNameExpression).getIdentifier()?.replace(it) }
                             val resultDescriptor = element.resolveMainReferenceToDescriptors().firstOrNull()
                             if (descriptor.importableFqName == resultDescriptor?.importableFqName) {
                                 return@forEach
@@ -225,7 +225,7 @@ class KotlinAddImportAction internal constructor(
                         }
 
                         descriptor.importableFqName?.let {
-                            element.mainReference.bindToFqName(
+                            (element as KtSimpleNameExpression).mainReference.bindToFqName(
                                 it,
                                 KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING
                             )

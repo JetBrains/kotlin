@@ -27,9 +27,9 @@ class WrapUnaryOperatorInspection : AbstractKotlinInspection() {
             if (expression.operationToken.isUnaryMinusOrPlus()) {
                 val baseExpression = expression.baseExpression
                 if (baseExpression is KtDotQualifiedExpression) {
-                    val receiverExpression = baseExpression.receiverExpression
+                    val receiverExpression = (baseExpression as KtDotQualifiedExpression).receiverExpression
                     if (receiverExpression is KtConstantExpression &&
-                        receiverExpression.node.elementType in numberTypes) {
+                        (receiverExpression as KtConstantExpression).node.elementType in numberTypes) {
                         holder.registerProblem(expression,
                                                "Wrap unary operator and value with ()",
                                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,

@@ -65,7 +65,7 @@ class ChangeToMutableCollectionFix(property: KtProperty, private val type: Strin
             val psiFactory = KtPsiFactory(property)
             val mutableOf = mutableConversionMap[fqName]
             if (mutableOf != null) {
-                (initializer as? KtCallExpression)?.calleeExpression?.replaced(psiFactory.createExpression(mutableOf)) ?: return
+                (initializer as? KtCallExpression)?.calleeExpression?.replaced(psiFactory.createExpression(mutableOf!!)) ?: return
             } else {
                 val builtIns = property.builtIns
                 val toMutable = when (type.constructor) {
@@ -79,7 +79,7 @@ class ChangeToMutableCollectionFix(property: KtProperty, private val type: Strin
                 ) as KtDotQualifiedExpression
                 val receiver = dotQualifiedExpression.receiverExpression
                 val deparenthesize = KtPsiUtil.deparenthesize(dotQualifiedExpression.receiverExpression)
-                if (deparenthesize != null && receiver != deparenthesize) receiver.replace(deparenthesize)
+                if (deparenthesize != null && receiver != deparenthesize) receiver.replace(deparenthesize!!)
             }
             property.typeReference?.also { it.replace(psiFactory.createType("Mutable${it.text}")) }
         }

@@ -75,8 +75,8 @@ class CreateTypeParameterFromUsageFix(
                         }
                         .filter {
                             val arguments = when (it) {
-                                is KtUserType -> it.typeArguments
-                                is KtCallElement -> it.typeArguments
+                                is KtUserType -> (it as KtUserType).typeArguments
+                                is KtCallElement -> (it as KtCallElement).typeArguments
                                 else -> return@filter false
                             }
                             arguments.size != expectedTypeArgumentCount
@@ -92,12 +92,12 @@ class CreateTypeParameterFromUsageFix(
 
             val newTypeParameters = data.typeParameters.map { typeParameter ->
                 val upperBoundType = typeParameter.upperBoundType
-                val upperBoundText = if (upperBoundType != null && !upperBoundType.isNullableAny()) {
-                    IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBoundType)
+                val upperBoundText = if (upperBoundType != null && !upperBoundType!!.isNullableAny()) {
+                    IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBoundType!!)
                 }
                 else null
                 val upperBound = upperBoundText?.let { psiFactory.createType(it) }
-                val newTypeParameterText = if (upperBound != null) "${typeParameter.name} : ${upperBound.text}" else typeParameter.name
+                val newTypeParameterText = if (upperBound != null) "${typeParameter.name} : ${upperBound!!.text}" else typeParameter.name
                 val newTypeParameter = declaration.addTypeParameter(psiFactory.createTypeParameter(newTypeParameterText))!!
                 elementsToShorten += newTypeParameter
 
@@ -105,7 +105,7 @@ class CreateTypeParameterFromUsageFix(
                 val anonymizedUpperBoundText = upperBoundType?.let {
                     TypeSubstitutor
                             .create(mapOf(typeParameter.fakeTypeParameter.typeConstructor to TypeProjectionImpl(anonymizedTypeParameter.defaultType)))
-                            .substitute(upperBoundType, Variance.INVARIANT)
+                            .substitute(upperBoundType!!, Variance.INVARIANT)
                 }?.let {
                     IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
                 }
@@ -116,22 +116,22 @@ class CreateTypeParameterFromUsageFix(
                 usages.forEach {
                     when (it) {
                         is KtUserType -> {
-                            val typeArgumentList = it.typeArgumentList
+                            val typeArgumentList = (it as KtUserType).typeArgumentList
                             elementsToShorten += if (typeArgumentList != null) {
-                                typeArgumentList.addArgument(anonymizedUpperBoundAsTypeArg)
+                                typeArgumentList!!.addArgument(anonymizedUpperBoundAsTypeArg)
                             }
                             else {
                                 it.addAfter(
                                         psiFactory.createTypeArguments("<${anonymizedUpperBoundAsTypeArg.text}>"),
-                                        it.referenceExpression!!
+                                        (it as KtUserType).referenceExpression!!
                                 ) as KtTypeArgumentList
                             }
                         }
                         is KtCallElement -> {
-                            if (it.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS).diagnostics.forElement(it.calleeExpression!!).any {
+                            if (it.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS).diagnostics.forElement((it as KtCallElement).calleeExpression!!).any {
                                 it.factory in Errors.TYPE_INFERENCE_ERRORS
                             }) {
-                                callsToExplicateArguments += it
+                                callsToExplicateArguments += it as KtCallElement
                             }
                         }
                     }
@@ -143,14 +143,14 @@ class CreateTypeParameterFromUsageFix(
                         InsertExplicitTypeArgumentsIntention.applyTo(it, shortenReferences = false)
 
                         val newTypeArgument = it.typeArguments.lastOrNull()
-                        if (anonymizedUpperBoundText != null && newTypeArgument != null && newTypeArgument.text == "kotlin.Any") {
-                            newTypeArgument.replaced(anonymizedUpperBoundAsTypeArg)
+                        if (anonymizedUpperBoundText != null && newTypeArgument != null && newTypeArgument!!.text == "kotlin.Any") {
+                            newTypeArgument!!.replaced(anonymizedUpperBoundAsTypeArg)
                         }
 
                         it.typeArgumentList
                     }
                     else {
-                        typeArgumentList.addArgument(anonymizedUpperBoundAsTypeArg)
+                        typeArgumentList!!.addArgument(anonymizedUpperBoundAsTypeArg)
                     }
                 }
 

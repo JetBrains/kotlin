@@ -55,13 +55,13 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
         if (element is KtConstructor<*>) return null
         if (element.typeReference != null) return null
 
-        if (element is KtNamedFunction && element.hasBlockBody()) return null
+        if (element is KtNamedFunction && (element as KtNamedFunction).hasBlockBody()) return null
 
         text = if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly"
 
         val initializer = (element as? KtDeclarationWithInitializer)?.initializer
         return if (initializer != null) {
-            TextRange(element.startOffset, initializer.startOffset - 1)
+            TextRange(element.startOffset, initializer!!.startOffset - 1)
         } else {
             TextRange(element.startOffset, element.endOffset)
         }
@@ -71,7 +71,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
         val type = getTypeForDeclaration(element)
         if (type.isError) {
             if (editor != null) {
-                HintManager.getInstance().showErrorHint(editor, "Cannot infer type for this declaration")
+                HintManager.getInstance().showErrorHint(editor!!, "Cannot infer type for this declaration")
             }
             return
         }
@@ -87,8 +87,8 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             declaration: KtCallableDeclaration, publicAPIOnly: Boolean, reportPlatformArguments: Boolean
         ): KotlinType? {
             when (declaration) {
-                is KtFunction -> if (declaration.isLocal || declaration.hasDeclaredReturnType()) return null
-                is KtProperty -> if (declaration.isLocal || declaration.typeReference != null) return null
+                is KtFunction -> if ((declaration as KtFunction).isLocal || (declaration as KtFunction).hasDeclaredReturnType()) return null
+                is KtProperty -> if ((declaration as KtProperty).isLocal || (declaration as KtProperty).typeReference != null) return null
                 else -> return null
             }
 
@@ -114,8 +114,8 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
                 else
                     it.returnType
             }
-            if (type != null && type.isError && descriptor is PropertyDescriptor) {
-                return descriptor.setterType ?: ErrorUtils.createErrorType("null type")
+            if (type != null && type!!.isError && descriptor is PropertyDescriptor) {
+                return (descriptor as PropertyDescriptor).setterType ?: ErrorUtils.createErrorType("null type")
             }
             return type ?: ErrorUtils.createErrorType("null type")
         }
@@ -181,9 +181,9 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
                 val renderType = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
                 val descriptor = element.constructor.declarationDescriptor
                 if (descriptor?.name?.asString() == renderType) {
-                    val className = (DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtClass)?.nameIdentifier?.text
-                    if (className != null && className != className.unquote()) {
-                        return className
+                    val className = (DescriptorToSourceUtils.descriptorToDeclaration(descriptor!!) as? KtClass)?.nameIdentifier?.text
+                    if (className != null && className != className!!.unquote()) {
+                        return className!!
                     }
                 }
                 return renderType
@@ -192,7 +192,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
 
         fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {
             if (editor != null) {
-                addTypeAnnotationWithTemplate(editor, declaration, exprType)
+                addTypeAnnotationWithTemplate(editor!!, declaration, exprType)
             } else {
                 declaration.setType(exprType)
             }
@@ -207,10 +207,10 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             return object : TemplateEditingAdapter() {
                 override fun templateFinished(template: Template, brokenOff: Boolean) {
                     val typeRef = declaration.typeReference
-                    if (typeRef != null && typeRef.isValid) {
+                    if (typeRef != null && typeRef!!.isValid) {
                         runWriteAction {
-                            ShortenReferences.DEFAULT.process(typeRef)
-                            if (iterator != null && editor != null) addTypeAnnotationWithTemplate(editor, iterator)
+                            ShortenReferences.DEFAULT.process(typeRef!!)
+                            if (iterator != null && editor != null) addTypeAnnotationWithTemplate(editor!!, iterator)
                         }
                     }
                 }
@@ -218,8 +218,8 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
         }
 
         fun addTypeAnnotationWithTemplate(editor: Editor, iterator: Iterator<KtCallableDeclaration>?) {
-            if (iterator == null || !iterator.hasNext()) return
-            val declaration = iterator.next()
+            if (iterator == null || !iterator!!.hasNext()) return
+            val declaration = iterator!!.next()
             val exprType = getTypeForDeclaration(declaration)
             addTypeAnnotationWithTemplate(editor, declaration, exprType, iterator)
         }

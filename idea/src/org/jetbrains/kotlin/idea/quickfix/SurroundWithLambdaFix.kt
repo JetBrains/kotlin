@@ -56,7 +56,7 @@ class SurroundWithLambdaFix(
                         return null
                     }
                     expectedType = diagnosticWithParameters.b
-                    expressionType = context.getType(diagnosticElement) ?: return null
+                    expressionType = context.getType(diagnosticElement as KtExpression) ?: return null
                 }
                 else -> {
                     LOG.error("Unexpected diagnostic: " + DefaultErrorMessages.render(diagnostic))

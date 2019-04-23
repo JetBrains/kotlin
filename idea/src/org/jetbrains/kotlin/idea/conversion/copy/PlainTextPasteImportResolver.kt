@@ -59,8 +59,8 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
 
     private fun canBeImported(descriptor: DeclarationDescriptorWithVisibility?): Boolean {
         return descriptor != null
-               && descriptor.canBeReferencedViaImport()
-               && descriptor.isVisible(targetFile, null, bindingContext, resolutionFacade)
+               && descriptor!!.canBeReferencedViaImport()
+               && descriptor!!.isVisible(targetFile, null, bindingContext, resolutionFacade)
     }
 
     private fun addImport(importStatement: PsiImportStatementBase, shouldAddToTarget: Boolean = false) {
@@ -74,13 +74,13 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
         fun tryConvertKotlinImport(importDirective: KtImportDirective) {
             val importPath = importDirective.importPath
             val importedReference = importDirective.importedReference
-            if (importPath != null && !importPath.hasAlias() && importedReference is KtDotQualifiedExpression) {
-                val receiver = importedReference
+            if (importPath != null && !importPath!!.hasAlias() && importedReference is KtDotQualifiedExpression) {
+                val receiver = (importedReference as KtDotQualifiedExpression)
                         .receiverExpression
                         .referenceExpression()
                         ?.mainReference
                         ?.resolve()
-                val selector = importedReference
+                val selector = (importedReference as KtDotQualifiedExpression)
                         .selectorExpression
                         ?.referenceExpression()
                         ?.mainReference
@@ -90,7 +90,7 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
                 val isClassReceiver = receiver is PsiClass
                 val isClassSelector = selector is PsiClass
 
-                if (importPath.isAllUnder) {
+                if (importPath!!.isAllUnder) {
                     if (isClassReceiver)
                         addImport(psiElementFactory.createImportStaticStatement(receiver as PsiClass, "*"))
                     else if (isPackageReceiver)
@@ -100,7 +100,7 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
                     if (isClassSelector)
                         addImport(psiElementFactory.createImportStatement(selector as PsiClass))
                     else if (isClassReceiver)
-                        addImport(psiElementFactory.createImportStaticStatement(receiver as PsiClass, importPath.importedName!!.asString()))
+                        addImport(psiElementFactory.createImportStaticStatement(receiver as PsiClass, importPath!!.importedName!!.asString()))
                 }
             }
         }
@@ -181,7 +181,7 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
                 if (!tryResolveReference(reference)) {
                     val referenceName = reference.referenceName
                     if (referenceName != null) {
-                        failedToResolveReferenceNames += referenceName
+                        failedToResolveReferenceNames += referenceName!!
                     }
                 }
             }

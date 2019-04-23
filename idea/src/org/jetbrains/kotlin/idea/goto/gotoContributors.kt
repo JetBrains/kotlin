@@ -70,7 +70,7 @@ class KotlinGotoSymbolContributor : GotoClassContributor {
         val result = ArrayList<NavigationItem>()
         result += KotlinFunctionShortNameIndex.getInstance().get(name, project, noLibrarySourceScope).filter {
             val method = LightClassUtil.getLightClassMethod(it)
-            method == null || it.name != method.name
+            method == null || it.name != method!!.name
         }
         result += KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope).filter {
             LightClassUtil.getLightClassBackingField(it) == null ||
@@ -86,9 +86,9 @@ class KotlinGotoSymbolContributor : GotoClassContributor {
 
     override fun getQualifiedName(item: NavigationItem): String? {
         if (item is KtCallableDeclaration) {
-            val receiverType = (item.receiverTypeReference?.typeElement as? KtUserType)?.referencedName
+            val receiverType = ((item as KtCallableDeclaration).receiverTypeReference?.typeElement as? KtUserType)?.referencedName
             if (receiverType != null) {
-                return "$receiverType.${item.name}"
+                return "$receiverType.${(item as KtCallableDeclaration).name}"
             }
         }
         return null

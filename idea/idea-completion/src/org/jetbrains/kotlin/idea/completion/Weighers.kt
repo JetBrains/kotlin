@@ -129,10 +129,10 @@ object KindWeigher : LookupElementWeigher("kotlin.kind") {
             is PackageLookupObject -> Weight.packages
 
             is DeclarationLookupObject -> {
-                val descriptor = o.descriptor
+                val descriptor = (o as DeclarationLookupObject).descriptor
                 when (descriptor) {
                     is VariableDescriptor, is FunctionDescriptor -> Weight.callable
-                    is ClassDescriptor -> if (descriptor.kind == ClassKind.ENUM_ENTRY) Weight.enumMember else Weight.default
+                    is ClassDescriptor -> if ((descriptor as ClassDescriptor).kind == ClassKind.ENUM_ENTRY) Weight.enumMember else Weight.default
                     else -> Weight.default
                 }
             }
@@ -257,7 +257,7 @@ object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMatching",
                     when {
                         smartCompletionPriority != null && smartCompletionPriority != SmartCompletionItemPriority.DEFAULT -> Weight.specialExactMatch
                         element.getUserData(NOT_IMPORTED_KEY) != null -> Weight.notImportedExactMatch
-                        o.descriptor is FunctionDescriptor -> Weight.functionExactMatch
+                        (o as DeclarationLookupObject).descriptor is FunctionDescriptor -> Weight.functionExactMatch
                         else -> Weight.defaultExactMatch
                     }
                 }
@@ -301,7 +301,7 @@ class SmartCompletionInBasicWeigher(
 
         val priority = element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY)
         if (priority != null) { // it's an "additional item" came from smart completion, don't match it against expected type
-            return itemWeight(priority, element.getUserData(NAME_SIMILARITY_KEY) ?: 0)
+            return itemWeight(priority!!, element.getUserData(NAME_SIMILARITY_KEY) ?: 0)
         }
 
         val o = element.`object`
@@ -314,11 +314,11 @@ class SmartCompletionInBasicWeigher(
 
         val (fuzzyTypes, name) = when (o) {
             is DeclarationLookupObject -> {
-                val descriptor = o.descriptor ?: return NO_MATCH_WEIGHT
+                val descriptor = (o as DeclarationLookupObject).descriptor ?: return NO_MATCH_WEIGHT
                 descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callTypeAndReceiver, resolutionFacade, bindingContext) to descriptor.name
             }
 
-            is ThisItemLookupObject -> smartCastCalculator.types(o.receiverParameter).map { it.toFuzzyType(emptyList()) } to null
+            is ThisItemLookupObject -> smartCastCalculator.types((o as ThisItemLookupObject).receiverParameter).map { it.toFuzzyType(emptyList()) } to null
 
             else -> return NO_MATCH_WEIGHT
         }
@@ -330,7 +330,7 @@ class SmartCompletionInBasicWeigher(
 
         val nameSimilarity = if (name != null) {
             val matchingInfos = matched.filter { it.second != ExpectedInfoMatch.noMatch }.map { it.first }
-            calcNameSimilarity(name.asString(), matchingInfos)
+            calcNameSimilarity(name!!.asString(), matchingInfos)
         }
         else {
             0
@@ -347,7 +347,7 @@ class PreferContextElementsWeigher(context: DeclarationDescriptor) : LookupEleme
     private val contextElements = context.parentsWithSelf
             .takeWhile { it !is PackageFragmentDescriptor }
             .toList()
-            .flatMap { if (it is CallableDescriptor) it.findOriginalTopMostOverriddenDescriptors() else listOf(it) }
+            .flatMap { if (it is CallableDescriptor) (it as CallableDescriptor).findOriginalTopMostOverriddenDescriptors() else listOf(it) }
             .toSet()
     private val contextElementNames = contextElements.map { it.name }.toSet()
 

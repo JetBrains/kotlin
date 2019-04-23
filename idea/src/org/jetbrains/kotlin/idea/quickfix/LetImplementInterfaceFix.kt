@@ -83,10 +83,10 @@ class LetImplementInterfaceFix(
         if (implementMembersHandler.collectMembersToGenerate(element).isEmpty()) return
 
         if (editor != null) {
-            editor.caretModel.moveToOffset(element.textRange.startOffset)
+            editor!!.caretModel.moveToOffset(element.textRange.startOffset)
             val containingFile = element.containingFile
             FileEditorManager.getInstance(project).openFile(containingFile.virtualFile, true)
-            implementMembersHandler.invoke(project, editor, containingFile)
+            implementMembersHandler.invoke(project, editor!!, containingFile)
         }
     }
 }

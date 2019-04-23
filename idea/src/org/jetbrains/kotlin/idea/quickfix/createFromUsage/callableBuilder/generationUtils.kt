@@ -30,12 +30,12 @@ fun setupEditorSelection(editor: Editor, declaration: KtNamedDeclaration) {
     val selectionModel = editor.selectionModel
 
     val offset = when (declaration) {
-        is KtPrimaryConstructor -> declaration.getConstructorKeyword()?.endOffset ?: declaration.valueParameterList?.startOffset
-        is KtSecondaryConstructor -> declaration.getConstructorKeyword().endOffset
+        is KtPrimaryConstructor -> (declaration as KtPrimaryConstructor).getConstructorKeyword()?.endOffset ?: (declaration as KtPrimaryConstructor).valueParameterList?.startOffset
+        is KtSecondaryConstructor -> (declaration as KtSecondaryConstructor).getConstructorKeyword().endOffset
         else -> declaration.nameIdentifier?.endOffset
     }
     if (offset != null) {
-        caretModel.moveToOffset(offset)
+        caretModel.moveToOffset(offset!!)
     }
 
     fun positionBetween(left: PsiElement, right: PsiElement) {
@@ -54,7 +54,7 @@ fun setupEditorSelection(editor: Editor, declaration: KtNamedDeclaration) {
             }
         }
         is KtClassOrObject -> {
-            caretModel.moveToOffset(declaration.nameIdentifier?.startOffset ?: declaration.startOffset)
+            caretModel.moveToOffset((declaration as KtClassOrObject).nameIdentifier?.startOffset ?: declaration.startOffset)
         }
         is KtProperty -> {
             caretModel.moveToOffset(declaration.endOffset)

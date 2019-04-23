@@ -85,8 +85,8 @@ object ReferencesSearchScopeHelper {
     fun search(declaration: KtDeclaration, defaultScope: SearchScope? = null): Query<PsiReference> {
         val enclosingElement = KtPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
         return when {
-            enclosingElement != null -> ReferencesSearch.search(declaration, LocalSearchScope(enclosingElement))
-            defaultScope != null -> ReferencesSearch.search(declaration, defaultScope)
+            enclosingElement != null -> ReferencesSearch.search(declaration, LocalSearchScope(enclosingElement!!))
+            defaultScope != null -> ReferencesSearch.search(declaration, defaultScope!!)
             else -> ReferencesSearch.search(declaration)
         }
     }

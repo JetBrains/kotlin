@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 fun getCurrentElement(dataContext: DataContext, project: Project): PsiElement? {
     val editor = CommonDataKeys.EDITOR.getData(dataContext)
     if (editor != null) {
-        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return null
+        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor!!.document) ?: return null
         if (!ProjectRootsUtil.isInProjectOrLibSource(file)) return null
         return TargetElementUtil.findTargetElement(editor, TargetElementUtil.getInstance().allAccepted)
     }

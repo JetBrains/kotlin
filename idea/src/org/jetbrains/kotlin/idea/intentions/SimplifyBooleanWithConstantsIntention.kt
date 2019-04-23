@@ -49,18 +49,18 @@ class SimplifyBooleanWithConstantsIntention :
 
     private fun areThereExpressionsToBeSimplified(element: KtExpression?): Boolean {
         if (element == null) return false
-        when (element) {
-            is KtParenthesizedExpression -> return areThereExpressionsToBeSimplified(element.expression)
+        when (element!!) {
+            is KtParenthesizedExpression -> return areThereExpressionsToBeSimplified((element as KtParenthesizedExpression).expression)
 
             is KtBinaryExpression -> {
-                val op = element.operationToken
+                val op = (element as KtBinaryExpression).operationToken
                 if (op == ANDAND || op == OROR || op == EQEQ || op == EXCLEQ) {
-                    if (areThereExpressionsToBeSimplified(element.left) && element.right.hasBooleanType()) return true
-                    if (areThereExpressionsToBeSimplified(element.right) && element.left.hasBooleanType()) return true
+                    if (areThereExpressionsToBeSimplified((element as KtBinaryExpression).left) && (element as KtBinaryExpression).right.hasBooleanType()) return true
+                    if (areThereExpressionsToBeSimplified((element as KtBinaryExpression).right) && (element as KtBinaryExpression).left.hasBooleanType()) return true
                 }
             }
         }
-        return element.canBeReducedToBooleanConstant()
+        return element!!.canBeReducedToBooleanConstant()
     }
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
@@ -92,9 +92,9 @@ class SimplifyBooleanWithConstantsIntention :
             }
 
             expression is KtParenthesizedExpression -> {
-                val expr = expression.expression
+                val expr = (expression as KtParenthesizedExpression).expression
                 if (expr != null) {
-                    val simplified = toSimplifiedExpression(expr)
+                    val simplified = toSimplifiedExpression(expr!!)
                     return if (simplified is KtBinaryExpression) {
                         // wrap in new parentheses to keep the user's original format
                         psiFactory.createExpressionByPattern("($0)", simplified)
@@ -106,13 +106,13 @@ class SimplifyBooleanWithConstantsIntention :
             }
 
             expression is KtBinaryExpression -> {
-                if (!areThereExpressionsToBeSimplified(expression)) return expression.copied()
-                val left = expression.left
-                val right = expression.right
-                val op = expression.operationToken
+                if (!areThereExpressionsToBeSimplified(expression)) return (expression as KtBinaryExpression).copied()
+                val left = (expression as KtBinaryExpression).left
+                val right = (expression as KtBinaryExpression).right
+                val op = (expression as KtBinaryExpression).operationToken
                 if (left != null && right != null && (op == ANDAND || op == OROR || op == EQEQ || op == EXCLEQ)) {
-                    val simpleLeft = simplifyExpression(left)
-                    val simpleRight = simplifyExpression(right)
+                    val simpleLeft = simplifyExpression(left!!)
+                    val simpleRight = simplifyExpression(right!!)
                     return when {
                         simpleLeft.canBeReducedToTrue() -> toSimplifiedBooleanBinaryExpressionWithConstantOperand(true, simpleRight, op)
 
@@ -123,7 +123,7 @@ class SimplifyBooleanWithConstantsIntention :
                         simpleRight.canBeReducedToFalse() -> toSimplifiedBooleanBinaryExpressionWithConstantOperand(false, simpleLeft, op)
 
                         else -> {
-                            val opText = expression.operationReference.text
+                            val opText = (expression as KtBinaryExpression).operationReference.text
                             psiFactory.createExpressionByPattern("$0 $opText $1", simpleLeft, simpleRight)
                         }
                     }

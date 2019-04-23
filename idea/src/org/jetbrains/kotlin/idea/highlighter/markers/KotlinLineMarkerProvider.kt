@@ -98,11 +98,11 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
 
             when (element) {
                 is KtClass -> {
-                    collectInheritedClassMarker(element, result)
-                    collectHighlightingColorsMarkers(element, result)
+                    collectInheritedClassMarker(element as KtClass, result)
+                    collectHighlightingColorsMarkers(element as KtClass, result)
                 }
                 is KtNamedFunction -> {
-                    functions.add(element)
+                    functions.add(element as KtNamedFunction)
                     collectSuperDeclarationMarkers(element, result)
                 }
                 is KtProperty -> {
@@ -110,7 +110,7 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
                     collectSuperDeclarationMarkers(element, result)
                 }
                 is KtParameter -> {
-                    if (element.hasValOrVar()) {
+                    if ((element as KtParameter).hasValOrVar()) {
                         properties.add(element)
                         collectSuperDeclarationMarkers(element, result)
                     }
@@ -373,7 +373,7 @@ private fun Document.areAnchorsOnOneLine(
 ): Boolean {
     if (second == null) return false
     val firstAnchor = first.expectOrActualAnchor
-    val secondAnchor = second.expectOrActualAnchor
+    val secondAnchor = second!!.expectOrActualAnchor
     return firstAnchor.startLine(this) == secondAnchor.startLine(this)
 }
 
@@ -505,7 +505,7 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
         if (function.isOverridable()) {
             val method = LightClassUtil.getLightClassMethod(function) ?: KtFakeLightMethod.get(function)
             if (method != null) {
-                mappingToJava[method] = function
+                mappingToJava[method!!] = function
             }
             mappingToJava[function] = function
         }

@@ -32,7 +32,7 @@ class ReplaceWithArrayCallInAnnotationFix(argument: KtExpression) : KotlinQuickF
         val argument = element?.getParentOfType<KtValueArgument>(false) ?: return
         val spreadElement = argument.getSpreadElement()
         if (spreadElement != null)
-            spreadElement.delete()
+            spreadElement!!.delete()
         else
             surroundWithArrayLiteral(argument)
     }

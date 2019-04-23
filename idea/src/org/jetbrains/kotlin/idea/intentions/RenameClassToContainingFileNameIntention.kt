@@ -26,7 +26,7 @@ class RenameClassToContainingFileNameIntention : SelfTargetingRangeIntention<KtC
             || fileName[0].isLowerCase()
             || !Name.isValidIdentifier(fileName)
             || Name.identifier(fileName).render() != fileName
-            || element.containingKtFile.declarations.any { it is KtClassOrObject && it.name == fileName }
+            || element.containingKtFile.declarations.any { it is KtClassOrObject && (it as KtClassOrObject).name == fileName }
         ) return null
         text = "Rename class to $fileName"
         return element.nameIdentifier?.textRange

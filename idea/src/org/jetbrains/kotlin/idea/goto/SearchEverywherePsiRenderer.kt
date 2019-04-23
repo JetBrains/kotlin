@@ -72,17 +72,17 @@ internal class KotlinSearchEverywherePsiRenderer(private val myList: JList<*>) :
 
     override fun getElementText(element: PsiElement?): String {
         if (element !is KtNamedFunction) return super.getElementText(element)
-        val descriptor = element.resolveToDescriptorIfAny() ?: return ""
+        val descriptor = (element as KtNamedFunction).resolveToDescriptorIfAny() ?: return ""
         return buildString {
             descriptor.extensionReceiverParameter?.let { append(RENDERER.renderType(it.type)).append('.') }
-            append(element.name)
+            append((element as KtNamedFunction).name)
             descriptor.valueParameters.joinTo(this, prefix = "(", postfix = ")") { RENDERER.renderType(it.type) }
         }
     }
 
     override fun getContainerText(element: PsiElement, name: String): String? {
         if (element is PsiFileSystemItem) {
-            val file = element.virtualFile
+            val file = (element as PsiFileSystemItem).virtualFile
             val parent = file?.parent
             if (parent == null) {
                 if (file != null) { // use fallback from Switcher
@@ -111,19 +111,19 @@ internal class KotlinSearchEverywherePsiRenderer(private val myList: JList<*>) :
         if (myList.width == 0) return text
         if (text == null) return null
 
-        if (text.startsWith("(") && text.endsWith(")")) {
-            text = text.substring(1, text.length - 1)
+        if (text!!.startsWith("(") && text!!.endsWith(")")) {
+            text = text!!.substring(1, text!!.length - 1)
         }
-        val `in` = text.startsWith("in ")
-        if (`in`) text = text.substring(3)
+        val `in` = text!!.startsWith("in ")
+        if (`in`) text = text!!.substring(3)
         val fm = myList.getFontMetrics(myList.font)
         val maxWidth = myList.width - fm.stringWidth(name) - 16 - myRightComponentWidth - 20
         val left = if (`in`) "(in " else "("
         val right = ")"
 
         if (fm.stringWidth(left + text + right) < maxWidth) return left + text + right
-        val separator = if (text.contains(File.separator)) File.separator else "."
-        val parts = LinkedList(StringUtil.split(text, separator))
+        val separator = if (text!!.contains(File.separator)) File.separator else "."
+        val parts = LinkedList(StringUtil.split(text!!, separator))
         var index: Int
         while (parts.size > 1) {
             index = parts.size / 2 - 1
@@ -157,13 +157,13 @@ internal class KotlinSearchEverywherePsiRenderer(private val myList: JList<*>) :
         val color = list!!.foreground
         if (nameAttributes == null) nameAttributes = SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, color)
 
-        renderer!!.append(item!!.toString() + " ", nameAttributes)
-        val itemPresentation = item.presentation!!
-        renderer.icon = itemPresentation.getIcon(true)
+        renderer!!.append(item!!.toString() + " ", nameAttributes!!)
+        val itemPresentation = item!!.presentation!!
+        renderer!!.icon = itemPresentation.getIcon(true)
 
         val locationString = itemPresentation.locationString
         if (!StringUtil.isEmpty(locationString)) {
-            renderer.append(locationString!!, SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.GRAY))
+            renderer!!.append(locationString!!, SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.GRAY))
         }
         return true
     }

@@ -67,7 +67,7 @@ class AddActualFix(
         }
         val primaryConstructor = pureActualClass.primaryConstructor
         if (element.primaryConstructor == null && primaryConstructor != null) {
-            element.addAfter(primaryConstructor, element.nameIdentifier).clean()
+            element.addAfter(primaryConstructor!!, element.nameIdentifier).clean()
         }
     }
 

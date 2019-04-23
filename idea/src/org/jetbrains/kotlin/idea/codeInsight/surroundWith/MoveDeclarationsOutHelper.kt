@@ -55,7 +55,7 @@ fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultIn
                 val property = statement as? KtProperty
                 if (property?.initializer != null) {
                     if (i == statements.size - 1) {
-                        kotlinStyleDeclareOut(container, dummyFirstStatement, resultStatements, propertiesDeclarations, property)
+                        kotlinStyleDeclareOut(container, dummyFirstStatement, resultStatements, propertiesDeclarations, property!!)
                     } else {
                         declareOut(
                             container,
@@ -63,7 +63,7 @@ fun move(container: PsiElement, statements: Array<PsiElement>, generateDefaultIn
                             generateDefaultInitializers,
                             resultStatements,
                             propertiesDeclarations,
-                            property
+                            property!!
                         )
                     }
                 } else {
@@ -143,7 +143,7 @@ private fun getPropertyType(property: KtProperty): KotlinType {
 private fun createProperty(property: KtProperty, propertyType: KotlinType, initializer: String?): KtProperty {
     val typeRef = property.typeReference
     val typeString = when {
-        typeRef != null -> typeRef.text
+        typeRef != null -> typeRef!!.text
         !propertyType.isError -> IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType)
         else -> null
     }

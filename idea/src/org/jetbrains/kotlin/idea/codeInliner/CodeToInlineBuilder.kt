@@ -61,7 +61,7 @@ class CodeToInlineBuilder(
 
         val descriptor = mainExpression.getResolvedCall(bindingContext)?.resultingDescriptor
         val alwaysKeepMainExpression = when (descriptor) {
-            is PropertyDescriptor -> descriptor.getter?.isDefault == false
+            is PropertyDescriptor -> (descriptor as PropertyDescriptor).getter?.isDefault == false
             else -> false
         }
         val codeToInline = MutableCodeToInline(
@@ -76,12 +76,12 @@ class CodeToInlineBuilder(
         processReferences(codeToInline, bindingContext, reformat)
 
         if (mainExpression != null) {
-            val functionLiteralExpression = mainExpression.unpackFunctionLiteral(true)
+            val functionLiteralExpression = mainExpression!!.unpackFunctionLiteral(true)
             if (functionLiteralExpression != null) {
-                val functionLiteralParameterTypes = getParametersForFunctionLiteral(functionLiteralExpression, bindingContext)
+                val functionLiteralParameterTypes = getParametersForFunctionLiteral(functionLiteralExpression!!, bindingContext)
                 if (functionLiteralParameterTypes != null) {
-                    codeToInline.addPostInsertionAction(mainExpression) { inlinedExpression ->
-                        addFunctionLiteralParameterTypes(functionLiteralParameterTypes, inlinedExpression)
+                    codeToInline.addPostInsertionAction(mainExpression!!) { inlinedExpression ->
+                        addFunctionLiteralParameterTypes(functionLiteralParameterTypes!!, inlinedExpression)
                     }
                 }
             }
@@ -93,10 +93,10 @@ class CodeToInlineBuilder(
     private fun getParametersForFunctionLiteral(functionLiteralExpression: KtLambdaExpression, context: BindingContext): String? {
         val lambdaDescriptor = context.get(BindingContext.FUNCTION, functionLiteralExpression.functionLiteral)
         if (lambdaDescriptor == null ||
-            ErrorUtils.containsErrorTypeInParameters(lambdaDescriptor) ||
-            ErrorUtils.containsErrorType(lambdaDescriptor.returnType)
+            ErrorUtils.containsErrorTypeInParameters(lambdaDescriptor!!) ||
+            ErrorUtils.containsErrorType(lambdaDescriptor!!.returnType)
         ) return null
-        return lambdaDescriptor.valueParameters.joinToString {
+        return lambdaDescriptor!!.valueParameters.joinToString {
             it.name.render() + ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)
         }
     }
@@ -164,23 +164,23 @@ class CodeToInlineBuilder(
             }
 
             if (expression.getReceiverExpression() == null) {
-                if (target is ValueParameterDescriptor && target.containingDeclaration == targetCallable) {
-                    expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
-                } else if (target is TypeParameterDescriptor && target.containingDeclaration == targetCallable) {
-                    expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
+                if (target is ValueParameterDescriptor && (target as ValueParameterDescriptor).containingDeclaration == targetCallable) {
+                    expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, (target as ValueParameterDescriptor).name)
+                } else if (target is TypeParameterDescriptor && (target as TypeParameterDescriptor).containingDeclaration == targetCallable) {
+                    expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, (target as TypeParameterDescriptor).name)
                 }
 
                 val resolvedCall = expression.getResolvedCall(bindingContext)
-                if (resolvedCall != null && resolvedCall.isReallySuccess()) {
-                    val receiver = if (resolvedCall.resultingDescriptor.isExtension)
-                        resolvedCall.extensionReceiver
+                if (resolvedCall != null && resolvedCall!!.isReallySuccess()) {
+                    val receiver = if (resolvedCall!!.resultingDescriptor.isExtension)
+                        resolvedCall!!.extensionReceiver
                     else
-                        resolvedCall.dispatchReceiver
+                        resolvedCall!!.dispatchReceiver
                     if (receiver is ImplicitReceiver) {
                         val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
-                        val receiverExpression = receiver.asExpression(resolutionScope, psiFactory)
+                        val receiverExpression = (receiver as ImplicitReceiver).asExpression(resolutionScope, psiFactory)
                         if (receiverExpression != null) {
-                            receiversToAdd.add(expression to receiverExpression)
+                            receiversToAdd.add(expression to receiverExpression!!)
                         }
                     }
                 }

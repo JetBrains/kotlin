@@ -179,15 +179,15 @@ class InflowSlicer(
 
             val rhsValue = when {
                 refElement is KtExpression -> {
-                    val (accessKind, accessExpression) = refElement.readWriteAccessWithFullExpression(true)
-                    if (accessKind == ReferenceAccess.WRITE && accessExpression is KtBinaryExpression && accessExpression.operationToken == KtTokens.EQ) {
-                        accessExpression.right
+                    val (accessKind, accessExpression) = (refElement as KtExpression).readWriteAccessWithFullExpression(true)
+                    if (accessKind == ReferenceAccess.WRITE && accessExpression is KtBinaryExpression && (accessExpression as KtBinaryExpression).operationToken == KtTokens.EQ) {
+                        (accessExpression as KtBinaryExpression).right
                     } else {
                         accessExpression
                     }
                 }
 
-                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(0)
+                refParent is PsiCall -> (refParent as PsiCall).argumentList?.expressions?.getOrNull(0)
 
                 else -> null
             }
@@ -246,13 +246,13 @@ class InflowSlicer(
         val function = ownerFunction ?: return
         if (function.isOverridable()) return
 
-        if (function is KtPropertyAccessor && function.isSetter) {
-            function.property.processPropertyAssignments()
+        if (function is KtPropertyAccessor && (function as KtPropertyAccessor).isSetter) {
+            (function as KtPropertyAccessor).property.processPropertyAssignments()
             return
         }
 
         if (function is KtNamedFunction
-            && function.name == OperatorNameConventions.SET_VALUE.asString()
+            && (function as KtNamedFunction).name == OperatorNameConventions.SET_VALUE.asString()
             && function.hasModifier(KtTokens.OPERATOR_KEYWORD)
         ) {
 
@@ -275,12 +275,12 @@ class InflowSlicer(
                     val valueArguments = resolvedCall.originalValueArguments
                     when (val resolvedArgument = valueArguments[parameterDescriptor] ?: return@body) {
                         is DefaultValueArgument -> defaultValue
-                        is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
+                        is ExpressionValueArgument -> (resolvedArgument as ExpressionValueArgument).valueArgument?.getArgumentExpression()
                         else -> null
                     }
                 }
 
-                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(this@processParameter.parameterIndex())
+                refParent is PsiCall -> (refParent as PsiCall).argumentList?.expressions?.getOrNull(this@processParameter.parameterIndex())
 
                 else -> null
             }
@@ -296,8 +296,8 @@ class InflowSlicer(
         val bodyExpression = bodyExpression ?: return
         val pseudocode = pseudocodeCache[bodyExpression] ?: return
         pseudocode.traverse(TraversalOrder.FORWARD) { instr ->
-            if (instr is ReturnValueInstruction && instr.subroutine == this) {
-                (instr.returnExpressionIfAny?.returnedExpression ?: instr.element as? KtExpression)?.passToProcessorAsValue()
+            if (instr is ReturnValueInstruction && (instr as ReturnValueInstruction).subroutine == this) {
+                ((instr as ReturnValueInstruction).returnExpressionIfAny?.returnedExpression ?: (instr as ReturnValueInstruction).element as? KtExpression)?.passToProcessorAsValue()
             }
         }
     }
@@ -324,7 +324,7 @@ class InflowSlicer(
         }
         if (lambda != null) {
             if (parentUsage.lambdaLevel > 0) {
-                lambda.passToProcessor(parentUsage.lambdaLevel - 1)
+                lambda!!.passToProcessor(parentUsage.lambdaLevel - 1)
             }
             return
         }
@@ -333,18 +333,18 @@ class InflowSlicer(
         val expressionValue = pseudocode.getElementValue(this) ?: return
         when (val createdAt = expressionValue.createdAt) {
             is ReadValueInstruction -> {
-                if (createdAt.target == AccessTarget.BlackBox) {
+                if ((createdAt as ReadValueInstruction).target == AccessTarget.BlackBox) {
                     val originalElement = expressionValue.element as? KtExpression ?: return
                     if (originalElement != this) {
                         originalElement.processExpression()
                     }
                     return
                 }
-                val accessedDescriptor = createdAt.target.accessedDescriptor ?: return
+                val accessedDescriptor = (createdAt as ReadValueInstruction).target.accessedDescriptor ?: return
                 val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return
                 if (accessedDescriptor is SyntheticFieldDescriptor) {
                     val property = accessedDeclaration as? KtProperty ?: return
-                    if (accessedDescriptor.propertyDescriptor.setter?.isDefault != false) {
+                    if ((accessedDescriptor as SyntheticFieldDescriptor).propertyDescriptor.setter?.isDefault != false) {
                         property.processPropertyAssignments()
                     } else {
                         property.setter?.processBackingFieldAssignments()
@@ -354,10 +354,10 @@ class InflowSlicer(
                 accessedDeclaration.processHierarchyDownwardAndPass()
             }
 
-            is MergeInstruction -> createdAt.passInputsToProcessor()
+            is MergeInstruction -> (createdAt as MergeInstruction).passInputsToProcessor()
 
-            is MagicInstruction -> when (createdAt.kind) {
-                MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> createdAt.passInputsToProcessor()
+            is MagicInstruction -> when ((createdAt as MagicInstruction).kind) {
+                MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> (createdAt as MagicInstruction).passInputsToProcessor()
                 MagicKind.BOUND_CALLABLE_REFERENCE, MagicKind.UNBOUND_CALLABLE_REFERENCE -> {
                     val callableRefExpr = expressionValue.element as? KtCallableReferenceExpression ?: return
                     val referencedDescriptor = analyze()[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
@@ -368,7 +368,7 @@ class InflowSlicer(
             }
 
             is CallInstruction -> {
-                val resolvedCall = createdAt.resolvedCall
+                val resolvedCall = (createdAt as CallInstruction).resolvedCall
                 val resultingDescriptor = resolvedCall.resultingDescriptor
                 if (resultingDescriptor is FunctionInvokeDescriptor) {
                     (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression?.passToProcessorAsValue(parentUsage.lambdaLevel + 1)
@@ -383,9 +383,9 @@ class InflowSlicer(
         if (parentUsage.forcedExpressionMode) return element.processExpression()
 
         when (element) {
-            is KtProperty -> element.processProperty()
-            is KtParameter -> element.processParameter()
-            is KtDeclarationWithBody -> element.processFunction()
+            is KtProperty -> (element as KtProperty).processProperty()
+            is KtParameter -> (element as KtParameter).processParameter()
+            is KtDeclarationWithBody -> (element as KtDeclarationWithBody).processFunction()
             else -> element.processExpression()
         }
     }
@@ -409,7 +409,7 @@ class OutflowSlicer(
                     return@body
                 }
 
-                val refExpression = KtPsiUtil.safeDeparenthesize(refElement)
+                val refExpression = KtPsiUtil.safeDeparenthesize(refElement as KtExpression)
                 if (withDereferences) {
                     refExpression.processDereferences()
                 }
@@ -424,7 +424,7 @@ class OutflowSlicer(
         if (this is KtArrayAccessExpression) return this
 
         val operationRefExpr = getNonStrictParentOfType<KtOperationReferenceExpression>()
-        if (operationRefExpr != null) return operationRefExpr.parent as? KtOperationExpression
+        if (operationRefExpr != null) return operationRefExpr!!.parent as? KtOperationExpression
 
         val parentCall = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
         val callee = parentCall.calleeExpression?.let { KtPsiUtil.safeDeparenthesize(it) }
@@ -447,10 +447,10 @@ class OutflowSlicer(
                         when (val refElement = it.element) {
                             null -> (it.reference as? LightMemberReference)?.element?.passToProcessor()
                             is KtExpression -> {
-                                refElement.getCallElementForExactCallee()?.passToProcessor()
-                                refElement.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
+                                (refElement as KtExpression).getCallElementForExactCallee()?.passToProcessor()
+                                (refElement as KtExpression).getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
                             }
-                            else -> refElement.passToProcessor()
+                            else -> refElement!!.passToProcessor()
                         }
                     }
                 } else if (this is PsiMethod && language == JavaLanguage.INSTANCE) {
@@ -480,8 +480,8 @@ class OutflowSlicer(
 
         val receiver = instr.receiverValues[pseudoValue]
         val resolvedCall = when (instr) {
-            is CallInstruction -> instr.resolvedCall
-            is ReadValueInstruction -> (instr.target as? AccessTarget.Call)?.resolvedCall
+            is CallInstruction -> (instr as CallInstruction).resolvedCall
+            is ReadValueInstruction -> ((instr as ReadValueInstruction).target as? AccessTarget.Call)?.resolvedCall
             else -> null
         } ?: return
 
@@ -499,8 +499,8 @@ class OutflowSlicer(
     private fun KtExpression.processDereferences() {
         processPseudocodeUsages { pseudoValue, instr ->
             when (instr) {
-                is ReadValueInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr)
-                is CallInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr)
+                is ReadValueInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr as ReadValueInstruction)
+                is CallInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr as CallInstruction)
             }
         }
     }
@@ -508,17 +508,17 @@ class OutflowSlicer(
     private fun KtExpression.processExpression() {
         processPseudocodeUsages { pseudoValue, instr ->
             when (instr) {
-                is WriteValueInstruction -> instr.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
+                is WriteValueInstruction -> (instr as WriteValueInstruction).target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
                 is CallInstruction -> {
-                    if (parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
-                        instr.element.passToProcessor(parentUsage.lambdaLevel - 1)
+                    if (parentUsage.lambdaLevel > 0 && (instr as CallInstruction).receiverValues[pseudoValue] != null) {
+                        (instr as CallInstruction).element.passToProcessor(parentUsage.lambdaLevel - 1)
                     } else {
-                        instr.arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
+                        (instr as CallInstruction).arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
                     }
                 }
-                is ReturnValueInstruction -> instr.subroutine.passToProcessor()
-                is MagicInstruction -> when (instr.kind) {
-                    MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> instr.outputValue.element?.passToProcessor()
+                is ReturnValueInstruction -> (instr as ReturnValueInstruction).subroutine.passToProcessor()
+                is MagicInstruction -> when ((instr as MagicInstruction).kind) {
+                    MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> (instr as MagicInstruction).outputValue.element?.passToProcessor()
                     else -> {
                     }
                 }
@@ -531,9 +531,9 @@ class OutflowSlicer(
 
         when (element) {
             is KtProperty, is KtParameter -> (element as KtDeclaration).processVariable()
-            is KtFunction -> element.processFunction()
-            is KtPropertyAccessor -> if (element.isGetter) {
-                element.property.processVariable()
+            is KtFunction -> (element as KtFunction).processFunction()
+            is KtPropertyAccessor -> if ((element as KtPropertyAccessor).isGetter) {
+                (element as KtPropertyAccessor).property.processVariable()
             }
             else -> element.processExpression()
         }

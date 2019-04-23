@@ -29,25 +29,25 @@ interface Condition {
     companion object {
         fun create(expression: KtExpression, negated: Boolean = false): Condition {
             if (negated) {
-                if (expression is KtBinaryExpression && expression.operationToken == KtTokens.OROR) {
+                if (expression is KtBinaryExpression && (expression as KtBinaryExpression).operationToken == KtTokens.OROR) {
                     //TODO: check Boolean type for operands
-                    val left = expression.left
-                    val right = expression.right
+                    val left = (expression as KtBinaryExpression).left
+                    val right = (expression as KtBinaryExpression).right
                     if (left != null && right != null) {
-                        val leftCondition = create(left, negated = true)
-                        val rightCondition = create(right, negated = true)
+                        val leftCondition = create(left!!, negated = true)
+                        val rightCondition = create(right!!, negated = true)
                         return CompositeCondition.create(leftCondition.toAtomicConditions() + rightCondition.toAtomicConditions())
                     }
                 }
             }
             else {
-                if (expression is KtBinaryExpression && expression.operationToken == KtTokens.ANDAND) {
+                if (expression is KtBinaryExpression && (expression as KtBinaryExpression).operationToken == KtTokens.ANDAND) {
                     //TODO: check Boolean type for operands
-                    val left = expression.left
-                    val right = expression.right
+                    val left = (expression as KtBinaryExpression).left
+                    val right = (expression as KtBinaryExpression).right
                     if (left != null && right != null) {
-                        val leftCondition = create(left)
-                        val rightCondition = create(right)
+                        val leftCondition = create(left!!)
+                        val rightCondition = create(right!!)
                         return CompositeCondition.create(leftCondition.toAtomicConditions() + rightCondition.toAtomicConditions())
                     }
                 }

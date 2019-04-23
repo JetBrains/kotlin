@@ -33,7 +33,7 @@ class SafeDeleteValueArgumentListUsageInfo(
             val valueArgument = valueArgumentPointer.element ?: return
             val parent = valueArgument.parent
             if (parent is KtValueArgumentList) {
-                parent.removeArgument(valueArgument)
+                (parent as KtValueArgumentList).removeArgument(valueArgument)
             }
             else {
                 valueArgument.delete()

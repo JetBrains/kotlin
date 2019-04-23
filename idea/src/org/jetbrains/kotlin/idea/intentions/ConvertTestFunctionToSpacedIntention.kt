@@ -89,7 +89,7 @@ sealed class ConvertTestFunctionToSpacedIntention(case: String) : SelfTargetingR
             builder.replaceElement(nameIdentifier, newId)
             val template = runWriteAction { builder.buildInlineTemplate() }
             TemplateManager.getInstance(element.project).startTemplate(
-                editor,
+                editor!!,
                 template,
                 object : TemplateEditingAdapter() {
                     private var chosenId: String = newId
@@ -103,7 +103,7 @@ sealed class ConvertTestFunctionToSpacedIntention(case: String) : SelfTargetingR
 
                     override fun templateFinished(template: Template, brokenOff: Boolean) {
                         range?.let {
-                            val doc = editor.document
+                            val doc = editor!!.document
                             runWriteAction { doc.replaceString(it.startOffset, it.endOffset, oldId) }
                             PsiDocumentManager.getInstance(element.project).commitDocument(doc)
                         }

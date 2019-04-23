@@ -65,21 +65,21 @@ class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
 
         while (atCaret != null) {
             when {
-                atCaret.isKotlinStatement() -> return atCaret
-                atCaret.parent is KtFunctionLiteral -> return atCaret
+                atCaret!!.isKotlinStatement() -> return atCaret
+                atCaret!!.parent is KtFunctionLiteral -> return atCaret
                 atCaret is KtDeclaration -> {
                     val declaration = atCaret
                     when {
-                        declaration is KtParameter && !declaration.isInLambdaExpression() -> {/* proceed to function declaration */
+                        declaration is KtParameter && !(declaration as KtParameter).isInLambdaExpression() -> {/* proceed to function declaration */
                         }
-                        declaration.parent is KtForExpression -> {/* skip variable declaration in 'for' expression */
+                        (declaration as KtDeclaration).parent is KtForExpression -> {/* skip variable declaration in 'for' expression */
                         }
                         else -> return atCaret
                     }
                 }
             }
 
-            atCaret = atCaret.parent
+            atCaret = atCaret!!.parent
         }
 
         return null
@@ -124,12 +124,12 @@ class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
     class KotlinPlainEnterProcessor : SmartEnterProcessorWithFixers.FixEnterProcessor() {
         private fun getControlStatementBlock(caret: Int, element: PsiElement): KtExpression? {
             when (element) {
-                is KtDeclarationWithBody -> return element.bodyExpression
+                is KtDeclarationWithBody -> return (element as KtDeclarationWithBody).bodyExpression
                 is KtIfExpression -> {
-                    if (element.then.isWithCaret(caret)) return element.then
-                    if (element.`else`.isWithCaret(caret)) return element.`else`
+                    if ((element as KtIfExpression).then.isWithCaret(caret)) return (element as KtIfExpression).then
+                    if ((element as KtIfExpression).`else`.isWithCaret(caret)) return (element as KtIfExpression).`else`
                 }
-                is KtLoopExpression -> return element.body
+                is KtLoopExpression -> return (element as KtLoopExpression).body
             }
 
             return null
@@ -140,12 +140,12 @@ class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
 
             val block = getControlStatementBlock(editor.caretModel.offset, atCaret) as? KtBlockExpression
             if (block != null) {
-                val firstElement = block.firstChild?.nextSibling
+                val firstElement = block!!.firstChild?.nextSibling
 
                 val offset = if (firstElement != null) {
-                    firstElement.textRange!!.startOffset - 1
+                    firstElement!!.textRange!!.startOffset - 1
                 } else {
-                    block.textRange!!.endOffset
+                    block!!.textRange!!.endOffset
                 }
 
                 editor.caretModel.moveToOffset(offset)

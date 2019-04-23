@@ -41,7 +41,7 @@ abstract class CreateCallableMemberFromUsageFactory<E : KtElement>(
         return QuickFixWithDelegateFactory(priority) {
             val data = quickFixDataFactory().orEmpty()
             val originalElement = originalElementPointer.element
-            if (data.isNotEmpty() && originalElement != null) quickFixFactory(originalElement, data) else null
+            if (data.isNotEmpty() && originalElement != null) quickFixFactory(originalElement!!, data) else null
         }
     }
 

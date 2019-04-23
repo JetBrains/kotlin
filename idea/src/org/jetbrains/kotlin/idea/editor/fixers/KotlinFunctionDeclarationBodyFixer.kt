@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtNamedFunction) return
-        if (psiElement.bodyExpression != null || psiElement.equalsToken != null) return
+        if ((psiElement as KtNamedFunction).bodyExpression != null || (psiElement as KtNamedFunction).equalsToken != null) return
 
         val parentDeclaration = psiElement.getStrictParentOfType<KtDeclaration>()
         if (parentDeclaration is KtClassOrObject) {
-            if (KtPsiUtil.isTrait(parentDeclaration) || psiElement.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+            if (KtPsiUtil.isTrait(parentDeclaration as KtClassOrObject) || (psiElement as KtNamedFunction).hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 return
             }
         }
@@ -43,7 +43,7 @@ class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<K
         val doc = editor.document
         var endOffset = psiElement.range.end
 
-        if (psiElement.text?.last() == ';') {
+        if ((psiElement as KtNamedFunction).text?.last() == ';') {
             doc.deleteString(endOffset - 1, endOffset)
             endOffset--
         }

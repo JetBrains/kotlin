@@ -38,19 +38,20 @@ class SelfAssignmentInspection : AbstractKotlinInspection(), CleanupLocalInspect
 
             if (!rightCallee.isVar) return
             if (rightCallee is PropertyDescriptor) {
-                if (rightCallee.isOverridable) return
-                if (rightCallee.accessors.any { !it.isDefault }) return
+                if ((rightCallee as PropertyDescriptor).isOverridable) return
+                if ((rightCallee as PropertyDescriptor).accessors.any { !it.isDefault }) return
             }
 
-            if (left.receiverDeclarationDescriptor(leftResolvedCall, context) !=
-                right.receiverDeclarationDescriptor(rightResolvedCall, context)) {
+            if (left!!.receiverDeclarationDescriptor(leftResolvedCall!!, context) !=
+                right!!.receiverDeclarationDescriptor(rightResolvedCall!!, context)) {
                 return
             }
 
-            holder.registerProblem(right,
-                                   "Variable '${rightCallee.name}' is assigned to itself",
-                                   ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                   RemoveSelfAssignmentFix())
+            holder.registerProblem(
+                right!!,
+                "Variable '${rightCallee.name}' is assigned to itself",
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                RemoveSelfAssignmentFix())
         })
     }
 

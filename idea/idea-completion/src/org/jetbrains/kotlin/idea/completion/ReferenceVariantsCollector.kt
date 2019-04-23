@@ -122,7 +122,7 @@ class ReferenceVariantsCollector(
 
         val getOrSetPrefix = GET_SET_PREFIXES.firstOrNull { prefix.startsWith(it) }
         val additionalPropertyNameFilter: ((String) -> Boolean)? = getOrSetPrefix
-                ?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmartForCompiler()).asStringNameFilter() }
+                ?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix!!).decapitalizeSmartForCompiler()).asStringNameFilter() }
 
         val shadowedDeclarationsFilter = if (runtimeReceiver != null)
             ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression, runtimeReceiver)
@@ -151,15 +151,15 @@ class ReferenceVariantsCollector(
 
         var basicVariants = getReferenceVariants(descriptorKindFilter, basicNameFilter)
         if (additionalPropertyNameFilter != null) {
-            basicVariants += getReferenceVariants(descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES), additionalPropertyNameFilter.toNameFilter())
+            basicVariants += getReferenceVariants(descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES), additionalPropertyNameFilter!!.toNameFilter())
             runDistinct = true
         }
 
         val containingCodeFragment = nameExpression.containingKtFile as? KtCodeFragment
         if (containingCodeFragment != null) {
-            val externalDescriptors = containingCodeFragment.externalDescriptors
+            val externalDescriptors = containingCodeFragment!!.externalDescriptors
             if (externalDescriptors != null) {
-                basicVariants += externalDescriptors
+                basicVariants += externalDescriptors!!
                     .filter { descriptorKindFilter.accepts(it) && basicNameFilter(it.name) }
             }
         }
@@ -176,11 +176,11 @@ class ReferenceVariantsCollector(
 
         if (completeExtensionsFromIndices) {
             val nameFilter = if (additionalPropertyNameFilter != null)
-                descriptorNameFilter or additionalPropertyNameFilter
+                descriptorNameFilter or additionalPropertyNameFilter!!
             else
                 descriptorNameFilter
             val extensions = if (runtimeReceiver != null)
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), nameFilter)
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver!!.type), nameFilter)
             else
                 indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, nameExpression, bindingContext, nameFilter)
 
@@ -206,7 +206,7 @@ class ReferenceVariantsCollector(
         var variants = _variants
 
         if (shadowedDeclarationsFilter != null)
-            variants = shadowedDeclarationsFilter.filter(variants)
+            variants = shadowedDeclarationsFilter!!.filter(variants)
 
         if (!configuration.javaGettersAndSetters)
             variants = referenceVariantsHelper.filterOutJavaGettersAndSetters(variants)
@@ -223,10 +223,10 @@ class ReferenceVariantsCollector(
     private object TopLevelExtensionsExclude : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor !is CallableMemberDescriptor) return false
-            if (descriptor.extensionReceiverParameter == null) return false
-            if (descriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) return false /* do not filter out synthetic extensions */
+            if ((descriptor as CallableMemberDescriptor).extensionReceiverParameter == null) return false
+            if ((descriptor as CallableMemberDescriptor).kind != CallableMemberDescriptor.Kind.DECLARATION) return false /* do not filter out synthetic extensions */
             if (descriptor.isArtificialImportAliasedDescriptor) return false // do not exclude aliased descriptors - they cannot be completed via indices
-            val containingPackage = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
+            val containingPackage = (descriptor as CallableMemberDescriptor).containingDeclaration as? PackageFragmentDescriptor ?: return false
             if (containingPackage.fqName.asString().startsWith("kotlinx.android.synthetic.")) return false // TODO: temporary solution for Android synthetic extensions
             return true
         }
@@ -236,8 +236,8 @@ class ReferenceVariantsCollector(
 
     private fun isDataClassComponentFunction(descriptor: DeclarationDescriptor): Boolean {
         return descriptor is FunctionDescriptor &&
-               descriptor.isOperator &&
-               DataClassDescriptorResolver.isComponentLike(descriptor.name) &&
-               descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+               (descriptor as FunctionDescriptor).isOperator &&
+               DataClassDescriptorResolver.isComponentLike((descriptor as FunctionDescriptor).name) &&
+               (descriptor as FunctionDescriptor).kind == CallableMemberDescriptor.Kind.SYNTHESIZED
     }
 }

@@ -39,7 +39,7 @@ class NumberConversionFix(
     private val isConversionAvailable: Boolean = run {
         val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element)
         expressionType != null && expressionType != type &&
-                expressionType.isSignedOrUnsignedNumberType() && type.isSignedOrUnsignedNumberType()
+                expressionType!!.isSignedOrUnsignedNumberType() && type.isSignedOrUnsignedNumberType()
     }
     private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
 

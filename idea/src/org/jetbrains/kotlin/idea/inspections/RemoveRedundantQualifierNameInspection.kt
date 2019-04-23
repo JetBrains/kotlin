@@ -92,7 +92,7 @@ private fun KtExpression.isApplicableReceiver(context: BindingContext): Boolean 
     val descriptor = reference?.mainReference?.resolveToDescriptors(context)?.firstOrNull() ?: return false
 
     return if (!descriptor.isCompanionObject()) true
-    else descriptor.name.asString() != reference.text
+    else descriptor.name.asString() != reference!!.text
 }
 
 private fun KtUserType.applicableExpression(): KtUserType? {

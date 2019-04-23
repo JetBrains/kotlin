@@ -35,7 +35,7 @@ open class QuickFixWithDelegateFactory(
         val delegate = delegateFactory()
         familyName = delegate?.familyName ?: ""
         text = delegate?.text ?: ""
-        startInWriteAction = delegate != null && delegate.startInWriteAction()
+        startInWriteAction = delegate != null && delegate!!.startInWriteAction()
     }
 
     override fun getFamilyName() = familyName

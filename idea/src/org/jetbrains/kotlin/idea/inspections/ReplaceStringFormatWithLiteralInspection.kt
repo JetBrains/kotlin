@@ -29,7 +29,7 @@ class ReplaceStringFormatWithLiteralInspection : AbstractKotlinInspection() {
         return callExpressionVisitor(fun(callExpression) {
             if (callExpression.calleeExpression?.text != "format") return
             val qualifiedExpression = callExpression.parent as? KtQualifiedExpression
-            if (qualifiedExpression != null && !qualifiedExpression.receiverExpression.text.endsWith("String")) return
+            if (qualifiedExpression != null && !qualifiedExpression!!.receiverExpression.text.endsWith("String")) return
 
             val args = callExpression.valueArguments.mapNotNull { it.getArgumentExpression() }
             if (args.size <= 1) return

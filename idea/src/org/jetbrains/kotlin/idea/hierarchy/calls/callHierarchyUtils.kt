@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 fun isCallHierarchyElement(e: PsiElement): Boolean {
-    return (e is KtNamedFunction && e.name != null) ||
+    return (e is KtNamedFunction && (e as KtNamedFunction).name != null) ||
            e is KtSecondaryConstructor ||
-           (e is KtProperty && !e.isLocal) ||
+           (e is KtProperty && !(e as KtProperty).isLocal) ||
            e is KtObjectDeclaration ||
-           (e is KtClass && !e.isInterface()) ||
+           (e is KtClass && !(e as KtClass).isInterface()) ||
            e is KtFile
 }
 
@@ -60,18 +60,18 @@ internal fun getOrCreateNodeDescriptor(
         elementToDescriptorMap: MutableMap<PsiElement, NodeDescriptor<*>>,
         isJavaMap: Boolean
 ): HierarchyNodeDescriptor? {
-    val element = (if (isJavaMap && originalElement is KtElement) originalElement.toLightElements().firstOrNull() else originalElement)
+    val element = (if (isJavaMap && originalElement is KtElement) (originalElement as KtElement).toLightElements().firstOrNull() else originalElement)
                   ?: return null
 
     val existingDescriptor = elementToDescriptorMap[element] as? HierarchyNodeDescriptor
     val result = if (existingDescriptor != null) {
-        existingDescriptor.incrementUsageCount()
-        existingDescriptor
+        existingDescriptor!!.incrementUsageCount()
+        existingDescriptor!!
     }
     else {
         val newDescriptor: HierarchyNodeDescriptor = when (element) {
-            is KtElement -> KotlinCallHierarchyNodeDescriptor(parent, element, false, navigateToReference)
-            is PsiMember -> CallHierarchyNodeDescriptor(element.project, parent, element, false, navigateToReference)
+            is KtElement -> KotlinCallHierarchyNodeDescriptor(parent, element as KtElement, false, navigateToReference)
+            is PsiMember -> CallHierarchyNodeDescriptor((element as PsiMember).project, parent, element, false, navigateToReference)
             else -> return null
         }
         elementToDescriptorMap[element] = newDescriptor
@@ -79,7 +79,7 @@ internal fun getOrCreateNodeDescriptor(
     }
 
     if (reference != null) {
-        result.addReference(reference)
+        result.addReference(reference!!)
     }
 
     return result

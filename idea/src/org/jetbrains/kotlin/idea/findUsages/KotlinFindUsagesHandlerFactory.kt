@@ -56,34 +56,34 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
     override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
         when (element) {
             is KtClassOrObject ->
-                return KotlinFindClassUsagesHandler(element, this)
+                return KotlinFindClassUsagesHandler(element as KtClassOrObject, this)
 
             is KtParameter -> {
                 if (!forHighlightUsages) {
-                    if (element.hasValOrVar()) {
-                        val declarationsToSearch = checkSuperMethods(element, null, "find usages of")
-                        return handlerForMultiple(element, declarationsToSearch)
+                    if ((element as KtParameter).hasValOrVar()) {
+                        val declarationsToSearch = checkSuperMethods(element as KtParameter, null, "find usages of")
+                        return handlerForMultiple(element as KtParameter, declarationsToSearch)
                     }
-                    val function = element.ownerFunction
-                    if (function != null && function.isOverridable()) {
-                        val psiMethod = function.toLightMethods().singleOrNull()
+                    val function = (element as KtParameter).ownerFunction
+                    if (function != null && function!!.isOverridable()) {
+                        val psiMethod = function!!.toLightMethods().singleOrNull()
                         if (psiMethod != null) {
-                            val hasOverridden = OverridingMethodsSearch.search(psiMethod).any()
-                            if (hasOverridden && askWhetherShouldSearchForParameterInOverridingMethods(element)) {
-                                val parametersCount = psiMethod.parameterList.parametersCount
+                            val hasOverridden = OverridingMethodsSearch.search(psiMethod!!).any()
+                            if (hasOverridden && askWhetherShouldSearchForParameterInOverridingMethods(element as KtParameter)) {
+                                val parametersCount = psiMethod!!.parameterList.parametersCount
                                 val parameterIndex = element.parameterIndex()
                                 assert(parameterIndex < parametersCount)
-                                val overridingParameters = OverridingMethodsSearch.search(psiMethod, true)
+                                val overridingParameters = OverridingMethodsSearch.search(psiMethod!!, true)
                                     .filter { it.parameterList.parametersCount == parametersCount }
                                     .mapNotNull { it.parameterList.parameters[parameterIndex].unwrapped }
-                                return handlerForMultiple(element, listOf(element) + overridingParameters)
+                                return handlerForMultiple(element as KtParameter, listOf(element as KtParameter) + overridingParameters)
                             }
                         }
 
                     }
                 }
 
-                return KotlinFindMemberUsagesHandler.getInstance(element, factory = this)
+                return KotlinFindMemberUsagesHandler.getInstance(element as KtParameter, factory = this)
             }
 
             is KtNamedFunction, is KtProperty, is KtConstructor<*> -> {
@@ -98,7 +98,7 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
             }
 
             is KtTypeParameter ->
-                return KotlinTypeParameterFindUsagesHandler(element, this)
+                return KotlinTypeParameterFindUsagesHandler(element as KtTypeParameter, this)
 
             else ->
                 throw IllegalArgumentException("unexpected element type: $element")
@@ -112,7 +112,7 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
             1 -> {
                 val target = declarations.single().unwrapped ?: return FindUsagesHandler.NULL_HANDLER
                 if (target is KtNamedDeclaration) {
-                    KotlinFindMemberUsagesHandler.getInstance(target, factory = this)
+                    KotlinFindMemberUsagesHandler.getInstance(target as KtNamedDeclaration, factory = this)
                 } else {
                     javaHandlerFactory.createFindUsagesHandler(target, false)!!
                 }

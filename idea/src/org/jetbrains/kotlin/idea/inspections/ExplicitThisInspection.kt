@@ -88,7 +88,7 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
             val parent = thisExpression.parent
 
             when (parent) {
-                is KtDotQualifiedExpression -> parent.replace(parent.selectorExpression ?: return)
+                is KtDotQualifiedExpression -> (parent as KtDotQualifiedExpression).replace((parent as KtDotQualifiedExpression).selectorExpression ?: return)
                 is KtCallableReferenceExpression -> thisExpression.delete()
             }
         }

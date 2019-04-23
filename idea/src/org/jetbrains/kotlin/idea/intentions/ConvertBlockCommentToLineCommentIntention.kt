@@ -24,7 +24,7 @@ class ConvertBlockCommentToLineCommentIntention : SelfTargetingIntention<PsiComm
 
         val prevSibling = element.prevSibling
         val indent = if (prevSibling is PsiWhiteSpace) {
-            val space = prevSibling.text.reversed().takeWhile { it == ' ' || it == '\t' }
+            val space = (prevSibling as PsiWhiteSpace).text.reversed().takeWhile { it == ' ' || it == '\t' }
             psiFactory.createWhiteSpace("\n$space")
         } else {
             psiFactory.createNewLine()

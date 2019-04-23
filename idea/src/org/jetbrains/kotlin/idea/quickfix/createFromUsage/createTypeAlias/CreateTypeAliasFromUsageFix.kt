@@ -53,7 +53,7 @@ class CreateTypeAliasFromUsageFix<E : KtElement>(
         val typeAlias = placeDeclarationInContainer(typeAliasProto, aliasInfo.targetParent, element)
 
         if (!ApplicationManager.getApplication().isUnitTestMode) {
-            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor!!.document)
 
             val aliasBody = typeAlias.getTypeReference()!!
 
@@ -64,7 +64,7 @@ class CreateTypeAliasFromUsageFix<E : KtElement>(
                 val defaultBodyText = aliasInfo.expectedType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Any"
                 replaceElement(aliasBody, ConstantNode(defaultBodyText))
 
-                run(editor, true)
+                run(editor!!, true)
             }
         }
     }

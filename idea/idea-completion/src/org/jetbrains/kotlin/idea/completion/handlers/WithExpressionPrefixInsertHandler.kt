@@ -43,12 +43,12 @@ class WithExpressionPrefixInsertHandler(val prefix: String) : InsertHandler<Look
         var expression = token.getStrictParentOfType<KtExpression>() ?: return
         if (expression is KtSimpleNameExpression) {
             var parent = expression.getParent()
-            if (parent is KtCallExpression && expression == parent.calleeExpression) {
-                expression = parent
-                parent = parent.parent
+            if (parent is KtCallExpression && expression == (parent as KtCallExpression).calleeExpression) {
+                expression = parent as KtCallExpression
+                parent = (parent as KtCallExpression).parent
             }
-            if (parent is KtDotQualifiedExpression && expression == parent.selectorExpression) {
-                expression = parent
+            if (parent is KtDotQualifiedExpression && expression == (parent as KtDotQualifiedExpression).selectorExpression) {
+                expression = parent as KtDotQualifiedExpression
             }
         }
 

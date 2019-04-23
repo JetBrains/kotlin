@@ -50,13 +50,13 @@ object CreateSetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet 
         if (arrayExpr.getType(arrayExpr.analyze(BodyResolveMode.PARTIAL))?.isReadOnlyCollectionOrMap(builtIns) == true) return null
         val valType = when (assignmentExpr) {
             is KtBinaryExpression -> {
-                TypeInfo(assignmentExpr.right ?: return null, Variance.IN_VARIANCE)
+                TypeInfo((assignmentExpr as KtBinaryExpression).right ?: return null, Variance.IN_VARIANCE)
             }
             is KtUnaryExpression -> {
-                if (assignmentExpr.operationToken !in OperatorConventions.INCREMENT_OPERATIONS) return null
+                if ((assignmentExpr as KtUnaryExpression).operationToken !in OperatorConventions.INCREMENT_OPERATIONS) return null
 
                 val rhsType = assignmentExpr.resolveToCall()?.resultingDescriptor?.returnType
-                TypeInfo(if (rhsType == null || ErrorUtils.containsErrorType(rhsType)) builtIns.anyType else rhsType, Variance.IN_VARIANCE)
+                TypeInfo(if (rhsType == null || ErrorUtils.containsErrorType(rhsType)) builtIns.anyType else rhsType!!, Variance.IN_VARIANCE)
             }
             else -> return null
         }

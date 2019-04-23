@@ -69,7 +69,7 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
         }
 
         if (labelName != null) {
-            forEachDescendantOfType<KtContinueExpression>({ it.shouldEnterForQualified(this, labelName) }) {
+            forEachDescendantOfType<KtContinueExpression>({ it.shouldEnterForQualified(this, labelName!!) }) {
                 if (it.getLabelName() == labelName) {
                     continueElements += it
                 }

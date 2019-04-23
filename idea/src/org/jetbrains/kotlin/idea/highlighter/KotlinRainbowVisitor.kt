@@ -53,23 +53,23 @@ class KotlinRainbowVisitor : RainbowVisitor() {
                 )
                 if (qualifiedExpression?.selectorExpression?.isAncestor(element) == true) return
 
-                val reference = element.mainReference
+                val reference = (element as KtSimpleNameExpression).mainReference
                 val targetElement = reference.resolve()
                 if (targetElement != null) {
-                    if (targetElement.isRainbowDeclaration()) {
-                        addRainbowHighlight(targetElement, element)
+                    if (targetElement!!.isRainbowDeclaration()) {
+                        addRainbowHighlight(targetElement!!, element)
                     }
-                } else if (element.getReferencedName() == "it") {
+                } else if ((element as KtSimpleNameExpression).getReferencedName() == "it") {
                     val itTargetElement =
                         KOTLIN_TARGET_ELEMENT_EVALUATOR.getElementByReference(reference, TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)
 
                     if (itTargetElement != null) {
-                        addRainbowHighlight(itTargetElement, element)
+                        addRainbowHighlight(itTargetElement!!, element)
                     }
                 }
             }
             element is KDocName -> {
-                val target = element.reference?.resolve() ?: return
+                val target = (element as KDocName).reference?.resolve() ?: return
                 if (target.isRainbowDeclaration()) {
                     addRainbowHighlight(target, element, KDOC_LINK)
                 }

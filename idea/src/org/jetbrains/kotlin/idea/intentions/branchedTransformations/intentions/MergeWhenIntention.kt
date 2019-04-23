@@ -43,7 +43,7 @@ class MergeWhenIntention : SelfTargetingRangeIntention<KtWhenExpression>(
         val subject1 = element.subjectExpression
         val subject2 = next.subjectExpression
         if (!subject1.matches(subject2)) return null
-        if (subject1 != null && !subject1.isStableVal()) return null
+        if (subject1 != null && !subject1!!.isStableVal()) return null
 
         val entries1 = element.entries
         val entries2 = next.entries
@@ -101,7 +101,7 @@ class MergeWhenIntention : SelfTargetingRangeIntention<KtWhenExpression>(
         else -> {
             val psiFactory = KtPsiFactory(this)
             val block = this as? KtBlockExpression ?: replaced(psiFactory.createSingleStatementBlock(this))
-            for (element in that.blockExpressionsOrSingle()) {
+            for (element in that!!.blockExpressionsOrSingle()) {
                 val expression = block.appendElement(element)
                 block.addBefore(psiFactory.createNewLine(), expression)
             }

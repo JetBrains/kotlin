@@ -58,10 +58,10 @@ class ReturnSaver(val function: KtNamedFunction) {
         for (returnExpression in returnToReplace) {
             val value = returnExpression.returnedExpression
             val replaceWith = if (value != null && returnExpression.isValueOfBlock(lambdaBody)) {
-                value
+                value!!
             }
             else if (value != null) {
-                factory.createExpressionByPattern("return@$0 $1", label, value)
+                factory.createExpressionByPattern("return@$0 $1", label, value!!)
             }
             else {
                 factory.createExpressionByPattern("return@$0", label)
@@ -80,18 +80,18 @@ class ReturnSaver(val function: KtNamedFunction) {
             }
 
             is KtBlockExpression -> {
-                return isValueOfBlock(parent) && parent.isValueOfBlock(inBlock)
+                return isValueOfBlock(parent as KtBlockExpression) && (parent as KtBlockExpression).isValueOfBlock(inBlock)
             }
 
             is KtContainerNode -> {
-                val owner = parent.parent
+                val owner = (parent as KtContainerNode).parent
                 if (owner is KtIfExpression) {
-                    return (this == owner.then || this == owner.`else`) && owner.isValueOfBlock(inBlock)
+                    return (this == (owner as KtIfExpression).then || this == (owner as KtIfExpression).`else`) && (owner as KtIfExpression).isValueOfBlock(inBlock)
                 }
             }
 
             is KtWhenEntry -> {
-                return this == parent.expression && (parent.parent as KtWhenExpression).isValueOfBlock(inBlock)
+                return this == (parent as KtWhenEntry).expression && ((parent as KtWhenEntry).parent as KtWhenExpression).isValueOfBlock(inBlock)
             }
         }
 

@@ -179,7 +179,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
                 if (element is KtElement && !isOnlyKotlinSearch(options.searchScope)) {
                     // TODO: very bad code!! ReferencesSearch does not work correctly for constructors and annotation parameters
                     val psiMethodScopeSearch = when {
-                        element is KtNamedFunction || element is KtParameter && element.dataClassComponentFunction() != null ->
+                        element is KtNamedFunction || element is KtParameter && (element as KtParameter).dataClassComponentFunction() != null ->
                             options.searchScope.excludeKotlinSources()
                         else -> options.searchScope
                     }
@@ -224,7 +224,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
         val callableDescriptor = (target as? KtCallableDeclaration)?.resolveToDescriptorIfAny() as? CallableDescriptor
         val descriptorsToHighlight = if (callableDescriptor is ParameterDescriptor)
-            listOf(callableDescriptor)
+            listOf(callableDescriptor as ParameterDescriptor)
         else
             callableDescriptor?.findOriginalTopMostOverriddenDescriptors() ?: emptyList()
 
@@ -233,7 +233,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         return if (baseDeclarations.isNotEmpty()) {
             baseDeclarations.flatMap {
                 val handler = (FindManager.getInstance(project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(it!!, true)
-                handler?.findReferencesToHighlight(it, searchScope) ?: emptyList()
+                handler?.findReferencesToHighlight(it!!, searchScope) ?: emptyList()
             }
         } else {
             super.findReferencesToHighlight(target, searchScope)
@@ -248,7 +248,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
             factory: KotlinFindUsagesHandlerFactory
         ): KotlinFindMemberUsagesHandler<out KtNamedDeclaration> {
             return if (declaration is KtFunction)
-                Function(declaration, elementsToSearch, factory)
+                Function(declaration as KtFunction, elementsToSearch, factory)
             else
                 Property(declaration, elementsToSearch, factory)
         }

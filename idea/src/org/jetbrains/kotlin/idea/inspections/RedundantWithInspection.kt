@@ -46,7 +46,7 @@ class RedundantWithInspection : AbstractKotlinInspection() {
                     if (used) return
                     element.acceptChildren(this)
 
-                    if (element is KtReturnExpression && element.getLabelName() == "with") {
+                    if (element is KtReturnExpression && (element as KtReturnExpression).getLabelName() == "with") {
                         used = true
                         return
                     }

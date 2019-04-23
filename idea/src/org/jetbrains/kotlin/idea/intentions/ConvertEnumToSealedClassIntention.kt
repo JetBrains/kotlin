@@ -44,7 +44,7 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(K
         for (klass in element.withExpectedActuals()) {
             klass as? KtClass ?: continue
 
-            val classDescriptor = klass.resolveToDescriptorIfAny() as? ClassDescriptor ?: continue
+            val classDescriptor = (klass as KtClass).resolveToDescriptorIfAny() as? ClassDescriptor ?: continue
             val isExpect = classDescriptor.isExpect
             val isActual = classDescriptor.isActual
 
@@ -53,14 +53,14 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(K
 
             val psiFactory = KtPsiFactory(klass)
 
-            for (member in klass.declarations) {
+            for (member in (klass as KtClass).declarations) {
                 if (member !is KtEnumEntry) continue
 
-                val obj = psiFactory.createDeclaration<KtObjectDeclaration>("object ${member.name}")
+                val obj = psiFactory.createDeclaration<KtObjectDeclaration>("object ${(member as KtEnumEntry).name}")
 
-                val initializers = member.initializerList?.initializers ?: emptyList()
+                val initializers = (member as KtEnumEntry).initializerList?.initializers ?: emptyList()
                 if (initializers.isNotEmpty()) {
-                    initializers.forEach { obj.addSuperTypeListEntry(psiFactory.createSuperTypeCallEntry("${klass.name}${it.text}")) }
+                    initializers.forEach { obj.addSuperTypeListEntry(psiFactory.createSuperTypeCallEntry("${(klass as KtClass).name}${it.text}")) }
                 }
                 else {
                     val defaultEntry = if (isExpect) psiFactory.createSuperTypeEntry(name) else psiFactory.createSuperTypeCallEntry("$name()")
@@ -71,22 +71,22 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(K
                     obj.addModifier(KtTokens.ACTUAL_KEYWORD)
                 }
 
-                member.getBody()?.let { body -> obj.add(body) }
+                (member as KtEnumEntry).getBody()?.let { body -> obj.add(body) }
 
                 member.delete()
-                klass.addDeclaration(obj)
+                (klass as KtClass).addDeclaration(obj)
             }
 
-            klass.getBody()?.let { body ->
+            (klass as KtClass).getBody()?.let { body ->
                 val semicolon = body
                         .allChildren
                         .takeWhile { it !is KtDeclaration }
                         .firstOrNull { it.node.elementType == KtTokens.SEMICOLON }
                 if (semicolon != null) {
-                    val nonWhiteSibling = semicolon.siblings(forward = true, withItself = false).firstOrNull { it !is PsiWhiteSpace }
+                    val nonWhiteSibling = semicolon!!.siblings(forward = true, withItself = false).firstOrNull { it !is PsiWhiteSpace }
                     body.deleteChildRange(semicolon, nonWhiteSibling?.prevSibling ?: semicolon)
                     if (nonWhiteSibling != null) {
-                        CodeStyleManager.getInstance(klass.project).reformat(nonWhiteSibling.firstChild ?: nonWhiteSibling)
+                        CodeStyleManager.getInstance((klass as KtClass).project).reformat(nonWhiteSibling!!.firstChild ?: nonWhiteSibling!!)
                     }
                 }
             }

@@ -27,8 +27,8 @@ class KotlinTryBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterH
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtTryExpression) return
 
-        if (psiElement.tryBlock.lBrace == null) {
-            val offset = psiElement.node.findChildByType(KtTokens.TRY_KEYWORD)?.textRange?.endOffset ?: return
+        if ((psiElement as KtTryExpression).tryBlock.lBrace == null) {
+            val offset = (psiElement as KtTryExpression).node.findChildByType(KtTokens.TRY_KEYWORD)?.textRange?.endOffset ?: return
             editor.document.insertString(offset, "{}")
         }
     }

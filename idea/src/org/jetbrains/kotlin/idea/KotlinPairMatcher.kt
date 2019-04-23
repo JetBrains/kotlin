@@ -43,7 +43,7 @@ class KotlinPairMatcher : PairedBraceMatcher {
     override fun getCodeConstructStart(file: PsiFile, openingBraceOffset: Int): Int {
         val element = file.findElementAt(openingBraceOffset)
         if (element == null || element is PsiFile) return openingBraceOffset
-        val parent = element.parent
+        val parent = element!!.parent
         return when (parent) {
             is KtClassBody, is KtBlockExpression ->
                 DeclarationRangeUtil.getPossibleDeclarationAtRange(parent.parent)?.startOffset ?: openingBraceOffset

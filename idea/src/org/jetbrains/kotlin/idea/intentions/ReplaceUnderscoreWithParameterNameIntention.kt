@@ -58,8 +58,8 @@ class ReplaceUnderscoreWithParameterNameIntention : SelfTargetingOffsetIndepende
 
     private fun suggestedParameterName(element: KtCallableDeclaration) =
             when (element) {
-                is KtDestructuringDeclarationEntry -> dataClassParameterName(element)
-                is KtParameter -> lambdaParameterName(element)
+                is KtDestructuringDeclarationEntry -> dataClassParameterName(element as KtDestructuringDeclarationEntry)
+                is KtParameter -> lambdaParameterName(element as KtParameter)
                 else -> null
             }
 

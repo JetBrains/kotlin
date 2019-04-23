@@ -39,9 +39,9 @@ class KotlinRawStringBackspaceHandler : BackspaceHandlerDelegate() {
         val psiElement = file.findElementAt(offset) ?: return
 
         psiElement.parent?.let {
-            if (it is KtStringTemplateExpression && it.text == "\"\"\"\"\"\"") {
-                if (editor.caretModel.offset == it.textOffset + 3) {
-                    rangeMarker = editor.document.createRangeMarker(it.textRange)
+            if (it is KtStringTemplateExpression && (it as KtStringTemplateExpression).text == "\"\"\"\"\"\"") {
+                if (editor.caretModel.offset == (it as KtStringTemplateExpression).textOffset + 3) {
+                    rangeMarker = editor.document.createRangeMarker((it as KtStringTemplateExpression).textRange)
                 }
             }
         }

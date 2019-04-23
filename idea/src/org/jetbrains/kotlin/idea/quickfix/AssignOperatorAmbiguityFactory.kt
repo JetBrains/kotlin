@@ -24,22 +24,22 @@ object AssignOperatorAmbiguityFactory : KotlinIntentionActionsFactory() {
         val fixes = mutableListOf<IntentionAction>()
         val element = diagnostic.psiElement.parent
         if (element is KtBinaryExpression) {
-            val left = element.left
-            val right = element.right
-            val operationText = when (element.operationToken) {
+            val left = (element as KtBinaryExpression).left
+            val right = (element as KtBinaryExpression).right
+            val operationText = when ((element as KtBinaryExpression).operationToken) {
                 KtTokens.PLUSEQ -> "plus"
                 KtTokens.MINUSEQ -> "minus"
                 else -> null
             }
             if (left != null && right != null && operationText != null) {
-                val context = element.analyze(BodyResolveMode.PARTIAL)
-                if (left.getType(context).isMutableCollection()) {
-                    val property = left.mainReference?.resolve() as? KtProperty
+                val context = (element as KtBinaryExpression).analyze(BodyResolveMode.PARTIAL)
+                if (left!!.getType(context).isMutableCollection()) {
+                    val property = left!!.mainReference?.resolve() as? KtProperty
                     val propertyName = property?.name
-                    if (property != null && propertyName != null && property.isLocal) {
-                        fixes.add(ChangeVariableMutabilityFix(property, false, "Change '$propertyName' to val"))
+                    if (property != null && propertyName != null && property!!.isLocal) {
+                        fixes.add(ChangeVariableMutabilityFix(property!!, false, "Change '$propertyName' to val"))
                     }
-                    fixes.add(ReplaceWithAssignFunctionCallFix(element, operationText))
+                    fixes.add(ReplaceWithAssignFunctionCallFix(element as KtBinaryExpression, operationText!!))
                 }
             }
         }

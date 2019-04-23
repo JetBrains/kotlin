@@ -43,7 +43,7 @@ class DeprecatedSymbolUsageFix(
         val element = element ?: return
         val result = replacementStrategy.createReplacer(element)?.invoke()
         if (result != null) {
-            val offset = (result.getCalleeExpressionIfAny() ?: result).textOffset
+            val offset = (result.getCalleeExpressionIfAny() ?: result!!).textOffset
             editor?.moveCaret(offset)
         }
     }

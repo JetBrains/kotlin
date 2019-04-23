@@ -143,16 +143,16 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
                 it.text == "// TARGET_BLOCK:"
             }
             val target = containers.firstOrNull { it == targetComment?.parent } ?: containers.last()
-            return doApply(editor, element, target)
+            return doApply(editor!!, element, target)
         }
 
         chooseContainerElementIfNecessary(
-                containers,
-                editor,
-                if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
-                true,
-                { it },
-                { doApply(editor, element, it) }
+            containers,
+            editor!!,
+            if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
+            true,
+            { it },
+            { doApply(editor!!, element, it) }
         )
     }
 }

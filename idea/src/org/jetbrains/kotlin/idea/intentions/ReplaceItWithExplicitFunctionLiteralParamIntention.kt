@@ -44,10 +44,10 @@ class ReplaceItWithExplicitFunctionLiteralParamIntention : SelfTargetingOffsetIn
             newExpr.functionLiteral.arrow ?: return,
             functionLiteral.lBrace
         )
-        PsiDocumentManager.getInstance(element.project).doPostponedOperationsAndUnblockDocument(editor.document)
+        PsiDocumentManager.getInstance(element.project).doPostponedOperationsAndUnblockDocument(editor!!.document)
 
         val paramToRename = functionLiteral.valueParameters.single()
-        editor.caretModel.moveToOffset(element.textOffset)
-        KotlinVariableInplaceRenameHandler().doRename(paramToRename, editor, null)
+        editor!!.caretModel.moveToOffset(element.textOffset)
+        KotlinVariableInplaceRenameHandler().doRename(paramToRename, editor!!, null)
     }
 }

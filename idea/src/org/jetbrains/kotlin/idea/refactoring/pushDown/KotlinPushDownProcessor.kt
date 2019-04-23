@@ -62,7 +62,7 @@ class KotlinPushDownContext(
             .map { it.member }
             .keysToMap {
                 when (it) {
-                    is KtPsiClassWrapper -> it.psiClass.getJavaClassDescriptor(resolutionFacade)!!
+                    is KtPsiClassWrapper -> (it as KtPsiClassWrapper).psiClass.getJavaClassDescriptor(resolutionFacade)!!
                     else -> sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!!
                 }
             }
@@ -138,12 +138,12 @@ class KotlinPushDownProcessor(
                     memberDescriptor as CallableMemberDescriptor
 
                     moveCallableMemberToClass(
-                            member as KtCallableDeclaration,
-                            memberDescriptor,
-                            targetClass,
-                            targetClassDescriptor,
-                            substitutor,
-                            memberInfo.isToAbstract
+                        member as KtCallableDeclaration,
+                        memberDescriptor as CallableMemberDescriptor,
+                        targetClass,
+                        targetClassDescriptor,
+                        substitutor,
+                        memberInfo.isToAbstract
                     )
                 }
 
@@ -177,12 +177,14 @@ class KotlinPushDownProcessor(
                     member as KtCallableDeclaration
                     memberDescriptor as CallableMemberDescriptor
 
-                    if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
+                    if ((memberDescriptor as CallableMemberDescriptor).modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
                         if (member.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
                             member.addModifier(KtTokens.PROTECTED_KEYWORD)
                         }
-                        makeAbstract(member, memberDescriptor, TypeSubstitutor.EMPTY, context.sourceClass)
-                        member.typeReference?.addToShorteningWaitSet()
+                        makeAbstract(
+                            member as KtCallableDeclaration,
+                            memberDescriptor as CallableMemberDescriptor, TypeSubstitutor.EMPTY, context.sourceClass)
+                        (member as KtCallableDeclaration).typeReference?.addToShorteningWaitSet()
                     }
                     else {
                         member.delete()

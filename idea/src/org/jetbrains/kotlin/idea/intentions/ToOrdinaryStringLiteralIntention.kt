@@ -44,7 +44,7 @@ class ToOrdinaryStringLiteralIntention : SelfTargetingOffsetIndependentIntention
 
             for (entry in element.entries) {
                 if (entry is KtLiteralStringTemplateEntry) {
-                    var text = entry.text
+                    var text = (entry as KtLiteralStringTemplateEntry).text
                     text = text.replace("\\", "\\\\")
                     text = text.replace("\"", "\\\"")
                     text = StringUtil.convertLineSeparators(text, "\\n")

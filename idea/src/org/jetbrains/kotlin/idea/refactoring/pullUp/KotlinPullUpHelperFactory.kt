@@ -84,7 +84,7 @@ class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
 
         val outerPsiClasses = outerClasses.map {
             val psiClass = elementFactory.createClass(it.name!!)
-            if (!(it is KtClass && it.isInner())) {
+            if (!(it is KtClass && (it as KtClass).isInner())) {
                 psiClass.modifierList!!.setModifierProperty(PsiModifier.STATIC, true)
             }
             psiClass

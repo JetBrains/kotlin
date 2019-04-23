@@ -52,17 +52,17 @@ fun KtParameter.setValOrVar(valOrVar: KotlinValVar): PsiElement? {
 
     if (currentKeyword != null) {
         return if (newKeyword == null) {
-            currentKeyword.delete()
+            currentKeyword!!.delete()
             null
         }
         else {
-            currentKeyword.replace(newKeyword)
+            currentKeyword!!.replace(newKeyword!!)
         }
     }
 
     if (newKeyword == null) return null
 
-    nameIdentifier?.let { return addBefore(newKeyword, it) }
-    modifierList?.let { return addAfter(newKeyword, it) }
-    return addAfter(newKeyword, null)
+    nameIdentifier?.let { return addBefore(newKeyword!!, it) }
+    modifierList?.let { return addAfter(newKeyword!!, it) }
+    return addAfter(newKeyword!!, null)
 }

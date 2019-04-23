@@ -41,7 +41,7 @@ abstract class AbstractChangeFeatureSupportLevelFix(
     abstract class FeatureSupportIntentionActionsFactory : KotlinIntentionActionsFactory() {
         protected fun shouldConfigureInProject(module: Module): Boolean {
             val facetSettings = KotlinFacet.get(module)?.configuration?.settings
-            return (facetSettings == null || facetSettings.useProjectSettings) &&
+            return (facetSettings == null || facetSettings!!.useProjectSettings) &&
                     module.getBuildSystemType() == BuildSystemType.JPS
         }
 

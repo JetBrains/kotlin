@@ -69,6 +69,6 @@ class PlatformExpectedAnnotator : Annotator {
 
     private fun isExpectedDeclaration(declaration: KtDeclaration): Boolean {
         return declaration.hasExpectModifier() ||
-                declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration)?.hasExpectModifier() == true
+                declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration as KtClassOrObject)?.hasExpectModifier() == true
     }
 }

@@ -39,11 +39,11 @@ class RemoveToStringFix : LocalQuickFix {
 
         val receiverExpression = element.receiverExpression
         if (receiverExpression is KtNameReferenceExpression) {
-            val templateEntry = receiverExpression.parent.parent
-            if (templateEntry is KtBlockStringTemplateEntry && canPlaceAfterSimpleNameEntry(templateEntry.nextSibling)) {
+            val templateEntry = (receiverExpression as KtNameReferenceExpression).parent.parent
+            if (templateEntry is KtBlockStringTemplateEntry && canPlaceAfterSimpleNameEntry((templateEntry as KtBlockStringTemplateEntry).nextSibling)) {
 
                 val factory = KtPsiFactory(templateEntry)
-                templateEntry.replace(factory.createSimpleNameStringTemplateEntry(receiverExpression.getReferencedName()))
+                templateEntry.replace(factory.createSimpleNameStringTemplateEntry((receiverExpression as KtNameReferenceExpression).getReferencedName()))
                 return
             }
         }

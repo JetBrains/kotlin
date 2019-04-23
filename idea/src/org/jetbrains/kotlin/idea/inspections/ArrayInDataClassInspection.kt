@@ -49,13 +49,13 @@ class ArrayInDataClassInspection : AbstractKotlinInspection() {
         for (declaration in klass.declarations) {
             if (declaration !is KtFunction) continue
             if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) continue
-            if (declaration.nameAsName == OperatorNameConventions.EQUALS && declaration.valueParameters.size == 1) {
+            if ((declaration as KtFunction).nameAsName == OperatorNameConventions.EQUALS && (declaration as KtFunction).valueParameters.size == 1) {
                 val type = (declaration.resolveToDescriptorIfAny() as? FunctionDescriptor)?.valueParameters?.singleOrNull()?.type
-                if (type != null && KotlinBuiltIns.isNullableAny(type)) {
+                if (type != null && KotlinBuiltIns.isNullableAny(type!!)) {
                     overriddenEquals = true
                 }
             }
-            if (declaration.name == "hashCode" && declaration.valueParameters.size == 0) {
+            if ((declaration as KtFunction).name == "hashCode" && (declaration as KtFunction).valueParameters.size == 0) {
                 overriddenHashCode = true
             }
         }

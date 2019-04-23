@@ -81,12 +81,12 @@ class KotlinMemberInfo @JvmOverloads constructor(
 
 fun lightElementForMemberInfo(declaration: KtNamedDeclaration?): PsiMember? {
     return when (declaration) {
-        is KtNamedFunction -> declaration.getRepresentativeLightMethod()
-        is KtProperty, is KtParameter -> declaration.toLightElements().let {
+        is KtNamedFunction -> (declaration as KtNamedFunction).getRepresentativeLightMethod()
+        is KtProperty, is KtParameter -> declaration!!.toLightElements().let {
             it.firstIsInstanceOrNull<PsiMethod>() ?: it.firstIsInstanceOrNull<PsiField>()
         } as PsiMember?
-        is KtClassOrObject -> declaration.toLightClass()
-        is KtPsiClassWrapper -> declaration.psiClass
+        is KtClassOrObject -> (declaration as KtClassOrObject).toLightClass()
+        is KtPsiClassWrapper -> (declaration as KtPsiClassWrapper).psiClass
         else -> null
     }
 }

@@ -46,7 +46,7 @@ object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFacto
 
         val targetType = diagnosticWithParameters.b
         val targetClassDescriptor = targetType.constructor.declarationDescriptor as? ClassDescriptor
-        if (targetClassDescriptor != null && targetClassDescriptor.isData) return null
+        if (targetClassDescriptor != null && targetClassDescriptor!!.isData) return null
 
         val ownerTypeInfo = TypeInfo(targetType, Variance.IN_VARIANCE)
         val entries = element.entries

@@ -52,7 +52,7 @@ class KotlinCalleeTreeStructure(
 
     override fun buildChildren(nodeDescriptor: HierarchyNodeDescriptor): Array<Any> {
         if (nodeDescriptor is CallHierarchyNodeDescriptor) {
-            val psiMethod = nodeDescriptor.enclosingElement as? PsiMethod ?: return ArrayUtil.EMPTY_OBJECT_ARRAY
+            val psiMethod = (nodeDescriptor as CallHierarchyNodeDescriptor).enclosingElement as? PsiMethod ?: return ArrayUtil.EMPTY_OBJECT_ARRAY
             return CalleeMethodsTreeStructure(myProject, psiMethod, scopeType).getChildElements(nodeDescriptor)
         }
 

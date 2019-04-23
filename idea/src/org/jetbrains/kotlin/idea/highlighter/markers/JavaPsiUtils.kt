@@ -36,8 +36,8 @@ fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {
     for (method in methods) {
         ProgressManager.checkCanceled()
         val parentClass = method.containingClass
-        if (parentClass != null && CommonClassNames.JAVA_LANG_OBJECT != parentClass.qualifiedName) {
-            classes.add(parentClass)
+        if (parentClass != null && CommonClassNames.JAVA_LANG_OBJECT != parentClass!!.qualifiedName) {
+            classes.add(parentClass!!)
         }
     }
 
@@ -47,9 +47,9 @@ fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {
 internal tailrec fun getPsiClass(element: PsiElement?): PsiClass? {
     return when {
         element == null -> null
-        element is PsiClass -> element
-        element is KtClass -> element.toLightClass() ?: KtFakeLightClass(element)
-        element.parent is KtClass -> getPsiClass(element.parent)
+        element is PsiClass -> element as PsiClass
+        element is KtClass -> (element as KtClass).toLightClass() ?: KtFakeLightClass(element as KtClass)
+        element!!.parent is KtClass -> getPsiClass(element!!.parent)
         else -> null
     }
 }
@@ -58,9 +58,9 @@ internal fun getPsiMethod(element: PsiElement?): PsiMethod? {
     val parent = element?.parent
     return when {
         element == null -> null
-        element is PsiMethod -> element
+        element is PsiMethod -> element as PsiMethod
         parent is KtNamedFunction || parent is KtSecondaryConstructor ->
-            LightClassUtil.getLightClassMethod(parent as KtFunction) ?: KtFakeLightMethod.get(parent)
+            LightClassUtil.getLightClassMethod(parent as KtFunction) ?: KtFakeLightMethod.get(parent as KtFunction)
         else -> null
     }
 }

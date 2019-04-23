@@ -169,7 +169,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
                         if (choice != null && !used[parameter.index]) {
                             used[parameter.index] = true
                             matched[superParameter.index] = true
-                            newParameters[superParameter.index] = choice
+                            newParameters[superParameter.index] = choice!!
                             break
                         }
                     }
@@ -230,7 +230,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
     override fun getText(): String {
         val single = signatures.singleOrNull()
-        return if (single != null) "Change function signature to '${single.preview}'"
+        return if (single != null) "Change function signature to '${single!!.preview}'"
         else "Change function signature..."
     }
 
@@ -282,7 +282,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
             if (!function.isValid || signatures.isEmpty()) return
 
-            if (signatures.size == 1 || editor == null || !editor.component.isShowing) {
+            if (signatures.size == 1 || editor == null || !editor!!.component.isShowing) {
                 changeSignature(signatures.first())
             } else {
                 chooseSignatureAndChange()
@@ -315,7 +315,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
                 val newTypeRef = function.setTypeReference(patternFunction.typeReference)
                 if (newTypeRef != null) {
-                    ShortenReferences.DEFAULT.process(newTypeRef)
+                    ShortenReferences.DEFAULT.process(newTypeRef!!)
                 }
 
                 patternFunction.valueParameters.forEach { param ->
@@ -339,8 +339,8 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 val patternTypeParameterList = patternFunction.typeParameterList
                 if (patternTypeParameterList != null) {
                     ShortenReferences.DEFAULT.process(
-                        (if (function.typeParameterList != null) function.typeParameterList?.replace(patternTypeParameterList)
-                        else function.addAfter(patternTypeParameterList, function.funKeyword)) as KtTypeParameterList
+                        (if (function.typeParameterList != null) function.typeParameterList?.replace(patternTypeParameterList!!)
+                        else function.addAfter(patternTypeParameterList!!, function.funKeyword)) as KtTypeParameterList
                     )
                 } else function.typeParameterList?.delete()
             }

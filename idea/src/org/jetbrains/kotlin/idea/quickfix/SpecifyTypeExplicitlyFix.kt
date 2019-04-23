@@ -48,7 +48,7 @@ class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
             else -> return false
         }
 
-        return !SpecifyTypeExplicitlyIntention.getTypeForDeclaration(declaration).isError
+        return !SpecifyTypeExplicitlyIntention.getTypeForDeclaration(declaration!!).isError
     }
 
     private fun declarationByElement(element: PsiElement): KtCallableDeclaration? {

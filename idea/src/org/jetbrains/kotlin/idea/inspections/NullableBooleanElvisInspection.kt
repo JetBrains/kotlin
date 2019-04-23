@@ -33,11 +33,11 @@ class NullableBooleanElvisInspection : AbstractKotlinInspection(), CleanupLocalI
                 val parentIfOrWhile = PsiTreeUtil.getParentOfType(
                         expression, KtIfExpression::class.java, KtWhileExpressionBase::class.java)
                 val condition = when (parentIfOrWhile) {
-                    is KtIfExpression -> parentIfOrWhile.condition
-                    is KtWhileExpressionBase -> parentIfOrWhile.condition
+                    is KtIfExpression -> (parentIfOrWhile as KtIfExpression).condition
+                    is KtWhileExpressionBase -> (parentIfOrWhile as KtWhileExpressionBase).condition
                     else -> null
                 }
-                val (highlightType, verb) = if (condition != null && condition in expression.parentsWithSelf)
+                val (highlightType, verb) = if (condition != null && condition!! in expression.parentsWithSelf)
                     GENERIC_ERROR_OR_WARNING to "should"
                 else
                     INFORMATION to "can"

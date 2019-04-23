@@ -52,7 +52,7 @@ class InlineFunctionHyperLinkInfo(
                     .createPopup()
 
             if (hyperlinkLocationPoint != null) {
-                popup.show(hyperlinkLocationPoint)
+                popup.show(hyperlinkLocationPoint!!)
             }
             else {
                 popup.showInFocusCenter()
@@ -62,7 +62,7 @@ class InlineFunctionHyperLinkInfo(
 
     override fun getDescriptor(): OpenFileDescriptor? {
         val file = inlineInfo.firstOrNull()
-        return file?.let { OpenFileDescriptor(project, file.file, file.line, 0) }
+        return file?.let { OpenFileDescriptor(project, file!!.file, file!!.line, 0) }
     }
 
     sealed class InlineInfo(val prefix: String, val file: VirtualFile, val line: Int) {
@@ -86,7 +86,7 @@ class InlineFunctionHyperLinkInfo(
             clear()
 
             if (value != null) {
-                append(value.prefix)
+                append(value!!.prefix)
             }
 
             if (isSelected) {

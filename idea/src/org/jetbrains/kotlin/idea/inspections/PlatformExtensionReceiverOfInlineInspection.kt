@@ -58,7 +58,7 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                 val nameRegex = nameRegex
                 val callExpression = expression.selectorExpression as? KtCallExpression ?: return
                 val calleeText = callExpression.calleeExpression?.text ?: return
-                if (nameRegex != null && !nameRegex.matches(calleeText)) {
+                if (nameRegex != null && !nameRegex!!.matches(calleeText)) {
                     return
                 }
 

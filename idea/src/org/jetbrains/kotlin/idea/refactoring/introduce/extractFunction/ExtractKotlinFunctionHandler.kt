@@ -79,7 +79,7 @@ class ExtractKotlinFunctionHandler(
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is KtFile) return
-        selectElements(editor, file) { elements, targetSibling -> doInvoke(editor, file, elements, targetSibling) }
+        selectElements(editor, file as KtFile) { elements, targetSibling -> doInvoke(editor, file as KtFile, elements, targetSibling) }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

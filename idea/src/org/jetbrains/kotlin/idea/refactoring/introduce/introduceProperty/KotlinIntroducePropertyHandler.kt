@@ -58,7 +58,7 @@ class KotlinIntroducePropertyHandler(
             val descriptor = descriptorWithConflicts.descriptor
             val target = getExtractionTarget(descriptor)
             if (target != null) {
-                val options = ExtractionGeneratorOptions.DEFAULT.copy(target = target, delayInitialOccurrenceReplacement = true)
+                val options = ExtractionGeneratorOptions.DEFAULT.copy(target = target!!, delayInitialOccurrenceReplacement = true)
                 doRefactor(ExtractionGeneratorConfiguration(descriptor, options), onFinish)
             } else {
                 showErrorHint(project, editor, "Can't introduce property for this expression", INTRODUCE_PROPERTY)
@@ -76,7 +76,7 @@ class KotlinIntroducePropertyHandler(
             ::validateExpressionElements,
             { _, parent ->
                 parent.getExtractionContainers(strict = true, includeAll = true)
-                    .filter { it is KtClassBody || (it is KtFile && !it.isScript()) }
+                    .filter { it is KtClassBody || (it is KtFile && !(it as KtFile).isScript()) }
             },
             continuation
         )
@@ -121,7 +121,8 @@ class KotlinIntroducePropertyHandler(
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is KtFile) return
-        selectElements(editor, file) { elements, targetSibling -> doInvoke(project, editor, file, elements, targetSibling) }
+        selectElements(editor, file as KtFile) { elements, targetSibling -> doInvoke(project, editor,
+                                                                                     file as KtFile, elements, targetSibling) }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

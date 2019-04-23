@@ -54,8 +54,8 @@ class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsa
 
     private fun createChangeInfo(data: IntroduceParameterData, method: PsiElement): KotlinChangeInfo? {
         val psiMethodDescriptor = when (method) {
-            is KtFunction -> method.unsafeResolveToDescriptor() as? FunctionDescriptor
-            is PsiMethod -> method.getJavaMethodDescriptor()
+            is KtFunction -> (method as KtFunction).unsafeResolveToDescriptor() as? FunctionDescriptor
+            is PsiMethod -> (method as PsiMethod).getJavaMethodDescriptor()
             else -> null
         } ?: return null
         val changeSignatureData = KotlinChangeSignatureData(psiMethodDescriptor, method, Collections.singletonList(psiMethodDescriptor))
@@ -81,7 +81,7 @@ class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsa
         changeInfo.newParameters.last().currentTypeInfo = KotlinTypeInfo(false, addedParameterType)
 
         val scope = element.useScope.let {
-            if (it is GlobalSearchScope) GlobalSearchScope.getScopeRestrictedByFileTypes(it, KotlinFileType.INSTANCE) else it
+            if (it is GlobalSearchScope) GlobalSearchScope.getScopeRestrictedByFileTypes(it as GlobalSearchScope, KotlinFileType.INSTANCE) else it
         }
         val kotlinFunctions = HierarchySearchRequest(element, scope)
                 .searchOverriders()
@@ -101,7 +101,7 @@ class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsa
         val callElement = refElement.getParentOfTypeAndBranch<KtCallElement>(true) { calleeExpression } ?: return true
         val delegateUsage = if (callElement is KtConstructorDelegationCall) {
             @Suppress("UNCHECKED_CAST")
-            (KotlinConstructorDelegationCallUsage(callElement, changeInfo) as KotlinUsageInfo<KtCallElement>)
+            (KotlinConstructorDelegationCallUsage(callElement as KtConstructorDelegationCall, changeInfo) as KotlinUsageInfo<KtCallElement>)
         }
         else {
             KotlinFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)

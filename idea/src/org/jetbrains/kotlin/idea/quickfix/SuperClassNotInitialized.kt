@@ -80,7 +80,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         if (classOrObjectDeclaration is KtClass) {
             val superType = classDescriptor.typeConstructor.supertypes.firstOrNull { it.constructor.declarationDescriptor == superClass }
             if (superType != null) {
-                val substitutor = TypeConstructorSubstitution.create(superClass.typeConstructor, superType.arguments).buildSubstitutor()
+                val substitutor = TypeConstructorSubstitution.create(superClass.typeConstructor, superType!!.arguments).buildSubstitutor()
 
                 val substitutedConstructors = constructors
                     .asSequence()
@@ -108,7 +108,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                                 .toList()
                         val parameterString = typesRendered.joinToString(", ", "(", if (types.size <= maxParamsToDisplay) ")" else ",...)")
                         val text = "Add constructor parameters from " + superClass.name.asString() + parameterString
-                        fixes.addIfNotNull(AddParametersFix.create(delegator, classOrObjectDeclaration, constructor, text))
+                        fixes.addIfNotNull(AddParametersFix.create(delegator, classOrObjectDeclaration as KtClass, constructor, text))
                     }
                 }
             }
@@ -132,14 +132,14 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
             val baseClass = AddDefaultConstructorFix.superTypeEntryToClass(element, context)
 
             val newSpecifier = element.replaced(KtPsiFactory(project).createSuperTypeCallEntry(element.text + "()"))
-            if (baseClass != null && baseClass.hasExpectModifier() && baseClass.secondaryConstructors.isEmpty()) {
-                baseClass.createPrimaryConstructorIfAbsent()
+            if (baseClass != null && baseClass!!.hasExpectModifier() && baseClass!!.secondaryConstructors.isEmpty()) {
+                baseClass!!.createPrimaryConstructorIfAbsent()
             }
 
             if (putCaretIntoParenthesis) {
                 if (editor != null) {
                     val offset = newSpecifier.valueArgumentList!!.leftParenthesis!!.endOffset
-                    editor.moveCaret(offset)
+                    editor!!.moveCaret(offset)
                     if (!ApplicationManager.getApplication().isUnitTestMode) {
                         ShowParameterInfoHandler.invoke(project, editor, file, offset - 1, null, true)
                     }
@@ -185,13 +185,13 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     val nameString = parameter.name.asString()
                     val existingParameter = oldParameters.firstOrNull { it.name == nameString }
                     if (existingParameter != null) {
-                        val type = (existingParameter.resolveToParameterDescriptorIfAny() as? VariableDescriptor)?.type
+                        val type = (existingParameter!!.resolveToParameterDescriptorIfAny() as? VariableDescriptor)?.type
                                 ?: return null
                         if (type.isSubtypeOf(parameter.type)) continue // use existing parameter
                     }
 
                     val parameterText = if (varargElementType != null)
-                        "vararg " + nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(varargElementType)
+                        "vararg " + nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(varargElementType!!)
                     else
                         nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameter.type)
                     parametersToAdd.add(KtPsiFactory(element).createParameter(parameterText))

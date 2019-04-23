@@ -48,15 +48,15 @@ class ChangeToStarProjectionFix(element: KtTypeElement) : KotlinQuickFixAction<K
             if (typeElement is KtFunctionType) return null
 
             if (binaryExpr?.operationReference?.isAsKeyword() == true) {
-                val parent = binaryExpr.getParentOfTypes(true, KtValueArgument::class.java, KtQualifiedExpression::class.java)
+                val parent = binaryExpr!!.getParentOfTypes(true, KtValueArgument::class.java, KtQualifiedExpression::class.java)
                 val type = when (parent) {
                     is KtValueArgument -> {
-                        val callExpr = parent.getStrictParentOfType<KtCallExpression>()
-                        (callExpr?.resolveToCall()?.getArgumentMapping(parent) as? ArgumentMatch)?.valueParameter?.original?.type
+                        val callExpr = (parent as KtValueArgument).getStrictParentOfType<KtCallExpression>()
+                        (callExpr?.resolveToCall()?.getArgumentMapping(parent as KtValueArgument) as? ArgumentMatch)?.valueParameter?.original?.type
                     }
                     is KtQualifiedExpression ->
-                        if (KtPsiUtil.safeDeparenthesize(parent.receiverExpression) == binaryExpr)
-                            parent.resolveToCall()?.resultingDescriptor?.extensionReceiverParameter?.value?.original?.type
+                        if (KtPsiUtil.safeDeparenthesize((parent as KtQualifiedExpression).receiverExpression) == binaryExpr)
+                            (parent as KtQualifiedExpression).resolveToCall()?.resultingDescriptor?.extensionReceiverParameter?.value?.original?.type
                         else
                             null
                     else ->

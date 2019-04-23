@@ -45,9 +45,9 @@ class KotlinFileChooserDialog(
     override fun getSelectedFromTreeUserObject(node: DefaultMutableTreeNode): KtFile? {
         val userObject = node.userObject
         return when (userObject) {
-            is KtFileTreeNode -> userObject.ktFile
+            is KtFileTreeNode -> (userObject as KtFileTreeNode).ktFile
             is KtClassOrObjectTreeNode -> {
-                val containingFile = userObject.value.containingKtFile
+                val containingFile = (userObject as KtClassOrObjectTreeNode).value.containingKtFile
                 if (containingFile.declarations.size == 1) containingFile else null
             }
             else -> null

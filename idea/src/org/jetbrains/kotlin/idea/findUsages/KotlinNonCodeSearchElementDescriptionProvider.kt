@@ -27,6 +27,6 @@ class KotlinNonCodeSearchElementDescriptionProvider : ElementDescriptionProvider
     override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
         if (location !is NonCodeSearchDescriptionLocation) return null
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return null
-        return if (location.isNonJava) (declaration.fqName?.asString() ?: declaration.name) else declaration.name
+        return if ((location as NonCodeSearchDescriptionLocation).isNonJava) (declaration.fqName?.asString() ?: declaration.name) else declaration.name
     }
 }

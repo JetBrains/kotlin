@@ -49,37 +49,37 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
         return when (element) {
             is KtClass -> {
-                val isExpectEnum = runReadAction { element.isEnum() && element.isExpectDeclaration() }
+                val isExpectEnum = runReadAction { (element as KtClass).isEnum() && (element as KtClass).isExpectDeclaration() }
                 if (isExpectEnum) {
-                    processActualDeclarations(element, consumer)
+                    processActualDeclarations(element as KtClass, consumer)
                 } else {
-                    processClassImplementations(element, consumer) && processActualDeclarations(element, consumer)
+                    processClassImplementations(element as KtClass, consumer) && processActualDeclarations(element as KtClass, consumer)
                 }
             }
 
             is KtObjectDeclaration -> {
-                processActualDeclarations(element, consumer)
+                processActualDeclarations(element as KtObjectDeclaration, consumer)
             }
 
             is KtLightClass -> {
-                val useScope = runReadAction { element.useScope }
+                val useScope = runReadAction { (element as KtLightClass).useScope }
                 if (useScope is LocalSearchScope)
-                    processLightClassLocalImplementations(element, useScope, consumer)
+                    processLightClassLocalImplementations(element as KtLightClass, useScope as LocalSearchScope, consumer)
                 else
                     true
             }
 
             is KtNamedFunction, is KtSecondaryConstructor -> {
-                processFunctionImplementations(element as KtFunction, scope, consumer) && processActualDeclarations(element, consumer)
+                processFunctionImplementations(element as KtFunction, scope, consumer) && processActualDeclarations(element as KtFunction, consumer)
             }
 
             is KtProperty -> {
-                processPropertyImplementations(element, scope, consumer) && processActualDeclarations(element, consumer)
+                processPropertyImplementations(element as KtProperty, scope, consumer) && processActualDeclarations(element as KtProperty, consumer)
             }
 
             is KtParameter -> {
-                if (isFieldParameter(element)) {
-                    processPropertyImplementations(element, scope, consumer) && processActualDeclarations(element, consumer)
+                if (isFieldParameter(element as KtParameter)) {
+                    processPropertyImplementations(element as KtParameter, scope, consumer) && processActualDeclarations(element as KtParameter, consumer)
                 } else {
                     true
                 }
@@ -100,7 +100,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
             }
         }
 
-        private fun isDelegated(element: PsiElement): Boolean = element is KtLightMethod && element.isDelegated
+        private fun isDelegated(element: PsiElement): Boolean = element is KtLightMethod && (element as KtLightMethod).isDelegated
 
         private fun isFieldParameter(parameter: KtParameter): Boolean {
             return runReadAction { KtPsiUtil.getClassIfParameterIsProperty(parameter) != null }
@@ -111,7 +111,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
             val searchScope = runReadAction { psiClass.useScope }
             if (searchScope is LocalSearchScope) {
-                return processLightClassLocalImplementations(psiClass, searchScope, consumer)
+                return processLightClassLocalImplementations(psiClass, searchScope as LocalSearchScope, consumer)
             }
 
             return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer)
@@ -171,7 +171,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
                         val mirrorElement = (implementation as? KtLightMethod)?.kotlinOrigin
                         when (mirrorElement) {
                             is KtProperty, is KtParameter -> mirrorElement
-                            is KtPropertyAccessor -> if (mirrorElement.parent is KtProperty) mirrorElement.parent else implementation
+                            is KtPropertyAccessor -> if ((mirrorElement as KtPropertyAccessor).parent is KtProperty) (mirrorElement as KtPropertyAccessor).parent else implementation
                             else -> implementation
                         }
                     }

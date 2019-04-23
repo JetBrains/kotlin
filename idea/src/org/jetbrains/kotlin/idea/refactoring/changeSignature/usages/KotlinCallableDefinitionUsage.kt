@@ -63,8 +63,8 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         val element = declaration
         when (element) {
             is KtFunction, is KtProperty, is KtParameter -> (element as KtDeclaration).unsafeResolveToDescriptor() as CallableDescriptor
-            is KtClass -> (element.unsafeResolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
-            is PsiMethod -> element.getJavaMethodDescriptor()
+            is KtClass -> ((element as KtClass).unsafeResolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
+            is PsiMethod -> (element as PsiMethod).getJavaMethodDescriptor()
             else -> null
         }
     }
@@ -78,7 +78,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         else {
             val currentBaseDescriptor = this.baseFunction.currentCallableDescriptor
             val classDescriptor = currentBaseDescriptor?.containingDeclaration as? ClassDescriptor ?: return@lazy null
-            getTypeSubstitutor(classDescriptor.defaultType, samCallType)
+            getTypeSubstitutor(classDescriptor.defaultType, samCallType!!)
         }
     }
 
@@ -102,7 +102,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
     override fun processUsage(changeInfo: KotlinChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean {
         if (element !is KtNamedDeclaration) return true
 
-        val psiFactory = KtPsiFactory(element.project)
+        val psiFactory = KtPsiFactory((element as KtNamedDeclaration).project)
 
         if (changeInfo.isNameChanged) {
             val identifier = (element as KtCallableDeclaration).nameIdentifier
@@ -112,25 +112,25 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
 
         changeReturnTypeIfNeeded(changeInfo, element)
 
-        val parameterList = element.getValueParameterList()
+        val parameterList = (element as KtNamedDeclaration).getValueParameterList()
 
         if (changeInfo.isParameterSetOrOrderChanged) {
             processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory)
         }
         else if (parameterList != null) {
             val offset = if (originalCallableDescriptor.extensionReceiverParameter != null) 1 else 0
-            for ((paramIndex, parameter) in parameterList.parameters.withIndex()) {
+            for ((paramIndex, parameter) in parameterList!!.parameters.withIndex()) {
                 val parameterInfo = changeInfo.newParameters[paramIndex + offset]
                 changeParameter(paramIndex, parameter, parameterInfo)
             }
 
-            parameterList.addToShorteningWaitSet(Options.DEFAULT)
+            parameterList!!.addToShorteningWaitSet(Options.DEFAULT)
         }
 
         if (element is KtCallableDeclaration && changeInfo.isReceiverTypeChanged()) {
             val receiverTypeText = changeInfo.renderReceiverType(this)
-            val receiverTypeRef = if (receiverTypeText != null) psiFactory.createType(receiverTypeText) else null
-            val newReceiverTypeRef = element.setReceiverTypeReference(receiverTypeRef)
+            val receiverTypeRef = if (receiverTypeText != null) psiFactory.createType(receiverTypeText!!) else null
+            val newReceiverTypeRef = (element as KtCallableDeclaration).setReceiverTypeReference(receiverTypeRef)
             newReceiverTypeRef?.addToShorteningWaitSet(Options.DEFAULT)
         }
 
@@ -139,9 +139,9 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         }
 
         if (canDropOverride) {
-            dropOverrideKeywordIfNecessary(element)
+            dropOverrideKeywordIfNecessary(element as KtNamedDeclaration)
         }
-        dropOperatorKeywordIfNecessary(element)
+        dropOperatorKeywordIfNecessary(element as KtNamedDeclaration)
 
         return true
     }
@@ -153,11 +153,11 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         val returnTypeIsNeeded = (element is KtFunction && element !is KtFunctionLiteral) || element is KtProperty || element is KtParameter
 
         if (changeInfo.isReturnTypeChanged && returnTypeIsNeeded) {
-            element.typeReference = null
+            (element as KtCallableDeclaration).typeReference = null
             val returnTypeText = changeInfo.renderReturnType(this)
             val returnType = changeInfo.newReturnTypeInfo.type
-            if (returnType == null || !returnType.isUnit()) {
-                element.setTypeReference(KtPsiFactory(element).createType(returnTypeText))!!.addToShorteningWaitSet(Options.DEFAULT)
+            if (returnType == null || !returnType!!.isUnit()) {
+                (element as KtCallableDeclaration).setTypeReference(KtPsiFactory(element).createType(returnTypeText))!!.addToShorteningWaitSet(Options.DEFAULT)
             }
         }
     }
@@ -176,7 +176,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         if (isLambda) {
             if (parametersCount == 0) {
                 if (parameterList != null) {
-                    parameterList.delete()
+                    parameterList!!.delete()
                     val arrow = (element as KtFunctionLiteral).arrow
                     arrow?.delete()
                     parameterList = null
@@ -195,22 +195,22 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
 
         if (parameterList != null) {
             newParameterList = if (canReplaceEntireList) {
-                parameterList.replace(newParameterList) as KtParameterList
+                parameterList!!.replace(newParameterList!!) as KtParameterList
             }
             else {
-                replaceListPsiAndKeepDelimiters(parameterList, newParameterList) { parameters }
+                replaceListPsiAndKeepDelimiters(parameterList!!, newParameterList!!) { parameters }
             }
         }
         else {
             if (element is KtClass) {
-                val constructor = element.createPrimaryConstructorIfAbsent()
+                val constructor = (element as KtClass).createPrimaryConstructorIfAbsent()
                 val oldParameterList = constructor.valueParameterList.sure { "primary constructor from factory has parameter list" }
-                newParameterList = oldParameterList.replace(newParameterList) as KtParameterList
+                newParameterList = oldParameterList.replace(newParameterList!!) as KtParameterList
             }
             else if (isLambda) {
                 val functionLiteral = element as KtFunctionLiteral
                 val anchor = functionLiteral.lBrace
-                newParameterList = element.addAfter(newParameterList, anchor) as KtParameterList
+                newParameterList = element.addAfter(newParameterList!!, anchor) as KtParameterList
                 if (functionLiteral.arrow == null) {
                     val whitespaceAndArrow = psiFactory.createWhitespaceAndArrow()
                     element.addRangeAfter(whitespaceAndArrow.first, whitespaceAndArrow.second, newParameterList)
@@ -218,14 +218,14 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
             }
         }
 
-        newParameterList.addToShorteningWaitSet(Options.DEFAULT)
+        newParameterList!!.addToShorteningWaitSet(Options.DEFAULT)
     }
 
     private fun changeVisibility(changeInfo: KotlinChangeInfo, element: PsiElement) {
         val newVisibilityToken = changeInfo.newVisibility.toKeywordToken()
         when (element) {
-            is KtCallableDeclaration -> element.setVisibility(newVisibilityToken)
-            is KtClass -> element.createPrimaryConstructorIfAbsent().setVisibility(newVisibilityToken)
+            is KtCallableDeclaration -> (element as KtCallableDeclaration).setVisibility(newVisibilityToken)
+            is KtClass -> (element as KtClass).createPrimaryConstructorIfAbsent().setVisibility(newVisibilityToken)
             else -> throw AssertionError("Invalid element: " + element.getElementTextWithContext())
         }
     }

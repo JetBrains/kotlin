@@ -187,8 +187,8 @@ abstract class CallableRefactoring<out T : CallableDescriptor>(
 fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
     val baseCallables = descriptorsForChange.mapNotNull { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
     return baseCallables + baseCallables.flatMapTo(HashSet<PsiElement>()) { callable ->
-        if (callable is KtDeclaration && callable.isExpectDeclaration()) {
-            callable.actualsForExpected()
+        if (callable is KtDeclaration && (callable as KtDeclaration).isExpectDeclaration()) {
+            (callable as KtDeclaration).actualsForExpected()
         } else {
             callable.toLightMethods().flatMap { psiMethod ->
                 val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
@@ -202,13 +202,13 @@ fun DeclarationDescriptor.getContainingScope(): LexicalScope? {
     val declaration = DescriptorToSourceUtils.descriptorToDeclaration(this)
     val block = declaration?.parent as? KtBlockExpression
     return if (block != null) {
-        val lastStatement = block.statements.last()
+        val lastStatement = block!!.statements.last()
         val bindingContext = lastStatement.analyze()
         lastStatement.getResolutionScope(bindingContext, lastStatement.getResolutionFacade())
     } else {
         when (val containingDescriptor = containingDeclaration ?: return null) {
-            is ClassDescriptorWithResolutionScopes -> containingDescriptor.scopeForInitializerResolution
-            is PackageFragmentDescriptor -> LexicalScope.Base(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
+            is ClassDescriptorWithResolutionScopes -> (containingDescriptor as ClassDescriptorWithResolutionScopes).scopeForInitializerResolution
+            is PackageFragmentDescriptor -> LexicalScope.Base((containingDescriptor as PackageFragmentDescriptor).getMemberScope().memberScopeAsImportingScope(), this)
             else -> null
         }
     }

@@ -37,7 +37,7 @@ class RenameByLabeledReferenceHandler : AbstractReferenceSubstitutionRenameHandl
         val labelTarget = context[BindingContext.LABEL_TARGET, refExpr] as? KtExpression ?: return null
         val labeledParent = labelTarget.getLabeledParent(refExpr.getReferencedName())
         if (labelTarget !is KtFunction || labeledParent != null) return labeledParent
-        val calleeExpression = labelTarget.getCalleeByLambdaArgument() ?: return null
+        val calleeExpression = (labelTarget as KtFunction).getCalleeByLambdaArgument() ?: return null
         val descriptor = context[BindingContext.REFERENCE_TARGET, calleeExpression] as? FunctionDescriptor ?: return null
         return DescriptorToSourceUtilsIde.getAnyDeclaration(dataContext.project, descriptor)
     }

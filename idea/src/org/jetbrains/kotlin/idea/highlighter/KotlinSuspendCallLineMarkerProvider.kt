@@ -56,18 +56,18 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
 
             if (element !is KtExpression) continue
 
-            val containingFile = element.containingFile
+            val containingFile = (element as KtExpression).containingFile
             if (containingFile !is KtFile || containingFile is KtCodeFragment) {
                 continue
             }
 
             val lineNumber = element.getLineNumber()
             if (lineNumber in markedLineNumbers) continue
-            if (!element.hasSuspendCalls()) continue
+            if (!(element as KtExpression).hasSuspendCalls()) continue
 
             markedLineNumbers += lineNumber
             result += if (element is KtForExpression) {
-                SuspendCallMarkerInfo(getElementForLineMark(element.loopRange!!), "Suspending iteration")
+                SuspendCallMarkerInfo(getElementForLineMark((element as KtForExpression).loopRange!!), "Suspending iteration")
             } else {
                 SuspendCallMarkerInfo(getElementForLineMark(element), "Suspend function call")
             }
@@ -78,7 +78,7 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
 private fun KtExpression.isValidCandidateExpression(): Boolean {
     if (this is KtOperationReferenceExpression || this is KtForExpression || this is KtProperty || this is KtNameReferenceExpression) return true
     val parent = parent
-    if (parent is KtCallExpression && parent.calleeExpression == this) return true
+    if (parent is KtCallExpression && (parent as KtCallExpression).calleeExpression == this) return true
     return false
 }
 
@@ -112,7 +112,7 @@ fun KtExpression.hasSuspendCalls(bindingContext: BindingContext = analyze(BodyRe
             else {
                 val propertyDescriptor = resolvedCall?.resultingDescriptor as? PropertyDescriptor
                 val s = propertyDescriptor?.fqNameSafe?.asString()
-                s?.startsWith("kotlin.coroutines.") == true && s.endsWith(".coroutineContext")
+                s?.startsWith("kotlin.coroutines.") == true && s!!.endsWith(".coroutineContext")
             }
         }
     }

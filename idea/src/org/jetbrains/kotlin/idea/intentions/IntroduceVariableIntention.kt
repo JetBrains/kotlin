@@ -44,14 +44,14 @@ class IntroduceVariableIntention : SelfTargetingRangeIntention<PsiElement>(
             .takeWhile { it !is KtDeclarationWithBody }
             .firstOrNull {
                 val parent = it.parent
-                parent is KtBlockExpression || parent is KtDeclarationWithBody && !parent.hasBlockBody() && parent.bodyExpression == it
+                parent is KtBlockExpression || parent is KtDeclarationWithBody && !(parent as KtDeclarationWithBody).hasBlockBody() && (parent as KtDeclarationWithBody).bodyExpression == it
             }
     }
 
     override fun applicabilityRange(element: PsiElement): TextRange? {
         val expression = getExpressionToProcess(element) ?: return null
         val type = expression.analyze().getType(expression)
-        if (type == null || type.isUnit() || type.isNothing()) return null
+        if (type == null || type!!.isUnit() || type!!.isNothing()) return null
         return element.textRange
     }
 

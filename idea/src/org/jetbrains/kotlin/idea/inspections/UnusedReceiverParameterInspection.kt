@@ -58,10 +58,10 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
         return object : KtVisitorVoid() {
             private fun check(callableDeclaration: KtCallableDeclaration) {
                 val receiverTypeReference = callableDeclaration.receiverTypeReference
-                if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
+                if (receiverTypeReference == null || receiverTypeReference!!.textRange.isEmpty) return
 
-                if (callableDeclaration is KtProperty && callableDeclaration.accessors.isEmpty()) return
-                if (callableDeclaration is KtNamedFunction && !callableDeclaration.hasBody()) return
+                if (callableDeclaration is KtProperty && (callableDeclaration as KtProperty).accessors.isEmpty()) return
+                if (callableDeclaration is KtNamedFunction && !(callableDeclaration as KtNamedFunction).hasBody()) return
 
                 if (callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
                     callableDeclaration.hasModifier(KtTokens.OPERATOR_KEYWORD) ||
@@ -81,9 +81,9 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
                 val containingDeclaration = callable.containingDeclaration
                 if (containingDeclaration != null && containingDeclaration == receiverTypeDeclaration) {
-                    val thisLabelName = containingDeclaration.getThisLabelName()
+                    val thisLabelName = containingDeclaration!!.getThisLabelName()
                     if (!callableDeclaration.anyDescendantOfType<KtThisExpression> { it.getLabelName() == thisLabelName }) {
-                        registerProblem(receiverTypeReference, true)
+                        registerProblem(receiverTypeReference!!, true)
                     }
                     return
                 }
@@ -102,7 +102,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                     }
                 })
 
-                if (!used) registerProblem(receiverTypeReference)
+                if (!used) registerProblem(receiverTypeReference!!)
             }
 
             override fun visitNamedFunction(function: KtNamedFunction) {
@@ -181,7 +181,7 @@ fun isUsageOfDescriptor(descriptor: DeclarationDescriptor, resolvedCall: Resolve
     }
 
     if (resolvedCall is VariableAsFunctionResolvedCall) {
-        return isUsageOfDescriptor(descriptor, resolvedCall.variableCall, bindingContext)
+        return isUsageOfDescriptor(descriptor, (resolvedCall as VariableAsFunctionResolvedCall).variableCall, bindingContext)
     }
 
     return false

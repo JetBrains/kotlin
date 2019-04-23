@@ -72,8 +72,8 @@ sealed class MoveDeclarationsDelegate {
             val targetContainerFqName = moveTarget.targetContainerFqName
             val newInfo = when {
                 targetContainerFqName == null -> ContainerInfo.UnknownPackage
-                movingToClass -> ContainerInfo.Class(targetContainerFqName)
-                else -> ContainerInfo.Package(targetContainerFqName)
+                movingToClass -> ContainerInfo.Class(targetContainerFqName!!)
+                else -> ContainerInfo.Package(targetContainerFqName!!)
             }
             return ContainerChangeInfo(originalInfo, newInfo)
         }
@@ -91,7 +91,7 @@ sealed class MoveDeclarationsDelegate {
             return when (moveTarget) {
                 is KotlinMoveTargetForCompanion -> true
                 is KotlinMoveTargetForExistingElement -> {
-                    val targetClass = moveTarget.targetElement as? KtClassOrObject ?: return false
+                    val targetClass = (moveTarget as KotlinMoveTargetForExistingElement).targetElement as? KtClassOrObject ?: return false
                     val targetClassDescriptor = targetClass.unsafeResolveToDescriptor() as ClassDescriptor
                     val companionClassDescriptor = companionDescriptor.containingDeclaration as? ClassDescriptor ?: return false
                     targetClassDescriptor.isSubclassOf(companionClassDescriptor)
@@ -112,13 +112,13 @@ sealed class MoveDeclarationsDelegate {
 
                 val isConflict = when (usage) {
                     is ImplicitCompanionAsDispatchReceiverUsageInfo -> {
-                        if (!isValidTargetForImplicitCompanionAsDispatchReceiver(descriptor, usage.companionDescriptor)) {
+                        if (!isValidTargetForImplicitCompanionAsDispatchReceiver(descriptor, (usage as ImplicitCompanionAsDispatchReceiverUsageInfo).companionDescriptor)) {
                             conflicts.putValue(element, "Implicit companion object will be inaccessible: ${element.text}")
                         }
                         true
                     }
 
-                    is OuterInstanceReferenceUsageInfo -> usage.reportConflictIfAny(conflicts)
+                    is OuterInstanceReferenceUsageInfo -> (usage as OuterInstanceReferenceUsageInfo).reportConflictIfAny(conflicts)
 
                     else -> false
                 }
@@ -151,29 +151,30 @@ sealed class MoveDeclarationsDelegate {
         override fun preprocessUsages(descriptor: MoveDeclarationsDescriptor, usages: List<UsageInfo>) {
             if (outerInstanceParameterName == null) return
             val psiFactory = KtPsiFactory(descriptor.project)
-            val newOuterInstanceRef = psiFactory.createExpression(outerInstanceParameterName)
+            val newOuterInstanceRef = psiFactory.createExpression(outerInstanceParameterName!!)
             val classToMove = descriptor.moveSource.elementsToMove.singleOrNull() as? KtClass
 
             for (usage in usages) {
                 if (usage is MoveRenameUsageInfo) {
-                    val referencedNestedClass = usage.referencedElement?.unwrapped as? KtClassOrObject
+                    val referencedNestedClass = (usage as MoveRenameUsageInfo).referencedElement?.unwrapped as? KtClassOrObject
                     if (referencedNestedClass == classToMove) {
                         val outerClass = referencedNestedClass?.containingClassOrObject
                         val lightOuterClass = outerClass?.toLightClass()
                         if (lightOuterClass != null) {
                             MoveInnerClassUsagesHandler.EP_NAME
-                                    .forLanguage(usage.element!!.language)
-                                    ?.correctInnerClassUsage(usage, lightOuterClass, outerInstanceParameterName)
+                                    .forLanguage((usage as MoveRenameUsageInfo).element!!.language)
+                                    ?.correctInnerClassUsage(usage, lightOuterClass!!, outerInstanceParameterName)
                         }
                     }
                 }
 
                 when (usage) {
                     is OuterInstanceReferenceUsageInfo.ExplicitThis -> {
-                        usage.expression?.replace(newOuterInstanceRef)
+                        (usage as OuterInstanceReferenceUsageInfo.ExplicitThis).expression?.replace(newOuterInstanceRef)
                     }
                     is OuterInstanceReferenceUsageInfo.ImplicitReceiver -> {
-                        usage.callElement?.let { it.replace(psiFactory.createExpressionByPattern("$0.$1", outerInstanceParameterName, it)) }
+                        (usage as OuterInstanceReferenceUsageInfo.ImplicitReceiver).callElement?.let { it.replace(psiFactory.createExpressionByPattern("$0.$1",
+                                                                                                                                                       outerInstanceParameterName!!, it)) }
                     }
                 }
             }

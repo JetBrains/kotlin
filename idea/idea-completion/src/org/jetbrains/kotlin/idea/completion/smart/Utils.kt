@@ -149,13 +149,13 @@ fun Collection<FuzzyType>.matchExpectedInfo(expectedInfo: ExpectedInfo): Expecte
     val sequence = asSequence()
     val substitutor = sequence.map { expectedInfo.matchingSubstitutor(it) }.firstOrNull()
     if (substitutor != null) {
-        return ExpectedInfoMatch.match(substitutor)
+        return ExpectedInfoMatch.match(substitutor!!)
     }
 
     if (sequence.any { it.nullability() == TypeNullability.NULLABLE }) {
         val substitutor2 = sequence.map { expectedInfo.matchingSubstitutor(it.makeNotNullable()) }.firstOrNull()
         if (substitutor2 != null) {
-            return ExpectedInfoMatch.ifNotNullMatch(substitutor2)
+            return ExpectedInfoMatch.ifNotNullMatch(substitutor2!!)
         }
     }
 
@@ -305,7 +305,7 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
         bindingContext: BindingContext
 ): Collection<FuzzyType> {
     if (callTypeAndReceiver is CallTypeAndReceiver.CALLABLE_REFERENCE) {
-        val lhs = callTypeAndReceiver.receiver?.let { bindingContext[BindingContext.DOUBLE_COLON_LHS, it] }
+        val lhs = (callTypeAndReceiver as CallTypeAndReceiver.CALLABLE_REFERENCE).receiver?.let { bindingContext[BindingContext.DOUBLE_COLON_LHS, it] }
         return listOfNotNull((this as? CallableDescriptor)?.callableReferenceType(resolutionFacade, lhs))
     }
 

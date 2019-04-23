@@ -114,12 +114,12 @@ abstract class ChangeCallableReturnTypeFix(
         val element = element ?: return ""
 
         if (changeFunctionLiteralReturnTypeFix != null) {
-            return changeFunctionLiteralReturnTypeFix.text
+            return changeFunctionLiteralReturnTypeFix!!.text
         }
 
         val functionPresentation = functionPresentation()
 
-        if (isUnitType && element is KtFunction && element.hasBlockBody()) {
+        if (isUnitType && element is KtFunction && (element as KtFunction).hasBlockBody()) {
             return if (functionPresentation == null)
                 "Remove explicitly specified return type"
             else
@@ -145,14 +145,14 @@ abstract class ChangeCallableReturnTypeFix(
         val element = element ?: return
 
         if (changeFunctionLiteralReturnTypeFix != null) {
-            changeFunctionLiteralReturnTypeFix.invoke(project, editor!!, file)
+            changeFunctionLiteralReturnTypeFix!!.invoke(project, editor!!, file)
         } else {
-            if (!(isUnitType && element is KtFunction && element.hasBlockBody())) {
+            if (!(isUnitType && element is KtFunction && (element as KtFunction).hasBlockBody())) {
                 var newTypeRef = KtPsiFactory(project).createType(typeSourceCode)
                 newTypeRef = element.setTypeReference(newTypeRef)!!
                 ShortenReferences.DEFAULT.process(newTypeRef)
             } else {
-                element.typeReference = null
+                (element as KtFunction).typeReference = null
             }
         }
     }
@@ -203,7 +203,7 @@ abstract class ChangeCallableReturnTypeFix(
 
             val matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor)
             if (matchingReturnType != null) {
-                actions.add(OnType(function, matchingReturnType))
+                actions.add(OnType(function, matchingReturnType!!))
             }
 
             val functionType = descriptor.returnType ?: return actions
@@ -219,7 +219,7 @@ abstract class ChangeCallableReturnTypeFix(
             if (overriddenMismatchingFunctions.size == 1) {
                 val overriddenFunction = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingFunctions[0])
                 if (overriddenFunction is KtFunction) {
-                    actions.add(ForOverridden(overriddenFunction, functionType))
+                    actions.add(ForOverridden(overriddenFunction as KtFunction, functionType))
                 }
             }
 

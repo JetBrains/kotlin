@@ -93,8 +93,8 @@ class KotlinFindClassUsagesHandler(
                 processMemberReferencesLater(classOrObject)
             }
 
-            if (kotlinOptions.isUsages && classOrObject is KtObjectDeclaration && classOrObject.isCompanion() && classOrObject in options.searchScope) {
-                if (!processCompanionObjectInternalReferences(classOrObject)) return false
+            if (kotlinOptions.isUsages && classOrObject is KtObjectDeclaration && (classOrObject as KtObjectDeclaration).isCompanion() && classOrObject in options.searchScope) {
+                if (!processCompanionObjectInternalReferences(classOrObject as KtObjectDeclaration)) return false
             }
 
             if (kotlinOptions.searchConstructorUsages) {
@@ -190,7 +190,7 @@ class KotlinFindClassUsagesHandler(
 
     override fun getStringsToSearch(element: PsiElement): Collection<String> {
         val psiClass = when (element) {
-            is PsiClass -> element
+            is PsiClass -> element as PsiClass
             is KtClassOrObject -> getElement().toLightClass()
             else -> null
         } ?: return Collections.emptyList()

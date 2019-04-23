@@ -59,7 +59,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is KtNamedFunction || (element is KtLightMethod && element.kotlinOrigin is KtNamedFunction) || element is FunctionWithSupersWrapper
+        return element is KtNamedFunction || (element is KtLightMethod && (element as KtLightMethod).kotlinOrigin is KtNamedFunction) || element is FunctionWithSupersWrapper
     }
 
     override fun isToSearchInComments(psiElement: PsiElement) = JavaRefactoringSettings.getInstance().RENAME_SEARCH_IN_COMMENTS_FOR_METHOD
@@ -129,13 +129,13 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
                 javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
             }
             else -> {
-                val chosenElements = checkSuperMethods(element, null, "rename")
-                if (chosenElements.size > 1) FunctionWithSupersWrapper(element, chosenElements) else wrappedMethod
+                val chosenElements = checkSuperMethods(element as KtNamedFunction, null, "rename")
+                if (chosenElements.size > 1) FunctionWithSupersWrapper(element as KtNamedFunction, chosenElements) else wrappedMethod
             }
         }
 
         if (substitutedJavaElement is KtLightMethod && element is KtDeclaration) {
-            return substitutedJavaElement.kotlinOrigin as? KtNamedFunction
+            return (substitutedJavaElement as KtLightMethod).kotlinOrigin as? KtNamedFunction
         }
 
         return substitutedJavaElement
@@ -144,7 +144,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     override fun substituteElementToRename(element: PsiElement, editor: Editor, renameCallback: Pass<PsiElement>) {
         fun preprocessAndPass(substitutedJavaElement: PsiElement) {
             val elementToProcess = if (substitutedJavaElement is KtLightMethod && element is KtDeclaration) {
-                substitutedJavaElement.kotlinOrigin as? KtNamedFunction
+                (substitutedJavaElement as KtLightMethod).kotlinOrigin as? KtNamedFunction
             }
             else {
                 substitutedJavaElement
@@ -156,14 +156,14 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
 
         val wrappedMethod = wrapPsiMethod(element)
         val deepestSuperMethods = if (wrappedMethod != null) {
-            findDeepestSuperMethodsKotlinAware(wrappedMethod)
+            findDeepestSuperMethodsKotlinAware(wrappedMethod!!)
         } else {
             findDeepestSuperMethodsNoWrapping(element)
         }
         when {
             deepestSuperMethods.isEmpty() -> preprocessAndPass(element)
-            wrappedMethod != null && (wrappedMethod.isConstructor || element !is KtNamedFunction) -> {
-                javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor, Pass(::preprocessAndPass))
+            wrappedMethod != null && (wrappedMethod!!.isConstructor || element !is KtNamedFunction) -> {
+                javaMethodProcessorInstance.substituteElementToRename(wrappedMethod!!, editor, Pass(::preprocessAndPass))
             }
             else -> {
                 val declaration = element.unwrapped as? KtNamedFunction ?: return
@@ -185,7 +185,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         super.prepareRenaming(element, newName, allRenames, scope)
 
         if (element is KtLightMethod && getJvmName(element) == null) {
-            (element.kotlinOrigin as? KtNamedFunction)?.let { allRenames[it] = newName }
+            ((element as KtLightMethod).kotlinOrigin as? KtNamedFunction)?.let { allRenames[it] = newName }
         }
         if (element is FunctionWithSupersWrapper) {
             allRenames.remove(element)
@@ -208,7 +208,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
                     val newOverriderName = RefactoringUtil.suggestNewOverriderName(overriderName, baseName, newBaseName)
                     if (newOverriderName != null) {
                         RenameProcessor.assertNonCompileElement(overrider)
-                        allRenames.put(overrider, newOverriderName)
+                        allRenames.put(overrider, newOverriderName!!)
                     }
                     return@forEachOverridingMethod true
                 }
@@ -221,7 +221,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         val ambiguousImportUsages = SmartList<UsageInfo>()
         for (usage in usages) {
             if (usage is LostDefaultValuesInOverridingFunctionUsageInfo) {
-                usage.apply()
+                (usage as LostDefaultValuesInOverridingFunctionUsageInfo).apply()
                 continue
             }
 
@@ -244,7 +244,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     }
 
     private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {
-        is PsiMethod -> element
+        is PsiMethod -> element as PsiMethod
         is KtNamedFunction, is KtSecondaryConstructor -> runReadAction {
             LightClassUtil.getLightClassMethod(element as KtFunction)
         }

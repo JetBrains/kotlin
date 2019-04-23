@@ -95,7 +95,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
 
                 migrationInfo = prepareMigrationInfo(localOld, new) ?: return@executeOnPooledThread
 
-                if (applicableMigrationTools(migrationInfo).isEmpty()) {
+                if (applicableMigrationTools(migrationInfo!!).isEmpty()) {
                     hasApplicableTools = false
                     return@executeOnPooledThread
                 } else {
@@ -107,7 +107,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
                 }
 
                 ApplicationManager.getApplication().invokeLater {
-                    showMigrationNotification(project, migrationInfo)
+                    showMigrationNotification(project, migrationInfo!!)
                 }
             } finally {
                 notifyFinish(migrationInfo, hasApplicableTools)
@@ -132,20 +132,20 @@ class KotlinMigrationProjectComponent(val project: Project) {
                 return null
             }
 
-            val oldLibraryVersion = old.stdlibInfo?.version
-            val newLibraryVersion = new.stdlibInfo?.version
+            val oldLibraryVersion = old!!.stdlibInfo?.version
+            val newLibraryVersion = new!!.stdlibInfo?.version
 
             if (oldLibraryVersion == null || newLibraryVersion == null) {
                 return null
             }
 
             if (VersionComparatorUtil.COMPARATOR.compare(newLibraryVersion, oldLibraryVersion) > 0 ||
-                old.apiVersion < new.apiVersion || old.languageVersion < new.languageVersion
+                old!!.apiVersion < new!!.apiVersion || old!!.languageVersion < new!!.languageVersion
             ) {
                 return MigrationInfo(
-                    oldLibraryVersion, newLibraryVersion,
-                    old.apiVersion, new.apiVersion,
-                    old.languageVersion, new.languageVersion
+                    oldLibraryVersion!!, newLibraryVersion!!,
+                    old!!.apiVersion, new!!.apiVersion,
+                    old!!.languageVersion, new!!.languageVersion
                 )
             }
 
@@ -266,7 +266,7 @@ private fun maxKotlinLibVersion(project: Project): LibInfo? {
 
             val libraryInfo = parseExternalLibraryName(library) ?: continue
 
-            if (maxStdlibInfo == null || VersionComparatorUtil.COMPARATOR.compare(libraryInfo.version, maxStdlibInfo.version) > 0) {
+            if (maxStdlibInfo == null || VersionComparatorUtil.COMPARATOR.compare(libraryInfo.version, maxStdlibInfo!!.version) > 0) {
                 maxStdlibInfo = LibInfo(KOTLIN_GROUP_ID, libraryInfo.artifactId, libraryInfo.version)
             }
         }
@@ -288,11 +288,11 @@ private fun collectMaxCompilerSettings(project: Project): LanguageVersionSetting
 
             val languageVersionSettings = module.languageVersionSettings
 
-            if (maxApiVersion == null || languageVersionSettings.apiVersion > maxApiVersion) {
+            if (maxApiVersion == null || languageVersionSettings.apiVersion > maxApiVersion!!) {
                 maxApiVersion = languageVersionSettings.apiVersion
             }
 
-            if (maxLanguageVersion == null || languageVersionSettings.languageVersion > maxLanguageVersion) {
+            if (maxLanguageVersion == null || languageVersionSettings.languageVersion > maxLanguageVersion!!) {
                 maxLanguageVersion = languageVersionSettings.languageVersion
             }
         }

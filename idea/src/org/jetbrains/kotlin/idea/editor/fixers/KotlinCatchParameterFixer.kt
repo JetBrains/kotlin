@@ -30,16 +30,16 @@ class KotlinCatchParameterFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmar
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtCatchClause) return
 
-        val catchEnd = psiElement.node.findChildByType(KtTokens.CATCH_KEYWORD)!!.textRange!!.endOffset
+        val catchEnd = (psiElement as KtCatchClause).node.findChildByType(KtTokens.CATCH_KEYWORD)!!.textRange!!.endOffset
 
-        val parameterList = psiElement.parameterList
-        if (parameterList == null || parameterList.node.findChildByType(KtTokens.RPAR) == null) {
-            val endOffset = min(psiElement.endOffset, psiElement.catchBody?.startOffset ?: Int.MAX_VALUE)
+        val parameterList = (psiElement as KtCatchClause).parameterList
+        if (parameterList == null || parameterList!!.node.findChildByType(KtTokens.RPAR) == null) {
+            val endOffset = min(psiElement.endOffset, (psiElement as KtCatchClause).catchBody?.startOffset ?: Int.MAX_VALUE)
             val parameter = parameterList?.parameters?.firstOrNull()?.text ?: ""
             editor.document.replaceString(catchEnd, endOffset, "($parameter)")
             processor.registerUnresolvedError(endOffset - 1)
-        } else if (parameterList.parameters.firstOrNull()?.text.isNullOrBlank()) {
-            processor.registerUnresolvedError(parameterList.startOffset + 1)
+        } else if (parameterList!!.parameters.firstOrNull()?.text.isNullOrBlank()) {
+            processor.registerUnresolvedError(parameterList!!.startOffset + 1)
         }
     }
 }

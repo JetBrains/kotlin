@@ -131,8 +131,8 @@ private fun UsageReplacementStrategy.processUsages(
             //TODO: keep the import if we don't know how to replace some of the usages
             val importDirective = usage.getStrictParentOfType<KtImportDirective>()
             if (importDirective != null) {
-                if (!importDirective.isAllUnder && importDirective.targetDescriptors().size == 1) {
-                    importsToDelete.add(importDirective)
+                if (!importDirective!!.isAllUnder && importDirective!!.targetDescriptors().size == 1) {
+                    importsToDelete.add(importDirective!!)
                 }
                 continue
             }
@@ -151,8 +151,8 @@ private fun UsageReplacementStrategy.specialUsageProcessing(
 ): Boolean {
     when (val usageParent = usage.parent) {
         is KtCallableReferenceExpression -> {
-            val grandParent = usageParent.parent
-            ConvertReferenceToLambdaIntention().applyTo(usageParent, null)
+            val grandParent = (usageParent as KtCallableReferenceExpression).parent
+            ConvertReferenceToLambdaIntention().applyTo(usageParent as KtCallableReferenceExpression, null)
             (grandParent as? KtElement)?.let {
                 doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor)
             }
@@ -160,9 +160,9 @@ private fun UsageReplacementStrategy.specialUsageProcessing(
         }
 
         is KtCallElement -> {
-            val lambdaArguments = usageParent.lambdaArguments
+            val lambdaArguments = (usageParent as KtCallElement).lambdaArguments
             if (lambdaArguments.isNotEmpty()) {
-                val grandParent = usageParent.parent
+                val grandParent = (usageParent as KtCallElement).parent
                 val specifySignature = SpecifyExplicitLambdaSignatureIntention()
                 for (lambdaArgument in lambdaArguments) {
                     val lambdaExpression = lambdaArgument.getLambdaExpression() ?: continue

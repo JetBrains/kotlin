@@ -55,7 +55,7 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                 factory.generateIt(project, element) ?: return@runWhenSmart
             } catch (e: KotlinTypeInaccessibleException) {
                 if (editor != null) {
-                    showErrorHint(project, editor, "Cannot generate expected $elementType: " + e.message, e.message)
+                    showErrorHint(project, editor!!, "Cannot generate expected $elementType: " + e.message, e.message)
                 }
                 return@runWhenSmart
             }
@@ -67,16 +67,16 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                     val packageDirective = originalFile.packageDirective
                     if (packageDirective != null) {
                         val oldPackageDirective = targetFile.packageDirective
-                        val newPackageDirective = factory.createPackageDirective(packageDirective.fqName)
+                        val newPackageDirective = factory.createPackageDirective(packageDirective!!.fqName)
                         if (oldPackageDirective != null) {
-                            oldPackageDirective.replace(newPackageDirective)
+                            oldPackageDirective!!.replace(newPackageDirective)
                         } else {
                             targetFile.add(newPackageDirective)
                         }
                     }
                 }
                 val generatedDeclaration = when {
-                    targetClass != null -> targetClass.addDeclaration(generated as KtNamedDeclaration)
+                    targetClass != null -> targetClass!!.addDeclaration(generated as KtNamedDeclaration)
                     else -> targetFile.add(generated) as KtElement
                 }
                 val reformatted = CodeStyleManager.getInstance(project).reformat(generatedDeclaration)

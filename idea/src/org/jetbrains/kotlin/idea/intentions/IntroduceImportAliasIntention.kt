@@ -29,6 +29,6 @@ class IntroduceImportAliasIntention : SelfTargetingRangeIntention<KtNameReferenc
 
     override fun applyTo(element: KtNameReferenceExpression, editor: Editor?) {
         if (editor == null) return
-        KotlinIntroduceImportAliasHandler.doRefactoring(element.project, editor, element)
+        KotlinIntroduceImportAliasHandler.doRefactoring(element.project, editor!!, element)
     }
 }

@@ -49,12 +49,12 @@ class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
             val childValue = child.value?.asKtFile()
 
             if (childValue != null) {
-                val mainClass = KotlinIconProvider.getSingleClass(childValue)
+                val mainClass = KotlinIconProvider.getSingleClass(childValue!!)
                 if (mainClass != null) {
-                    result.add(KtClassOrObjectTreeNode(childValue.project, mainClass, settings))
+                    result.add(KtClassOrObjectTreeNode(childValue!!.project, mainClass!!, settings))
                 }
                 else {
-                    result.add(KtFileTreeNode(childValue.project, childValue, settings))
+                    result.add(KtFileTreeNode(childValue!!.project, childValue, settings))
                 }
             }
             else {
@@ -100,9 +100,9 @@ class KotlinSelectInProjectViewProvider(private val project: Project) : Selectab
         var current = element.parentsWithSelf.firstOrNull() { it.isSelectable() }
 
         if (current is KtFile) {
-            val declaration = current.declarations.singleOrNull()
+            val declaration = (current as KtFile).declarations.singleOrNull()
             val nameWithoutExtension = virtualFile?.nameWithoutExtension ?: file.name
-            if (declaration is KtClassOrObject && nameWithoutExtension == declaration.name) {
+            if (declaration is KtClassOrObject && nameWithoutExtension == (declaration as KtClassOrObject).name) {
                 current = declaration
             }
         }
@@ -120,6 +120,6 @@ class KotlinSelectInProjectViewProvider(private val project: Project) : Selectab
 
     private fun fileInRoots(file: VirtualFile?): Boolean {
         val index = ProjectRootManager.getInstance(project).fileIndex
-        return file != null && (index.isInSourceContent(file) || index.isInLibraryClasses(file) || index.isInLibrarySource(file))
+        return file != null && (index.isInSourceContent(file!!) || index.isInLibraryClasses(file!!) || index.isInLibrarySource(file!!))
     }
 }

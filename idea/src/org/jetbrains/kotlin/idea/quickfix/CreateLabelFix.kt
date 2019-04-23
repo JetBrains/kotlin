@@ -71,7 +71,7 @@ sealed class CreateLabelFix(
 
         chooseContainerElementIfNecessary(
             containers,
-            editor,
+            editor!!,
             chooserTitle,
             true,
             { it },

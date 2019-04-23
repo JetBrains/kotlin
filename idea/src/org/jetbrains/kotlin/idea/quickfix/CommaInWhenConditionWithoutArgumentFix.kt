@@ -67,7 +67,7 @@ class CommaInWhenConditionWithoutArgumentFix(element: PsiElement) : KotlinQuickF
             whenEntryChildren@ while (child != null) {
                 when {
                     child is KtWhenConditionWithExpression -> {
-                        conditions.add(child)
+                        conditions.add(child as KtWhenConditionWithExpression)
                     }
                     child.node.elementType == KtTokens.ARROW -> {
                         arrow = child
@@ -80,7 +80,7 @@ class CommaInWhenConditionWithoutArgumentFix(element: PsiElement) : KotlinQuickF
             val last = child?.prevSibling
 
             return if (arrow != null && last != null)
-                WhenEntryConditionsData(conditions.toTypedArray(), whenEntry.firstChild, last, arrow)
+                WhenEntryConditionsData(conditions.toTypedArray(), whenEntry.firstChild, last!!, arrow!!)
             else
                 null
         }

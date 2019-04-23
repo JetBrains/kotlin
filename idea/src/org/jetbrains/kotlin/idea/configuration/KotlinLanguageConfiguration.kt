@@ -153,9 +153,9 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
                 }
 
                 is PluginUpdateStatus.Update -> {
-                    update = pluginUpdateStatus
+                    update = pluginUpdateStatus as PluginUpdateStatus.Update
                     versionForInstallation = update?.pluginDescriptor?.version
-                    form.setUpdateStatus("A new version ${pluginUpdateStatus.pluginDescriptor.version} is available", true)
+                    form.setUpdateStatus("A new version ${(pluginUpdateStatus as PluginUpdateStatus.Update).pluginDescriptor.version} is available", true)
                     if (installedVersion != null && installedVersion == versionForInstallation) {
                         // Installation of the plugin has been started or finished
                         form.hideInstallButton()
@@ -164,12 +164,12 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
                 }
 
                 is PluginUpdateStatus.CheckFailed ->
-                    form.setUpdateStatus("Update check failed: ${pluginUpdateStatus.message}", false)
+                    form.setUpdateStatus("Update check failed: ${(pluginUpdateStatus as PluginUpdateStatus.CheckFailed).message}", false)
 
                 is PluginUpdateStatus.Unverified -> {
-                    val version = pluginUpdateStatus.updateStatus.pluginDescriptor.version
-                    val generalLine = "A new version $version is found but it's not verified by ${pluginUpdateStatus.verifierName}."
-                    val reasonLine = pluginUpdateStatus.reason ?: ""
+                    val version = (pluginUpdateStatus as PluginUpdateStatus.Unverified).updateStatus.pluginDescriptor.version
+                    val generalLine = "A new version $version is found but it's not verified by ${(pluginUpdateStatus as PluginUpdateStatus.Unverified).verifierName}."
+                    val reasonLine = (pluginUpdateStatus as PluginUpdateStatus.Unverified).reason ?: ""
                     val message = "<html>$generalLine<br/>$reasonLine</html>"
                     form.setUpdateStatus(message, false)
                 }

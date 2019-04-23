@@ -106,42 +106,43 @@ class CompletionBindingContextProvider(project: Project) {
         val prevStatement = inStatement?.siblings(forward = false, withItself = false)?.firstIsInstanceOrNull<KtExpression>()
         val modificationScope = inStatement?.let { KotlinCodeBlockModificationListener.getInsideCodeBlockModificationScope(it) }
 
-        val psiElementsBeforeAndAfter = modificationScope?.let { collectPsiElementsBeforeAndAfter(modificationScope, inStatement) }
+        val psiElementsBeforeAndAfter = modificationScope?.let { collectPsiElementsBeforeAndAfter(modificationScope!!, inStatement!!) }
 
         val prevCompletionData = prevCompletionDataCache.value.data
         when {
             prevCompletionData == null ->
                 log("No up-to-date data from previous completion\n")
-            block != prevCompletionData.block ->
+            block != prevCompletionData!!.block ->
                 log("Not in the same block\n")
-            prevStatement != prevCompletionData.prevStatement ->
+            prevStatement != prevCompletionData!!.prevStatement ->
                 log("Previous statement is not the same\n")
-            psiElementsBeforeAndAfter != prevCompletionData.psiElementsBeforeAndAfter ->
+            psiElementsBeforeAndAfter != prevCompletionData!!.psiElementsBeforeAndAfter ->
                 log("PSI-tree has changed inside current scope\n")
-            prevCompletionData.moduleDescriptor != resolutionFacade.moduleDescriptor ->
+            prevCompletionData!!.moduleDescriptor != resolutionFacade.moduleDescriptor ->
                 log("ModuleDescriptor has been reset")
-            inStatement.isTooComplex() ->
+            inStatement!!.isTooComplex() ->
                 log("Current statement is too complex to use optimization\n")
             else -> {
-                log("Statement position is the same - analyzing only one statement:\n${inStatement.text.prependIndent("    ")}\n")
-                LOG.debug("Reusing data from completion of \"${prevCompletionData.debugText}\"")
+                log("Statement position is the same - analyzing only one statement:\n${inStatement!!.text.prependIndent("    ")}\n")
+                LOG.debug("Reusing data from completion of \"${prevCompletionData!!.debugText}\"")
 
                 //TODO: expected type?
-                val statementContext = inStatement.analyzeInContext(scope = prevCompletionData.statementResolutionScope,
-                                                                    contextExpression = block,
-                                                                    dataFlowInfo = prevCompletionData.statementDataFlowInfo,
-                                                                    isStatement = true)
+                val statementContext = inStatement!!.analyzeInContext(scope = prevCompletionData!!.statementResolutionScope,
+                                                                      contextExpression = block!!,
+                                                                      dataFlowInfo = prevCompletionData!!.statementDataFlowInfo,
+                                                                      isStatement = true)
                 // we do not update prevCompletionDataCache because the same data should work
-                return CompositeBindingContext.create(listOf(statementContext, prevCompletionData.bindingContext))
+                return CompositeBindingContext.create(listOf(statementContext, prevCompletionData!!.bindingContext))
             }
         }
 
         val bindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
         prevCompletionDataCache.value.data = if (block != null && modificationScope != null) {
-            val resolutionScope = inStatement.getResolutionScope(bindingContext, resolutionFacade)
-            val dataFlowInfo = bindingContext.getDataFlowInfoBefore(inStatement)
-            CompletionData(block, prevStatement, psiElementsBeforeAndAfter!!, bindingContext, resolutionFacade.moduleDescriptor, resolutionScope, dataFlowInfo,
-                           debugText = position.text)
+            val resolutionScope = inStatement!!.getResolutionScope(bindingContext, resolutionFacade)
+            val dataFlowInfo = bindingContext.getDataFlowInfoBefore(inStatement!!)
+            CompletionData(
+                block!!, prevStatement, psiElementsBeforeAndAfter!!, bindingContext, resolutionFacade.moduleDescriptor, resolutionScope, dataFlowInfo,
+                debugText = position.text)
         }
         else {
             null

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 class AddModifierFixFactory(val token: KtModifierKeywordToken) : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val functionDescriptor = (diagnostic as? DiagnosticWithParameters2<*, *, *>)?.a as? FunctionDescriptor ?: return null
-        val target = DescriptorToSourceUtilsIde.getAnyDeclaration(diagnostic.psiFile.project, functionDescriptor)
+        val target = DescriptorToSourceUtilsIde.getAnyDeclaration((diagnostic as DiagnosticWithParameters2<*, *, *>).psiFile.project, functionDescriptor)
                 as? KtModifierListOwner ?: return null
         if (target.canRefactor()) {
             return object : AddModifierFix(target, token), CleanupFix {}

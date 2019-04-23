@@ -27,7 +27,7 @@ class ImplicitNullableNothingTypeInspection : IntentionBasedInspection<KtCallabl
         additionalChecker = { declaration ->
             SpecifyTypeExplicitlyIntention.getTypeForDeclaration(declaration).isNullableNothing() &&
             (declaration.getModalityFromDescriptor() == KtTokens.OPEN_KEYWORD ||
-             declaration is KtProperty && declaration.isVar)
+             declaration is KtProperty && (declaration as KtProperty).isVar)
         },
         problemText = "Implicit `Nothing?` type"
 ) {

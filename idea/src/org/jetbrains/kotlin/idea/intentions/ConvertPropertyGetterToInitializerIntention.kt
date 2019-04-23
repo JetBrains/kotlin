@@ -43,7 +43,7 @@ class ConvertPropertyGetterToInitializerIntention : SelfTargetingIntention<KtPro
 private fun KtPropertyAccessor.singleExpression(): KtExpression? {
     val bodyExpression = this.bodyExpression
     return if (bodyExpression is KtBlockExpression)
-        (bodyExpression.statements.singleOrNull() as? KtReturnExpression)?.returnedExpression
+        ((bodyExpression as KtBlockExpression).statements.singleOrNull() as? KtReturnExpression)?.returnedExpression
     else
         bodyExpression
 }

@@ -85,7 +85,7 @@ class LoopToCallChainInspection : AbstractKotlinInspection() {
 
             val offset = when (result) {
                 // if result is variable declaration, put the caret onto its name to allow quick inline
-                is KtProperty -> result.nameIdentifier?.startOffset ?: result.startOffset
+                is KtProperty -> (result as KtProperty).nameIdentifier?.startOffset ?: result.startOffset
                 else -> result.startOffset
             }
 
@@ -113,7 +113,7 @@ abstract class AbstractLoopToCallChainIntention(
 ) {
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         val match = match(element, lazy, false)
-        text = if (match != null) "Replace with '${match.transformationMatch.buildPresentation()}'" else defaultText
+        text = if (match != null) "Replace with '${match!!.transformationMatch.buildPresentation()}'" else defaultText
         return if (match != null) element.forKeyword.textRange else null
     }
 

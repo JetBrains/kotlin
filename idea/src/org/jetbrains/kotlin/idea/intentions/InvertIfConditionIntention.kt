@@ -68,8 +68,8 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
             //use De Morgan's law only for negated condition to not make it more complex
             if (it.operationReference.getReferencedNameElementType() == KtTokens.EXCL) {
                 val binaryExpr = (it.baseExpression as? KtParenthesizedExpression)?.expression as? KtBinaryExpression
-                if (binaryExpr != null && simplifyIntention.isApplicableTo(binaryExpr)) {
-                    simplifyIntention.applyTo(binaryExpr)
+                if (binaryExpr != null && simplifyIntention.isApplicableTo(binaryExpr!!)) {
+                    simplifyIntention.applyTo(binaryExpr!!)
                 }
             }
         }
@@ -91,7 +91,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         else
             elseBranch
 
-        val newElse = if (thenBranch is KtBlockExpression && thenBranch.statements.isEmpty())
+        val newElse = if (thenBranch is KtBlockExpression && (thenBranch as KtBlockExpression).statements.isEmpty())
             null
         else
             thenBranch
@@ -106,7 +106,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         val newIf = if (newElse == null) {
             psiFactory.createExpressionByPattern("if ($0)$afterCondition$1", newCondition, newThen)
         } else {
-            psiFactory.createExpressionByPattern("if ($0)$afterCondition$1${beforeElse}else$afterElse$2", newCondition, newThen, newElse)
+            psiFactory.createExpressionByPattern("if ($0)$afterCondition$1${beforeElse}else$afterElse$2", newCondition, newThen, newElse!!)
         } as KtIfExpression
 
         return ifExpression.replaced(newIf)
@@ -123,31 +123,31 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         if (lastThenStatement.isExitStatement()) {
             val block = ifExpression.parent as? KtBlockExpression
             if (block != null) {
-                val rBrace = block.rBrace
+                val rBrace = block!!.rBrace
                 val afterIfInBlock = ifExpression.siblings(withItself = false).takeWhile { it != rBrace }.toList()
                 val lastStatementInBlock = afterIfInBlock.lastIsInstanceOrNull<KtExpression>()
                 if (lastStatementInBlock != null) {
-                    val exitStatementAfterIf = if (lastStatementInBlock.isExitStatement())
+                    val exitStatementAfterIf = if (lastStatementInBlock!!.isExitStatement())
                         lastStatementInBlock
                     else
-                        exitStatementExecutedAfter(lastStatementInBlock)
+                        exitStatementExecutedAfter(lastStatementInBlock!!)
                     if (exitStatementAfterIf != null) {
                         val first = afterIfInBlock.first()
                         val last = afterIfInBlock.last()
                         // build new then branch from statements after if (we will add exit statement if necessary later)
                         //TODO: no block if single?
-                        val newThenRange = if (isEmptyReturn(lastThenStatement) && isEmptyReturn(lastStatementInBlock)) {
-                            PsiChildRange(first, lastStatementInBlock.prevSibling).trimWhiteSpaces()
+                        val newThenRange = if (isEmptyReturn(lastThenStatement) && isEmptyReturn(lastStatementInBlock!!)) {
+                            PsiChildRange(first, lastStatementInBlock!!.prevSibling).trimWhiteSpaces()
                         } else {
                             PsiChildRange(first, last).trimWhiteSpaces()
                         }
                         val newIf = factory.createExpressionByPattern("if ($0) { $1 }", newCondition, newThenRange) as KtIfExpression
 
                         // remove statements after if as they are moving under if
-                        block.deleteChildRange(first, last)
+                        block!!.deleteChildRange(first, last)
 
                         if (isEmptyReturn(lastThenStatement)) {
-                            if (block.parent is KtDeclarationWithBody && block.parent !is KtFunctionLiteral) {
+                            if (block!!.parent is KtDeclarationWithBody && block!!.parent !is KtFunctionLiteral) {
                                 lastThenStatement.delete()
                             }
                         }
@@ -159,7 +159,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
                             val exitAfterNewIf = exitStatementExecutedAfter(updatedIf)
                             if (exitAfterNewIf == null || !exitAfterNewIf.matches(exitStatementAfterIf)) {
                                 val newThen = newIf.then as KtBlockExpression
-                                newThen.addBefore(exitStatementAfterIf, newThen.rBrace)
+                                newThen.addBefore(exitStatementAfterIf!!, newThen.rBrace)
                             }
                         }
 
@@ -178,7 +178,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
     }
 
     private fun isEmptyReturn(statement: KtExpression) =
-        statement is KtReturnExpression && statement.returnedExpression == null && statement.labeledExpression == null
+        statement is KtReturnExpression && (statement as KtReturnExpression).returnedExpression == null && (statement as KtReturnExpression).labeledExpression == null
 
     private fun copyThenBranchAfter(ifExpression: KtIfExpression): KtIfExpression {
         val factory = KtPsiFactory(ifExpression)
@@ -195,7 +195,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         }
 
         if (thenBranch is KtBlockExpression) {
-            val range = thenBranch.contentRange()
+            val range = (thenBranch as KtBlockExpression).contentRange()
             if (!range.isEmpty) {
                 parent.addRangeAfter(range.first, range.last, ifExpression)
                 parent.addAfter(factory.createNewLine(), ifExpression)
@@ -210,9 +210,9 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
     private fun exitStatementExecutedAfter(expression: KtExpression): KtExpression? {
         val parent = expression.parent
         if (parent is KtBlockExpression) {
-            val lastStatement = parent.statements.last()
+            val lastStatement = (parent as KtBlockExpression).statements.last()
             if (expression == lastStatement) {
-                return exitStatementExecutedAfter(parent)
+                return exitStatementExecutedAfter(parent as KtBlockExpression)
             } else {
                 if (lastStatement.isExitStatement() && expression.siblings(withItself = false).firstIsInstance<KtExpression>() == lastStatement) {
                     return lastStatement
@@ -223,26 +223,26 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
 
         when (parent) {
             is KtNamedFunction -> {
-                if (parent.bodyExpression == expression) {
-                    if (!parent.hasBlockBody()) return null
-                    val returnType = parent.resolveToDescriptorIfAny()?.returnType
-                    if (returnType == null || !returnType.isUnit()) return null
+                if ((parent as KtNamedFunction).bodyExpression == expression) {
+                    if (!(parent as KtNamedFunction).hasBlockBody()) return null
+                    val returnType = (parent as KtNamedFunction).resolveToDescriptorIfAny()?.returnType
+                    if (returnType == null || !returnType!!.isUnit()) return null
                     return KtPsiFactory(expression).createExpression("return")
                 }
             }
 
             is KtContainerNode -> {
-                val pparent = parent.parent
+                val pparent = (parent as KtContainerNode).parent
                 when (pparent) {
                     is KtLoopExpression -> {
-                        if (expression == pparent.body) {
+                        if (expression == (pparent as KtLoopExpression).body) {
                             return KtPsiFactory(expression).createExpression("continue")
                         }
                     }
 
                     is KtIfExpression -> {
-                        if (expression == pparent.then || expression == pparent.`else`) {
-                            return exitStatementExecutedAfter(pparent)
+                        if (expression == (pparent as KtIfExpression).then || expression == (pparent as KtIfExpression).`else`) {
+                            return exitStatementExecutedAfter(pparent as KtIfExpression)
                         }
                     }
                 }
@@ -259,6 +259,6 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         val lastLineNumber = getLineNumber(false)
         return siblings(withItself = false)
             .takeWhile { it.getLineNumber() == lastLineNumber }
-            .firstOrNull { it is PsiComment && it.node.elementType == KtTokens.EOL_COMMENT }
+            .firstOrNull { it is PsiComment && (it as PsiComment).node.elementType == KtTokens.EOL_COMMENT }
     }
 }

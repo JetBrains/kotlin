@@ -52,8 +52,8 @@ class KotlinChangeSignatureData(
         receiver = createReceiverInfoIfNeeded()
 
         val valueParameters = when (baseDeclaration) {
-            is KtFunction -> baseDeclaration.valueParameters
-            is KtClass -> baseDeclaration.primaryConstructorParameters
+            is KtFunction -> (baseDeclaration as KtFunction).valueParameters
+            is KtClass -> (baseDeclaration as KtClass).primaryConstructorParameters
             else -> null
         }
         parameters = baseDescriptor.valueParameters
@@ -106,8 +106,8 @@ class KotlinChangeSignatureData(
                 return@flatMapTo primaryDeclaration.actualsForExpected().mapNotNull {
                     val descriptor = it.unsafeResolveToDescriptor()
                     val callableDescriptor = when (descriptor) {
-                        is CallableDescriptor -> descriptor
-                        is ClassDescriptor -> descriptor.unsubstitutedPrimaryConstructor ?: return@mapNotNull null
+                        is CallableDescriptor -> descriptor as CallableDescriptor
+                        is ClassDescriptor -> (descriptor as ClassDescriptor).unsubstitutedPrimaryConstructor ?: return@mapNotNull null
                         else -> return@mapNotNull null
                     }
                     KotlinCallableDefinitionUsage<PsiElement>(it, callableDescriptor, primaryFunction, null)
@@ -118,17 +118,17 @@ class KotlinChangeSignatureData(
 
             val results = SmartList<UsageInfo>()
 
-            primaryDeclaration.forEachOverridingElement { baseElement, overridingElement ->
+            (primaryDeclaration as KtCallableDeclaration).forEachOverridingElement { baseElement, overridingElement ->
                 val currentDeclaration = overridingElement.namedUnwrappedElement
                 results += when (currentDeclaration) {
                     is KtDeclaration -> {
-                        val overridingDescriptor = currentDeclaration.unsafeResolveToDescriptor() as CallableDescriptor
-                        KotlinCallableDefinitionUsage(currentDeclaration, overridingDescriptor, primaryFunction, null)
+                        val overridingDescriptor = (currentDeclaration as KtDeclaration).unsafeResolveToDescriptor() as CallableDescriptor
+                        KotlinCallableDefinitionUsage(currentDeclaration as KtDeclaration, overridingDescriptor, primaryFunction, null)
                     }
 
                     is PsiMethod -> {
                         val baseMethod = baseElement as? PsiMethod ?: return@forEachOverridingElement true
-                        OverriderUsageInfo(currentDeclaration, baseMethod, true, true, true)
+                        OverriderUsageInfo(currentDeclaration as PsiMethod, baseMethod, true, true, true)
                     }
 
                     else -> return@forEachOverridingElement true
@@ -144,7 +144,7 @@ class KotlinChangeSignatureData(
     override fun getParameters(): List<KotlinParameterInfo> = parameters
 
     override fun getName() = when (baseDescriptor) {
-        is ConstructorDescriptor -> baseDescriptor.containingDeclaration.name.asString()
+        is ConstructorDescriptor -> (baseDescriptor as ConstructorDescriptor).containingDeclaration.name.asString()
         is AnonymousFunctionDescriptor -> ""
         else -> baseDescriptor.name.asString()
     }
@@ -158,7 +158,7 @@ class KotlinChangeSignatureData(
     override fun canChangeVisibility(): Boolean {
         if (DescriptorUtils.isLocal(baseDescriptor)) return false
         val parent = baseDescriptor.containingDeclaration
-        return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && parent.kind == ClassKind.INTERFACE)
+        return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && (parent as ClassDescriptor).kind == ClassKind.INTERFACE)
     }
 
     override fun canChangeParameters() = true

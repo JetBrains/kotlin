@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.psi.KtFile
 class KotlinAutomaticTestRenamerFactory : AutomaticTestRenamerFactory() {
     private fun getPsiClass(element: PsiElement): PsiClass? {
         return when (element) {
-            is KtLightClassForSourceDeclaration -> element
-            is KtClassOrObject -> element.toLightClass()
-            is KtFile -> element.findFacadeClass()
+            is KtLightClassForSourceDeclaration -> element as KtLightClassForSourceDeclaration
+            is KtClassOrObject -> (element as KtClassOrObject).toLightClass()
+            is KtFile -> (element as KtFile).findFacadeClass()
             else -> null
         }
     }

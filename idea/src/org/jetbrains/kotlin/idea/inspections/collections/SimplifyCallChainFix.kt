@@ -54,7 +54,7 @@ class SimplifyCallChainFix(
         }
 
         val receiverExpressionOrEmptyString =
-            if (!removeReceiverOfFirstCall && firstExpression is KtQualifiedExpression) firstExpression.receiverExpression.text else ""
+            if (!removeReceiverOfFirstCall && firstExpression is KtQualifiedExpression) (firstExpression as KtQualifiedExpression).receiverExpression.text else ""
 
         val firstCallExpression = AbstractCallChainChecker.getCallExpression(firstExpression) ?: return
         factory.modifyArguments(firstCallExpression)
@@ -93,8 +93,8 @@ class SimplifyCallChainFix(
         }
         if (lambdaExpression != null) {
             val callExpression = when (result) {
-                is KtQualifiedExpression -> result.callExpression
-                is KtCallExpression -> result
+                is KtQualifiedExpression -> (result as KtQualifiedExpression).callExpression
+                is KtCallExpression -> result as KtCallExpression
                 else -> null
             }
             callExpression?.moveFunctionLiteralOutsideParentheses()

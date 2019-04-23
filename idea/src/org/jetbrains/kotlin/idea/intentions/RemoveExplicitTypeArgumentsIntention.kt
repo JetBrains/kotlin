@@ -101,45 +101,45 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
             for (element in expression.parentsWithSelf) {
                 if (element !is KtExpression) continue
 
-                if (element.getQualifiedExpressionForSelector() != null) continue
+                if ((element as KtExpression).getQualifiedExpressionForSelector() != null) continue
                 if (element is KtFunctionLiteral) continue
-                if (!element.isUsedAsExpression(bindingContext)) return element to null
+                if (!(element as KtExpression).isUsedAsExpression(bindingContext)) return element as KtExpression to null
 
-                val parent = element.parent
+                val parent = (element as KtExpression).parent
                 when (parent) {
                     is KtNamedFunction -> {
-                        val expectedType = if (element == parent.bodyExpression && !parent.hasBlockBody() && parent.hasDeclaredReturnType())
+                        val expectedType = if (element == (parent as KtNamedFunction).bodyExpression && !(parent as KtNamedFunction).hasBlockBody() && (parent as KtNamedFunction).hasDeclaredReturnType())
                             (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? FunctionDescriptor)?.returnType
                         else
                             null
-                        return element to expectedType
+                        return element as KtExpression to expectedType
                     }
 
                     is KtVariableDeclaration -> {
-                        val expectedType = if (element == parent.initializer && parent.typeReference != null)
+                        val expectedType = if (element == (parent as KtVariableDeclaration).initializer && (parent as KtVariableDeclaration).typeReference != null)
                             (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? ValueDescriptor)?.type
                         else
                             null
-                        return element to expectedType
+                        return element as KtExpression to expectedType
                     }
 
                     is KtParameter -> {
-                        val expectedType = if (element == parent.defaultValue)
+                        val expectedType = if (element == (parent as KtParameter).defaultValue)
                             (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? ValueDescriptor)?.type
                         else
                             null
-                        return element to expectedType
+                        return element as KtExpression to expectedType
                     }
 
                     is KtPropertyAccessor -> {
-                        val property = parent.parent as KtProperty
+                        val property = (parent as KtPropertyAccessor).parent as KtProperty
                         val expectedType = when {
-                            element != parent.bodyExpression || parent.hasBlockBody() -> null
-                            parent.isSetter -> parent.builtIns.unitType
+                            element != (parent as KtPropertyAccessor).bodyExpression || (parent as KtPropertyAccessor).hasBlockBody() -> null
+                            (parent as KtPropertyAccessor).isSetter -> (parent as KtPropertyAccessor).builtIns.unitType
                             property.typeReference == null -> null
                             else -> (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? FunctionDescriptor)?.returnType
                         }
-                        return element to expectedType
+                        return element as KtExpression to expectedType
                     }
                 }
             }

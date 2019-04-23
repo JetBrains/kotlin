@@ -32,7 +32,7 @@ object CastReceiverInsertHandler {
             PsiTreeUtil.findElementOfClassAtOffset(context.file, context.startOffset, KtSimpleNameExpression::class.java, false)
         val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, KtQualifiedExpression::class.java, true)
         if (qualifiedExpression != null) {
-            val receiver = qualifiedExpression.receiverExpression
+            val receiver = qualifiedExpression!!.receiverExpression
 
             val descriptor = (item.`object` as? DeclarationLookupObject)?.descriptor as CallableDescriptor
             val project = context.project

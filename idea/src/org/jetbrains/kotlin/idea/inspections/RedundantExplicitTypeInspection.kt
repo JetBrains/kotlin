@@ -26,19 +26,19 @@ class RedundantExplicitTypeInspection : AbstractKotlinInspection() {
             if (type is AbbreviatedType) return
             when (initializer) {
                 is KtConstantExpression -> {
-                    when (initializer.node.elementType) {
+                    when ((initializer as KtConstantExpression).node.elementType) {
                         KtNodeTypes.BOOLEAN_CONSTANT -> {
                             if (!KotlinBuiltIns.isBoolean(type)) return
                         }
                         KtNodeTypes.INTEGER_CONSTANT -> {
-                            if (initializer.text.endsWith("L")) {
+                            if ((initializer as KtConstantExpression).text.endsWith("L")) {
                                 if (!KotlinBuiltIns.isLong(type)) return
                             } else {
                                 if (!KotlinBuiltIns.isInt(type)) return
                             }
                         }
                         KtNodeTypes.FLOAT_CONSTANT -> {
-                            if (initializer.text.endsWith("f") || initializer.text.endsWith("F")) {
+                            if ((initializer as KtConstantExpression).text.endsWith("f") || (initializer as KtConstantExpression).text.endsWith("F")) {
                                 if (!KotlinBuiltIns.isFloat(type)) return
                             } else {
                                 if (!KotlinBuiltIns.isDouble(type)) return
@@ -54,10 +54,10 @@ class RedundantExplicitTypeInspection : AbstractKotlinInspection() {
                     if (!KotlinBuiltIns.isString(type)) return
                 }
                 is KtNameReferenceExpression -> {
-                    if (typeReference.text != initializer.getReferencedName()) return
+                    if (typeReference.text != (initializer as KtNameReferenceExpression).getReferencedName()) return
                 }
                 is KtCallExpression -> {
-                    if (typeReference.text != initializer.calleeExpression?.text) return
+                    if (typeReference.text != (initializer as KtCallExpression).calleeExpression?.text) return
                 }
                 else -> return
             }

@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
 class KotlinRefactoringHelperForDelayedRequests : RefactoringHelper<Any> {
     override fun prepareOperation(usages: Array<out UsageInfo>?): Any? {
-        if (usages != null && usages.isNotEmpty()) {
-            val project = usages[0].project
+        if (usages != null && usages!!.isNotEmpty()) {
+            val project = usages!![0].project
             prepareDelayedRequests(project)
         }
         return null

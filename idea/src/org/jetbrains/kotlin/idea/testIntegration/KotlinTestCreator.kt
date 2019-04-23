@@ -29,7 +29,7 @@ class KotlinTestCreator : TestCreator {
     private fun getTarget(editor: Editor, file: PsiFile): KtNamedDeclaration? {
         return file.findElementAt(editor.caretModel.offset)
                 ?.parents
-                ?.firstOrNull { it is KtClassOrObject || it is KtNamedDeclaration && it.parent is KtFile } as? KtNamedDeclaration
+                ?.firstOrNull { it is KtClassOrObject || it is KtNamedDeclaration && (it as KtNamedDeclaration).parent is KtFile } as? KtNamedDeclaration
     }
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {

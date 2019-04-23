@@ -37,7 +37,7 @@ fun KtWhenCondition.toExpression(subject: KtExpression?): KtExpression {
 
         is KtWhenConditionWithExpression -> {
             if (subject != null) {
-                factory.createExpressionByPattern("$0 == $1", subject, expression ?: "")
+                factory.createExpressionByPattern("$0 == $1", subject!!, expression ?: "")
             }
             else {
                 expression!!
@@ -59,7 +59,7 @@ fun KtWhenExpression.getSubjectToIntroduce(): KtExpression?  {
         for (condition in conditions) {
             if (condition !is KtWhenConditionWithExpression) return null
 
-            val candidate = condition.expression?.getWhenConditionSubjectCandidate() as? KtNameReferenceExpression ?: return null
+            val candidate = (condition as KtWhenConditionWithExpression).expression?.getWhenConditionSubjectCandidate() as? KtNameReferenceExpression ?: return null
 
             if (lastCandidate == null) {
                 lastCandidate = candidate
@@ -137,17 +137,17 @@ fun KtWhenExpression.introduceSubject(): KtWhenExpression? {
 private fun BuilderByPattern<KtExpression>.appendConditionWithSubjectRemoved(conditionExpression: KtExpression?, subject: KtExpression) {
     when (conditionExpression) {
         is KtIsExpression -> {
-            if (conditionExpression.isNegated) {
+            if ((conditionExpression as KtIsExpression).isNegated) {
                 appendFixedText("!")
             }
             appendFixedText("is ")
-            appendNonFormattedText(conditionExpression.typeReference?.text ?: "")
+            appendNonFormattedText((conditionExpression as KtIsExpression).typeReference?.text ?: "")
         }
 
         is KtBinaryExpression -> {
-            val lhs = conditionExpression.left
-            val rhs = conditionExpression.right
-            val op = conditionExpression.operationToken
+            val lhs = (conditionExpression as KtBinaryExpression).left
+            val rhs = (conditionExpression as KtBinaryExpression).right
+            val op = (conditionExpression as KtBinaryExpression).operationToken
             when (op) {
                 KtTokens.IN_KEYWORD -> appendFixedText("in ").appendExpression(rhs)
                 KtTokens.NOT_IN -> appendFixedText("!in ").appendExpression(rhs)

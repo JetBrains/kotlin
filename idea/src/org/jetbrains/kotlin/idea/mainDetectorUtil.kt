@@ -15,7 +15,7 @@ fun KtElement.isMainFunction(computedDescriptor: DeclarationDescriptor? = null):
     if (this !is KtNamedFunction) return false
     val mainFunctionDetector = MainFunctionDetector(languageVersionSettings) { it.resolveToDescriptorIfAny() }
 
-    if (computedDescriptor != null) return mainFunctionDetector.isMain(computedDescriptor)
+    if (computedDescriptor != null) return mainFunctionDetector.isMain(computedDescriptor!!)
 
     return mainFunctionDetector.isMain(this)
 }

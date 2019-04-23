@@ -76,7 +76,7 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
                             override fun getTextFor(value: KotlinScriptDefinition): String {
                                 return when (value) {
                                     is KotlinScriptDefinitionFromAnnotatedTemplate -> {
-                                        value.name + " (${value.scriptFilePattern})"
+                                        value.name + " (${(value as KotlinScriptDefinitionFromAnnotatedTemplate).scriptFilePattern})"
                                     }
                                     is KotlinScriptDefinitionAdapterFromNewAPIBase -> {
                                         value.name + " (${value.fileExtension})"

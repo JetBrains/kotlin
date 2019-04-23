@@ -14,15 +14,15 @@ class KotlinFunctionParameterUnwrapper(key: String) : KotlinUnwrapRemoveBase(key
 
     override fun isApplicableTo(element: PsiElement): Boolean {
         if (element !is KtCallExpression) return false
-        if (element.valueArguments.size != 1) return false
-        val argument = element.parent as? KtValueArgument ?: return false
+        if ((element as KtCallExpression).valueArguments.size != 1) return false
+        val argument = (element as KtCallExpression).parent as? KtValueArgument ?: return false
         if (argument.getStrictParentOfType<KtCallExpression>() == null) return false
         return true
     }
 
     override fun doUnwrap(element: PsiElement?, context: Context?) {
         val function = element as? KtCallExpression ?: return
-        val argument = element.valueArguments.firstOrNull()?.getArgumentExpression() ?: return
+        val argument = (element as KtCallExpression).valueArguments.firstOrNull()?.getArgumentExpression() ?: return
         context?.extractFromExpression(argument, function)
         context?.delete(function)
     }

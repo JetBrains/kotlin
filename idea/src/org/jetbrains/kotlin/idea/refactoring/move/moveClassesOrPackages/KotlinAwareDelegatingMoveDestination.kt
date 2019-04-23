@@ -50,21 +50,21 @@ class KotlinAwareDelegatingMoveDestination(
 
         if (targetPackage == null || targetDirectory == null) return
 
-        val project = targetDirectory.project
-        val moveTarget = KotlinDirectoryMoveTarget(FqName(targetPackage.qualifiedName), targetDirectory)
+        val project = targetDirectory!!.project
+        val moveTarget = KotlinDirectoryMoveTarget(FqName(targetPackage!!.qualifiedName), targetDirectory!!)
         val packagesIndex = KotlinExactPackagesIndex.getInstance()
         val directoriesToMove = elements.flatMapTo(LinkedHashSet<PsiDirectory>()) {
             (it as? PsiPackage)?.directories?.toList() ?: emptyList()
         }
         val projectScope = project.projectScope()
         val filesToProcess = elements.flatMapTo(LinkedHashSet<KtFile>()) {
-            if (it is PsiPackage) packagesIndex[it.qualifiedName, project, projectScope] else emptyList()
+            if (it is PsiPackage) packagesIndex[(it as PsiPackage).qualifiedName, project, projectScope] else emptyList()
         }
 
         val extraElementsForReferenceSearch = LinkedHashSet<PsiElement>()
         val extraElementCollector = object : PsiRecursiveElementWalkingVisitor() {
             override fun visitElement(element: PsiElement) {
-                if (element is KtNamedDeclaration && element.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
+                if (element is KtNamedDeclaration && (element as KtNamedDeclaration).hasModifier(KtTokens.INTERNAL_KEYWORD)) {
                     element.parentsWithSelf.lastOrNull { it is KtNamedDeclaration }?.let { extraElementsForReferenceSearch += it }
                     stopWalking()
                 }

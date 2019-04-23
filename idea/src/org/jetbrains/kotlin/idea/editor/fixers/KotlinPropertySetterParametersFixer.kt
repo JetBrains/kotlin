@@ -30,26 +30,26 @@ class KotlinPropertySetterParametersFixer : SmartEnterProcessorWithFixers.Fixer<
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtPropertyAccessor) return
 
-        if (!psiElement.isSetter) return
+        if (!(psiElement as KtPropertyAccessor).isSetter) return
 
-        val parameter = psiElement.parameter
+        val parameter = (psiElement as KtPropertyAccessor).parameter
 
-        if (!parameter?.text.isNullOrBlank() && psiElement.rightParenthesis != null) return
+        if (!parameter?.text.isNullOrBlank() && (psiElement as KtPropertyAccessor).rightParenthesis != null) return
 
         //setter without parameter and body is valid
-        if (psiElement.namePlaceholder.endOffset == psiElement.endOffset) return
+        if ((psiElement as KtPropertyAccessor).namePlaceholder.endOffset == psiElement.endOffset) return
 
         val doc = editor.document
 
-        val parameterOffset = (psiElement.leftParenthesis?.startOffset ?: return) + 1
+        val parameterOffset = ((psiElement as KtPropertyAccessor).leftParenthesis?.startOffset ?: return) + 1
 
         if (parameter?.text.isNullOrBlank()) {
-            if (psiElement.rightParenthesis == null) {
+            if ((psiElement as KtPropertyAccessor).rightParenthesis == null) {
                 doc.insertString(parameterOffset, "value)")
             } else {
                 doc.insertString(parameterOffset, "value")
             }
-        } else if (psiElement.rightParenthesis == null) {
+        } else if ((psiElement as KtPropertyAccessor).rightParenthesis == null) {
             doc.insertString(parameterOffset + parameter!!.text.length, ")")
         }
     }

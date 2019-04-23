@@ -87,16 +87,16 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
                         when {
                             (it is KtNamedFunction || it is KtSecondaryConstructor) && varExpected ||
                             it is KtPropertyAccessor -> chooseContainingClass(it)
-                            it is KtAnonymousInitializer -> it.parent.parent as? KtClass
+                            it is KtAnonymousInitializer -> (it as KtAnonymousInitializer).parent.parent as? KtClass
                             it is KtSuperTypeListEntry -> {
                                 val klass = it.getStrictParentOfType<KtClassOrObject>()
-                                if (klass is KtClass && !klass.isInterface() && klass !is KtEnumEntry) klass else null
+                                if (klass is KtClass && !(klass as KtClass).isInterface() && klass !is KtEnumEntry) klass as KtClass else null
                             }
                             it is KtClassBody -> {
-                                val klass = it.parent as? KtClass
+                                val klass = (it as KtClassBody).parent as? KtClass
                                 when {
-                                    klass is KtEnumEntry -> chooseContainingClass(klass)
-                                    klass != null && klass.isInterface() -> null
+                                    klass is KtEnumEntry -> chooseContainingClass(klass as KtEnumEntry)
+                                    klass != null && klass!!.isInterface() -> null
                                     else -> klass
                                 }
                             }
@@ -108,7 +108,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
         val container = chooseContainerPreferringClass() ?: chooseFunction()
 
         val functionDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, container]?.let {
-            if (it is ClassDescriptor) it.unsubstitutedPrimaryConstructor else it
+            if (it is ClassDescriptor) (it as ClassDescriptor).unsubstitutedPrimaryConstructor else it
         } as? FunctionDescriptor ?: return null
 
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
@@ -133,12 +133,12 @@ fun KotlinType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, co
     val scope =
             when (functionDescriptor) {
                 is ConstructorDescriptor -> {
-                    (functionDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes)?.scopeForClassHeaderResolution
+                    ((functionDescriptor as ConstructorDescriptor).containingDeclaration as? ClassDescriptorWithResolutionScopes)?.scopeForClassHeaderResolution
                 }
 
                 else -> {
                     val function = functionDescriptor.source.getPsi() as? KtFunction
-                    function?.bodyExpression?.getResolutionScope(context, function.getResolutionFacade())
+                    function?.bodyExpression?.getResolutionScope(context, function!!.getResolutionFacade())
                 }
             } ?: return true
 

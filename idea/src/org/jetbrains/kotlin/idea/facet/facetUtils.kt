@@ -57,12 +57,12 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
         var jvmTarget = Kotlin2JvmCompilerArgumentsHolder.getInstance(module.project).settings.jvmTarget?.let { JvmTarget.fromString(it) }
         if (jvmTarget == null) {
             val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
-            val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
-            if (sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8) {
+            val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk!!)
+            if (sdkVersion == null || sdkVersion!! >= JavaSdkVersion.JDK_1_8) {
                 jvmTarget = JvmTarget.JVM_1_8
             }
         }
-        return if (jvmTarget != null) JvmIdePlatformKind.Platform(jvmTarget) else JvmIdePlatformKind.defaultPlatform
+        return if (jvmTarget != null) JvmIdePlatformKind.Platform(jvmTarget!!) else JvmIdePlatformKind.defaultPlatform
     }
     return platformKind.defaultPlatform
 }
@@ -161,10 +161,10 @@ fun KotlinFacet.configureFacet(
         )
         val apiLevel = apiLevel
         val languageLevel = languageLevel
-        if (languageLevel != null && apiLevel != null && apiLevel > languageLevel) {
+        if (languageLevel != null && apiLevel != null && apiLevel!! > languageLevel!!) {
             this.apiLevel = languageLevel
         }
-        this.coroutineSupport = if (languageLevel != null && languageLevel < LanguageVersion.KOTLIN_1_3) coroutineSupport else null
+        this.coroutineSupport = if (languageLevel != null && languageLevel!! < LanguageVersion.KOTLIN_1_3) coroutineSupport else null
     }
 
     module.externalCompilerVersion = compilerVersion
@@ -243,10 +243,10 @@ private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArgum
     KotlinSdkType.setUpIfNeeded()
     val allSdks = ProjectJdkTable.getInstance().allJdks
     val sdk = if (compilerArguments is K2JVMCompilerArguments) {
-        val jdkHome = compilerArguments.jdkHome
+        val jdkHome = (compilerArguments as K2JVMCompilerArguments).jdkHome
         when {
             jdkHome != null -> allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 }
-            projectSdk != null && projectSdk.sdkType is JavaSdk -> projectSdk
+            projectSdk != null && projectSdk!!.sdkType is JavaSdk -> projectSdk
             else -> allSdks.firstOrNull { it.sdkType is JavaSdk }
         }
     } else {
@@ -268,7 +268,7 @@ private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArgum
 }
 
 private fun Module.hasNonOverriddenExternalSdkConfiguration(compilerArguments: CommonCompilerArguments): Boolean =
-    hasExternalSdkConfiguration && (compilerArguments !is K2JVMCompilerArguments || compilerArguments.jdkHome == null)
+    hasExternalSdkConfiguration && (compilerArguments !is K2JVMCompilerArguments || (compilerArguments as K2JVMCompilerArguments).jdkHome == null)
 
 fun parseCompilerArgumentsToFacet(
     arguments: List<String>,
@@ -308,7 +308,7 @@ fun applyCompilerArgumentsToFacet(
         // The rest is combined into string and stored in CompilerSettings.additionalArguments
 
         if (modelsProvider != null)
-            kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider)
+            kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider!!)
 
         val primaryFields = compilerArguments.primaryFields
         val ignoredFields = compilerArguments.ignoredFields
@@ -333,7 +333,7 @@ fun applyCompilerArgumentsToFacet(
 
         val languageLevel = languageLevel
         val apiLevel = apiLevel
-        if (languageLevel != null && apiLevel != null && apiLevel > languageLevel) {
+        if (languageLevel != null && apiLevel != null && apiLevel!! > languageLevel!!) {
             this.apiLevel = languageLevel
         }
 
@@ -350,5 +350,5 @@ private fun joinPluginOptions(old: Array<String>?, new: Array<String>?): Array<S
         return new
     }
 
-    return (old + new).distinct().toTypedArray()
+    return (old!! + new!!).distinct().toTypedArray()
 }

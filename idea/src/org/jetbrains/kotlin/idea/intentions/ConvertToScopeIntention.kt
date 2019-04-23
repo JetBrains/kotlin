@@ -42,15 +42,15 @@ sealed class ConvertToScopeIntention(
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
         when (element) {
             is KtProperty ->
-                if (!element.isLocal) return false
+                if (!(element as KtProperty).isLocal) return false
             is KtCallExpression -> {
-                if (element.parent is KtDotQualifiedExpression) return false
+                if ((element as KtCallExpression).parent is KtDotQualifiedExpression) return false
                 val propertyName = element.prevProperty()?.name ?: return false
                 if (!element.isTarget(propertyName)) return false
             }
             is KtDotQualifiedExpression -> {
-                if (element.parent is KtDotQualifiedExpression) return false
-                val name = element.getLeftMostReceiverExpression().text
+                if ((element as KtDotQualifiedExpression).parent is KtDotQualifiedExpression) return false
+                val name = (element as KtDotQualifiedExpression).getLeftMostReceiverExpression().text
                 if (!element.isTarget(name)) return false
             }
             else ->
@@ -68,7 +68,7 @@ sealed class ConvertToScopeIntention(
             ALSO, APPLY -> property
             else -> first
         } ?: return
-        val parent = element.parent.let { if (it is KtBinaryExpression) it.parent else it }
+        val parent = element.parent.let { if (it is KtBinaryExpression) (it as KtBinaryExpression).parent else it }
 
         val psiFactory = KtPsiFactory(element)
         val (scopeFunctionCall, block) = psiFactory.createScopeFunctionCall(propertyOrFirst) ?: return
@@ -81,20 +81,20 @@ sealed class ConvertToScopeIntention(
     private fun replace(element: PsiElement, referenceName: String, psiFactory: KtPsiFactory) {
         when (element) {
             is KtDotQualifiedExpression -> {
-                val replaced = element.deleteFirstReceiver()
+                val replaced = (element as KtDotQualifiedExpression).deleteFirstReceiver()
                 if (scopeFunction.isParameterScope) {
                     replaced.replace(psiFactory.createExpressionByPattern("${scopeFunction.receiver}.$0", replaced))
                 }
             }
             is KtCallExpression -> {
-                element.valueArguments.forEach { arg ->
+                (element as KtCallExpression).valueArguments.forEach { arg ->
                     if (arg.getArgumentExpression()?.text == referenceName) {
                         arg.replace(psiFactory.createArgument(scopeFunction.receiver))
                     }
                 }
             }
             is KtBinaryExpression -> {
-                listOfNotNull(element.left, element.right).forEach {
+                listOfNotNull((element as KtBinaryExpression).left, (element as KtBinaryExpression).right).forEach {
                     replace(it, referenceName, psiFactory)
                 }
             }
@@ -161,7 +161,7 @@ sealed class ConvertToScopeIntention(
 
     private fun KtExpression.prevProperty(): KtProperty? {
         val parentOrThis = parent as? KtBinaryExpression ?: this
-        return parentOrThis.siblings(forward = false, withItself = true).firstOrNull { it is KtProperty && it.isLocal } as? KtProperty
+        return parentOrThis.siblings(forward = false, withItself = true).firstOrNull { it is KtProperty && (it as KtProperty).isLocal } as? KtProperty
     }
 
     private fun KtPsiFactory.createScopeFunctionCall(element: PsiElement): Pair<KtExpression, KtBlockExpression>? {
@@ -169,12 +169,12 @@ sealed class ConvertToScopeIntention(
         val (scopeFunctionCall, callExpression) = when (scopeFunction) {
             ALSO, APPLY -> {
                 if (element !is KtProperty) return null
-                val propertyName = element.name ?: return null
-                val initializer = element.initializer ?: return null
+                val propertyName = (element as KtProperty).name ?: return null
+                val initializer = (element as KtProperty).initializer ?: return null
                 val property = createProperty(
                     name = propertyName,
-                    type = element.typeReference?.text,
-                    isVar = element.isVar,
+                    type = (element as KtProperty).typeReference?.text,
+                    isVar = (element as KtProperty).isVar,
                     initializer = "${initializer.text}.$scopeFunctionName {}"
                 )
                 val callExpression = (property.initializer as? KtDotQualifiedExpression)?.callExpression ?: return null
@@ -184,7 +184,7 @@ sealed class ConvertToScopeIntention(
                 if (element !is KtDotQualifiedExpression) return null
                 val scopeFunctionCall = createExpressionByPattern(
                     "$0.$scopeFunctionName {}",
-                    element.getLeftMostReceiverExpression()
+                    (element as KtDotQualifiedExpression).getLeftMostReceiverExpression()
                 ) as? KtQualifiedExpression ?: return null
                 val callExpression = scopeFunctionCall.callExpression ?: return null
                 scopeFunctionCall to callExpression
@@ -193,7 +193,7 @@ sealed class ConvertToScopeIntention(
                 if (element !is KtDotQualifiedExpression) return null
                 val scopeFunctionCall = createExpressionByPattern(
                     "$scopeFunctionName($0) {}",
-                    element.getLeftMostReceiverExpression()
+                    (element as KtDotQualifiedExpression).getLeftMostReceiverExpression()
                 ) as? KtCallExpression ?: return null
                 scopeFunctionCall to scopeFunctionCall
             }

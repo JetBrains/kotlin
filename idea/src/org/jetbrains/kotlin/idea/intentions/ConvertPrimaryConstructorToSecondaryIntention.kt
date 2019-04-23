@@ -51,7 +51,7 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         val referencedDescriptor = context[BindingContext.REFERENCE_TARGET, this] ?: return false
         return when (referencedDescriptor) {
             is ValueParameterDescriptor ->
-                (referencedDescriptor.containingDeclaration as? ConstructorDescriptor)?.containingDeclaration != classDescriptor
+                ((referencedDescriptor as ValueParameterDescriptor).containingDeclaration as? ConstructorDescriptor)?.containingDeclaration != classDescriptor
             else ->
                 classDescriptor !in referencedDescriptor.parents
         }
@@ -98,8 +98,8 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                     noReturnType()
                     for (superTypeEntry in klass.superTypeListEntries) {
                         if (superTypeEntry is KtSuperTypeCallEntry) {
-                            superDelegation(superTypeEntry.valueArgumentList?.text ?: "")
-                            superTypeEntry.replace(factory.createSuperTypeEntry(superTypeEntry.typeReference!!.text))
+                            superDelegation((superTypeEntry as KtSuperTypeCallEntry).valueArgumentList?.text ?: "")
+                            superTypeEntry.replace(factory.createSuperTypeEntry((superTypeEntry as KtSuperTypeCallEntry).typeReference!!.text))
                         }
                     }
                     val valueParameterInitializers = element.valueParameters.asSequence().filter { it.hasValOrVar() }.joinToString(separator = "\n") {
@@ -107,11 +107,11 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                         "this.$name = $name"
                     }
                     val classBodyInitializers = klass.declarations.asSequence().filter {
-                        (it is KtProperty && initializerMap[it] != null) || it is KtAnonymousInitializer
+                        (it is KtProperty && initializerMap[it as KtProperty] != null) || it is KtAnonymousInitializer
                     }.joinToString(separator = "\n") {
                         if (it is KtProperty) {
-                            val name = it.name!!
-                            val text = initializerMap[it]
+                            val name = (it as KtProperty).name!!
+                            val text = initializerMap[it as KtProperty]
                             if (text != null) {
                                 "${THIS_KEYWORD.value}.$name = $text"
                             }
@@ -167,8 +167,8 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
         if (lastEnumEntry == null) {
             klass.getOrCreateBody().let { it.addAfter(factory.createSemicolon(), it.lBrace) }
         }
-        else if (lastEnumEntry.getChildrenOfType<LeafPsiElement>().none { it.elementType == KtTokens.SEMICOLON }) {
-            lastEnumEntry.add(factory.createSemicolon())
+        else if (lastEnumEntry!!.getChildrenOfType<LeafPsiElement>().none { it.elementType == KtTokens.SEMICOLON }) {
+            lastEnumEntry!!.add(factory.createSemicolon())
         }
     }
 }

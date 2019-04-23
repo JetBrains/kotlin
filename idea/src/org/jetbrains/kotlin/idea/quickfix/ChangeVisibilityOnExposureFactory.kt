@@ -69,10 +69,10 @@ object ChangeVisibilityOnExposureFactory : KotlinIntentionActionsFactory() {
         val userDeclaration = diagnostic.psiElement.getParentOfType<KtDeclaration>(true)
         val protectedAllowed = exposedDeclaration.parent == userDeclaration?.parent
         if (userDeclaration != null) {
-            val userDescriptor = userDeclaration.toDescriptor() as? DeclarationDescriptorWithVisibility
-            if (userDescriptor != null && isVisibleIgnoringReceiver(exposedDescriptor, userDescriptor)) {
+            val userDescriptor = userDeclaration!!.toDescriptor() as? DeclarationDescriptorWithVisibility
+            if (userDescriptor != null && isVisibleIgnoringReceiver(exposedDescriptor, userDescriptor!!)) {
                 addFixToTargetVisibility(
-                    userDeclaration, userDescriptor,
+                    userDeclaration!!, userDescriptor!!,
                     targetUserVisibility, PRIVATE,
                     protectedAllowed, result
                 )

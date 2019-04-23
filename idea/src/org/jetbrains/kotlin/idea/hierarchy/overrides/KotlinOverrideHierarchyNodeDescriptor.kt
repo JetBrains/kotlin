@@ -51,8 +51,8 @@ class KotlinOverrideHierarchyNodeDescriptor(
 
     private fun resolveToDescriptor(psiElement: PsiElement): DeclarationDescriptor? {
         return when (psiElement) {
-            is KtNamedDeclaration -> psiElement.unsafeResolveToDescriptor()
-            is PsiMember -> psiElement.getJavaMemberDescriptor()
+            is KtNamedDeclaration -> (psiElement as KtNamedDeclaration).unsafeResolveToDescriptor()
+            is PsiMember -> (psiElement as PsiMember).getJavaMemberDescriptor()
             else -> null
         }
     }
@@ -102,7 +102,7 @@ class KotlinOverrideHierarchyNodeDescriptor(
             return true
         }
 
-        val newRawIcon = classPsi.getIcon(flags)
+        val newRawIcon = classPsi!!.getIcon(flags)
         val newStateIcon = calculateState()
 
         if (changes || newRawIcon !== rawIcon || newStateIcon !== stateIcon) {
@@ -136,17 +136,17 @@ class KotlinOverrideHierarchyNodeDescriptor(
         }
 
         with(myHighlightedText.ending) {
-            addText(classDescriptor.name.asString(), classNameAttributes)
-            classDescriptor.parents.forEach { parentDescriptor ->
+            addText(classDescriptor!!.name.asString(), classNameAttributes)
+            classDescriptor!!.parents.forEach { parentDescriptor ->
                 when (parentDescriptor) {
                     is MemberDescriptor -> {
-                        addText(" in ${parentDescriptor.name.asString()}", classNameAttributes)
+                        addText(" in ${(parentDescriptor as MemberDescriptor).name.asString()}", classNameAttributes)
                         if (parentDescriptor is FunctionDescriptor) {
                             addText("()", classNameAttributes)
                         }
                     }
                     is PackageFragmentDescriptor -> {
-                        addText("  (${parentDescriptor.fqName.asString()})", getPackageNameAttributes())
+                        addText("  (${(parentDescriptor as PackageFragmentDescriptor).fqName.asString()})", getPackageNameAttributes())
                         return@forEach
                     }
                 }

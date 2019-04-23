@@ -39,7 +39,7 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
         private val RETURN_AND_THROW = TokenSet.create(KtTokens.RETURN_KEYWORD, KtTokens.THROW_KEYWORD)
 
         private fun getOnReturnOrThrowUsageHandler(editor: Editor, file: PsiFile, target: PsiElement): HighlightUsagesHandlerBase<*>? {
-            if (target !is LeafPsiElement || target.elementType !in RETURN_AND_THROW) {
+            if (target !is LeafPsiElement || (target as LeafPsiElement).elementType !in RETURN_AND_THROW) {
                 return null
             }
 
@@ -53,11 +53,11 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
         }
 
         private fun getOnLambdaCallUsageHandler(editor: Editor, file: PsiFile, target: PsiElement): HighlightUsagesHandlerBase<*>? {
-            if (target !is LeafPsiElement || target.elementType != KtTokens.IDENTIFIER) {
+            if (target !is LeafPsiElement || (target as LeafPsiElement).elementType != KtTokens.IDENTIFIER) {
                 return null
             }
 
-            val refExpr = target.parent as? KtNameReferenceExpression ?: return null
+            val refExpr = (target as LeafPsiElement).parent as? KtNameReferenceExpression ?: return null
             val call = refExpr.parent as? KtCallExpression ?: return null
             if (call.calleeExpression != refExpr) return null
 
@@ -85,7 +85,7 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
         override fun computeUsages(targets: MutableList<PsiElement>?) {
             val relevantFunction: KtDeclarationWithBody? =
                 if (target is KtFunctionLiteral) {
-                    target
+                    target as KtFunctionLiteral
                 } else {
                     target.getRelevantDeclaration()
                 }
@@ -154,13 +154,13 @@ private fun KtExpression.getRelevantDeclaration(): KtDeclarationWithBody? {
         for (parent in parents) {
             if (parent is KtDeclarationWithBody) {
                 if (parent is KtPropertyAccessor) {
-                    return parent
+                    return parent as KtDeclarationWithBody
                 }
 
                 if (InlineUtil.canBeInlineArgument(parent) &&
-                    !InlineUtil.isInlinedArgument(parent as KtFunction, parent.analyze(BodyResolveMode.FULL), false)
+                    !InlineUtil.isInlinedArgument(parent as KtFunction, (parent as KtDeclarationWithBody).analyze(BodyResolveMode.FULL), false)
                 ) {
-                    return parent
+                    return parent as KtDeclarationWithBody
                 }
             }
         }

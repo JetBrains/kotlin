@@ -54,16 +54,16 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
             if (constantValue == null) return emptyList()
             val fixes = mutableListOf<ConstantConditionIfFix>()
 
-            if (expression.branch(constantValue) != null) {
-                val keepBraces = expression.isElseIf() && expression.branch(constantValue) is KtBlockExpression
+            if (expression.branch(constantValue!!) != null) {
+                val keepBraces = expression.isElseIf() && expression.branch(constantValue!!) is KtBlockExpression
                 fixes += SimplifyFix(
-                    constantValue,
+                    constantValue!!,
                     expression.isUsedAsExpression(expression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)),
                     keepBraces
                 )
             }
 
-            if (!constantValue && expression.`else` == null) {
+            if (!constantValue!! && expression.`else` == null) {
                 fixes += RemoveFix()
             }
 
@@ -161,11 +161,11 @@ fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boo
         branch !is KtBlockExpression -> replaced(branch)
         isUsedAsExpression -> {
             val factory = KtPsiFactory(this)
-            replaced(factory.createExpressionByPattern("run $0", branch.text))
+            replaced(factory.createExpressionByPattern("run $0", (branch as KtBlockExpression).text))
         }
         else -> {
-            val firstChildSibling = branch.firstChild.nextSibling
-            val lastChild = branch.lastChild
+            val firstChildSibling = (branch as KtBlockExpression).firstChild.nextSibling
+            val lastChild = (branch as KtBlockExpression).lastChild
             if (firstChildSibling != lastChild) {
                 if (keepBraces) {
                     parent.addAfter(branch, this)

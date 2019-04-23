@@ -62,8 +62,8 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
 
         val subclassesByContainer = subclasses.groupBy {
             if (it !is KtObjectDeclaration) return@groupBy null
-            if (it.superTypeListEntries.size != 1) return@groupBy null
-            val containingClass = it.containingClassOrObject as? KtClass ?: return@groupBy null
+            if ((it as KtObjectDeclaration).superTypeListEntries.size != 1) return@groupBy null
+            val containingClass = (it as KtObjectDeclaration).containingClassOrObject as? KtClass ?: return@groupBy null
             if (containingClass != klass && containingClass.liftToExpected() != klass) return@groupBy null
             containingClass
         }
@@ -114,14 +114,14 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
             subclass as KtObjectDeclaration
 
             val entryText = buildString {
-                append(subclass.name)
+                append((subclass as KtObjectDeclaration).name)
                 if (constructorCallNeeded) {
-                    append((subclass.superTypeListEntries.firstOrNull() as? KtSuperTypeCallEntry)?.valueArgumentList?.text ?: "()")
+                    append(((subclass as KtObjectDeclaration).superTypeListEntries.firstOrNull() as? KtSuperTypeCallEntry)?.valueArgumentList?.text ?: "()")
                 }
             }
             val entry = psiFactory.createEnumEntry(entryText)
 
-            subclass.getBody()?.let { body -> entry.add(body) }
+            (subclass as KtObjectDeclaration).getBody()?.let { body -> entry.add(body) }
 
             if (i < subclasses.lastIndex) {
                 entry.add(comma)

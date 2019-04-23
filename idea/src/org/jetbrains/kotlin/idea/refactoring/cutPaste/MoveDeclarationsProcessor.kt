@@ -138,8 +138,8 @@ class MoveDeclarationsProcessor(
     private fun insertStubDeclarations(): RangeMarker {
         val insertionOffset = sourceContainer.declarations.firstOrNull()?.startOffset
                               ?: when (sourceContainer) {
-                                  is KtFile -> sourceContainer.textLength
-                                  is KtObjectDeclaration -> sourceContainer.getBody()?.rBrace?.startOffset ?: sourceContainer.endOffset
+                                  is KtFile -> (sourceContainer as KtFile).textLength
+                                  is KtObjectDeclaration -> (sourceContainer as KtObjectDeclaration).getBody()?.rBrace?.startOffset ?: (sourceContainer as KtObjectDeclaration).endOffset
                                   else -> error("Unknown sourceContainer: $sourceContainer")
                               }
         val textToInsert = "\n//start\n\n" + stubTexts.joinToString(separator = "\n") + "\n//end\n"

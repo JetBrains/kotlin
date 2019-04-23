@@ -41,10 +41,10 @@ abstract class ChooseValueExpression<in T : Any>(
             val topLevelEditor = InjectedLanguageUtil.getTopLevelEditor(context.editor)
             val templateState = TemplateManagerImpl.getTemplateState(topLevelEditor)
             if (templateState != null) {
-                val range = templateState.currentVariableRange
+                val range = templateState!!.currentVariableRange
                 if (range != null) {
                     @Suppress("UNCHECKED_CAST")
-                    topLevelEditor.document.replaceString(range.startOffset, range.endOffset, getResult(item.`object` as T))
+                    topLevelEditor.document.replaceString(range!!.startOffset, range!!.endOffset, getResult(item.`object` as T))
                 }
             }
         }

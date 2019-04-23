@@ -74,8 +74,8 @@ sealed class CreateExpectedFix<D : KtNamedDeclaration>(
                 ?: declaration.module?.implementedModules
                 ?: return emptyList()
             return when (declaration) {
-                is KtClassOrObject -> expectedModules.map { CreateExpectedClassFix(declaration, expectedContainingClass, it) }
-                is KtFunction -> expectedModules.map { CreateExpectedFunctionFix(declaration, expectedContainingClass, it) }
+                is KtClassOrObject -> expectedModules.map { CreateExpectedClassFix(declaration as KtClassOrObject, expectedContainingClass, it) }
+                is KtFunction -> expectedModules.map { CreateExpectedFunctionFix(declaration as KtFunction, expectedContainingClass, it) }
                 is KtProperty, is KtParameter -> expectedModules.map { CreateExpectedPropertyFix(declaration, expectedContainingClass, it) }
                 else -> emptyList()
             }
@@ -97,7 +97,7 @@ class CreateExpectedPropertyFix(
     commonModule: Module
 ) : CreateExpectedFix<KtNamedDeclaration>(property, targetExpectedClass, commonModule, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, true, element, descriptor, targetExpectedClass) }
+    descriptor?.let { generateProperty(project, true, element, descriptor!!, targetExpectedClass) }
 })
 
 class CreateExpectedFunctionFix(
@@ -106,6 +106,6 @@ class CreateExpectedFunctionFix(
     commonModule: Module
 ) : CreateExpectedFix<KtFunction>(function, targetExpectedClass, commonModule, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, true, element, descriptor, targetExpectedClass) }
+    descriptor?.let { generateFunction(project, true, element, descriptor!!, targetExpectedClass) }
 })
 

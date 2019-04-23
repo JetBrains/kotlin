@@ -35,7 +35,7 @@ class KotlinStringTemplateBackspaceHandler : BackspaceHandlerDelegate() {
         if (iterator.tokenType != KtTokens.LONG_TEMPLATE_ENTRY_END) return
         iterator.retreat()
         if (iterator.tokenType != KtTokens.LONG_TEMPLATE_ENTRY_START) return
-        editor.document.deleteString(offset, offset + 1)
+        (editor as EditorEx).document.deleteString(offset, offset + 1)
     }
 
     override fun charDeleted(c: Char, file: PsiFile, editor: Editor): Boolean {

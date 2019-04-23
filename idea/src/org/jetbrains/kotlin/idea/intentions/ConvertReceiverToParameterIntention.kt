@@ -48,7 +48,7 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
                 return originalDescriptor.modify {
                     it.receiver = null
                     if (newName != null) {
-                        it.parameters.first().name = newName
+                        it.parameters.first().name = newName!!
                     }
                 }
             }
@@ -77,18 +77,18 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
                 val addedParameter = function.getOrCreateValueParameterList().addParameterAfter(newParameter, null)
 
                 with(PsiDocumentManager.getInstance(project)) {
-                    commitDocument(editor.document)
-                    doPostponedOperationsAndUnblockDocument(editor.document)
+                    commitDocument(editor!!.document)
+                    doPostponedOperationsAndUnblockDocument(editor!!.document)
                 }
 
-                editor.caretModel.moveToOffset(function.startOffset)
+                editor!!.caretModel.moveToOffset(function.startOffset)
 
                 val templateBuilder = TemplateBuilderImpl(function)
                 templateBuilder.replaceElement(addedParameter.nameIdentifier!!, ChooseStringExpression(receiverNames))
                 TemplateManager.getInstance(project).startTemplate(
-                        editor,
-                        templateBuilder.buildInlineTemplate(),
-                        object: TemplateEditingAdapter() {
+                    editor!!,
+                    templateBuilder.buildInlineTemplate(),
+                    object: TemplateEditingAdapter() {
                             private fun revertChanges() {
                                 runWriteAction {
                                     function.setReceiverTypeReference(addedParameter.typeReference)

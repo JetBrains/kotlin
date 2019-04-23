@@ -46,18 +46,18 @@ class OptionalExpectationInspection : AbstractKotlinInspection() {
                                 hashSetOf()
                             ) { it }.all { actual ->
                                 val expectedOnes = ExpectedActualResolver.findExpectedForActual(actual, descriptor.module)
-                                expectedOnes != null && ExpectedActualResolver.Compatibility.Compatible in expectedOnes.keys
+                                expectedOnes != null && ExpectedActualResolver.Compatibility.Compatible in expectedOnes!!.keys
                             })
                 ) continue
                 val platform = (actualModuleDescriptor.getMultiTargetPlatform() as? MultiTargetPlatform.Specific) ?: continue
                 val displayedName = actualModuleDescriptor.getCapability(ModuleInfo.Capability)?.displayedName ?: ""
                 val actualModule = (actualModuleDescriptor.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module ?: continue
                 holder.registerProblem(
-                    classOrObject.nameIdentifier ?: classOrObject,
+                    (classOrObject as KtClass).nameIdentifier ?: classOrObject,
                     "Optionally expected annotation has no actual annotation in module $displayedName for platform ${platform.platform}",
                     // NB: some highlighting is not suggested for this inspection
                     ProblemHighlightType.INFORMATION,
-                    IntentionWrapper(CreateActualClassFix(classOrObject, actualModule, platform), classOrObject.containingFile)
+                    IntentionWrapper(CreateActualClassFix(classOrObject, actualModule, platform), (classOrObject as KtClass).containingFile)
                 )
             }
         })

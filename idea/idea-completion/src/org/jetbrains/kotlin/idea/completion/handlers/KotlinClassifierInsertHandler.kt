@@ -60,14 +60,14 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                 val token = file.findElementAt(startOffset)!!
                 val nameRef = token.parent as? KtNameReferenceExpression
                 if (nameRef != null) {
-                    val bindingContext = nameRef.analyze(BodyResolveMode.PARTIAL)
+                    val bindingContext = nameRef!!.analyze(BodyResolveMode.PARTIAL)
                     val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, nameRef]
                         ?: bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
-                    if (target != null && IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(target) == qualifiedName) return
+                    if (target != null && IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(target!!) == qualifiedName) return
                 }
 
                 val tempPrefix = if (nameRef != null) {
-                    val isAnnotation = CallTypeAndReceiver.detect(nameRef) is CallTypeAndReceiver.ANNOTATION
+                    val isAnnotation = CallTypeAndReceiver.detect(nameRef!!) is CallTypeAndReceiver.ANNOTATION
                     // we insert space so that any preceding spaces inserted by formatter on reference shortening are deleted
                     // (but not for annotations where spaces are not allowed after @)
                     if (isAnnotation) "" else " "
@@ -84,7 +84,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                 val rangeMarker = document.createRangeMarker(classNameStart, classNameEnd)
                 val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length)
 
-                ShortenReferences.DEFAULT.process(file, classNameStart, classNameEnd)
+                ShortenReferences.DEFAULT.process(file as KtFile, classNameStart, classNameEnd)
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
                 if (rangeMarker.isValid && wholeRangeMarker.isValid) {

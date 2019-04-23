@@ -70,10 +70,10 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
             val parent = unwrapped.parent
             when (parent) {
                 is KtLambdaArgument -> {
-                    val callExpression = parent.parent as? KtCallExpression
+                    val callExpression = (parent as KtLambdaArgument).parent as? KtCallExpression
                     val callName = callExpression?.getCallNameExpression()?.getReferencedName()
                     if (callName != null) {
-                        val receiverText = callExpression.getQualifiedExpressionForSelector()?.let {
+                        val receiverText = callExpression!!.getQualifiedExpressionForSelector()?.let {
                             it.receiverExpression.text.orEllipsis(TextKind.INFO) + it.operationSign.value
                         } ?: ""
 
@@ -81,8 +81,8 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
                             append(receiverText)
                             append(callName)
 
-                            if (callExpression.valueArgumentList != null) {
-                                appendCallArguments(callExpression)
+                            if (callExpression!!.valueArgumentList != null) {
+                                appendCallArguments(callExpression!!)
                             }
                             else {
                                 if (label.isNotEmpty()) append(" ")
@@ -93,10 +93,10 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
                 }
 
                 is KtProperty -> {
-                    val name = parent.nameAsName
-                    if (unwrapped == parent.initializer && name != null) {
-                        val valOrVar = if (parent.isVar) "var" else "val"
-                        return "$valOrVar ${name.render()} = $lambdaText"
+                    val name = (parent as KtProperty).nameAsName
+                    if (unwrapped == (parent as KtProperty).initializer && name != null) {
+                        val valOrVar = if ((parent as KtProperty).isVar) "var" else "val"
+                        return "$valOrVar ${name!!.render()} = $lambdaText"
                     }
                 }
             }
@@ -113,7 +113,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
                     val argument = arguments.single()
                     val argumentExpression = argument.getArgumentExpression()
                     if (!argument.isNamed() && argument.getSpreadElement() == null && argumentExpression != null) {
-                        argumentText = "(" + argumentExpression.shortText(TextKind.INFO) + ")"
+                        argumentText = "(" + argumentExpression!!.shortText(TextKind.INFO) + ")"
                     }
                 }
             }
@@ -184,7 +184,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
     private object DeclarationHandler : ElementHandler<KtDeclaration>(KtDeclaration::class) {
         override fun accepts(element: KtDeclaration): Boolean {
             if (element is KtProperty) {
-                return element.parent is KtFile || element.parent is KtClassBody // do not show local variables
+                return (element as KtProperty).parent is KtFile || (element as KtProperty).parent is KtClassBody // do not show local variables
             }
             return true
         }
@@ -192,13 +192,13 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
         override fun elementInfo(element: KtDeclaration): String {
             when {
                 element is KtProperty -> {
-                    return (if (element.isVar) "var " else "val ") + element.nameAsName?.render()
+                    return (if ((element as KtProperty).isVar) "var " else "val ") + (element as KtProperty).nameAsName?.render()
                 }
 
-                element is KtObjectDeclaration && element.isCompanion() -> {
+                element is KtObjectDeclaration && (element as KtObjectDeclaration).isCompanion() -> {
                     return buildString {
                         append("companion object")
-                        element.nameIdentifier?.let { append(" "); append(it.text) }
+                        (element as KtObjectDeclaration).nameIdentifier?.let { append(" "); append(it.text) }
                     }
                 }
 
@@ -239,7 +239,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
                 val expression = extractExpression(this@buildText)
                 if (expression != null) {
                     append(" (")
-                    append(expression.shortText(kind))
+                    append(expression!!.shortText(kind))
                     append(")")
                 }
             }
@@ -279,7 +279,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
         override fun elementInfo(element: KtContainerNode): String {
             val ifExpression = element.parent as KtIfExpression
             val then = ifExpression.thenNode
-            val ifInfo = if (ifExpression.isElseIf() || then == null) "if" else IfThenHandler.elementInfo(then)
+            val ifInfo = if (ifExpression.isElseIf() || then == null) "if" else IfThenHandler.elementInfo(then!!)
             return "$ifInfo $ellipsis else"
         }
 
@@ -414,7 +414,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
     @Suppress("UNCHECKED_CAST")
     private fun handler(e: PsiElement): ElementHandler<in KtElement>? {
         if (e !is KtElement) return null
-        val handler = handlers.firstOrNull { it.type.java.isInstance(e) && (it as ElementHandler<in KtElement>).accepts(e) }
+        val handler = handlers.firstOrNull { it.type.java.isInstance(e) && (it as ElementHandler<in KtElement>).accepts(e as KtElement) }
         return handler as ElementHandler<in KtElement>?
     }
 
@@ -478,8 +478,8 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
             var result = ""
             var current = parent
             while (current is KtLabeledExpression) {
-                result = current.getLabelName() + "@ " + result
-                current = current.parent
+                result = (current as KtLabeledExpression).getLabelName() + "@ " + result
+                current = (current as KtLabeledExpression).parent
             }
             return result
         }

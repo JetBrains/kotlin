@@ -68,41 +68,41 @@ class AddWhenRemainingBranchesFix(
 
         fun isAvailable(element: KtWhenExpression?): Boolean {
             if (element == null) return false
-            return element.closeBrace != null &&
-                    with(WhenChecker.getMissingCases(element, element.analyze())) { isNotEmpty() && !hasUnknown }
+            return element!!.closeBrace != null &&
+                    with(WhenChecker.getMissingCases(element!!, element!!.analyze())) { isNotEmpty() && !hasUnknown }
         }
 
         fun addRemainingBranches(element: KtWhenExpression?, withImport: Boolean = false) {
             if (element == null) return
-            val missingCases = WhenChecker.getMissingCases(element, element.analyze())
+            val missingCases = WhenChecker.getMissingCases(element!!, element!!.analyze())
 
-            val whenCloseBrace = element.closeBrace ?: throw AssertionError("isAvailable should check if close brace exist")
-            val elseBranch = element.entries.find { it.isElse }
-            val psiFactory = KtPsiFactory(element)
+            val whenCloseBrace = element!!.closeBrace ?: throw AssertionError("isAvailable should check if close brace exist")
+            val elseBranch = element!!.entries.find { it.isElse }
+            val psiFactory = KtPsiFactory(element!!)
             (whenCloseBrace.prevSibling as? PsiWhiteSpace)?.replace(psiFactory.createNewLine())
             for (case in missingCases) {
                 val branchConditionText = when (case) {
                     UnknownMissingCase, NullMissingCase, is BooleanMissingCase ->
                         case.branchConditionText
                     is ClassMissingCase ->
-                        if (case.classIsSingleton) {
+                        if ((case as ClassMissingCase).classIsSingleton) {
                             ""
                         } else {
                             "is "
-                        } + case.descriptor.fqNameSafe.quoteIfNeeded().asString()
+                        } + (case as ClassMissingCase).descriptor.fqNameSafe.quoteIfNeeded().asString()
                 }
                 val entry = psiFactory.createWhenEntry("$branchConditionText -> TODO()")
                 if (elseBranch != null) {
-                    element.addBefore(entry, elseBranch)
+                    element!!.addBefore(entry, elseBranch)
                 } else {
-                    element.addBefore(entry, whenCloseBrace)
+                    element!!.addBefore(entry, whenCloseBrace)
                 }
             }
 
-            ShortenReferences.DEFAULT.process(element)
+            ShortenReferences.DEFAULT.process(element!!)
 
             if (withImport) {
-                importAllEntries(element)
+                importAllEntries(element!!)
             }
         }
 

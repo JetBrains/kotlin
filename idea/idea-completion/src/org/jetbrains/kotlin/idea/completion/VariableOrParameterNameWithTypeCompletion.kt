@@ -119,10 +119,10 @@ class VariableOrParameterNameWithTypeCompletion(
             if (name != null && prefixMatcher.isStartMatch(name)) {
                 val descriptor = resolutionFacade.analyze(parameter)[BindingContext.VALUE_PARAMETER, parameter]
                 if (descriptor != null) {
-                    val parameterType = descriptor.type
+                    val parameterType = descriptor!!.type
                     if (parameterType.isVisible(visibilityFilter)) {
-                        val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), withType, lookupElementFactory)!!
-                        val (count, name) = lookupElementToCount[lookupElement] ?: Pair(0, name)
+                        val lookupElement = MyLookupElement.create(name!!, ArbitraryType(parameterType), withType, lookupElementFactory)!!
+                        val (count, name) = lookupElementToCount[lookupElement] ?: Pair(0, name!!)
                         lookupElementToCount[lookupElement] = Pair(count + 1, name)
                     }
                 }
@@ -155,8 +155,8 @@ class VariableOrParameterNameWithTypeCompletion(
             if (prefixMatcher.isStartMatch(parameterName)) {
                 val lookupElement = MyLookupElement.create(parameterName, type, withType, lookupElementFactory)
                 if (lookupElement != null) {
-                    lookupElement.putUserData(PRIORITY_KEY, userPrefix.length) // suggestions with longer user prefix get lower priority
-                    if (withType || !lookupNamesAdded.contains(parameterName)) collector.addElement(lookupElement, notImported)
+                    lookupElement!!.putUserData(PRIORITY_KEY, userPrefix.length) // suggestions with longer user prefix get lower priority
+                    if (withType || !lookupNamesAdded.contains(parameterName)) collector.addElement(lookupElement!!, notImported)
                     suggestionsByTypesAdded.add(type)
                     lookupNamesAdded.add(parameterName)
                 }
@@ -173,7 +173,7 @@ class VariableOrParameterNameWithTypeCompletion(
     private abstract class Type(private val idString: String) {
         abstract fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory): LookupElement?
 
-        override fun equals(other: Any?) = other is Type && other.idString == idString
+        override fun equals(other: Any?) = other is Type && (other as Type).idString == idString
         override fun hashCode() = idString.hashCode()
     }
 
@@ -233,7 +233,7 @@ class VariableOrParameterNameWithTypeCompletion(
                 val replacementOffset = context.offsetMap.tryGetOffset(REPLACEMENT_OFFSET)
                 if (replacementOffset != null) {
                     val tailOffset = context.tailOffset
-                    context.document.deleteString(tailOffset, replacementOffset)
+                    context.document.deleteString(tailOffset, replacementOffset!!)
 
                     val chars = context.document.charsSequence
                     var offset = chars.skipSpaces(tailOffset)
@@ -267,7 +267,7 @@ class VariableOrParameterNameWithTypeCompletion(
         }
 
         override fun equals(other: Any?) =
-            other is MyLookupElement && parameterName == other.parameterName && type == other.type && shouldInsertType == other.shouldInsertType
+            other is MyLookupElement && parameterName == (other as MyLookupElement).parameterName && type == (other as MyLookupElement).type && shouldInsertType == (other as MyLookupElement).shouldInsertType
 
         override fun hashCode() = parameterName.hashCode()
     }

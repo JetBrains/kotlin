@@ -71,9 +71,9 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
         multiParameter = loopParameter.replaced(multiParameter)
 
         val indexVariable = multiParameter.entries[0]
-        editor.caretModel.moveToOffset(indexVariable.startOffset)
+        editor!!.caretModel.moveToOffset(indexVariable.startOffset)
 
-        runTemplate(editor, element, indexVariable)
+        runTemplate(editor!!, element, indexVariable)
     }
 
     private fun runTemplate(editor: Editor, forExpression: KtForExpression, indexVariable: KtDestructuringDeclarationEntry) {
@@ -85,11 +85,11 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
         val body = forExpression.body
         when (body) {
             is KtBlockExpression -> {
-                val statement = body.statements.firstOrNull()
+                val statement = (body as KtBlockExpression).statements.firstOrNull()
                 if (statement != null) {
                     templateBuilder.setEndVariableBefore(statement)
                 } else {
-                    templateBuilder.setEndVariableAfter(body.lBrace)
+                    templateBuilder.setEndVariableAfter((body as KtBlockExpression).lBrace)
                 }
             }
 

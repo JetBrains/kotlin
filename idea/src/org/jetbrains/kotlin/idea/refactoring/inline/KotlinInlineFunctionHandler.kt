@@ -40,32 +40,32 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
     override fun isEnabledForLanguage(language: Language) = language == KotlinLanguage.INSTANCE
 
     //TODO: overrides etc
-    override fun canInlineElement(element: PsiElement) = element is KtNamedFunction && element.hasBody()
+    override fun canInlineElement(element: PsiElement) = element is KtNamedFunction && (element as KtNamedFunction).hasBody()
 
     override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
         element as KtNamedFunction
         val nameReference = editor?.findSimpleNameReference()
 
-        val recursive = element.isRecursive()
+        val recursive = (element as KtNamedFunction).isRecursive()
         if (recursive && nameReference == null) {
             val message = RefactoringBundle.getCannotRefactorMessage("Inline recursive function is supported only on references")
             CommonRefactoringUtil.showErrorHint(project, editor, message, "Inline Function", null)
             return
         }
 
-        val descriptor = element.unsafeResolveToDescriptor() as SimpleFunctionDescriptor
+        val descriptor = (element as KtNamedFunction).unsafeResolveToDescriptor() as SimpleFunctionDescriptor
         val codeToInline = buildCodeToInline(
-                element,
-                descriptor.returnType,
-                element.hasDeclaredReturnType(),
-                element.bodyExpression!!,
-                element.hasBlockBody(),
-                editor
+            element as KtNamedFunction,
+            descriptor.returnType,
+            (element as KtNamedFunction).hasDeclaredReturnType(),
+            (element as KtNamedFunction).bodyExpression!!,
+            (element as KtNamedFunction).hasBlockBody(),
+            editor
         ) ?: return
 
         val replacementStrategy = CallableUsageReplacementStrategy(codeToInline, inlineSetter = false)
 
-        val dialog = KotlinInlineFunctionDialog(project, element, nameReference, replacementStrategy,
+        val dialog = KotlinInlineFunctionDialog(project, element as KtNamedFunction, nameReference, replacementStrategy,
                                                 allowInlineThisOnly = recursive)
         if (!ApplicationManager.getApplication().isUnitTestMode) {
             dialog.show()

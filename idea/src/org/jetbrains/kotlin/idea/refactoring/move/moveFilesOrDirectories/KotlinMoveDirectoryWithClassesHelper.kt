@@ -81,15 +81,15 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
             conflicts: MultiMap<PsiElement, String>
     ) {
         val psiPackage = directory?.getPackage() ?: return
-        val moveTarget = KotlinDirectoryMoveTarget(FqName(psiPackage.qualifiedName), directory)
+        val moveTarget = KotlinDirectoryMoveTarget(FqName(psiPackage.qualifiedName), directory!!)
         for ((index, usageInfo) in infos.withIndex()) {
             if (usageInfo !is FileUsagesWrapper) continue
 
-            ProgressManager.getInstance().progressIndicator?.text2 = "Processing ${usageInfo.psiFile.name}"
+            ProgressManager.getInstance().progressIndicator?.text2 = "Processing ${(usageInfo as FileUsagesWrapper).psiFile.name}"
 
             runReadAction {
-                analyzeConflictsInFile(usageInfo.psiFile, usageInfo.usages, moveTarget, files, conflicts) {
-                    infos[index] = usageInfo.copy(usages = it)
+                analyzeConflictsInFile((usageInfo as FileUsagesWrapper).psiFile, (usageInfo as FileUsagesWrapper).usages, moveTarget, files, conflicts) {
+                    infos[index] = (usageInfo as FileUsagesWrapper).copy(usages = it)
                 }
             }
         }
@@ -114,7 +114,7 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
         moveContextMap[file] = MoveContext(moveDestination, moveDeclarationsProcessor)
         if (moveDeclarationsProcessor != null) {
             moveDestination.getPackage()?.let { newPackage ->
-                file.packageDirective?.fqName = FqName(newPackage.qualifiedName).quoteIfNeeded()
+                (file as KtFile).packageDirective?.fqName = FqName(newPackage.qualifiedName).quoteIfNeeded()
             }
         }
         return true

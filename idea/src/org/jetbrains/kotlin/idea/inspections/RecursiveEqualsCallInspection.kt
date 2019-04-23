@@ -42,14 +42,14 @@ class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
                 val context = analyze(BodyResolveMode.PARTIAL)
                 val resolvedCall = getResolvedCall(context)
                 val dispatchReceiver = resolvedCall?.dispatchReceiver as? ThisClassReceiver ?: return false
-                val argumentDescriptor = context[BindingContext.REFERENCE_TARGET, argumentExpr] ?: return false
-                val calledFunctionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor
+                val argumentDescriptor = context[BindingContext.REFERENCE_TARGET, argumentExpr as KtNameReferenceExpression] ?: return false
+                val calledFunctionDescriptor = resolvedCall!!.resultingDescriptor as? FunctionDescriptor
                 if (calledFunctionDescriptor?.isAnyEquals() != true) return false
 
                 val containingFunctionDescriptor = getNonStrictParentOfType<KtNamedFunction>()?.descriptor as? FunctionDescriptor
                 return calledFunctionDescriptor == containingFunctionDescriptor &&
-                       dispatchReceiver.classDescriptor == containingFunctionDescriptor.containingDeclaration &&
-                       argumentDescriptor == containingFunctionDescriptor.valueParameters.singleOrNull()
+                       dispatchReceiver.classDescriptor == containingFunctionDescriptor!!.containingDeclaration &&
+                       argumentDescriptor == containingFunctionDescriptor!!.valueParameters.singleOrNull()
             }
 
             private fun KtExpression.reportRecursiveEquals(invert: Boolean = false) {
@@ -90,15 +90,15 @@ private class ReplaceWithReferentialEqualityFix(invert: Boolean) : LocalQuickFix
         val element = descriptor.psiElement
         val (right, target) = when (element) {
             is KtBinaryExpression -> {
-                element.right to element
+                (element as KtBinaryExpression).right to element as KtBinaryExpression
             }
-            is KtCallExpression -> with (element ){
+            is KtCallExpression -> with (element as KtCallExpression){
                 valueArguments.first().getArgumentExpression() to getQualifiedExpressionForSelectorOrThis()
             }
             else -> return
         }
         if (right == null) return
-        target.replace(KtPsiFactory(project).createExpressionByPattern("this $0 $1", operator, right))
+        target.replace(KtPsiFactory(project).createExpressionByPattern("this $0 $1", operator, right!!))
     }
 }
 

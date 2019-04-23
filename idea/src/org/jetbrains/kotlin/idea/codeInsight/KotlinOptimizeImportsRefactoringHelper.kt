@@ -54,10 +54,10 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
             val pointer = pointerIterator.next()
 
             val directive = pointer.element
-            if (directive == null || !directive.isValid) return isDone
+            if (directive == null || !directive!!.isValid) return isDone
 
             try {
-                directive.delete()
+                directive!!.delete()
             }
             catch (e: IncorrectOperationException) {
                 LOG.error(e)

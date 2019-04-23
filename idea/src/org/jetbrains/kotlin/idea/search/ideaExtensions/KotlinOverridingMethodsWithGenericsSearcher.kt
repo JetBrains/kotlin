@@ -38,16 +38,16 @@ class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, Ove
         val method = p.method
         if (method !is KtLightMethod) return true
 
-        val declaration = method.kotlinOrigin as? KtCallableDeclaration ?: return true
+        val declaration = (method as KtLightMethod).kotlinOrigin as? KtCallableDeclaration ?: return true
 
         val callDescriptor = runReadAction { declaration.unsafeResolveToDescriptor() }
         if (callDescriptor !is CallableDescriptor) return true
 
         // Java overriding method search can't find overloads with primitives types, so
         // we do additional search for such methods.
-        if (!callDescriptor.valueParameters.any { it.type.constructor.declarationDescriptor is TypeParameterDescriptor }) return true
+        if (!(callDescriptor as CallableDescriptor).valueParameters.any { it.type.constructor.declarationDescriptor is TypeParameterDescriptor }) return true
 
-        val parentClass = runReadAction { method.containingClass }
+        val parentClass = runReadAction { (method as KtLightMethod).containingClass }
 
         return ClassInheritorsSearch.search(parentClass, p.scope, true).forEach(Processor { inheritor: PsiClass ->
             val found = runReadAction {
@@ -69,7 +69,7 @@ class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, Ove
             val candidateDescriptor = (lightMethodCandidate as? KtLightMethod)?.kotlinOrigin?.unsafeResolveToDescriptor() ?: continue
             if (candidateDescriptor !is CallableMemberDescriptor) continue
 
-            val overriddenDescriptors = candidateDescriptor.getDirectlyOverriddenDeclarations()
+            val overriddenDescriptors = (candidateDescriptor as CallableMemberDescriptor).getDirectlyOverriddenDeclarations()
             for (candidateSuper in overriddenDescriptors) {
                 val candidateDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(candidateSuper)
                 if (candidateDeclaration == callableDeclaration) {

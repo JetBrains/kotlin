@@ -23,6 +23,6 @@ import org.jetbrains.kotlin.psi.KtContainerNode
 
 class KotlinBracketsSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement): Boolean {
-        return e is KtContainerNode && e.node.elementType == KtNodeTypes.INDICES
+        return e is KtContainerNode && (e as KtContainerNode).node.elementType == KtNodeTypes.INDICES
     }
 }

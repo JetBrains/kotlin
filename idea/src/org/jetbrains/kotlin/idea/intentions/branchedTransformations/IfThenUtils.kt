@@ -68,7 +68,7 @@ fun KtBinaryExpression.expressionComparedToNull(): KtExpression? {
 fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
     val innerExpression = KtPsiUtil.safeDeparenthesize(this, true)
     if (innerExpression is KtBlockExpression) {
-        val statement = innerExpression.statements.singleOrNull() ?: return this
+        val statement = (innerExpression as KtBlockExpression).statements.singleOrNull() ?: return this
         val deparenthesized = KtPsiUtil.safeDeparenthesize(statement, true)
         if (deparenthesized is KtLambdaExpression) return this
         return deparenthesized
@@ -133,8 +133,8 @@ fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpressi
     val project = this.project
     val condition = condition
     val occurrenceInConditional = when (condition) {
-        is KtBinaryExpression -> condition.left
-        is KtIsExpression -> condition.leftHandSide
+        is KtBinaryExpression -> (condition as KtBinaryExpression).left
+        is KtIsExpression -> (condition as KtIsExpression).leftHandSide
         else -> throw AssertionError("Only binary / is expressions are supported here: ${condition?.text}")
     }!!
     KotlinIntroduceVariableHandler.doRefactoring(
@@ -178,7 +178,7 @@ fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Edito
 fun KtExpression.isStableSimpleExpression(context: BindingContext = this.analyze()): Boolean {
     val dataFlowValue = this.toDataFlowValue(context)
     return dataFlowValue?.isStable == true &&
-            dataFlowValue.kind != DataFlowValue.Kind.STABLE_COMPLEX_EXPRESSION
+            dataFlowValue!!.kind != DataFlowValue.Kind.STABLE_COMPLEX_EXPRESSION
 
 }
 
@@ -213,24 +213,28 @@ data class IfThenToSelectData(
         }
 
         return if (baseClauseEvaluatesToReceiver()) {
-            if (condition is KtIsExpression) newReceiver!! else baseClause
+            if (condition is KtIsExpression) newReceiver!! else baseClause!!
         } else {
             when {
                 condition is KtIsExpression -> {
                     when {
-                        baseClause is KtDotQualifiedExpression -> baseClause.replaceFirstReceiver(
+                        baseClause is KtDotQualifiedExpression -> (baseClause as KtDotQualifiedExpression).replaceFirstReceiver(
                             factory, newReceiver!!, safeAccess = true
                         )
-                        hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
+                        hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!,
+                                                                                                        baseClause!!
+                        ).insertSafeCalls(
                             factory
                         )
-                        baseClause is KtCallExpression -> baseClause.replaceCallWithLet(newReceiver!!, factory)
+                        baseClause is KtCallExpression -> (baseClause as KtCallExpression).replaceCallWithLet(newReceiver!!, factory)
                         else -> error("Illegal state")
                     }
                 }
-                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", receiverExpression, baseClause).insertSafeCalls(factory)
-                baseClause is KtCallExpression -> baseClause.replaceCallWithLet(receiverExpression, factory)
-                else -> baseClause.insertSafeCalls(factory)
+                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", receiverExpression,
+                                                                                                baseClause!!
+                ).insertSafeCalls(factory)
+                baseClause is KtCallExpression -> (baseClause as KtCallExpression).replaceCallWithLet(receiverExpression, factory)
+                else -> baseClause!!.insertSafeCalls(factory)
             }
         }
     }
@@ -283,19 +287,19 @@ internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData?
     val receiverExpression = condition.checkedExpression()?.unwrapBlockOrParenthesis() ?: return null
 
     val (baseClause, negatedClause) = when (condition) {
-        is KtBinaryExpression -> when (condition.operationToken) {
+        is KtBinaryExpression -> when ((condition as KtBinaryExpression).operationToken) {
             KtTokens.EQEQ -> elseClause to thenClause
             KtTokens.EXCLEQ -> thenClause to elseClause
             else -> return null
         }
         is KtIsExpression -> {
-            val targetType = context[BindingContext.TYPE, condition.typeReference] ?: return null
+            val targetType = context[BindingContext.TYPE, (condition as KtIsExpression).typeReference] ?: return null
             if (TypeUtils.isNullableType(targetType)) return null
             // TODO: the following check can be removed after fix of KT-14576
             val originalType = receiverExpression.getType(context) ?: return null
             if (!targetType.isSubtypeOf(originalType)) return null
 
-            when (condition.isNegated) {
+            when ((condition as KtIsExpression).isNegated) {
                 true -> elseClause to thenClause
                 false -> thenClause to elseClause
             }
@@ -312,8 +316,8 @@ internal fun KtIfExpression.shouldBeTransformed(): Boolean {
     val condition = condition
     return when (condition) {
         is KtBinaryExpression -> {
-            val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
-            !baseClause.isClauseTransformableToLetOnly(condition.checkedExpression())
+            val baseClause = (if ((condition as KtBinaryExpression).operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
+            !baseClause.isClauseTransformableToLetOnly((condition as KtBinaryExpression).checkedExpression())
         }
         else -> false
     }

@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.psi.*
 class KotlinCallerUsage(element: KtNamedDeclaration): KotlinUsageInfo<KtNamedDeclaration>(element) {
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtNamedDeclaration, allUsages: Array<out UsageInfo>): Boolean {
         // Do not process function twice
-        if (changeInfo.getAffectedCallables().any { it is KotlinCallableDefinitionUsage<*> && it.element == element }) return true
+        if (changeInfo.getAffectedCallables().any { it is KotlinCallableDefinitionUsage<*> && (it as KotlinCallableDefinitionUsage<*>).element == element }) return true
 
         val parameterList = when (element) {
-            is KtFunction -> element.valueParameterList
-            is KtClass -> element.createPrimaryConstructorParameterListIfAbsent()
+            is KtFunction -> (element as KtFunction).valueParameterList
+            is KtClass -> (element as KtClass).createPrimaryConstructorParameterListIfAbsent()
             else -> null
         } ?: return true
         changeInfo.getNonReceiverParameters()

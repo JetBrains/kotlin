@@ -41,12 +41,12 @@ abstract class KotlinGenerateActionBase : CodeInsightAction(), CodeInsightAction
         super.update(presentation, project, editor, file, dataContext, actionPlace)
         val actionHandler = handler
         if (actionHandler is ContextAwareActionHandler && presentation.isEnabled) {
-            presentation.isEnabled = actionHandler.isAvailableForQuickList(editor, file, dataContext)
+            presentation.isEnabled = (actionHandler as ContextAwareActionHandler).isAvailableForQuickList(editor, file, dataContext)
         }
     }
 
     override fun isValidForFile(project: Project, editor: Editor, file: PsiFile): Boolean {
-        if (file !is KtFile || file.isCompiled) return false
+        if (file !is KtFile || (file as KtFile).isCompiled) return false
 
         val targetClass = getTargetClass(editor, file) ?: return false
         return targetClass.canRefactor() && isValidForClass(targetClass)

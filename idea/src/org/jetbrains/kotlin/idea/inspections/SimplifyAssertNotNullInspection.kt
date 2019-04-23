@@ -88,7 +88,7 @@ class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtC
             initializer.replace(newInitializer)
         }
         else {
-            val newInitializer = KtPsiFactory(expression).createExpressionByPattern("$0 ?: kotlin.error($1)", initializer, message)
+            val newInitializer = KtPsiFactory(expression).createExpressionByPattern("$0 ?: kotlin.error($1)", initializer, message!!)
             val result = initializer.replace(newInitializer)
 
             val qualifiedExpression = (result as KtBinaryExpression).right as KtDotQualifiedExpression
@@ -107,7 +107,7 @@ class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtC
                 newInitializer.endOffset
             else
                 (newInitializer as KtBinaryExpression).operationReference.startOffset
-            editor.moveCaret(offset)
+            editor!!.moveCaret(offset)
         }
     }
 

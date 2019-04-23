@@ -50,15 +50,15 @@ class ClassUsageReplacementStrategy(
 
         constructorReplacementStrategy?.createReplacer(usage)?.let { return it }
 
-        when (val parent = usage.parent) {
+        when (val parent = (usage as KtNameReferenceExpression).parent) {
             is KtUserType -> {
                 if (typeReplacement == null) return null
                 return {
-                    val oldArgumentList = parent.typeArgumentList?.copy() as? KtTypeArgumentList
-                    val replaced = parent.replaced(typeReplacement)
+                    val oldArgumentList = (parent as KtUserType).typeArgumentList?.copy() as? KtTypeArgumentList
+                    val replaced = parent.replaced(typeReplacement!!)
                     val newArgumentList = replaced.typeArgumentList
-                    if (oldArgumentList != null && oldArgumentList.arguments.size == newArgumentList?.arguments?.size) {
-                        newArgumentList.replace(oldArgumentList)
+                    if (oldArgumentList != null && oldArgumentList!!.arguments.size == newArgumentList?.arguments?.size) {
+                        newArgumentList!!.replace(oldArgumentList!!)
                     }
 
                     ShortenReferences.DEFAULT.process(replaced)
@@ -66,10 +66,10 @@ class ClassUsageReplacementStrategy(
             }
 
             is KtCallExpression -> {
-                if (usage != parent.calleeExpression) return null
+                if (usage != (parent as KtCallExpression).calleeExpression) return null
                 when {
                     constructorReplacementStrategy == null && typeReplacement != null -> return {
-                        replaceConstructorCallWithOtherTypeConstruction(parent)
+                        replaceConstructorCallWithOtherTypeConstruction(parent as KtCallExpression)
                     }
                     else -> return null
                 }
@@ -77,7 +77,7 @@ class ClassUsageReplacementStrategy(
 
             else -> {
                 if (typeReplacement != null) {
-                    val fqNameStr = typeReplacement.text
+                    val fqNameStr = typeReplacement!!.text
                     val fqName = FqName(fqNameStr)
 
                     return {
@@ -96,20 +96,20 @@ class ClassUsageReplacementStrategy(
             .getInstance()[referenceExpression.text, callExpression.project, callExpression.resolveScope]
             .firstOrNull()
 
-        val replacementTypeArgumentList = typeReplacement.typeArgumentList
+        val replacementTypeArgumentList = typeReplacement!!.typeArgumentList
         val replacementTypeArgumentCount = classFromReplacement?.typeParameters?.size
             ?: replacementTypeArgumentList?.arguments?.size
 
         val typeArgumentList = callExpression.typeArgumentList
         val callDescriptor = callExpression.resolveToCall()
             ?.resultingDescriptor
-            ?.let { if (it is TypeAliasConstructorDescriptor) it.underlyingConstructorDescriptor else it }
+            ?.let { if (it is TypeAliasConstructorDescriptor) (it as TypeAliasConstructorDescriptor).underlyingConstructorDescriptor else it }
         val typeArgumentCount = callDescriptor?.typeParametersCount ?: typeArgumentList?.arguments?.size
 
         if (typeArgumentCount != replacementTypeArgumentCount) {
             if (replacementTypeArgumentList == null) typeArgumentList?.delete()
             else callExpression.replaceOrCreateTypeArgumentList(
-                replacementTypeArgumentList.copy() as KtTypeArgumentList
+                replacementTypeArgumentList!!.copy() as KtTypeArgumentList
             )
         }
 
@@ -117,7 +117,7 @@ class ClassUsageReplacementStrategy(
 
         val expressionToReplace = callExpression.getQualifiedExpressionForSelectorOrThis()
         val newExpression = if (typeReplacementQualifierAsExpression != null)
-            factory.createExpressionByPattern("$0.$1", typeReplacementQualifierAsExpression, callExpression)
+            factory.createExpressionByPattern("$0.$1", typeReplacementQualifierAsExpression!!, callExpression)
         else
             callExpression
 

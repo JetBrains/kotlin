@@ -45,12 +45,12 @@ class AutomaticParameterRenamer(element: KtParameter, newName: String) : Automat
             if (!callable.canRefactor()) continue
             val parameter: PsiNamedElement? =
                     when (callable) {
-                        is KtCallableDeclaration -> callable.valueParameters.firstOrNull { it.name == element.name }
-                        is PsiMethod -> callable.parameterList.parameters.firstOrNull { it.name == element.name }
+                        is KtCallableDeclaration -> (callable as KtCallableDeclaration).valueParameters.firstOrNull { it.name == element.name }
+                        is PsiMethod -> (callable as PsiMethod).parameterList.parameters.firstOrNull { it.name == element.name }
                         else -> null
                     }
             if (parameter == null) continue
-            myElements += parameter
+            myElements += parameter!!
         }
         suggestAllNames(element.name, newName.quoteIfNeeded())
     }
@@ -65,7 +65,7 @@ class AutomaticParameterRenamer(element: KtParameter, newName: String) : Automat
 }
 
 class AutomaticParameterRenamerFactory : AutomaticRenamerFactory {
-    override fun isApplicable(element: PsiElement) = element is KtParameter && element.ownerFunction is KtNamedFunction
+    override fun isApplicable(element: PsiElement) = element is KtParameter && (element as KtParameter).ownerFunction is KtNamedFunction
 
     override fun getOptionName() = RefactoringBundle.message("rename.parameters.hierarchy")!!
 

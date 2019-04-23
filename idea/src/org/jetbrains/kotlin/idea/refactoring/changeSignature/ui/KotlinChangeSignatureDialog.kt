@@ -187,15 +187,15 @@ class KotlinChangeSignatureDialog(
                     if (KotlinCallableParameterTableModel.isTypeColumn(columnInfo)) {
                         val document = PsiDocumentManager.getInstance(project).getDocument(item.typeCodeFragment)
                         editor = EditorTextField(document, project, fileType)
-                        component = editor
+                        component = editor!!
                     } else if (KotlinCallableParameterTableModel.isNameColumn(columnInfo)) {
                         editor = nameEditor
-                        component = editor
+                        component = editor!!
                         updateNameEditor()
                     } else if (KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo) && isDefaultColumnEnabled()) {
                         val document = PsiDocumentManager.getInstance(project).getDocument(item.defaultValueCodeFragment)
                         editor = EditorTextField(document, project, fileType)
-                        component = editor
+                        component = editor!!
                     } else if (KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {
                         val comboBox = JComboBox(KotlinValVar.values())
                         comboBox.selectedItem = item.parameter.valOrVar
@@ -223,14 +223,14 @@ class KotlinChangeSignatureDialog(
                     panel.add(label)
 
                     if (editor != null) {
-                        editor.addDocumentListener(
+                        editor!!.addDocumentListener(
                             object : DocumentListener {
                                 override fun documentChanged(e: DocumentEvent) {
                                     fireDocumentChanged(e, columnFinal)
                                 }
                             }
                         )
-                        editor.setPreferredWidth(table.width / parametersTableModel.columnCount)
+                        editor!!.setPreferredWidth(table.width / parametersTableModel.columnCount)
                     }
 
                     components.add(component)
@@ -291,12 +291,12 @@ class KotlinChangeSignatureDialog(
             override fun getPreferredFocusedComponent(): JComponent {
                 val me = mouseEvent
                 val index = when {
-                    me != null -> getEditorIndex(me.point.getX().toInt())
+                    me != null -> getEditorIndex(me!!.point.getX().toInt())
                     myMethod.kind === Kind.PRIMARY_CONSTRUCTOR -> 1
                     else -> 0
                 }
                 val component = components[index]
-                return if (component is EditorTextField) component.focusTarget else component
+                return if (component is EditorTextField) (component as EditorTextField).focusTarget else component
             }
 
             override fun getFocusableComponents(): Array<JComponent> {
@@ -421,12 +421,12 @@ class KotlinChangeSignatureDialog(
         fun getTypeCodeFragmentContext(startFrom: PsiElement): KtElement {
             return startFrom.parentsWithSelf.mapNotNull {
                 when {
-                    it is KtNamedFunction -> it.bodyExpression ?: it.valueParameterList
-                    it is KtPropertyAccessor -> it.bodyExpression
-                    it is KtDeclaration && KtPsiUtil.isLocal(it) -> null
-                    it is KtConstructor<*> -> it
-                    it is KtClassOrObject -> it
-                    it is KtFile -> it
+                    it is KtNamedFunction -> (it as KtNamedFunction).bodyExpression ?: (it as KtNamedFunction).valueParameterList
+                    it is KtPropertyAccessor -> (it as KtPropertyAccessor).bodyExpression
+                    it is KtDeclaration && KtPsiUtil.isLocal(it as KtDeclaration) -> null
+                    it is KtConstructor<*> -> it as KtConstructor<*>
+                    it is KtClassOrObject -> it as KtClassOrObject
+                    it is KtFile -> it as KtFile
                     else -> null
                 }
             }.first()
@@ -461,8 +461,8 @@ class KotlinChangeSignatureDialog(
             val typeRef = getContentElement()
             val type = typeRef?.analyze(BodyResolveMode.PARTIAL)?.get(BindingContext.TYPE, typeRef)
             return when {
-                type != null && !type.isError -> KotlinTypeInfo(isCovariant, type, if (forPreview) typeRef.text else null)
-                typeRef != null -> KotlinTypeInfo(isCovariant, null, typeRef.text)
+                type != null && !type!!.isError -> KotlinTypeInfo(isCovariant, type, if (forPreview) typeRef!!.text else null)
+                typeRef != null -> KotlinTypeInfo(isCovariant, null, typeRef!!.text)
                 else -> KotlinTypeInfo(isCovariant)
             }
         }
@@ -483,7 +483,7 @@ class KotlinChangeSignatureDialog(
 
                 val codeFragment = parameter.defaultValueCodeFragment as KtExpressionCodeFragment
                 val oldDefaultValue = parameterInfo.defaultValueForCall
-                if (codeFragment.text != (if (oldDefaultValue != null) oldDefaultValue.text else "")) {
+                if (codeFragment.text != (if (oldDefaultValue != null) oldDefaultValue!!.text else "")) {
                     parameterInfo.defaultValueForCall = codeFragment.getContentElement()
                 }
 

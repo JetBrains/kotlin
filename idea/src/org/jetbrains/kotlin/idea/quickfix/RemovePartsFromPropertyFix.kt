@@ -57,12 +57,12 @@ open class RemovePartsFromPropertyFix(
 
         val getter = newElement.getter
         if (removeGetter && getter != null) {
-            newElement.deleteChildInternal(getter.node)
+            newElement.deleteChildInternal(getter!!.node)
         }
 
         val setter = newElement.setter
         if (removeSetter && setter != null) {
-            newElement.deleteChildInternal(setter.node)
+            newElement.deleteChildInternal(setter!!.node)
         }
 
         val initializer = newElement.initializer
@@ -79,7 +79,7 @@ open class RemovePartsFromPropertyFix(
         }
         val replaceElement = element?.replace(newElement) as? KtProperty
         if (replaceElement != null && typeToAdd != null) {
-            SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, replaceElement, typeToAdd)
+            SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, replaceElement!!, typeToAdd!!)
         }
     }
 

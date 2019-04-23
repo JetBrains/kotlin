@@ -46,7 +46,7 @@ class DelegatingFindMemberUsagesHandler(
     private fun getHandlerAndOptions(element: PsiElement, options: FindUsagesOptions?): HandlerAndOptions? {
         return when (element) {
             is KtNamedDeclaration ->
-                HandlerAndOptions(KotlinFindMemberUsagesHandler.getInstance(element, elementsToSearch, factory), options)
+                HandlerAndOptions(KotlinFindMemberUsagesHandler.getInstance(element as KtNamedDeclaration, elementsToSearch, factory), options)
 
             is PsiMethod, is PsiParameter ->
                 HandlerAndOptions(

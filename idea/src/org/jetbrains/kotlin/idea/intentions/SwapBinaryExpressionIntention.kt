@@ -83,9 +83,9 @@ class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>
 
     private fun firstDescendantOfTighterPrecedence(expression: KtExpression?, precedence: Int, getChild: KtBinaryExpression.() -> KtExpression?): KtExpression? {
         if (expression is KtBinaryExpression) {
-            val expressionPrecedence = PsiPrecedences.getPrecedence(expression)
+            val expressionPrecedence = PsiPrecedences.getPrecedence(expression as KtBinaryExpression)
             if (!PsiPrecedences.isTighter(expressionPrecedence, precedence)) {
-                return firstDescendantOfTighterPrecedence(expression.getChild(), precedence, getChild)
+                return firstDescendantOfTighterPrecedence((expression as KtBinaryExpression).getChild(), precedence, getChild)
             }
         }
         return expression

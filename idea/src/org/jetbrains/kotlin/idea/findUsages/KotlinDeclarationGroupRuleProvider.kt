@@ -38,11 +38,11 @@ class KotlinDeclarationGroupingRule(val level: Int = 0) : UsageGroupingRule {
         if (element is KtFile) {
             val offset = (usage as? UsageInfo2UsageAdapter)?.usageInfo?.navigationOffset
             if (offset != null) {
-                element = element.findElementAt(offset) ?: element
+                element = element.findElementAt(offset!!) ?: element
             }
         }
 
-        val parentList = element.parents.filterIsInstance<KtNamedDeclaration>().filterNot { it is KtProperty && it.isLocal }.toList()
+        val parentList = element.parents.filterIsInstance<KtNamedDeclaration>().filterNot { it is KtProperty && (it as KtProperty).isLocal }.toList()
         if (parentList.size <= level) {
             return null
         }

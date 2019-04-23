@@ -183,7 +183,7 @@ fun thisExpressionItems(bindingContext: BindingContext, position: KtExpression, 
     for ((receiver, expressionFactory) in scope.getImplicitReceiversWithInstanceToExpression()) {
         if (expressionFactory == null) continue
         // if prefix does not start with "this@" do not include immediate this in the form with label
-        val expression = expressionFactory.createExpression(psiFactory, shortThis = !prefix.startsWith("this@")) as? KtThisExpression ?: continue
+        val expression = expressionFactory!!.createExpression(psiFactory, shortThis = !prefix.startsWith("this@")) as? KtThisExpression ?: continue
         result.add(ThisItemLookupObject(receiver, expression.getLabelNameAsName()))
     }
     return result
@@ -193,10 +193,10 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
     val result = ArrayList<LookupElement>()
     for (parent in position.parentsWithSelf) {
         if (parent is KtDeclarationWithBody) {
-            val returnType = parent.returnType(bindingContext)
-            val isUnit = returnType == null || KotlinBuiltIns.isUnit(returnType)
+            val returnType = (parent as KtDeclarationWithBody).returnType(bindingContext)
+            val isUnit = returnType == null || KotlinBuiltIns.isUnit(returnType!!)
             if (parent is KtFunctionLiteral) {
-                val (label, call) = parent.findLabelAndCall()
+                val (label, call) = (parent as KtFunctionLiteral).findLabelAndCall()
                 if (label != null) {
                     result.add(createKeywordElementWithSpace("return", tail = label.labelNameToTail(), addSpaceAfter = !isUnit))
                 }
@@ -206,22 +206,24 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
                 if (!InlineUtil.isInline(bindingContext[BindingContext.REFERENCE_TARGET, callee])) break // not inlined
             }
             else {
-                if (parent.hasBlockBody()) {
+                if ((parent as KtDeclarationWithBody).hasBlockBody()) {
                     result.add(createKeywordElementWithSpace("return", addSpaceAfter = !isUnit))
 
                     if (returnType != null) {
-                        if (returnType.nullability() == TypeNullability.NULLABLE) {
+                        if (returnType!!.nullability() == TypeNullability.NULLABLE) {
                             result.add(createKeywordElement("return null"))
                         }
 
-                        if (KotlinBuiltIns.isBooleanOrNullableBoolean(returnType)) {
+                        if (KotlinBuiltIns.isBooleanOrNullableBoolean(returnType!!)) {
                             result.add(createKeywordElement("return true"))
                             result.add(createKeywordElement("return false"))
                         }
-                        else if (KotlinBuiltIns.isCollectionOrNullableCollection(returnType) || KotlinBuiltIns.isListOrNullableList(returnType) || KotlinBuiltIns.isIterableOrNullableIterable(returnType)) {
+                        else if (KotlinBuiltIns.isCollectionOrNullableCollection(returnType!!) || KotlinBuiltIns.isListOrNullableList(
+                                returnType!!
+                            ) || KotlinBuiltIns.isIterableOrNullableIterable(returnType!!)) {
                             result.add(createKeywordElement("return", tail = " emptyList()"))
                         }
-                        else if (KotlinBuiltIns.isSetOrNullableSet(returnType)) {
+                        else if (KotlinBuiltIns.isSetOrNullableSet(returnType!!)) {
                             result.add(createKeywordElement("return", tail = " emptySet()"))
                         }
                     }
@@ -284,7 +286,7 @@ fun breakOrContinueExpressionItems(position: KtElement, breakOrContinue: String)
                     result.add(createKeywordElement(breakOrContinue))
                 }
 
-                val label = (parent.parent as? KtLabeledExpression)?.getLabelNameAsName()
+                val label = ((parent as KtLoopExpression).parent as? KtLabeledExpression)?.getLabelNameAsName()
                 if (label != null) {
                     result.add(createKeywordElement(breakOrContinue, tail = label.labelNameToTail()))
                 }
@@ -328,7 +330,7 @@ fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): Look
 private open class BaseTypeLookupElement(type: KotlinType, baseLookupElement: LookupElement) : LookupElementDecorator<LookupElement>(baseLookupElement) {
     val fullText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 
-    override fun equals(other: Any?) = other is BaseTypeLookupElement && fullText == other.fullText
+    override fun equals(other: Any?) = other is BaseTypeLookupElement && fullText == (other as BaseTypeLookupElement).fullText
     override fun hashCode() = fullText.hashCode()
 
     override fun renderElement(presentation: LookupElementPresentation) {

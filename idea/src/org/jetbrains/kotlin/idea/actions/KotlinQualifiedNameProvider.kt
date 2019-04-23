@@ -30,11 +30,11 @@ class KotlinQualifiedNameProvider: QualifiedNameProvider {
     override fun adjustElementToCopy(element: PsiElement?) = null
 
     override fun getQualifiedName(element: PsiElement?) = when(element) {
-        is KtClassOrObject -> element.fqName?.asString()
-        is KtNamedFunction -> getJavaQualifiedName(LightClassUtil.getLightClassMethod(element))
+        is KtClassOrObject -> (element as KtClassOrObject).fqName?.asString()
+        is KtNamedFunction -> getJavaQualifiedName(LightClassUtil.getLightClassMethod(element as KtNamedFunction))
 
         is KtProperty -> {
-            val lightClassPropertyMethods = LightClassUtil.getLightClassPropertyMethods(element)
+            val lightClassPropertyMethods = LightClassUtil.getLightClassPropertyMethods(element as KtProperty)
             val lightElement: PsiElement? = lightClassPropertyMethods.getter ?: lightClassPropertyMethods.backingField
             getJavaQualifiedName(lightElement)
         }

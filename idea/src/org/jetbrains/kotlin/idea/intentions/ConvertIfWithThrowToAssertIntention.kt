@@ -35,9 +35,9 @@ class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntent
         val thrownExpr = getSelector(throwExpr?.thrownExpression)
         if (thrownExpr !is KtCallExpression) return false
 
-        if (thrownExpr.valueArguments.size > 1) return false
+        if ((thrownExpr as KtCallExpression).valueArguments.size > 1) return false
 
-        val resolvedCall = thrownExpr.resolveToCall() ?: return false
+        val resolvedCall = (thrownExpr as KtCallExpression).resolveToCall() ?: return false
         val targetFqName = DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).asString()
         return targetFqName in constant { setOf("kotlin.AssertionError.<init>", "java.lang.AssertionError.<init>") }
     }
@@ -54,13 +54,13 @@ class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntent
         var newCondition = element.condition!!
         val simplifier = SimplifyNegatedBinaryExpressionInspection()
         if (simplifier.isApplicable(newCondition as KtPrefixExpression)) {
-            simplifier.applyTo(newCondition.operationReference, editor = editor)
+            simplifier.applyTo((newCondition as KtPrefixExpression).operationReference, editor = editor)
             newCondition = element.condition!!
         }
 
         val arg = thrownExpr.valueArguments.singleOrNull()?.getArgumentExpression()
         val assertExpr = if (arg != null && !arg.isNullExpression())
-            psiFactory.createExpressionByPattern("kotlin.assert($0) {$1}", newCondition, arg)
+            psiFactory.createExpressionByPattern("kotlin.assert($0) {$1}", newCondition, arg!!)
         else
             psiFactory.createExpressionByPattern("kotlin.assert($0)", newCondition)
 
@@ -70,7 +70,7 @@ class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntent
 
     private fun getSelector(element: KtExpression?): KtExpression? {
         if (element is KtDotQualifiedExpression) {
-            return element.selectorExpression
+            return (element as KtDotQualifiedExpression).selectorExpression
         }
         return element
     }

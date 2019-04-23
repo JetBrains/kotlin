@@ -44,8 +44,8 @@ object CreateTypeParameterUnmatchedTypeArgumentActionFactory : KotlinIntentionAc
         val context = element.analyze()
         val parent = element.parent
         val referencedDescriptor = when (parent) {
-            is KtUserType -> context[BindingContext.REFERENCE_TARGET, parent.referenceExpression]
-            is KtCallElement -> parent.getResolvedCall(context)?.resultingDescriptor
+            is KtUserType -> context[BindingContext.REFERENCE_TARGET, (parent as KtUserType).referenceExpression]
+            is KtCallElement -> (parent as KtCallElement).getResolvedCall(context)?.resultingDescriptor
             else -> null
         } ?: return null
         val referencedDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, referencedDescriptor) as? KtTypeParameterListOwner

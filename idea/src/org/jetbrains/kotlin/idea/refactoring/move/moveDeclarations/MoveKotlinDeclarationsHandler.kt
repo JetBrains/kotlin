@@ -53,8 +53,8 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                     e.containingFile?.parent
                 } else {
                     when (e) {
-                        is KtNamedDeclaration -> e.containingClassOrObject ?: e.parent
-                        is KtFile -> e.parent
+                        is KtNamedDeclaration -> (e as KtNamedDeclaration).containingClassOrObject ?: (e as KtNamedDeclaration).parent
+                        is KtFile -> (e as KtFile).parent
                         else -> null
                     }
                 }
@@ -80,14 +80,14 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
 
         val elementsToSearch = elements.flatMapTo(LinkedHashSet<KtNamedDeclaration>()) {
             when (it) {
-                is KtNamedDeclaration -> listOf(it)
-                is KtFile -> it.declarations.filterIsInstance<KtNamedDeclaration>()
+                is KtNamedDeclaration -> listOf(it as KtNamedDeclaration)
+                is KtFile -> (it as KtFile).declarations.filterIsInstance<KtNamedDeclaration>()
                 else -> emptyList()
             }
         }
 
         // todo: allow moving companion object
-        if (elementsToSearch.any { it is KtObjectDeclaration && it.isCompanion() }) {
+        if (elementsToSearch.any { it is KtObjectDeclaration && (it as KtObjectDeclaration).isCompanion() }) {
             val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is not supported for companion objects")
             CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
@@ -122,7 +122,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
             return true
         }
 
-        when (container) {
+        when (container!!) {
             is PsiDirectory, is PsiPackage, is KtFile -> {
                 val targetPackageName = MoveClassesOrPackagesImpl.getInitialTargetPackageName(targetContainer, elements)
                 val targetDirectory = if (targetContainer != null) {
@@ -159,8 +159,8 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                     MoveKotlinNestedClassesDialog(
                         project,
                         elementsToSearch.filterIsInstance<KtClassOrObject>(),
-                        container,
-                        targetContainer,
+                        container as KtClassOrObject,
+                        targetContainer as KtClassOrObject,
                         callback
                     ).show()
                     return true
@@ -171,7 +171,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                 )
             }
 
-            else -> throw AssertionError("Unexpected container: ${container.getElementTextWithContext()}")
+            else -> throw AssertionError("Unexpected container: ${container!!.getElementTextWithContext()}")
         }
 
         return true
@@ -188,10 +188,10 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
 
         return elements.all { e ->
             when {
-                e is KtClass || e is KtObjectDeclaration && !e.isObjectLiteral() || e is KtNamedFunction || e is KtProperty || e is KtTypeAlias ->
+                e is KtClass || e is KtObjectDeclaration && !(e as KtObjectDeclaration).isObjectLiteral() || e is KtNamedFunction || e is KtProperty || e is KtTypeAlias ->
                     (editorMode || (e as KtNamedDeclaration).canMove()) && e.canRefactor()
                 e is KtFile ->
-                    e.declarations.any { it is KtNamedDeclaration } && e.canRefactor()
+                    (e as KtFile).declarations.any { it is KtNamedDeclaration } && e.canRefactor()
                 else ->
                     false
             }
@@ -219,10 +219,10 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
 
     override fun isValidTarget(psiElement: PsiElement?, sources: Array<out PsiElement>): Boolean {
         return psiElement is PsiPackage
-                || (psiElement is PsiDirectory && psiElement.getPackage() != null)
+                || (psiElement is PsiDirectory && (psiElement as PsiDirectory).getPackage() != null)
                 || psiElement is KtFile
                 || (psiElement is KtClassOrObject
-                && !(psiElement.hasModifier(KtTokens.ANNOTATION_KEYWORD))
+                && !((psiElement as KtClassOrObject).hasModifier(KtTokens.ANNOTATION_KEYWORD))
                 && !sources.any { it.parent is KtFile })
     }
 
@@ -233,10 +233,10 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     override fun tryToMove(
         element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
     ): Boolean {
-        if (element is PsiWhiteSpace && element.textOffset > 0) {
-            val prevElement = element.containingFile.findElementAt(element.textOffset - 1)
+        if (element is PsiWhiteSpace && (element as PsiWhiteSpace).textOffset > 0) {
+            val prevElement = (element as PsiWhiteSpace).containingFile.findElementAt((element as PsiWhiteSpace).textOffset - 1)
             return prevElement != null
-                    && recursivelyTryToMove(prevElement, project, dataContext, reference, editor)
+                    && recursivelyTryToMove(prevElement!!, project, dataContext, reference, editor)
         }
         return tryToMoveImpl(element, project, dataContext, reference, editor)
     }

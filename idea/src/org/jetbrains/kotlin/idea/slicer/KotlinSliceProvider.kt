@@ -52,9 +52,9 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
         object : SliceNullnessAnalyzerBase(LEAF_ELEMENT_EQUALITY, this) {
             override fun checkNullability(element: PsiElement?): Nullability {
                 val types = when (element) {
-                    is KtCallableDeclaration -> listOfNotNull((element.resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType)
+                    is KtCallableDeclaration -> listOfNotNull(((element as KtCallableDeclaration).resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType)
                     is KtDeclaration -> emptyList()
-                    is KtExpression -> listOfNotNull(element.analyze(BodyResolveMode.PARTIAL).getType(element))
+                    is KtExpression -> listOfNotNull((element as KtExpression).analyze(BodyResolveMode.PARTIAL).getType(element as KtExpression))
                     else -> emptyList()
                 }
                 return when {
@@ -85,13 +85,13 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
                     it is KtProperty ||
                             it is KtParameter ||
                             it is KtDeclarationWithBody ||
-                            (it is KtClass && !it.hasExplicitPrimaryConstructor()) ||
+                            (it is KtClass && !(it as KtClass).hasExplicitPrimaryConstructor()) ||
                             (it is KtExpression && it !is KtDeclaration)
                 }
                 ?.let { KtPsiUtil.safeDeparenthesize(it as KtExpression) } ?: return null
         if (dataFlowToThis) {
             if (element is KtConstantExpression) return null
-            if (element is KtStringTemplateExpression && element.isPlainWithEscapes()) return null
+            if (element is KtStringTemplateExpression && (element as KtStringTemplateExpression).isPlainWithEscapes()) return null
             if (element is KtClassLiteralExpression) return null
             if (element is KtCallableReferenceExpression) return null
         }

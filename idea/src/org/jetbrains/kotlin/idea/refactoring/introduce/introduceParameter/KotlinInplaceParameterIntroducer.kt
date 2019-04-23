@@ -109,7 +109,7 @@ class KotlinInplaceParameterIntroducer(
         init {
             val templateState = TemplateManagerImpl.getTemplateState(myEditor)
             val currentType = if (templateState?.template != null) {
-                templateState
+                templateState!!
                         .getVariableValue(KotlinInplaceVariableIntroducer.TYPE_REFERENCE_VARIABLE_NAME)
                         ?.text
             } else null
@@ -243,12 +243,12 @@ class KotlinInplaceParameterIntroducer(
     }
 
     override fun getRangeToRename(element: PsiElement): TextRange {
-        if (element is KtProperty) return element.nameIdentifier!!.textRange.shiftRight(-element.startOffset)
+        if (element is KtProperty) return (element as KtProperty).nameIdentifier!!.textRange.shiftRight(-element.startOffset)
         return super.getRangeToRename(element)
     }
 
     override fun createMarker(element: PsiElement): RangeMarker {
-        if (element is KtProperty) return super.createMarker(element.nameIdentifier)
+        if (element is KtProperty) return super.createMarker((element as KtProperty).nameIdentifier)
         return super.createMarker(element)
     }
 

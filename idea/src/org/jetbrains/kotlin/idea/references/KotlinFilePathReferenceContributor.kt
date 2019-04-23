@@ -34,12 +34,12 @@ class KotlinFilePathReferenceContributor : AbstractKotlinReferenceContributor() 
     object KotlinFilePathReferenceProvider : FilePathReferenceProvider() {
         override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
             if (element !is KtStringTemplateExpression) return PsiReference.EMPTY_ARRAY
-            if (!element.isPlain()) return PsiReference.EMPTY_ARRAY
-            val refByElem = getReferencesByElement(element, element.plainContent, element.getContentRange().startOffset, true)
+            if (!(element as KtStringTemplateExpression).isPlain()) return PsiReference.EMPTY_ARRAY
+            val refByElem = getReferencesByElement(element, (element as KtStringTemplateExpression).plainContent, (element as KtStringTemplateExpression).getContentRange().startOffset, true)
             val res = refByElem
                 .map {
                     if (it is FileReference) {
-                        object : FileReference(it.fileReferenceSet, it.rangeInElement, it.index, it.text) {
+                        object : FileReference((it as FileReference).fileReferenceSet, (it as FileReference).rangeInElement, (it as FileReference).index, (it as FileReference).text) {
                             override fun getVariants(): Array<out Any> {
                                 return super.getVariants()
                                     .map {

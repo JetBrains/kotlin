@@ -55,7 +55,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
 
         val messageFunctionExpr = when {
             args.size == 2 -> args[1]?.getArgumentExpression() ?: return
-            functionLiteralArgument != null -> functionLiteralArgument.getLambdaExpression()
+            functionLiteralArgument != null -> functionLiteralArgument!!.getLambdaExpression()
             else -> null
         }
 
@@ -78,7 +78,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
 
         val message = psiFactory.createExpression(
                 if (messageIsFunction && messageExpr is KtCallableReferenceExpression) {
-                    messageExpr.callableReference.text + "()"
+                    (messageExpr as KtCallableReferenceExpression).callableReference.text + "()"
                 }
                 else if (messageIsFunction) {
                     messageExpr.text + "()"

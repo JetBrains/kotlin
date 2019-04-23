@@ -54,11 +54,11 @@ class DeprecatedSymbolUsageInWholeProjectFix(
     private fun targetPsiElement(): KtDeclaration? {
         val referenceTarget = element?.mainReference?.resolve()
         return when (referenceTarget) {
-            is KtNamedFunction -> referenceTarget
-            is KtProperty -> referenceTarget
-            is KtTypeAlias -> referenceTarget
-            is KtConstructor<*> -> referenceTarget.getContainingClassOrObject() //TODO: constructor can be deprecated itself
-            is KtClass -> referenceTarget.takeIf { it.isAnnotation() }
+            is KtNamedFunction -> referenceTarget as KtNamedFunction
+            is KtProperty -> referenceTarget as KtProperty
+            is KtTypeAlias -> referenceTarget as KtTypeAlias
+            is KtConstructor<*> -> (referenceTarget as KtConstructor<*>).getContainingClassOrObject() //TODO: constructor can be deprecated itself
+            is KtClass -> (referenceTarget as KtClass).takeIf { it.isAnnotation() }
             else -> null
         }
     }

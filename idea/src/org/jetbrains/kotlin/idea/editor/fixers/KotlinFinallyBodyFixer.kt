@@ -27,8 +27,8 @@ class KotlinFinallyBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEn
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtFinallySection) return
 
-        if (!psiElement.finalExpression.text.startsWith('{')) {
-            editor.document.insertString(psiElement.node.findChildByType(KtTokens.FINALLY_KEYWORD)!!.textRange.end, "{}")
+        if (!(psiElement as KtFinallySection).finalExpression.text.startsWith('{')) {
+            editor.document.insertString((psiElement as KtFinallySection).node.findChildByType(KtTokens.FINALLY_KEYWORD)!!.textRange.end, "{}")
         }
     }
 }

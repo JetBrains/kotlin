@@ -40,7 +40,7 @@ class RemoveFunctionBodyFix(element: KtFunction) : KotlinQuickFixAction<KtFuncti
         val bodyExpression = element.bodyExpression!!
         val equalsToken = element.equalsToken
         if (equalsToken != null) {
-            val commentSaver = CommentSaver(PsiChildRange(equalsToken.nextSibling, bodyExpression.prevSibling), true)
+            val commentSaver = CommentSaver(PsiChildRange(equalsToken!!.nextSibling, bodyExpression.prevSibling), true)
             element.deleteChildRange(equalsToken, bodyExpression)
             commentSaver.restore(element)
         }

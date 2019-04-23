@@ -114,10 +114,10 @@ class FindImplicitNothingAction : AnAction() {
         val callee = getCalleeExpressionIfAny() ?: return false
         when (callee) {
             is KtSimpleNameExpression -> {
-                val target = bindingContext[BindingContext.REFERENCE_TARGET, callee] ?: return false
+                val target = bindingContext[BindingContext.REFERENCE_TARGET, callee as KtSimpleNameExpression] ?: return false
                 val callableDescriptor = (target as? CallableDescriptor ?: return false).original
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor) as? KtCallableDeclaration
-                if (declaration != null && declaration.typeReference == null) return false // implicit type
+                if (declaration != null && declaration!!.typeReference == null) return false // implicit type
                 val type = callableDescriptor.returnType ?: return false
                 return type.isNothingOrNothingFunctionType()
             }

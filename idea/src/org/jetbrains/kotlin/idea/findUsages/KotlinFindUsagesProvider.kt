@@ -44,7 +44,7 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
             is KtNamedFunction -> "function"
             is KtClass -> "class"
             is KtParameter -> "parameter"
-            is KtProperty -> if (element.isLocal) "variable" else "property"
+            is KtProperty -> if ((element as KtProperty).isLocal) "variable" else "property"
             is KtDestructuringDeclarationEntry -> "variable"
             is KtTypeParameter -> "type parameter"
             is KtSecondaryConstructor -> "constructor"
@@ -64,32 +64,32 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
         return when (element) {
             is PsiDirectory, is PsiPackage, is PsiFile -> javaProvider.getDescriptiveName(element)
             is KtClassOrObject -> {
-                if (element is KtObjectDeclaration && element.isObjectLiteral()) return "<unnamed>"
-                element.fqName?.asString() ?: element.name ?: "<unnamed>"
+                if (element is KtObjectDeclaration && (element as KtObjectDeclaration).isObjectLiteral()) return "<unnamed>"
+                (element as KtClassOrObject).fqName?.asString() ?: (element as KtClassOrObject).name ?: "<unnamed>"
             }
-            is KtProperty -> (element.name ?: "") + (element.containerDescription?.let { " of $it" } ?: "")
+            is KtProperty -> ((element as KtProperty).name ?: "") + ((element as KtProperty).containerDescription?.let { " of $it" } ?: "")
             is KtFunction -> {
-                val name = element.name ?: ""
-                val descriptor = element.unsafeResolveToDescriptor() as FunctionDescriptor
+                val name = (element as KtFunction).name ?: ""
+                val descriptor = (element as KtFunction).unsafeResolveToDescriptor() as FunctionDescriptor
                 val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS
                 val paramsDescription =
                     descriptor.valueParameters.joinToString(prefix = "(", postfix = ")") { renderer.renderType(it.type) }
                 val returnType = descriptor.returnType
-                val returnTypeDescription = if (returnType != null && !returnType.isUnit()) renderer.renderType(returnType) else null
+                val returnTypeDescription = if (returnType != null && !returnType!!.isUnit()) renderer.renderType(returnType!!) else null
                 val funDescription = "$name$paramsDescription" + (returnTypeDescription?.let { ": $it" } ?: "")
-                return funDescription + (element.containerDescription?.let { " of $it" } ?: "")
+                return funDescription + ((element as KtFunction).containerDescription?.let { " of $it" } ?: "")
             }
-            is KtLabeledExpression -> element.getLabelName() ?: ""
-            is KtImportAlias -> element.name ?: ""
-            is KtLightElement<*, *> -> element.kotlinOrigin?.let { getDescriptiveName(it) } ?: ""
+            is KtLabeledExpression -> (element as KtLabeledExpression).getLabelName() ?: ""
+            is KtImportAlias -> (element as KtImportAlias).name ?: ""
+            is KtLightElement<*, *> -> (element as KtLightElement<*, *>).kotlinOrigin?.let { getDescriptiveName(it) } ?: ""
             is KtParameter -> {
-                if (element.isPropertyParameter()) {
-                    (element.name ?: "") + (element.containerDescription?.let { " of $it" } ?: "")
+                if ((element as KtParameter).isPropertyParameter()) {
+                    ((element as KtParameter).name ?: "") + ((element as KtParameter).containerDescription?.let { " of $it" } ?: "")
                 } else {
-                    element.name ?: ""
+                    (element as KtParameter).name ?: ""
                 }
             }
-            is PsiNamedElement -> element.name ?: ""
+            is PsiNamedElement -> (element as PsiNamedElement).name ?: ""
             else -> ""
         }
     }

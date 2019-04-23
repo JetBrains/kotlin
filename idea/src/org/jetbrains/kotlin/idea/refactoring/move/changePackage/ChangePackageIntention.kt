@@ -67,11 +67,11 @@ class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageD
         var enteredName: String? = null
         var affectedRange: TextRange? = null
 
-        editor.caretModel.moveToOffset(0)
+        editor!!.caretModel.moveToOffset(0)
         TemplateManager.getInstance(project).startTemplate(
-                editor,
-                builder.buildInlineTemplate(),
-                object: TemplateEditingAdapter() {
+            editor!!,
+            builder.buildInlineTemplate(),
+            object: TemplateEditingAdapter() {
                     override fun beforeTemplateFinished(state: TemplateState, template: Template?) {
                         if (state == null) return
                         enteredName = state.getVariableValue(PACKAGE_NAME_VAR)!!.text
@@ -83,7 +83,7 @@ class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageD
 
                         // Restore original name and run refactoring
 
-                        val document = editor.document
+                        val document = editor!!.document
                         project.executeWriteCommand(text) {
                             document.replaceString(affectedRange!!.startOffset, affectedRange!!.endOffset, FqName(currentName).quoteSegmentsIfNeeded())
                         }
@@ -91,7 +91,8 @@ class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageD
                         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)
 
                         if (!FqNameUnsafe(enteredName!!).hasIdentifiersOnly()) {
-                            CodeInsightUtils.showErrorHint(project, editor, "$enteredName is not a valid package name", "Change package", null)
+                            CodeInsightUtils.showErrorHint(project,
+                                                           editor!!, "$enteredName is not a valid package name", "Change package", null)
                             return
                         }
 

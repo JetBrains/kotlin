@@ -32,7 +32,7 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
                 val typeArgument = typeReference.typeElement?.typeArgumentsAsTypes?.firstOrNull()
                 val typeProjection = typeArgument?.parent as? KtTypeProjection
                 if (typeProjection?.hasModifier(KtTokens.IN_KEYWORD) == false) {
-                    text = if (!typeProjection.hasModifier(KtTokens.OUT_KEYWORD)
+                    text = if (!typeProjection!!.hasModifier(KtTokens.OUT_KEYWORD)
                         && !KotlinBuiltIns.isPrimitiveType(element.builtIns.getArrayElementType(type))
                     ) {
                         BREAKING_TEXT

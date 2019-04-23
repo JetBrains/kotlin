@@ -45,8 +45,8 @@ class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
 
             val callExpression = lambdaExpression.parent?.parent as? KtCallExpression
             if (callExpression != null) {
-                val callee = callExpression.calleeExpression as? KtNameReferenceExpression
-                if (callee != null && callee.getReferencedName() == "forEach" && singleParameter?.name != "it") return
+                val callee = callExpression!!.calleeExpression as? KtNameReferenceExpression
+                if (callee != null && callee!!.getReferencedName() == "forEach" && singleParameter?.name != "it") return
             }
 
             val lambdaContext = lambdaExpression.analyze()
@@ -102,7 +102,7 @@ private fun KtCallExpression.isApplicableCall(lambdaExpression: KtLambdaExpressi
             }
         )
     } else {
-        dotQualifiedExpression.replaceWithCopyWithResolveCheck(
+        dotQualifiedExpression!!.replaceWithCopyWithResolveCheck(
             resolveStrategy = { expr, context ->
                 expr.selectorExpression.getResolvedCall(context)?.resultingDescriptor
             },

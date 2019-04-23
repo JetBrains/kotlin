@@ -28,6 +28,6 @@ class KotlinWrapperForJavaUsageInfos(
     override fun hashCode() = javaChangeInfo.method.hashCode()
 
     override fun equals(other: Any?): Boolean {
-        return other === this || (other is KotlinWrapperForJavaUsageInfos && javaChangeInfo.method == other.javaChangeInfo.method)
+        return other === this || (other is KotlinWrapperForJavaUsageInfos && javaChangeInfo.method == (other as KotlinWrapperForJavaUsageInfos).javaChangeInfo.method)
     }
 }

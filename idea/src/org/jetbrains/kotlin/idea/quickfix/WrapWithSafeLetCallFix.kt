@@ -53,7 +53,7 @@ class WrapWithSafeLetCallFix(
         val name = KotlinNameSuggester.suggestNameByName("it", validator)
         nullableExpression.replace(factory.createExpression(name))
         val underLetExpression = when {
-            receiverExpression != null -> factory.createExpressionByPattern("$0.$1", receiverExpression, element)
+            receiverExpression != null -> factory.createExpressionByPattern("$0.$1", receiverExpression!!, element)
             else -> element
         }
         val wrapped = when (name) {
@@ -68,7 +68,7 @@ class WrapWithSafeLetCallFix(
             val element = diagnostic.psiElement
 
             if (element is KtNameReferenceExpression) {
-                val resolvedCall = element.resolveToCall()
+                val resolvedCall = (element as KtNameReferenceExpression).resolveToCall()
                 if (resolvedCall?.call?.callType != Call.CallType.INVOKE) return null
             }
 

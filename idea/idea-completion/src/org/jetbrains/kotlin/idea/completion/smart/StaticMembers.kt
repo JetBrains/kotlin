@@ -61,7 +61,7 @@ class StaticMembers(
                 if (delegatesClass is ClassDescriptor) {
                     addToCollection(
                         collection,
-                        delegatesClass,
+                        delegatesClass as ClassDescriptor,
                         listOf(expectedInfo),
                         context,
                         enumEntriesToSkip,
@@ -94,7 +94,7 @@ class StaticMembers(
         defaultPriority: SmartCompletionItemPriority
     ) {
         fun processMember(descriptor: DeclarationDescriptor) {
-            if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(
+            if (descriptor is DeclarationDescriptorWithVisibility && !(descriptor as DeclarationDescriptorWithVisibility).isVisible(
                     context,
                     null,
                     bindingContext,
@@ -104,7 +104,7 @@ class StaticMembers(
 
             val matcher: (ExpectedInfo) -> ExpectedInfoMatch = when {
                 descriptor is CallableDescriptor -> {
-                    val returnType = descriptor.fuzzyReturnType() ?: return
+                    val returnType = (descriptor as CallableDescriptor).fuzzyReturnType() ?: return
                     { expectedInfo -> returnType.matchExpectedInfo(expectedInfo) }
                 }
                 DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor) -> {
@@ -126,7 +126,7 @@ class StaticMembers(
 
         val companionObject = classDescriptor.companionObjectDescriptor
         if (companionObject != null) {
-            companionObject.defaultType.memberScope.getContributedDescriptors()
+            companionObject!!.defaultType.memberScope.getContributedDescriptors()
                 .filter { !it.isExtension }
                 .forEach(::processMember)
         }

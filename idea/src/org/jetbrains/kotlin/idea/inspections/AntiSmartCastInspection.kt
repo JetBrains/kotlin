@@ -30,12 +30,12 @@ class AntiSmartCastInspection : AbstractKotlinInspection() {
             val defaultType = smartCast.defaultType
             if (defaultType != null) {
                 val fix = when {
-                    expressionType != null && expressionType.isNullable() && !defaultType.isNullable() &&
-                            StrictEqualityTypeChecker.strictEqualTypes(expressionType.makeNotNullable().unwrap(), defaultType.unwrap()) -> {
+                    expressionType != null && expressionType!!.isNullable() && !defaultType!!.isNullable() &&
+                            StrictEqualityTypeChecker.strictEqualTypes(expressionType!!.makeNotNullable().unwrap(), defaultType!!.unwrap()) -> {
                         IntentionWrapper(AddExclExclCallFix(refExpr), refExpr.containingKtFile)
                     }
                     else -> {
-                        IntentionWrapper(CastExpressionFix(refExpr, defaultType), refExpr.containingKtFile)
+                        IntentionWrapper(CastExpressionFix(refExpr, defaultType!!), refExpr.containingKtFile)
                     }
 
                 }

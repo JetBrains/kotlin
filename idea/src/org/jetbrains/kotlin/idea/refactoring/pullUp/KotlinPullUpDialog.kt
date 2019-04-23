@@ -59,7 +59,7 @@ class KotlinPullUpDialog(
         private var lastSuperClass: PsiNamedElement? = null
 
         private fun KtNamedDeclaration.isConstructorParameterWithInterfaceTarget(targetClass: PsiNamedElement): Boolean {
-            return targetClass is KtClass && targetClass.isInterface() && isConstructorDeclaredProperty()
+            return targetClass is KtClass && (targetClass as KtClass).isInterface() && isConstructorDeclaredProperty()
         }
 
         // Abstract members remain abstract
@@ -86,9 +86,9 @@ class KotlinPullUpDialog(
             if (member.isConstructorParameterWithInterfaceTarget(superClass)) return false
             if (member.isCompanionMemberOf(sourceClass)) return false
 
-            if (!superClass.isInterface()) return true
+            if (!(superClass as KtClass).isInterface()) return true
 
-            return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface()) || member is KtParameter
+            return member is KtNamedFunction || (member is KtProperty && !(member as KtProperty).mustBeAbstractInInterface()) || member is KtParameter
         }
 
         override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {
@@ -96,7 +96,7 @@ class KotlinPullUpDialog(
             val member = memberInfo.member
             if (member.isCompanionMemberOf(sourceClass)) return false
             if (member.isAbstractInInterface(sourceClass)) return true
-            if (superClass != null && member.isConstructorParameterWithInterfaceTarget(superClass)) return true
+            if (superClass != null && member.isConstructorParameterWithInterfaceTarget(superClass!!)) return true
             return ((member is KtProperty || member is KtParameter) && superClass !is PsiClass)
                    || (member is KtNamedFunction && superClass is PsiClass)
         }
@@ -107,11 +107,11 @@ class KotlinPullUpDialog(
 
             if (member.hasModifier(KtTokens.CONST_KEYWORD)) return false
 
-            if (superClass is KtClass && superClass.isInterface() &&
+            if (superClass is KtClass && (superClass as KtClass).isInterface() &&
                 (member.hasModifier(KtTokens.INTERNAL_KEYWORD) || member.hasModifier(KtTokens.PROTECTED_KEYWORD))) return false
 
             if (superClass is PsiClass) {
-                if (!member.canMoveMemberToJavaClass(superClass)) return false
+                if (!member.canMoveMemberToJavaClass(superClass as PsiClass)) return false
                 if (member.isCompanionMemberOf(sourceClass)) return false
             }
             if (memberInfo in memberInfoStorage.getDuplicatedMemberInfos(superClass)) return false
@@ -124,7 +124,7 @@ class KotlinPullUpDialog(
             val superClass = superClass ?: return
             if (superClass != lastSuperClass) {
                 lastSuperClass = superClass
-                val isInterface = superClass is KtClass && superClass.isInterface()
+                val isInterface = superClass is KtClass && (superClass as KtClass).isInterface()
                 event.changedMembers.forEach { it.isToAbstract = isInterface }
                 setSuperClass(superClass)
             }

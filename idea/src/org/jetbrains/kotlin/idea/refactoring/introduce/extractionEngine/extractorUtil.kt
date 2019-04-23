@@ -90,7 +90,7 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
                     append(typeParameter.name)
                     if (bound != null) {
                         append(" : ")
-                        append(bound.text)
+                        append(bound!!.text)
                     }
                 }
             }
@@ -208,7 +208,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
 
         val matched = when (match) {
             is StronglyMatched -> true
-            is WeaklyMatched -> processWeakMatch(match, newControlFlow)
+            is WeaklyMatched -> processWeakMatch(match as WeaklyMatched, newControlFlow)
             else -> throw AssertionError("Unexpected unification result: $match")
         }
 
@@ -255,15 +255,15 @@ private fun makeCall(
     fun insertCall(anchor: PsiElement, wrappedCall: KtExpression): KtExpression? {
         val firstExpression = rangeToReplace.elements.firstOrNull { it is KtExpression } as? KtExpression
         if (firstExpression?.isLambdaOutsideParentheses() == true) {
-            val functionLiteralArgument = firstExpression.getStrictParentOfType<KtLambdaArgument>()!!
+            val functionLiteralArgument = firstExpression!!.getStrictParentOfType<KtLambdaArgument>()!!
             return functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
         }
 
         if (anchor is KtOperationReferenceExpression) {
-            val newNameExpression = when (val operationExpression = anchor.parent as? KtOperationExpression ?: return null) {
+            val newNameExpression = when (val operationExpression = (anchor as KtOperationReferenceExpression).parent as? KtOperationExpression ?: return null) {
                 is KtUnaryExpression -> OperatorToFunctionIntention.convert(operationExpression).second
                 is KtBinaryExpression -> {
-                    InfixCallToOrdinaryIntention.convert(operationExpression).getCalleeExpressionIfAny()
+                    InfixCallToOrdinaryIntention.convert(operationExpression as KtBinaryExpression).getCalleeExpressionIfAny()
                 }
                 else -> null
             }
@@ -279,11 +279,11 @@ private fun makeCall(
 
     if (rangeToReplace !is KotlinPsiRange.ListRange) return
 
-    val anchor = rangeToReplace.startElement
+    val anchor = (rangeToReplace as KotlinPsiRange.ListRange).startElement
     val anchorParent = anchor.parent!!
 
     anchor.nextSibling?.let { from ->
-        val to = rangeToReplace.endElement
+        val to = (rangeToReplace as KotlinPsiRange.ListRange).endElement
         if (to != anchor) {
             anchorParent.deleteChildRange(from, to)
         }
@@ -353,7 +353,7 @@ private fun makeCall(
     fun wrapCall(outputValue: OutputValue, callText: String): List<PsiElement> {
         return when (outputValue) {
             is ExpressionValue -> {
-                val exprText = if (outputValue.callSiteReturn) {
+                val exprText = if ((outputValue as ExpressionValue).callSiteReturn) {
                     val firstReturn = outputValue.originalExpressions.asSequence().filterIsInstance<KtReturnExpression>().firstOrNull()
                     val label = firstReturn?.getTargetLabel()?.text ?: ""
                     "return$label $callText"
@@ -365,25 +365,25 @@ private fun makeCall(
 
             is ParameterUpdate ->
                 Collections.singletonList(
-                    psiFactory.createExpression("${outputValue.parameter.argumentText} = $callText")
+                    psiFactory.createExpression("${(outputValue as ParameterUpdate).parameter.argumentText} = $callText")
                 )
 
             is Jump -> {
                 when {
-                    outputValue.elementToInsertAfterCall == null -> Collections.singletonList(psiFactory.createExpression(callText))
-                    outputValue.conditional -> Collections.singletonList(
-                        psiFactory.createExpression("if ($callText) ${outputValue.elementToInsertAfterCall.text}")
+                    (outputValue as Jump).elementToInsertAfterCall == null -> Collections.singletonList(psiFactory.createExpression(callText))
+                    (outputValue as Jump).conditional -> Collections.singletonList(
+                        psiFactory.createExpression("if ($callText) ${(outputValue as Jump).elementToInsertAfterCall.text}")
                     )
                     else -> listOf(
                         psiFactory.createExpression(callText),
                         newLine,
-                        psiFactory.createExpression(outputValue.elementToInsertAfterCall.text!!)
+                        psiFactory.createExpression((outputValue as Jump).elementToInsertAfterCall.text!!)
                     )
                 }
             }
 
             is Initializer -> {
-                val newProperty = copiedDeclarations[outputValue.initializedDeclaration] as KtProperty
+                val newProperty = copiedDeclarations[(outputValue as Initializer).initializedDeclaration] as KtProperty
                 newProperty.initializer = psiFactory.createExpression(callText)
                 Collections.emptyList()
             }
@@ -454,9 +454,9 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
             .mapNotNull {
                 when (it) {
                     is ExpressionValue -> resultExpression
-                    is Jump -> if (it.conditional) psiFactory.createExpression("false") else null
-                    is ParameterUpdate -> psiFactory.createExpression(it.parameter.nameForRef)
-                    is Initializer -> psiFactory.createExpression(it.initializedDeclaration.name!!)
+                    is Jump -> if ((it as Jump).conditional) psiFactory.createExpression("false") else null
+                    is ParameterUpdate -> psiFactory.createExpression((it as ParameterUpdate).parameter.nameForRef)
+                    is Initializer -> psiFactory.createExpression((it as Initializer).initializedDeclaration.name!!)
                     else -> throw IllegalArgumentException("Unknown output value: $it")
                 }
             }
@@ -482,7 +482,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         if (descriptor.returnType.isFlexible()) return true
         val inspection = getPublicApiInspectionIfEnabled() ?: return false
         val targetClass = (descriptor.extractionData.targetSibling.parent as? KtClassBody)?.parent as? KtClassOrObject
-        if ((targetClass != null && targetClass.isLocal) || descriptor.extractionData.isLocal()) return false
+        if ((targetClass != null && targetClass!!.isLocal) || descriptor.extractionData.isLocal()) return false
         val visibility = (descriptor.visibility ?: KtTokens.DEFAULT_VISIBILITY_KEYWORD).toVisibility()
         return when {
             visibility.isPublicAPI -> true
@@ -503,7 +503,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         val jumpValue = descriptor.controlFlow.jumpOutputValue
         if (jumpValue != null) {
-            val replacingReturn = psiFactory.createExpression(if (jumpValue.conditional) "return true" else "return")
+            val replacingReturn = psiFactory.createExpression(if (jumpValue!!.conditional) "return true" else "return")
             body.collectDescendantsOfType<KtExpression> { it.isJumpElementToReplace }.forEach {
                 it.replace(replacingReturn)
                 it.isJumpElementToReplace = false
@@ -540,7 +540,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         if (body !is KtBlockExpression) throw AssertionError("Block body expected: ${descriptor.extractionData.codeFragmentText}")
 
-        val firstExpression = body.statements.firstOrNull()
+        val firstExpression = (body as KtBlockExpression).statements.firstOrNull()
         if (firstExpression != null) {
             for (param in descriptor.parameters) {
                 param.mirrorVarName?.let { varName ->
@@ -552,14 +552,14 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         val defaultValue = descriptor.controlFlow.defaultOutputValue
 
-        val lastExpression = body.statements.lastOrNull()
+        val lastExpression = (body as KtBlockExpression).statements.lastOrNull()
         if (lastExpression is KtReturnExpression) return
 
         val defaultExpression =
             if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
                 val varNameValidator = NewDeclarationNameValidator(body, lastExpression, NewDeclarationNameValidator.Target.VARIABLES)
-                val resultVal = KotlinNameSuggester.suggestNamesByType(defaultValue.valueType, varNameValidator, null).first()
-                body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression.text}"), lastExpression)
+                val resultVal = KotlinNameSuggester.suggestNamesByType(defaultValue!!.valueType, varNameValidator, null).first()
+                body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.text}"), lastExpression)
                 body.addBefore(psiFactory.createNewLine(), lastExpression)
                 psiFactory.createExpression(resultVal)
             } else lastExpression
@@ -573,22 +573,22 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                 // In the case of lazy property absence of default value means that output values are of OutputValue.Initializer type
                 // We just add resulting expressions without return, since returns are prohibited in the body of lazy property
                 if (defaultValue == null) {
-                    body.appendElement(returnExpression.returnedExpression!!)
+                    (body as KtBlockExpression).appendElement(returnExpression.returnedExpression!!)
                 }
                 return
             }
         }
 
         when {
-            defaultValue == null -> body.appendElement(returnExpression)
-            !defaultValue.callSiteReturn -> lastExpression!!.replaceWithReturn(returnExpression)
+            defaultValue == null -> (body as KtBlockExpression).appendElement(returnExpression)
+            !defaultValue!!.callSiteReturn -> lastExpression!!.replaceWithReturn(returnExpression)
         }
 
         if (generatorOptions.allowExpressionBody) {
-            val bodyExpression = body.statements.singleOrNull()
-            val bodyOwner = body.parent as KtDeclarationWithBody
+            val bodyExpression = (body as KtBlockExpression).statements.singleOrNull()
+            val bodyOwner = (body as KtBlockExpression).parent as KtDeclarationWithBody
             val useExpressionBodyInspection = UseExpressionBodyInspection()
-            if (bodyExpression != null && !bodyExpression.isMultiLine() && useExpressionBodyInspection.isActiveFor(bodyOwner)) {
+            if (bodyExpression != null && !bodyExpression!!.isMultiLine() && useExpressionBodyInspection.isActiveFor(bodyOwner)) {
                 useExpressionBodyInspection.simplify(bodyOwner, !useExplicitReturnType())
             }
         }
@@ -607,7 +607,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                 }
             } else {
                 (targetContainer.addAfter(declaration, anchor) as KtNamedDeclaration).apply {
-                    if (!(targetContainer is KtClassBody && (targetContainer.parent as? KtClass)?.isEnum() == true)) {
+                    if (!(targetContainer is KtClassBody && ((targetContainer as KtClassBody).parent as? KtClass)?.isEnum() == true)) {
                         targetContainer.addAfter(emptyLines, anchor)
                     }
                 }

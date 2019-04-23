@@ -106,21 +106,21 @@ abstract class TypeInfo(val variance: Variance) {
     private fun getScopeForTypeApproximation(config: CallableBuilderConfiguration, placement: CallablePlacement?): LexicalScope? {
         if (placement == null) return config.originalElement.getResolutionScope()
 
-        val containingElement = when (placement) {
+        val containingElement = when (placement!!) {
             is CallablePlacement.NoReceiver -> {
-                placement.containingElement
+                (placement as CallablePlacement.NoReceiver).containingElement
             }
             is CallablePlacement.WithReceiver -> {
                 val receiverClassDescriptor =
-                        placement.receiverTypeCandidate.theType.constructor.declarationDescriptor
+                        (placement as CallablePlacement.WithReceiver).receiverTypeCandidate.theType.constructor.declarationDescriptor
                 val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
-                if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
+                if (!config.isExtension && classDeclaration != null) classDeclaration!! else config.currentFile
             }
         }
         return when (containingElement) {
-            is KtClassOrObject -> (containingElement.resolveToDescriptorIfAny() as? ClassDescriptorWithResolutionScopes)?.scopeForMemberDeclarationResolution
-            is KtBlockExpression -> (containingElement.statements.firstOrNull() ?: containingElement).getResolutionScope()
-            is KtElement -> containingElement.containingKtFile.getResolutionScope()
+            is KtClassOrObject -> ((containingElement as KtClassOrObject).resolveToDescriptorIfAny() as? ClassDescriptorWithResolutionScopes)?.scopeForMemberDeclarationResolution
+            is KtBlockExpression -> ((containingElement as KtBlockExpression).statements.firstOrNull() ?: containingElement as KtBlockExpression).getResolutionScope()
+            is KtElement -> (containingElement as KtElement).containingKtFile.getResolutionScope()
             else -> null
         }
     }

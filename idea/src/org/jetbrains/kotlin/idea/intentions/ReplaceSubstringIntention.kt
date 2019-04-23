@@ -38,9 +38,9 @@ abstract class ReplaceSubstringIntention(text: String) : SelfTargetingRangeInten
 
     protected fun isIndexOfCall(expression: KtExpression?, expectedReceiver: KtExpression): Boolean {
         return expression is KtDotQualifiedExpression
-               && expression.isMethodCall("kotlin.text.indexOf")
-               && expression.receiverExpression.evaluatesTo(expectedReceiver)
-               && expression.callExpression!!.valueArguments.size == 1
+               && (expression as KtDotQualifiedExpression).isMethodCall("kotlin.text.indexOf")
+               && (expression as KtDotQualifiedExpression).receiverExpression.evaluatesTo(expectedReceiver)
+               && (expression as KtDotQualifiedExpression).callExpression!!.valueArguments.size == 1
     }
 
     private fun KtDotQualifiedExpression.isMethodCall(fqMethodName: String): Boolean {

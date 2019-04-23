@@ -125,7 +125,7 @@ fun KotlinType.getTypeParameters(): Set<TypeParameterDescriptor> {
         if (arguments.isEmpty()) {
             val descriptor = type.constructor.declarationDescriptor
             if (descriptor is TypeParameterDescriptor) {
-                typeParameters.add(descriptor)
+                typeParameters.add(descriptor as TypeParameterDescriptor)
             }
             return
         }
@@ -154,7 +154,7 @@ fun KtExpression.guessTypes(
     val parent = parent
 
     // Type/Expected type may be wrong for the expression of KtWhenEntry when some branches have unresolved expressions
-    if (parent is KtWhenEntry && parent.expression == this) {
+    if (parent is KtWhenEntry && (parent as KtWhenEntry).expression == this) {
         return parent
             .getStrictParentOfType<KtWhenExpression>()
             ?.guessTypes(context, module, pseudocode, coerceUnusedToUnit, allowErrorTypes) ?: arrayOf()
@@ -163,24 +163,24 @@ fun KtExpression.guessTypes(
     if (this !is KtWhenExpression) {
         // if we know the actual type of the expression
         val theType1 = context.getType(this)
-        if (theType1 != null && isAcceptable(theType1)) {
+        if (theType1 != null && isAcceptable(theType1!!)) {
             return getDataFlowAwareTypes(this, context, theType1).toTypedArray()
         }
     }
 
     // expression has an expected type
     val theType2 = context[BindingContext.EXPECTED_EXPRESSION_TYPE, this]
-    if (theType2 != null && isAcceptable(theType2)) return arrayOf(theType2)
+    if (theType2 != null && isAcceptable(theType2!!)) return arrayOf(theType2!!)
 
     return when {
         this is KtTypeConstraint -> {
             // expression itself is a type assertion
             val constraint = this
-            arrayOf(context[BindingContext.TYPE, constraint.boundTypeReference]!!)
+            arrayOf(context[BindingContext.TYPE, (constraint as KtTypeConstraint).boundTypeReference]!!)
         }
         parent is KtTypeConstraint -> {
             // expression is on the left side of a type assertion
-            arrayOf(context[BindingContext.TYPE, parent.boundTypeReference]!!)
+            arrayOf(context[BindingContext.TYPE, (parent as KtTypeConstraint).boundTypeReference]!!)
         }
         this is KtDestructuringDeclarationEntry -> {
             // expression is on the lhs of a multi-declaration
@@ -206,20 +206,20 @@ fun KtExpression.guessTypes(
                 guessType(context)
             }
         }
-        parent is KtProperty && parent.isLocal -> {
+        parent is KtProperty && (parent as KtProperty).isLocal -> {
             // the expression is the RHS of a variable assignment with a specified type
-            val typeRef = parent.typeReference
+            val typeRef = (parent as KtProperty).typeReference
             if (typeRef != null) {
                 // and has a specified type
                 arrayOf(context[BindingContext.TYPE, typeRef]!!)
             }
             else {
                 // otherwise guess, based on LHS
-                parent.guessType(context)
+                (parent as KtProperty).guessType(context)
             }
         }
         parent is KtPropertyDelegate -> {
-            val variableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.parent as KtProperty] as VariableDescriptor
+            val variableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, (parent as KtPropertyDelegate).parent as KtProperty] as VariableDescriptor
             val delegateClassName = if (variableDescriptor.isVar) "ReadWriteProperty" else "ReadOnlyProperty"
             val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"), NoLookupLocation.FROM_IDE)
                                 ?: return arrayOf(module.builtIns.anyType)
@@ -228,19 +228,19 @@ fun KtExpression.guessTypes(
             val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(variableDescriptor.type))
             arrayOf(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
         }
-        parent is KtStringTemplateEntryWithExpression && parent.expression == this -> {
+        parent is KtStringTemplateEntryWithExpression && (parent as KtStringTemplateEntryWithExpression).expression == this -> {
             arrayOf(module.builtIns.stringType)
         }
-        parent is KtBlockExpression && parent.statements.lastOrNull() == this && parent.parent is KtFunctionLiteral -> {
-            parent.guessTypes(context, module, pseudocode, coerceUnusedToUnit)
+        parent is KtBlockExpression && (parent as KtBlockExpression).statements.lastOrNull() == this && (parent as KtBlockExpression).parent is KtFunctionLiteral -> {
+            (parent as KtBlockExpression).guessTypes(context, module, pseudocode, coerceUnusedToUnit)
         }
         parent is KtFunction -> {
             val functionDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent] as? FunctionDescriptor ?: return arrayOf()
             val returnType = functionDescriptor.returnType
-            if (returnType != null && isAcceptable(returnType)) return arrayOf(returnType)
+            if (returnType != null && isAcceptable(returnType!!)) return arrayOf(returnType!!)
             val functionalExpression: KtExpression? = when {
-                parent is KtFunctionLiteral -> parent.parent as? KtLambdaExpression
-                parent is KtNamedFunction && parent.name == null -> parent
+                parent is KtFunctionLiteral -> (parent as KtFunctionLiteral).parent as? KtLambdaExpression
+                parent is KtNamedFunction && (parent as KtNamedFunction).name == null -> parent as KtFunction
                 else -> null
             }
             if (functionalExpression == null) {
@@ -250,7 +250,7 @@ fun KtExpression.guessTypes(
                         ?.let { return arrayOf(it) }
                 return arrayOf()
             }
-            val lambdaTypes = functionalExpression.guessTypes(context, module, pseudocode?.parent, coerceUnusedToUnit)
+            val lambdaTypes = functionalExpression!!.guessTypes(context, module, pseudocode?.parent, coerceUnusedToUnit)
             lambdaTypes.mapNotNull { it.getFunctionType()?.arguments?.lastOrNull()?.type }.toTypedArray()
         }
         else -> {
@@ -266,7 +266,7 @@ private fun KotlinType.getFunctionType() = if (isFunctionType) this else superty
 private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinType> {
     val expectedTypes = SearchUtils.findAllReferences(this, useScope)!!.mapNotNullTo(HashSet<KotlinType>()) { ref ->
         if (ref is KtSimpleNameReference) {
-            context[BindingContext.EXPECTED_EXPRESSION_TYPE, ref.expression]
+            context[BindingContext.EXPECTED_EXPRESSION_TYPE, (ref as KtSimpleNameReference).expression]
         }
         else {
             null
@@ -278,7 +278,7 @@ private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinT
     }
     val theType = TypeIntersector.intersectTypes(expectedTypes)
     return if (theType != null) {
-        arrayOf(theType)
+        arrayOf(theType!!)
     }
     else {
         // intersection doesn't exist; let user make an imperfect choice
@@ -349,9 +349,9 @@ fun getDataFlowAwareTypes(
     if (originalType == null) return emptyList()
     val dataFlowInfo = bindingContext.getDataFlowInfoAfter(expression)
     val dataFlowValueFactory = expression.getResolutionFacade().frontendService<DataFlowValueFactory>()
-    val expressionType = bindingContext.getType(expression) ?: return listOf(originalType)
+    val expressionType = bindingContext.getType(expression) ?: return listOf(originalType!!)
     val dataFlowValue = dataFlowValueFactory.createDataFlowValue(
         expression, expressionType, bindingContext, expression.getResolutionFacade().moduleDescriptor
     )
-    return dataFlowInfo.getCollectedTypes(dataFlowValue, expression.languageVersionSettings).ifEmpty { listOf(originalType) }
+    return dataFlowInfo.getCollectedTypes(dataFlowValue, expression.languageVersionSettings).ifEmpty { listOf(originalType!!) }
 }

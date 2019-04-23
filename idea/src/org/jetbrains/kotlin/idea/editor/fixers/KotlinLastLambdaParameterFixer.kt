@@ -30,7 +30,7 @@ class KotlinLastLambdaParameterFixer : SmartEnterProcessorWithFixers.Fixer<Kotli
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is KtCallExpression) return
 
-        val resolvedCall = allowResolveInWriteAction { element.resolveToCall() } ?: return
+        val resolvedCall = allowResolveInWriteAction { (element as KtCallExpression).resolveToCall() } ?: return
 
         val valueParameters = resolvedCall.candidateDescriptor.valueParameters
 
@@ -40,7 +40,7 @@ class KotlinLastLambdaParameterFixer : SmartEnterProcessorWithFixers.Fixer<Kotli
                 val doc = editor.document
 
                 var offset = element.endOffset
-                if (element.valueArgumentList?.rightParenthesis == null) {
+                if ((element as KtCallExpression).valueArgumentList?.rightParenthesis == null) {
                     doc.insertString(offset, ")")
                     offset++
                 }

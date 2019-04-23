@@ -56,7 +56,7 @@ object CreateFunctionFromCallableReferenceActionFactory : CreateCallableMemberFr
                     val containers = element.getExtractionContainers(includeAll = true).ifEmpty { return@mapNotNull null }
                     val parameterInfos = SmartList<ParameterInfo>().apply {
                         if (receiverExpression == null && expectedReceiverType != null) {
-                            add(ParameterInfo(TypeInfo(expectedReceiverType, Variance.IN_VARIANCE)))
+                            add(ParameterInfo(TypeInfo(expectedReceiverType!!, Variance.IN_VARIANCE)))
                         }
 
                         it.getValueParameterTypesFromFunctionType()

@@ -36,11 +36,11 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
             if (bodyExpression.anyDescendantOfType<KtExpression> {
                     when (it) {
                         is KtBinaryExpression ->
-                            it.left.isBackingFieldReference(property) && it.operationToken in assignmentOperators
+                            (it as KtBinaryExpression).left.isBackingFieldReference(property) && (it as KtBinaryExpression).operationToken in assignmentOperators
                         is KtUnaryExpression ->
-                            it.baseExpression.isBackingFieldReference(property) && it.operationToken in incrementAndDecrementOperators
+                            (it as KtUnaryExpression).baseExpression.isBackingFieldReference(property) && (it as KtUnaryExpression).operationToken in incrementAndDecrementOperators
                         is KtCallExpression ->
-                            it.valueArguments.any { arg ->
+                            (it as KtCallExpression).valueArguments.any { arg ->
                                 arg.text == parameter?.text && run {
                                     val argumentResultingDescriptor =
                                         arg.getArgumentExpression().getResolvedCall(accessorContext)?.resultingDescriptor

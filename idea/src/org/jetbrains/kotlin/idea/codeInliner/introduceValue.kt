@@ -74,7 +74,7 @@ internal fun MutableCodeToInline.introduceValue(
 
     fun suggestName(validator: (String) -> Boolean): Name {
         val name = if (nameSuggestion != null)
-            KotlinNameSuggester.suggestNameByName(nameSuggestion, validator)
+            KotlinNameSuggester.suggestNameByName(nameSuggestion!!, validator)
         else
             KotlinNameSuggester.suggestNamesByExpressionOnly(value, bindingContext, validator, "t").first()
         return Name.identifier(name)
@@ -93,10 +93,10 @@ internal fun MutableCodeToInline.introduceValue(
             statementsBefore.add(0, declaration)
 
             val explicitType = valueType?.takeIf {
-                variableNeedsExplicitType(value, valueType, expressionToBeReplaced, resolutionScope, bindingContext)
+                variableNeedsExplicitType(value, valueType!!, expressionToBeReplaced, resolutionScope, bindingContext)
             }
             if (explicitType != null) {
-                addPostInsertionAction(declaration) { it.setType(explicitType) }
+                addPostInsertionAction(declaration) { it.setType(explicitType!!) }
             }
 
             replaceUsages(name)

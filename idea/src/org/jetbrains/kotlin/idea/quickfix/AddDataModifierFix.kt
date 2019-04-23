@@ -45,7 +45,7 @@ class AddDataModifierFix(element: KtClass, private val fqName: String) : AddModi
             val context = element.analyze()
 
             val callableDescriptor = if (element is KtDestructuringDeclarationEntry) {
-                context[BindingContext.DECLARATION_TO_DESCRIPTOR, element.parent.parent] as? CallableDescriptor
+                context[BindingContext.DECLARATION_TO_DESCRIPTOR, (element as KtDestructuringDeclarationEntry).parent.parent] as? CallableDescriptor
             }
             else {
                 element.getResolvedCall(context)?.resultingDescriptor

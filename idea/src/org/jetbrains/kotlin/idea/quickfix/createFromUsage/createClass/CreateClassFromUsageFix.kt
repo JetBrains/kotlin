@@ -81,7 +81,7 @@ data class ClassInfo(
 ) {
     val applicableParents by lazy {
         targetParents.filter {
-            if (kind == OBJECT && it is KtClass && (it.isInner() || it.isLocal)) return@filter false
+            if (kind == OBJECT && it is KtClass && ((it as KtClass).isInner() || (it as KtClass).isLocal)) return@filter false
             true
         }
     }
@@ -100,7 +100,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
             applicableParents.forEach {
                 if (it is PsiClass) {
                     if (kind == OBJECT || kind == ENUM_ENTRY) return false
-                    if (it.isInterface && inner) return false
+                    if ((it as PsiClass).isInterface && inner) return false
                 }
             }
 
@@ -115,7 +115,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
 
         val applicableParents = SmartList<PsiElement>().also { parents ->
             classInfo.applicableParents.filterNotTo(parents) { element ->
-                element is KtClassOrObject && element.superTypeListEntries.any {
+                element is KtClassOrObject && (element as KtClassOrObject).superTypeListEntries.any {
                     when (it) {
                         is KtDelegatedSuperTypeEntry, is KtSuperTypeEntry -> it.typeAsUserType == this.element
                         is KtSuperTypeCallEntry -> it == this.element
@@ -131,13 +131,13 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
             val targetParent = applicableParents.firstOrNull { element ->
-                if (element is PsiPackage) false else element.allChildren.any { it is PsiComment && it.text == "// TARGET_PARENT:" }
+                if (element is PsiPackage) false else element.allChildren.any { it is PsiComment && (it as PsiComment).text == "// TARGET_PARENT:" }
             } ?: classInfo.applicableParents.last()
-            return doInvoke(targetParent, editor, file)
+            return doInvoke(targetParent, editor!!, file)
         }
 
-        chooseContainerElementIfNecessary(applicableParents.reversed(), editor, "Choose class container", true, { it }) {
-            doInvoke(it, editor, file)
+        chooseContainerElementIfNecessary(applicableParents.reversed(), editor!!, "Choose class container", true, { it }) {
+            doInvoke(it, editor!!, file)
         }
     }
 
@@ -206,7 +206,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
             file.project.executeWriteCommand(text) {
                 val targetFile = getOrCreateKotlinFile(fileName, targetDirectory, (packageFqName ?: defaultPackageFqName).asString())
                 if (targetFile != null) {
-                    doInvoke(targetFile, editor, file, false)
+                    doInvoke(targetFile!!, editor, file, false)
                 }
             }
             return
@@ -219,7 +219,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
                 val targetParent =
                     when (selectedParent) {
                         is KtElement, is PsiClass -> selectedParent
-                        is PsiPackage -> createFileByPackage(selectedParent, editor, file)
+                        is PsiPackage -> createFileByPackage(selectedParent as PsiPackage, editor, file)
                         else -> throw AssertionError("Unexpected element: " + selectedParent.text)
                     } ?: return@runWriteAction
                 val constructorInfo = ClassWithPrimaryConstructorInfo(
@@ -240,7 +240,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
                 fun buildClass() {
                     builder.build {
                         if (targetParent !is KtFile || targetParent == file) return@build
-                        val targetPackageFqName = targetParent.packageFqName
+                        val targetPackageFqName = (targetParent as KtFile).packageFqName
                         if (targetPackageFqName == file.packageFqName) return@build
                         val reference = (element.getQualifiedElementSelector() as? KtSimpleNameExpression)?.mainReference ?: return@build
                         reference.bindToFqName(

@@ -120,7 +120,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression))
 
         if (valueArgumentParent != null && callGrandParent != null) {
-            callGrandParent.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
+            callGrandParent!!.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
         }
     }
 

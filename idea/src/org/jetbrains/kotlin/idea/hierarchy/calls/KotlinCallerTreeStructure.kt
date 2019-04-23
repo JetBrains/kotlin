@@ -61,13 +61,13 @@ class KotlinCallerTreeStructure(
                 }
             }
             if (callerElement is KtProperty) {
-                if (PsiTreeUtil.isAncestor(callerElement.initializer, refElement, false)) {
-                    callerElement = getCallHierarchyElement(callerElement.parent)
+                if (PsiTreeUtil.isAncestor((callerElement as KtProperty).initializer, refElement, false)) {
+                    callerElement = getCallHierarchyElement((callerElement as KtProperty).parent)
                 }
             }
             if (callerElement == null) return
 
-            getOrCreateNodeDescriptor(nodeDescriptor, callerElement, reference, true, callerToDescriptorMap, isJavaMap)
+            getOrCreateNodeDescriptor(nodeDescriptor, callerElement!!, reference, true, callerToDescriptorMap, isJavaMap)
         }
     }
 
@@ -77,7 +77,7 @@ class KotlinCallerTreeStructure(
             callerToDescriptorMap: MutableMap<PsiElement, NodeDescriptor<*>>
     ): Collection<Any> {
         if (nodeDescriptor is CallHierarchyNodeDescriptor) {
-            val psiMethod = nodeDescriptor.enclosingElement as? PsiMethod ?: return emptyList()
+            val psiMethod = (nodeDescriptor as CallHierarchyNodeDescriptor).enclosingElement as? PsiMethod ?: return emptyList()
             return CallerMethodsTreeStructure(myProject, psiMethod, scopeType).getChildElements(nodeDescriptor).toList()
         }
 
@@ -90,8 +90,8 @@ class KotlinCallerTreeStructure(
             is KtNamedFunction, is KtConstructor<*> -> KotlinFunctionFindUsagesOptions(myProject)
             is KtProperty -> KotlinPropertyFindUsagesOptions(myProject)
             is KtPropertyAccessor -> KotlinPropertyFindUsagesOptions(myProject).apply {
-                isReadAccess = element.isGetter
-                isWriteAccess = element.isSetter
+                isReadAccess = (element as KtPropertyAccessor).isGetter
+                isWriteAccess = (element as KtPropertyAccessor).isSetter
             }
             is KtClass -> KotlinClassFindUsagesOptions(myProject).apply {
                 isUsages = false
@@ -103,8 +103,8 @@ class KotlinCallerTreeStructure(
         findOptions.isSearchForTextOccurrences = false
 
         val elementToSearch = when (element) {
-            is KtPropertyAccessor -> element.property
-            else -> element
+            is KtPropertyAccessor -> (element as KtPropertyAccessor).property
+            else -> element as KtDeclaration
         }
 
         // If reference belongs to property initializer, show enclosing declaration instead
@@ -120,7 +120,7 @@ class KotlinCallerTreeStructure(
         val callerToDescriptorMap = hashMapOf<PsiElement, NodeDescriptor<*>>()
         val descriptor = element.unsafeResolveToDescriptor()
         if (descriptor is CallableMemberDescriptor) {
-            return descriptor.getDeepestSuperDeclarations().flatMap { rootDescriptor ->
+            return (descriptor as CallableMemberDescriptor).getDeepestSuperDeclarations().flatMap { rootDescriptor ->
                 val rootElement = DescriptorToSourceUtilsIde.getAnyDeclaration(myProject, rootDescriptor)
                                   ?: return@flatMap emptyList<Any>()
                 val rootNodeDescriptor = when (rootElement) {

@@ -66,9 +66,9 @@ class SurroundWithNullCheckFix(
             val parent = element.parent
             val nullableExpression =
                 when (parent) {
-                    is KtDotQualifiedExpression -> parent.receiverExpression
-                    is KtBinaryExpression -> parent.left
-                    is KtCallExpression -> parent.calleeExpression
+                    is KtDotQualifiedExpression -> (parent as KtDotQualifiedExpression).receiverExpression
+                    is KtBinaryExpression -> (parent as KtBinaryExpression).left
+                    is KtCallExpression -> (parent as KtCallExpression).calleeExpression
                     else -> return null
                 } as? KtReferenceExpression ?: return null
 
@@ -111,8 +111,8 @@ class SurroundWithNullCheckFix(
                     call.getLastParentOfTypeInRow<KtQualifiedExpression>() ?: call
                 }
                 is KtBinaryExpression -> {
-                    if (parent.right != nullableExpression) return null
-                    parent
+                    if ((parent as KtBinaryExpression).right != nullableExpression) return null
+                    parent as KtBinaryExpression
                 }
                 else -> return null
             }

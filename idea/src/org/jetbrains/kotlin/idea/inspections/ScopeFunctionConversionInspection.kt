@@ -58,9 +58,9 @@ class ScopeFunctionConversionInspection : AbstractKotlinInspection() {
                     "Call is replaceable with another scope function",
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     if (counterpartName == "also" || counterpartName == "let")
-                        ConvertScopeFunctionToParameter(counterpartName)
+                        ConvertScopeFunctionToParameter(counterpartName!!)
                     else
-                        ConvertScopeFunctionToReceiver(counterpartName)
+                        ConvertScopeFunctionToReceiver(counterpartName!!)
                 )
             }
 
@@ -74,13 +74,13 @@ private fun getCounterpart(expression: KtCallExpression): String? {
     val counterpartName = counterpartNames[calleeName]
     val lambdaExpression = expression.lambdaArguments.singleOrNull()?.getLambdaExpression()
     if (counterpartName != null && lambdaExpression != null) {
-        if (lambdaExpression.valueParameters.isNotEmpty()) {
+        if (lambdaExpression!!.valueParameters.isNotEmpty()) {
             return null
         }
         val bindingContext = callee.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = callee.getResolvedCall(bindingContext) ?: return null
         if (resolvedCall.resultingDescriptor.fqNameSafe.asString() == "kotlin.$calleeName" &&
-            nameResolvesToStdlib(expression, bindingContext, counterpartName)
+            nameResolvesToStdlib(expression, bindingContext, counterpartName!!)
         ) {
             return counterpartName
         }
@@ -193,7 +193,7 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
             val parameterType = lambdaExtensionReceiver?.type ?: lambdaDispatchReceiver?.type
             parameterName = findUniqueParameterName(parameterType, scopes)
             replacements.createParameter = {
-                val lambdaParameterList = functionLiteral.getOrCreateParameterList()
+                val lambdaParameterList = functionLiteral!!.getOrCreateParameterList()
                 val parameterToAdd = createLambdaParameterList(parameterName).parameters.first()
                 lambdaParameterList.addParameterBefore(parameterToAdd, lambdaParameterList.parameters.firstOrNull())
             }
@@ -208,13 +208,13 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
                 val extensionReceiverTarget = resolvedCall.extensionReceiver?.getReceiverTargetDescriptor(bindingContext)
                 if (dispatchReceiverTarget == lambdaDescriptor || extensionReceiverTarget == lambdaDescriptor) {
                     val parent = expression.parent
-                    if (parent is KtCallExpression && expression == parent.calleeExpression) {
-                        if ((parent.parent as? KtQualifiedExpression)?.receiverExpression !is KtThisExpression) {
-                            replacements.add(parent) { element ->
+                    if (parent is KtCallExpression && expression == (parent as KtCallExpression).calleeExpression) {
+                        if (((parent as KtCallExpression).parent as? KtQualifiedExpression)?.receiverExpression !is KtThisExpression) {
+                            replacements.add(parent as KtCallExpression) { element ->
                                 factory.createExpressionByPattern("$0.$1", parameterName, element)
                             }
                         }
-                    } else if (parent is KtQualifiedExpression && parent.receiverExpression is KtThisExpression) {
+                    } else if (parent is KtQualifiedExpression && (parent as KtQualifiedExpression).receiverExpression is KtThisExpression) {
                         // do nothing
                     } else {
                         val referencedName = expression.getReferencedName()
@@ -237,7 +237,7 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
 
     override fun postprocessLambda(lambda: KtLambdaArgument) {
         ShortenReferences { ShortenReferences.Options(removeThisLabels = true) }.process(lambda) { element ->
-            if (element is KtThisExpression && element.getLabelName() != null)
+            if (element is KtThisExpression && (element as KtThisExpression).getLabelName() != null)
                 ShortenReferences.FilterResult.PROCESS
             else
                 ShortenReferences.FilterResult.GO_INSIDE
@@ -289,7 +289,7 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
         }
 
         return if (parameterType != null)
-            KotlinNameSuggester.suggestNamesByType(parameterType, ::isNameUnique).first()
+            KotlinNameSuggester.suggestNamesByType(parameterType!!, ::isNameUnique).first()
         else {
             KotlinNameSuggester.suggestNameByName("p", ::isNameUnique)
         }
@@ -308,7 +308,7 @@ class ConvertScopeFunctionToReceiver(counterpartName: String) : ConvertScopeFunc
                 super.visitSimpleNameExpression(expression)
                 if (expression.getReferencedName() == "it") {
                     val result = expression.resolveMainReferenceToDescriptors().singleOrNull()
-                    if (result is ValueParameterDescriptor && result.containingDeclaration == lambdaDescriptor) {
+                    if (result is ValueParameterDescriptor && (result as ValueParameterDescriptor).containingDeclaration == lambdaDescriptor) {
                         replacements.add(expression) { createThisExpression() }
                     }
                 } else {
@@ -316,9 +316,9 @@ class ConvertScopeFunctionToReceiver(counterpartName: String) : ConvertScopeFunc
                     val dispatchReceiver = resolvedCall.dispatchReceiver
                     if (dispatchReceiver is ImplicitReceiver) {
                         val parent = expression.parent
-                        val thisLabelName = dispatchReceiver.declarationDescriptor.getThisLabelName()
-                        if (parent is KtCallExpression && expression == parent.calleeExpression) {
-                            replacements.add(parent) { element ->
+                        val thisLabelName = (dispatchReceiver as ImplicitReceiver).declarationDescriptor.getThisLabelName()
+                        if (parent is KtCallExpression && expression == (parent as KtCallExpression).calleeExpression) {
+                            replacements.add(parent as KtCallExpression) { element ->
                                 createExpressionByPattern("this@$0.$1", thisLabelName, element)
                             }
                         } else {
@@ -341,9 +341,9 @@ class ConvertScopeFunctionToReceiver(counterpartName: String) : ConvertScopeFunc
 
     override fun postprocessLambda(lambda: KtLambdaArgument) {
         ShortenReferences { ShortenReferences.Options(removeThis = true, removeThisLabels = true) }.process(lambda) { element ->
-            if (element is KtThisExpression && element.getLabelName() != null)
+            if (element is KtThisExpression && (element as KtThisExpression).getLabelName() != null)
                 ShortenReferences.FilterResult.PROCESS
-            else if (element is KtQualifiedExpression && element.receiverExpression is KtThisExpression)
+            else if (element is KtQualifiedExpression && (element as KtQualifiedExpression).receiverExpression is KtThisExpression)
                 ShortenReferences.FilterResult.PROCESS
             else
                 ShortenReferences.FilterResult.GO_INSIDE

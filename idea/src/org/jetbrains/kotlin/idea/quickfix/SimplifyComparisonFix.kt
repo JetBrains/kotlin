@@ -40,14 +40,14 @@ class SimplifyComparisonFix(element: KtExpression, val value: Boolean) : KotlinQ
 
         val booleanExpression = result.getNonStrictParentOfType<KtBinaryExpression>()
         val simplifyIntention = SimplifyBooleanWithConstantsIntention()
-        if (booleanExpression != null && simplifyIntention.isApplicableTo(booleanExpression)) {
-            simplifyIntention.applyTo(booleanExpression, editor)
+        if (booleanExpression != null && simplifyIntention.isApplicableTo(booleanExpression!!)) {
+            simplifyIntention.applyTo(booleanExpression!!, editor)
         } else {
             simplifyIntention.removeRedundantAssertion(result)
         }
 
         val ifExpression = result.getStrictParentOfType<KtIfExpression>()?.takeIf { it.condition == result }
-        if (ifExpression != null) ConstantConditionIfInspection.applyFixIfSingle(ifExpression)
+        if (ifExpression != null) ConstantConditionIfInspection.applyFixIfSingle(ifExpression!!)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

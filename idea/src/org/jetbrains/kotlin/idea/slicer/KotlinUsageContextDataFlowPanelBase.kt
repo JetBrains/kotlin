@@ -52,7 +52,7 @@ sealed class KotlinUsageContextDataFlowPanelBase(
         override fun isAvailableFor(usageView: UsageView): Boolean {
             val target = (usageView as UsageViewImpl).targets.firstOrNull() ?: return false
             val element = (target as? PsiElementUsageTarget)?.element
-            return element is KtDeclaration && element.isValid
+            return element is KtDeclaration && (element as KtDeclaration).isValid
         }
     }
 
@@ -92,7 +92,7 @@ sealed class KotlinUsageContextDataFlowPanelBase(
             add(JLabel(title, SwingConstants.CENTER), BorderLayout.CENTER)
         }
         else {
-            val element = infos.firstOrNull()?.element ?: return
+            val element = infos!!.firstOrNull()?.element ?: return
             if (panel != null) {
                 Disposer.dispose(panel as Disposable)
             }

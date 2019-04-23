@@ -75,7 +75,7 @@ class KotlinExtractInterfaceDialog(
                 val member = memberInfo.member
                 if (member.isAbstractInInterface(originalClass)) return false
                 if (member.isConstructorDeclaredProperty()) return false
-                return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface()) || member is KtParameter
+                return member is KtNamedFunction || (member is KtProperty && !(member as KtProperty).mustBeAbstractInInterface()) || member is KtParameter
             }
 
             override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {

@@ -29,9 +29,9 @@ class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterH
 
         val doc = editor.document
         val start = psiElement.range.start
-        val body = psiElement.body
+        val body = (psiElement as KtDoWhileExpression).body
 
-        val whileKeyword = psiElement.whileKeyword
+        val whileKeyword = (psiElement as KtDoWhileExpression).whileKeyword
         if (body == null) {
             if (whileKeyword == null) {
                 doc.replaceString(start, start + "do".length, "do {} while()")
@@ -39,23 +39,23 @@ class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterH
                 doc.insertString(start + "do".length, "{}")
             }
             return
-        } else if (whileKeyword != null && body !is KtBlockExpression && body.startLine(doc) > psiElement.startLine(doc)) {
-            doc.insertString(whileKeyword.range.start, "}")
+        } else if (whileKeyword != null && body !is KtBlockExpression && body!!.startLine(doc) > psiElement.startLine(doc)) {
+            doc.insertString(whileKeyword!!.range.start, "}")
             doc.insertString(start + "do".length, "{")
 
             return
         }
 
-        if (psiElement.condition == null) {
-            val lParen = psiElement.leftParenthesis
-            val rParen = psiElement.rightParenthesis
+        if ((psiElement as KtDoWhileExpression).condition == null) {
+            val lParen = (psiElement as KtDoWhileExpression).leftParenthesis
+            val rParen = (psiElement as KtDoWhileExpression).rightParenthesis
 
             when {
                 whileKeyword == null -> doc.insertString(psiElement.range.end, "while()")
                 lParen == null && rParen == null -> {
-                    doc.replaceString(whileKeyword.range.start, whileKeyword.range.end, "while()")
+                    doc.replaceString(whileKeyword!!.range.start, whileKeyword!!.range.end, "while()")
                 }
-                lParen != null -> processor.registerUnresolvedError(lParen.range.end)
+                lParen != null -> processor.registerUnresolvedError(lParen!!.range.end)
             }
         }
     }

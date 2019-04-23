@@ -45,7 +45,7 @@ class StaticMembersCompletion(
         private val isJvmModule: Boolean
 ) {
     private val alreadyAdded = alreadyAdded.mapTo(HashSet()) {
-        if (it is ImportedFromObjectCallableDescriptor<*>) it.callableFromObject else it
+        if (it is ImportedFromObjectCallableDescriptor<*>) (it as ImportedFromObjectCallableDescriptor<*>).callableFromObject else it
     }
 
     fun decoratedLookupElementFactory(itemPriority: ItemPriority): AbstractLookupElementFactory {

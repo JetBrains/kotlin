@@ -44,7 +44,7 @@ class ReformatInspection : LocalInspectionTool() {
     }
 
     private fun checkFile(file: PsiFile, isOnTheFly: Boolean): List<ProblemDescriptor>? {
-        if (file !is KtFile || !file.isWritable || !ProjectRootsUtil.isInProjectSource(file)) {
+        if (file !is KtFile || !(file as KtFile).isWritable || !ProjectRootsUtil.isInProjectSource(file)) {
             return null
         }
 
@@ -57,13 +57,13 @@ class ReformatInspection : LocalInspectionTool() {
 
         val elements = changes.asSequence().map {
             val rangeOffset = when (it) {
-                is ShiftIndentInsideRange -> it.range.startOffset
-                is ReplaceWhiteSpace -> it.textRange.startOffset
+                is ShiftIndentInsideRange -> (it as ShiftIndentInsideRange).range.startOffset
+                is ReplaceWhiteSpace -> (it as ReplaceWhiteSpace).textRange.startOffset
             }
 
             val leaf = file.findElementAt(rangeOffset) ?: return@map null
             if (!leaf.isValid) return@map null
-            if (leaf is PsiWhiteSpace && isEmptyLineReformat(leaf, it)) return@map null
+            if (leaf is PsiWhiteSpace && isEmptyLineReformat(leaf as PsiWhiteSpace, it)) return@map null
 
             leaf
         }.filterNotNull().toList()
@@ -91,7 +91,7 @@ class ReformatInspection : LocalInspectionTool() {
         if (change !is ReplaceWhiteSpace) return false
 
         val beforeText = whitespace.text
-        val afterText = change.whiteSpace
+        val afterText = (change as ReplaceWhiteSpace).whiteSpace
 
         return beforeText.count { it == '\n' } == afterText.count { it == '\n' } &&
                 beforeText.substringAfterLast('\n') == afterText.substringAfterLast('\n')

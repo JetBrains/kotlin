@@ -119,8 +119,8 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
 
             if (replaceWithArguments?.arguments?.isNotEmpty() == true) return null
 
-            if (level != null && level.arguments.isNotEmpty()) {
-                val levelDescriptor = level.arguments[0].getArgumentExpression().getResolvedCall(bindingContext)?.candidateDescriptor
+            if (level != null && level!!.arguments.isNotEmpty()) {
+                val levelDescriptor = level!!.arguments[0].getArgumentExpression().getResolvedCall(bindingContext)?.candidateDescriptor
                 if (levelDescriptor?.name?.asString() == "HIDDEN") return null
             }
 
@@ -197,7 +197,7 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
         val statement = block.statements.singleOrNull() ?: return null
         val returnsUnit = (resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor)?.returnType?.isUnit() ?: return null
         return when (statement) {
-            is KtReturnExpression -> statement.returnedExpression
+            is KtReturnExpression -> (statement as KtReturnExpression).returnedExpression
             else -> if (returnsUnit) statement else null
         }
     }

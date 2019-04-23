@@ -111,7 +111,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
         if (primaryConstructor?.valueParameters?.isNotEmpty() == true) return false
         val body = getBody()
         return body == null || run {
-            val declarations = body.declarations
+            val declarations = body!!.declarations
             declarations.asSequence().filterIsInstance<KtProperty>().none { property ->
                 // Simplified "backing field required"
                 when {

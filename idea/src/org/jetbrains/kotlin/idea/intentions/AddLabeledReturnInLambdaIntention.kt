@@ -34,6 +34,6 @@ class AddLabeledReturnInLambdaIntention : SelfTargetingRangeIntention<KtBlockExp
 
     private fun isApplicableTo(block: KtBlockExpression): Boolean {
         val lastStatement = block.statements.lastOrNull()
-        return lastStatement !is KtReturnExpression && lastStatement?.isUsedAsExpression(lastStatement.analyze()) == true
+        return lastStatement !is KtReturnExpression && lastStatement?.isUsedAsExpression(lastStatement!!.analyze()) == true
     }
 }

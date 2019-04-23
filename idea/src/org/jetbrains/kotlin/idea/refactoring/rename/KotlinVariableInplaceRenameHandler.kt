@@ -20,12 +20,12 @@ open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
                 is KtTypeParameter -> return true
                 is KtDestructuringDeclarationEntry -> return true
                 is KtParameter -> {
-                    val parent = element.parent
+                    val parent = (element as KtParameter).parent
                     if (parent is KtForExpression) {
                         return true
                     }
                     if (parent is KtParameterList) {
-                        val grandparent = parent.parent
+                        val grandparent = (parent as KtParameterList).parent
                         return grandparent is KtCatchClause || grandparent is KtFunctionLiteral
                     }
                 }
@@ -67,5 +67,5 @@ open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
     }
 
     override public fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile) =
-        editor.settings.isVariableInplaceRenameEnabled && element != null && isInplaceRenameAvailable(element)
+        editor.settings.isVariableInplaceRenameEnabled && element != null && isInplaceRenameAvailable(element!!)
 }

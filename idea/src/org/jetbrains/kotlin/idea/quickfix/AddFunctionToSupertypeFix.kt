@@ -64,7 +64,7 @@ class AddFunctionToSupertypeFix private constructor(
     override fun getText(): String {
         val single = functions.singleOrNull()
         return if (single != null)
-            actionName(single)
+            actionName(single!!)
         else
             "Add function to supertype..."
     }
@@ -73,10 +73,10 @@ class AddFunctionToSupertypeFix private constructor(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
-            if (functions.size == 1 || editor == null || !editor.component.isShowing) {
+            if (functions.size == 1 || editor == null || !editor!!.component.isShowing) {
                 addFunction(functions.first(), project)
             } else {
-                JBPopupFactory.getInstance().createListPopup(createFunctionPopup(project)).showInBestPositionFor(editor)
+                JBPopupFactory.getInstance().createListPopup(createFunctionPopup(project)).showInBestPositionFor(editor!!)
             }
         }
     }
@@ -135,7 +135,7 @@ class AddFunctionToSupertypeFix private constructor(
             var sourceCode = IdeDescriptorRenderers.SOURCE_CODE.render(functionDescriptor)
             if (classDescriptor.kind != ClassKind.INTERFACE && functionDescriptor.modality != Modality.ABSTRACT) {
                 val returnType = functionDescriptor.returnType
-                sourceCode += if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {
+                sourceCode += if (returnType == null || !KotlinBuiltIns.isUnit(returnType!!)) {
                     val bodyText = getFunctionBodyTextFromTemplate(
                         project,
                         TemplateKind.FUNCTION,

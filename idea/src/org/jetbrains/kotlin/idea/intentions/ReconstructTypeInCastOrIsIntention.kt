@@ -41,12 +41,12 @@ class ReconstructTypeInCastOrIsIntention : SelfTargetingOffsetIndependentIntenti
         if (expression !is KtBinaryExpressionWithTypeRHS && element.getParentOfType<KtWhenConditionIsPattern>(true) == null) return false
 
         val type = getReconstructedType(element)
-        if (type == null || type.isError) return false
+        if (type == null || type!!.isError) return false
 
         // No type parameters expected => nothing to reconstruct
-        if (type.constructor.parameters.isEmpty()) return false
+        if (type!!.constructor.parameters.isEmpty()) return false
 
-        val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
+        val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type!!)
         text = "Replace by '$typePresentation'"
 
         return true

@@ -42,12 +42,12 @@ internal class AnonymousTemplateEditingListener(private val psiFile: PsiFile, pr
         if (templateState.template == null) return
         val variableRange = templateState.getVariableRange("SUPERTYPE") ?: return
         val name = psiFile.findElementAt(variableRange.startOffset)
-        if (name != null && name.parent is KtReferenceExpression) {
-            val ref = name.parent as KtReferenceExpression
+        if (name != null && name!!.parent is KtReferenceExpression) {
+            val ref = name!!.parent as KtReferenceExpression
             val descriptor = ref.analyze(BodyResolveMode.FULL).get(BindingContext.REFERENCE_TARGET, ref)
             if (descriptor is ClassDescriptor) {
                 classRef = ref
-                classDescriptor = descriptor
+                classDescriptor = descriptor as ClassDescriptor
             }
         }
     }
@@ -91,7 +91,7 @@ internal class AnonymousTemplateEditingListener(private val psiFile: PsiFile, pr
             if (templateState != null) {
                 val listener = AnonymousTemplateEditingListener(psiFile, editor)
                 editor.putUserData(LISTENER_KEY, listener)
-                templateState.addTemplateStateListener(listener)
+                templateState!!.addTemplateStateListener(listener)
             }
         }
     }

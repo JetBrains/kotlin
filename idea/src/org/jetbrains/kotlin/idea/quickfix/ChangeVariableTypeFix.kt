@@ -93,14 +93,14 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
         toShorten.add(element.setTypeReference(replacingTypeReference)!!)
 
         if (element is KtProperty) {
-            val getterReturnTypeRef = element.getter?.returnTypeReference
+            val getterReturnTypeRef = (element as KtProperty).getter?.returnTypeReference
             if (getterReturnTypeRef != null) {
-                toShorten.add(getterReturnTypeRef.replace(replacingTypeReference) as KtTypeReference)
+                toShorten.add(getterReturnTypeRef!!.replace(replacingTypeReference) as KtTypeReference)
             }
 
-            val setterParameterTypeRef = element.setter?.parameter?.typeReference
+            val setterParameterTypeRef = (element as KtProperty).setter?.parameter?.typeReference
             if (setterParameterTypeRef != null) {
-                toShorten.add(setterParameterTypeRef.replace(replacingTypeReference) as KtTypeReference)
+                toShorten.add(setterParameterTypeRef!!.replace(replacingTypeReference) as KtTypeReference)
             }
         }
 
@@ -135,17 +135,17 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
                 for (overriddenProperty in descriptor.overriddenDescriptors) {
                     val overriddenPropertyType = overriddenProperty.returnType
                     if (overriddenPropertyType != null) {
-                        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
+                        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType!!)) {
                             overriddenMismatchingProperties.add(overriddenProperty)
                         } else if (overriddenProperty.isVar && !KotlinTypeChecker.DEFAULT.equalTypes(
-                                overriddenPropertyType,
+                                overriddenPropertyType!!,
                                 propertyType
                             )
                         ) {
                             canChangeOverriddenPropertyType = false
                         }
                         if (overriddenProperty.isVar && lowerBoundOfOverriddenPropertiesTypes != null &&
-                            !KotlinTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)
+                            !KotlinTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes!!, overriddenPropertyType!!)
                         ) {
                             lowerBoundOfOverriddenPropertiesTypes = null
                         }
@@ -153,13 +153,13 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
                 }
 
                 if (lowerBoundOfOverriddenPropertiesTypes != null) {
-                    actions.add(OnType(property, lowerBoundOfOverriddenPropertiesTypes))
+                    actions.add(OnType(property, lowerBoundOfOverriddenPropertiesTypes!!))
                 }
 
                 if (overriddenMismatchingProperties.size == 1 && canChangeOverriddenPropertyType) {
                     val overriddenProperty = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingProperties.single())
                     if (overriddenProperty is KtProperty) {
-                        actions.add(ForOverridden(overriddenProperty, propertyType))
+                        actions.add(ForOverridden(overriddenProperty as KtProperty, propertyType))
                     }
                 }
             }

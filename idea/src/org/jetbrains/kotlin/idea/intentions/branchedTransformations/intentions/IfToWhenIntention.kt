@@ -45,9 +45,9 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
             is KtReturnExpression, is KtThrowExpression ->
                 false
             is KtBlockExpression ->
-                expression.statements.all { canPassThrough(it) }
+                (expression as KtBlockExpression).statements.all { canPassThrough(it) }
             is KtIfExpression ->
-                canPassThrough(expression.then) || canPassThrough(expression.`else`)
+                canPassThrough((expression as KtIfExpression).then) || canPassThrough((expression as KtIfExpression).`else`)
             else ->
                 true
         }
@@ -56,7 +56,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
         var nextSibling = ifExpression.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
         return when (nextSibling) {
             is KtIfExpression ->
-                if (nextSibling.then == null) null else nextSibling
+                if ((nextSibling as KtIfExpression).then == null) null else nextSibling as KtIfExpression
             else -> {
                 val builder = StringBuilder()
                 while (true) {
@@ -152,7 +152,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                 val condition = currentIfExpression.condition
                 val orBranches = ArrayList<KtExpression>()
                 if (condition != null) {
-                    orBranches.addOrBranches(condition)
+                    orBranches.addOrBranches(condition!!)
                 }
 
                 appendExpressions(orBranches, separator = "||")
@@ -171,15 +171,15 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                     val syntheticElseBranch = if (canPassThrough) break else buildNextBranch(baseIfExpressionForSyntheticBranch) ?: break
                     toDelete.addAll(baseIfExpressionForSyntheticBranch.siblingsUpTo(syntheticElseBranch))
                     if (syntheticElseBranch is KtIfExpression) {
-                        baseIfExpressionForSyntheticBranch = syntheticElseBranch
-                        currentIfExpression = syntheticElseBranch
+                        baseIfExpressionForSyntheticBranch = syntheticElseBranch as KtIfExpression
+                        currentIfExpression = syntheticElseBranch as KtIfExpression
                         toDelete.add(syntheticElseBranch)
                     } else {
                         appendElseBlock(syntheticElseBranch)
                         break
                     }
                 } else if (currentElseBranch is KtIfExpression) {
-                    currentIfExpression = currentElseBranch
+                    currentIfExpression = currentElseBranch as KtIfExpression
                 } else {
                     appendElseBlock(currentElseBranch)
                     applyFullCommentSaver = false
@@ -203,29 +203,29 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
 
         result.accept(loopJumpVisitor)
         val labelName = loopJumpVisitor.labelName
-        if (loop != null && loopJumpVisitor.labelRequired && labelName != null && loop.parent !is KtLabeledExpression) {
-            val labeledLoopExpression = KtPsiFactory(result).createLabeledExpression(labelName)
-            labeledLoopExpression.baseExpression!!.replace(loop)
-            val replacedLabeledLoopExpression = loop.replace(labeledLoopExpression)
+        if (loop != null && loopJumpVisitor.labelRequired && labelName != null && loop!!.parent !is KtLabeledExpression) {
+            val labeledLoopExpression = KtPsiFactory(result).createLabeledExpression(labelName!!)
+            labeledLoopExpression.baseExpression!!.replace(loop!!)
+            val replacedLabeledLoopExpression = loop!!.replace(labeledLoopExpression)
             // For some reason previous operation can break adjustments
-            val project = loop.project
+            val project = loop!!.project
             if (editor != null) {
                 val documentManager = PsiDocumentManager.getInstance(project)
-                documentManager.commitDocument(editor.document)
-                documentManager.doPostponedOperationsAndUnblockDocument(editor.document)
-                val psiFile = documentManager.getPsiFile(editor.document)!!
+                documentManager.commitDocument(editor!!.document)
+                documentManager.doPostponedOperationsAndUnblockDocument(editor!!.document)
+                val psiFile = documentManager.getPsiFile(editor!!.document)!!
                 CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, replacedLabeledLoopExpression.textRange)
             }
         }
     }
 
     private fun MutableList<KtExpression>.addOrBranches(expression: KtExpression): List<KtExpression> {
-        if (expression is KtBinaryExpression && expression.operationToken == KtTokens.OROR) {
-            val left = expression.left
-            val right = expression.right
+        if (expression is KtBinaryExpression && (expression as KtBinaryExpression).operationToken == KtTokens.OROR) {
+            val left = (expression as KtBinaryExpression).left
+            val right = (expression as KtBinaryExpression).right
             if (left != null && right != null) {
-                addOrBranches(left)
-                addOrBranches(right)
+                addOrBranches(left!!)
+                addOrBranches(right!!)
                 return this
             }
         }

@@ -72,7 +72,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         return when (diagnostic.factory) {
             in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS, Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND -> {
                 val parent = diagElement.parent
-                if (parent is KtCallExpression && parent.calleeExpression == diagElement) parent else diagElement
+                if (parent is KtCallExpression && (parent as KtCallExpression).calleeExpression == diagElement) parent else diagElement
             }
 
             Errors.NO_VALUE_FOR_PARAMETER,
@@ -89,7 +89,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         val project = element.project
 
         val calleeExpr = when (element) {
-            is KtCallExpression -> element.calleeExpression
+            is KtCallExpression -> (element as KtCallExpression).calleeExpression
             is KtSimpleNameExpression -> element
             else -> null
         } as? KtSimpleNameExpression ?: return null
@@ -115,22 +115,22 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         return when (receiver) {
             null -> TypeInfo.Empty
             is Qualifier -> {
-                val qualifierType = context.getType(receiver.expression)
-                if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE)
+                val qualifierType = context.getType((receiver as Qualifier).expression)
+                if (qualifierType != null) return TypeInfo(qualifierType!!, Variance.IN_VARIANCE)
 
                 if (receiver !is ClassQualifier) return null
-                val classifierType = receiver.descriptor.classValueType
-                if (classifierType != null) return TypeInfo(classifierType, Variance.IN_VARIANCE)
+                val classifierType = (receiver as ClassQualifier).descriptor.classValueType
+                if (classifierType != null) return TypeInfo(classifierType!!, Variance.IN_VARIANCE)
 
-                val javaClassifier = receiver.descriptor as? JavaClassDescriptor ?: return null
+                val javaClassifier = (receiver as ClassQualifier).descriptor as? JavaClassDescriptor ?: return null
                 val javaClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, javaClassifier) as? PsiClass
-                if (javaClass == null || !javaClass.canRefactor()) return null
+                if (javaClass == null || !javaClass!!.canRefactor()) return null
                 TypeInfo.StaticContextRequired(TypeInfo(javaClassifier.defaultType, Variance.IN_VARIANCE))
             }
             is ReceiverValue -> {
-                val originalType = receiver.type
+                val originalType = (receiver as ReceiverValue).type
                 val finalType = if (receiver is ExpressionReceiver) {
-                    getDataFlowAwareTypes(receiver.expression, context, originalType).firstOrNull() ?: originalType
+                    getDataFlowAwareTypes((receiver as ExpressionReceiver).expression, context, originalType).firstOrNull() ?: originalType
                 } else originalType
                 TypeInfo(finalType, Variance.IN_VARIANCE)
             }
@@ -146,7 +146,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         if (originalReceiverTypeInfo != TypeInfo.Empty) {
             if (originalReceiverTypeInfo !is TypeInfo.ByType) return null
             receiverTypeInfo = originalReceiverTypeInfo
-            receiverType = receiverTypeInfo.theType
+            receiverType = (receiverTypeInfo as TypeInfo.ByType).theType
         } else {
             val containingClass = originalExpression.getStrictParentOfType<KtClassOrObject>() as? KtClass ?: return null
             if (containingClass is KtEnumEntry || containingClass.isAnnotation()) return null
@@ -219,7 +219,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                     analysisResult,
                     name,
                     receiverType,
-                    possibleContainers.filterNot { it is KtClassBody && (it.parent as KtClassOrObject).isInterfaceClass() }
+                    possibleContainers.filterNot { it is KtClassBody && ((it as KtClassBody).parent as KtClassOrObject).isInterfaceClass() }
                 )
             }
         }
@@ -271,15 +271,15 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             val fullCallExpression = expression.getQualifiedExpressionForSelectorOrThis()
             val expectedType = fullCallExpression.guessTypes(analysisResult.bindingContext, analysisResult.moduleDescriptor).singleOrNull()
             val returnType = if (expectedType != null) {
-                TypeInfo(expectedType, Variance.OUT_VARIANCE)
+                TypeInfo(expectedType!!, Variance.OUT_VARIANCE)
             } else {
                 TypeInfo(fullCallExpression, Variance.OUT_VARIANCE)
             }
             val parentFunction = expression.getStrictParentOfType<KtNamedFunction>()
             val modifierList = if (parentFunction?.hasModifier(KtTokens.INLINE_KEYWORD) == true) {
                 when {
-                    parentFunction.isPublic -> KtPsiFactory(expression).createModifierList(KtTokens.PUBLIC_KEYWORD)
-                    parentFunction.isProtected() -> KtPsiFactory(expression).createModifierList(KtTokens.PROTECTED_KEYWORD)
+                    parentFunction!!.isPublic -> KtPsiFactory(expression).createModifierList(KtTokens.PUBLIC_KEYWORD)
+                    parentFunction!!.isProtected() -> KtPsiFactory(expression).createModifierList(KtTokens.PROTECTED_KEYWORD)
                     else -> null
                 }
             } else {
@@ -336,16 +336,16 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 ?.distinct()
                 ?.singleOrNull() as? ClassDescriptor
             val klass = classDescriptor?.source?.getPsi()
-            if ((klass !is KtClass && klass !is PsiClass) || !klass.canRefactor()) return null
+            if ((klass !is KtClass && klass !is PsiClass) || !klass!!.canRefactor()) return null
 
             val expectedType =
                 analysisResult.bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, expression.getQualifiedExpressionForSelectorOrThis()]
-                    ?: classDescriptor.builtIns.nullableAnyType
-            if (!classDescriptor.defaultType.isSubtypeOf(expectedType)) return null
+                    ?: classDescriptor!!.builtIns.nullableAnyType
+            if (!classDescriptor!!.defaultType.isSubtypeOf(expectedType)) return null
 
             val parameters = expression.getParameterInfos()
 
-            return ConstructorInfo(parameters, klass)
+            return ConstructorInfo(parameters, klass!!)
         }
     }
 

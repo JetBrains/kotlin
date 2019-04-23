@@ -56,7 +56,7 @@ class ImportAwareClassifierNamePolicy(
     }
 
     private fun shortNameWithCompanionNameSkip(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
-        if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name, false)
+        if (classifier is TypeParameterDescriptor) return renderer.renderName((classifier as TypeParameterDescriptor).name, false)
 
         val qualifiedNameParts = classifier.parentsWithSelf
             .takeWhile { it is ClassifierDescriptor }
@@ -90,7 +90,7 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
     if (type.containsError()) return emptyList()
     val name = type.constructor.declarationDescriptor?.name
     if (name == SpecialNames.NO_NAME_PROVIDED) {
-        if (element is KtProperty && element.isLocal) {
+        if (element is KtProperty && (element as KtProperty).isLocal) {
             // for local variables, an anonymous object type is not collapsed to its supertype,
             // so showing the supertype will be misleading
             return emptyList()
@@ -124,26 +124,26 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
 private fun isUnclearType(type: KotlinType, element: KtCallableDeclaration): Boolean {
     if (element !is KtProperty) return true
 
-    val initializer = element.initializer ?: return true
+    val initializer = (element as KtProperty).initializer ?: return true
     if (initializer is KtConstantExpression || initializer is KtStringTemplateExpression) return false
-    if (initializer is KtUnaryExpression && initializer.baseExpression is KtConstantExpression) return false
+    if (initializer is KtUnaryExpression && (initializer as KtUnaryExpression).baseExpression is KtConstantExpression) return false
 
     if (isConstructorCall(initializer)) {
         return false
     }
 
     if (initializer is KtDotQualifiedExpression) {
-        val selectorExpression = initializer.selectorExpression
+        val selectorExpression = (initializer as KtDotQualifiedExpression).selectorExpression
         if (type.isEnum()) {
             // Do not show type for enums if initializer has enum entry with explicit enum name: val p = Enum.ENTRY
             val enumEntryDescriptor: DeclarationDescriptor? = selectorExpression?.resolveMainReferenceToDescriptors()?.singleOrNull()
 
-            if (enumEntryDescriptor != null && DescriptorUtils.isEnumEntry(enumEntryDescriptor)) {
+            if (enumEntryDescriptor != null && DescriptorUtils.isEnumEntry(enumEntryDescriptor!!)) {
                 return false
             }
         }
 
-        if (initializer.receiverExpression.isClassOrPackageReference() && isConstructorCall(selectorExpression)) {
+        if ((initializer as KtDotQualifiedExpression).receiverExpression.isClassOrPackageReference() && isConstructorCall(selectorExpression)) {
             return false
         }
     }
@@ -153,13 +153,13 @@ private fun isUnclearType(type: KotlinType, element: KtCallableDeclaration): Boo
 
 private fun isConstructorCall(initializer: KtExpression?): Boolean {
     if (initializer is KtCallExpression) {
-        val resolvedCall = initializer.resolveToCall(BodyResolveMode.FULL)
+        val resolvedCall = (initializer as KtCallExpression).resolveToCall(BodyResolveMode.FULL)
         val resolvedDescriptor = resolvedCall?.candidateDescriptor
         if (resolvedDescriptor is SamConstructorDescriptor) {
             return true
         }
         if (resolvedDescriptor is ConstructorDescriptor &&
-            (resolvedDescriptor.constructedClass.declaredTypeParameters.isEmpty() || initializer.typeArgumentList != null)
+            ((resolvedDescriptor as ConstructorDescriptor).constructedClass.declaredTypeParameters.isEmpty() || (initializer as KtCallExpression).typeArgumentList != null)
         ) {
             return true
         }

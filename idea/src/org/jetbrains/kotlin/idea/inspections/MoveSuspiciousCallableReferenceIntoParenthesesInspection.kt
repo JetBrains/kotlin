@@ -40,17 +40,17 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                 val parentResolvedCall = lambdaExpression.getParentResolvedCall(context)
                 if (parentResolvedCall != null) {
                     val originalParameterDescriptor =
-                        parentResolvedCall.getParameterForArgument(lambdaExpression.parent as? ValueArgument)?.original
+                        parentResolvedCall!!.getParameterForArgument(lambdaExpression.parent as? ValueArgument)?.original
                     if (originalParameterDescriptor != null) {
-                        val expectedType = originalParameterDescriptor.type
+                        val expectedType = originalParameterDescriptor!!.type
                         if (expectedType.isBuiltinFunctionalType) {
                             val returnType = expectedType.getReturnTypeFromFunctionType()
                             if (returnType.isBuiltinFunctionalTypeOrSubtype) return
-                            if (parentResolvedCall.call.callElement.getParentCall(context) != null) return
+                            if (parentResolvedCall!!.call.callElement.getParentCall(context) != null) return
                         }
                     }
                 }
-                val quickFix = if (canMove(lambdaExpression, callableReference, context))
+                val quickFix = if (canMove(lambdaExpression, callableReference!!, context))
                     IntentionWrapper(MoveIntoParenthesesIntention(), lambdaExpression.containingFile)
                 else
                     null
@@ -75,7 +75,7 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
         val functionReceiver = callableReference.receiverExpression?.mainReference?.resolveToDescriptors(context)?.firstOrNull()
         if (functionReceiver == lambdaParameter) return true
         val lambdaParameterType = lambdaParameter?.type
-        if (functionReceiver is VariableDescriptor && functionReceiver.type == lambdaParameterType) return true
+        if (functionReceiver is VariableDescriptor && (functionReceiver as VariableDescriptor).type == lambdaParameterType) return true
         if (functionReceiver is ClassDescriptor && functionReceiver == lambdaParameterType?.constructor?.declarationDescriptor) return true
 
         if (lambdaParameterType == null) return false
@@ -96,16 +96,16 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
             val receiver = if (receiverExpression == null) {
                 ""
             } else {
-                val descriptor = receiverExpression.getCallableDescriptor()
+                val descriptor = receiverExpression!!.getCallableDescriptor()
                 val literal = element.functionLiteral
                 if (descriptor == null ||
-                    descriptor is ValueParameterDescriptor && descriptor.containingDeclaration == literal.resolveToDescriptorIfAny()
+                    descriptor is ValueParameterDescriptor && (descriptor as ValueParameterDescriptor).containingDeclaration == literal.resolveToDescriptorIfAny()
                 ) {
                     callableReference.resolveToCall(BodyResolveMode.FULL)
                         ?.let { it.extensionReceiver ?: it.dispatchReceiver }
                         ?.let { "${it.type}" } ?: ""
                 } else {
-                    receiverExpression.text
+                    receiverExpression!!.text
                 }
             }
             return "$receiver::${callableReference.text}"

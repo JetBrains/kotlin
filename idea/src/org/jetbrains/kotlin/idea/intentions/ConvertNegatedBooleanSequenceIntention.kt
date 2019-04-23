@@ -61,14 +61,14 @@ class ConvertNegatedBooleanSequenceIntention : SelfTargetingOffsetIndependentInt
 
         var currentItem: KtBinaryExpression? = expression
         while (currentItem != null) {
-            if (currentItem.operationToken != firstOperator) return null //Boolean sequence must be homogeneous
+            if (currentItem!!.operationToken != firstOperator) return null //Boolean sequence must be homogeneous
 
-            val rightChild = currentItem.right as? KtPrefixExpression ?: return null
+            val rightChild = currentItem!!.right as? KtPrefixExpression ?: return null
             itemList.add(rightChild)
 
-            val leftChild = currentItem.left
+            val leftChild = currentItem!!.left
             when (leftChild) {
-                is KtPrefixExpression -> itemList.add(leftChild)
+                is KtPrefixExpression -> itemList.add(leftChild as KtPrefixExpression)
                 !is KtBinaryExpression -> return null
             }
 

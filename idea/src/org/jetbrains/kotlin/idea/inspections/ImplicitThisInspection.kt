@@ -40,11 +40,11 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
 
         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
             if (expression !is KtNameReferenceExpression) return
-            if (expression.parent is KtThisExpression) return
-            if (expression.parent is KtCallableReferenceExpression) return
+            if ((expression as KtNameReferenceExpression).parent is KtThisExpression) return
+            if ((expression as KtNameReferenceExpression).parent is KtCallableReferenceExpression) return
             if (expression.isSelectorOfDotQualifiedExpression()) return
-            val parent = expression.parent
-            if (parent is KtCallExpression && parent.isSelectorOfDotQualifiedExpression()) return
+            val parent = (expression as KtNameReferenceExpression).parent
+            if (parent is KtCallExpression && (parent as KtCallExpression).isSelectorOfDotQualifiedExpression()) return
 
             handle(expression, expression, ::CallFix)
         }
@@ -68,7 +68,7 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
 
         private fun KtExpression.isSelectorOfDotQualifiedExpression(): Boolean {
             val parent = parent
-            return parent is KtDotQualifiedExpression && parent.selectorExpression == this
+            return parent is KtDotQualifiedExpression && (parent as KtDotQualifiedExpression).selectorExpression == this
         }
     }
 

@@ -90,8 +90,8 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                     runWriteAction {
                         val codeStyleManager = CodeStyleManager.getInstance(file.project)
                         if (rangeMarker != null) {
-                            if (rangeMarker.isValid) {
-                                codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
+                            if (rangeMarker!!.isValid) {
+                                codeStyleManager.reformatRange(file, rangeMarker!!.startOffset, rangeMarker!!.endOffset)
                             }
                         } else {
                             codeStyleManager.reformat(file)
@@ -120,11 +120,11 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
 
                     if (rangeResult == RangeFilterResult.PROCESS) {
                         J2KPostProcessingRegistrarImpl.processings.forEach { processing ->
-                            val action = processing.createAction(element, diagnostics)
+                            val action = processing.createAction(element as KtElement, diagnostics)
                             if (action != null) {
                                 availableActions.add(
                                     ActionData(
-                                        element, action,
+                                        element as KtElement, action!!,
                                         J2KPostProcessingRegistrarImpl.priority(processing),
                                         processing.writeActionNeeded
                                     )
@@ -143,7 +143,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         val elements = if (rangeMarker == null)
             listOf(file)
         else
-            file.elementsInRange(rangeMarker.range!!).filterIsInstance<KtElement>()
+            file.elementsInRange(rangeMarker!!.range!!).filterIsInstance<KtElement>()
 
         return if (elements.isNotEmpty())
             file.getResolutionFacade().analyzeWithAllCompilerChecks(elements).bindingContext.diagnostics
@@ -153,8 +153,8 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
 
     private fun rangeFilter(element: PsiElement, rangeMarker: RangeMarker?): RangeFilterResult {
         if (rangeMarker == null) return RangeFilterResult.PROCESS
-        if (!rangeMarker.isValid) return RangeFilterResult.SKIP
-        val range = TextRange(rangeMarker.startOffset, rangeMarker.endOffset)
+        if (!rangeMarker!!.isValid) return RangeFilterResult.SKIP
+        val range = TextRange(rangeMarker!!.startOffset, rangeMarker!!.endOffset)
         val elementRange = element.textRange
         return when {
             range.contains(elementRange) -> RangeFilterResult.PROCESS

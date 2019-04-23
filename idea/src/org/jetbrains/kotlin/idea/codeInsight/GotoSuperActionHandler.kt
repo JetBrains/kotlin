@@ -56,19 +56,19 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
             private fun findSuperDeclarations(project: Project, descriptor: DeclarationDescriptor): List<PsiElement>? {
                 val superDescriptors: Collection<DeclarationDescriptor> = when (descriptor) {
                     is ClassDescriptor -> {
-                        val supertypes = descriptor.typeConstructor.supertypes
+                        val supertypes = (descriptor as ClassDescriptor).typeConstructor.supertypes
                         val superclasses = supertypes.mapNotNull { type ->
                             type.constructor.declarationDescriptor as? ClassDescriptor
                         }
                         ContainerUtil.removeDuplicates(superclasses)
                         superclasses
                     }
-                    is CallableMemberDescriptor -> descriptor.getDirectlyOverriddenDeclarations()
+                    is CallableMemberDescriptor -> (descriptor as CallableMemberDescriptor).getDirectlyOverriddenDeclarations()
                     else -> return null
                 }
 
                 return superDescriptors.mapNotNull { superDescriptor ->
-                    if (superDescriptor is ClassDescriptor && isAny(superDescriptor)) {
+                    if (superDescriptor is ClassDescriptor && isAny(superDescriptor as ClassDescriptor)) {
                         null
                     } else
                         DescriptorToSourceUtilsIde.getAnyDeclaration(project, superDescriptor)
@@ -85,8 +85,8 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
         if (allDeclarations.isEmpty()) return
         if (allDeclarations.size == 1) {
             val navigatable = EditSourceUtil.getDescriptor(allDeclarations[0])
-            if (navigatable != null && navigatable.canNavigate()) {
-                navigatable.navigate(true)
+            if (navigatable != null && navigatable!!.canNavigate()) {
+                navigatable!!.navigate(true)
             }
         } else {
             val message = getTitle(descriptor!!)

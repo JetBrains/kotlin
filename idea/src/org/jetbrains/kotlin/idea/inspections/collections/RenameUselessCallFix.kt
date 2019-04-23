@@ -34,7 +34,7 @@ class RenameUselessCallFix(val newName: String) : LocalQuickFix {
             val selectorCallExpression = it.selectorExpression as? KtCallExpression
             val calleeExpression = selectorCallExpression?.calleeExpression ?: return
             calleeExpression.replaced(factory.createExpression(newName))
-            selectorCallExpression.renameGivenReturnLabels(factory, calleeExpression.text, newName)
+            selectorCallExpression!!.renameGivenReturnLabels(factory, calleeExpression.text, newName)
         }
     }
 

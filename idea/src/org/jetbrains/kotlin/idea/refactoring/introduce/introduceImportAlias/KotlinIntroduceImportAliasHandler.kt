@@ -109,7 +109,7 @@ object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is KtFile) return
-        selectElement(editor, file, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) {
+        selectElement(editor, file as KtFile, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) {
             doRefactoring(project, editor, it as KtNameReferenceExpression)
         }
     }

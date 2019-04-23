@@ -44,19 +44,19 @@ private fun KtReferenceExpression.isRedundantUnit(): Boolean {
     if (!isUnitLiteral()) return false
     val parent = this.parent ?: return false
     if (parent is KtReturnExpression) {
-        val expectedReturnType = parent.expectedReturnType() ?: return false
+        val expectedReturnType = (parent as KtReturnExpression).expectedReturnType() ?: return false
         return expectedReturnType.nameIfStandardType != KotlinBuiltIns.FQ_NAMES.any.shortName() && !expectedReturnType.isMarkedNullable
     }
     if (parent is KtBlockExpression) {
         // Do not report just 'Unit' in function literals (return@label Unit is OK even in literals)
         if (parent.getParentOfType<KtFunctionLiteral>(strict = true) != null) return false
 
-        if (this == parent.lastBlockStatementOrThis()) {
+        if (this == (parent as KtBlockExpression).lastBlockStatementOrThis()) {
             val prev = this.previousStatement() ?: return true
             if (prev.isUnitLiteral()) return true
             val prevType = prev.resolveToCall(BodyResolveMode.FULL)?.resultingDescriptor?.returnType
             if (prevType != null) {
-                return prevType.isUnit()
+                return prevType!!.isUnit()
             }
             if (prev !is KtDeclaration) return false
             if (prev !is KtFunction) return true
@@ -74,9 +74,9 @@ private fun KtReturnExpression.expectedReturnType(): KotlinType? {
     val functionDescriptor = getTargetFunctionDescriptor(analyze()) ?: return null
     val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? KtFunctionLiteral
     if (functionLiteral != null) {
-        val callExpression = functionLiteral.getStrictParentOfType<KtCallExpression>() ?: return null
+        val callExpression = functionLiteral!!.getStrictParentOfType<KtCallExpression>() ?: return null
         val resolvedCall = callExpression.resolveToCall() ?: return null
-        val valueArgument = functionLiteral.getStrictParentOfType<KtValueArgument>() ?: return null
+        val valueArgument = functionLiteral!!.getStrictParentOfType<KtValueArgument>() ?: return null
         val mapping = resolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return null
         return mapping.valueParameter.returnType?.arguments?.lastOrNull()?.type
     }

@@ -66,13 +66,15 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         var Project.newName: String? by UserDataProperty(Key.create("NEW_NAME"))
 
         private fun PsiElement.getCopyableElement() =
-                parentsWithSelf.firstOrNull { it is KtFile || (it is KtNamedDeclaration && it.parent is KtFile) } as? KtElement
+                parentsWithSelf.firstOrNull { it is KtFile || (it is KtNamedDeclaration && (it as KtNamedDeclaration).parent is KtFile) } as? KtElement
 
         private fun PsiElement.getDeclarationsToCopy(): List<KtElement> {
             val declarationOrFile = getCopyableElement()
             return when (declarationOrFile) {
-                is KtFile -> declarationOrFile.declarations.filterIsInstance<KtNamedDeclaration>().ifEmpty { listOf(declarationOrFile) }
-                is KtNamedDeclaration -> listOf(declarationOrFile)
+                is KtFile -> (declarationOrFile as KtFile).declarations.filterIsInstance<KtNamedDeclaration>().ifEmpty { listOf(
+                    declarationOrFile as KtFile
+                ) }
+                is KtNamedDeclaration -> listOf(declarationOrFile as KtNamedDeclaration)
                 else -> emptyList()
             }
         }
@@ -122,12 +124,12 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             val policy = getFilePolicy(existingFile, targetFileName, targetDirectory, commandName)
             when (policy) {
                 ExistingFilePolicy.APPEND -> {}
-                ExistingFilePolicy.OVERWRITE -> runWriteAction { existingFile.delete() }
+                ExistingFilePolicy.OVERWRITE -> runWriteAction { existingFile!!.delete() }
                 ExistingFilePolicy.SKIP -> return null
             }
         }
         return runWriteAction {
-            if (existingFile != null && existingFile.isValid) {
+            if (existingFile != null && existingFile!!.isValid) {
                 existingFile as KtFile
             } else {
                 createKotlinFile(targetFileName, targetDirectory)
@@ -202,12 +204,12 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
         if (!isUnitTestMode) {
             if (singleElementToCopy != null && singleElementToCopy is KtNamedDeclaration) {
-                val dialog = CopyKotlinDeclarationDialog(singleElementToCopy, initialTargetDirectory, project)
+                val dialog = CopyKotlinDeclarationDialog(singleElementToCopy as KtNamedDeclaration, initialTargetDirectory, project)
                 dialog.title = commandName
                 if (!dialog.showAndGet()) return
 
                 openInEditor = dialog.openInEditor
-                newName = dialog.newName ?: singleElementToCopy.name
+                newName = dialog.newName ?: (singleElementToCopy as KtNamedDeclaration).name
                 targetDirWrapper = dialog.targetDirectory?.toDirectoryWrapper() ?: return
                 targetSourceRoot = dialog.targetSourceRoot
             }
@@ -235,7 +237,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             elementsToCopy.flatMapTo(LinkedHashSet()) { elementToCopy ->
                 elementToCopy.getInternalReferencesToUpdateOnPackageNameChange(changeInfo).filter {
                     val referencedElement = (it as? MoveRenameUsageInfo)?.referencedElement
-                    referencedElement == null || !elementToCopy.isAncestor(referencedElement)
+                    referencedElement == null || !elementToCopy.isAncestor(referencedElement!!)
                 }
             }
         }
@@ -252,7 +254,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                     val oldToNewElementsMapping = HashMap<PsiElement, PsiElement>()
 
                     val fileToCopy = when {
-                        singleElementToCopy is KtFile -> singleElementToCopy
+                        singleElementToCopy is KtFile -> singleElementToCopy as KtFile
                         isSingleDeclarationInFile -> originalFile
                         else -> null
                     }
@@ -261,15 +263,15 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                     val copiedDeclaration: KtNamedDeclaration?
                     if (fileToCopy != null) {
                         targetFile = runWriteAction {
-                            val copiedFile = targetDirectory.copyFileFrom(targetFileName, fileToCopy)
-                            if (copiedFile is KtFile && fileToCopy.packageMatchesDirectory()) {
-                                targetDirectory.getPackage()?.qualifiedName?.let { copiedFile.packageFqName = FqName(it) }
+                            val copiedFile = targetDirectory.copyFileFrom(targetFileName, fileToCopy!!)
+                            if (copiedFile is KtFile && fileToCopy!!.packageMatchesDirectory()) {
+                                targetDirectory.getPackage()?.qualifiedName?.let { (copiedFile as KtFile).packageFqName = FqName(it) }
                             }
                             performDelayedRefactoringRequests(project)
                             copiedFile
                         }
                         copiedDeclaration = if (isSingleDeclarationInFile && targetFile is KtFile) {
-                            targetFile.declarations.singleOrNull() as? KtNamedDeclaration
+                            (targetFile as KtFile).declarations.singleOrNull() as? KtNamedDeclaration
                         } else null
                     }
                     else {
@@ -317,10 +319,10 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             val targetSourceRootPsi = targetSourceRoot?.toPsiDirectory(project)
             if (targetSourceRootPsi != null && project == originalFile.project) {
                 val conflictChecker = MoveConflictChecker(
-                        project,
-                        elementsToCopy,
-                        KotlinDirectoryMoveTarget(FqName.ROOT, targetSourceRootPsi),
-                        originalFile
+                    project,
+                    elementsToCopy,
+                    KotlinDirectoryMoveTarget(FqName.ROOT, targetSourceRootPsi!!),
+                    originalFile
                 )
                 conflictChecker.checkModuleConflictsInDeclarations(internalUsages, conflicts)
                 conflictChecker.checkVisibilityInDeclarations(conflicts)

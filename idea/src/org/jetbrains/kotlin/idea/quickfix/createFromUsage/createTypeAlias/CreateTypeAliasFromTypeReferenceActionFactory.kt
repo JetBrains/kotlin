@@ -46,7 +46,7 @@ object CreateTypeAliasFromTypeReferenceActionFactory : KotlinSingleIntentionActi
         if ((targetParent as? PsiClass)?.language == JavaLanguage.INSTANCE) return null
 
         val expectedType = getTypeConstraintInfo(element)?.upperBound
-        if (expectedType != null && expectedType.containsError()) return null
+        if (expectedType != null && expectedType!!.containsError()) return null
 
         val validator = CollectingNameValidator(
                 filter = NewDeclarationNameValidator(targetParent, null, NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES)

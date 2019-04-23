@@ -95,10 +95,10 @@ fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression? {
     property.initializer = null
 
     if (explicitTypeToSet != null) {
-        property.setType(explicitTypeToSet)
+        property.setType(explicitTypeToSet!!)
     }
 
-    return assignment
+    return assignment as KtBinaryExpression
 }
 
 val KtQualifiedExpression.callExpression: KtCallExpression?
@@ -126,7 +126,7 @@ fun KtQualifiedExpression.isReceiverExpressionWithValue(): Boolean {
 
 fun KtExpression.negate(reformat: Boolean = true): KtExpression {
     val specialNegation = specialNegation(reformat)
-    if (specialNegation != null) return specialNegation
+    if (specialNegation != null) return specialNegation!!
     return KtPsiFactory(this).createExpressionByPattern("!$0", this, reformat = reformat)
 }
 
@@ -155,10 +155,10 @@ private fun KtExpression.specialNegation(reformat: Boolean): KtExpression? {
             if (operationReference.getReferencedName() == "!") {
                 val baseExpression = baseExpression
                 if (baseExpression != null) {
-                    val bindingContext = baseExpression.analyze(BodyResolveMode.PARTIAL)
-                    val type = bindingContext.getType(baseExpression)
-                    if (type != null && KotlinBuiltIns.isBoolean(type)) {
-                        return KtPsiUtil.safeDeparenthesize(baseExpression)
+                    val bindingContext = baseExpression!!.analyze(BodyResolveMode.PARTIAL)
+                    val type = bindingContext.getType(baseExpression!!)
+                    if (type != null && KotlinBuiltIns.isBoolean(type!!)) {
+                        return KtPsiUtil.safeDeparenthesize(baseExpression!!)
                     }
                 }
             }
@@ -234,7 +234,7 @@ private fun KtExpression.ifBranchesOrThis(): List<KtExpression?> {
 
 fun ResolvedCall<out CallableDescriptor>.resolvedToArrayType(): Boolean =
     resultingDescriptor.returnType.let { type ->
-        type != null && (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type))
+        type != null && (KotlinBuiltIns.isArray(type!!) || KotlinBuiltIns.isPrimitiveArray(type!!))
     }
 
 fun KtElement?.isZero() = this?.text == "0"
@@ -243,7 +243,7 @@ fun KtElement?.isOne() = this?.text == "1"
 
 private fun KtExpression.isExpressionOfTypeOrSubtype(predicate: (KotlinType) -> Boolean): Boolean {
     val returnType = resolveToCall()?.resultingDescriptor?.returnType
-    return returnType != null && (returnType.constructor.supertypes + returnType).any(predicate)
+    return returnType != null && (returnType!!.constructor.supertypes + returnType).any(predicate)
 }
 
 fun KtElement?.isSizeOrLength(): Boolean {
@@ -276,7 +276,7 @@ fun KtDotQualifiedExpression.replaceFirstReceiver(
     val receiver = replaced.receiverExpression
     when (receiver) {
         is KtDotQualifiedExpression -> {
-            receiver.replace(receiver.replaceFirstReceiver(factory, newReceiver, safeAccess))
+            (receiver as KtDotQualifiedExpression).replace((receiver as KtDotQualifiedExpression).replaceFirstReceiver(factory, newReceiver, safeAccess))
         }
         else -> {
             receiver.replace(newReceiver)
@@ -288,7 +288,7 @@ fun KtDotQualifiedExpression.replaceFirstReceiver(
 fun KtDotQualifiedExpression.deleteFirstReceiver(): KtExpression {
     val receiver = receiverExpression
     when (receiver) {
-        is KtDotQualifiedExpression -> receiver.deleteFirstReceiver()
+        is KtDotQualifiedExpression -> (receiver as KtDotQualifiedExpression).deleteFirstReceiver()
         else -> selectorExpression?.let { return this.replace(it) as KtExpression }
     }
     return this
@@ -347,6 +347,6 @@ fun KtPsiFactory.appendSemicolonBeforeLambdaContainingElement(element: PsiElemen
         it!!.node.elementType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
     }
     if (previousElement != null && previousElement is KtExpression) {
-        previousElement.parent.addAfter(createSemicolon(), previousElement)
+        (previousElement as KtExpression).parent.addAfter(createSemicolon(), previousElement)
     }
 }

@@ -83,23 +83,23 @@ fun generateLambda(
         return generateLambda(inputVariable, expression, reformat)
     }
 
-    val lambdaExpression = generateLambda(expression, *arrayOf(indexVariable, inputVariable), reformat = reformat)
+    val lambdaExpression = generateLambda(expression, *arrayOf(indexVariable!!, inputVariable), reformat = reformat)
 
     // replace "index++" with "index" or "index + 1" (see IntroduceIndexMatcher)
     val indexPlusPlus = lambdaExpression.findDescendantOfType<KtUnaryExpression> { unaryExpression ->
         val operand = unaryExpression.isPlusPlusOf() as? KtNameReferenceExpression
-        if (operand != null && operand.getReferencedName() == indexVariable.name) {
+        if (operand != null && operand!!.getReferencedName() == indexVariable!!.name) {
             val bindingContext = lambdaExpression.analyzeInContext(inputVariable)
             val parameter = lambdaExpression.valueParameters[0]
             val parameterDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parameter]
-            operand.mainReference.resolveToDescriptors(bindingContext).singleOrNull() == parameterDescriptor
+            operand!!.mainReference.resolveToDescriptors(bindingContext).singleOrNull() == parameterDescriptor
         }
         else {
             false
         }
     }
     if (indexPlusPlus != null) {
-        removePlusPlus(indexPlusPlus, reformat)
+        removePlusPlus(indexPlusPlus!!, reformat)
     }
 
     return lambdaExpression
@@ -173,8 +173,8 @@ fun KtExpression?.findVariableInitializationBeforeLoop(
     for (statement in prevStatements) {
         val variableInitialization = extractVariableInitialization(statement, variable)
         if (variableInitialization != null) {
-            return variableInitialization.takeIf {
-                statementsBetween.all { canSwapExecutionOrder(variableInitialization.initializationStatement, it) }
+            return variableInitialization!!.takeIf {
+                statementsBetween.all { canSwapExecutionOrder(variableInitialization!!.initializationStatement, it) }
             }
         }
 
@@ -210,7 +210,7 @@ fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
 
     when (descriptor) {
         is ConstructorDescriptor -> {
-            val classDescriptor = descriptor.containingDeclaration
+            val classDescriptor = (descriptor as ConstructorDescriptor).containingDeclaration
             val classFqName = classDescriptor.importableFqName?.asString()
             return when (classFqName) {
                 "java.util.ArrayList" -> CollectionKind.LIST
@@ -320,27 +320,27 @@ fun canSwapExecutionOrder(expressionBefore: KtExpression, expressionAfter: KtExp
 
     if (expressionBefore is KtDeclaration) {
         if (expressionBefore !is KtProperty) return false // local function, class or destructuring declaration - do not bother to handle these rare cases
-        if (expressionBefore.hasUsages(expressionAfter)) return false
-        return canSwapExecutionOrder(expressionBefore.initializer ?: return true, expressionAfter)
+        if ((expressionBefore as KtProperty).hasUsages(expressionAfter)) return false
+        return canSwapExecutionOrder((expressionBefore as KtProperty).initializer ?: return true, expressionAfter)
     }
 
     if (expressionAfter is KtDeclaration) {
         if (expressionAfter !is KtProperty) return false // local function, class or destructuring declaration - do not bother to handle these rare cases
-        return canSwapExecutionOrder(expressionBefore, expressionAfter.initializer ?: return true)
+        return canSwapExecutionOrder(expressionBefore, (expressionAfter as KtProperty).initializer ?: return true)
     }
 
     if (expressionBefore is KtBinaryExpression && isOrdinaryAssignment(expressionBefore)) {
-        val leftName = expressionBefore.left as? KtSimpleNameExpression ?: return false
+        val leftName = (expressionBefore as KtBinaryExpression).left as? KtSimpleNameExpression ?: return false
         val target = leftName.mainReference.resolve() as? KtProperty ?: return false
         if (target.hasUsages(expressionAfter)) return false
-        return canSwapExecutionOrder(expressionBefore.right ?: return true, expressionAfter)
+        return canSwapExecutionOrder((expressionBefore as KtBinaryExpression).right ?: return true, expressionAfter)
     }
 
     if (expressionAfter is KtBinaryExpression && isOrdinaryAssignment(expressionAfter)) {
-        val leftName = expressionAfter.left as? KtSimpleNameExpression ?: return false
+        val leftName = (expressionAfter as KtBinaryExpression).left as? KtSimpleNameExpression ?: return false
         val target = leftName.mainReference.resolve() as? KtProperty ?: return false
         if (target.hasUsages(expressionBefore)) return false
-        return canSwapExecutionOrder(expressionBefore, expressionAfter.right ?: return true)
+        return canSwapExecutionOrder(expressionBefore, (expressionAfter as KtBinaryExpression).right ?: return true)
     }
 
     if (expressionBefore.hasNoSideEffect() || expressionAfter.hasNoSideEffect()) return true
@@ -364,7 +364,7 @@ fun KtExpression.isStableInLoop(loop: KtLoopExpression, checkNoOtherUsagesInLoop
             if (declaration !is KtVariableDeclaration) return false
             if (!KtPsiUtil.isLocal(declaration)) return false // it's difficult to analyze non-local declarations
             //TODO: check that there are no local functions or lambdas that can modify it implicitly
-            return !declaration.hasWriteUsages(loop)
+            return !(declaration as KtVariableDeclaration).hasWriteUsages(loop)
         }
 
         //TODO: qualified expression?
@@ -389,7 +389,7 @@ private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolea
         is KtBlockExpression -> false
 
         is KtContainerNode -> {
-            val containerExpression = parent.parent as KtExpression
+            val containerExpression = (parent as KtContainerNode).parent as KtExpression
             containerExpression.isUsedAsExpression(containerExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA))
         }
 

@@ -28,7 +28,7 @@ class NewKotlinScriptAction : CreateFileFromTemplateAction(
         val module = ModuleUtilCore.findModuleForPsiElement(createdElement)
 
         if (createdElement is KtFile && module != null) {
-            NewKotlinFileHook.EP_NAME.extensions.forEach { it.postProcess(createdElement, module) }
+            NewKotlinFileHook.EP_NAME.extensions.forEach { it.postProcess(createdElement as KtFile, module!!) }
         }
     }
 

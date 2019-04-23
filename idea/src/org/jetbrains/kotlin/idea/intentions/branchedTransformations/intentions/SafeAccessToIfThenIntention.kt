@@ -59,8 +59,8 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
         var isAssignment = false
         val binaryExpression = (ifExpression.parent as? KtParenthesizedExpression)?.parent as? KtBinaryExpression
         val right = binaryExpression?.right
-        if (right != null && binaryExpression.operationToken == KtTokens.EQ) {
-            val replaced = binaryExpression.replaced(psiFactory.createExpressionByPattern("$0 = $1", ifExpression.text, right))
+        if (right != null && binaryExpression!!.operationToken == KtTokens.EQ) {
+            val replaced = binaryExpression!!.replaced(psiFactory.createExpressionByPattern("$0 = $1", ifExpression.text, right!!))
             ifExpression = replaced.findDescendantOfType()!!
             isAssignment = true
         }
@@ -81,7 +81,7 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
                 else ->
                     (ifExpression.then as? KtDotQualifiedExpression)?.receiverExpression
             }
-            if (valueToExtract != null) ifExpression.introduceValueForCondition(valueToExtract, editor)
+            if (valueToExtract != null) ifExpression.introduceValueForCondition(valueToExtract!!, editor)
         }
     }
 

@@ -61,8 +61,8 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         val psiFactory = KtPsiFactory(element)
 
         val prefixExpression = element.parent as? KtPrefixExpression
-        val expression = if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) {
-            prefixExpression.replace(psiFactory.createExpressionByPattern("$0 !in $1", argument, receiver))
+        val expression = if (prefixExpression != null && prefixExpression!!.operationToken == KtTokens.EXCL) {
+            prefixExpression!!.replace(psiFactory.createExpressionByPattern("$0 !in $1", argument, receiver))
         } else {
             element.replace(psiFactory.createExpressionByPattern("$0 in $1", argument, receiver))
         }

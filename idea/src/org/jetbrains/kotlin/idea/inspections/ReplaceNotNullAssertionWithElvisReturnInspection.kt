@@ -36,15 +36,15 @@ class ReplaceNotNullAssertionWithElvisReturnInspection : AbstractKotlinInspectio
         val parent = postfix.getParentOfTypes(true, KtLambdaExpression::class.java, KtNamedFunction::class.java)
         if (parent !is KtNamedFunction && parent !is KtLambdaExpression) return
         val context = postfix.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-        val (isNullable, returnLabelName) = when (parent) {
+        val (isNullable, returnLabelName) = when (parent!!) {
             is KtNamedFunction -> {
-                val returnType = parent.descriptor(context)?.returnType ?: return
+                val returnType = (parent as KtNamedFunction).descriptor(context)?.returnType ?: return
                 val isNullable = returnType.isNullable()
                 if (!returnType.isUnit() && !isNullable) return
                 isNullable to null
             }
             is KtLambdaExpression -> {
-                val functionLiteral = parent.functionLiteral
+                val functionLiteral = (parent as KtLambdaExpression).functionLiteral
                 val returnType = functionLiteral.descriptor(context)?.returnType ?: return
                 if (!returnType.isUnit()) return
                 val lambdaLabelName = functionLiteral.bodyBlockExpression?.getParentLambdaLabelName() ?: return

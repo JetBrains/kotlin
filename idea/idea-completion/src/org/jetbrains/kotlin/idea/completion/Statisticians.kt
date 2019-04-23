@@ -53,7 +53,7 @@ class KotlinCompletionStatistician : CompletionStatistician() {
 class KotlinProximityStatistician : ProximityStatistician() {
     override fun serialize(element: PsiElement, location: ProximityLocation): StatisticsInfo? {
         if (element !is KtDeclaration) return null
-        val descriptor = element.resolveToDescriptorIfAny() ?: return null
+        val descriptor = (element as KtDeclaration).resolveToDescriptorIfAny() ?: return null
         return KotlinStatisticsInfo.forDescriptor(descriptor)
     }
 }
@@ -76,8 +76,8 @@ object KotlinStatisticsInfo {
 
         val container = descriptor.containingDeclaration
         val containerFqName = when (container) {
-                                  is ClassDescriptor -> container.importableFqName?.asString()
-                                  is PackageFragmentDescriptor -> container.fqName.asString()
+                                  is ClassDescriptor -> (container as ClassDescriptor).importableFqName?.asString()
+                                  is PackageFragmentDescriptor -> (container as PackageFragmentDescriptor).fqName.asString()
                                   is ModuleDescriptor -> ""
                                   else -> null
                               }  ?: return StatisticsInfo.EMPTY

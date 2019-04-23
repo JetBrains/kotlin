@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.psi.*
 class KotlinMoveLeftRightHandler : MoveElementLeftRightHandler() {
     override fun getMovableSubElements(element: PsiElement): Array<PsiElement> {
         when (element) {
-            is KtParameterList -> return element.parameters.toTypedArray()
-            is KtValueArgumentList -> return element.arguments.toTypedArray()
-            is KtArrayAccessExpression -> return element.indexExpressions.toTypedArray()
-            is KtTypeParameterList -> return element.parameters.toTypedArray()
-            is KtSuperTypeList -> return element.entries.toTypedArray()
-            is KtTypeConstraintList -> return element.constraints.toTypedArray()
+            is KtParameterList -> return (element as KtParameterList).parameters.toTypedArray()
+            is KtValueArgumentList -> return (element as KtValueArgumentList).arguments.toTypedArray()
+            is KtArrayAccessExpression -> return (element as KtArrayAccessExpression).indexExpressions.toTypedArray()
+            is KtTypeParameterList -> return (element as KtTypeParameterList).parameters.toTypedArray()
+            is KtSuperTypeList -> return (element as KtSuperTypeList).entries.toTypedArray()
+            is KtTypeConstraintList -> return (element as KtTypeConstraintList).constraints.toTypedArray()
             //TODO
 //            is KtClass -> if (element.isEnum()) return element.declarations.filterIsInstance<KtEnumEntry>().toTypedArray()
         }

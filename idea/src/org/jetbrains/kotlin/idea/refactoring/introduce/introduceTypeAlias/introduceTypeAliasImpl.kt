@@ -63,7 +63,7 @@ fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
     val dummyVar = psiFactory.createProperty("val a: Int").apply {
         typeReference!!.replace(
             originalTypeElement.parent as? KtTypeReference ?: if (originalTypeElement is KtTypeElement) psiFactory.createType(
-                originalTypeElement
+                originalTypeElement as KtTypeElement
             ) else psiFactory.createType(originalTypeElement.text)
         )
     }
@@ -145,7 +145,7 @@ fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithCon
         conflicts.putValue(originalType, "Type parameter names must be distinct")
     }
 
-    if (visibility != null && visibility !in originalData.getApplicableVisibilities()) {
+    if (visibility != null && visibility!! !in originalData.getApplicableVisibilities()) {
         conflicts.putValue(originalType, "'$visibility' is not allowed in the target context")
     }
 
@@ -170,18 +170,18 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
         val typeArgumentsText = if (arguments.isNotEmpty()) "<${arguments.joinToString { it.text }}>" else ""
         when (occurrence) {
             is KtTypeElement -> {
-                replaceTypeElement(occurrence, typeArgumentsText)
+                replaceTypeElement(occurrence as KtTypeElement, typeArgumentsText)
             }
 
             is KtSuperTypeCallEntry -> {
-                occurrence.calleeExpression.typeReference?.typeElement?.let { replaceTypeElement(it, typeArgumentsText) }
+                (occurrence as KtSuperTypeCallEntry).calleeExpression.typeReference?.typeElement?.let { replaceTypeElement(it, typeArgumentsText) }
             }
 
             is KtCallElement -> {
-                val qualifiedExpression = occurrence.parent as? KtQualifiedExpression
-                val callExpression = if (qualifiedExpression != null && qualifiedExpression.selectorExpression == occurrence) {
-                    qualifiedExpression.replaced(occurrence)
-                } else occurrence
+                val qualifiedExpression = (occurrence as KtCallElement).parent as? KtQualifiedExpression
+                val callExpression = if (qualifiedExpression != null && qualifiedExpression!!.selectorExpression == occurrence) {
+                    qualifiedExpression!!.replaced(occurrence as KtCallElement)
+                } else occurrence as KtCallElement
                 val typeArgumentList = callExpression.typeArgumentList
                 if (arguments.isNotEmpty()) {
                     val newTypeArgumentList = psiFactory.createTypeArguments(typeArgumentsText)
@@ -205,7 +205,7 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
         DescriptorToSourceUtilsIde.getAnyDeclaration(typeAlias.project, it)
     }
     if (originalTypePsi != null) {
-        for (reference in ReferencesSearch.search(originalTypePsi, LocalSearchScope(typeAlias.parent))) {
+        for (reference in ReferencesSearch.search(originalTypePsi!!, LocalSearchScope(typeAlias.parent))) {
             val element = reference.element as? KtSimpleNameExpression ?: continue
             if ((element.textRange.intersects(aliasRange))) continue
 
@@ -214,19 +214,19 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
 
             val callElement = element.getParentOfTypeAndBranch<KtCallElement> { calleeExpression }
             if (callElement != null) {
-                occurrence = callElement
-                arguments = callElement.typeArguments.mapNotNull { it.typeReference?.typeElement }
+                occurrence = callElement!!
+                arguments = callElement!!.typeArguments.mapNotNull { it.typeReference?.typeElement }
             } else {
                 val userType = element.getParentOfTypeAndBranch<KtUserType> { referenceExpression }
                 if (userType != null) {
-                    occurrence = userType
-                    arguments = userType.typeArgumentsAsTypes.mapNotNull { it.typeElement }
+                    occurrence = userType!!
+                    arguments = userType!!.typeArgumentsAsTypes.mapNotNull { it.typeElement }
                 } else continue
             }
             if (arguments.size != typeAliasDescriptor.declaredTypeParameters.size) continue
             if (TypeUtils.isNullableType(typeAliasDescriptor.underlyingType)
                 && occurrence is KtUserType
-                && occurrence.parent !is KtNullableType
+                && (occurrence as KtUserType).parent !is KtNullableType
             ) continue
             rangesWithReplacers += occurrence.toRange() to { replaceOccurrence(occurrence, arguments) }
         }
@@ -260,12 +260,12 @@ fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false)
 
     val typeParameterNames = typeParameters.map { it.name }
     val typeAlias = if (originalElement is KtTypeElement) {
-        psiFactory.createTypeAlias(name, typeParameterNames, originalElement)
+        psiFactory.createTypeAlias(name, typeParameterNames, originalElement as KtTypeElement)
     } else {
         psiFactory.createTypeAlias(name, typeParameterNames, originalElement.text)
     }
     if (visibility != null && visibility != DEFAULT_VISIBILITY_KEYWORD) {
-        typeAlias.addModifier(visibility)
+        typeAlias.addModifier(visibility!!)
     }
 
     for (typeParameter in typeParameters)

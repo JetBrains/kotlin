@@ -147,7 +147,7 @@ private fun KotlinPullUpData.checkClashWithSuperDeclaration(
     val message = "${targetClassDescriptor.renderForConflicts()} already contains ${memberDescriptor.renderForConflicts()}"
 
     if (member is KtParameter) {
-        if (((targetClass as? KtClass)?.primaryConstructorParameters ?: emptyList()).any { it.name == member.name }) {
+        if (((targetClass as? KtClass)?.primaryConstructorParameters ?: emptyList()).any { it.name == (member as KtParameter).name }) {
             conflicts.putValue(member, message.capitalize())
         }
         return
@@ -155,7 +155,7 @@ private fun KotlinPullUpData.checkClashWithSuperDeclaration(
 
     if (memberDescriptor !is CallableMemberDescriptor) return
 
-    val clashingSuper = getClashingMemberInTargetClass(memberDescriptor) ?: return
+    val clashingSuper = getClashingMemberInTargetClass(memberDescriptor as CallableMemberDescriptor) ?: return
     if (clashingSuper.modality == Modality.ABSTRACT) return
     if (clashingSuper.kind != CallableMemberDescriptor.Kind.DECLARATION) return
     conflicts.putValue(member, message.capitalize())
@@ -163,7 +163,7 @@ private fun KotlinPullUpData.checkClashWithSuperDeclaration(
 
 private fun PsiClass.isSourceOrTarget(data: KotlinPullUpData): Boolean {
     var element = unwrapped
-    if (element is KtObjectDeclaration && element.isCompanion()) element = element.containingClassOrObject
+    if (element is KtObjectDeclaration && (element as KtObjectDeclaration).isCompanion()) element = (element as KtObjectDeclaration).containingClassOrObject
 
     return element == data.sourceClass || element == data.targetClass
 }
@@ -173,7 +173,7 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
     if (memberDescriptor is CallableDescriptor && !member.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-        val memberDescriptorInTargetClass = memberDescriptor.substitute(sourceToTargetClassSubstitutor)
+        val memberDescriptorInTargetClass = (memberDescriptor as CallableDescriptor).substitute(sourceToTargetClassSubstitutor)
         if (memberDescriptorInTargetClass != null) {
             HierarchySearchRequest<PsiElement>(targetClass, targetClass.useScope)
                     .searchInheritors()
@@ -203,7 +203,7 @@ private fun KotlinPullUpData.checkInnerClassToInterface(
         member: KtNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
-    if (isInterfaceTarget && memberDescriptor is ClassDescriptor && memberDescriptor.isInner) {
+    if (isInterfaceTarget && memberDescriptor is ClassDescriptor && (memberDescriptor as ClassDescriptor).isInner) {
         val message = "${memberDescriptor.renderForConflicts()} is an inner class. It can not be moved to the interface"
         conflicts.putValue(member, message.capitalize())
     }
@@ -218,7 +218,7 @@ private fun KotlinPullUpData.checkVisibility(
         if (targetDescriptor in memberDescriptors.values) return
         val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
         if (targetDescriptor is DeclarationDescriptorWithVisibility
-            && !Visibilities.isVisibleIgnoringReceiver(targetDescriptor, targetClassDescriptor)) {
+            && !Visibilities.isVisibleIgnoringReceiver(targetDescriptor as DeclarationDescriptorWithVisibility, targetClassDescriptor)) {
             val message = RefactoringBundle.message(
                     "0.uses.1.which.is.not.accessible.from.the.superclass",
                     memberDescriptor.renderForConflicts(),
@@ -231,12 +231,12 @@ private fun KotlinPullUpData.checkVisibility(
     val member = memberInfo.member
     val childrenToCheck = memberInfo.getChildrenToAnalyze()
     if (memberInfo.isToAbstract && member is KtCallableDeclaration) {
-        if (member.typeReference == null) {
+        if ((member as KtCallableDeclaration).typeReference == null) {
             (memberDescriptor as CallableDescriptor).returnType?.let { returnType ->
                 val typeInTargetClass = sourceToTargetClassSubstitutor.substitute(returnType, Variance.INVARIANT)
                 val descriptorToCheck = typeInTargetClass?.constructor?.declarationDescriptor as? ClassDescriptor
                 if (descriptorToCheck != null) {
-                    reportConflictIfAny(descriptorToCheck)
+                    reportConflictIfAny(descriptorToCheck!!)
                 }
             }
         }

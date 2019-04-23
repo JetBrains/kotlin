@@ -43,7 +43,7 @@ class KDocMissingDocumentationInspection : AbstractKotlinInspection() {
                         element.resolveToDescriptorIfAny() as? DeclarationDescriptorWithVisibility ?: return@namedDeclarationVisitor
                     if (descriptor.isEffectivelyPublicApi) {
                         val message = element.describe()?.let { "$it is missing documentation" } ?: "Missing documentation"
-                        holder.registerProblem(nameIdentifier, message, AddDocumentationFix())
+                        holder.registerProblem(nameIdentifier!!, message, AddDocumentationFix())
                     }
                 }
             }

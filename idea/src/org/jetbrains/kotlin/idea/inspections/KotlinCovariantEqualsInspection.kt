@@ -27,7 +27,7 @@ class KotlinCovariantEqualsInspection : AbstractKotlinInspection() {
         if (function.nameAsName != OperatorNameConventions.EQUALS) return
         val nameIdentifier = function.nameIdentifier ?: return
         val classOrObject = function.containingClassOrObject ?: return
-        if (classOrObject is KtObjectDeclaration && classOrObject.isCompanion()) return
+        if (classOrObject is KtObjectDeclaration && (classOrObject as KtObjectDeclaration).isCompanion()) return
 
         val parameter = function.valueParameters.singleOrNull() ?: return
         val typeReference = parameter.typeReference ?: return

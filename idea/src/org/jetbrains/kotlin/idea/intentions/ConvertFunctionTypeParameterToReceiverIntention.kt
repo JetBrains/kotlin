@@ -117,12 +117,12 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             }
 
             if (expression is KtLambdaExpression) {
-                expression.valueParameters.getOrNull(data.typeParameterIndex)?.let { parameterToConvert ->
+                (expression as KtLambdaExpression).valueParameters.getOrNull(data.typeParameterIndex)?.let { parameterToConvert ->
                     val thisRefExpr = psiFactory.createThisExpression()
                     for (ref in ReferencesSearch.search(parameterToConvert, LocalSearchScope(expression))) {
                         (ref.element as? KtSimpleNameExpression)?.replace(thisRefExpr)
                     }
-                    val lambda = expression.functionLiteral
+                    val lambda = (expression as KtLambdaExpression).functionLiteral
                     lambda.valueParameterList!!.removeParameter(parameterToConvert)
                     if (lambda.valueParameters.isEmpty()) {
                         lambda.arrow?.delete()
@@ -135,8 +135,8 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             val originalParameterTypes = originalLambdaTypes.arguments.dropLast(1).map { it.type }
 
             val calleeText = when (expression) {
-                is KtSimpleNameExpression -> expression.text
-                is KtCallableReferenceExpression -> "(${expression.text})"
+                is KtSimpleNameExpression -> (expression as KtSimpleNameExpression).text
+                is KtCallableReferenceExpression -> "(${(expression as KtCallableReferenceExpression).text})"
                 else -> generateVariable(expression)
             }
 
@@ -211,8 +211,8 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                         }
 
                         if (callable is KtFunction) {
-                            usages += FunctionDefinitionInfo(callable)
-                            processInternalUsages(callable, usages)
+                            usages += FunctionDefinitionInfo(callable as KtFunction)
+                            processInternalUsages(callable as KtFunction, usages)
                         }
                     }
                 }
@@ -234,8 +234,8 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
         ) {
             val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression }
             if (callElement != null) {
-                val context = callElement.analyze(BodyResolveMode.PARTIAL)
-                val expressionToProcess = getArgumentExpressionToProcess(callElement, context) ?: return
+                val context = callElement!!.analyze(BodyResolveMode.PARTIAL)
+                val expressionToProcess = getArgumentExpressionToProcess(callElement!!, context) ?: return
 
                 if (!data.isFirstParameter
                     && callElement is KtConstructorDelegationCall
@@ -263,7 +263,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             if (callableReference != null) {
                 conflicts.putValue(
                         refElement,
-                        "Callable reference transformation is not supported: " + StringUtil.htmlEmphasize(callableReference.text)
+                        "Callable reference transformation is not supported: " + StringUtil.htmlEmphasize(callableReference!!.text)
                 )
                 return
             }
@@ -299,11 +299,11 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             }
             if (body != null) {
                 val functionParameter = callable.valueParameters.getOrNull(data.functionParameterIndex) ?: return
-                for (ref in ReferencesSearch.search(functionParameter, LocalSearchScope(body))) {
+                for (ref in ReferencesSearch.search(functionParameter, LocalSearchScope(body!!))) {
                     val element = ref.element as? KtSimpleNameExpression ?: continue
                     val callExpression = element.getParentOfTypeAndBranch<KtCallExpression> { calleeExpression }
                     if (callExpression != null) {
-                        usages += ParameterCallInfo(callExpression)
+                        usages += ParameterCallInfo(callExpression!!)
                     }
                     else if (!data.isFirstParameter) {
                         usages += InternalReferencePassInfo(element)

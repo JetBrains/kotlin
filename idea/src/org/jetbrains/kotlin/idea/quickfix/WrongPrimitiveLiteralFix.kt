@@ -69,7 +69,7 @@ class WrongPrimitiveLiteralFix(element: KtConstantExpression, type: KotlinType) 
             append('u')
         } else {
             if (constValue is Float || constValue is Double) {
-                append(constValue.toLong())
+                append(constValue!!.toLong())
             } else {
                 append(element.text.trimEnd('l', 'L', 'u'))
             }
@@ -85,12 +85,12 @@ class WrongPrimitiveLiteralFix(element: KtConstantExpression, type: KotlinType) 
         if (expectedTypeIsFloat || expectedTypeIsDouble || expectedTypeIsUnsigned) return true
 
         if (constValue is Float || constValue is Double) {
-            val value = constValue.toDouble()
+            val value = constValue!!.toDouble()
             if (value != floor(value)) return false
             if (value !in Long.MIN_VALUE.toDouble()..Long.MAX_VALUE.toDouble()) return false
         }
 
-        return constValue.toLong() in valueRanges[typeName] ?: return false
+        return constValue!!.toLong() in valueRanges[typeName] ?: return false
     }
 
     override fun getFamilyName() = "Change to correct primitive type"

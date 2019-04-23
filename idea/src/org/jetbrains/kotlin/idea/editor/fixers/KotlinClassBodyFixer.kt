@@ -28,13 +28,13 @@ class KotlinClassBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnte
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtClassOrObject) return
 
-        val body = psiElement.getBody()
+        val body = (psiElement as KtClassOrObject).getBody()
         if (!body?.text.isNullOrBlank()) return
 
         var endOffset = psiElement.range.end
 
         if (body != null) {
-            body.getPrevSiblingIgnoringWhitespaceAndComments()?.let {
+            body!!.getPrevSiblingIgnoringWhitespaceAndComments()?.let {
                 endOffset = it.endOffset
             }
         }

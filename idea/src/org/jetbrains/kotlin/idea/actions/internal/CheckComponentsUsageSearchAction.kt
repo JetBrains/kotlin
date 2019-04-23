@@ -70,11 +70,11 @@ class CheckComponentsUsageSearchAction : AnAction() {
                     ProgressManager.getInstance().runProcess({
                         ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART
 
-                        smartRefsCount = ReferencesSearch.search(parameter).findAll().size
+                        smartRefsCount = ReferencesSearch.search(parameter!!).findAll().size
 
                         ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN
 
-                        goldRefsCount = ReferencesSearch.search(parameter).findAll().size
+                        goldRefsCount = ReferencesSearch.search(parameter!!).findAll().size
                     }, EmptyProgressIndicator())
 
                     if (smartRefsCount != goldRefsCount) {

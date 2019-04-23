@@ -31,7 +31,7 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
             return providePropertyTypeHint(elem)
         }
 
-        override fun isApplicable(elem: PsiElement): Boolean = elem is KtProperty && elem.getReturnTypeReference() == null && !elem.isLocal
+        override fun isApplicable(elem: PsiElement): Boolean = elem is KtProperty && (elem as KtProperty).getReturnTypeReference() == null && !(elem as KtProperty).isLocal
     },
 
     LOCAL_VARIABLE_HINT("Show local variable type hints", false) {
@@ -40,9 +40,9 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
         }
 
         override fun isApplicable(elem: PsiElement): Boolean =
-            (elem is KtProperty && elem.getReturnTypeReference() == null && elem.isLocal) ||
-                    (elem is KtParameter && elem.isLoopParameter && elem.typeReference == null) ||
-                    (elem is KtDestructuringDeclarationEntry && elem.getReturnTypeReference() == null)
+            (elem is KtProperty && (elem as KtProperty).getReturnTypeReference() == null && (elem as KtProperty).isLocal) ||
+                    (elem is KtParameter && (elem as KtParameter).isLoopParameter && (elem as KtParameter).typeReference == null) ||
+                    (elem is KtDestructuringDeclarationEntry && (elem as KtDestructuringDeclarationEntry).getReturnTypeReference() == null)
     },
 
     FUNCTION_HINT("Show function return type hints", false) {
@@ -56,7 +56,7 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
         }
 
         override fun isApplicable(elem: PsiElement): Boolean =
-            elem is KtNamedFunction && !(elem.hasBlockBody() || elem.hasDeclaredReturnType())
+            elem is KtNamedFunction && !((elem as KtNamedFunction).hasBlockBody() || (elem as KtNamedFunction).hasDeclaredReturnType())
     },
 
     PARAMETER_TYPE_HINT("Show parameter type hints ", false) {
@@ -69,7 +69,7 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
             return emptyList()
         }
 
-        override fun isApplicable(elem: PsiElement): Boolean = elem is KtParameter && elem.typeReference == null && !elem.isLoopParameter
+        override fun isApplicable(elem: PsiElement): Boolean = elem is KtParameter && (elem as KtParameter).typeReference == null && !(elem as KtParameter).isLoopParameter
     },
 
     PARAMETER_HINT("Show argument name hints", true) {
@@ -181,11 +181,11 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         val resolvedCallee = resolvedCall?.candidateDescriptor
         if (resolvedCallee is FunctionDescriptor) {
             val paramNames =
-                resolvedCallee.valueParameters.asSequence().map { it.name }.filter { !it.isSpecial }.map(Name::asString).toList()
+                (resolvedCallee as FunctionDescriptor).valueParameters.asSequence().map { it.name }.filter { !it.isSpecial }.map(Name::asString).toList()
             val fqName = if (resolvedCallee is ConstructorDescriptor)
-                resolvedCallee.containingDeclaration.fqNameSafe.asString()
+                (resolvedCallee as ConstructorDescriptor).containingDeclaration.fqNameSafe.asString()
             else
-                (resolvedCallee.fqNameOrNull()?.asString() ?: return null)
+                ((resolvedCallee as FunctionDescriptor).fqNameOrNull()?.asString() ?: return null)
             return HintInfo.MethodInfo(fqName, paramNames)
         }
         return null

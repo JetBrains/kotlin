@@ -60,7 +60,7 @@ object KeywordValues {
                 val additionalData = info.additionalData
                 val skipTrueFalse = when (additionalData) {
                     is IfConditionAdditionalData -> true
-                    is WhenEntryAdditionalData -> !additionalData.whenWithSubject
+                    is WhenEntryAdditionalData -> !(additionalData as WhenEntryAdditionalData).whenWithSubject
                     else -> false
                 }
                 if (skipTrueFalse) {
@@ -93,11 +93,13 @@ object KeywordValues {
             }
         }
 
-        if (callTypeAndReceiver is CallTypeAndReceiver.CALLABLE_REFERENCE && callTypeAndReceiver.receiver != null) {
-            val qualifierType = bindingContext.get(BindingContext.DOUBLE_COLON_LHS, callTypeAndReceiver.receiver!!)?.type
+        if (callTypeAndReceiver is CallTypeAndReceiver.CALLABLE_REFERENCE && (callTypeAndReceiver as CallTypeAndReceiver.CALLABLE_REFERENCE).receiver != null) {
+            val qualifierType = bindingContext.get(BindingContext.DOUBLE_COLON_LHS, (callTypeAndReceiver as CallTypeAndReceiver.CALLABLE_REFERENCE).receiver!!)?.type
             if (qualifierType != null) {
                 val kClassDescriptor = resolutionFacade.getFrontendService(ReflectionTypes::class.java).kClass
-                val classLiteralType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClassDescriptor, listOf(TypeProjectionImpl(qualifierType)))
+                val classLiteralType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClassDescriptor, listOf(TypeProjectionImpl(
+                    qualifierType!!
+                )))
                 val kClassTypes = listOf(classLiteralType.toFuzzyType(emptyList()))
                 val kClassMatcher = { info: ExpectedInfo -> kClassTypes.matchExpectedInfo(info) }
                 consumer.consume("class", kClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
@@ -109,7 +111,10 @@ object KeywordValues {
                             .singleOrNull() as? ClassDescriptor
 
                     if (javaLangClassDescriptor != null) {
-                        val javaLangClassType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, javaLangClassDescriptor, listOf(TypeProjectionImpl(qualifierType)))
+                        val javaLangClassType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY,
+                                                                                    javaLangClassDescriptor!!, listOf(TypeProjectionImpl(
+                                qualifierType!!
+                            )))
                         val javaClassTypes = listOf(javaLangClassType.toFuzzyType(emptyList()))
                         val javaClassMatcher = { info: ExpectedInfo -> javaClassTypes.matchExpectedInfo(info) }
                         consumer.consume("class", javaClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {

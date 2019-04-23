@@ -73,15 +73,15 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
             return when (targetContainer) {
                 is KtFile -> {
                     val declarationContainer: KtElement =
-                        if (targetContainer.isScript()) targetContainer.script!!.blockExpression else targetContainer
+                        if ((targetContainer as KtFile).isScript()) (targetContainer as KtFile).script!!.blockExpression else targetContainer
                     declarationContainer.add(originalElement) as KtNamedDeclaration
                 }
-                is KtClassOrObject -> targetContainer.addDeclaration(originalElement)
+                is KtClassOrObject -> (targetContainer as KtClassOrObject).addDeclaration(originalElement)
                 else -> error("Unexpected element: ${targetContainer.getElementTextWithContext()}")
             }.apply {
                 val container = originalElement.containingClassOrObject
-                if (container is KtObjectDeclaration && container.isCompanion() && container.declarations.singleOrNull() == originalElement) {
-                    container.deleteSingle()
+                if (container is KtObjectDeclaration && (container as KtObjectDeclaration).isCompanion() && (container as KtObjectDeclaration).declarations.singleOrNull() == originalElement) {
+                    (container as KtObjectDeclaration).deleteSingle()
                 }
                 else {
                     originalElement.deleteSingle()
@@ -128,7 +128,7 @@ private object ElementHashingStrategy : TObjectHashingStrategy<PsiElement> {
         if (e1 === e2) return true
         // Name should be enough to distinguish different light elements based on the same original declaration
         if (e1 is KtLightDeclaration<*, *> && e2 is KtLightDeclaration<*, *>) {
-            return e1.kotlinOrigin == e2.kotlinOrigin && e1.name == e2.name
+            return (e1 as KtLightDeclaration<*, *>).kotlinOrigin == (e2 as KtLightDeclaration<*, *>).kotlinOrigin && (e1 as KtLightDeclaration<*, *>).name == (e2 as KtLightDeclaration<*, *>).name
         }
         return e1 == e2
     }
@@ -136,8 +136,8 @@ private object ElementHashingStrategy : TObjectHashingStrategy<PsiElement> {
     override fun computeHashCode(e: PsiElement?): Int {
         return when (e) {
             null -> 0
-            is KtLightDeclaration<*, *> -> (e.kotlinOrigin?.hashCode() ?: 0) * 31 + (e.name?.hashCode() ?: 0)
-            else -> e.hashCode()
+            is KtLightDeclaration<*, *> -> ((e as KtLightDeclaration<*, *>).kotlinOrigin?.hashCode() ?: 0) * 31 + ((e as KtLightDeclaration<*, *>).name?.hashCode() ?: 0)
+            else -> e!!.hashCode()
         }
     }
 }
@@ -189,7 +189,7 @@ class MoveKotlinDeclarationsProcessor(
                 val javaScope = projectScope.restrictByFileType(JavaFileType.INSTANCE)
                 val currentFile = ktDeclaration.containingKtFile
                 val newFile = when (moveTarget) {
-                    is KotlinMoveTargetForExistingElement -> moveTarget.targetElement as? KtFile ?: return null
+                    is KotlinMoveTargetForExistingElement -> (moveTarget as KotlinMoveTargetForExistingElement).targetElement as? KtFile ?: return null
                     is KotlinMoveTargetForDeferredFile -> return javaScope
                     else -> return null
                 }
@@ -293,7 +293,7 @@ class MoveKotlinDeclarationsProcessor(
             }
         }
 
-        val (oldInternalUsages, externalUsages) = usages.partition { it is KotlinMoveUsage && it.isInternal }
+        val (oldInternalUsages, externalUsages) = usages.partition { it is KotlinMoveUsage && (it as KotlinMoveUsage).isInternal }
         val newInternalUsages = ArrayList<UsageInfo>()
 
         markInternalUsages(oldInternalUsages)

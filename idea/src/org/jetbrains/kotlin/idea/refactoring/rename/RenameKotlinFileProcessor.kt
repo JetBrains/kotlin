@@ -62,7 +62,7 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
             val facadeClass = JavaPsiFacade.getInstance(project)
                 .findClass(facadeFqName.asString(), GlobalSearchScope.moduleScope(module)) as? KtLightClass
             if (facadeClass != null) {
-                allRenames[FileRenamingPsiClassWrapper(facadeClass, jetFile)] = PackagePartClassUtils.getFilePartShortName(newName)
+                allRenames[FileRenamingPsiClassWrapper(facadeClass!!, jetFile)] = PackagePartClassUtils.getFilePartShortName(newName)
             }
         }
     }

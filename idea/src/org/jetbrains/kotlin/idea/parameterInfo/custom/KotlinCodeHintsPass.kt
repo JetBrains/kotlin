@@ -38,7 +38,7 @@ class KotlinCodeHintsPass(private val myRootElement: PsiElement, editor: Editor)
 
         val provider = InlayParameterHintsExtension.forLanguage(KotlinLanguage.INSTANCE)
         if (provider == null || !provider.canShowHintsWhenDisabled() && !isEnabled || DiffUtil.isDiffEditor(myEditor)) {
-            kotlinCodeHintsModel.removeAll(myDocument)
+            kotlinCodeHintsModel.removeAll(myDocument!!)
             return
         }
 
@@ -46,16 +46,16 @@ class KotlinCodeHintsPass(private val myRootElement: PsiElement, editor: Editor)
             val actualHints = HashMap<PsiElement, String>()
             myTraverser.forEach { element -> processLambdaReturnHints(element, actualHints) }
 
-            kotlinCodeHintsModel.update(myDocument, actualHints)
+            kotlinCodeHintsModel.update(myDocument!!, actualHints)
         } else {
-            kotlinCodeHintsModel.removeAll(myDocument)
+            kotlinCodeHintsModel.removeAll(myDocument!!)
         }
     }
 
     private fun processLambdaReturnHints(element: PsiElement, actualElements: MutableMap<PsiElement, String>) {
         if (element !is KtExpression) return
 
-        for (returnHint in provideLambdaReturnValueHints(element)) {
+        for (returnHint in provideLambdaReturnValueHints(element as KtExpression)) {
             val offset = returnHint.offset
 
             if (!canShowHintsAtOffset(offset)) continue
@@ -81,7 +81,7 @@ class KotlinCodeHintsPass(private val myRootElement: PsiElement, editor: Editor)
             return true
         }
 
-        return myDocument != null && myDocument.textLength == rootRange.length
+        return myDocument != null && myDocument!!.textLength == rootRange.length
     }
 
     companion object {

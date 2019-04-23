@@ -43,7 +43,7 @@ class ReplacePutWithAssignmentInspection : AbstractApplicabilityBasedInspection<
         val callExpression = element.callExpression
         if (callExpression?.valueArguments?.size != 2) return false
 
-        val calleeExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return false
+        val calleeExpression = callExpression!!.calleeExpression as? KtNameReferenceExpression ?: return false
         if (calleeExpression.getReferencedName() !in compatibleNames) return false
 
         val context = element.analyze()

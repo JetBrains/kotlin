@@ -55,7 +55,7 @@ class ConvertTrimMarginToTrimIndentIntention : SelfTargetingIntention<KtCallExpr
                 }
             }
         }
-        qualifiedExpression.replace(KtPsiFactory(element).createExpression("\"\"\"$newTemplate\"\"\".trimIndent()"))
+        qualifiedExpression!!.replace(KtPsiFactory(element).createExpression("\"\"\"$newTemplate\"\"\".trimIndent()"))
     }
 }
 
@@ -63,7 +63,7 @@ private fun KtCallExpression.marginPrefix(): String? {
     val argument = valueArguments.firstOrNull()?.getArgumentExpression()
     if (argument != null) {
         if (argument !is KtStringTemplateExpression) return null
-        val entry = argument.entries.toList().singleOrNull() as? KtLiteralStringTemplateEntry ?: return null
+        val entry = (argument as KtStringTemplateExpression).entries.toList().singleOrNull() as? KtLiteralStringTemplateEntry ?: return null
         return entry.text.replace("\"", "")
     }
     return "|"

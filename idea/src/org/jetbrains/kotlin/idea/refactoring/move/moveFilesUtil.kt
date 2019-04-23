@@ -49,7 +49,7 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
     }
 
     project.executeCommand(MoveHandler.REFACTORING_NAME) {
-        val selectedDir = (if (moveDialog != null) moveDialog.targetDirectory else initialTargetDirectory) ?: return@executeCommand
+        val selectedDir = (if (moveDialog != null) moveDialog!!.targetDirectory else initialTargetDirectory) ?: return@executeCommand
         val updatePackageDirective = moveDialog?.updatePackageDirective
 
         try {
@@ -57,7 +57,8 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
             val elementsToMove = elements
                     .filterNot {
                         it is PsiFile
-                        && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move") }
+                        && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice,
+                                                                                         it as PsiFile, (it as PsiFile).name, "Move") }
                     }
                     .sortedWith( // process Kotlin files first so that light classes are updated before changing references in Java files
                             java.util.Comparator { o1, o2 ->
@@ -72,7 +73,7 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
             elementsToMove.forEach {
                 MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir)
                 if (it is KtFile && it.isInJavaSourceRoot()) {
-                    it.updatePackageDirective = updatePackageDirective
+                    (it as KtFile).updatePackageDirective = updatePackageDirective
                 }
             }
 

@@ -64,7 +64,7 @@ class ReplOutputProcessor(
 
         historyMarkup.addRangeHighlighter(
                 startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
-        ).apply { gutterIconRenderer = ConsoleIndicatorRenderer(iconWithTooltip) }
+        ).apply { gutterIconRenderer = ConsoleIndicatorRenderer(iconWithTooltip!!) }
     }
 
     private fun printWarningMessage(message: String, isAddHyperlink: Boolean) = WriteCommandAction.runWriteCommandAction(project) {

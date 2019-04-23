@@ -128,7 +128,7 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
     }
 
     override fun isValidForClass(targetClass: KtClassOrObject): Boolean =
-        targetClass is KtClass && !targetClass.isAnnotation() && !targetClass.isInterface()
+        targetClass is KtClass && !targetClass.isAnnotation() && !(targetClass as KtClass).isInterface()
 
     override fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info? {
         if (klass !is KtClass) throw AssertionError("Not a class: ${klass.getElementTextWithContext()}")
@@ -137,7 +137,7 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
         val classDescriptor = context.get(BindingContext.CLASS, klass) ?: return null
 
         classDescriptor.findDeclaredToString(false)?.let {
-            if (!confirmMemberRewrite(klass, it)) return null
+            if (!confirmMemberRewrite(klass as KtClass, it)) return null
 
             runWriteAction {
                 try {
@@ -157,7 +157,7 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
                 Generator.SINGLE_TEMPLATE,
                 project
             )
-            return klass.adjuster?.let { it(info) } ?: info
+            return (klass as KtClass).adjuster?.let { it(info) } ?: info
         }
 
         val superToString = classDescriptor.getSuperClassOrAny().findDeclaredToString(true)!!

@@ -69,22 +69,22 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
             return
         }
 
-        val importList = root.importList
+        val importList = (root as KtFile).importList
         if (importList != null) {
-            val firstImport = importList.imports.firstOrNull()
-            if (firstImport != null && importList.imports.size > 1) {
-                val importKeyword = firstImport.firstChild
+            val firstImport = importList!!.imports.firstOrNull()
+            if (firstImport != null && importList!!.imports.size > 1) {
+                val importKeyword = firstImport!!.firstChild
 
                 val startOffset = importKeyword.endOffset + 1
-                val endOffset = importList.endOffset
+                val endOffset = importList!!.endOffset
 
-                descriptors.add(FoldingDescriptor(importList, TextRange(startOffset, endOffset)).apply {
+                descriptors.add(FoldingDescriptor(importList!!, TextRange(startOffset, endOffset)).apply {
                     setCanBeRemovedWhenCollapsed(true)
                 })
             }
         }
 
-        appendDescriptors(root.node, document, descriptors)
+        appendDescriptors((root as KtFile).node, document, descriptors)
     }
 
     private fun appendDescriptors(node: ASTNode, document: Document, descriptors: MutableList<FoldingDescriptor>) {
@@ -140,7 +140,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
             val lbrace = psi?.lBrace
             val rbrace = psi?.rBrace
             if (lbrace != null && rbrace != null) {
-                return TextRange(lbrace.startOffset, rbrace.endOffset)
+                return TextRange(lbrace!!.startOffset, rbrace!!.endOffset)
             }
         }
 
@@ -149,7 +149,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
             val leftParenthesis = valueArgumentList?.leftParenthesis
             val rightParenthesis = valueArgumentList?.rightParenthesis
             if (leftParenthesis != null && rightParenthesis != null) {
-                return TextRange(leftParenthesis.startOffset, rightParenthesis.endOffset)
+                return TextRange(leftParenthesis!!.startOffset, rightParenthesis!!.endOffset)
             }
         }
 

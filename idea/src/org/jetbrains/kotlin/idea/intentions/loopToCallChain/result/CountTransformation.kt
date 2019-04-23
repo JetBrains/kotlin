@@ -31,13 +31,14 @@ class CountTransformation(
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation, reformat: Boolean): ResultTransformation? {
         if (previousTransformation !is FilterTransformationBase) return null
-        if (previousTransformation.indexVariable != null) return null
+        if ((previousTransformation as FilterTransformationBase).indexVariable != null) return null
         val newFilter = if (filter == null)
-            previousTransformation.effectiveCondition.asExpression(reformat)
+            (previousTransformation as FilterTransformationBase).effectiveCondition.asExpression(reformat)
         else
-            KtPsiFactory(filter).createExpressionByPattern("$0 && $1", previousTransformation.effectiveCondition.asExpression(reformat), filter,
-                                                           reformat = reformat)
-        return CountTransformation(loop, previousTransformation.inputVariable, initialization, newFilter)
+            KtPsiFactory(filter!!).createExpressionByPattern("$0 && $1", (previousTransformation as FilterTransformationBase).effectiveCondition.asExpression(reformat),
+                                                                  filter!!,
+                                                                  reformat = reformat)
+        return CountTransformation(loop, (previousTransformation as FilterTransformationBase).inputVariable, initialization, newFilter)
     }
 
     override val presentation: String
@@ -46,7 +47,7 @@ class CountTransformation(
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val reformat = chainedCallGenerator.reformat
         val call = if (filter != null) {
-            val lambda = generateLambda(inputVariable, filter, reformat)
+            val lambda = generateLambda(inputVariable, filter!!, reformat)
             chainedCallGenerator.generate("count $0:'{}'", lambda)
         }
         else {

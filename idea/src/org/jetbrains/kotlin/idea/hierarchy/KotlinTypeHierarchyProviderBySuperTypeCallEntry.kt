@@ -45,9 +45,9 @@ class KotlinTypeHierarchyProviderBySuperTypeCallEntry : JavaTypeHierarchyProvide
 
         val targetElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext)?.unwrapped
         return when {
-            targetElement is KtConstructor<*> -> targetElement.containingClassOrObject?.toLightClass()
-            targetElement is PsiMethod && targetElement.isConstructor -> targetElement.containingClass
-            targetElement is KtClassOrObject -> targetElement.toLightClass()
+            targetElement is KtConstructor<*> -> (targetElement as KtConstructor<*>).containingClassOrObject?.toLightClass()
+            targetElement is PsiMethod && (targetElement as PsiMethod).isConstructor -> (targetElement as PsiMethod).containingClass
+            targetElement is KtClassOrObject -> (targetElement as KtClassOrObject).toLightClass()
             targetElement is PsiClass -> targetElement
             else -> null
         }

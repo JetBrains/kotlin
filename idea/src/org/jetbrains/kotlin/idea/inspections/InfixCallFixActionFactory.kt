@@ -32,14 +32,14 @@ import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 object InfixCallFixActionFactory : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val functionDescriptor = (diagnostic as? DiagnosticWithParameters2<*, *, *>)?.a as? FunctionDescriptor ?: return null
-        val target = DescriptorToSourceUtilsIde.getAnyDeclaration(diagnostic.psiFile.project, functionDescriptor)
+        val target = DescriptorToSourceUtilsIde.getAnyDeclaration((diagnostic as DiagnosticWithParameters2<*, *, *>).psiFile.project, functionDescriptor)
                 as? KtModifierListOwner
-        if (target == null || target.canRefactor()) {
+        if (target == null || target!!.canRefactor()) {
             // we'll fix the problem by adding the 'infix' modifier to the target
             return null
         }
 
-        val infixCall = (diagnostic.psiElement as? KtOperationReferenceExpression)?.parent as? KtBinaryExpression ?: return null
+        val infixCall = ((diagnostic as DiagnosticWithParameters2<*, *, *>).psiElement as? KtOperationReferenceExpression)?.parent as? KtBinaryExpression ?: return null
         return IntentionWrapper(InfixCallToOrdinaryIntention(), infixCall.containingFile)
     }
 }

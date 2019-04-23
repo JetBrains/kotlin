@@ -64,16 +64,16 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
         if (createdElement is KtFile) {
             if (module != null) {
                 for (hook in NewKotlinFileHook.EP_NAME.extensions) {
-                    hook.postProcess(createdElement, module)
+                    hook.postProcess(createdElement as KtFile, module!!)
                 }
             }
 
-            val ktClass = createdElement.declarations.singleOrNull() as? KtNamedDeclaration
+            val ktClass = (createdElement as KtFile).declarations.singleOrNull() as? KtNamedDeclaration
             if (ktClass != null) {
                 CreateFromTemplateAction.moveCaretAfterNameIdentifier(ktClass)
             } else {
-                val editor = FileEditorManager.getInstance(createdElement.project).selectedTextEditor ?: return
-                if (editor.document == createdElement.viewProvider.document) {
+                val editor = FileEditorManager.getInstance((createdElement as KtFile).project).selectedTextEditor ?: return
+                if (editor.document == (createdElement as KtFile).viewProvider.document) {
                     val lineCount = editor.document.lineCount
                     if (lineCount > 0) {
                         editor.caretModel.moveToLogicalPosition(LogicalPosition(lineCount - 1, 0))
@@ -208,10 +208,10 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
             try {
                 val psiFile = createFromTemplate(targetDir, className, template)
                 if (psiFile is KtFile) {
-                    val singleClass = psiFile.declarations.singleOrNull() as? KtClass
-                    if (singleClass != null && !singleClass.isEnum() && !singleClass.isInterface() && name.contains("Abstract")) {
+                    val singleClass = (psiFile as KtFile).declarations.singleOrNull() as? KtClass
+                    if (singleClass != null && !singleClass!!.isEnum() && !singleClass!!.isInterface() && name.contains("Abstract")) {
                         runWriteAction {
-                            singleClass.addModifier(KtTokens.ABSTRACT_KEYWORD)
+                            singleClass!!.addModifier(KtTokens.ABSTRACT_KEYWORD)
                         }
                     }
                 }

@@ -30,13 +30,13 @@ class RenameKotlinImplicitLambdaParameter : KotlinVariableInplaceRenameHandler()
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
         val nameExpression = file.findElementForRename<KtNameReferenceExpression>(editor.caretModel.offset)
 
-        return nameExpression != null && isAutoCreatedItUsage(nameExpression)
+        return nameExpression != null && isAutoCreatedItUsage(nameExpression!!)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
         val intention = ReplaceItWithExplicitFunctionLiteralParamIntention()
         project.executeWriteCommand("Convert 'it' to explicit lambda parameter") {
-            if (file != null) intention.invoke(project, editor, file)
+            if (file != null) intention.invoke(project, editor, file!!)
         }
     }
 

@@ -37,7 +37,7 @@ class KotlinMissingForOrWhileBodyFixer : SmartEnterProcessorWithFixers.Fixer<Kot
 
         if (!loopExpression.isValidLoopCondition()) return
 
-        if (body != null && body.startLine(doc) == loopExpression.startLine(doc)) return
+        if (body != null && body!!.startLine(doc) == loopExpression.startLine(doc)) return
 
         val rParen = loopExpression.rightParenthesis ?: return
 

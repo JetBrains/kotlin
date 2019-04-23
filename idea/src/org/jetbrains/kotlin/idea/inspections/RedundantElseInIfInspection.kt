@@ -54,14 +54,14 @@ private class RemoveRedundantElseFix : LocalQuickFix {
 
         val copy = elseExpression.copy()
         if (copy is KtBlockExpression) {
-            copy.lBrace?.delete()
-            copy.rBrace?.delete()
+            (copy as KtBlockExpression).lBrace?.delete()
+            (copy as KtBlockExpression).rBrace?.delete()
         }
         val parent = ifExpression.parent
         val added = parent.addAfter(copy, ifExpression)
         val elseKeywordLineNumber = elseKeyword.getLineNumber()
         val lastThenEndLine = elseKeyword.getPrevSiblingIgnoringWhitespaceAndComments()?.takeIf {
-            it is KtContainerNodeForControlStructureBody && it.node.elementType == KtNodeTypes.THEN
+            it is KtContainerNodeForControlStructureBody && (it as KtContainerNodeForControlStructureBody).node.elementType == KtNodeTypes.THEN
         }?.getLineNumber(start = false)
         val elseStartLine = ((elseExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: elseExpression).getLineNumber()
         if (elseKeywordLineNumber == lastThenEndLine && elseKeywordLineNumber == elseStartLine) {

@@ -113,9 +113,9 @@ private fun addParameter(method: PsiMethod, result: MutableSet<PsiElement>, para
     val parameterIndex = parameter.unwrapped!!.parameterIndex()
 
     if (method is KtLightMethod) {
-        val declaration = method.kotlinOrigin
+        val declaration = (method as KtLightMethod).kotlinOrigin
         if (declaration is KtFunction) {
-            result.add(declaration.valueParameters[parameterIndex])
+            result.add((declaration as KtFunction).valueParameters[parameterIndex])
         }
     }
     else {

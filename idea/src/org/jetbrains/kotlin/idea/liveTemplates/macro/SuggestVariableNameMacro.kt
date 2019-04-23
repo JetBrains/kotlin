@@ -65,13 +65,13 @@ class SuggestVariableNameMacro : KotlinMacro() {
 
         val initializer = (declaration as? KtDeclarationWithInitializer)?.initializer
         if (initializer != null) {
-            val bindingContext = initializer.analyze(BodyResolveMode.PARTIAL)
-            return KotlinNameSuggester.suggestNamesByExpressionAndType(initializer, null, bindingContext, nameValidator, null)
+            val bindingContext = initializer!!.analyze(BodyResolveMode.PARTIAL)
+            return KotlinNameSuggester.suggestNamesByExpressionAndType(initializer!!, null, bindingContext, nameValidator, null)
         }
 
         val parent = declaration.parent
-        if (parent is KtForExpression && declaration == parent.loopParameter) {
-            suggestIterationVariableName(parent, nameValidator)?.let { return it }
+        if (parent is KtForExpression && declaration == (parent as KtForExpression).loopParameter) {
+            suggestIterationVariableName(parent as KtForExpression, nameValidator)?.let { return it }
         }
 
         val descriptor = declaration.resolveToDescriptorIfAny() as? VariableDescriptor ?: return emptyList()

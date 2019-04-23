@@ -48,7 +48,7 @@ class AutomaticOverloadsRenamer(function: KtNamedFunction, newName: String) : Au
         val filter = function.elementFilter
         function.getOverloads().mapNotNullTo(myElements) {
             val candidate = it.source.getPsi() as? KtNamedFunction ?: return@mapNotNullTo null
-            if (filter != null && !filter(candidate)) return@mapNotNullTo null
+            if (filter != null && !(filter as (PsiElement) -> Boolean)(candidate)) return@mapNotNullTo null
             if (candidate != function) candidate else null
         }
         suggestAllNames(function.name, newName)
@@ -73,7 +73,7 @@ private fun KtNamedFunction.getOverloads(): Collection<FunctionDescriptor> {
     val result = LinkedHashSet<FunctionDescriptor>()
     result += scope.getAllAccessibleFunctions(name)
     if (extensionReceiverClass != null) {
-        result += extensionReceiverClass.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
+        result += extensionReceiverClass!!.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
     }
 
     return result
@@ -82,8 +82,8 @@ private fun KtNamedFunction.getOverloads(): Collection<FunctionDescriptor> {
 class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement): Boolean {
         if (element !is KtNamedFunction) return false
-        if (element.isLocal) return false
-        return element.getOverloads().size > 1
+        if ((element as KtNamedFunction).isLocal) return false
+        return (element as KtNamedFunction).getOverloads().size > 1
     }
 
     override fun getOptionName() = RefactoringBundle.message("rename.overloads")

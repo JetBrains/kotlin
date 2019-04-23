@@ -50,18 +50,19 @@ class CanBeValInspection @JvmOverloads constructor(val ignoreNotUsedVals: Boolea
 
                 when (declaration) {
                     is KtProperty -> {
-                        if (declaration.isVar && declaration.isLocal && !declaration.hasModifier(KtTokens.LATEINIT_KEYWORD) &&
-                            canBeVal(declaration,
-                                     declaration.hasInitializer() || declaration.hasDelegateExpression(),
-                                     listOf(declaration))) {
-                            reportCanBeVal(declaration)
+                        if ((declaration as KtProperty).isVar && (declaration as KtProperty).isLocal && !declaration.hasModifier(KtTokens.LATEINIT_KEYWORD) &&
+                            canBeVal(
+                                declaration as KtProperty,
+                                (declaration as KtProperty).hasInitializer() || (declaration as KtProperty).hasDelegateExpression(),
+                                listOf(declaration as KtProperty))) {
+                            reportCanBeVal(declaration as KtProperty)
                         }
                     }
 
                     is KtDestructuringDeclaration -> {
-                        val entries = declaration.entries
-                        if (declaration.isVar && entries.all { canBeVal(it, true, entries) }) {
-                            reportCanBeVal(declaration)
+                        val entries = (declaration as KtDestructuringDeclaration).entries
+                        if ((declaration as KtDestructuringDeclaration).isVar && entries.all { canBeVal(it, true, entries) }) {
+                            reportCanBeVal(declaration as KtDestructuringDeclaration)
                         }
                     }
                 }
@@ -117,9 +118,9 @@ class CanBeValInspection @JvmOverloads constructor(val ignoreNotUsedVals: Boolea
                 var instruction = from
                 while (instruction is InstructionWithNext) {
                     if (instruction is LocalFunctionDeclarationInstruction) {
-                        if (canReach(instruction.body.enterInstruction, targets, visited)) return true
+                        if (canReach((instruction as LocalFunctionDeclarationInstruction).body.enterInstruction, targets, visited)) return true
                     }
-                    val next = instruction.next ?: return false
+                    val next = (instruction as InstructionWithNext).next ?: return false
                     if (next in visited) return false
                     if (next in targets) return true
                     visited.add(next)

@@ -61,12 +61,12 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
     override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
         return targetClass is KtClass
                 && targetClass !is KtEnumEntry
-                && !targetClass.isInterface()
+                && !(targetClass as KtClass).isInterface()
                 && !targetClass.isAnnotation()
                 && !targetClass.hasExplicitPrimaryConstructor()
     }
 
-    private fun shouldPreselect(element: PsiElement) = element is KtProperty && !element.isVar
+    private fun shouldPreselect(element: PsiElement) = element is KtProperty && !(element as KtProperty).isVar
 
     private fun chooseSuperConstructors(klass: KtClassOrObject, classDescriptor: ClassDescriptor): List<DescriptorMemberChooserObject> {
         val project = klass.project
@@ -164,10 +164,10 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
         val parameterList = constructor.valueParameterList!!
 
         if (superConstructor != null) {
-            val substitutor = getTypeSubstitutor(superConstructor.containingDeclaration.defaultType, classDescriptor.defaultType)
+            val substitutor = getTypeSubstitutor(superConstructor!!.containingDeclaration.defaultType, classDescriptor.defaultType)
                     ?: TypeSubstitutor.EMPTY
             val delegationCallArguments = ArrayList<String>()
-            for (parameter in superConstructor.valueParameters) {
+            for (parameter in superConstructor!!.valueParameters) {
                 val isVararg = parameter.varargElementType != null
 
                 val paramName = KotlinNameSuggester.suggestNameByName(parameter.name.asString(), validator)

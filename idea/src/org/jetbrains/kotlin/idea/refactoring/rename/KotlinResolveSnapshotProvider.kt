@@ -49,7 +49,7 @@ class KotlinResolveSnapshotProvider : ResolveSnapshotProvider() {
                             if (expression.getQualifiedExpressionForSelector() != null) return super.visitSimpleNameExpression(expression)
                             val targetDescriptor = expression.resolveMainReferenceToDescriptors().singleOrNull() ?: return
                             if (targetDescriptor !is PropertyDescriptor) return
-                            refExpressionToDescriptor[expression.createSmartPointer()] = targetDescriptor
+                            refExpressionToDescriptor[expression.createSmartPointer()] = targetDescriptor as PropertyDescriptor
                         }
                     }
             )

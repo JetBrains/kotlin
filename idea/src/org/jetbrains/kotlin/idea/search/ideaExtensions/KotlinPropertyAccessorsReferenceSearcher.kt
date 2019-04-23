@@ -49,7 +49,7 @@ class KotlinPropertyAccessorsReferenceSearcher : QueryExecutorBase<PsiReference,
     private fun propertyNames(method: PsiMethod): List<String> {
         val unwrapped = method.namedUnwrappedElement
         if (unwrapped is KtProperty) {
-            return listOfNotNull(unwrapped.getName())
+            return listOfNotNull((unwrapped as KtProperty).getName())
         }
 
         return SyntheticJavaPropertyDescriptor.propertyNamesByAccessorName(Name.identifier(method.name)).map(Name::asString)

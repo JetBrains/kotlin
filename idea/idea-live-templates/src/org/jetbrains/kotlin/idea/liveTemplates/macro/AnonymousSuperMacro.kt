@@ -45,7 +45,7 @@ class AnonymousSuperMacro : KotlinMacro() {
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val editor = context.editor
         if (editor != null) {
-            AnonymousTemplateEditingListener.registerListener(editor, context.project)
+            AnonymousTemplateEditingListener.registerListener(editor!!, context.project)
         }
 
         val vars = getSupertypes(params, context)
@@ -75,8 +75,8 @@ class AnonymousSuperMacro : KotlinMacro() {
         return resolutionScope
                 .collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
                 .filter { it is ClassDescriptor &&
-                          (it.modality == Modality.OPEN || it.modality == Modality.ABSTRACT) &&
-                          (it.kind == ClassKind.CLASS || it.kind == ClassKind.INTERFACE) }
+                          ((it as ClassDescriptor).modality == Modality.OPEN || (it as ClassDescriptor).modality == Modality.ABSTRACT) &&
+                          ((it as ClassDescriptor).kind == ClassKind.CLASS || (it as ClassDescriptor).kind == ClassKind.INTERFACE) }
                 .mapNotNull { DescriptorToSourceUtils.descriptorToDeclaration(it) as PsiNamedElement? }
     }
 }

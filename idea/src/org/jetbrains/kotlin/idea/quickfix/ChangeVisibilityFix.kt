@@ -47,7 +47,7 @@ open class ChangeVisibilityFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val originalElement = element
         if (originalElement is KtDeclaration) {
-            originalElement.runOnExpectAndAllActuals { it.setVisibility(visibilityModifier) }
+            (originalElement as KtDeclaration).runOnExpectAndAllActuals { it.setVisibility(visibilityModifier) }
         }
 
         element?.setVisibility(visibilityModifier)

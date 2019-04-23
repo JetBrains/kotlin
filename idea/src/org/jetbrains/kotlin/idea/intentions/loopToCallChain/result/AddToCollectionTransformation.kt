@@ -44,8 +44,8 @@ class AddToCollectionTransformation(
         return when (previousTransformation) {
             is FilterTransformation -> {
                 FilterToTransformation.create(
-                        loop, previousTransformation.inputVariable, previousTransformation.indexVariable,
-                        targetCollection, previousTransformation.effectiveCondition, previousTransformation.isFilterNot)
+                    loop, (previousTransformation as FilterTransformation).inputVariable, (previousTransformation as FilterTransformation).indexVariable,
+                    targetCollection, (previousTransformation as FilterTransformation).effectiveCondition, (previousTransformation as FilterTransformation).isFilterNot)
             }
 
             is FilterNotNullTransformation -> {
@@ -53,11 +53,11 @@ class AddToCollectionTransformation(
             }
 
             is MapTransformation -> {
-                MapToTransformation.create(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, targetCollection, previousTransformation.mapping, previousTransformation.mapNotNull)
+                MapToTransformation.create(loop, (previousTransformation as MapTransformation).inputVariable, (previousTransformation as MapTransformation).indexVariable, targetCollection, (previousTransformation as MapTransformation).mapping, (previousTransformation as MapTransformation).mapNotNull)
             }
 
             is FlatMapTransformation -> {
-                FlatMapToTransformation.create(loop, previousTransformation.inputVariable, targetCollection, previousTransformation.transform)
+                FlatMapToTransformation.create(loop, (previousTransformation as FlatMapTransformation).inputVariable, targetCollection, (previousTransformation as FlatMapTransformation).transform)
             }
 
             else -> null
@@ -266,9 +266,9 @@ class FilterToTransformation private constructor(
                 isFilterNot: Boolean
         ): ResultTransformation {
             val initialization = targetCollection.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
-            return if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                val transformation = FilterToTransformation(loop, inputVariable, indexVariable, initialization.initializer, condition, isFilterNot)
-                AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+            return if (initialization != null && initialization!!.initializer.hasNoSideEffect()) {
+                val transformation = FilterToTransformation(loop, inputVariable, indexVariable, initialization!!.initializer, condition, isFilterNot)
+                AssignToVariableResultTransformation.createDelegated(transformation, initialization!!)
             }
             else {
                 FilterToTransformation(loop, inputVariable, indexVariable, targetCollection, condition, isFilterNot)
@@ -295,9 +295,9 @@ class FilterNotNullToTransformation private constructor(
                 targetCollection: KtExpression
         ): ResultTransformation {
             val initialization = targetCollection.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
-            return if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                val transformation = FilterNotNullToTransformation(loop, initialization.initializer)
-                AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+            return if (initialization != null && initialization!!.initializer.hasNoSideEffect()) {
+                val transformation = FilterNotNullToTransformation(loop, initialization!!.initializer)
+                AssignToVariableResultTransformation.createDelegated(transformation, initialization!!)
             }
             else {
                 FilterNotNullToTransformation(loop, targetCollection)
@@ -338,9 +338,9 @@ class MapToTransformation private constructor(
                 mapNotNull: Boolean
         ): ResultTransformation {
             val initialization = targetCollection.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
-            return if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                val transformation = MapToTransformation(loop, inputVariable, indexVariable, initialization.initializer, mapping, mapNotNull)
-                AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+            return if (initialization != null && initialization!!.initializer.hasNoSideEffect()) {
+                val transformation = MapToTransformation(loop, inputVariable, indexVariable, initialization!!.initializer, mapping, mapNotNull)
+                AssignToVariableResultTransformation.createDelegated(transformation, initialization!!)
             }
             else {
                 MapToTransformation(loop, inputVariable, indexVariable, targetCollection, mapping, mapNotNull)
@@ -377,9 +377,9 @@ class FlatMapToTransformation private constructor(
                 transform: KtExpression
         ): ResultTransformation {
             val initialization = targetCollection.findVariableInitializationBeforeLoop(loop, checkNoOtherUsagesInLoop = true)
-            return if (initialization != null && initialization.initializer.hasNoSideEffect()) {
-                val transformation = FlatMapToTransformation(loop, inputVariable, initialization.initializer, transform)
-                AssignToVariableResultTransformation.createDelegated(transformation, initialization)
+            return if (initialization != null && initialization!!.initializer.hasNoSideEffect()) {
+                val transformation = FlatMapToTransformation(loop, inputVariable, initialization!!.initializer, transform)
+                AssignToVariableResultTransformation.createDelegated(transformation, initialization!!)
             }
             else {
                 FlatMapToTransformation(loop, inputVariable, targetCollection, transform)

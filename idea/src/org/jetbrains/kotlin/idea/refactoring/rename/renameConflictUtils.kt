@@ -121,8 +121,8 @@ internal fun checkRedeclarations(
 
         if (descriptor is TypeParameterDescriptor) {
             val typeParameters = when (containingDescriptor) {
-                is ClassDescriptor -> containingDescriptor.declaredTypeParameters
-                is CallableDescriptor -> containingDescriptor.typeParameters
+                is ClassDescriptor -> (containingDescriptor as ClassDescriptor).declaredTypeParameters
+                is CallableDescriptor -> (containingDescriptor as CallableDescriptor).typeParameters
                 else -> emptyList()
             }
 
@@ -138,8 +138,8 @@ internal fun checkRedeclarations(
         }
 
         return when (containingDescriptor) {
-            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope.findSiblingsByName()
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().findSiblingsByName().filter {
+            is ClassDescriptor -> (containingDescriptor as ClassDescriptor).unsubstitutedMemberScope.findSiblingsByName()
+            is PackageFragmentDescriptor -> (containingDescriptor as PackageFragmentDescriptor).getMemberScope().findSiblingsByName().filter {
                 it != descriptor
                 && (!(descriptor.isTopLevelPrivate() || it.isTopLevelPrivate()) || isInSameFile(descriptor, it))
             }
@@ -177,7 +177,7 @@ internal fun checkRedeclarations(
     }
     for (candidateDescriptor in getSiblingsWithNewName()) {
         val candidate = (candidateDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtNamedDeclaration ?: continue
-        if (overloadChecker != null && overloadChecker.isOverloadable(descriptor, candidateDescriptor)) continue
+        if (overloadChecker != null && overloadChecker!!.isOverloadable(descriptor, candidateDescriptor)) continue
         val what = candidate.renderDescription().capitalize()
         val where = candidate.representativeContainer()?.renderDescription() ?: continue
         val message = "$what is already declared in $where"
@@ -257,16 +257,16 @@ private fun checkUsagesRetargeting(
                 usageIterator.set(UsageInfoWithFqNameReplacement(refElement, declaration, newFqName))
             }
             else {
-                reportShadowing(declaration, elementToBindUsageInfosTo, referencedClassInNewContext, refElement, newUsages)
+                reportShadowing(declaration, elementToBindUsageInfosTo, referencedClassInNewContext!!, refElement, newUsages)
             }
             continue
         }
 
-        val callExpression = resolvedCall.call.callElement as? KtExpression ?: continue
+        val callExpression = resolvedCall!!.call.callElement as? KtExpression ?: continue
         val fullCallExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
 
-        val qualifiedExpression = if (resolvedCall.noReceivers()) {
-            val resultingDescriptor = resolvedCall.resultingDescriptor
+        val qualifiedExpression = if (resolvedCall!!.noReceivers()) {
+            val resultingDescriptor = resolvedCall!!.resultingDescriptor
             val fqName =
                     resultingDescriptor.importableFqName
                     ?: (resultingDescriptor as? ClassifierDescriptor)?.let {
@@ -281,10 +281,10 @@ private fun checkUsagesRetargeting(
             }
         }
         else {
-            resolvedCall.getExplicitReceiverValue()?.let {
+            resolvedCall!!.getExplicitReceiverValue()?.let {
                 fullCallExpression.copied()
             }
-            ?: resolvedCall.getImplicitReceiverValue()?.let { implicitReceiver ->
+            ?: resolvedCall!!.getImplicitReceiverValue()?.let { implicitReceiver ->
                 val expectedLabelName = implicitReceiver.declarationDescriptor.getThisLabelName()
                 val implicitReceivers = scope.getImplicitReceiversHierarchy()
                 val receiversWithExpectedName = implicitReceivers.filter {
@@ -324,8 +324,8 @@ private fun checkUsagesRetargeting(
 
         if (newResolvedCall != null
             && !accessibleDescriptors.any { it.canonicalRender() == candidateText }
-            && resolvedCall.candidateDescriptor.canonicalRender() != candidateText) {
-            reportShadowing(declaration, elementToBindUsageInfosTo, newResolvedCall.candidateDescriptor, refElement, newUsages)
+            && resolvedCall!!.candidateDescriptor.canonicalRender() != candidateText) {
+            reportShadowing(declaration, elementToBindUsageInfosTo, newResolvedCall!!.candidateDescriptor, refElement, newUsages)
             continue
         }
 
@@ -353,9 +353,9 @@ internal fun checkNewNameUsagesRetargeting(
     val currentName = declaration.name ?: return
     val descriptor = declaration.unsafeResolveToDescriptor()
 
-    if (declaration is KtParameter && !declaration.hasValOrVar()) {
-        val ownerFunction = declaration.ownerFunction
-        val searchScope = (if (ownerFunction is KtPrimaryConstructor) ownerFunction.containingClassOrObject else ownerFunction) ?: return
+    if (declaration is KtParameter && !(declaration as KtParameter).hasValOrVar()) {
+        val ownerFunction = (declaration as KtParameter).ownerFunction
+        val searchScope = (if (ownerFunction is KtPrimaryConstructor) (ownerFunction as KtPrimaryConstructor).containingClassOrObject else ownerFunction) ?: return
 
         val usagesByCandidate = LinkedHashMap<PsiElement, MutableList<UsageInfo>>()
 

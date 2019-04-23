@@ -58,11 +58,11 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
 
         private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean = when {
             baseClause == null -> false
-            negatedClause == null && baseClause.isUsedAsExpression(context) -> false
+            negatedClause == null && baseClause!!.isUsedAsExpression(context) -> false
             negatedClause != null && !negatedClause.isNullExpression() -> false
-            baseClause.evaluatesTo(receiverExpression) -> true
-            baseClause.hasFirstReceiverOf(receiverExpression) -> true
-            baseClause.anyArgumentEvaluatesTo(receiverExpression) -> true
+            baseClause!!.evaluatesTo(receiverExpression) -> true
+            baseClause!!.hasFirstReceiverOf(receiverExpression) -> true
+            baseClause!!.anyArgumentEvaluatesTo(receiverExpression) -> true
             receiverExpression is KtThisExpression -> getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true
             else -> false
         }
@@ -70,7 +70,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
         fun fixTextFor(element: KtIfExpression): String {
             val ifThenToSelectData = element.buildSelectTransformationData()
             return if (ifThenToSelectData?.baseClauseEvaluatesToReceiver() == true) {
-                if (ifThenToSelectData.condition is KtIsExpression) {
+                if (ifThenToSelectData!!.condition is KtIsExpression) {
                     "Replace 'if' expression with safe cast expression"
                 } else {
                     "Remove redundant 'if' expression"
@@ -91,8 +91,8 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
             }
 
             if (editor != null && resultExpr is KtSafeQualifiedExpression) {
-                resultExpr.inlineReceiverIfApplicableWithPrompt(editor)
-                resultExpr.renameLetParameter(editor)
+                (resultExpr as KtSafeQualifiedExpression).inlineReceiverIfApplicableWithPrompt(editor)
+                (resultExpr as KtSafeQualifiedExpression).renameLetParameter(editor!!)
             }
         }
 

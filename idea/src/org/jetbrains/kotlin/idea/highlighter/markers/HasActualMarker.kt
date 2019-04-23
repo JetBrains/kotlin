@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 private fun ModuleDescriptor?.getMultiTargetPlatformName(): String? {
     if (this == null) return null
     val moduleInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo
-    if (moduleInfo != null && moduleInfo.module.isAndroidModule()) {
+    if (moduleInfo != null && moduleInfo!!.module.isAndroidModule()) {
         return "Android"
     }
     val platform = getMultiTargetPlatform() ?: return null
     return when (platform) {
         is MultiTargetPlatform.Specific ->
-            platform.platform
+            (platform as MultiTargetPlatform.Specific).platform
         MultiTargetPlatform.Common ->
             "common"
     }
@@ -58,7 +58,7 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
             if (platform == null) {
                 throw AssertionError("Platform should not be null")
             }
-            platform + modulesSuffix
+            platform!! + modulesSuffix
         }
 }
 

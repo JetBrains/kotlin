@@ -105,7 +105,7 @@ abstract class KotlinGenerateTestSupportActionBase(
     class Data : KotlinGenerateTestSupportActionBase(MethodKind.DATA) {
         override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             if (framework !is JavaTestFramework) return false
-            return framework.findParametersMethod(targetClass.toLightClass()) == null
+            return (framework as JavaTestFramework).findParametersMethod(targetClass.toLightClass()) == null
         }
     }
 

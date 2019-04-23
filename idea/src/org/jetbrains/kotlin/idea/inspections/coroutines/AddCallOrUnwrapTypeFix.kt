@@ -60,9 +60,9 @@ class AddCallOrUnwrapTypeFix(
             }
         }
         if (function is KtFunctionLiteral) {
-            val lastStatement = function.bodyExpression?.statements?.lastOrNull()
+            val lastStatement = (function as KtFunctionLiteral).bodyExpression?.statements?.lastOrNull()
             if (lastStatement != null && lastStatement !is KtReturnExpression) {
-                lastStatement.addCallAndSimplify(factory)
+                lastStatement!!.addCallAndSimplify(factory)
             }
         } else if (!function.hasBlockBody()) {
             bodyExpression?.addCallAndSimplify(factory)

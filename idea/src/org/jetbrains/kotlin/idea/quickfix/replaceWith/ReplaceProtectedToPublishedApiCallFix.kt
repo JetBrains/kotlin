@@ -91,10 +91,10 @@ class ReplaceProtectedToPublishedApiCallFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val psiElement = diagnostic.psiElement as? KtExpression ?: return null
             val descriptor = DiagnosticFactory.cast(diagnostic, Errors.PROTECTED_CALL_FROM_PUBLIC_INLINE).a.let {
-                if (it is CallableMemberDescriptor) DescriptorUtils.getDirectMember(it) else it
+                if (it is CallableMemberDescriptor) DescriptorUtils.getDirectMember(it as CallableMemberDescriptor) else it
             }
             val isProperty = descriptor is PropertyDescriptor
-            val isVar = descriptor is PropertyDescriptor && descriptor.isVar
+            val isVar = descriptor is PropertyDescriptor && (descriptor as PropertyDescriptor).isVar
 
             val signature = signatureRenderer.render(descriptor)
             val originalName = descriptor.name.asString()

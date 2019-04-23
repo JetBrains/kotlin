@@ -69,10 +69,10 @@ private fun KtWhenExpression.findDeclarationNear(): KtProperty? {
 private tailrec fun KtExpression.previousPropertyFromParent(): KtProperty? {
     val parentExpression = parent as? KtExpression ?: return null
     if (this != when (parentExpression) {
-            is KtProperty -> parentExpression.initializer
-            is KtReturnExpression -> parentExpression.returnedExpression
-            is KtBinaryExpression -> parentExpression.left
-            is KtUnaryExpression -> parentExpression.baseExpression
+            is KtProperty -> (parentExpression as KtProperty).initializer
+            is KtReturnExpression -> (parentExpression as KtReturnExpression).returnedExpression
+            is KtBinaryExpression -> (parentExpression as KtBinaryExpression).left
+            is KtUnaryExpression -> (parentExpression as KtUnaryExpression).baseExpression
             else -> null
         }
     ) return null

@@ -43,12 +43,12 @@ class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(K
     private fun KtExpression.findSafeCastReceiver(context: BindingContext): KtBinaryExpressionWithTypeRHS? {
         var current = this
         while (current is KtQualifiedExpression) {
-            val resolvedCall = current.selectorExpression.getResolvedCall(context) ?: return null
+            val resolvedCall = (current as KtQualifiedExpression).selectorExpression.getResolvedCall(context) ?: return null
             val type = resolvedCall.resultingDescriptor.returnType
-            if (type != null && TypeUtils.isNullableType(type)) {
+            if (type != null && TypeUtils.isNullableType(type!!)) {
                 return null
             }
-            current = current.receiverExpression
+            current = (current as KtQualifiedExpression).receiverExpression
         }
         current = KtPsiUtil.safeDeparenthesize(current)
         return (current as? KtBinaryExpressionWithTypeRHS)?.takeIf {
@@ -79,8 +79,8 @@ class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(K
 
         val leftSafeCastReceiver = left.findSafeCastReceiver(context)
         val (leftIsStable, ifStatement) = if (leftSafeCastReceiver != null) {
-            val newReceiver = leftSafeCastReceiver.left
-            val typeReference = leftSafeCastReceiver.right!!
+            val newReceiver = leftSafeCastReceiver!!.left
+            val typeReference = leftSafeCastReceiver!!.right!!
             val factory = KtPsiFactory(element)
             newReceiver.isStableSimpleExpression(context) to element.convertToIfStatement(
                     factory.createExpressionByPattern("$0 is $1", newReceiver, typeReference),

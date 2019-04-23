@@ -61,9 +61,9 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
             val initializerText = CodeInsightUtils.defaultInitializer(descriptor.type) ?: "null"
             val initializer = element.setInitializer(KtPsiFactory(project).createExpression(initializerText))!!
             if (editor != null) {
-                PsiDocumentManager.getInstance(project).commitDocument(editor.document)
-                editor.selectionModel.setSelection(initializer.startOffset, initializer.endOffset)
-                editor.caretModel.moveToOffset(initializer.endOffset)
+                PsiDocumentManager.getInstance(project).commitDocument(editor!!.document)
+                editor!!.selectionModel.setSelection(initializer.startOffset, initializer.endOffset)
+                editor!!.caretModel.moveToOffset(initializer.endOffset)
             }
         }
     }
@@ -144,7 +144,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                         val constructorScope = classDescriptor.scopeForClassHeaderResolution
                         val validator = CollectingNameValidator(originalDescriptor.parameters.map { it.name }) { name ->
                             constructorScope.getContributedDescriptors(DescriptorKindFilter.VARIABLES).all {
-                                it !is VariableDescriptor || it.name.asString() != name
+                                it !is VariableDescriptor || (it as VariableDescriptor).name.asString() != name
                             }
                         }
                         val initializerText = CodeInsightUtils.defaultInitializer(propertyDescriptor.type) ?: "null"
@@ -185,8 +185,8 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 override fun onRefactoringDone() {
                     val constructorOrClass = constructorPointer?.element
                     val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.primaryConstructor
-                    if (constructor == null || !visitedElements.add(constructor)) return
-                    constructor.getValueParameters().lastOrNull()?.let { newParam ->
+                    if (constructor == null || !visitedElements.add(constructor!!)) return
+                    constructor!!.getValueParameters().lastOrNull()?.let { newParam ->
                         val psiFactory = KtPsiFactory(project)
                         (constructor as? KtSecondaryConstructor)?.getOrCreateBody()?.appendElement(
                                 psiFactory.createExpression("this.${element.name} = ${newParam.name!!}")
@@ -208,7 +208,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
             else {
                 classDescriptor.secondaryConstructors.filter {
                     val constructor = it.source.getPsi() as? KtSecondaryConstructor
-                    constructor != null && !constructor.getDelegationCall().isCallToThis
+                    constructor != null && !constructor!!.getDelegationCall().isCallToThis
                 }
             }
 

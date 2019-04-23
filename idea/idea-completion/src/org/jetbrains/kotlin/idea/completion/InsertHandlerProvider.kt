@@ -42,8 +42,8 @@ class InsertHandlerProvider(
             is FunctionDescriptor -> {
                 when (callType) {
                     CallType.DEFAULT, CallType.DOT, CallType.SAFE, CallType.SUPER_MEMBERS -> {
-                        val needTypeArguments = needTypeArguments(descriptor)
-                        val parameters = descriptor.valueParameters
+                        val needTypeArguments = needTypeArguments(descriptor as FunctionDescriptor)
+                        val parameters = (descriptor as FunctionDescriptor).valueParameters
                         when (parameters.size) {
                             0 -> KotlinFunctionInsertHandler.Normal(callType, needTypeArguments, inputValueArguments = false)
 
@@ -94,11 +94,11 @@ class InsertHandlerProvider(
 
         fun addPotentiallyInferred(type: KotlinType) {
             val descriptor = type.constructor.declarationDescriptor as? TypeParameterDescriptor
-            if (descriptor != null && descriptor in typeParameters && descriptor !in potentiallyInferred) {
-                potentiallyInferred.add(descriptor)
+            if (descriptor != null && descriptor in typeParameters && descriptor!! !in potentiallyInferred) {
+                potentiallyInferred.add(descriptor!!)
                 // Add possible inferred by type-arguments of upper-bound of parameter
                 // e.g. <T, C: Iterable<T>>, so T inferred from C
-                descriptor.upperBounds.filter { it.arguments.isNotEmpty() }.forEach(::addPotentiallyInferred)
+                descriptor!!.upperBounds.filter { it.arguments.isNotEmpty() }.forEach(::addPotentiallyInferred)
             }
 
             if (type.isFunctionType && getValueParametersCountFromFunctionType(type) <= 1) {
@@ -124,7 +124,7 @@ class InsertHandlerProvider(
         val returnType = originalFunction.returnType
         // check that there is an expected type and return value from the function can potentially match it
         if (returnType != null) {
-            addPotentiallyInferred(returnType)
+            addPotentiallyInferred(returnType!!)
 
             if (allTypeParametersPotentiallyInferred() && expectedInfos.any { it.fuzzyType?.checkIsSuperTypeOf(originalFunction.fuzzyReturnType()!!) != null }) {
                 return false

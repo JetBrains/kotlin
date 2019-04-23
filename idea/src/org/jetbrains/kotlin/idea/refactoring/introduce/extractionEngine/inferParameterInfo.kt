@@ -99,7 +99,7 @@ internal fun ExtractionData.inferParametersInfo(
             extensionReceiver
         })
 
-        val twoReceivers = resolvedCall != null && resolvedCall.hasBothReceivers()
+        val twoReceivers = resolvedCall != null && resolvedCall!!.hasBothReceivers()
         val dispatchReceiverDescriptor = (resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
         if (options.canWrapInWith
             && twoReceivers
@@ -210,29 +210,29 @@ private fun ExtractionData.extractReceiver(
     val referencedClassifierDescriptor: ClassifierDescriptor? = (thisDescriptor ?: originalDescriptor).let {
         when (it) {
             is ClassDescriptor ->
-                when (it.kind) {
-                    ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it
-                    ClassKind.ENUM_ENTRY -> it.containingDeclaration as? ClassDescriptor
-                    else -> if (refInfo.refExpr.getNonStrictParentOfType<KtTypeReference>() != null) it else null
+                when ((it as ClassDescriptor).kind) {
+                    ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it as ClassDescriptor
+                    ClassKind.ENUM_ENTRY -> (it as ClassDescriptor).containingDeclaration as? ClassDescriptor
+                    else -> if (refInfo.refExpr.getNonStrictParentOfType<KtTypeReference>() != null) it as ClassDescriptor else null
                 }
 
-            is TypeParameterDescriptor -> it
+            is TypeParameterDescriptor -> it as TypeParameterDescriptor
 
-            is ConstructorDescriptor -> it.containingDeclaration
+            is ConstructorDescriptor -> (it as ConstructorDescriptor).containingDeclaration
 
             else -> null
         }
     }
 
     if (referencedClassifierDescriptor != null) {
-        if (!referencedClassifierDescriptor.defaultType.processTypeIfExtractable(
+        if (!referencedClassifierDescriptor!!.defaultType.processTypeIfExtractable(
                 info.typeParameters, info.nonDenotableTypes, options, targetScope, referencedClassifierDescriptor is TypeParameterDescriptor
             )
         ) return
 
         if (options.canWrapInWith
             && resolvedCall != null
-            && resolvedCall.hasBothReceivers()
+            && resolvedCall!!.hasBothReceivers()
             && DescriptorUtils.isObject(referencedClassifierDescriptor)
         ) {
             info.replacementMap.putValue(originalRef, WrapObjectInWithReplacement(referencedClassifierDescriptor as ClassDescriptor))
@@ -249,7 +249,7 @@ private fun ExtractionData.extractReceiver(
         val extractFunctionRef =
             options.captureLocalFunctions
                     && originalRef.getReferencedName() == originalDescriptor.name.asString() // to forbid calls by convention
-                    && originalDeclaration is KtNamedFunction && originalDeclaration.isLocal
+                    && originalDeclaration is KtNamedFunction && (originalDeclaration as KtNamedFunction).isLocal
                     && targetScope.findFunction(originalDescriptor.name, NoLookupLocation.FROM_IDE) { it == originalDescriptor } == null
 
         val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
@@ -258,7 +258,7 @@ private fun ExtractionData.extractReceiver(
         if (extractParameter) {
             val parameterExpression = when {
                 receiverToExtract is ExpressionReceiver -> {
-                    val receiverExpression = receiverToExtract.expression
+                    val receiverExpression = (receiverToExtract as ExpressionReceiver).expression
                     // If p.q has a smart-cast, then extract entire qualified expression
                     if (refInfo.smartCast != null) receiverExpression.parent as KtExpression else receiverExpression
                 }
@@ -279,12 +279,12 @@ private fun ExtractionData.extractReceiver(
             val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
                 var argumentText =
                     if (hasThisReceiver && extractThis) {
-                        val label = if (descriptorToExtract is ClassDescriptor) "@${descriptorToExtract.name.asString()}" else ""
+                        val label = if (descriptorToExtract is ClassDescriptor) "@${(descriptorToExtract as ClassDescriptor).name.asString()}" else ""
                         "this$label"
                     } else {
                         val argumentExpr = (thisExpr ?: refInfo.refExpr).getQualifiedExpressionForSelectorOrThis()
                         if (argumentExpr is KtOperationReferenceExpression) {
-                            val nameElement = argumentExpr.getReferencedNameElement()
+                            val nameElement = (argumentExpr as KtOperationReferenceExpression).getReferencedNameElement()
                             val nameElementType = nameElement.node.elementType
                             (nameElementType as? KtToken)?.let {
                                 OperatorConventions.getNameForOperationSymbol(it)?.asString()
@@ -312,7 +312,7 @@ private fun ExtractionData.extractReceiver(
 
             if (!extractThis) {
                 parameter.currentName = when (originalDeclaration) {
-                    is PsiNameIdentifierOwner -> originalDeclaration.nameIdentifier?.text
+                    is PsiNameIdentifierOwner -> (originalDeclaration as PsiNameIdentifierOwner).nameIdentifier?.text
                     else -> null
                 }
             }
@@ -329,7 +329,7 @@ private fun ExtractionData.extractReceiver(
                 if (receiverValue != null) {
                     parameter.addTypePredicate(
                         getExpectedTypePredicate(
-                            receiverValue,
+                            receiverValue!!,
                             bindingContext,
                             targetScope.ownerDescriptor.builtIns
                         )
@@ -368,16 +368,16 @@ private fun suggestParameterType(
             createFunctionType(
                 builtIns,
                 Annotations.EMPTY,
-                originalDescriptor.extensionReceiverParameter?.type,
-                originalDescriptor.valueParameters.map { it.type },
-                originalDescriptor.valueParameters.map { it.name },
-                originalDescriptor.returnType ?: builtIns.defaultReturnType
+                (originalDescriptor as FunctionDescriptor).extensionReceiverParameter?.type,
+                (originalDescriptor as FunctionDescriptor).valueParameters.map { it.type },
+                (originalDescriptor as FunctionDescriptor).valueParameters.map { it.name },
+                (originalDescriptor as FunctionDescriptor).returnType ?: builtIns.defaultReturnType
             )
         }
 
         parameterExpression != null ->
             (if (useSmartCastsIfPossible) bindingContext[BindingContext.SMARTCAST, parameterExpression]?.defaultType else null)
-                ?: bindingContext.getType(parameterExpression)
+                ?: bindingContext.getType(parameterExpression!!)
                 ?: (parameterExpression as? KtReferenceExpression)?.let {
                     (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.returnType
                 }
@@ -390,12 +390,12 @@ private fun suggestParameterType(
 
                 val dataFlowValueFactory = callElement.getResolutionFacade().frontendService<DataFlowValueFactory>()
                 val possibleTypes = dataFlowInfo.getCollectedTypes(
-                    dataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract),
+                    dataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract as ImplicitReceiver),
                     callElement.languageVersionSettings
                 )
                 if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
             } else null
-            typeByDataFlowInfo ?: receiverToExtract.type
+            typeByDataFlowInfo ?: (receiverToExtract as ImplicitReceiver).type
         }
 
         else -> receiverToExtract?.type

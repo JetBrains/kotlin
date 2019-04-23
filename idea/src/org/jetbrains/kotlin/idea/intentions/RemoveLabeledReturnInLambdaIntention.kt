@@ -29,7 +29,7 @@ class RemoveLabeledReturnInLambdaIntention : SelfTargetingIntention<KtReturnExpr
         if (returnedExpression == null) {
             element.delete()
         } else {
-            element.replace(returnedExpression)
+            element.replace(returnedExpression!!)
         }
     }
 }

@@ -64,11 +64,11 @@ class MapTransformation(
             if (declaration.hasWriteUsages()) return null
             val restStatements = state.statements.drop(1)
 
-            if (initializer is KtBinaryExpression && initializer.operationToken == KtTokens.ELVIS) {
-                val continueExpression = initializer.right as? KtContinueExpression ?: return null
+            if (initializer is KtBinaryExpression && (initializer as KtBinaryExpression).operationToken == KtTokens.ELVIS) {
+                val continueExpression = (initializer as KtBinaryExpression).right as? KtContinueExpression ?: return null
                 if (continueExpression.targetLoop() != state.innerLoop) return null
 
-                val mapping = initializer.left ?: return null
+                val mapping = (initializer as KtBinaryExpression).left ?: return null
                 if (mapping.containsEmbeddedBreakOrContinue()) return null
 
                 val transformation = if (state.indexVariable != null && state.indexVariable.hasUsages(mapping))

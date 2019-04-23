@@ -77,7 +77,7 @@ abstract class FilterTransformationBase : SequenceTransformation {
                 return TransformationMatch.Sequence(transformation, currentState)
             }
 
-            val atomicConditions = transformation.effectiveCondition.toAtomicConditions().toMutableList()
+            val atomicConditions = (transformation as FilterTransformationBase).effectiveCondition.toAtomicConditions().toMutableList()
             while (true) {
                 currentState = currentState.unwrapBlock()
 
@@ -87,7 +87,7 @@ abstract class FilterTransformationBase : SequenceTransformation {
                 if (nextTransformation !is FilterTransformationBase) break
                 assert(nextState.indexVariable == currentState.indexVariable) // indexVariable should not change
 
-                atomicConditions.addAll(nextTransformation.effectiveCondition.toAtomicConditions())
+                atomicConditions.addAll((nextTransformation as FilterTransformationBase).effectiveCondition.toAtomicConditions())
 
                 currentState = nextState
             }
@@ -103,8 +103,9 @@ abstract class FilterTransformationBase : SequenceTransformation {
 
             val findTransformationMatch = FindTransformationMatcher.matchWithFilterBefore(currentState, transformations.last())
             return if (findTransformationMatch != null) {
-                TransformationMatch.Result(findTransformationMatch.resultTransformation,
-                                           transformations.dropLast(1) + findTransformationMatch.sequenceTransformations)
+                TransformationMatch.Result(
+                    findTransformationMatch!!.resultTransformation,
+                    transformations.dropLast(1) + findTransformationMatch!!.sequenceTransformations)
             }
             else {
                 TransformationMatch.Sequence(transformations, currentState)
@@ -129,7 +130,7 @@ abstract class FilterTransformationBase : SequenceTransformation {
 
             val lastUseOfIndex = transformations.lastOrNull { it.indexVariable != null }
             if (lastUseOfIndex != null) {
-                val index = transformations.indexOf(lastUseOfIndex)
+                val index = transformations.indexOf(lastUseOfIndex!!)
                 val condition = CompositeCondition.create(conditions.take(index + 1))
                 resultTransformations.add(createFilterTransformation(loop, inputVariable, indexVariable, condition, reformat = reformat))
                 transformations = transformations.drop(index + 1)
@@ -142,7 +143,7 @@ abstract class FilterTransformationBase : SequenceTransformation {
                 else {
                     val prevFilter = resultTransformations.lastOrNull() as? FilterTransformation
                     if (prevFilter != null) {
-                        val mergedCondition = CompositeCondition.create(prevFilter.effectiveCondition.toAtomicConditions() + transformation.effectiveCondition.toAtomicConditions())
+                        val mergedCondition = CompositeCondition.create(prevFilter!!.effectiveCondition.toAtomicConditions() + transformation.effectiveCondition.toAtomicConditions())
                         val mergedTransformation = createFilterTransformation(loop, inputVariable, indexVariable, mergedCondition, onlyFilterOrFilterNot = true, reformat = reformat)
                         resultTransformations[resultTransformations.lastIndex] = mergedTransformation
                     }
@@ -166,12 +167,12 @@ abstract class FilterTransformationBase : SequenceTransformation {
             else if (state.statements.size == 1) {
                 val thenStatement = thenBranch.blockExpressionsOrSingle().singleOrNull()
                 if (thenStatement is KtBreakExpression || thenStatement is KtContinueExpression) {
-                    return matchOneTransformation(state, condition, false, thenBranch, listOf(elseBranch))
+                    return matchOneTransformation(state, condition, false, thenBranch, listOf(elseBranch!!))
                 }
 
-                val elseStatement = elseBranch.blockExpressionsOrSingle().singleOrNull()
+                val elseStatement = elseBranch!!.blockExpressionsOrSingle().singleOrNull()
                 if (elseStatement is KtBreakExpression || elseStatement is KtContinueExpression) {
-                    return matchOneTransformation(state, condition, true, elseBranch, listOf(thenBranch))
+                    return matchOneTransformation(state, condition, true, elseBranch!!, listOf(thenBranch))
                 }
             }
 
@@ -201,7 +202,7 @@ abstract class FilterTransformationBase : SequenceTransformation {
                 val statement = then.blockExpressionsOrSingle().singleOrNull() ?: return null
                 when (statement) {
                     is KtContinueExpression -> {
-                        if (statement.targetLoop() != state.innerLoop) return null
+                        if ((statement as KtContinueExpression).targetLoop() != state.innerLoop) return null
                         val transformation = createFilterTransformation(
                                 state.outerLoop, state.inputVariable, state.indexVariable, Condition.create(condition, !negateCondition),
                                 reformat = state.reformat
@@ -211,7 +212,7 @@ abstract class FilterTransformationBase : SequenceTransformation {
                     }
 
                     is KtBreakExpression -> {
-                        if (statement.targetLoop() != state.outerLoop) return null
+                        if ((statement as KtBreakExpression).targetLoop() != state.outerLoop) return null
                         val transformation = TakeWhileTransformation(
                                 state.outerLoop, state.inputVariable,
                                 if (negateCondition) condition else condition.negate(reformat = state.reformat)
@@ -234,32 +235,32 @@ abstract class FilterTransformationBase : SequenceTransformation {
                 reformat: Boolean
         ): FilterTransformationBase {
 
-            if (indexVariable != null && condition.hasUsagesOf(indexVariable)) {
+            if (indexVariable != null && condition.hasUsagesOf(indexVariable!!)) {
                 return FilterTransformation(loop, inputVariable, indexVariable, condition, isFilterNot = false)
             }
 
             val conditionAsExpression = condition.asExpression(reformat)
             if (!onlyFilterOrFilterNot) {
                 if (conditionAsExpression is KtIsExpression
-                    && !conditionAsExpression.isNegated
-                    && conditionAsExpression.leftHandSide.isSimpleName(inputVariable.nameAsSafeName) // we cannot use isVariableReference here because expression can be non-physical
+                    && !(conditionAsExpression as KtIsExpression).isNegated
+                    && (conditionAsExpression as KtIsExpression).leftHandSide.isSimpleName(inputVariable.nameAsSafeName) // we cannot use isVariableReference here because expression can be non-physical
                 ) {
-                    val typeRef = conditionAsExpression.typeReference
+                    val typeRef = (conditionAsExpression as KtIsExpression).typeReference
                     if (typeRef != null) {
-                        return FilterIsInstanceTransformation(loop, inputVariable, typeRef, condition)
+                        return FilterIsInstanceTransformation(loop, inputVariable, typeRef!!, condition)
                     }
                 }
 
                 if (conditionAsExpression is KtBinaryExpression
-                    && conditionAsExpression.operationToken == KtTokens.EXCLEQ
-                    && conditionAsExpression.right.isNullExpression()
-                    && conditionAsExpression.left.isSimpleName(inputVariable.nameAsSafeName)
+                    && (conditionAsExpression as KtBinaryExpression).operationToken == KtTokens.EXCLEQ
+                    && (conditionAsExpression as KtBinaryExpression).right.isNullExpression()
+                    && (conditionAsExpression as KtBinaryExpression).left.isSimpleName(inputVariable.nameAsSafeName)
                 ) {
                     return FilterNotNullTransformation(loop, inputVariable, condition)
                 }
             }
 
-            if (conditionAsExpression is KtPrefixExpression && conditionAsExpression.operationToken == KtTokens.EXCL) {
+            if (conditionAsExpression is KtPrefixExpression && (conditionAsExpression as KtPrefixExpression).operationToken == KtTokens.EXCL) {
                 return FilterTransformation(loop, inputVariable, null, condition, isFilterNot = true)
             }
 
@@ -336,7 +337,7 @@ class FilterNotNullTransformation(
 
     override fun mergeWithPrevious(previousTransformation: SequenceTransformation, reformat: Boolean): SequenceTransformation? {
         if (previousTransformation is MapTransformation) {
-            return MapTransformation(loop, previousTransformation.inputVariable, previousTransformation.indexVariable, previousTransformation.mapping, mapNotNull = true)
+            return MapTransformation(loop, (previousTransformation as MapTransformation).inputVariable, (previousTransformation as MapTransformation).indexVariable, (previousTransformation as MapTransformation).mapping, mapNotNull = true)
         }
         return null
     }

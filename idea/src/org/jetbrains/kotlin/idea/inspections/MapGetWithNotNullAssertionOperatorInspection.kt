@@ -84,14 +84,14 @@ private fun KtPostfixExpression.getReplacementData(): Pair<KtExpression, KtExpre
     val base = baseExpression
     when (base) {
         is KtQualifiedExpression -> {
-            if (base.callExpression?.calleeExpression?.text != "get") return null
-            val reference = base.receiverExpression
-            val index = base.callExpression?.valueArguments?.firstOrNull()?.getArgumentExpression() ?: return null
+            if ((base as KtQualifiedExpression).callExpression?.calleeExpression?.text != "get") return null
+            val reference = (base as KtQualifiedExpression).receiverExpression
+            val index = (base as KtQualifiedExpression).callExpression?.valueArguments?.firstOrNull()?.getArgumentExpression() ?: return null
             return reference to index
         }
         is KtArrayAccessExpression -> {
-            val reference = base.arrayExpression ?: return null
-            val index = base.indexExpressions.firstOrNull() ?: return null
+            val reference = (base as KtArrayAccessExpression).arrayExpression ?: return null
+            val index = (base as KtArrayAccessExpression).indexExpressions.firstOrNull() ?: return null
             return reference to index
         }
         else -> return null

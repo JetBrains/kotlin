@@ -37,7 +37,7 @@ class InlineTypeParameterFix(val typeReference: KtTypeReference) : KotlinQuickFi
         parameterListOwner.forEachDescendantOfType<KtTypeReference> { typeReference ->
             val typeElement = typeReference.typeElement
             val type = context[BindingContext.TYPE, typeReference]
-            if (typeElement != null && type != null && type.constructor.declarationDescriptor == parameterDescriptor) {
+            if (typeElement != null && type != null && type!!.constructor.declarationDescriptor == parameterDescriptor) {
                 typeReference.replace(bound)
             }
         }

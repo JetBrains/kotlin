@@ -38,11 +38,11 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
         when (val container = block.parent) {
             is KtContainerNode -> {
                 if (singleStatement is KtIfExpression) {
-                    val elseExpression = (container.parent as? KtIfExpression)?.`else`
+                    val elseExpression = ((container as KtContainerNode).parent as? KtIfExpression)?.`else`
                     if (elseExpression != null && elseExpression != block) return false
                 }
 
-                val description = container.description() ?: return false
+                val description = (container as KtContainerNode).description() ?: return false
                 text = "Remove braces from '$description' statement"
                 return true
             }
@@ -72,10 +72,10 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
 
         if (construct is KtIfExpression &&
             container.node.elementType == KtNodeTypes.ELSE &&
-            construct.parent is KtExpression &&
-            construct.parent !is KtStatementExpression
+            (construct as KtIfExpression).parent is KtExpression &&
+            (construct as KtIfExpression).parent !is KtStatementExpression
         ) {
-            construct.replace(factory.createExpressionByPattern("($0)", construct))
+            (construct as KtIfExpression).replace(factory.createExpressionByPattern("($0)", construct))
         }
     }
 
@@ -89,12 +89,12 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
                 if (construct.prevSibling is PsiWhiteSpace) {
                     construct.prevSibling!!.replace(psiFactory.createNewLine())
                 }
-                val commentElement = construct.parent.addBefore(sibling, construct.prevSibling)
+                val commentElement = construct.parent.addBefore(sibling as PsiComment, construct.prevSibling)
                 construct.parent.addBefore(psiFactory.createNewLine(), commentElement)
             }
-            sibling = sibling.nextSibling
+            sibling = sibling!!.nextSibling
         }
     }
 
-    override fun allowCaretInsideElement(element: PsiElement) = element !is KtBlockExpression || element.parent is KtWhenEntry
+    override fun allowCaretInsideElement(element: PsiElement) = element !is KtBlockExpression || (element as KtBlockExpression).parent is KtWhenEntry
 }

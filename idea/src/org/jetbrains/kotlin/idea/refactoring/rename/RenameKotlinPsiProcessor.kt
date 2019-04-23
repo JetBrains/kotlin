@@ -78,8 +78,8 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
         )
         val references = ReferencesSearch.search(searchParameters).toMutableList()
         if (element is KtNamedFunction
-            || (element is KtProperty && !element.isLocal)
-            || (element is KtParameter && element.hasValOrVar())) {
+            || (element is KtProperty && !(element as KtProperty).isLocal)
+            || (element is KtParameter && (element as KtParameter).hasValOrVar())) {
             element.toLightMethods().flatMapTo(references) { MethodReferencesSearch.search(it) }
         }
         return references
@@ -88,8 +88,8 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     override fun createUsageInfo(element: PsiElement, ref: PsiReference, referenceElement: PsiElement): UsageInfo {
         if (ref !is KtReference) {
             val targetElement = ref.resolve()
-            if (targetElement is KtLightMethod && targetElement.isMangled) {
-                KotlinTypeMapper.InternalNameMapper.getModuleNameSuffix(targetElement.name)?.let {
+            if (targetElement is KtLightMethod && (targetElement as KtLightMethod).isMangled) {
+                KotlinTypeMapper.InternalNameMapper.getModuleNameSuffix((targetElement as KtLightMethod).name)?.let {
                     return MangledJavaRefUsageInfo(
                             it,
                             element,
@@ -112,8 +112,8 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
         if (!nonJava) return newName
 
         val qualifiedName = when (element) {
-            is KtNamedDeclaration -> element.fqName?.asString() ?: element.name
-            is PsiClass -> element.qualifiedName ?: element.name
+            is KtNamedDeclaration -> (element as KtNamedDeclaration).fqName?.asString() ?: (element as KtNamedDeclaration).name
+            is PsiClass -> (element as PsiClass).qualifiedName ?: (element as PsiClass).name
             else -> return null
         }
         return PsiUtilCore.getQualifiedNameAfterRename(qualifiedName, newName)
@@ -128,7 +128,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
 
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration
         if (declaration != null) {
-            declaration.liftToExpected()?.let { expectDeclaration ->
+            declaration!!.liftToExpected()?.let { expectDeclaration ->
                 allRenames[expectDeclaration] = safeNewName
                 expectDeclaration.actualsForExpected().forEach { allRenames[it] = safeNewName }
             }
@@ -140,23 +140,23 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     protected fun UsageInfo.isAmbiguousImportUsage(): Boolean {
         val ref = reference as? PsiPolyVariantReference ?: return false
         val refElement = ref.element
-        return refElement.parents.any { (it is KtImportDirective && !it.isAllUnder) || (it is PsiImportStaticStatement && !it.isOnDemand) }
+        return refElement.parents.any { (it is KtImportDirective && !(it as KtImportDirective).isAllUnder) || (it is PsiImportStaticStatement && !(it as PsiImportStaticStatement).isOnDemand) }
                && ref.multiResolve(false).mapNotNullTo(HashSet()) { it.element?.unwrapped }.size > 1
     }
 
     protected fun renameMangledUsageIfPossible(usage: UsageInfo, element: PsiElement, newName: String): Boolean {
         val chosenName = if (usage is MangledJavaRefUsageInfo) {
-            KotlinTypeMapper.InternalNameMapper.mangleInternalName(newName, usage.manglingSuffix)
+            KotlinTypeMapper.InternalNameMapper.mangleInternalName(newName, (usage as MangledJavaRefUsageInfo).manglingSuffix)
         } else {
             val reference = usage.reference
             if (reference is KtReference) {
-                if (element is KtLightMethod && element.isMangled) {
+                if (element is KtLightMethod && (element as KtLightMethod).isMangled) {
                     KotlinTypeMapper.InternalNameMapper.demangleInternalName(newName)
                 } else null
             } else null
         }
         if (chosenName == null) return false
-        usage.reference?.handleElementRename(chosenName)
+        usage.reference?.handleElementRename(chosenName!!)
         return true
     }
 

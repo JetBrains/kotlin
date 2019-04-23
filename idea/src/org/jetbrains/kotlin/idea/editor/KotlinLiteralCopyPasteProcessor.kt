@@ -73,7 +73,7 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
         }
         val buffer = StringBuilder()
         var changed = false
-        val fileText = file.text
+        val fileText = (file as KtFile).text
         val deducedBlockSelectionWidth = deduceBlockSelectionWidth(startOffsets, endOffsets, text)
 
         for (i in startOffsets.indices) {
@@ -88,22 +88,22 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
                     buffer.append(fileText.substring(givenTextOffset, fileRange.endOffset))
                     break
                 }
-                val elTp = element.node.elementType
-                if (elTp == KtTokens.ESCAPE_SEQUENCE && fileRange.contains(element.range) &&
-                    element.templateContentRange?.contains(fileRange) == true
+                val elTp = element!!.node.elementType
+                if (elTp == KtTokens.ESCAPE_SEQUENCE && fileRange.contains(element!!.range) &&
+                    element!!.templateContentRange?.contains(fileRange) == true
                 ) {
-                    val tpEntry = element.parent as KtEscapeStringTemplateEntry
+                    val tpEntry = element!!.parent as KtEscapeStringTemplateEntry
                     changed = true
                     buffer.append(tpEntry.unescapedValue)
-                    givenTextOffset = element.endOffset
+                    givenTextOffset = element!!.endOffset
                 } else if (elTp == KtTokens.SHORT_TEMPLATE_ENTRY_START || elTp == KtTokens.LONG_TEMPLATE_ENTRY_START) {
                     //Process inner templates without escaping
-                    val tpEntry = element.parent
+                    val tpEntry = element!!.parent
                     val inter = fileRange.intersection(tpEntry.range)!!
                     buffer.append(fileText.substring(inter.startOffset, inter.endOffset))
                     givenTextOffset = inter.endOffset
                 } else {
-                    val inter = fileRange.intersection(element.range)!!
+                    val inter = fileRange.intersection(element!!.range)!!
                     buffer.append(fileText.substring(inter.startOffset, inter.endOffset))
                     givenTextOffset = inter.endOffset
                 }
@@ -135,8 +135,8 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
             var endsInLineBreak = false
             TemplateTokenSequence(text).forEach {
                 when (it) {
-                    is LiteralChunk -> StringUtil.escapeStringCharacters(it.text.length, it.text, "\$\"", res)
-                    is EntryChunk -> res.append(it.text)
+                    is LiteralChunk -> StringUtil.escapeStringCharacters((it as LiteralChunk).text.length, (it as LiteralChunk).text, "\$\"", res)
+                    is EntryChunk -> res.append((it as EntryChunk).text)
                     is NewLineChunk -> res.append(lineBreak)
                 }
                 endsInLineBreak = it is NewLineChunk
@@ -150,10 +150,10 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
             val tripleQuoteRe = Regex("[\"]{3,}")
             TemplateTokenSequence(text).map { chunk ->
                 when (chunk) {
-                    is LiteralChunk -> chunk.text.replace("\$", "\${'$'}").let { escapedDollar ->
+                    is LiteralChunk -> (chunk as LiteralChunk).text.replace("\$", "\${'$'}").let { escapedDollar ->
                         tripleQuoteRe.replace(escapedDollar) { "\"\"" + "\${'\"'}".repeat(it.value.count() - 2) }
                     }
-                    is EntryChunk -> chunk.text
+                    is EntryChunk -> (chunk as EntryChunk).text
                     is NewLineChunk -> "\n"
                 }
             }.joinToString(separator = "")
@@ -263,8 +263,8 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
 internal fun createTemplateSequenceTokenString(input: String): String {
     return TemplateTokenSequence(input).map {
         when (it) {
-            is LiteralChunk -> "LITERAL_CHUNK(${it.text})"
-            is EntryChunk -> "ENTRY_CHUNK(${it.text})"
+            is LiteralChunk -> "LITERAL_CHUNK(${(it as LiteralChunk).text})"
+            is EntryChunk -> "ENTRY_CHUNK(${(it as EntryChunk).text})"
             is NewLineChunk -> "NEW_LINE()"
         }
     }.joinToString(separator = "")

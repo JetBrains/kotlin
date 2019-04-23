@@ -90,7 +90,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
 
     fun init(receiver: Parameter?, parameters: List<Parameter>) {
         parameterInfos = parameters.mapTo(
-            if (receiver != null) arrayListOf(ParameterInfo(receiver, true)) else arrayListOf()
+            if (receiver != null) arrayListOf(ParameterInfo(receiver!!, true)) else arrayListOf()
         ) { ParameterInfo(it, false) }
 
         super.init()

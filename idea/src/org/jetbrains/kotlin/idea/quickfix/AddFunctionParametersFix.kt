@@ -108,9 +108,9 @@ class AddFunctionParametersFix(
                             }
                             val parameterType = parameters[i].type
 
-                            if (argumentType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
+                            if (argumentType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType!!, parameterType)) {
                                 descriptor.parameters[i].currentTypeInfo = KotlinTypeInfo(false, argumentType)
-                                typesToShorten.add(argumentType)
+                                typesToShorten.add(argumentType!!)
                             }
                         } else {
                             val parameterInfo = getNewParameterInfo(

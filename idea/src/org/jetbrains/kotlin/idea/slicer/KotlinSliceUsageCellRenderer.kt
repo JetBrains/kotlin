@@ -53,13 +53,13 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             }
         }
 
-        append(" (Tracking enclosing lambda)".repeat(sliceUsage.lambdaLevel), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
+        append(" (Tracking enclosing lambda)".repeat((sliceUsage as KotlinSliceUsage).lambdaLevel), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
 
-        val declaration = sliceUsage.element?.parents?.firstOrNull {
+        val declaration = (sliceUsage as KotlinSliceUsage).element?.parents?.firstOrNull {
             it is KtClass ||
-            it is KtObjectDeclaration && !it.isObjectLiteral() ||
+            it is KtObjectDeclaration && !(it as KtObjectDeclaration).isObjectLiteral() ||
             it is KtDeclarationWithBody ||
-            it is KtProperty && it.isLocal
+            it is KtProperty && (it as KtProperty).isLocal
         } as? KtDeclaration ?: return
         val descriptor = declaration.unsafeResolveToDescriptor()
         append(" in ${descriptorRenderer.render(descriptor)}", SimpleTextAttributes.GRAY_ATTRIBUTES)

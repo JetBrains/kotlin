@@ -38,10 +38,10 @@ class FqNameFixingMoveJavaFileHandler : MoveFileHandler() {
 
     override fun prepareMovedFile(file: PsiFile, moveDestination: PsiDirectory, oldToNewMap: MutableMap<PsiElement, PsiElement>) {
         delegate.prepareMovedFile(file, moveDestination, oldToNewMap)
-        if (file is PsiJavaFile && file.shouldFixFqName) {
+        if (file is PsiJavaFile && (file as PsiJavaFile).shouldFixFqName) {
             val newPackage = JavaDirectoryService.getInstance().getPackage(moveDestination) ?: return
             if (!FileTypeUtils.isInServerPageFile(file) && !PsiUtil.isModuleFile(file)) {
-                file.packageName = newPackage.qualifiedName
+                (file as PsiJavaFile).packageName = newPackage.qualifiedName
             }
         }
     }

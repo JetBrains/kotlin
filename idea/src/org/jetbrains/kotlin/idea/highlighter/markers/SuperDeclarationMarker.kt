@@ -78,7 +78,7 @@ class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<PsiE
 
         val superDeclarations = ArrayList<NavigatablePsiElement>()
         for (overriddenMember in overriddenDescriptors) {
-            val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(element.project, overriddenMember)
+            val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(element!!.project, overriddenMember)
             superDeclarations += declarations.filterIsInstance<NavigatablePsiElement>()
         }
 
@@ -99,11 +99,11 @@ data class ResolveWithParentsResult(
 
 fun resolveDeclarationWithParents(element: KtDeclaration): ResolveWithParentsResult {
     val descriptor = if (element is KtParameter)
-        element.propertyDescriptor
+        (element as KtParameter).propertyDescriptor
     else
         element.resolveToDescriptorIfAny()
 
     if (descriptor !is CallableMemberDescriptor) return ResolveWithParentsResult(null, listOf())
 
-    return ResolveWithParentsResult(descriptor, descriptor.getDirectlyOverriddenDeclarations())
+    return ResolveWithParentsResult(descriptor as CallableMemberDescriptor, (descriptor as CallableMemberDescriptor).getDirectlyOverriddenDeclarations())
 }

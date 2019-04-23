@@ -168,7 +168,7 @@ fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<KtElemen
     for (element in parents) {
         val isValidContainer = when (element) {
             is KtFile -> true
-            is KtClassBody -> !objectOrNonInnerNestedClassFound || element.parent is KtObjectDeclaration
+            is KtClassBody -> !objectOrNonInnerNestedClassFound || (element as KtClassBody).parent is KtObjectDeclaration
             is KtBlockExpression -> !objectOrNonInnerNestedClassFound
             else -> false
         }
@@ -179,8 +179,8 @@ fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<KtElemen
         if (!objectOrNonInnerNestedClassFound) {
             val bodyParent = (element as? KtClassBody)?.parent
             objectOrNonInnerNestedClassFound =
-                (bodyParent is KtObjectDeclaration && !bodyParent.isObjectLiteral())
-                        || (bodyParent is KtClass && !bodyParent.isInner())
+                (bodyParent is KtObjectDeclaration && !(bodyParent as KtObjectDeclaration).isObjectLiteral())
+                        || (bodyParent is KtClass && !(bodyParent as KtClass).isInner())
         }
     }
 
@@ -191,7 +191,7 @@ fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boole
     fun getEnclosingDeclaration(element: PsiElement, strict: Boolean): PsiElement? {
         return (if (strict) element.parents else element.parentsWithSelf)
             .filter {
-                (it is KtDeclarationWithBody && it !is KtFunctionLiteral && !(it is KtNamedFunction && it.name == null))
+                (it is KtDeclarationWithBody && it !is KtFunctionLiteral && !(it is KtNamedFunction && (it as KtNamedFunction).name == null))
                         || it is KtAnonymousInitializer
                         || it is KtClassBody
                         || it is KtFile
@@ -206,15 +206,15 @@ fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boole
     }
 
     return when (enclosingDeclaration) {
-        is KtFile -> Collections.singletonList(enclosingDeclaration)
+        is KtFile -> Collections.singletonList(enclosingDeclaration as KtFile)
         is KtClassBody -> getAllExtractionContainers(strict).filterIsInstance<KtClassBody>()
         else -> {
             val targetContainer = when (enclosingDeclaration) {
-                is KtDeclarationWithBody -> enclosingDeclaration.bodyExpression
-                is KtAnonymousInitializer -> enclosingDeclaration.body
+                is KtDeclarationWithBody -> (enclosingDeclaration as KtDeclarationWithBody).bodyExpression
+                is KtAnonymousInitializer -> (enclosingDeclaration as KtAnonymousInitializer).body
                 else -> null
             }
-            if (targetContainer is KtBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
+            if (targetContainer is KtBlockExpression) Collections.singletonList(targetContainer as KtBlockExpression) else Collections.emptyList()
         }
     }
 }
@@ -323,8 +323,8 @@ class SelectionAwareScopeHighlighter(val editor: Editor) {
 
 fun PsiFile.getLineStartOffset(line: Int): Int? {
     val doc = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
-    if (doc != null && line >= 0 && line < doc.lineCount) {
-        val startOffset = doc.getLineStartOffset(line)
+    if (doc != null && line >= 0 && line < doc!!.lineCount) {
+        val startOffset = doc!!.getLineStartOffset(line)
         val element = findElementAt(startOffset) ?: return startOffset
 
         if (element is PsiWhiteSpace || element is PsiComment) {
@@ -351,9 +351,9 @@ fun PsiElement.getLineCount(): Int {
     if (doc != null) {
         val spaceRange = textRange ?: TextRange.EMPTY_RANGE
 
-        if (spaceRange.endOffset <= doc.textLength) {
-            val startLine = doc.getLineNumber(spaceRange.startOffset)
-            val endLine = doc.getLineNumber(spaceRange.endOffset)
+        if (spaceRange.endOffset <= doc!!.textLength) {
+            val startLine = doc!!.getLineNumber(spaceRange.startOffset)
+            val endLine = doc!!.getLineNumber(spaceRange.endOffset)
 
             return endLine - startLine
         }
@@ -798,7 +798,7 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
             for (addedItem in addedItems) {
                 val elementBefore = addedItem.prevSibling
                 if ((elementBefore !is PsiWhiteSpace && elementBefore !is PsiComment) || !elementBefore.textContains('\n')) {
-                    addedItem.parent.addBefore(extraSpace, addedItem)
+                    addedItem.parent.addBefore(extraSpace!!, addedItem)
                 }
             }
         }
@@ -863,7 +863,7 @@ internal fun DeclarationDescriptor.getThisLabelName(): String {
             ?: (function?.parent as? KtLambdaExpression)?.parent as? KtValueArgument
         val callElement = argument?.getStrictParentOfType<KtCallElement>()
         val callee = callElement?.calleeExpression as? KtSimpleNameExpression
-        if (callee != null) return callee.text
+        if (callee != null) return callee!!.text
     }
     return ""
 }
@@ -894,7 +894,7 @@ fun checkSuperMethods(
             val description = when (element) {
                 is KtNamedFunction, is KtProperty, is KtParameter -> formatClassDescriptor(descriptor.containingDeclaration)
                 is PsiMethod -> {
-                    val psiClass = element.containingClass ?: error("Invalid element: ${element.getText()}")
+                    val psiClass = (element as PsiMethod).containingClass ?: error("Invalid element: ${element.getText()}")
                     formatPsiClass(psiClass, markAsJava = true, inCode = false)
                 }
                 else -> error("Unexpected element: ${element.getElementTextWithContext()}")
@@ -941,7 +941,7 @@ fun checkSuperMethods(
         }
     }
     if (ignore != null) {
-        overriddenElementsToDescriptor.keys.removeAll(ignore)
+        overriddenElementsToDescriptor.keys.removeAll(ignore!!)
     }
 
     if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
@@ -961,8 +961,8 @@ fun checkSuperMethodsWithPopup(
     val superMethod = deepestSuperMethods.first()
 
     val (superClass, isAbstract) = when (superMethod) {
-        is PsiMember -> superMethod.containingClass to superMethod.hasModifierProperty(PsiModifier.ABSTRACT)
-        is KtNamedDeclaration -> superMethod.containingClassOrObject to superMethod.isAbstract()
+        is PsiMember -> (superMethod as PsiMember).containingClass to (superMethod as PsiMember).hasModifierProperty(PsiModifier.ABSTRACT)
+        is KtNamedDeclaration -> (superMethod as KtNamedDeclaration).containingClassOrObject to (superMethod as KtNamedDeclaration).isAbstract()
         else -> null
     } ?: return action(listOf(declaration))
     if (superClass == null) return action(listOf(declaration))
@@ -991,7 +991,7 @@ fun checkSuperMethodsWithPopup(
         append(if (isAbstract) " implements " else " overrides ")
         append(ElementDescriptionUtil.getElementDescription(superMethod, UsageViewTypeLocation.INSTANCE))
         append(" of ")
-        append(SymbolPresentationUtil.getSymbolPresentableText(superClass))
+        append(SymbolPresentationUtil.getSymbolPresentableText(superClass!!))
     }
     val list = JBList<String>(renameBase, renameCurrent)
     JBPopupFactory.getInstance()

@@ -45,7 +45,7 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
         text = "Add '$name =' to argument"
 
         if (expression is KtLambdaExpression) {
-            val range = expression.textRange
+            val range = (expression as KtLambdaExpression).textRange
             return caretOffset == range.start || caretOffset == range.end
         }
 

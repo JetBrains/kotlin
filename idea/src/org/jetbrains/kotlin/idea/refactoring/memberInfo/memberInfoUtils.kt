@@ -55,12 +55,12 @@ fun KotlinMemberInfo.getChildrenToAnalyze(): List<PsiElement> {
     val member = member
     val childrenToCheck = member.allChildren.toMutableList()
     if (isToAbstract && member is KtCallableDeclaration) {
-        when (member) {
-            is KtNamedFunction -> childrenToCheck.remove(member.bodyExpression as PsiElement?)
+        when (member as KtCallableDeclaration) {
+            is KtNamedFunction -> childrenToCheck.remove((member as KtNamedFunction).bodyExpression as PsiElement?)
             is KtProperty -> {
-                childrenToCheck.remove(member.initializer as PsiElement?)
-                childrenToCheck.remove(member.delegateExpression as PsiElement?)
-                childrenToCheck.removeAll(member.accessors)
+                childrenToCheck.remove((member as KtProperty).initializer as PsiElement?)
+                childrenToCheck.remove((member as KtProperty).delegateExpression as PsiElement?)
+                childrenToCheck.removeAll((member as KtProperty).accessors)
             }
         }
     }

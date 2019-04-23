@@ -47,9 +47,9 @@ class KotlinDefaultAnnotationMethodImplicitReferenceContributor : AbstractKotlin
                     val signature = MethodSignatureUtil.createMethodSignature(
                             name, PsiType.EMPTY_ARRAY, PsiTypeParameter.EMPTY_ARRAY, PsiSubstitutor.EMPTY
                     )
-                    MethodSignatureUtil.findMethodBySignature(annotationPsi, signature, false)
+                    MethodSignatureUtil.findMethodBySignature(annotationPsi as PsiClass, signature, false)
                 }
-                is KtPrimaryConstructor -> annotationPsi.containingClassOrObject?.findPropertyByName(name) as? KtParameter
+                is KtPrimaryConstructor -> (annotationPsi as KtPrimaryConstructor).containingClassOrObject?.findPropertyByName(name) as? KtParameter
                 else -> null
             }
         }

@@ -43,14 +43,14 @@ class FromUnresolvedNamesCompletion(
                 val callTypeAndReceiver = CallTypeAndReceiver.detect(refExpr)
                 if (callTypeAndReceiver.receiver != null) return@forEachDescendantOfType
                 if (sampleDescriptor != null) {
-                    if (!callTypeAndReceiver.callType.descriptorKindFilter.accepts(sampleDescriptor)) return@forEachDescendantOfType
+                    if (!callTypeAndReceiver.callType.descriptorKindFilter.accepts(sampleDescriptor!!)) return@forEachDescendantOfType
 
                     if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
                         val isCall = refExpr.parent is KtCallExpression
-                        val canBeUsage = when (sampleDescriptor) {
+                        val canBeUsage = when (sampleDescriptor!!) {
                             is FunctionDescriptor -> isCall // cannot use simply function name without arguments
                             is VariableDescriptor -> true // variable can as well be used with arguments when it has invoke()
-                            is ClassDescriptor -> if (isCall) sampleDescriptor.kind == ClassKind.CLASS else sampleDescriptor.kind.isSingleton
+                            is ClassDescriptor -> if (isCall) (sampleDescriptor as ClassDescriptor).kind == ClassKind.CLASS else (sampleDescriptor as ClassDescriptor).kind.isSingleton
                             else -> false // what else it can be?
                         }
                         if (!canBeUsage) return@forEachDescendantOfType
@@ -60,7 +60,7 @@ class FromUnresolvedNamesCompletion(
                 val name = refExpr.getReferencedName()
                 if (!prefixMatcher.prefixMatches(name)) return@forEachDescendantOfType
 
-                if (afterOffset != null && refExpr.startOffset < afterOffset) return@forEachDescendantOfType
+                if (afterOffset != null && refExpr.startOffset < afterOffset!!) return@forEachDescendantOfType
 
                 if (refExpr.resolveMainReferenceToDescriptors().isEmpty()) {
                     names.add(name)

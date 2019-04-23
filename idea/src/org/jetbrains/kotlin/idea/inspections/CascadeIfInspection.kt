@@ -27,7 +27,7 @@ class CascadeIfInspection : AbstractKotlinInspection() {
 
             if (branches.any {
                 it == null ||
-                it.lastBlockStatementOrThis() is KtIfExpression
+                it!!.lastBlockStatementOrThis() is KtIfExpression
             }) return
 
             if (expression.isElseIf()) return
@@ -38,16 +38,16 @@ class CascadeIfInspection : AbstractKotlinInspection() {
 
             var current: KtIfExpression? = expression
             while (current != null) {
-                val condition = current.condition
+                val condition = current!!.condition
                 when (condition) {
-                    is KtBinaryExpression -> when (condition.operationToken) {
+                    is KtBinaryExpression -> when ((condition as KtBinaryExpression).operationToken) {
                         KtTokens.ANDAND, KtTokens.OROR -> return
                     }
-                    is KtUnaryExpression -> when (condition.operationToken) {
+                    is KtUnaryExpression -> when ((condition as KtUnaryExpression).operationToken) {
                         KtTokens.EXCL -> return
                     }
                 }
-                current = current.`else` as? KtIfExpression
+                current = current!!.`else` as? KtIfExpression
             }
 
             holder.registerProblem(

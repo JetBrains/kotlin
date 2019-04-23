@@ -57,13 +57,13 @@ fun KtFile.canBeDecompiledToJava() = isCompiled && virtualFile?.fileType == Java
 // Add action to "Attach sources" notification panel
 class DecompileKotlinToJavaActionProvider : AttachSourcesProvider {
     override fun getActions(orderEntries: MutableList<LibraryOrderEntry>, psiFile: PsiFile): Collection<AttachSourcesProvider.AttachSourcesAction> {
-        if (psiFile !is KtFile || !psiFile.canBeDecompiledToJava()) return emptyList()
+        if (psiFile !is KtFile || !(psiFile as KtFile).canBeDecompiledToJava()) return emptyList()
 
         return listOf(object : AttachSourcesProvider.AttachSourcesAction {
             override fun getName() = "Decompile to Java"
 
             override fun perform(orderEntriesContainingFile: List<LibraryOrderEntry>?): ActionCallback {
-                showDecompiledCode(psiFile)
+                showDecompiledCode(psiFile as KtFile)
                 return ActionCallback.DONE
             }
 

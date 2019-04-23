@@ -35,8 +35,8 @@ private fun KtImportDirective.isSafeToDelete(element: PsiElement): Boolean {
     val referencedDescriptor = targetDescriptors().singleOrNull() ?: return false
     val unwrappedElement = element.unwrapped
     val declarationDescriptor = when (unwrappedElement) {
-        is KtDeclaration -> unwrappedElement.resolveToDescriptorIfAny(BodyResolveMode.FULL)
-        is PsiMember -> unwrappedElement.getJavaMemberDescriptor()
+        is KtDeclaration -> (unwrappedElement as KtDeclaration).resolveToDescriptorIfAny(BodyResolveMode.FULL)
+        is PsiMember -> (unwrappedElement as PsiMember).getJavaMemberDescriptor()
         else -> return false
     }
     return referencedDescriptor == declarationDescriptor

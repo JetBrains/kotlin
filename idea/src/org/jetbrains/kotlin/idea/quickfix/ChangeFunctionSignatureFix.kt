@@ -61,10 +61,10 @@ abstract class ChangeFunctionSignatureFix(
         val expression = argument.getArgumentExpression()
 
         return when {
-            argumentName != null -> KotlinNameSuggester.suggestNameByName(argumentName.asName.asString(), validator)
+            argumentName != null -> KotlinNameSuggester.suggestNameByName(argumentName!!.asName.asString(), validator)
             expression != null -> {
-                val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-                KotlinNameSuggester.suggestNamesByExpressionAndType(expression, null, bindingContext, validator, "param").first()
+                val bindingContext = expression!!.analyze(BodyResolveMode.PARTIAL)
+                KotlinNameSuggester.suggestNamesByExpressionAndType(expression!!, null, bindingContext, validator, "param").first()
             }
             else -> KotlinNameSuggester.suggestNameByName("param", validator)
         }
@@ -85,7 +85,7 @@ abstract class ChangeFunctionSignatureFix(
             if (functionDescriptor.kind == SYNTHESIZED) return null
 
             if (data is ValueParameterDescriptor) {
-                return RemoveParameterFix(originalElement, functionDescriptor, data)
+                return RemoveParameterFix(originalElement, functionDescriptor, data as ValueParameterDescriptor)
             } else {
                 val parameters = functionDescriptor.valueParameters
                 val arguments = originalElement.valueArguments
@@ -96,7 +96,7 @@ abstract class ChangeFunctionSignatureFix(
                     val argumentToParameter = call.mapArgumentsToParameters(functionDescriptor)
                     val hasTypeMismatches = argumentToParameter.any { (argument, parameter) ->
                         val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
-                        argumentType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
+                        argumentType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType!!, parameter.type)
                     }
                     return AddFunctionParametersFix(originalElement, functionDescriptor, hasTypeMismatches)
                 }

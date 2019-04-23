@@ -56,16 +56,16 @@ class KotlinParameterInfo @JvmOverloads constructor (
     init {
         val file = defaultValueForCall?.containingFile as? KtFile
         defaultValueParameterReferences =
-                if (defaultValueForCall != null && file != null && (file.isPhysical || file.analysisContext != null)) {
-                    val project = file.project
+                if (defaultValueForCall != null && file != null && (file!!.isPhysical || file!!.analysisContext != null)) {
+                    val project = file!!.project
                     val map = LinkedHashMap<PsiReference, DeclarationDescriptor>()
 
                     defaultValueForCall!!.accept(
                             object : KtTreeVisitorVoid() {
                                 private fun selfParameterOrNull(parameter: DeclarationDescriptor?): ValueParameterDescriptor? {
                                     return if (parameter is ValueParameterDescriptor &&
-                                               compareDescriptors(project, parameter.containingDeclaration, callableDescriptor)) {
-                                        parameter
+                                               compareDescriptors(project, (parameter as ValueParameterDescriptor).containingDeclaration, callableDescriptor)) {
+                                        parameter as ValueParameterDescriptor
                                     } else null
                                 }
 
@@ -97,7 +97,7 @@ class KotlinParameterInfo @JvmOverloads constructor (
                                     if (descriptor is ValueParameterDescriptor) return selfParameterOrNull(descriptor)
 
                                     if (descriptor is PropertyDescriptor && callableDescriptor is ConstructorDescriptor) {
-                                        val parameter = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtParameter
+                                        val parameter = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor as PropertyDescriptor) as? KtParameter
                                         return parameter?.let { selfParameterOrNull(context[BindingContext.VALUE_PARAMETER, it]) }
                                     }
 
@@ -188,7 +188,7 @@ class KotlinParameterInfo @JvmOverloads constructor (
 
         if (originalIndex < 0) return !inheritedCallable.hasExpectedType
 
-        val inheritedParameterDescriptor = inheritedFunctionDescriptor.valueParameters[originalIndex]
+        val inheritedParameterDescriptor = (inheritedFunctionDescriptor as AnonymousFunctionDescriptor).valueParameters[originalIndex]
         val parameter = DescriptorToSourceUtils.descriptorToDeclaration(inheritedParameterDescriptor) as? KtParameter ?: return false
         return parameter.typeReference != null
     }
@@ -203,7 +203,7 @@ class KotlinParameterInfo @JvmOverloads constructor (
         val buffer = StringBuilder()
 
         if (modifierList != null) {
-            buffer.append(modifierList.text).append(' ')
+            buffer.append(modifierList!!.text).append(' ')
         }
 
         if (valOrVar != KotlinValVar.None) {

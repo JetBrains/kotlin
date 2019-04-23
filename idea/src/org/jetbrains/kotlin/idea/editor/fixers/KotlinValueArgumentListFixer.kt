@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
 class KotlinValueArgumentListFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
 
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
-        if (element !is KtValueArgumentList || element.rightParenthesis != null) return
-        val lPar = element.leftParenthesis ?: return
+        if (element !is KtValueArgumentList || (element as KtValueArgumentList).rightParenthesis != null) return
+        val lPar = (element as KtValueArgumentList).leftParenthesis ?: return
 
-        val lastArgument = element.arguments.lastOrNull()
-        if (lastArgument != null && PsiUtilCore.hasErrorElementChild(lastArgument)) {
-            val prev = lastArgument.getPrevSiblingIgnoringWhitespace() ?: lPar
+        val lastArgument = (element as KtValueArgumentList).arguments.lastOrNull()
+        if (lastArgument != null && PsiUtilCore.hasErrorElementChild(lastArgument!!)) {
+            val prev = lastArgument!!.getPrevSiblingIgnoringWhitespace() ?: lPar
             val offset = prev.endOffset
             if (prev == lPar) {
                 editor.document.insertString(offset, ")")

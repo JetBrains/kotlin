@@ -102,15 +102,15 @@ class LookupElementFactory(
         // add special item for function with one argument of function type with more than one parameter
         if (descriptor is FunctionDescriptor && isNormalCall) {
             if (callType != CallType.SUPER_MEMBERS) {
-                result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
+                result.addSpecialFunctionCallElements(descriptor as FunctionDescriptor, useReceiverTypes)
             }
             else if (useReceiverTypes) {
-                result.addIfNotNull(createSuperFunctionCallWithArguments(descriptor))
+                result.addIfNotNull(createSuperFunctionCallWithArguments(descriptor as FunctionDescriptor))
             }
         }
 
         // special "[]" item for get-operator
-        if (callType == CallType.DOT && descriptor is FunctionDescriptor && descriptor.isOperator && descriptor.name == OperatorNameConventions.GET) {
+        if (callType == CallType.DOT && descriptor is FunctionDescriptor && (descriptor as FunctionDescriptor).isOperator && (descriptor as FunctionDescriptor).name == OperatorNameConventions.GET) {
             val baseLookupElement = createLookupElement(descriptor, useReceiverTypes)
             val lookupElement = object : LookupElementDecorator<LookupElement>(baseLookupElement) {
                 override fun getLookupString() = "[]"
@@ -237,7 +237,7 @@ class LookupElementFactory(
             private val needTypeArguments: Boolean
     ) : LookupElementDecorator<LookupElement>(originalLookupElement) {
 
-        override fun equals(other: Any?) = other is FunctionCallWithArgumentsLookupElement && delegate == other.delegate && argumentText == other.argumentText
+        override fun equals(other: Any?) = other is FunctionCallWithArgumentsLookupElement && delegate == (other as FunctionCallWithArgumentsLookupElement).delegate && argumentText == (other as FunctionCallWithArgumentsLookupElement).argumentText
         override fun hashCode() = delegate.hashCode() * 17 + argumentText.hashCode()
 
         override fun renderElement(presentation: LookupElementPresentation) {
@@ -316,26 +316,26 @@ class LookupElementFactory(
 
         // don't treat synthetic extensions as real extensions
         if (descriptor is SyntheticJavaPropertyDescriptor) {
-            return callableWeight(descriptor.getMethod)
+            return callableWeight((descriptor as SyntheticJavaPropertyDescriptor).getMethod)
         }
         if (descriptor is SamAdapterExtensionFunctionDescriptor) {
-            return callableWeight(descriptor.baseDescriptorForSynthetic)
+            return callableWeight((descriptor as SamAdapterExtensionFunctionDescriptor).baseDescriptorForSynthetic)
         }
 
-        if (descriptor.overriddenDescriptors.isNotEmpty()) {
+        if ((descriptor as CallableDescriptor).overriddenDescriptors.isNotEmpty()) {
             // Optimization: when one of direct overridden fits, then nothing can fit better
-            descriptor.overriddenDescriptors
-                    .mapNotNull { it.callableWeightBasedOnReceiver(receiverTypes, onReceiverTypeMismatch = null) }
+            (descriptor as CallableDescriptor).overriddenDescriptors
+                    .mapNotNull { it.callableWeightBasedOnReceiver(receiverTypes!!, onReceiverTypeMismatch = null) }
                     .minBy { it.enum }
                     ?.let { return it }
 
-            val overridden = descriptor.overriddenTreeUniqueAsSequence(useOriginal = false)
+            val overridden = (descriptor as CallableDescriptor).overriddenTreeUniqueAsSequence(useOriginal = false)
             return overridden
-                    .map { callableWeightBasic(it, receiverTypes)!! }
+                    .map { callableWeightBasic(it, receiverTypes!!)!! }
                     .minBy { it.enum }!!
         }
 
-        return callableWeightBasic(descriptor, receiverTypes)
+        return callableWeightBasic(descriptor as CallableDescriptor, receiverTypes!!)
     }
 
     private fun callableWeightBasic(descriptor: CallableDescriptor, receiverTypes: Collection<ReceiverType>): CallableWeight? {
@@ -378,7 +378,7 @@ class LookupElementFactory(
         for (receiverType in receiverTypes) {
             val weight = callableWeightForReceiverType(receiverType.type, receiverParameter.type)
             if (weight != null) {
-                if (bestWeight == null || weight < bestWeight) {
+                if (bestWeight == null || weight!! < bestWeight!!) {
                     bestWeight = weight
                     bestReceiverType = receiverType
                 }
@@ -399,7 +399,7 @@ class LookupElementFactory(
             }
         }
 
-        return CallableWeight(bestWeight, receiverIndexToUse)
+        return CallableWeight(bestWeight!!, receiverIndexToUse)
     }
 
     private fun CallableDescriptor.callableWeightForReceiverType(

@@ -64,7 +64,7 @@ sealed class PluginUpdateStatus {
                     return other
                 }
                 is Update -> {
-                    if (VersionComparatorUtil.compare(other.pluginDescriptor.version, pluginDescriptor.version) > 0) {
+                    if (VersionComparatorUtil.compare((other as Update).pluginDescriptor.version, pluginDescriptor.version) > 0) {
                         return other
                     }
                 }
@@ -105,8 +105,8 @@ class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) 
         if (lastUpdateTime == 0L || System.currentTimeMillis() - lastUpdateTime > CACHED_REQUEST_DELAY) {
             queueUpdateCheck { updateStatus ->
                 when (updateStatus) {
-                    is PluginUpdateStatus.Update -> notifyPluginUpdateAvailable(updateStatus)
-                    is PluginUpdateStatus.CheckFailed -> LOG.info("Plugin update check failed: ${updateStatus.message}, details: ${updateStatus.detail}")
+                    is PluginUpdateStatus.Update -> notifyPluginUpdateAvailable(updateStatus as PluginUpdateStatus.Update)
+                    is PluginUpdateStatus.CheckFailed -> LOG.info("Plugin update check failed: ${(updateStatus as PluginUpdateStatus.CheckFailed).message}, details: ${(updateStatus as PluginUpdateStatus.CheckFailed).detail}")
                 }
                 true
             }
@@ -131,9 +131,9 @@ class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) 
     fun runCachedUpdate(callback: (PluginUpdateStatus) -> Boolean) {
         ApplicationManager.getApplication().assertIsDispatchThread()
         val cachedStatus = lastUpdateStatus
-        if (cachedStatus != null && System.currentTimeMillis() - cachedStatus.timestamp < CACHED_REQUEST_DELAY) {
+        if (cachedStatus != null && System.currentTimeMillis() - cachedStatus!!.timestamp < CACHED_REQUEST_DELAY) {
             if (cachedStatus !is PluginUpdateStatus.CheckFailed) {
-                callback(cachedStatus)
+                callback(cachedStatus!!)
                 return
             }
         }
@@ -162,7 +162,7 @@ class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) 
         checkQueued = false
 
         if (updateStatus is PluginUpdateStatus.Update) {
-            updateStatus = verify(updateStatus)
+            updateStatus = verify(updateStatus as PluginUpdateStatus.Update)
         }
 
         if (updateStatus !is PluginUpdateStatus.CheckFailed) {

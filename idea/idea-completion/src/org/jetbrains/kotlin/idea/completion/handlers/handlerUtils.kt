@@ -68,8 +68,8 @@ fun removeRedundantBracesInStringTemplate(context: InsertionContext) {
         psiDocumentManager.commitAllDocuments()
 
         val token = context.file.findElementAt(tailOffset)
-        if (token != null && token.node.elementType == KtTokens.LONG_TEMPLATE_ENTRY_END) {
-            val entry = token.parent as KtBlockStringTemplateEntry
+        if (token != null && token!!.node.elementType == KtTokens.LONG_TEMPLATE_ENTRY_END) {
+            val entry = token!!.parent as KtBlockStringTemplateEntry
             val nameExpression = entry.expression as? KtNameReferenceExpression ?: return
             if (canPlaceAfterSimpleNameEntry(entry.nextSibling)) {
                 context.tailOffset++ // place after '}' otherwise it gets invalidated
@@ -155,20 +155,20 @@ fun createKeywordConstructLookupElement(
 
                 val sibling = when {
                     element !is PsiWhiteSpace -> element
-                    element.textContains('\n') -> null
-                    else -> element.getNextSiblingIgnoringWhitespace(true)
+                    (element as PsiWhiteSpace).textContains('\n') -> null
+                    else -> (element as PsiWhiteSpace).getNextSiblingIgnoringWhitespace(true)
                 }
 
                 if (sibling != null && beforeCaret.trimStart().startsWith(
                         insertionContext.document.getText(
                             TextRange.from(
-                                sibling.startOffset,
+                                sibling!!.startOffset,
                                 1
                             )
                         )
                     )
                 ) {
-                    insertionContext.editor.moveCaret(sibling.startOffset + 1)
+                    insertionContext.editor.moveCaret(sibling!!.startOffset + 1)
                 } else {
                     insertionContext.document.insertString(offset, beforeCaret + afterCaret)
                     insertionContext.editor.moveCaret(offset + beforeCaret.length)

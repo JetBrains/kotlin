@@ -266,8 +266,8 @@ fun KtElement.renderTrimmed(): String {
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject) {
             val keyword = when (classOrObject) {
-                is KtClass -> classOrObject.getClassOrInterfaceKeyword()
-                is KtObjectDeclaration -> classOrObject.getObjectKeyword()
+                is KtClass -> (classOrObject as KtClass).getClassOrInterfaceKeyword()
+                is KtObjectDeclaration -> (classOrObject as KtObjectDeclaration).getObjectKeyword()
                 else -> return
             }
             keyword?.accept(this)
@@ -302,7 +302,7 @@ fun KtElement.renderTrimmed(): String {
 
         override fun visitElement(element: PsiElement) {
             if (element is LeafPsiElement) {
-                builder.append(element.text)
+                builder.append((element as LeafPsiElement).text)
             }
             else {
                 super.visitElement(element)

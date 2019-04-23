@@ -34,7 +34,7 @@ class CallableUsageReplacementStrategy(
         if (!resolvedCall.status.isSuccess) return null
 
         val callElement = when (resolvedCall) {
-            is VariableAsFunctionResolvedCall -> resolvedCall.variableCall.call.callElement
+            is VariableAsFunctionResolvedCall -> (resolvedCall as VariableAsFunctionResolvedCall).variableCall.call.callElement
             else -> resolvedCall.call.callElement
 
         }
@@ -47,7 +47,7 @@ class CallableUsageReplacementStrategy(
 
         return {
             if (usage is KtOperationReferenceExpression && usage.getReferencedNameElementType() != KtTokens.IDENTIFIER) {
-                val nameExpression = OperatorToFunctionIntention.convert(usage.parent as KtExpression).second
+                val nameExpression = OperatorToFunctionIntention.convert((usage as KtOperationReferenceExpression).parent as KtExpression).second
                 createReplacer(nameExpression)?.invoke()
             } else {
                 CodeInliner(usage, bindingContext, resolvedCall, callElement, inlineSetter, replacement).doInline()

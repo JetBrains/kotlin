@@ -84,8 +84,8 @@ class JavaToKotlinAction : AnAction() {
                         MessagesEx.error(psiFile.project, "Failed to save conversion result: couldn't find document for " + psiFile.name).showLater()
                         continue
                     }
-                    document.replaceString(0, document.textLength, text)
-                    FileDocumentManager.getInstance().saveDocument(document)
+                    document!!.replaceString(0, document!!.textLength, text)
+                    FileDocumentManager.getInstance().saveDocument(document!!)
 
                     val virtualFile = psiFile.virtualFile
                     if (ScratchRootType.getInstance().containsFile(virtualFile)) {
@@ -186,7 +186,7 @@ class JavaToKotlinAction : AnAction() {
 
         if (firstSyntaxError != null) {
             val count = javaFiles.filter { PsiTreeUtil.hasErrorElements(it) }.count()
-            val question = firstSyntaxError.containingFile.name +
+            val question = firstSyntaxError!!.containingFile.name +
                            (if (count > 1) " and ${count - 1} more Java files" else " file") +
                            " contain syntax errors, the conversion result may be incorrect"
 
@@ -200,7 +200,7 @@ class JavaToKotlinAction : AnAction() {
                     cancelText,
                     Messages.getWarningIcon()
             ) == Messages.OK) {
-                NavigationUtil.activateFileWithPsiElement(firstSyntaxError.navigationElement)
+                NavigationUtil.activateFileWithPsiElement(firstSyntaxError!!.navigationElement)
                 return
             }
         }

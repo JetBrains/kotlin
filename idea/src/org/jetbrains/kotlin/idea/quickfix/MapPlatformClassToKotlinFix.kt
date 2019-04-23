@@ -53,7 +53,8 @@ class MapPlatformClassToKotlinFix(
         val platformClassQualifiedName = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(platformClass.defaultType)
         val singleClass = possibleClasses.singleOrNull()
         return if (singleClass != null)
-            "Change all usages of '$platformClassQualifiedName' in this file to '${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(singleClass.defaultType)}'"
+            "Change all usages of '$platformClassQualifiedName' in this file to '${DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(
+                singleClass!!.defaultType)}'"
         else
             "Change all usages of '$platformClassQualifiedName' in this file to a Kotlin class"
     }
@@ -74,7 +75,7 @@ class MapPlatformClassToKotlinFix(
 
             val import = refExpr.getStrictParentOfType<KtImportDirective>()
             if (import != null) {
-                imports.add(import)
+                imports.add(import!!)
             }
             else {
                 usages.add(refExpr.getStrictParentOfType<KtUserType>() ?: continue)
@@ -95,7 +96,7 @@ class MapPlatformClassToKotlinFix(
             for (klass in possibleClasses) {
                 possibleTypes.add(klass.name.asString())
             }
-            buildAndShowTemplate(project, editor, file, replacedElements, possibleTypes)
+            buildAndShowTemplate(project, editor!!, file, replacedElements, possibleTypes)
         }
     }
 
@@ -173,7 +174,7 @@ class MapPlatformClassToKotlinFix(
         private fun getImportOrUsageFromDiagnostic(diagnostic: Diagnostic): KtReferenceExpression? {
             val import = diagnostic.psiElement.getNonStrictParentOfType<KtImportDirective>()
             return if (import != null) {
-                import.importedReference?.getQualifiedElementSelector() as? KtReferenceExpression
+                import!!.importedReference?.getQualifiedElementSelector() as? KtReferenceExpression
             }
             else {
                 (diagnostic.psiElement.getNonStrictParentOfType<KtUserType>() ?: return null).referenceExpression

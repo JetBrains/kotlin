@@ -99,20 +99,20 @@ fun replaceReferencesToGetterByReferenceToField(property: KtProperty) {
 
     val javaScope = GlobalSearchScope.getScopeRestrictedByFileTypes(project.allScope(), JavaFileType.INSTANCE)
     val getterUsages = if (getter != null)
-        ReferencesSearch.search(getter, javaScope).findAll()
+        ReferencesSearch.search(getter!!, javaScope).findAll()
     else
         emptyList()
 
     val backingField = LightClassUtil.getLightClassPropertyMethods(property).backingField
     if (backingField != null) {
         val factory = PsiElementFactory.SERVICE.getInstance(project)
-        val fieldFQName = backingField.containingClass!!.qualifiedName + "." + backingField.name
+        val fieldFQName = backingField!!.containingClass!!.qualifiedName + "." + backingField!!.name
 
         getterUsages.forEach {
             val call = it.element.getNonStrictParentOfType<PsiMethodCallExpression>()
-            if (call != null && it.element == call.methodExpression) {
+            if (call != null && it.element == call!!.methodExpression) {
                 val fieldRef = factory.createExpressionFromText(fieldFQName, it.element)
-                call.replace(fieldRef)
+                call!!.replace(fieldRef)
             }
         }
     }

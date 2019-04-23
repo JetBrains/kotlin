@@ -184,7 +184,7 @@ class UsePropertyAccessSyntaxIntention :
         if (isSetUsage && qualifiedExpression.isUsedAsExpression(bindingContext)) {
             // call to the setter used as expression can be converted in the only case when it's used as body expression for some declaration and its type is Unit
             val parent = qualifiedExpression.parent
-            if (parent !is KtDeclarationWithBody || qualifiedExpression != parent.bodyExpression) return null
+            if (parent !is KtDeclarationWithBody || qualifiedExpression != (parent as KtDeclarationWithBody).bodyExpression) return null
             if (function.returnType?.isUnit() != true) return null
         }
 
@@ -258,30 +258,30 @@ class UsePropertyAccessSyntaxIntention :
         val call = callExpression.getQualifiedExpressionForSelector() ?: callExpression
         val callParent = call.parent
         var callToConvert = callExpression
-        if (callParent is KtDeclarationWithBody && call == callParent.bodyExpression) {
-            ConvertToBlockBodyIntention.convert(callParent)
-            val firstStatement = callParent.bodyBlockExpression?.statements?.first()
+        if (callParent is KtDeclarationWithBody && call == (callParent as KtDeclarationWithBody).bodyExpression) {
+            ConvertToBlockBodyIntention.convert(callParent as KtDeclarationWithBody)
+            val firstStatement = (callParent as KtDeclarationWithBody).bodyBlockExpression?.statements?.first()
             callToConvert = (firstStatement as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
                     ?: firstStatement as? KtCallExpression
-                    ?: throw IllegalStateException("Unexpected contents of function after conversion: ${callParent.text}")
+                    ?: throw IllegalStateException("Unexpected contents of function after conversion: ${(callParent as KtDeclarationWithBody).text}")
         }
 
         val qualifiedExpression = callToConvert.getQualifiedExpressionForSelector()
         val argument = callToConvert.valueArguments.single()
         if (qualifiedExpression != null) {
-            val pattern = when (qualifiedExpression) {
+            val pattern = when (qualifiedExpression!!) {
                 is KtDotQualifiedExpression -> "$0.$1=$2"
                 is KtSafeQualifiedExpression -> "$0?.$1=$2"
-                else -> error(qualifiedExpression) //TODO: make it sealed?
+                else -> error(qualifiedExpression!!) //TODO: make it sealed?
             }
             val newExpression = KtPsiFactory(callToConvert).createExpressionByPattern(
                 pattern,
-                qualifiedExpression.receiverExpression,
+                qualifiedExpression!!.receiverExpression,
                 propertyName,
                 argument.getArgumentExpression()!!,
                 reformat = reformat
             )
-            return qualifiedExpression.replaced(newExpression)
+            return qualifiedExpression!!.replaced(newExpression)
         } else {
             val newExpression =
                 KtPsiFactory(callToConvert).createExpressionByPattern("$0=$1", propertyName, argument.getArgumentExpression()!!)

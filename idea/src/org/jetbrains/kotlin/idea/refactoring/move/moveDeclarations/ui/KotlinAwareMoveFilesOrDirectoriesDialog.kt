@@ -109,7 +109,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         val psiElement = psiElements.singleOrNull()
         if (psiElement != null) {
             val shortenedPath = CopyFilesOrDirectoriesDialog.shortenPath((psiElement as PsiFileSystemItem).virtualFile)
-            nameLabel.text = when (psiElement) {
+            nameLabel.text = when (psiElement as PsiFileSystemItem) {
                 is PsiFile -> RefactoringBundle.message("move.file.0", shortenedPath)
                 else -> RefactoringBundle.message("move.directory.0", shortenedPath)
             }
@@ -137,7 +137,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             }
 
             val singleFile = jetFiles.singleOrNull()
-            isSelected = singleFile == null || singleFile.packageMatchesDirectory()
+            isSelected = singleFile == null || singleFile!!.packageMatchesDirectory()
             text = "Update package directive (Kotlin files)"
         }
     }

@@ -49,7 +49,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
     override fun isEnabledForLanguage(l: Language) = l == KotlinLanguage.INSTANCE
 
     override fun canInlineElement(element: PsiElement): Boolean {
-        return element is KtProperty && element.name != null
+        return element is KtProperty && (element as KtProperty).name != null
     }
 
     override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
@@ -91,10 +91,10 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
             assignmentToDelete = initialization.assignment
         } else {
             readReplacement = getter?.let {
-                buildCodeToInline(getter, descriptor.type, isTypeExplicit, getter.bodyExpression!!, getter.hasBlockBody(), editor) ?: return
+                buildCodeToInline(getter!!, descriptor.type, isTypeExplicit, getter!!.bodyExpression!!, getter!!.hasBlockBody(), editor) ?: return
             }
             writeReplacement = setter?.let {
-                buildCodeToInline(setter, setter.builtIns.unitType, true, setter.bodyExpression!!, setter.hasBlockBody(), editor) ?: return
+                buildCodeToInline(setter!!, setter!!.builtIns.unitType, true, setter!!.bodyExpression!!, setter!!.hasBlockBody(), editor) ?: return
             }
             assignmentToDelete = null
         }
@@ -128,10 +128,10 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
             val expression = (refElement as? KtExpression)?.getQualifiedExpressionForSelectorOrThis()
             //TODO: what if null?
             if (expression != null) {
-                if (expression.readWriteAccess(useResolveForReadWrite = true) == ReferenceAccess.READ_WRITE) {
-                    conflictUsages.putValue(expression, "Unsupported usage: ${expression.parent.text}")
+                if (expression!!.readWriteAccess(useResolveForReadWrite = true) == ReferenceAccess.READ_WRITE) {
+                    conflictUsages.putValue(expression, "Unsupported usage: ${expression!!.parent.text}")
                 }
-                referenceExpressions.add(expression)
+                referenceExpressions.add(expression!!)
             }
         }
         return Usages(referenceExpressions, conflictUsages)
@@ -153,7 +153,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
                 reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
                 return null
             }
-            return Initialization(initializerInDeclaration, assignment = null)
+            return Initialization(initializerInDeclaration!!, assignment = null)
         } else {
             val assignment = writeUsages.singleOrNull()
                 ?.getAssignmentByLHS()
@@ -163,7 +163,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
                 reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
                 return null
             }
-            return Initialization(initializer, assignment)
+            return Initialization(initializer!!, assignment)
         }
     }
 

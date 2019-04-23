@@ -48,7 +48,7 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         val classKind = if (inAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS
         val fullCallExpr = element.getQualifiedExpressionForSelectorOrThis()
         val expectedType = fullCallExpr.guessTypeForClass(context, moduleDescriptor)
-        if (expectedType != null && !targetParents.any { getClassKindFilter(expectedType, it)(classKind) }) return emptyList()
+        if (expectedType != null && !targetParents.any { getClassKindFilter(expectedType!!, it)(classKind) }) return emptyList()
 
         return listOf(classKind)
     }
@@ -69,7 +69,7 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
 
         val callParent = callExpr.parent
         val fullCallExpr =
-                if (callParent is KtQualifiedExpression && callParent.selectorExpression == callExpr) callParent else callExpr
+                if (callParent is KtQualifiedExpression && (callParent as KtQualifiedExpression).selectorExpression == callExpr) callParent as KtQualifiedExpression else callExpr
 
         val (context, moduleDescriptor) = callExpr.analyzeAndGetResult()
 
@@ -92,7 +92,7 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         val expectedType = fullCallExpr.guessTypeForClass(context, moduleDescriptor)
         val expectedTypeInfo = expectedType?.toClassTypeInfo() ?: TypeInfo.Empty
         val filteredParents = if (expectedType != null) {
-            targetParents.filter { getClassKindFilter(expectedType, it)(classKind) }.ifEmpty { return null }
+            targetParents.filter { getClassKindFilter(expectedType!!, it)(classKind) }.ifEmpty { return null }
         } else targetParents
 
         val typeArgumentInfos = if (inAnnotationEntry) Collections.emptyList() else callExpr.getTypeInfoForTypeArguments()

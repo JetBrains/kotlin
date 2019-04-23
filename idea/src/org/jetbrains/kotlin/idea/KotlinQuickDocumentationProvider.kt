@@ -88,7 +88,7 @@ class HtmlClassifierNamePolicy(val base: ClassifierNamePolicy) : ClassifierNameP
                     supertypes.joinTo(this) {
                         val ref = it.constructor.declarationDescriptor
                         if (ref != null)
-                            renderClassifier(ref, renderer)
+                            renderClassifier(ref!!, renderer)
                         else
                             "&lt;ERROR CLASS&gt;"
                     }
@@ -152,7 +152,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): String? {
-        return if (element == null) null else getText(element, originalElement, true)
+        return if (element == null) null else getText(element!!, originalElement, true)
     }
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
@@ -173,8 +173,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
     override fun getDocumentationElementForLookupItem(psiManager: PsiManager, `object`: Any?, element: PsiElement?): PsiElement? {
         if (`object` is DeclarationLookupObject) {
-            `object`.psiElement?.let { return it }
-            `object`.descriptor?.let { descriptor ->
+            (`object` as DeclarationLookupObject).psiElement?.let { return it }
+            (`object` as DeclarationLookupObject).descriptor?.let { descriptor ->
                 return DescriptorToSourceUtilsIde.getAnyDeclaration(psiManager.project, descriptor)
             }
         }
@@ -220,10 +220,10 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                         description {
                             insert(DescriptionBodyTemplate.Kotlin()) {
                                 content {
-                                    appendKDocContent(section)
+                                    appendKDocContent(section!!)
                                 }
                                 sections {
-                                    appendKDocSection(section)
+                                    appendKDocSection(section!!)
                                 }
                             }
                         }
@@ -239,11 +239,11 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 // When caret on special enum function (e.g SomeEnum.values<caret>())
                 // element is not an KtReferenceExpression, but KtClass of enum
                 // so reference extracted from originalElement
-                val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
+                val context = referenceExpression!!.analyze(BodyResolveMode.PARTIAL)
                 (context[BindingContext.REFERENCE_TARGET, referenceExpression]
-                        ?: context[BindingContext.REFERENCE_TARGET, referenceExpression.getChildOfType<KtReferenceExpression>()])?.let {
+                        ?: context[BindingContext.REFERENCE_TARGET, referenceExpression!!.getChildOfType<KtReferenceExpression>()])?.let {
                     if (it is FunctionDescriptor) // To protect from Some<caret>Enum.values()
-                        return renderEnumSpecialFunction(element, it, quickNavigation)
+                        return renderEnumSpecialFunction(element, it as FunctionDescriptor, quickNavigation)
                 }
             }
             return renderKotlinDeclaration(element, quickNavigation)
@@ -265,13 +265,13 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 val itElement = findElementWithText(originalElement, "it")
                 val itReference = itElement?.getParentOfType<KtNameReferenceExpression>(false)
                 if (itReference != null) {
-                    return getTextImpl(itReference, originalElement, quickNavigation)
+                    return getTextImpl(itReference!!, originalElement, quickNavigation)
                 }
             }
 
             if (element is KtTypeReference) {
-                val declaration = element.parent
-                if (declaration is KtCallableDeclaration && declaration.receiverTypeReference == element) {
+                val declaration = (element as KtTypeReference).parent
+                if (declaration is KtCallableDeclaration && (declaration as KtCallableDeclaration).receiverTypeReference == element) {
                     val thisElement = findElementWithText(originalElement, "this")
                     if (thisElement != null) {
                         return getTextImpl(declaration, originalElement, quickNavigation)
@@ -279,15 +279,17 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 }
             }
 
-            if (element is KtClass && element.isEnum()) {
+            if (element is KtClass && (element as KtClass).isEnum()) {
                 // When caret on special enum function (e.g SomeEnum.values<caret>())
                 // element is not an KtReferenceExpression, but KtClass of enum
-                return renderEnum(element, originalElement, quickNavigation)
+                return renderEnum(element as KtClass, originalElement, quickNavigation)
             } else if (element is KtEnumEntry && !quickNavigation) {
-                val ordinal = element.containingClassOrObject?.getBody()?.run { getChildrenOfType<KtEnumEntry>().indexOf(element) }
+                val ordinal = (element as KtEnumEntry).containingClassOrObject?.getBody()?.run { getChildrenOfType<KtEnumEntry>().indexOf(
+                    element as KtEnumEntry
+                ) }
 
                 return buildString {
-                    insert(buildKotlinDeclaration(element, quickNavigation)) {
+                    insert(buildKotlinDeclaration(element as KtEnumEntry, quickNavigation)) {
                         definition {
                             it.inherit()
                             ordinal?.let {
@@ -297,11 +299,11 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                     }
                 }
             } else if (element is KtDeclaration) {
-                return renderKotlinDeclaration(element, quickNavigation)
-            } else if (element is KtNameReferenceExpression && element.getReferencedName() == "it") {
-                return renderKotlinImplicitLambdaParameter(element, quickNavigation)
+                return renderKotlinDeclaration(element as KtDeclaration, quickNavigation)
+            } else if (element is KtNameReferenceExpression && (element as KtNameReferenceExpression).getReferencedName() == "it") {
+                return renderKotlinImplicitLambdaParameter(element as KtNameReferenceExpression, quickNavigation)
             } else if (element is KtLightDeclaration<*, *>) {
-                val origin = element.kotlinOrigin ?: return null
+                val origin = (element as KtLightDeclaration<*, *>).kotlinOrigin ?: return null
                 return renderKotlinDeclaration(origin, quickNavigation)
             } else if (element.isModifier()) {
                 when(element.text) {
@@ -322,10 +324,10 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             if (quickNavigation) {
                 val referenceExpression = originalElement?.getNonStrictParentOfType<KtReferenceExpression>()
                 if (referenceExpression != null) {
-                    val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
+                    val context = referenceExpression!!.analyze(BodyResolveMode.PARTIAL)
                     val declarationDescriptor = context[BindingContext.REFERENCE_TARGET, referenceExpression]
                     if (declarationDescriptor != null) {
-                        return mixKotlinToJava(declarationDescriptor, element, originalElement)
+                        return mixKotlinToJava(declarationDescriptor!!, element, originalElement)
                     }
                 }
             } else {
@@ -352,7 +354,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 }
             }
 
-            return buildKotlin(context, declarationDescriptor, quickNavigation, declaration)
+            return buildKotlin(context, declarationDescriptor!!, quickNavigation, declaration)
         }
 
         private fun renderKotlinImplicitLambdaParameter(element: KtReferenceExpression, quickNavigation: Boolean): String? {
@@ -379,9 +381,9 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             @Suppress("NAME_SHADOWING")
             var declarationDescriptor = declarationDescriptor
             if (declarationDescriptor is ValueParameterDescriptor) {
-                val property = context[BindingContext.VALUE_PARAMETER_AS_PROPERTY, declarationDescriptor]
+                val property = context[BindingContext.VALUE_PARAMETER_AS_PROPERTY, declarationDescriptor as ValueParameterDescriptor]
                 if (property != null) {
-                    declarationDescriptor = property
+                    declarationDescriptor = property!!
                 }
             }
 
@@ -400,10 +402,10 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                         if (comment != null) {
                             insert(DescriptionBodyTemplate.Kotlin()) {
                                 content {
-                                    appendKDocContent(comment)
+                                    appendKDocContent(comment!!)
                                 }
                                 sections {
-                                    if (comment is KDocSection) appendKDocSection(comment)
+                                    if (comment is KDocSection) appendKDocSection(comment as KDocSection)
                                 }
                             }
                         } else if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
@@ -420,7 +422,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             if (!DescriptorUtils.isLocal(descriptor)) {
                 val containingDeclaration = descriptor.containingDeclaration
                 if (containingDeclaration != null) {
-                    val fqName = containingDeclaration.fqNameSafe
+                    val fqName = containingDeclaration!!.fqNameSafe
                     if (!fqName.isRoot) {
                         DocumentationManagerUtil.createHyperlink(this, fqName.asString(), fqName.asString(), false)
                     }
@@ -524,8 +526,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         private fun findElementWithText(element: PsiElement?, text: String): PsiElement? {
             return when {
                 element == null -> null
-                element.text == text -> element
-                element.prevLeaf()?.text == text -> element.prevLeaf()
+                element!!.text == text -> element
+                element!!.prevLeaf()?.text == text -> element!!.prevLeaf()
                 else -> null
             }
         }

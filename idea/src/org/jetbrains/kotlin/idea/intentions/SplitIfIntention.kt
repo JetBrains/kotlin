@@ -32,15 +32,15 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 class SplitIfIntention : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Split 'if' into two") {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
         return when (element) {
-            is KtOperationReferenceExpression -> isOperatorValid(element)
-            is KtIfExpression -> getFirstValidOperator(element) != null && element.ifKeyword.textRange.containsOffset(caretOffset)
+            is KtOperationReferenceExpression -> isOperatorValid(element as KtOperationReferenceExpression)
+            is KtIfExpression -> getFirstValidOperator(element as KtIfExpression) != null && (element as KtIfExpression).ifKeyword.textRange.containsOffset(caretOffset)
             else -> false
         }
     }
 
     override fun applyTo(element: KtExpression, editor: Editor?) {
         val operator = when (element) {
-            is KtIfExpression -> getFirstValidOperator(element)!!
+            is KtIfExpression -> getFirstValidOperator(element as KtIfExpression)!!
             else -> element as KtOperationReferenceExpression
         }
 
@@ -49,10 +49,10 @@ class SplitIfIntention : SelfTargetingIntention<KtExpression>(KtExpression::clas
         val commentSaver = CommentSaver(ifExpression!!)
 
         val expression = operator.parent as KtBinaryExpression
-        val rightExpression = KtPsiUtil.safeDeparenthesize(getRight(expression, ifExpression.condition!!, commentSaver))
+        val rightExpression = KtPsiUtil.safeDeparenthesize(getRight(expression, ifExpression!!.condition!!, commentSaver))
         val leftExpression = KtPsiUtil.safeDeparenthesize(expression.left!!)
-        val thenBranch = ifExpression.then!!
-        val elseBranch = ifExpression.`else`
+        val thenBranch = ifExpression!!.then!!
+        val elseBranch = ifExpression!!.`else`
 
         val psiFactory = KtPsiFactory(element)
 
@@ -62,12 +62,12 @@ class SplitIfIntention : SelfTargetingIntention<KtExpression>(KtExpression::clas
             KtTokens.ANDAND -> psiFactory.createIf(leftExpression, psiFactory.createSingleStatementBlock(innerIf), elseBranch)
 
             KtTokens.OROR -> {
-                val container = ifExpression.parent
+                val container = ifExpression!!.parent
 
                 if (container is KtBlockExpression && elseBranch == null && thenBranch.lastBlockStatementOrThis().isExitStatement()) { // special case
                     val secondIf = container.addAfter(innerIf, ifExpression)
                     container.addAfter(psiFactory.createNewLine(), ifExpression)
-                    val firstIf = ifExpression.replace(psiFactory.createIf(leftExpression, thenBranch))
+                    val firstIf = ifExpression!!.replace(psiFactory.createIf(leftExpression, thenBranch))
                     commentSaver.restore(PsiChildRange(firstIf, secondIf))
                     return
                 }
@@ -79,7 +79,7 @@ class SplitIfIntention : SelfTargetingIntention<KtExpression>(KtExpression::clas
             else -> throw IllegalArgumentException()
         }
 
-        val result = ifExpression.replace(newIf)
+        val result = ifExpression!!.replace(newIf)
         commentSaver.restore(result)
     }
 

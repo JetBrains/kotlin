@@ -166,7 +166,7 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is KtFile) return
-        selectElements(editor, file) { elements, targetParent -> doInvoke(project, editor, elements, targetParent) }
+        selectElements(editor, file as KtFile) { elements, targetParent -> doInvoke(project, editor, elements, targetParent) }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

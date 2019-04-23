@@ -27,7 +27,7 @@ class KotlinCatchBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnte
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtCatchClause) return
 
-        if (psiElement.catchBody == null) {
+        if ((psiElement as KtCatchClause).catchBody == null) {
             editor.document.insertString(psiElement.endOffset, "{}")
         }
     }

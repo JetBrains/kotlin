@@ -43,17 +43,17 @@ class AddPropertyToSupertypeFix private constructor(
 
     override fun getText(): String {
         val single = properties.singleOrNull()
-        return if (single != null) actionName(single) else "Add property to supertype..."
+        return if (single != null) actionName(single!!) else "Add property to supertype..."
     }
 
     override fun getFamilyName() = "Add property to supertype"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
-            if (properties.size == 1 || editor == null || !editor.component.isShowing) {
+            if (properties.size == 1 || editor == null || !editor!!.component.isShowing) {
                 addProperty(properties.first(), project)
             } else {
-                JBPopupFactory.getInstance().createListPopup(createPropertyPopup(project)).showInBestPositionFor(editor)
+                JBPopupFactory.getInstance().createListPopup(createPropertyPopup(project)).showInBestPositionFor(editor!!)
             }
         }
     }
@@ -119,7 +119,7 @@ class AddPropertyToSupertypeFix private constructor(
 
             var sourceCode = IdeDescriptorRenderers.SOURCE_CODE.render(propertyDescriptor)
             if (classDescriptor.kind == ClassKind.CLASS && classDescriptor.modality == Modality.OPEN && initializer != null) {
-                sourceCode += " = ${initializer.text}"
+                sourceCode += " = ${initializer!!.text}"
             }
 
             val targetClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor) as? KtClass ?: return null

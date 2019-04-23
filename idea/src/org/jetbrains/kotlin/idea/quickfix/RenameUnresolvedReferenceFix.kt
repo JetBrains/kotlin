@@ -93,14 +93,14 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
                 .match(container, KotlinPsiUnifier.DEFAULT)
                 .mapNotNull {
                     val candidate = (it.range.elements.first() as? KtExpression)?.getQualifiedElementSelector() as? KtNameReferenceExpression
-                    if (candidate != null && candidate.isCallee() == isCallee) candidate else null
+                    if (candidate != null && candidate!!.isCallee() == isCallee) candidate else null
                 }
 
         val resolutionFacade = element.getResolutionFacade()
         val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL_WITH_CFA)
         val moduleDescriptor = resolutionFacade.moduleDescriptor
         val variantsHelper = ReferenceVariantsHelper(context, resolutionFacade, moduleDescriptor, {
-            it !is DeclarationDescriptorWithVisibility || it.isVisible(element, null, context, resolutionFacade)
+            it !is DeclarationDescriptorWithVisibility || (it as DeclarationDescriptorWithVisibility).isVisible(element, null, context, resolutionFacade)
         }, NotPropertiesService.getNotProperties(element))
         val expectedTypes = patternExpression
                 .guessTypes(context, moduleDescriptor)
@@ -109,7 +109,7 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
         val lookupItems = variantsHelper
                 .getReferenceVariants(element, descriptorKindFilter, { true })
                 .filter { candidate ->
-                    candidate is CallableDescriptor && (expectedTypes.any { candidate.returnType?.isSubtypeOf(it) ?: false })
+                    candidate is CallableDescriptor && (expectedTypes.any { (candidate as CallableDescriptor).returnType?.isSubtypeOf(it) ?: false })
                 }
                 .mapTo(if (ApplicationManager.getApplication().isUnitTestMode) linkedSetOf() else linkedSetOf(originalName)) {
                     it.name.asString()
@@ -128,8 +128,8 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
             }
         }
 
-        editor.caretModel.moveToOffset(container.startOffset)
-        TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate())
+        editor!!.caretModel.moveToOffset(container.startOffset)
+        TemplateManager.getInstance(project).startTemplate(editor!!, builder.buildInlineTemplate())
     }
 }
 

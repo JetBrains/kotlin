@@ -97,13 +97,13 @@ class FoldInitializerAndIfToElvisIntention :
 
             val elvis = factory.createExpressionByPattern(pattern, initializer, ifNullExpr) as KtBinaryExpression
             if (typeReference != null) {
-                elvis.left!!.replace(factory.createExpressionByPattern("$0 as? $1", initializer, typeReference))
+                elvis.left!!.replace(factory.createExpressionByPattern("$0 as? $1", initializer, typeReference!!))
             }
             val newElvis = initializer.replaced(elvis)
             element.delete()
 
-            if (explicitTypeToSet != null && !explicitTypeToSet.isError) {
-                declaration.setType(explicitTypeToSet)
+            if (explicitTypeToSet != null && !explicitTypeToSet!!.isError) {
+                declaration.setType(explicitTypeToSet!!)
             }
 
             commentSaver.restore(childRangeAfter)
@@ -127,13 +127,13 @@ class FoldInitializerAndIfToElvisIntention :
             val operationExpression = ifExpression.condition as? KtOperationExpression ?: return null
             val value = when (operationExpression) {
                 is KtBinaryExpression -> {
-                    if (operationExpression.operationToken != KtTokens.EQEQ) return null
-                    operationExpression.expressionComparedToNull()
+                    if ((operationExpression as KtBinaryExpression).operationToken != KtTokens.EQEQ) return null
+                    (operationExpression as KtBinaryExpression).expressionComparedToNull()
                 }
                 is KtIsExpression -> {
-                    if (!operationExpression.isNegated) return null
-                    if (operationExpression.typeReference?.typeElement is KtNullableType) return null
-                    operationExpression.leftHandSide
+                    if (!(operationExpression as KtIsExpression).isNegated) return null
+                    if ((operationExpression as KtIsExpression).typeReference?.typeElement is KtNullableType) return null
+                    (operationExpression as KtIsExpression).leftHandSide
                 }
                 else -> return null
             } as? KtNameReferenceExpression ?: return null
@@ -142,25 +142,25 @@ class FoldInitializerAndIfToElvisIntention :
             val prevStatement = (ifExpression.siblings(forward = false, withItself = false)
                 .firstIsInstanceOrNull<KtExpression>() ?: return null) as? KtVariableDeclaration
             prevStatement ?: return null
-            if (prevStatement.nameAsName != value.getReferencedNameAsName()) return null
-            val initializer = prevStatement.initializer ?: return null
+            if (prevStatement!!.nameAsName != value.getReferencedNameAsName()) return null
+            val initializer = prevStatement!!.initializer ?: return null
             val then = ifExpression.then ?: return null
             val typeReference = (operationExpression as? KtIsExpression)?.typeReference
 
             if (typeReference != null) {
                 val checkedType = ifExpression.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
-                val variableType = (prevStatement.resolveToDescriptorIfAny() as? VariableDescriptor)?.type
-                if (checkedType != null && variableType != null && !checkedType.isSubtypeOf(variableType)) return null
+                val variableType = (prevStatement!!.resolveToDescriptorIfAny() as? VariableDescriptor)?.type
+                if (checkedType != null && variableType != null && !checkedType!!.isSubtypeOf(variableType!!)) return null
             }
 
-            val statement = if (then is KtBlockExpression) then.statements.singleOrNull() else then
+            val statement = if (then is KtBlockExpression) (then as KtBlockExpression).statements.singleOrNull() else then
             statement ?: return null
 
-            if (ReferencesSearch.search(prevStatement, LocalSearchScope(statement)).findFirst() != null) {
+            if (ReferencesSearch.search(prevStatement!!, LocalSearchScope(statement!!)).findFirst() != null) {
                 return null
             }
 
-            return Data(initializer, prevStatement, statement, typeReference)
+            return Data(initializer, prevStatement!!, statement!!, typeReference)
         }
 
         private fun PsiChildRange.withoutLastStatement(): PsiChildRange {

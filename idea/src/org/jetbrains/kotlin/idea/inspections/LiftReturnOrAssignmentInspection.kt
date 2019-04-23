@@ -38,10 +38,10 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
 
                 val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)
                 if (foldableReturns?.isNotEmpty() == true) {
-                    val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
-                    val isSerious = !hasOtherReturns && foldableReturns.size > 1
+                    val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns!! }
+                    val isSerious = !hasOtherReturns && foldableReturns!!.size > 1
                     registerProblem(expression, keyword, isSerious, LiftReturnOutFix(keyword.text))
-                    foldableReturns.forEach {
+                    foldableReturns!!.forEach {
                         registerProblem(expression, keyword, isSerious, LiftReturnOutFix(keyword.text), it, INFORMATION)
                     }
                     return

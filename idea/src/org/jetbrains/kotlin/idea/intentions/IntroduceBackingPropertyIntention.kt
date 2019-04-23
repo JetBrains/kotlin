@@ -50,7 +50,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
 
             val containingClass = property.getStrictParentOfType<KtClassOrObject>() ?: return false
             if (containingClass.isExpectDeclaration()) return false
-            return containingClass.declarations.none { it is KtProperty && it.name == "_$name" }
+            return containingClass.declarations.none { it is KtProperty && (it as KtProperty).name == "_$name" }
         }
 
         fun introduceBackingProperty(property: KtProperty) {
@@ -65,7 +65,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
             if (getter == null) {
                 createGetter(property)
             } else {
-                replaceFieldReferences(getter, property.name!!)
+                replaceFieldReferences(getter!!, property.name!!)
             }
 
             if (property.isVar) {
@@ -73,7 +73,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
                 if (setter == null) {
                     createSetter(property)
                 } else {
-                    replaceFieldReferences(setter, property.name!!)
+                    replaceFieldReferences(setter!!, property.name!!)
                 }
             }
 

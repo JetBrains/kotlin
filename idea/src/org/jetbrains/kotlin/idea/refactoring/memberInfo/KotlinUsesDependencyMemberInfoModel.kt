@@ -35,8 +35,8 @@ open class KotlinUsesDependencyMemberInfoModel<T : KtNamedDeclaration, M : Membe
         val container = member.containingClassOrObject
         if (problem == MemberInfoModel.ERROR
             && container is KtObjectDeclaration
-            && container.isCompanion()
-            && container.containingClassOrObject == myClass) return MemberInfoModel.WARNING
+            && (container as KtObjectDeclaration).isCompanion()
+            && (container as KtObjectDeclaration).containingClassOrObject == myClass) return MemberInfoModel.WARNING
 
         return problem
     }

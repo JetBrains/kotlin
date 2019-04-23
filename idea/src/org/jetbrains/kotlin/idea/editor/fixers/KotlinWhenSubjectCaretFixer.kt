@@ -26,12 +26,12 @@ class KotlinWhenSubjectCaretFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSm
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is KtWhenExpression) return
 
-        val lParen = element.leftParenthesis
-        val rParen = element.rightParenthesis
-        val subject = element.subjectExpression
+        val lParen = (element as KtWhenExpression).leftParenthesis
+        val rParen = (element as KtWhenExpression).rightParenthesis
+        val subject = (element as KtWhenExpression).subjectExpression
 
         if (subject == null && lParen != null && rParen != null) {
-            processor.registerUnresolvedError(lParen.range.end)
+            processor.registerUnresolvedError(lParen!!.range.end)
         }
     }
 }

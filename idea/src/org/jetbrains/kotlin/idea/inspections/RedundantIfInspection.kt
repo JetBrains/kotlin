@@ -38,7 +38,7 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
         data class LabeledReturn(val label: String) : BranchType()
 
         class Assign(val lvalue: KtExpression) : BranchType() {
-            override fun equals(other: Any?) = other is Assign && lvalue.text == other.lvalue.text
+            override fun equals(other: Any?) = other is Assign && lvalue.text == (other as Assign).lvalue.text
 
             override fun hashCode() = lvalue.text.hashCode()
         }
@@ -96,8 +96,8 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
             element.replace(
                 when (branchType) {
                     is BranchType.Return -> factory.createExpressionByPattern("return $0", condition)
-                    is BranchType.LabeledReturn -> factory.createExpressionByPattern("return${branchType.label} $0", condition)
-                    is BranchType.Assign -> factory.createExpressionByPattern("$0 = $1", branchType.lvalue, condition)
+                    is BranchType.LabeledReturn -> factory.createExpressionByPattern("return${(branchType as BranchType.LabeledReturn).label} $0", condition)
+                    is BranchType.Assign -> factory.createExpressionByPattern("$0 = $1", (branchType as BranchType.Assign).lvalue, condition)
                     else -> condition
                 }
             )

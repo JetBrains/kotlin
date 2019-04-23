@@ -47,9 +47,9 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
             val element: PsiElement = ref.element
             if (element.text != "it") return null
 
-            if (element !is KtNameReferenceExpression || !isAutoCreatedItUsage(element)) return null
+            if (element !is KtNameReferenceExpression || !isAutoCreatedItUsage(element as KtNameReferenceExpression)) return null
 
-            val itDescriptor = element.resolveMainReferenceToDescriptors().singleOrNull() ?: return null
+            val itDescriptor = (element as KtNameReferenceExpression).resolveMainReferenceToDescriptors().singleOrNull() ?: return null
             val descriptorWithSource = itDescriptor.containingDeclaration as? DeclarationDescriptorWithSource ?: return null
             val lambdaExpression = descriptorWithSource.source.getPsi()?.parent as? KtLambdaExpression ?: return null
             return lambdaExpression.leftCurlyBrace.treeNext?.psi
@@ -61,7 +61,7 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
             if (element.text != "this") return null
 
             if (element !is KtNameReferenceExpression) return null
-            val callableDescriptor = element.resolveMainReferenceToDescriptors().singleOrNull() as? CallableDescriptor ?: return null
+            val callableDescriptor = (element as KtNameReferenceExpression).resolveMainReferenceToDescriptors().singleOrNull() as? CallableDescriptor ?: return null
 
             if (!callableDescriptor.isExtension) return null
             val callableDeclaration = callableDescriptor.source.getPsi() as? KtCallableDeclaration ?: return null
@@ -76,13 +76,13 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
 
     override fun getAllAdditionalFlags() = additionalDefinitionSearchFlags + additionalReferenceSearchFlags
 
-    override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is KtClass && element.isAbstract())
+    override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is KtClass && (element as KtClass).isAbstract())
 
     override fun getElementByReference(ref: PsiReference, flags: Int): PsiElement? {
-        if (ref is KtSimpleNameReference && ref.expression is KtLabelReferenceExpression) {
+        if (ref is KtSimpleNameReference && (ref as KtSimpleNameReference).expression is KtLabelReferenceExpression) {
             val refTarget = ref.resolve() as? KtExpression ?: return null
             if (!BitUtil.isSet(flags, DO_NOT_UNWRAP_LABELED_EXPRESSION)) {
-                return refTarget.getLabeledParent(ref.expression.getReferencedName()) ?: refTarget
+                return refTarget.getLabeledParent((ref as KtSimpleNameReference).expression.getReferencedName()) ?: refTarget
             }
             return refTarget
         }
@@ -93,7 +93,7 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
 
         // prefer destructing declaration entry to its target if element name is accepted
         if (ref is KtDestructuringDeclarationReference && BitUtil.isSet(flags, TargetElementUtil.ELEMENT_NAME_ACCEPTED)) {
-            return ref.element
+            return (ref as KtDestructuringDeclarationReference).element
         }
 
         val refExpression = ref.element as? KtSimpleNameExpression

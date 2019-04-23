@@ -52,7 +52,7 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
         val applicableTargets = AnnotationChecker.applicableTargetSet(annotationClassDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
 
         val context = when (element) {
-            is KtElement -> element.analyze()
+            is KtElement -> (element as KtElement).analyze()
             else -> containingDeclaration.analyze()
         }
 
@@ -78,13 +78,13 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
         if (containingDeclaration is KtCallableDeclaration) {
             val containingClassOrObject = containingDeclaration.containingClassOrObject
             if (containingClassOrObject != null) {
-                val suffix = " to containing class '${containingClassOrObject.name}'"
-                if (isApplicableTo(containingClassOrObject, applicableTargets)) {
-                    result.add(AddAnnotationFix(containingClassOrObject, annotationFqName, suffix))
+                val suffix = " to containing class '${containingClassOrObject!!.name}'"
+                if (isApplicableTo(containingClassOrObject!!, applicableTargets)) {
+                    result.add(AddAnnotationFix(containingClassOrObject!!, annotationFqName, suffix))
                 } else {
                     result.add(
                         AddAnnotationFix(
-                            containingClassOrObject, ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME, suffix, annotationFqName
+                            containingClassOrObject!!, ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME, suffix, annotationFqName
                         )
                     )
                 }
@@ -94,7 +94,7 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
         val module = containingFile.module
         if (module != null) {
             result.add(
-                MakeModuleExperimentalFix(containingFile, module, annotationFqName)
+                MakeModuleExperimentalFix(containingFile, module!!, annotationFqName)
             )
         }
 

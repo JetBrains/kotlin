@@ -42,8 +42,8 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
 
             val qualifiedExpression = lambda.getStrictParentOfType<KtQualifiedExpression>()
             if (qualifiedExpression != null) {
-                val receiver = qualifiedExpression.receiverExpression
-                val call = qualifiedExpression.callExpression
+                val receiver = qualifiedExpression!!.receiverExpression
+                val call = qualifiedExpression!!.callExpression
                 if (receiver.text == "it" && call?.isCalling(scopeFunctions, context) == true) return
             }
 

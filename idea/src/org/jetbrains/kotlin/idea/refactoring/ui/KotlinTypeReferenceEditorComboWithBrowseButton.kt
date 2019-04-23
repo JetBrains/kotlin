@@ -52,7 +52,7 @@ class KotlinTypeReferenceEditorComboWithBrowseButton(
         }
 
         if (text != null) {
-            if (text.isNotEmpty()) {
+            if (text!!.isNotEmpty()) {
                 childComponent.prependItem(text)
             }
             else {

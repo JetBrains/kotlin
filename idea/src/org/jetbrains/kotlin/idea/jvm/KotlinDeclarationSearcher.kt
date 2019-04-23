@@ -24,20 +24,20 @@ class KotlinDeclarationSearcher : JvmDeclarationSearcher {
 
     private fun getLightElements(declaringElement: PsiElement): List<PsiNamedElement> = when (declaringElement) {
         is KtClass -> {
-            val primaryConstructor = declaringElement.primaryConstructor
+            val primaryConstructor = (declaringElement as KtClass).primaryConstructor
             if (primaryConstructor?.hasConstructorKeyword() != false)
-                declaringElement.toLightElements()
+                (declaringElement as KtClass).toLightElements()
             else
-                declaringElement.toLightElements() + primaryConstructor.toLightElements()
+                (declaringElement as KtClass).toLightElements() + primaryConstructor!!.toLightElements()
         }
         is KtParameter -> {
             SmartList<PsiNamedElement>().apply {
-                addAll(declaringElement.toPsiParameters())
-                addIfNotNull(LightClassUtil.getLightClassBackingField(declaringElement))
-                addAll(LightClassUtil.getLightClassPropertyMethods(declaringElement))
+                addAll((declaringElement as KtParameter).toPsiParameters())
+                addIfNotNull(LightClassUtil.getLightClassBackingField(declaringElement as KtParameter))
+                addAll(LightClassUtil.getLightClassPropertyMethods(declaringElement as KtParameter))
             }
         }
-        is KtElement -> declaringElement.toLightElements()
+        is KtElement -> (declaringElement as KtElement).toLightElements()
         else -> emptyList()
     }
 }

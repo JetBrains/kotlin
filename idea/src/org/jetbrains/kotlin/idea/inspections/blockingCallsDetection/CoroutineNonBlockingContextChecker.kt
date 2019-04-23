@@ -39,7 +39,9 @@ class CoroutineNonBlockingContextChecker : NonBlockingContextChecker {
             return false
 
         val containingLambda = element.parents
-            .firstOrNull { it is KtLambdaExpression && it.analyze().get(BindingContext.LAMBDA_INVOCATIONS, it) == null }
+            .firstOrNull { it is KtLambdaExpression && (it as KtLambdaExpression).analyze().get(BindingContext.LAMBDA_INVOCATIONS,
+                                                                                                it as KtLambdaExpression
+            ) == null }
         val containingArgument = PsiTreeUtil.getParentOfType(containingLambda, KtValueArgument::class.java)
         if (containingArgument != null) {
             val callExpression = PsiTreeUtil.getParentOfType(containingArgument, KtCallExpression::class.java) ?: return false
@@ -55,7 +57,7 @@ class CoroutineNonBlockingContextChecker : NonBlockingContextChecker {
             val type = parameterForArgument.returnType ?: return false
 
             val hasRestrictSuspensionAnnotation = if (type.isBuiltinFunctionalType) {
-                type.getReceiverTypeFromFunctionType()?.isRestrictsSuspensionReceiver(element.project.getLanguageVersionSettings())
+                type.getReceiverTypeFromFunctionType()?.isRestrictsSuspensionReceiver((element as KtCallExpression).project.getLanguageVersionSettings())
             } else null
 
             return hasRestrictSuspensionAnnotation != true && type.isSuspendFunctionType

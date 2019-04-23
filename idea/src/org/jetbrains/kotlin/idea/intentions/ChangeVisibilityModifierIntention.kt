@@ -50,21 +50,21 @@ open class ChangeVisibilityModifierIntention protected constructor(
             // cannot make visibility less than (or non-comparable with) any of the supers
             if (callableDescriptor.overriddenDescriptors
                     .map { Visibilities.compare(it.visibility, targetVisibility) }
-                    .any { it == null || it > 0 }) return null
+                    .any { it == null || it!! > 0 }) return null
         }
 
         text = defaultText
 
         if (element is KtPropertyAccessor) {
-            if (element.isGetter) return null
+            if ((element as KtPropertyAccessor).isGetter) return null
             if (targetVisibility == Visibilities.PUBLIC) {
-                val explicitVisibility = element.modifierList?.visibilityModifierType()?.value ?: return null
+                val explicitVisibility = (element as KtPropertyAccessor).modifierList?.visibilityModifierType()?.value ?: return null
                 text = "Remove '$explicitVisibility' modifier"
             } else {
-                val propVisibility = (element.property.toDescriptor() as? DeclarationDescriptorWithVisibility)?.visibility ?: return null
+                val propVisibility = ((element as KtPropertyAccessor).property.toDescriptor() as? DeclarationDescriptorWithVisibility)?.visibility ?: return null
                 if (propVisibility == targetVisibility) return null
                 val compare = Visibilities.compare(targetVisibility, propVisibility)
-                if (compare == null || compare > 0) return null
+                if (compare == null || compare!! > 0) return null
             }
         }
         val defaultRange = noModifierYetApplicabilityRange(element) ?: return null
@@ -74,30 +74,30 @@ open class ChangeVisibilityModifierIntention protected constructor(
         }
 
         return if (modifierList != null)
-            TextRange(modifierList.startOffset, defaultRange.endOffset) //TODO: smaller range? now it includes annotations too
+            TextRange(modifierList!!.startOffset, defaultRange.endOffset) //TODO: smaller range? now it includes annotations too
         else
             defaultRange
     }
 
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
         element.setVisibility(modifier)
-        if (element is KtPropertyAccessor) element.modifierList?.nextSibling?.replace(KtPsiFactory(element).createWhiteSpace())
+        if (element is KtPropertyAccessor) (element as KtPropertyAccessor).modifierList?.nextSibling?.replace(KtPsiFactory(element).createWhiteSpace())
     }
 
     private fun noModifierYetApplicabilityRange(declaration: KtDeclaration): TextRange? {
         return when (declaration) {
-            is KtNamedFunction -> declaration.funKeyword?.textRange
-            is KtProperty -> declaration.valOrVarKeyword.textRange
-            is KtPropertyAccessor -> declaration.namePlaceholder.textRange
-            is KtClass -> declaration.getClassOrInterfaceKeyword()?.textRange
-            is KtObjectDeclaration -> declaration.getObjectKeyword()?.textRange
-            is KtPrimaryConstructor -> declaration.valueParameterList?.let {
+            is KtNamedFunction -> (declaration as KtNamedFunction).funKeyword?.textRange
+            is KtProperty -> (declaration as KtProperty).valOrVarKeyword.textRange
+            is KtPropertyAccessor -> (declaration as KtPropertyAccessor).namePlaceholder.textRange
+            is KtClass -> (declaration as KtClass).getClassOrInterfaceKeyword()?.textRange
+            is KtObjectDeclaration -> (declaration as KtObjectDeclaration).getObjectKeyword()?.textRange
+            is KtPrimaryConstructor -> (declaration as KtPrimaryConstructor).valueParameterList?.let {
                 //TODO: use constructor keyword if exist
                 TextRange.from(it.startOffset, 0)
             }
-            is KtSecondaryConstructor -> declaration.getConstructorKeyword().textRange
-            is KtParameter -> declaration.valOrVarKeyword?.textRange
-            is KtTypeAlias -> declaration.getTypeAliasKeyword()?.textRange
+            is KtSecondaryConstructor -> (declaration as KtSecondaryConstructor).getConstructorKeyword().textRange
+            is KtParameter -> (declaration as KtParameter).valOrVarKeyword?.textRange
+            is KtTypeAlias -> (declaration as KtTypeAlias).getTypeAliasKeyword()?.textRange
             else -> null
         }
     }

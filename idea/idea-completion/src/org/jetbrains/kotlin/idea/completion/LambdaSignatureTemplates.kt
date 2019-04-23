@@ -162,8 +162,8 @@ object LambdaSignatureTemplates {
             val parameterName = parameterType.extractParameterNameFromFunctionTypeArgument()?.render()
             val nameExpression =  if (parameterName != null) {
                 object : Expression() {
-                    override fun calculateResult(context: ExpressionContext?) = TextResult(parameterName)
-                    override fun calculateQuickResult(context: ExpressionContext?): Result? = TextResult(parameterName)
+                    override fun calculateResult(context: ExpressionContext?) = TextResult(parameterName!!)
+                    override fun calculateQuickResult(context: ExpressionContext?): Result? = TextResult(parameterName!!)
                     override fun calculateLookupItems(context: ExpressionContext?) = emptyArray<LookupElement>()
                 }
             }

@@ -42,7 +42,7 @@ class KotlinAddRequiredModuleFix(module: PsiJavaModule, private val requiredName
         return PsiUtil.isLanguageLevel9OrHigher(file) &&
                startElement is PsiJavaModule &&
                startElement.getManager().isInProject(startElement) &&
-               getLBrace(startElement) != null
+               getLBrace(startElement as PsiJavaModule) != null
     }
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
@@ -81,7 +81,7 @@ class KotlinAddRequiredModuleFix(module: PsiJavaModule, private val requiredName
                 if (PsiUtil.isJavaToken(element, JavaTokenType.LBRACE)) {
                     return element
                 }
-                element = element.nextSibling
+                element = element!!.nextSibling
             }
             return null // module-info is incomplete
         }

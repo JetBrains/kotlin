@@ -72,9 +72,9 @@ class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
         if (nameIdentifier != null
                 && editorPsiFile == elementToRename.containingFile
                 && elementToRename is KtPrimaryConstructor
-                && offset !in nameIdentifier.textRange
-                && offset in elementToRename.textRange) {
-            editor.caretModel.moveToOffset(nameIdentifier.textOffset)
+                && offset !in nameIdentifier!!.textRange
+                && offset in (elementToRename as KtPrimaryConstructor).textRange) {
+            editor.caretModel.moveToOffset(nameIdentifier!!.textOffset)
         }
 
         val currentName = nameIdentifier?.text ?: ""

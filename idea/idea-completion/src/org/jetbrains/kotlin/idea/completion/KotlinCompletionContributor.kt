@@ -74,14 +74,14 @@ class KotlinCompletionContributor : CompletionContributor() {
         val offset = context.startOffset
         val tokenBefore = psiFile.findElementAt(max(0, offset - 1))
 
-        if (offset > 0 && tokenBefore!!.node.elementType == KtTokens.REGULAR_STRING_PART && tokenBefore.text.startsWith(".")) {
-            val prev = tokenBefore.parent.prevSibling
+        if (offset > 0 && tokenBefore!!.node.elementType == KtTokens.REGULAR_STRING_PART && tokenBefore!!.text.startsWith(".")) {
+            val prev = tokenBefore!!.parent.prevSibling
             if (prev != null && prev is KtSimpleNameStringTemplateEntry) {
-                val expression = prev.expression
+                val expression = (prev as KtSimpleNameStringTemplateEntry).expression
                 if (expression != null) {
-                    val prefix = tokenBefore.text.substring(0, offset - tokenBefore.startOffset)
-                    context.dummyIdentifier = "{" + expression.text + prefix + CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "}"
-                    context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, expression.startOffset)
+                    val prefix = tokenBefore!!.text.substring(0, offset - tokenBefore!!.startOffset)
+                    context.dummyIdentifier = "{" + expression!!.text + prefix + CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "}"
+                    context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, expression!!.startOffset)
                     return
                 }
             }
@@ -108,13 +108,13 @@ class KotlinCompletionContributor : CompletionContributor() {
         val tokenAt = psiFile.findElementAt(max(0, offset))
         if (tokenAt != null) {
             if (context.completionType == CompletionType.SMART && !isAtEndOfLine(offset, context.editor.document) /* do not use parent expression if we are at the end of line - it's probably parsed incorrectly */) {
-                var parent = tokenAt.parent
+                var parent = tokenAt!!.parent
                 if (parent is KtExpression && parent !is KtBlockExpression) {
                     // search expression to be replaced - go up while we are the first child of parent expression
-                    var expression: KtExpression = parent
+                    var expression: KtExpression = parent as KtExpression
                     parent = expression.parent
                     while (parent is KtExpression && parent.getFirstChild() == expression) {
-                        expression = parent
+                        expression = parent as KtExpression
                         parent = expression.parent
                     }
 
@@ -128,17 +128,17 @@ class KotlinCompletionContributor : CompletionContributor() {
                     val argumentList = (expression.parent as? KtValueArgument)?.parent as? KtValueArgumentList
                     if (argumentList != null) {
                         context.offsetMap.addOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET,
-                                                    argumentList.rightParenthesis?.textRange?.startOffset ?: argumentList.endOffset)
+                                                    argumentList!!.rightParenthesis?.textRange?.startOffset ?: argumentList!!.endOffset)
                     }
                 }
             }
 
             // IDENTIFIER when 'f<caret>oo: Foo'
             // COLON when 'foo<caret>: Foo'
-            if (tokenAt.node.elementType == KtTokens.IDENTIFIER || tokenAt.node.elementType == KtTokens.COLON) {
-                val parameter = tokenAt.parent as? KtParameter
+            if (tokenAt!!.node.elementType == KtTokens.IDENTIFIER || tokenAt!!.node.elementType == KtTokens.COLON) {
+                val parameter = tokenAt!!.parent as? KtParameter
                 if (parameter != null) {
-                    context.offsetMap.addOffset(VariableOrParameterNameWithTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
+                    context.offsetMap.addOffset(VariableOrParameterNameWithTypeCompletion.REPLACEMENT_OFFSET, parameter!!.endOffset)
                 }
             }
         }
@@ -148,16 +148,16 @@ class KotlinCompletionContributor : CompletionContributor() {
     private fun replacementOffsetByExpression(expression: KtExpression): Int {
         when (expression) {
             is KtCallExpression -> {
-                val calleeExpression = expression.calleeExpression
+                val calleeExpression = (expression as KtCallExpression).calleeExpression
                 if (calleeExpression != null) {
-                    return calleeExpression.textRange!!.endOffset
+                    return calleeExpression!!.textRange!!.endOffset
                 }
             }
 
             is KtQualifiedExpression -> {
-                val selector = expression.selectorExpression
+                val selector = (expression as KtQualifiedExpression).selectorExpression
                 if (selector != null) {
-                    return replacementOffsetByExpression(selector)
+                    return replacementOffsetByExpression(selector!!)
                 }
             }
         }
@@ -168,19 +168,19 @@ class KotlinCompletionContributor : CompletionContributor() {
         val classOrObject = tokenBefore?.parents?.firstIsInstanceOrNull<KtClassOrObject>() ?: return false
         val name = classOrObject.nameIdentifier ?: return false
         val body = classOrObject.getBody() ?: return false
-        val offset = tokenBefore.startOffset
+        val offset = tokenBefore!!.startOffset
         return name.endOffset <= offset && offset <= body.startOffset
     }
 
     private fun specialLambdaSignatureDummyIdentifier(tokenBefore: PsiElement?): String? {
         var leaf = tokenBefore
         while (leaf is PsiWhiteSpace || leaf is PsiComment) {
-            leaf = leaf.prevLeaf(true)
+            leaf = leaf!!.prevLeaf(true)
         }
 
         val lambda = leaf?.parents?.firstOrNull { it is KtFunctionLiteral } ?: return null
 
-        val lambdaChild = leaf.parents.takeWhile { it != lambda }.lastOrNull()
+        val lambdaChild = leaf!!.parents.takeWhile { it != lambda }.lastOrNull()
 
         return if (lambdaChild is KtParameterList)
             CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
@@ -217,7 +217,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                 builder.append(tail)
 
                 val text = builder.toString()
-                val file = KtPsiFactory(tokenBefore.project).createFile(text)
+                val file = KtPsiFactory(tokenBefore!!.project).createFile(text)
                 val declaration = file.declarations.singleOrNull() ?: return null
                 if (declaration.textLength != text.length) return null
                 val containsErrorElement = !PsiTreeUtil.processElements(file, PsiElementProcessor<PsiElement>{ it !is PsiErrorElement })
@@ -235,14 +235,14 @@ class KotlinCompletionContributor : CompletionContributor() {
         val position = parameters.position
         val parametersOriginFile = parameters.originalFile
         if (position.containingFile !is KtFile || parametersOriginFile !is KtFile) return
-        if (parametersOriginFile.doNotComplete == true) return
+        if ((parametersOriginFile as KtFile).doNotComplete == true) return
 
         val toFromOriginalFileMapper = ToFromOriginalFileMapper.create(parameters)
 
         if (position.node.elementType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
             val expression = (position.parent as KtBlockStringTemplateEntry).expression
             if (expression is KtDotQualifiedExpression) {
-                val correctedPosition = (expression.selectorExpression as KtNameReferenceExpression).firstChild
+                val correctedPosition = ((expression as KtDotQualifiedExpression).selectorExpression as KtNameReferenceExpression).firstChild
                 // Workaround for KT-16848
                 // ex:
                 // expression: some.IntellijIdeaRulezzz
@@ -288,7 +288,7 @@ class KotlinCompletionContributor : CompletionContributor() {
 
         fun addPostProcessor(session: CompletionSession) {
             if (lookupElementPostProcessor != null) {
-                session.addLookupElementPostProcessor(lookupElementPostProcessor)
+                session.addLookupElementPostProcessor(lookupElementPostProcessor!!)
             }
         }
 
@@ -389,18 +389,18 @@ class KotlinCompletionContributor : CompletionContributor() {
     private fun specialInTypeArgsDummyIdentifier(tokenBefore: PsiElement?): String? {
         if (tokenBefore == null) return null
 
-        if (tokenBefore.getParentOfType<KtTypeArgumentList>(true) != null) { // already parsed inside type argument list
+        if (tokenBefore!!.getParentOfType<KtTypeArgumentList>(true) != null) { // already parsed inside type argument list
             return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED // do not insert '$' to not break type argument list parsing
         }
 
-        val pair = unclosedTypeArgListNameAndBalance(tokenBefore) ?: return null
+        val pair = unclosedTypeArgListNameAndBalance(tokenBefore!!) ?: return null
         val (nameToken, balance) = pair
         assert(balance > 0)
 
         val nameRef = nameToken.parent as? KtNameReferenceExpression ?: return null
         val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
         val targets = nameRef.getReferenceTargets(bindingContext)
-        return if (targets.isNotEmpty() && targets.all { it is FunctionDescriptor || it is ClassDescriptor && it.kind == ClassKind.CLASS }) {
+        return if (targets.isNotEmpty() && targets.all { it is FunctionDescriptor || it is ClassDescriptor && (it as ClassDescriptor).kind == ClassKind.CLASS }) {
             CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">".repeat(balance) + "$"
         }
         else {
@@ -415,7 +415,7 @@ class KotlinCompletionContributor : CompletionContributor() {
             Pair(nameToken, 1)
         }
         else {
-            Pair(pair.first, pair.second + 1)
+            Pair(pair!!.first, pair!!.second + 1)
         }
     }
 

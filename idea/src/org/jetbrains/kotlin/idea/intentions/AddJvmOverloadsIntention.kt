@@ -36,17 +36,17 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
     override fun isApplicableTo(element: KtModifierListOwner, caretOffset: Int): Boolean {
         val (targetName, parameters) = when (element) {
             is KtNamedFunction -> {
-                val funKeyword = element.funKeyword ?: return false
-                val valueParameterList = element.valueParameterList ?: return false
+                val funKeyword = (element as KtNamedFunction).funKeyword ?: return false
+                val valueParameterList = (element as KtNamedFunction).valueParameterList ?: return false
                 if (caretOffset !in funKeyword.startOffset..valueParameterList.endOffset) {
                     return false
                 }
 
-                "function '${element.name}'" to valueParameterList.parameters
+                "function '${(element as KtNamedFunction).name}'" to valueParameterList.parameters
             }
             is KtSecondaryConstructor -> {
-                val constructorKeyword = element.getConstructorKeyword()
-                val valueParameterList = element.valueParameterList ?: return false
+                val constructorKeyword = (element as KtSecondaryConstructor).getConstructorKeyword()
+                val valueParameterList = (element as KtSecondaryConstructor).valueParameterList ?: return false
                 if (caretOffset !in constructorKeyword.startOffset..valueParameterList.endOffset) {
                     return false
                 }
@@ -54,7 +54,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
                 "secondary constructor" to valueParameterList.parameters
             }
             is KtPrimaryConstructor -> {
-                val parameters = (element.valueParameterList ?: return false).parameters
+                val parameters = ((element as KtPrimaryConstructor).valueParameterList ?: return false).parameters
 
                 // For primary constructors with all default values, a zero-arg constructor is generated anyway. If there's only one
                 // parameter and it has a default value, the bytecode with and without @JvmOverloads is exactly the same.
@@ -76,8 +76,8 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
 
     override fun applyTo(element: KtModifierListOwner, editor: Editor?) {
         if (element is KtPrimaryConstructor) {
-            if (element.getConstructorKeyword() == null) {
-                element.addBefore(KtPsiFactory(element).createConstructorKeyword(), element.valueParameterList)
+            if ((element as KtPrimaryConstructor).getConstructorKeyword() == null) {
+                element.addBefore(KtPsiFactory(element).createConstructorKeyword(), (element as KtPrimaryConstructor).valueParameterList)
             }
             element.addAnnotation(annotationFqName, whiteSpaceText = " ")
         }

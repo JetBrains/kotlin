@@ -62,7 +62,7 @@ class KotlinMemberInfoStorage(
             val superClass = supertype.constructor.declarationDescriptor?.source?.getPsi()
             if (superClass is KtClass || superClass is PsiClass) {
                 getSubclasses(superClass as PsiNamedElement).add(aClass)
-                buildSubClassesMap(superClass)
+                buildSubClassesMap(superClass as PsiNamedElement)
             }
         }
     }
@@ -75,7 +75,7 @@ class KotlinMemberInfoStorage(
 
     override fun extractClassMembers(aClass: PsiNamedElement, temp: ArrayList<KotlinMemberInfo>) {
         if (aClass is KtClassOrObject) {
-            temp += extractClassMembers(aClass, aClass == myClass) { myFilter.includeMember(it) }
+            temp += extractClassMembers(aClass as KtClassOrObject, aClass == myClass) { myFilter.includeMember(it) }
         }
     }
 }
@@ -95,8 +95,8 @@ fun extractClassMembers(
             .filter {
                 it is KtNamedDeclaration
                         && it !is KtConstructor<*>
-                        && !(it is KtObjectDeclaration && it.isCompanion())
-                        && (filter == null || filter(it))
+                        && !(it is KtObjectDeclaration && (it as KtObjectDeclaration).isCompanion())
+                        && (filter == null || (filter as (KtNamedDeclaration) -> Boolean)(it as KtNamedDeclaration))
             }
                 .mapTo(result) { KotlinMemberInfo(it as KtNamedDeclaration, isCompanionMember = isCompanion) }
     }
@@ -113,8 +113,8 @@ fun extractClassMembers(
                     val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
                     val classPsi = classDescriptor?.source?.getPsi()
                     when (classPsi) {
-                        is KtClass -> classPsi
-                        is PsiClass -> KtPsiClassWrapper(classPsi)
+                        is KtClass -> classPsi as KtClass
+                        is PsiClass -> KtPsiClassWrapper(classPsi as PsiClass)
                         else -> null
                     }
                 }

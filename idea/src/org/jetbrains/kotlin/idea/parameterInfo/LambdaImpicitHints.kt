@@ -29,14 +29,14 @@ fun provideLambdaImplicitHints(lambda: KtLambdaExpression): List<InlayInfo> {
         val text = buildString {
             append(TYPE_INFO_PREFIX)
             append("this: ")
-            append(getInlayHintsTypeRenderer(bindingContext, lambda).renderType(implicitReceiver.type))
+            append(getInlayHintsTypeRenderer(bindingContext, lambda).renderType(implicitReceiver!!.type))
         }
         return listOf(InlayInfo(text, lbrace.textRange.endOffset))
     }
 
     val singleParameter = functionDescriptor.valueParameters.singleOrNull()
     if (singleParameter != null && bindingContext[BindingContext.AUTO_CREATED_IT, singleParameter] == true) {
-        val type = singleParameter.type
+        val type = singleParameter!!.type
         if (type.isUnit()) return emptyList()
         val text = buildString {
             append(TYPE_INFO_PREFIX)

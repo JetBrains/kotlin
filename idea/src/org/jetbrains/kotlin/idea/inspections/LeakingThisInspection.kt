@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemHighlightType.WEAK_WARNING
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.search.searches.DefinitionsScopedSearch
+import org.jetbrains.kotlin.cfg.LeakingThisDescriptor
 import org.jetbrains.kotlin.cfg.LeakingThisDescriptor.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
@@ -41,22 +42,22 @@ class LeakingThisInspection : AbstractKotlinInspection() {
                             if (klass.isEnum()) {
                                 val enumEntries = klass.body?.getChildrenOfType<KtEnumEntry>() ?: continue@these
                                 if (enumEntries.none { it.hasOverriddenMember() }) continue@these
-                                "Leaking 'this' in constructor of enum class ${leakingThisDescriptor.klass.name} (with overridable members)"
+                                "Leaking 'this' in constructor of enum class ${(leakingThisDescriptor as NonFinalClass).klass.name} (with overridable members)"
                             } else {
-                                "Leaking 'this' in constructor of non-final class ${leakingThisDescriptor.klass.name}"
+                                "Leaking 'this' in constructor of non-final class ${(leakingThisDescriptor as NonFinalClass).klass.name}"
                             }
                         } else {
                             continue@these // Not supported yet
                         }
                     is NonFinalProperty ->
-                        "Accessing non-final property ${leakingThisDescriptor.property.name} in constructor"
+                        "Accessing non-final property ${(leakingThisDescriptor as NonFinalProperty).property.name} in constructor"
                     is NonFinalFunction ->
-                        "Calling non-final function ${leakingThisDescriptor.function.name} in constructor"
+                        "Calling non-final function ${(leakingThisDescriptor as NonFinalFunction).function.name} in constructor"
                     else -> continue@these // Not supported yet
                 }
-                val memberDescriptorToFix = when (leakingThisDescriptor) {
-                    is NonFinalProperty -> leakingThisDescriptor.property
-                    is NonFinalFunction -> leakingThisDescriptor.function
+                val memberDescriptorToFix = when (leakingThisDescriptor as LeakingThisDescriptor?) {
+                    is NonFinalProperty -> (leakingThisDescriptor as NonFinalProperty).property
+                    is NonFinalFunction -> (leakingThisDescriptor as NonFinalFunction).function
                     else -> null
                 }
                 val memberFix = memberDescriptorToFix?.let {
@@ -73,7 +74,7 @@ class LeakingThisInspection : AbstractKotlinInspection() {
 
                 holder.registerProblem(
                     expression, description,
-                    when (leakingThisDescriptor) {
+                    when (leakingThisDescriptor as LeakingThisDescriptor?) {
                         is NonFinalProperty, is NonFinalFunction -> GENERIC_ERROR_OR_WARNING
                         else -> WEAK_WARNING
                     },
@@ -90,10 +91,10 @@ class LeakingThisInspection : AbstractKotlinInspection() {
     companion object {
         private fun createMakeFinalFix(declaration: KtDeclaration?): IntentionWrapper? {
             declaration ?: return null
-            val useScope = declaration.useScope
+            val useScope = declaration!!.useScope
             if (DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null) return null
-            if ((declaration.containingClassOrObject as? KtClass)?.isInterface() == true) return null
-            return IntentionWrapper(AddModifierFix(declaration, KtTokens.FINAL_KEYWORD), declaration.containingFile)
+            if ((declaration!!.containingClassOrObject as? KtClass)?.isInterface() == true) return null
+            return IntentionWrapper(AddModifierFix(declaration!!, KtTokens.FINAL_KEYWORD), declaration!!.containingFile)
         }
     }
 }

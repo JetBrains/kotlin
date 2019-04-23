@@ -30,28 +30,28 @@ class KotlinFilePasteProvider : PasteProvider {
         val text = CopyPasteManager.getInstance().getContents<String>(DataFlavor.stringFlavor) ?: return
         val project = project(dataContext)
         val ideView = ideView(dataContext)
-        if (project == null || ideView == null || ideView.directories.isEmpty()) return
+        if (project == null || ideView == null || ideView!!.directories.isEmpty()) return
 
-        val ktFile = KtPsiFactory(project).createFile(text)
+        val ktFile = KtPsiFactory(project!!).createFile(text)
         val fileName = (ktFile.declarations.firstOrNull()?.name ?: return) + ".kt"
-        val directory = ideView.getOrChooseDirectory() ?: return
-        project.executeWriteCommand("Create Kotlin file") {
+        val directory = ideView!!.getOrChooseDirectory() ?: return
+        project!!.executeWriteCommand("Create Kotlin file") {
             val file = try {
                 directory.createFile(fileName)
             } catch (e: IncorrectOperationException) {
                 return@executeWriteCommand
             }
 
-            val documentManager = PsiDocumentManager.getInstance(project)
+            val documentManager = PsiDocumentManager.getInstance(project!!)
             val document = documentManager.getDocument(file)
             if (document != null) {
-                document.setText(text)
-                documentManager.commitDocument(document)
+                document!!.setText(text)
+                documentManager.commitDocument(document!!)
                 val qualName = JavaDirectoryService.getInstance()?.getPackage(directory)?.qualifiedName
                 if (qualName != null && file is KtFile) {
-                    file.packageFqName = FqName(qualName)
+                    (file as KtFile).packageFqName = FqName(qualName!!)
                 }
-                OpenFileDescriptor(project, file.virtualFile).navigate(true)
+                OpenFileDescriptor(project!!, file.virtualFile).navigate(true)
             }
         }
     }
@@ -59,13 +59,13 @@ class KotlinFilePasteProvider : PasteProvider {
     override fun isPasteEnabled(dataContext: DataContext): Boolean {
         val project = project(dataContext)
         val ideView = ideView(dataContext)
-        if (project == null || ideView == null || ideView.directories.isEmpty()) return false
+        if (project == null || ideView == null || ideView!!.directories.isEmpty()) return false
         val text = CopyPasteManager.getInstance().getContents<String>(DataFlavor.stringFlavor) ?: return false
         //todo: KT-25329, to remove these heuristics
         if (text.contains(";\n") ||
             ((text.contains("public interface") || text.contains("public class")) &&
                     !text.contains("fun "))) return false //Optimisation for Java. Kotlin doesn't need that...
-        val file = KtPsiFactory(project).createFile(text)
+        val file = KtPsiFactory(project!!).createFile(text)
         return !PsiTreeUtil.hasErrorElements(file)
     }
 

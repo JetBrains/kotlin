@@ -143,10 +143,10 @@ class MaxOrMinTransformation(
                 loop: KtForExpression
         ): TransformationMatch.Result? {
             if (condition !is KtBinaryExpression) return null
-            val comparison = condition.operationToken
+            val comparison = (condition as KtBinaryExpression).operationToken
             if (comparison !in setOf(KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ)) return null
-            val left = condition.left as? KtNameReferenceExpression ?: return null
-            val right = condition.right as? KtNameReferenceExpression ?: return null
+            val left = (condition as KtBinaryExpression).left as? KtNameReferenceExpression ?: return null
+            val right = (condition as KtBinaryExpression).right as? KtNameReferenceExpression ?: return null
             val otherHand = when {
                 left.isVariableReference(inputVariable) -> right
                 right.isVariableReference(inputVariable) -> left

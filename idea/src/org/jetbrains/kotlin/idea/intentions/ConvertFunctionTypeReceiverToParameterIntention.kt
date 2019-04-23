@@ -136,12 +136,12 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
 
                         for (ref in callable.searchReferencesOrMethodReferences()) {
                             if (ref !is KtSimpleReference<*>) continue
-                            processExternalUsage(ref, usages)
+                            processExternalUsage(ref as KtSimpleReference<*>, usages)
                         }
 
-                        usages += FunctionDefinitionInfo(callable)
+                        usages += FunctionDefinitionInfo(callable as KtFunction)
 
-                        processInternalUsages(callable, usages)
+                        processInternalUsages(callable as KtFunction, usages)
                     }
                 }
             }
@@ -165,7 +165,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
                                               ?.let { KtPsiUtil.safeDeparenthesize(it) }
                                       ?: return
             if (expressionToProcess is KtLambdaExpression) {
-                usages += LambdaInfo(expressionToProcess)
+                usages += LambdaInfo(expressionToProcess as KtLambdaExpression)
             }
         }
 
@@ -176,7 +176,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
             }
             if (body != null) {
                 val functionParameter = callable.valueParameters.getOrNull(data.functionParameterIndex) ?: return
-                for (ref in ReferencesSearch.search(functionParameter, LocalSearchScope(body))) {
+                for (ref in ReferencesSearch.search(functionParameter, LocalSearchScope(body!!))) {
                     val element = ref.element as? KtSimpleNameExpression ?: continue
                     val callExpression = element.getParentOfTypeAndBranch<KtCallExpression> { calleeExpression } ?: continue
                     usages += ParameterCallInfo(callExpression)

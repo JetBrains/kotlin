@@ -56,7 +56,7 @@ class EmptyRangeInspection : AbstractPrimitiveRangeToInspection() {
             val (left, right) = element.getArguments() ?: return
             if (left == null || right == null) return
 
-            element.replace(KtPsiFactory(element).createExpressionByPattern("$0 downTo $1", left, right))
+            element.replace(KtPsiFactory(element).createExpressionByPattern("$0 downTo $1", left!!, right!!))
         }
     }
 

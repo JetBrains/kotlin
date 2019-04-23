@@ -62,12 +62,12 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
         for (overriddenDescriptor in getAllDeclaredNonOverridableOverriddenDescriptors(descriptor)) {
             assert(overriddenDescriptor.kind == DECLARATION) { "Can only be applied to declarations." }
             val overriddenMember = DescriptorToSourceUtils.descriptorToDeclaration(overriddenDescriptor)
-            if (overriddenMember == null || !overriddenMember.canRefactor() || overriddenMember !is KtCallableDeclaration ||
-                overriddenMember.modifierList?.hasModifier(OPEN_KEYWORD) == true) {
+            if (overriddenMember == null || !overriddenMember!!.canRefactor() || overriddenMember !is KtCallableDeclaration ||
+                (overriddenMember as KtCallableDeclaration).modifierList?.hasModifier(OPEN_KEYWORD) == true) {
                 return QUICKFIX_UNAVAILABLE
             }
             val containingDeclarationName = overriddenDescriptor.containingDeclaration.name.asString()
-            overriddenNonOverridableMembers.add(overriddenMember.createSmartPointer())
+            overriddenNonOverridableMembers.add((overriddenMember as KtCallableDeclaration).createSmartPointer())
             containingDeclarationsNames.add(containingDeclarationName)
         }
         return QuickFixInfo(overriddenNonOverridableMembers, containingDeclarationsNames)

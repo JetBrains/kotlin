@@ -70,7 +70,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         if (descriptor is FunctionClassDescriptor) {
             val psiFactory = KtPsiFactory(project)
             val syntheticClass = psiFactory.createClass(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(descriptor))
-            return psiFactory.createAnalyzableFile("${descriptor.name.asString()}.kt", "", element!!).add(syntheticClass)
+            return psiFactory.createAnalyzableFile("${(descriptor as FunctionClassDescriptor).name.asString()}.kt", "", element!!).add(syntheticClass)
         }
         return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
     }
@@ -114,11 +114,11 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 
                     if (receiverType != null) {
                         if (isExtension) {
-                            val receiverTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)
-                            val isFunctionType = receiverType.constructor.declarationDescriptor is FunctionClassDescriptor
+                            val receiverTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType!!)
+                            val isFunctionType = receiverType!!.constructor.declarationDescriptor is FunctionClassDescriptor
                             append(if (isFunctionType) "($receiverTypeText)" else receiverTypeText).append('.')
                         } else {
-                            receiverType.constructor.declarationDescriptor?.let {
+                            receiverType!!.constructor.declarationDescriptor?.let {
                                 append(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderClassifierName(it)).append('.')
                             }
                         }
@@ -162,14 +162,14 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         val isFunction = callableInfos.any { it.kind == CallableKind.FUNCTION }
         return receiverTypeCandidates.any {
             val declaration = getDeclarationIfApplicable(project, it)
-            val insertToJavaInterface = declaration is PsiClass && declaration.isInterface
+            val insertToJavaInterface = declaration is PsiClass && (declaration as PsiClass).isInterface
             when {
-                !isExtension && propertyInfo != null && insertToJavaInterface && (!receiverInfo.staticContextRequired || propertyInfo.writable) ->
+                !isExtension && propertyInfo != null && insertToJavaInterface && (!receiverInfo.staticContextRequired || propertyInfo!!.writable) ->
                     false
                 isFunction && insertToJavaInterface && receiverInfo.staticContextRequired ->
                     false
                 !isExtension && declaration is KtTypeParameter -> false
-                propertyInfo != null && !propertyInfo.isAbstract && declaration is KtClass && declaration.isInterface() -> false
+                propertyInfo != null && !propertyInfo!!.isAbstract && declaration is KtClass && (declaration as KtClass).isInterface() -> false
                 else ->
                     declaration != null
             }
@@ -196,7 +196,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         }
 
         if (callableInfo is ConstructorInfo) {
-            runBuilder(CallablePlacement.NoReceiver(callableInfo.targetClass))
+            runBuilder(CallablePlacement.NoReceiver((callableInfo as ConstructorInfo).targetClass))
             return
         }
 
@@ -223,7 +223,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
             }
 
             chooseContainerElementIfNecessary(callableInfo.possibleContainers, editorForBuilder, popupTitle, true, { it }) {
-                val container = if (it is KtClassBody) it.parent as KtClassOrObject else it
+                val container = if (it is KtClassBody) (it as KtClassBody).parent as KtClassOrObject else it
                 runBuilder(CallablePlacement.NoReceiver(container))
             }
         }

@@ -32,7 +32,7 @@ class KotlinClassFindUsagesOptions(project: Project) : KotlinMemberFindUsagesOpt
     var searchConstructorUsages: Boolean = true
 
     override fun equals(other: Any?): Boolean {
-        return super.equals(other) && other is KotlinClassFindUsagesOptions && other.searchConstructorUsages == searchConstructorUsages
+        return super.equals(other) && other is KotlinClassFindUsagesOptions && (other as KotlinClassFindUsagesOptions).searchConstructorUsages == searchConstructorUsages
     }
 
     override fun hashCode(): Int {

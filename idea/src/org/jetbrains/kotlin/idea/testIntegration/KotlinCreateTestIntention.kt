@@ -56,27 +56,27 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
         if (element.nameIdentifier == null) return null
 
         if (element is KtClassOrObject) {
-            if (element.isLocal) return null
+            if ((element as KtClassOrObject).isLocal) return null
             if (element is KtEnumEntry) return null
-            if (element is KtClass && (element.isAnnotation() || element.isInterface())) return null
+            if (element is KtClass && ((element as KtClassOrObject).isAnnotation() || (element as KtClass).isInterface())) return null
 
-            if (element.resolveToDescriptorIfAny() == null) return null
+            if ((element as KtClassOrObject).resolveToDescriptorIfAny() == null) return null
 
             return TextRange(
                 element.startOffset,
-                element.getSuperTypeList()?.startOffset ?: element.body?.startOffset ?: element.endOffset
+                (element as KtClassOrObject).getSuperTypeList()?.startOffset ?: (element as KtClassOrObject).body?.startOffset ?: element.endOffset
             )
         }
 
         if (element.parent !is KtFile) return null
 
         if (element is KtNamedFunction) {
-            return TextRange((element.funKeyword ?: element.nameIdentifier!!).startOffset, element.nameIdentifier!!.endOffset)
+            return TextRange(((element as KtNamedFunction).funKeyword ?: (element as KtNamedFunction).nameIdentifier!!).startOffset, (element as KtNamedFunction).nameIdentifier!!.endOffset)
         }
 
         if (element is KtProperty) {
-            if (element.getter == null && element.delegate == null) return null
-            return TextRange(element.valOrVarKeyword.startOffset, element.nameIdentifier!!.endOffset)
+            if ((element as KtProperty).getter == null && (element as KtProperty).delegate == null) return null
+            return TextRange((element as KtProperty).valOrVarKeyword.startOffset, (element as KtProperty).nameIdentifier!!.endOffset)
         }
 
         return null
@@ -87,7 +87,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
     override fun applyTo(element: KtNamedDeclaration, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val lightClass = when (element) {
-            is KtClassOrObject -> element.toLightClass()
+            is KtClassOrObject -> (element as KtClassOrObject).toLightClass()
             else -> element.containingKtFile.findFacadeClass()
         } ?: return
 
@@ -140,7 +140,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                     // TODO: Override dialog method when it becomes protected
                     val answer = Messages.showYesNoDialog(
                         project,
-                        "Kotlin class '${existingClass.name}' already exists. Do you want to update it?",
+                        "Kotlin class '${existingClass!!.name}' already exists. Do you want to update it?",
                         CommonBundle.getErrorTitle(),
                         "Rewrite",
                         "Cancel",
@@ -153,7 +153,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                     val generator = TestGenerators.INSTANCE.forLanguage(dialog.selectedTestFrameworkDescriptor.language)
                     project.runWithAlternativeResolveEnabled {
                         if (existingClass != null) {
-                            dialog.explicitClassName = getTempJavaClassName(project, existingClass.containingFile.virtualFile)
+                            dialog.explicitClassName = getTempJavaClassName(project, existingClass!!.containingFile.virtualFile)
                         }
                         generator.generateTest(project, dialog)
                     }
@@ -170,7 +170,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
 
                             if (existingClass != null) {
                                 runWriteAction {
-                                    val existingMethodNames = existingClass
+                                    val existingMethodNames = existingClass!!
                                         .declarations
                                         .asSequence()
                                         .filterIsInstance<KtNamedFunction>()
@@ -178,10 +178,10 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                                     generatedClass
                                         .methods
                                         .filter { it.name !in existingMethodNames }
-                                        .forEach { it.j2k()?.let { declaration -> existingClass.addDeclaration(declaration) } }
+                                        .forEach { it.j2k()?.let { declaration -> existingClass!!.addDeclaration(declaration) } }
                                     generatedClass.delete()
                                 }
-                                NavigationUtil.activateFileWithPsiElement(existingClass)
+                                NavigationUtil.activateFileWithPsiElement(existingClass!!)
                             } else {
                                 with(PsiDocumentManager.getInstance(project)) {
                                     getDocument(generatedFile)?.let { doPostponedOperationsAndUnblockDocument(it) }

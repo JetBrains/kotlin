@@ -43,7 +43,7 @@ class ChangeToLabeledReturnFix(
         val newExpression = if (returnedExpression == null)
             factory.createExpression(labeledReturn)
         else
-            factory.createExpressionByPattern("$0 $1", labeledReturn, returnedExpression)
+            factory.createExpressionByPattern("$0 $1", labeledReturn, returnedExpression!!)
         returnExpression.replace(newExpression)
     }
 
@@ -52,9 +52,9 @@ class ChangeToLabeledReturnFix(
             val result = mutableListOf<Name>()
             for (parent in position.parentsWithSelf) {
                 if (parent is KtFunctionLiteral) {
-                    val (label, call) = parent.findLabelAndCall()
+                    val (label, call) = (parent as KtFunctionLiteral).findLabelAndCall()
                     if (label != null) {
-                        result.add(label)
+                        result.add(label!!)
                     }
 
                     // check if the current function literal is inlined and stop processing outer declarations if it's not

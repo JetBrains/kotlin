@@ -90,8 +90,8 @@ class KotlinChangeSignature(
                 KotlinChangePropertySignatureDialog.createProcessorForSilentRefactoring(project, commandName, descriptor)
             }
             is PsiMethod -> {
-                if (baseDeclaration.language != JavaLanguage.INSTANCE) {
-                    Messages.showErrorDialog("Can't change signature of ${baseDeclaration.language.displayName} method", commandName)
+                if ((baseDeclaration as PsiMethod).language != JavaLanguage.INSTANCE) {
+                    Messages.showErrorDialog("Can't change signature of ${(baseDeclaration as PsiMethod).language.displayName} method", commandName)
                     return
                 }
 
@@ -110,12 +110,12 @@ class KotlinChangeSignature(
             is PsiMethod -> {
                 // No changes are made from Kotlin side: just run foreign refactoring
                 if (descriptor is KotlinChangeSignatureData) {
-                    ChangeSignatureUtil.invokeChangeSignatureOn(baseDeclaration, project)
+                    ChangeSignatureUtil.invokeChangeSignatureOn(baseDeclaration as PsiMethod, project)
                     return
                 }
 
-                if (baseDeclaration.language != JavaLanguage.INSTANCE) {
-                    Messages.showErrorDialog("Can't change signature of ${baseDeclaration.language.displayName} method", commandName)
+                if ((baseDeclaration as PsiMethod).language != JavaLanguage.INSTANCE) {
+                    Messages.showErrorDialog("Can't change signature of ${(baseDeclaration as PsiMethod).language.displayName} method", commandName)
                     return
                 }
 
@@ -214,18 +214,18 @@ class KotlinChangeSignature(
             return null
         }
 
-        if (!checkModifiable(functionDeclaration)) {
+        if (!checkModifiable(functionDeclaration!!)) {
             return null
         }
 
-        val originalDescriptor = KotlinChangeSignatureData(baseDescriptor, functionDeclaration, descriptorsForSignatureChange)
+        val originalDescriptor = KotlinChangeSignatureData(baseDescriptor, functionDeclaration!!, descriptorsForSignatureChange)
         return configuration.configure(originalDescriptor)
     }
 
     private fun preferContainedInClass(descriptorsForSignatureChange: Collection<CallableDescriptor>): CallableDescriptor {
         for (descriptor in descriptorsForSignatureChange) {
             val containingDeclaration = descriptor.containingDeclaration
-            if (containingDeclaration is ClassDescriptor && containingDeclaration.kind != ClassKind.INTERFACE) {
+            if (containingDeclaration is ClassDescriptor && (containingDeclaration as ClassDescriptor).kind != ClassKind.INTERFACE) {
                 return descriptor
             }
         }

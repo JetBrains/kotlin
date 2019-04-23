@@ -56,10 +56,10 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
             isMemberDeclaration(declaration) -> {
                 val containingClass = declaration.containingClassOrObject
                 if (containingClass != null) {
-                    fixNativeClass(containingClass)
+                    fixNativeClass(containingClass!!)
                 }
             }
-            declaration is KtClassOrObject -> fixNativeClass(declaration)
+            declaration is KtClassOrObject -> fixNativeClass(declaration as KtClassOrObject)
         }
     }
 
@@ -131,14 +131,14 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                 annotations.isGetter -> {
                     appendFixedText("()")
                     if (declaration is KtNamedFunction) {
-                        appendParameters(declaration, "[", "]")
+                        appendParameters(declaration as KtNamedFunction, "[", "]")
                     }
                 }
                 annotations.isSetter -> {
                     appendFixedText("()")
                     if (declaration is KtNamedFunction) {
-                        appendParameters(declaration, "[", "]", skipLast = true)
-                        declaration.valueParameters.last().nameAsName?.let {
+                        appendParameters(declaration as KtNamedFunction, "[", "]", skipLast = true)
+                        (declaration as KtNamedFunction).valueParameters.last().nameAsName?.let {
                             appendFixedText(" = ")
                             appendName(it)
                         }
@@ -147,22 +147,22 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                 annotations.isInvoke -> {
                     appendFixedText("()")
                     if (declaration is KtNamedFunction) {
-                        appendParameters(declaration, "(", ")")
+                        appendParameters(declaration as KtNamedFunction, "(", ")")
                     }
                 }
                 else -> {
                     appendFixedText("().")
                     appendName(name)
                     if (declaration is KtNamedFunction) {
-                        appendParameters(declaration, "(", ")")
+                        appendParameters(declaration as KtNamedFunction, "(", ")")
                     }
                 }
             }
         }
 
         if (declaration is KtNamedFunction) {
-            declaration.bodyExpression?.delete()
-            declaration.equalsToken?.delete()
+            (declaration as KtNamedFunction).bodyExpression?.delete()
+            (declaration as KtNamedFunction).equalsToken?.delete()
 
             if (annotations.isSetter || annotations.isInvoke) {
                 val blockBody = ktPsiFactory.createSingleStatementBlock(body)
@@ -173,12 +173,12 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
             }
         }
         else if (declaration is KtProperty) {
-            declaration.setter?.delete()
-            declaration.getter?.delete()
+            (declaration as KtProperty).setter?.delete()
+            (declaration as KtProperty).getter?.delete()
             val getter = ktPsiFactory.createPropertyGetter(body)
             declaration.add(getter)
 
-            if (declaration.isVar) {
+            if ((declaration as KtProperty).isVar) {
                 val setterBody = ktPsiFactory.buildExpression {
                     appendName(Name.identifier("asDynamic"))
                     appendFixedText("().")
@@ -211,15 +211,15 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
 
         convertNativeAnnotationToJsName(declaration, annotations)
 
-        if (declaration is KtFunction && !declaration.hasDeclaredReturnType() && !annotations.isSetter && !annotations.isInvoke && editor != null) {
-            SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, declaration, declaration.builtIns.unitType)
+        if (declaration is KtFunction && !(declaration as KtFunction).hasDeclaredReturnType() && !annotations.isSetter && !annotations.isInvoke && editor != null) {
+            SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, declaration as KtFunction, declaration.builtIns.unitType)
         }
     }
 
     private fun convertNativeAnnotationToJsName(declaration: KtNamedDeclaration, annotations: JsNativeAnnotations) {
         val nativeAnnotation = annotations.nativeAnnotation
-        if (nativeAnnotation != null && nativeAnnotation.valueArguments.isNotEmpty()) {
-            declaration.addAnnotation(FqName("JsName"), nativeAnnotation.valueArguments.joinToString { it.asElement().text })
+        if (nativeAnnotation != null && nativeAnnotation!!.valueArguments.isNotEmpty()) {
+            declaration.addAnnotation(FqName("JsName"), nativeAnnotation!!.valueArguments.joinToString { it.asElement().text })
         }
     }
 
@@ -240,7 +240,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         private fun KtAnnotationEntry.isJsAnnotation(vararg predefinedAnnotations: PredefinedAnnotation): Boolean {
             val bindingContext = analyze(BodyResolveMode.PARTIAL)
             val annotationDescriptor = bindingContext[BindingContext.ANNOTATION, this]
-            return annotationDescriptor != null && predefinedAnnotations.any { annotationDescriptor.fqName == it.fqName }
+            return annotationDescriptor != null && predefinedAnnotations.any { annotationDescriptor!!.fqName == it.fqName }
         }
 
         private fun KtAnnotationEntry.isJsNativeAnnotation(): Boolean {
@@ -248,13 +248,13 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
         }
 
         private fun isMemberExtensionDeclaration(psiElement: PsiElement): Boolean {
-            return (psiElement is KtNamedFunction && psiElement.receiverTypeReference != null) ||
-                   (psiElement is KtProperty && psiElement.receiverTypeReference != null)
+            return (psiElement is KtNamedFunction && (psiElement as KtNamedFunction).receiverTypeReference != null) ||
+                   (psiElement is KtProperty && (psiElement as KtProperty).receiverTypeReference != null)
         }
 
         private fun isMemberDeclaration(psiElement: PsiElement): Boolean {
-            return (psiElement is KtNamedFunction && psiElement.receiverTypeReference == null) ||
-                   (psiElement is KtProperty && psiElement.receiverTypeReference == null)
+            return (psiElement is KtNamedFunction && (psiElement as KtNamedFunction).receiverTypeReference == null) ||
+                   (psiElement is KtProperty && (psiElement as KtProperty).receiverTypeReference == null)
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {

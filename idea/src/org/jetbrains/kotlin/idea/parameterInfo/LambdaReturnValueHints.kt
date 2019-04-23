@@ -56,7 +56,7 @@ private fun getNameOfFunctionThatTakesLambda(expression: KtExpression): String? 
     if (callExpression.lambdaArguments.any { it.getLambdaExpression() == lambda }) {
         val parent = lambda.parent
         if (parent is KtLabeledExpression) {
-            return parent.getLabelName()
+            return (parent as KtLabeledExpression).getLabelName()
         }
         return (callExpression.calleeExpression as? KtNameReferenceExpression)?.getReferencedName()
     }
@@ -74,8 +74,8 @@ private fun forceLabelOnExpressionPart(expression: KtExpression): Boolean {
 
 private fun expressionStatementPart(expression: KtExpression): KtExpression? {
     val splitPart: KtExpression = when (expression) {
-        is KtAnnotatedExpression -> expression.baseExpression
-        is KtLabeledExpression -> expression.baseExpression
+        is KtAnnotatedExpression -> (expression as KtAnnotatedExpression).baseExpression
+        is KtLabeledExpression -> (expression as KtLabeledExpression).baseExpression
         else -> null
     } ?: return null
 

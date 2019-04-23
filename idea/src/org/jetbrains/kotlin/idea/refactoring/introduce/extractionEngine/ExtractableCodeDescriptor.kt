@@ -135,11 +135,11 @@ class FqNameReplacement(val fqName: FqName) : Replacement {
     override fun invoke(descriptor: ExtractableCodeDescriptor, e: KtElement): KtElement {
         val thisExpr = e.parent as? KtThisExpression
         if (thisExpr != null) {
-            return thisExpr.replaced(KtPsiFactory(e).createExpression(fqName.asString())).getQualifiedElementSelector()!!
+            return thisExpr!!.replaced(KtPsiFactory(e).createExpression(fqName.asString())).getQualifiedElementSelector()!!
         }
 
         val newExpr = (e as? KtSimpleNameExpression)?.mainReference?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as KtElement
-        return if (newExpr is KtQualifiedExpression) newExpr.selectorExpression!! else newExpr
+        return if (newExpr is KtQualifiedExpression) (newExpr as KtQualifiedExpression).selectorExpression!! else newExpr
     }
 }
 
@@ -196,14 +196,14 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
     protected fun extractArgumentExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression? {
         val call: KtCallExpression? = when (boxedExpression) {
-            is KtCallExpression -> boxedExpression
-            is KtQualifiedExpression -> boxedExpression.selectorExpression as? KtCallExpression
+            is KtCallExpression -> boxedExpression as KtCallExpression
+            is KtQualifiedExpression -> (boxedExpression as KtQualifiedExpression).selectorExpression as? KtCallExpression
             else -> null
         }
         val arguments = call?.valueArguments
-        if (arguments == null || arguments.size <= index) return null
+        if (arguments == null || arguments!!.size <= index) return null
 
-        return arguments[index].getArgumentExpression()
+        return arguments!![index].getArgumentExpression()
     }
 
     fun extractExpressionByValue(boxedExpression: KtExpression, value: OutputValue): KtExpression? {
@@ -341,7 +341,7 @@ fun ControlFlow.toDefault(): ControlFlow =
 
 fun ControlFlow.copy(oldToNewParameters: Map<Parameter, Parameter>): ControlFlow {
     val newOutputValues = outputValues.map {
-        if (it is ParameterUpdate) ParameterUpdate(oldToNewParameters[it.parameter]!!, it.originalExpressions) else it
+        if (it is ParameterUpdate) ParameterUpdate(oldToNewParameters[(it as ParameterUpdate).parameter]!!, it.originalExpressions) else it
     }
     return copy(outputValues = newOutputValues)
 }
@@ -374,9 +374,9 @@ fun ExtractableCodeDescriptor.copy(
     for ((ref, replacements) in replacementMap.entrySet()) {
         val newReplacements = replacements.map {
             if (it is ParameterReplacement) {
-                val parameter = it.parameter
+                val parameter = (it as ParameterReplacement).parameter
                 val newParameter = oldToNewParameters[parameter] ?: return@map it
-                it.copy(newParameter)
+                (it as ParameterReplacement).copy(newParameter)
             } else it
         }
         newReplacementMap.putValues(ref, newReplacements)
@@ -438,7 +438,7 @@ enum class ExtractionTarget(val targetName: String) {
     companion object {
         fun checkNotTrait(descriptor: ExtractableCodeDescriptor): Boolean {
             val parent = descriptor.extractionData.targetSibling.getStrictParentOfType<KtDeclaration>()
-            return !(parent is KtClass && parent.isInterface())
+            return !(parent is KtClass && (parent as KtClass).isInterface())
         }
 
         fun checkSimpleBody(descriptor: ExtractableCodeDescriptor): Boolean {
@@ -448,7 +448,7 @@ enum class ExtractionTarget(val targetName: String) {
 
         fun checkSimpleControlFlow(descriptor: ExtractableCodeDescriptor): Boolean {
             val outputValue = descriptor.controlFlow.outputValues.singleOrNull()
-            return (outputValue is ExpressionValue && !outputValue.callSiteReturn) || outputValue is Initializer
+            return (outputValue is ExpressionValue && !(outputValue as ExpressionValue).callSiteReturn) || outputValue is Initializer
         }
 
         fun checkSignatureAndParent(descriptor: ExtractableCodeDescriptor): Boolean {

@@ -49,8 +49,8 @@ class ConcatenatedStringGenerator {
         collectDescendantsOfType<KtStringTemplateEntry>().forEach {
             stringTemplate ->
             when (stringTemplate) {
-                is KtLiteralStringTemplateEntry -> sb.append(stringTemplate.text)
-                is KtEscapeStringTemplateEntry -> sb.append(stringTemplate.unescapedValue)
+                is KtLiteralStringTemplateEntry -> sb.append((stringTemplate as KtLiteralStringTemplateEntry).text)
+                is KtEscapeStringTemplateEntry -> sb.append((stringTemplate as KtEscapeStringTemplateEntry).unescapedValue)
                 else -> sb.append(stringTemplate.expression?.convertToValueIfCompileTimeConstant() ?: "?")
             }
         }

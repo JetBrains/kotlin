@@ -59,7 +59,7 @@ fun highlightElements(project: Project, editor: Editor?, elements: List<PsiEleme
     val editorColorsManager = EditorColorsManager.getInstance()
     val searchResultsAttributes = editorColorsManager.globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)
     val highlightManager = HighlightManager.getInstance(project)
-    highlightManager.addOccurrenceHighlights(editor, elements.toTypedArray(), searchResultsAttributes, true, null)
+    highlightManager.addOccurrenceHighlights(editor!!, elements.toTypedArray(), searchResultsAttributes, true, null)
 }
 
 fun showDialog(
@@ -73,7 +73,7 @@ fun showDialog(
     if (ApplicationManager.getApplication().isUnitTestMode) return true
 
     val kind = when (declaration) {
-        is KtProperty -> if (declaration.isLocal) "local variable" else "property"
+        is KtProperty -> if ((declaration as KtProperty).isLocal) "local variable" else "property"
         is KtTypeAlias -> "type alias"
         else -> return false
     }
@@ -142,7 +142,7 @@ internal fun buildCodeToInline(
     val builder = CodeToInlineBuilder(descriptor as CallableDescriptor, declaration.getResolutionFacade())
     if (isBlockBody) {
         bodyCopy as KtBlockExpression
-        val statements = bodyCopy.statements
+        val statements = (bodyCopy as KtBlockExpression).statements
 
         val returnStatements = bodyCopy.collectDescendantsOfType<KtReturnExpression> {
             it.getLabelName().let { it == null || it == declaration.name }
@@ -171,8 +171,8 @@ internal fun buildCodeToInline(
 internal fun Editor.findSimpleNameReference(): KtSimpleNameReference? {
     val reference = TargetElementUtil.findReference(this, caretModel.offset)
     return when (reference) {
-        is KtSimpleNameReference -> reference
-        is PsiMultiReference -> reference.references.firstIsInstanceOrNull()
+        is KtSimpleNameReference -> reference as KtSimpleNameReference
+        is PsiMultiReference -> (reference as PsiMultiReference).references.firstIsInstanceOrNull()
         else -> null
     }
 }

@@ -42,7 +42,7 @@ class DefaultAnnotationMethodKotlinImplicitReferenceSearcher :
     private fun createReferenceProcessor(consumer: Processor<in PsiReference>) = object : ReadActionProcessor<PsiReference>() {
         override fun processInReadAction(reference: PsiReference): Boolean {
             if (reference !is KtSimpleNameReference) return true
-            val annotationEntry = reference.expression.getParentOfTypeAndBranch<KtAnnotationEntry> { typeReference } ?: return true
+            val annotationEntry = (reference as KtSimpleNameReference).expression.getParentOfTypeAndBranch<KtAnnotationEntry> { typeReference } ?: return true
             val argument = annotationEntry.valueArguments.singleOrNull() as? KtValueArgument ?: return true
             val implicitRef = argument.references.firstIsInstanceOrNull<ImplicitReference>() ?: return true
             return consumer.process(implicitRef)

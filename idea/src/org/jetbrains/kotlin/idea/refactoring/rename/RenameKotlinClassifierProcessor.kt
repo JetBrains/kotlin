@@ -77,7 +77,7 @@ class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        if (element is KtObjectDeclaration && element.isCompanion()) {
+        if (element is KtObjectDeclaration && (element as KtObjectDeclaration).isCompanion()) {
             return super.findReferences(element).filter { !it.isCompanionObjectClassReference() }
         }
         return super.findReferences(element)
@@ -109,14 +109,14 @@ class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
 
     private fun getClassOrObject(element: PsiElement?): PsiElement? = when (element) {
         is KtLightClass ->
-            when (element) {
-                is KtLightClassForSourceDeclaration -> element.kotlinOrigin
-                is KtLightClassForFacade -> element
+            when (element as KtLightClass) {
+                is KtLightClassForSourceDeclaration -> (element as KtLightClassForSourceDeclaration).kotlinOrigin
+                is KtLightClassForFacade -> element as KtLightClass
                 else -> throw AssertionError("Should not be suggested to rename element of type " + element::class.java + " " + element)
             }
 
         is KtConstructor<*> ->
-            element.getContainingClassOrObject()
+            (element as KtConstructor<*>).getContainingClassOrObject()
 
         is KtClassOrObject, is KtTypeAlias -> element
 

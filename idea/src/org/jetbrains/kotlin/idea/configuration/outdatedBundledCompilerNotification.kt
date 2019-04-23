@@ -90,7 +90,7 @@ fun createOutdatedBundledCompilerMessage(project: Project, bundledCompilerVersio
             newerModuleCompilerInfos.add(moduleCompilerInfo)
 
             if (maxCompilerInfo == null ||
-                VersionComparatorUtil.COMPARATOR.compare(externalCompilerVersion, maxCompilerInfo.externalCompilerVersion) > 0
+                VersionComparatorUtil.COMPARATOR.compare(externalCompilerVersion, maxCompilerInfo!!.externalCompilerVersion) > 0
             ) {
                 maxCompilerInfo = moduleCompilerInfo
             }
@@ -102,14 +102,14 @@ fun createOutdatedBundledCompilerMessage(project: Project, bundledCompilerVersio
     }
 
     val lastProjectNotified = alreadyNotified[project.name]
-    if (lastProjectNotified == maxCompilerInfo.externalCompilerVersion) {
+    if (lastProjectNotified == maxCompilerInfo!!.externalCompilerVersion) {
         if (!ApplicationManager.getApplication().isUnitTestMode) {
             return null
         }
     }
-    alreadyNotified[project.name] = maxCompilerInfo.externalCompilerVersion
+    alreadyNotified[project.name] = maxCompilerInfo!!.externalCompilerVersion
 
-    val selectedNewerModulesInfos = selectedModulesForPopup(project, maxCompilerInfo, newerModuleCompilerInfos)
+    val selectedNewerModulesInfos = selectedModulesForPopup(project, maxCompilerInfo!!, newerModuleCompilerInfos)
     if (selectedNewerModulesInfos.isEmpty()) {
         return null
     }

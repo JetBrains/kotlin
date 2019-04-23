@@ -84,11 +84,11 @@ private fun checkConflicts(
         return
     }
 
-    val targetClassDescriptor = context.resolutionFacade.resolveToDescriptor(targetClass) as ClassDescriptor
+    val targetClassDescriptor = context.resolutionFacade.resolveToDescriptor(targetClass as KtClassOrObject) as ClassDescriptor
     val substitutor = getTypeSubstitutor(context.sourceClassDescriptor.defaultType, targetClassDescriptor.defaultType)
                       ?: TypeSubstitutor.EMPTY
 
-    if (!context.sourceClass.isInterface() && targetClass is KtClass && targetClass.isInterface()) {
+    if (!context.sourceClass.isInterface() && targetClass is KtClass && (targetClass as KtClass).isInterface()) {
         val message = "${targetClassDescriptor.renderForConflicts()} " +
                       "inherits from ${context.sourceClassDescriptor.renderForConflicts()}.\n" +
                       "It won't be affected by the refactoring"
@@ -96,7 +96,8 @@ private fun checkConflicts(
     }
 
     for (member in membersToPush) {
-        checkMemberClashing(conflicts, context, member, membersToKeepAbstract, substitutor, targetClass, targetClassDescriptor)
+        checkMemberClashing(conflicts, context, member, membersToKeepAbstract, substitutor,
+                            targetClass as KtClassOrObject, targetClassDescriptor)
         checkSuperCalls(conflicts, context, member, membersToPush)
         checkExternalUsages(conflicts, member, targetClassDescriptor, context.resolutionFacade)
         checkVisibility(conflicts, context, member, targetClassDescriptor)
@@ -118,11 +119,11 @@ private fun checkMemberClashing(
             val clashingDeclaration = clashingDescriptor?.source?.getPsi() as? KtNamedDeclaration
             if (clashingDescriptor != null && clashingDeclaration != null) {
                 if (memberDescriptor.modality != Modality.ABSTRACT && member !in membersToKeepAbstract) {
-                    val message = "${targetClassDescriptor.renderForConflicts()} already contains ${clashingDescriptor.renderForConflicts()}"
+                    val message = "${targetClassDescriptor.renderForConflicts()} already contains ${clashingDescriptor!!.renderForConflicts()}"
                     conflicts.putValue(clashingDeclaration, CommonRefactoringUtil.capitalize(message))
                 }
-                if (!clashingDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
-                    val message = "${clashingDescriptor.renderForConflicts()} in ${targetClassDescriptor.renderForConflicts()} " +
+                if (!clashingDeclaration!!.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                    val message = "${clashingDescriptor!!.renderForConflicts()} in ${targetClassDescriptor.renderForConflicts()} " +
                                   "will override corresponding member of ${context.sourceClassDescriptor.renderForConflicts()} " +
                                   "after refactoring"
                     conflicts.putValue(clashingDeclaration, CommonRefactoringUtil.capitalize(message))
@@ -134,10 +135,10 @@ private fun checkMemberClashing(
             targetClass.declarations
                 .asSequence()
                 .filterIsInstance<KtClassOrObject>()
-                    .firstOrNull() { it.name == member.name }
+                    .firstOrNull() { it.name == (member as KtClassOrObject).name }
                     ?.let {
                         val message = "${targetClassDescriptor.renderForConflicts()} " +
-                                      "already contains nested class named ${CommonRefactoringUtil.htmlEmphasize(member.name ?: "")}"
+                                      "already contains nested class named ${CommonRefactoringUtil.htmlEmphasize((member as KtClassOrObject).name ?: "")}"
                         conflicts.putValue(it, message.capitalize())
                     }
         }
@@ -183,7 +184,7 @@ internal fun checkExternalUsages(
         val callElement = resolvedCall.call.callElement
         val dispatchReceiver = resolvedCall.dispatchReceiver
         if (dispatchReceiver == null || dispatchReceiver is Qualifier) continue
-        val receiverClassDescriptor = dispatchReceiver.type.constructor.declarationDescriptor as? ClassDescriptor ?: continue
+        val receiverClassDescriptor = dispatchReceiver!!.type.constructor.declarationDescriptor as? ClassDescriptor ?: continue
         if (!DescriptorUtils.isSubclass(receiverClassDescriptor, targetClassDescriptor)) {
             conflicts.putValue(callElement, "Pushed member won't be available in '${callElement.text}'")
         }
@@ -199,7 +200,7 @@ private fun checkVisibility(
     fun reportConflictIfAny(targetDescriptor: DeclarationDescriptor) {
         val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
         if (targetDescriptor is DeclarationDescriptorWithVisibility
-            && !Visibilities.isVisibleIgnoringReceiver(targetDescriptor, targetClassDescriptor)) {
+            && !Visibilities.isVisibleIgnoringReceiver(targetDescriptor as DeclarationDescriptorWithVisibility, targetClassDescriptor)) {
             val message = "${context.memberDescriptors[member]!!.renderForConflicts()} " +
                           "uses ${targetDescriptor.renderForConflicts()}, " +
                           "which is not accessible from the ${targetClassDescriptor.renderForConflicts()}"

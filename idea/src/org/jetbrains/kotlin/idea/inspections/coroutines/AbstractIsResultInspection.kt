@@ -30,16 +30,16 @@ abstract class AbstractIsResultInspection(
     protected fun analyzeFunction(function: KtNamedFunction, toReport: PsiElement, holder: ProblemsHolder) {
         if (function is KtConstructor<*>) return
         val returnTypeText = function.getReturnTypeReference()?.text
-        if (returnTypeText != null && typeShortName !in returnTypeText) return
+        if (returnTypeText != null && typeShortName !in returnTypeText!!) return
         val name = function.nameAsName?.asString()
-        if (name == null || name in allowedNames) return
+        if (name == null || name!! in allowedNames) return
         val receiverTypeReference = function.receiverTypeReference
         // Filter given type extensions
-        if (receiverTypeReference != null && typeShortName in receiverTypeReference.text) return
+        if (receiverTypeReference != null && typeShortName in receiverTypeReference!!.text) return
         if (returnTypeText == null) {
             // Heuristics to save performance: check if something creates given type in function text
             val text = function.bodyExpression?.text
-            if (text != null && allowedNames.none { it in text } && typeShortName !in text && allowedSuffix !in text) return
+            if (text != null && allowedNames.none { it in text!! } && typeShortName !in text!! && allowedSuffix !in text!!) return
         }
 
         val descriptor = function.resolveToDescriptorIfAny() ?: return
@@ -47,8 +47,8 @@ abstract class AbstractIsResultInspection(
         val returnTypeClass = returnType.constructor.declarationDescriptor as? ClassDescriptor ?: return
         if (returnTypeClass.fqNameSafe.asString() != typeFullName) return
 
-        if (name.endsWith(allowedSuffix)) {
-            analyzeFunctionWithAllowedSuffix(name, descriptor, toReport, holder)
+        if (name!!.endsWith(allowedSuffix)) {
+            analyzeFunctionWithAllowedSuffix(name!!, descriptor, toReport, holder)
         } else {
             holder.registerProblem(
                 toReport,

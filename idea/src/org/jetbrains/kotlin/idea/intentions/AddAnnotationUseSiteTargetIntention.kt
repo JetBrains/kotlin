@@ -47,7 +47,7 @@ class AddAnnotationUseSiteTargetIntention : SelfTargetingIntention<KtAnnotationE
                 JBPopupFactory
                     .getInstance()
                     .createListPopup(createListPopupStep(element, useSiteTargets, project))
-                    .showInBestPositionFor(editor)
+                    .showInBestPositionFor(editor!!)
         }
     }
 
@@ -82,7 +82,7 @@ private fun KtAnnotationEntry.applicableUseSiteTargets(): List<AnnotationUseSite
     val applicableTargets = when (annotated) {
         is KtParameter ->
             if (annotated.getStrictParentOfType<KtPrimaryConstructor>() != null)
-                when (annotated.valOrVarKeyword?.node?.elementType) {
+                when ((annotated as KtParameter).valOrVarKeyword?.node?.elementType) {
                     KtTokens.VAR_KEYWORD ->
                         listOf(CONSTRUCTOR_PARAMETER, FIELD, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, SETTER_PARAMETER)
                     KtTokens.VAL_KEYWORD ->
@@ -94,11 +94,11 @@ private fun KtAnnotationEntry.applicableUseSiteTargets(): List<AnnotationUseSite
                 emptyList()
         is KtProperty ->
             when {
-                annotated.delegate != null ->
+                (annotated as KtProperty).delegate != null ->
                     listOf(PROPERTY, PROPERTY_GETTER, PROPERTY_DELEGATE_FIELD)
-                !annotated.isLocal -> {
-                    val backingField = LightClassUtil.getLightClassPropertyMethods(annotated).backingField
-                    if (annotated.isVar) {
+                !(annotated as KtProperty).isLocal -> {
+                    val backingField = LightClassUtil.getLightClassPropertyMethods(annotated as KtProperty).backingField
+                    if ((annotated as KtProperty).isVar) {
                         if (backingField != null)
                             listOf(FIELD, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, SETTER_PARAMETER)
                         else

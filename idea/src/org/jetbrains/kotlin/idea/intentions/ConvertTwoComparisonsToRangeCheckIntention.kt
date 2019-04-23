@@ -134,22 +134,22 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
 
         if (valType == null || minType == null || maxType == null) return null
 
-        if (!valType.isComparable()) return null
+        if (!valType!!.isComparable()) return null
 
         var minVal = min
         var maxVal = max
 
         if (minType != valType || maxType != valType) {
             //numbers can be compared to numbers of different types
-            if (valType.isPrimitiveNumberType() && minType.isPrimitiveNumberType() && maxType.isPrimitiveNumberType()) {
+            if (valType!!.isPrimitiveNumberType() && minType!!.isPrimitiveNumberType() && maxType!!.isPrimitiveNumberType()) {
                 //char is comparable to chars only
-                if (KotlinBuiltIns.isChar(valType) || KotlinBuiltIns.isChar(minType) || KotlinBuiltIns.isChar(maxType)) return null
+                if (KotlinBuiltIns.isChar(valType!!) || KotlinBuiltIns.isChar(minType!!) || KotlinBuiltIns.isChar(maxType!!)) return null
 
-                if (valType.isFloatingPoint()) {
-                    if (minType.isInteger())
-                        minVal = KtPsiFactory(minVal).createExpression(getDoubleConstant(min, minType, context) ?: return null)
-                    if (maxType.isInteger())
-                        maxVal = KtPsiFactory(maxVal).createExpression(getDoubleConstant(max, maxType, context) ?: return null)
+                if (valType!!.isFloatingPoint()) {
+                    if (minType!!.isInteger())
+                        minVal = KtPsiFactory(minVal).createExpression(getDoubleConstant(min, minType!!, context) ?: return null)
+                    if (maxType!!.isInteger())
+                        maxVal = KtPsiFactory(maxVal).createExpression(getDoubleConstant(max, maxType!!, context) ?: return null)
                 }
             } else {
                 return null

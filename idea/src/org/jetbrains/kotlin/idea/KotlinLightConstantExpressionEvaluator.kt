@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 class KotlinLightConstantExpressionEvaluator : ConstantExpressionEvaluator {
     private fun evalConstantValue(constantValue: ConstantValue<*>): Any? {
         return if (constantValue is ArrayValue) {
-            val items = constantValue.value.map { evalConstantValue(it) }
+            val items = (constantValue as ArrayValue).value.map { evalConstantValue(it) }
             items.singleOrNull() ?: items
         } else constantValue.value
     }
@@ -47,7 +47,7 @@ class KotlinLightConstantExpressionEvaluator : ConstantExpressionEvaluator {
         auxEvaluator: PsiConstantEvaluationHelper.AuxEvaluator?
     ): Any? {
         val expressionToCompute = when (expression) {
-            is KtLightElementBase -> expression.kotlinOrigin as? KtExpression ?: return null
+            is KtLightElementBase -> (expression as KtLightElementBase).kotlinOrigin as? KtExpression ?: return null
             else -> return null
         }
 

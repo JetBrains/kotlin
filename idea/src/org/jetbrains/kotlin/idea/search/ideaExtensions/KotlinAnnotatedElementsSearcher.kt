@@ -50,7 +50,7 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
         return processAnnotatedMembers(p.annotationClass, p.scope) { declaration ->
             when (declaration) {
                 is KtClass -> {
-                    val lightClass = declaration.toLightClass()
+                    val lightClass = (declaration as KtClass).toLightClass()
                     consumer.process(lightClass)
                 }
                 is KtNamedFunction, is KtConstructor<*> -> {
@@ -63,14 +63,14 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
                         return@processAnnotatedMembers consumer.process(backingField)
                     }
 
-                    LightClassUtil.getLightClassPropertyMethods(declaration).all { consumer.process(it) }
+                    LightClassUtil.getLightClassPropertyMethods(declaration as KtProperty).all { consumer.process(it) }
                 }
                 is KtParameter -> {
-                    if (!declaration.toPsiParameters().all { consumer.process(it) }) return@processAnnotatedMembers false
+                    if (!(declaration as KtParameter).toPsiParameters().all { consumer.process(it) }) return@processAnnotatedMembers false
                     LightClassUtil.getLightClassBackingField(declaration)?.let {
                         if (!consumer.process(it)) return@processAnnotatedMembers false
                     }
-                    LightClassUtil.getLightClassPropertyMethods(declaration).all { consumer.process(it) }
+                    LightClassUtil.getLightClassPropertyMethods(declaration as KtParameter).all { consumer.process(it) }
                 }
                 else -> true
             }
@@ -97,18 +97,18 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
 
                 val result = runReadAction(fun(): Boolean {
                     if (elt !is KtAnnotationEntry) return true
-                    if (!preFilter(elt)) return true
+                    if (!preFilter(elt as KtAnnotationEntry)) return true
 
                     val declaration = elt.getStrictParentOfType<KtDeclaration>() ?: return true
 
-                    val psiBasedResolveResult = elt.calleeExpression?.constructorReferenceExpression?.let { ref ->
+                    val psiBasedResolveResult = (elt as KtAnnotationEntry).calleeExpression?.constructorReferenceExpression?.let { ref ->
                         psiBasedClassResolver.canBeTargetReference(ref)
                     }
 
                     if (psiBasedResolveResult == NO_MATCH) return true
                     if (psiBasedResolveResult == UNSURE) {
-                        val context = elt.analyze(BodyResolveMode.PARTIAL)
-                        val annotationDescriptor = context.get(BindingContext.ANNOTATION, elt) ?: return true
+                        val context = (elt as KtAnnotationEntry).analyze(BodyResolveMode.PARTIAL)
+                        val annotationDescriptor = context.get(BindingContext.ANNOTATION, elt as KtAnnotationEntry) ?: return true
 
                         val fqName = annotationDescriptor.fqName ?: return true
                         if (fqName.asString() != annotationFQN) return true
@@ -129,7 +129,7 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
             return runReadAction(fun(): Collection<PsiElement> {
                 if (useScope is GlobalSearchScope) {
                     val name = annClass.name ?: return emptyList()
-                    val scope = KotlinSourceFilterScope.sourcesAndLibraries(useScope, annClass.project)
+                    val scope = KotlinSourceFilterScope.sourcesAndLibraries(useScope as GlobalSearchScope, annClass.project)
                     return KotlinAnnotationsIndex.getInstance().get(name, annClass.project, scope)
                 }
 
@@ -142,8 +142,8 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
 
             val faultyContainer = PsiUtilCore.getVirtualFile(found)
             LOG.error("Non annotation in annotations list: $faultyContainer; element:$found")
-            if (faultyContainer != null && faultyContainer.isValid) {
-                FileBasedIndex.getInstance().requestReindex(faultyContainer)
+            if (faultyContainer != null && faultyContainer!!.isValid) {
+                FileBasedIndex.getInstance().requestReindex(faultyContainer!!)
             }
 
             return true

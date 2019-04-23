@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
 class KotlinHighlightImplicitItHandlerFactory : HighlightUsagesHandlerFactoryBase() {
     override fun createHighlightUsagesHandler(editor: Editor, file: PsiFile, target: PsiElement): HighlightUsagesHandlerBase<*>? {
-        if (!(target is LeafPsiElement && target.elementType == KtTokens.IDENTIFIER)) return null
-        val refExpr = target.parent as? KtNameReferenceExpression ?: return null
+        if (!(target is LeafPsiElement && (target as LeafPsiElement).elementType == KtTokens.IDENTIFIER)) return null
+        val refExpr = (target as LeafPsiElement).parent as? KtNameReferenceExpression ?: return null
         val lambda = getLambdaByImplicitItReference(refExpr) ?: return null
         return object : HighlightUsagesHandlerBase<KtNameReferenceExpression>(editor, file) {
             override fun getTargets() = listOf(refExpr)
@@ -46,7 +46,7 @@ class KotlinHighlightImplicitItHandlerFactory : HighlightUsagesHandlerFactoryBas
                 lambda.accept(
                     object : KtTreeVisitorVoid() {
                         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-                            if (expression is KtNameReferenceExpression && getLambdaByImplicitItReference(expression) == lambda) {
+                            if (expression is KtNameReferenceExpression && getLambdaByImplicitItReference(expression as KtNameReferenceExpression) == lambda) {
                                 addOccurrence(expression)
                             }
                         }

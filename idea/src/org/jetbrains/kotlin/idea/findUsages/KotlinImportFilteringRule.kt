@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 class KotlinImportFilteringRule : ImportFilteringRule() {
     override fun isVisible(usage: Usage): Boolean {
         if (usage is PsiElementUsage) {
-            return usage.element?.getNonStrictParentOfType<KtImportDirective>() == null
+            return (usage as PsiElementUsage).element?.getNonStrictParentOfType<KtImportDirective>() == null
         }
 
         return true

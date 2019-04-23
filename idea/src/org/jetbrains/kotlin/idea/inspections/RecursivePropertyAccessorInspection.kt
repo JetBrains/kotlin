@@ -82,33 +82,33 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
         fun isRecursivePropertyAccess(element: KtElement): Boolean {
             if (element !is KtSimpleNameExpression) return false
             val propertyAccessor = element.getParentOfType<KtDeclarationWithBody>(true) as? KtPropertyAccessor ?: return false
-            if (element.text != propertyAccessor.property.name) return false
-            if (element.parent is KtCallableReferenceExpression) return false
+            if ((element as KtSimpleNameExpression).text != propertyAccessor.property.name) return false
+            if ((element as KtSimpleNameExpression).parent is KtCallableReferenceExpression) return false
             val bindingContext = element.analyze()
-            val target = bindingContext[REFERENCE_TARGET, element]
+            val target = bindingContext[REFERENCE_TARGET, element as KtSimpleNameExpression]
             if (target != bindingContext[DECLARATION_TO_DESCRIPTOR, propertyAccessor.property]) return false
-            (element.parent as? KtQualifiedExpression)?.let {
+            ((element as KtSimpleNameExpression).parent as? KtQualifiedExpression)?.let {
                 if (it.receiverExpression.text != KtTokens.THIS_KEYWORD.value && !it.hasObjectReceiver(bindingContext)) return false
             }
-            return isSameAccessor(element, propertyAccessor.isGetter)
+            return isSameAccessor(element as KtSimpleNameExpression, propertyAccessor.isGetter)
         }
 
         fun isRecursiveSyntheticPropertyAccess(element: KtElement): Boolean {
             if (element !is KtSimpleNameExpression) return false
             val namedFunction = element.getParentOfType<KtDeclarationWithBody>(true) as? KtNamedFunction ?: return false
             val name = namedFunction.name ?: return false
-            val referencedName = element.text.capitalize()
+            val referencedName = (element as KtSimpleNameExpression).text.capitalize()
             val isGetter = name == "get$referencedName"
             val isSetter = name == "set$referencedName"
             if (!isGetter && !isSetter) return false
-            if (element.parent is KtCallableReferenceExpression) return false
+            if ((element as KtSimpleNameExpression).parent is KtCallableReferenceExpression) return false
             val bindingContext = element.analyze()
-            val syntheticDescriptor = bindingContext[REFERENCE_TARGET, element] as? SyntheticJavaPropertyDescriptor ?: return false
+            val syntheticDescriptor = bindingContext[REFERENCE_TARGET, element as KtSimpleNameExpression] as? SyntheticJavaPropertyDescriptor ?: return false
             val namedFunctionDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, namedFunction]
             if (namedFunctionDescriptor != syntheticDescriptor.getMethod &&
                 namedFunctionDescriptor != syntheticDescriptor.setMethod
             ) return false
-            return isSameAccessor(element, isGetter)
+            return isSameAccessor(element as KtSimpleNameExpression, isGetter)
         }
 
         private fun KtQualifiedExpression.hasObjectReceiver(context: BindingContext): Boolean {

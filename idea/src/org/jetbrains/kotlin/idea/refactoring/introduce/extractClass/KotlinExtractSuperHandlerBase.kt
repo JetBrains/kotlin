@@ -55,7 +55,7 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
         if (dataContext == null) return
-        val editor = CommonDataKeys.EDITOR.getData(dataContext)
+        val editor = CommonDataKeys.EDITOR.getData(dataContext!!)
         val klass = PsiTreeUtil.findCommonParent(*elements)?.getNonStrictParentOfType<KtClassOrObject>() ?: return
         if (!checkClass(klass, editor)) return
         selectElements(klass, editor)
@@ -90,12 +90,12 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
         if (editor == null) return doInvoke(klass, containers.first())
 
         chooseContainerElementIfNecessary(
-                containers,
-                editor,
-                if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
-                true,
-                { it },
-                { doInvoke(klass, if (it is SeparateFileWrapper) klass.containingFile.parent!! else it) }
+            containers,
+            editor!!,
+            if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
+            true,
+            { it },
+            { doInvoke(klass, if (it is SeparateFileWrapper) klass.containingFile.parent!! else it) }
         )
     }
 

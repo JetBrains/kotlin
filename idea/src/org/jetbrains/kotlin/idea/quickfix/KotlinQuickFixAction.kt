@@ -34,7 +34,7 @@ abstract class KotlinQuickFixAction<out T : PsiElement>(element: T) : QuickFixAc
     final override fun invoke(project: Project, editor: Editor?, file: PsiFile) {
         val element = element ?: return
         if (file is KtFile && FileModificationService.getInstance().prepareFileForWrite(element.containingFile)) {
-            invoke(project, editor, file)
+            invoke(project, editor, file as KtFile)
         }
     }
 

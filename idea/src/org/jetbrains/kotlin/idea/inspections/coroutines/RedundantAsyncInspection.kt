@@ -44,10 +44,10 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
         val receiverExpression = expression.receiverExpression
         val scopeExpression = (receiverExpression as? KtQualifiedExpression)?.receiverExpression
         if (scopeExpression != null) {
-            val context = scopeExpression.analyze(BodyResolveMode.PARTIAL)
+            val context = scopeExpression!!.analyze(BodyResolveMode.PARTIAL)
             val scopeDescriptor = (scopeExpression as? KtNameReferenceExpression)?.let { context[BindingContext.REFERENCE_TARGET, it] }
             if (scopeDescriptor?.fqNameSafe?.toString() != GLOBAL_SCOPE) {
-                conversion = conversion.withArgument("${scopeExpression.text}.coroutineContext")
+                conversion = conversion.withArgument("${scopeExpression!!.text}.coroutineContext")
             }
         }
 
@@ -70,10 +70,10 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
                 val call = callExpression.resolveToCall()
                 if (call != null) {
                     for (argument in callExpression.valueArguments) {
-                        val mapping = call.getArgumentMapping(argument) as? ArgumentMatch ?: continue
+                        val mapping = call!!.getArgumentMapping(argument) as? ArgumentMatch ?: continue
                         if (mapping.valueParameter.name.asString() == CONTEXT_ARGUMENT_NAME) {
                             val name = argument.getArgumentName()?.asName
-                            val expressionText = contextArgument + " + " + argument.getArgumentExpression()!!.text
+                            val expressionText = contextArgument!! + " + " + argument.getArgumentExpression()!!.text
                             argument.replace(
                                 if (name == null) {
                                     createArgument(expressionText)

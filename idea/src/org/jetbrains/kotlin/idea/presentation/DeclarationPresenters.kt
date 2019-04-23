@@ -28,7 +28,7 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
     override fun getPresentableText() = declaration.name
 
     override fun getLocationString(): String? {
-        if ((declaration is KtFunction && declaration.isLocal) || (declaration is KtClassOrObject && declaration.isLocal)) {
+        if ((declaration is KtFunction && (declaration as KtFunction).isLocal) || (declaration is KtClassOrObject && (declaration as KtClassOrObject).isLocal)) {
             val containingDeclaration = declaration.getStrictParentOfType<KtNamedDeclaration>() ?: return null
             val containerName = containingDeclaration.fqName ?: containingDeclaration.name
             return "(in $containerName)"
@@ -37,9 +37,9 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
         val name = declaration.fqName
         val parent = declaration.parent
         val containerText = if (name != null) {
-            val qualifiedContainer = name.parent().toString()
+            val qualifiedContainer = name!!.parent().toString()
             if (parent is KtFile && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-                "${parent.name} in $qualifiedContainer"
+                "${(parent as KtFile).name} in $qualifiedContainer"
             } else {
                 qualifiedContainer
             }
@@ -49,7 +49,7 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
 
         val receiverTypeRef = (declaration as? KtCallableDeclaration)?.receiverTypeReference
         return when {
-            receiverTypeRef != null -> "(for " + receiverTypeRef.text + " in " + containerText + ")"
+            receiverTypeRef != null -> "(for " + receiverTypeRef!!.text + " in " + containerText + ")"
             parent is KtFile -> "($containerText)"
             else -> "(in $containerText)"
         }
@@ -89,7 +89,7 @@ class KtFunctionPresenter : ItemPresentationProvider<KtFunction> {
 
             override fun getLocationString(): String? {
                 if (function is KtConstructor<*>) {
-                    val name = function.getContainingClassOrObject().fqName ?: return null
+                    val name = (function as KtConstructor<*>).getContainingClassOrObject().fqName ?: return null
                     return "(in $name)"
                 }
 

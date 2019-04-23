@@ -62,7 +62,7 @@ class AddReifiedToTypeParameterOfFunctionFix(
             val element = Errors.TYPE_PARAMETER_AS_REIFIED.cast(diagnostic)
             val function = element.psiElement.getStrictParentOfType<KtNamedFunction>()
             val parameter = function?.typeParameterList?.parameters?.getOrNull(element.a.index) ?: return null
-            return AddReifiedToTypeParameterOfFunctionFix(parameter, function)
+            return AddReifiedToTypeParameterOfFunctionFix(parameter, function!!)
         }
     }
 }

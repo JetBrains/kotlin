@@ -70,7 +70,7 @@ abstract class AssignToVariableResultTransformation(
             }
             val uniqueName = KotlinNameSuggester.suggestNameByName("test", ::isUniqueName)
 
-            val copy = initializationStatement.copied()
+            val copy = (initializationStatement as KtVariableDeclaration).copied()
             copy.initializer!!.replace(resultCallChain)
             copy.setName(uniqueName)
             copy

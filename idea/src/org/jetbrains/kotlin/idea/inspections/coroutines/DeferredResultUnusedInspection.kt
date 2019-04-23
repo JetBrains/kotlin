@@ -19,10 +19,10 @@ import javax.swing.JComponent
 class DeferredResultUnusedInspection(@JvmField var standardOnly: Boolean = false) : AbstractResultUnusedChecker(
     expressionChecker = fun(expression, inspection): Boolean =
         inspection is DeferredResultUnusedInspection && expression is KtCallExpression &&
-                (!inspection.standardOnly || expression.calleeExpression?.text in shortNames),
+                (!(inspection as DeferredResultUnusedInspection).standardOnly || (expression as KtCallExpression).calleeExpression?.text in shortNames),
     callChecker = fun(resolvedCall, inspection): Boolean {
         if (inspection !is DeferredResultUnusedInspection) return false
-        return if (inspection.standardOnly) {
+        return if ((inspection as DeferredResultUnusedInspection).standardOnly) {
             resolvedCall.resultingDescriptor.fqNameOrNull() in fqNamesAll
         } else {
             val returnTypeClassifier = resolvedCall.resultingDescriptor.returnType?.constructor?.declarationDescriptor

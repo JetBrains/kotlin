@@ -92,7 +92,7 @@ private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingC
         val expression = instruction.element as? KtExpression
         val descriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, bindingContext)
         if (expression != null && descriptor != null) {
-            result.getOrPut(descriptor) { ArrayList() }.add(expression)
+            result.getOrPut(descriptor!!) { ArrayList() }.add(expression!!)
         }
     }
 
@@ -111,7 +111,7 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
                     bindingContext
                 )?.let { descriptor -> accessedAfterwards.add(descriptor) }
 
-                it is LocalFunctionDeclarationInstruction -> doTraversal(it.body.enterInstruction)
+                it is LocalFunctionDeclarationInstruction -> doTraversal((it as LocalFunctionDeclarationInstruction).body.enterInstruction)
             }
 
             TraverseInstructionResult.CONTINUE
@@ -134,9 +134,9 @@ private fun ExtractionData.getResultTypeAndExpressions(
     fun instructionToExpression(instruction: Instruction, unwrapReturn: Boolean): KtExpression? {
         return when (instruction) {
             is ReturnValueInstruction ->
-                (if (unwrapReturn) null else instruction.returnExpressionIfAny) ?: instruction.returnedValue.element as? KtExpression
+                (if (unwrapReturn) null else (instruction as ReturnValueInstruction).returnExpressionIfAny) ?: (instruction as ReturnValueInstruction).returnedValue.element as? KtExpression
             is InstructionWithValue ->
-                instruction.outputValue?.element as? KtExpression
+                (instruction as InstructionWithValue).outputValue?.element as? KtExpression
             else -> null
         }
     }
@@ -212,8 +212,8 @@ private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
         if (instruction !in localInstructions) {
             instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext)?.let { descriptor ->
                 val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-                if (declaration is KtNamedDeclaration && declaration.isInsideOf(physicalElements)) {
-                    declarations.add(declaration)
+                if (declaration is KtNamedDeclaration && (declaration as KtNamedDeclaration).isInsideOf(physicalElements)) {
+                    declarations.add(declaration as KtNamedDeclaration)
                 }
             }
         }
@@ -241,32 +241,34 @@ private fun ExtractionData.analyzeControlFlow(
 
         when (val inst = when {
             it !is ReturnValueInstruction && it !is ReturnNoValueInstruction && it.owner != pseudocode -> null
-            it is UnconditionalJumpInstruction && it.targetLabel.isJumpToError -> it
-            e != null && e !is KtBreakExpression && e !is KtContinueExpression -> it.previousInstructions.firstOrNull()
+            it is UnconditionalJumpInstruction && (it as UnconditionalJumpInstruction).targetLabel.isJumpToError -> it
+            e != null && e !is KtBreakExpression && e !is KtContinueExpression -> (it as UnconditionalJumpInstruction).previousInstructions.firstOrNull()
             else -> it
         }) {
-            is ReturnValueInstruction -> if (inst.owner == pseudocode) {
-                if (inst.returnExpressionIfAny == null) {
-                    defaultExits.add(inst)
+            is ReturnValueInstruction -> if ((inst as ReturnValueInstruction).owner == pseudocode) {
+                if ((inst as ReturnValueInstruction).returnExpressionIfAny == null) {
+                    defaultExits.add(inst as ReturnValueInstruction)
                 } else {
-                    valuedReturnExits.add(inst)
+                    valuedReturnExits.add(inst as ReturnValueInstruction)
                 }
             }
 
             is AbstractJumpInstruction -> {
-                val element = inst.element
-                if ((element is KtReturnExpression && inst.owner == pseudocode)
+                val element = (inst as AbstractJumpInstruction).element
+                if ((element is KtReturnExpression && (inst as AbstractJumpInstruction).owner == pseudocode)
                     || element is KtBreakExpression
                     || element is KtContinueExpression
-                ) jumpExits.add(inst) else if (element !is KtThrowExpression && !inst.targetLabel.isJumpToError) defaultExits.add(inst)
+                ) jumpExits.add(inst as AbstractJumpInstruction) else if (element !is KtThrowExpression && !(inst as AbstractJumpInstruction).targetLabel.isJumpToError) defaultExits.add(
+                    inst as AbstractJumpInstruction
+                )
             }
 
-            else -> if (inst != null && inst !is LocalFunctionDeclarationInstruction) defaultExits.add(inst)
+            else -> if (inst != null && inst !is LocalFunctionDeclarationInstruction) defaultExits.add(inst!!)
         }
     }
 
     val nonLocallyUsedDeclarations = getLocalDeclarationsWithNonLocalUsages(pseudocode, localInstructions, bindingContext)
-    val (declarationsToCopy, declarationsToReport) = nonLocallyUsedDeclarations.partition { it is KtProperty && it.isLocal }
+    val (declarationsToCopy, declarationsToReport) = nonLocallyUsedDeclarations.partition { it is KtProperty && (it as KtProperty).isLocal }
 
     val (typeOfDefaultFlow, defaultResultExpressions) = getResultTypeAndExpressions(
         defaultExits,
@@ -460,7 +462,7 @@ internal fun KotlinType.processTypeIfExtractable(
                 extractable
 
             typeParameter != null -> {
-                typeParameters.add(TypeParameter(typeParameter, typeParameter.collectRelevantConstraints()))
+                typeParameters.add(TypeParameter(typeParameter!!, typeParameter!!.collectRelevantConstraints()))
                 extractable
             }
 
@@ -570,10 +572,10 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val target = expression.mainReference.resolve()
                 if (target is KtNamedDeclaration
-                    && target.isInsideOf(physicalElements)
-                    && target.getStrictParentOfType<KtDeclaration>() == enclosingDeclaration
+                    && (target as KtNamedDeclaration).isInsideOf(physicalElements)
+                    && (target as KtNamedDeclaration).getStrictParentOfType<KtDeclaration>() == enclosingDeclaration
                 ) {
-                    declarationsOutOfScope.add(target)
+                    declarationsOutOfScope.add(target as KtNamedDeclaration)
                 }
             }
         }
@@ -590,7 +592,7 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
 private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<Instruction> {
     val instructions = ArrayList<Instruction>()
     pseudocode.traverse(TraversalOrder.FORWARD) {
-        if (it is KtElementInstruction && it.element.isInsideOf(physicalElements)) {
+        if (it is KtElementInstruction && (it as KtElementInstruction).element.isInsideOf(physicalElements)) {
             instructions.add(it)
         }
     }
@@ -599,12 +601,12 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
 
 fun ExtractionData.isLocal(): Boolean {
     val parent = targetSibling.parent
-    return parent !is KtClassBody && (parent !is KtFile || parent.isScript())
+    return parent !is KtClassBody && (parent !is KtFile || (parent as KtFile).isScript())
 }
 
 fun ExtractionData.isVisibilityApplicable(): Boolean {
     if (isLocal()) return false
-    if (commonParent.parentsWithSelf.any { it is KtNamedFunction && it.hasModifier(KtTokens.INLINE_KEYWORD) && it.isPublic }) return false
+    if (commonParent.parentsWithSelf.any { it is KtNamedFunction && (it as KtNamedFunction).hasModifier(KtTokens.INLINE_KEYWORD) && (it as KtNamedFunction).isPublic }) return false
     return true
 }
 
@@ -613,8 +615,8 @@ fun ExtractionData.getDefaultVisibility(): KtModifierKeywordToken? {
 
     val parent = targetSibling.getStrictParentOfType<KtDeclaration>()
     if (parent is KtClass) {
-        if (parent.isInterface()) return null
-        if (parent.isEnum() && commonParent.getNonStrictParentOfType<KtEnumEntry>()?.getStrictParentOfType<KtClass>() == parent) return null
+        if ((parent as KtClass).isInterface()) return null
+        if ((parent as KtClass).isEnum() && commonParent.getNonStrictParentOfType<KtEnumEntry>()?.getStrictParentOfType<KtClass>() == parent) return null
     }
 
     return KtTokens.PRIVATE_KEYWORD
@@ -731,7 +733,7 @@ private fun ExtractionData.suggestFunctionNames(returnType: KotlinType): List<St
     val validator =
         NewDeclarationNameValidator(
             targetSibling.parent,
-            if (targetSibling is KtAnonymousInitializer) targetSibling.parent else targetSibling,
+            if (targetSibling is KtAnonymousInitializer) (targetSibling as KtAnonymousInitializer).parent else targetSibling,
             if (options.extractAsProperty) NewDeclarationNameValidator.Target.VARIABLES else NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES
         )
     if (!KotlinBuiltIns.isUnit(returnType)) {
@@ -741,7 +743,7 @@ private fun ExtractionData.suggestFunctionNames(returnType: KotlinType): List<St
     expressions.singleOrNull()?.let { expr ->
         val property = expr.getStrictParentOfType<KtProperty>()
         if (property?.initializer == expr) {
-            property.name?.let { functionNames.add(KotlinNameSuggester.suggestNameByName("get" + it.capitalize(), validator)) }
+            property!!.name?.let { functionNames.add(KotlinNameSuggester.suggestNameByName("get" + it.capitalize(), validator)) }
         }
     }
 
@@ -793,10 +795,10 @@ fun ExtractableCodeDescriptor.validate(target: ExtractionTarget = ExtractionTarg
         val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
         val currentTarget =
             currentDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(extractionData.project, it) } as? PsiNamedElement
-        if (currentTarget is KtParameter && currentTarget.parent == valueParameterList) return
-        if (currentTarget is KtTypeParameter && currentTarget.parent == typeParameterList) return
+        if (currentTarget is KtParameter && (currentTarget as KtParameter).parent == valueParameterList) return
+        if (currentTarget is KtTypeParameter && (currentTarget as KtTypeParameter).parent == typeParameterList) return
         if (currentDescriptor is LocalVariableDescriptor
-            && parameters.any { it.mirrorVarName == currentDescriptor.name.asString() }
+            && parameters.any { it.mirrorVarName == (currentDescriptor as LocalVariableDescriptor).name.asString() }
         ) return
 
         if (diagnostics.any { it.factory in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS }

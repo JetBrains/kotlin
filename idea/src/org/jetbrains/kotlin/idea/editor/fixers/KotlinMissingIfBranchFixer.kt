@@ -28,24 +28,24 @@ class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSma
         if (element !is KtIfExpression) return
 
         val document = editor.document
-        val elseBranch = element.`else`
-        val elseKeyword = element.elseKeyword
+        val elseBranch = (element as KtIfExpression).`else`
+        val elseKeyword = (element as KtIfExpression).elseKeyword
 
         if (elseKeyword != null) {
-            if (elseBranch == null || elseBranch !is KtBlockExpression && elseBranch.startLine(document) > elseKeyword.startLine(document)) {
-                document.insertString(elseKeyword.range.end, "{}")
+            if (elseBranch == null || elseBranch !is KtBlockExpression && elseBranch!!.startLine(document) > elseKeyword!!.startLine(document)) {
+                document.insertString(elseKeyword!!.range.end, "{}")
                 return
             }
         }
 
-        val thenBranch = element.then
+        val thenBranch = (element as KtIfExpression).then
         if (thenBranch is KtBlockExpression) return
 
-        val rParen = element.rightParenthesis ?: return
+        val rParen = (element as KtIfExpression).rightParenthesis ?: return
 
         var transformingOneLiner = false
-        if (thenBranch != null && thenBranch.startLine(document) == element.startLine(document)) {
-            if (element.condition != null) return
+        if (thenBranch != null && thenBranch!!.startLine(document) == element.startLine(document)) {
+            if ((element as KtIfExpression).condition != null) return
             transformingOneLiner = true
         }
 
@@ -55,7 +55,7 @@ class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSma
             document.insertString(rParen.range.end, "{}")
         } else {
             document.insertString(rParen.range.end, "{")
-            document.insertString(thenBranch.range.end + 1, "}")
+            document.insertString(thenBranch!!.range.end + 1, "}")
         }
     }
 }

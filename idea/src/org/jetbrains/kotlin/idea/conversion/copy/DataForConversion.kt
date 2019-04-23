@@ -46,8 +46,8 @@ data class DataForConversion private constructor(
 
             val newFileText = clipTextIfNeeded(file, fileText, startOffsets, endOffsets)
             if (newFileText != null) {
-                fileText = newFileText
-                file = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, newFileText) as PsiJavaFile
+                fileText = newFileText!!
+                file = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, newFileText!!) as PsiJavaFile
             }
 
             val elementsAndTexts = ElementAndTextList()
@@ -72,11 +72,11 @@ data class DataForConversion private constructor(
                 val startToken = file.findElementAt(start)!!
                 val elementToClipLeft = startToken.maximalParentToClip(range)
                 if (elementToClipLeft != null) {
-                    val elementStart = elementToClipLeft.range.start
+                    val elementStart = elementToClipLeft!!.range.start
                     if (elementStart < start) {
-                        val clipBound = tryClipLeftSide(elementToClipLeft, start)
+                        val clipBound = tryClipLeftSide(elementToClipLeft!!, start)
                         if (clipBound != null) {
-                            val rangeToDrop = TextRange(elementStart, clipBound)
+                            val rangeToDrop = TextRange(elementStart, clipBound!!)
                             if (canDropRange(rangeToDrop)) {
                                 rangesToDrop.add(rangeToDrop)
                             }
@@ -87,11 +87,11 @@ data class DataForConversion private constructor(
                 val endToken = file.findElementAt(end - 1)!!
                 val elementToClipRight = endToken.maximalParentToClip(range)
                 if (elementToClipRight != null) {
-                    val elementEnd = elementToClipRight.range.end
+                    val elementEnd = elementToClipRight!!.range.end
                     if (elementEnd > end) {
-                        val clipBound = tryClipRightSide(elementToClipRight, end)
+                        val clipBound = tryClipRightSide(elementToClipRight!!, end)
                         if (clipBound != null) {
-                            val rangeToDrop = TextRange(clipBound, elementEnd)
+                            val rangeToDrop = TextRange(clipBound!!, elementEnd)
                             if (canDropRange(rangeToDrop)) {
                                 rangesToDrop.add(rangeToDrop)
                             }
@@ -149,7 +149,7 @@ data class DataForConversion private constructor(
                 is PsiWhiteSpace, is PsiComment, is PsiModifierList, is PsiAnnotation -> true
 
                 is PsiJavaToken -> {
-                    when (element.tokenType) {
+                    when ((element as PsiJavaToken).tokenType) {
                         // modifiers
                         JavaTokenType.PUBLIC_KEYWORD, JavaTokenType.PROTECTED_KEYWORD, JavaTokenType.PRIVATE_KEYWORD,
                         JavaTokenType.STATIC_KEYWORD, JavaTokenType.ABSTRACT_KEYWORD, JavaTokenType.FINAL_KEYWORD,
@@ -241,7 +241,7 @@ data class DataForConversion private constructor(
 
                 val importList = sourceFile.importList
                 if (importList != null) {
-                    for (import in importList.importStatements) {
+                    for (import in importList!!.importStatements) {
                         val qualifiedName = import.qualifiedName ?: continue
                         if (import.isOnDemand) {
                             append("import $qualifiedName.*\n")

@@ -58,7 +58,7 @@ class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteral
         val valueArgument = element.parent as? KtValueArgument
         val call = valueArgument?.getStrictParentOfType<KtCallExpression>()
         if (call != null) {
-            val argumentMatch = call.resolveToCall()?.getArgumentMapping(valueArgument) as? ArgumentMatch
+            val argumentMatch = call!!.resolveToCall()?.getArgumentMapping(valueArgument!!) as? ArgumentMatch
             if (baseType.constructor != argumentMatch?.valueParameter?.type?.constructor) return ProblemHighlightType.INFORMATION
         }
 
@@ -168,10 +168,10 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         val parentCall = ((replaced.parent as? KtValueArgument)
                              ?.parent as? KtValueArgumentList)
                                  ?.parent as? KtCallExpression
-        if (parentCall != null && RedundantSamConstructorInspection.samConstructorCallsToBeConverted(parentCall).singleOrNull() == callExpression) {
+        if (parentCall != null && RedundantSamConstructorInspection.samConstructorCallsToBeConverted(parentCall!!).singleOrNull() == callExpression) {
             RedundantSamConstructorInspection.replaceSamConstructorCall(callExpression)
-            if (parentCall.canMoveLambdaOutsideParentheses()) {
-                parentCall.moveFunctionLiteralOutsideParentheses()
+            if (parentCall!!.canMoveLambdaOutsideParentheses()) {
+                parentCall!!.moveFunctionLiteralOutsideParentheses()
             }
         }
         else {

@@ -56,7 +56,7 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
                 name,
                 argument.getSpreadElement() != null
             )
-            argument.replace(newArgument)
+            (argument as KtValueArgument).replace(newArgument)
         }
     }
 }

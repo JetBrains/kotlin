@@ -79,7 +79,7 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
             return when {
                 initializer != null -> {
                     val compileTimeConstant = ConstantExpressionEvaluator.getConstant(
-                        initializer, context
+                        initializer!!, context
                     ) ?: return NONE
                     val erroneousConstant = compileTimeConstant.usesNonConstValAsConstant
                     compileTimeConstant.toConstantValue(propertyDescriptor.type).takeIf {

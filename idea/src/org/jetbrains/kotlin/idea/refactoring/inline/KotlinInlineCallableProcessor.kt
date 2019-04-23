@@ -45,14 +45,14 @@ class KotlinInlineCallableProcessor(
 
     private val kind = when (declaration) {
         is KtNamedFunction -> "function"
-        is KtProperty -> if (declaration.isLocal) "local variable" else "property"
+        is KtProperty -> if ((declaration as KtProperty).isLocal) "local variable" else "property"
         else -> "declaration"
     }
 
     private val commandName = "Inlining $kind ${DescriptiveNameUtil.getDescriptiveName(declaration)}"
 
     override fun findUsages(): Array<UsageInfo> {
-        if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference))
+        if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference!!))
         val usages = runReadAction {
             val searchScope = GlobalSearchScope.projectScope(myProject)
             ReferencesSearchScopeHelper.search(declaration, searchScope)

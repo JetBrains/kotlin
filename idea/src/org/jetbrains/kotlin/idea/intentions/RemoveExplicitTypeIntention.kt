@@ -41,7 +41,7 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
         val initializer = (element as? KtProperty)?.initializer
         val typeArgumentList = initializer?.let { getQualifiedTypeArgumentList(it) }
         element.typeReference = null
-        if (typeArgumentList != null) addTypeArgumentsIfNeeded(initializer, typeArgumentList)
+        if (typeArgumentList != null) addTypeArgumentsIfNeeded(initializer!!, typeArgumentList!!)
     }
 
     companion object {
@@ -51,14 +51,14 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
             if (typeReference.annotationEntries.isNotEmpty()) return null
 
             if (element is KtParameter) {
-                if (element.isLoopParameter) return element.textRange
-                if (element.isSetterParameter) return typeReference.textRange
+                if ((element as KtParameter).isLoopParameter) return (element as KtParameter).textRange
+                if ((element as KtParameter).isSetterParameter) return typeReference.textRange
             }
 
             if (element !is KtProperty && element !is KtNamedFunction) return null
 
             if (element is KtNamedFunction
-                && element.hasBlockBody()
+                && (element as KtNamedFunction).hasBlockBody()
                 && (element.descriptor as? FunctionDescriptor)?.returnType?.isUnit()?.not() != false
             ) return null
 
@@ -67,8 +67,8 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
             if (!redundantTypeSpecification(element, initializer)) return null
 
             return when {
-                initializer != null -> TextRange(element.startOffset, initializer.startOffset - 1)
-                element is KtProperty && element.getter != null -> TextRange(element.startOffset, typeReference.endOffset)
+                initializer != null -> TextRange(element.startOffset, initializer!!.startOffset - 1)
+                element is KtProperty && (element as KtProperty).getter != null -> TextRange(element.startOffset, typeReference.endOffset)
                 element is KtNamedFunction -> TextRange(element.startOffset, typeReference.endOffset)
                 else -> null
             }
@@ -80,9 +80,9 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
             val functionType = element.typeReference?.typeElement as? KtFunctionType ?: return true
             if (functionType.receiver != null) return false
             if (functionType.parameters.isEmpty()) return true
-            val valueParameters = when (initializer) {
-                is KtLambdaExpression -> initializer.valueParameters
-                is KtNamedFunction -> initializer.valueParameters
+            val valueParameters = when (initializer!!) {
+                is KtLambdaExpression -> (initializer as KtLambdaExpression).valueParameters
+                is KtNamedFunction -> (initializer as KtNamedFunction).valueParameters
                 else -> emptyList()
             }
             return valueParameters.isNotEmpty() && valueParameters.none { it.typeReference == null }

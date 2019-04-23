@@ -59,7 +59,7 @@ fun markElements(
                     val callee = expression.getQualifiedExpressionForReceiver()?.selectorExpression?.getCalleeExpressionIfAny() ?: return
                     val calleeTarget = callee.getResolvedCall(context)?.resultingDescriptor ?: return
                     if ((calleeTarget as? CallableMemberDescriptor)?.kind != CallableMemberDescriptor.Kind.DECLARATION) return
-                    if (calleeTarget.containingDeclaration == targetClassDescriptor) {
+                    if ((calleeTarget as CallableMemberDescriptor).containingDeclaration == targetClassDescriptor) {
                         expression.replaceWithTargetThis = true
                         affectedElements.add(expression)
                     }

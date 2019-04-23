@@ -52,7 +52,7 @@ object ReplaceWithAnnotationAnalyzer {
         reformat: Boolean
     ): CodeToInline? {
         val originalDescriptor = when (symbolDescriptor) {
-            is CallableMemberDescriptor -> DescriptorUtils.unwrapFakeOverride(symbolDescriptor)
+            is CallableMemberDescriptor -> DescriptorUtils.unwrapFakeOverride(symbolDescriptor as CallableMemberDescriptor)
             else -> symbolDescriptor
         }.original
         return analyzeOriginal(annotation, originalDescriptor, resolutionFacade, reformat)
@@ -187,9 +187,9 @@ object ReplaceWithAnnotationAnalyzer {
     ): LexicalScope? {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
-                val moduleDescriptor = descriptor.containingDeclaration
+                val moduleDescriptor = (descriptor as PackageFragmentDescriptor).containingDeclaration
                 getResolutionScope(
-                    moduleDescriptor.getPackage(descriptor.fqName),
+                    moduleDescriptor.getPackage((descriptor as PackageFragmentDescriptor).fqName),
                     ownerDescriptor,
                     explicitScopes,
                     additionalScopes,
@@ -198,7 +198,7 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             is PackageViewDescriptor -> {
-                val memberAsImportingScope = descriptor.memberScope.memberScopeAsImportingScope()
+                val memberAsImportingScope = (descriptor as PackageViewDescriptor).memberScope.memberScopeAsImportingScope()
                 LexicalScope.Base(
                     chainImportingScopes(explicitScopes + listOf(memberAsImportingScope) + additionalScopes)!!,
                     ownerDescriptor
@@ -207,10 +207,10 @@ object ReplaceWithAnnotationAnalyzer {
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(
-                    descriptor.containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
+                    (descriptor as ClassDescriptor).containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
                 ) ?: return null
                 ClassResolutionScopesSupport(
-                    descriptor,
+                    descriptor as ClassDescriptor,
                     LockBasedStorageManager.NO_LOCKS,
                     languageVersionSettings
                 ) { outerScope }.scopeForMemberDeclarationResolution()
@@ -218,7 +218,7 @@ object ReplaceWithAnnotationAnalyzer {
 
             is TypeAliasDescriptor -> {
                 val outerScope = getResolutionScope(
-                    descriptor.containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
+                    (descriptor as TypeAliasDescriptor).containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
                 ) ?: return null
                 LexicalScopeImpl(
                     outerScope,
@@ -228,7 +228,7 @@ object ReplaceWithAnnotationAnalyzer {
                     LexicalScopeKind.TYPE_ALIAS_HEADER,
                     LocalRedeclarationChecker.DO_NOTHING
                 ) {
-                    for (typeParameter in descriptor.declaredTypeParameters) {
+                    for (typeParameter in (descriptor as TypeAliasDescriptor).declaredTypeParameters) {
                         addClassifierDescriptor(typeParameter)
                     }
                 }
@@ -236,21 +236,21 @@ object ReplaceWithAnnotationAnalyzer {
 
             is FunctionDescriptor -> {
                 val outerScope = getResolutionScope(
-                    descriptor.containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
+                    (descriptor as FunctionDescriptor).containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
                 ) ?: return null
-                FunctionDescriptorUtil.getFunctionInnerScope(outerScope, descriptor, LocalRedeclarationChecker.DO_NOTHING)
+                FunctionDescriptorUtil.getFunctionInnerScope(outerScope, descriptor as FunctionDescriptor, LocalRedeclarationChecker.DO_NOTHING)
             }
 
             is PropertyDescriptor -> {
                 val outerScope = getResolutionScope(
-                    descriptor.containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
+                    (descriptor as PropertyDescriptor).containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
                 ) ?: return null
-                val propertyHeader = ScopeUtils.makeScopeForPropertyHeader(outerScope, descriptor)
+                val propertyHeader = ScopeUtils.makeScopeForPropertyHeader(outerScope, descriptor as PropertyDescriptor)
                 LexicalScopeImpl(
                     propertyHeader,
                     descriptor,
                     false,
-                    descriptor.extensionReceiverParameter,
+                    (descriptor as PropertyDescriptor).extensionReceiverParameter,
                     LexicalScopeKind.PROPERTY_ACCESSOR_BODY
                 )
             }

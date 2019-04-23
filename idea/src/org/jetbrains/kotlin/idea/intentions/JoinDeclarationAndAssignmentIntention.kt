@@ -49,7 +49,7 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
     private fun equalNullableTypes(type1: KotlinType?, type2: KotlinType?): Boolean {
         if (type1 == null) return type2 == null
         if (type2 == null) return false
-        return TypeUtils.equalTypes(type1, type2)
+        return TypeUtils.equalTypes(type1!!, type2!!)
     }
 
     override fun applicabilityRange(element: KtProperty): TextRange? {
@@ -84,8 +84,8 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
 
         val initializerBlock = assignment.parent.parent as? KtAnonymousInitializer
         assignment.delete()
-        if (initializerBlock != null && (initializerBlock.body as? KtBlockExpression)?.isEmpty() == true) {
-            initializerBlock.delete()
+        if (initializerBlock != null && (initializerBlock!!.body as? KtBlockExpression)?.isEmpty() == true) {
+            initializerBlock!!.delete()
         }
 
         editor?.apply {
@@ -111,9 +111,9 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
             val left = binaryExpr.left
             val leftReference = when (left) {
                 is KtNameReferenceExpression ->
-                    left
+                    left as KtNameReferenceExpression
                 is KtDotQualifiedExpression ->
-                    if (left.receiverExpression is KtThisExpression) left.selectorExpression as? KtNameReferenceExpression else null
+                    if ((left as KtDotQualifiedExpression).receiverExpression is KtThisExpression) (left as KtDotQualifiedExpression).selectorExpression as? KtNameReferenceExpression else null
                 else ->
                     null
             } ?: return
@@ -155,7 +155,7 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
 
     private fun hasNoLocalDependencies(element: KtElement, localContext: PsiElement): Boolean {
         return !element.anyDescendantOfType<PsiElement> { child ->
-            child.resolveAllReferences().any { it != null && PsiTreeUtil.isAncestor(localContext, it, false) }
+            child.resolveAllReferences().any { it != null && PsiTreeUtil.isAncestor(localContext, it!!, false) }
         }
     }
 }

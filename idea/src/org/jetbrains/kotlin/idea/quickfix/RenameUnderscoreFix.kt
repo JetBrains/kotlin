@@ -32,7 +32,7 @@ class RenameUnderscoreFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtD
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (editor == null) return
-        val dataContext = DataManager.getInstance().getDataContext(editor.component)
+        val dataContext = DataManager.getInstance().getDataContext(editor!!.component)
         val renameHandler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext)
         renameHandler?.invoke(project, arrayOf(element), dataContext)
     }

@@ -39,17 +39,17 @@ class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFi
 
     init {
         val defaultValue = element.defaultValue
-        var type = defaultValue?.getType(defaultValue.analyze(BodyResolveMode.PARTIAL))
-        if (type != null && KotlinBuiltIns.isArrayOrPrimitiveArray(type)) {
+        var type = defaultValue?.getType(defaultValue!!.analyze(BodyResolveMode.PARTIAL))
+        if (type != null && KotlinBuiltIns.isArrayOrPrimitiveArray(type!!)) {
             if (element.hasModifier(KtTokens.VARARG_KEYWORD)) {
-                type = if (KotlinBuiltIns.isPrimitiveArray(type))
-                    element.builtIns.getArrayElementType(type)
+                type = if (KotlinBuiltIns.isPrimitiveArray(type!!))
+                    element.builtIns.getArrayElementType(type!!)
                 else
-                    type.arguments.singleOrNull()?.type
+                    type!!.arguments.singleOrNull()?.type
             }
             else if (defaultValue is KtCollectionLiteralExpression) {
                 val builtIns = element.builtIns
-                val elementType = builtIns.getArrayElementType(type)
+                val elementType = builtIns.getArrayElementType(type!!)
                 if (KotlinBuiltIns.isPrimitiveType(elementType)) {
                     type = builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType)
                 }
@@ -71,7 +71,7 @@ class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFi
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         if (typeName != null) {
-            element.typeReference = KtPsiFactory(element).createType(typeName)
+            element.typeReference = KtPsiFactory(element).createType(typeName!!)
             ShortenReferences.DEFAULT.process(element)
         }
     }

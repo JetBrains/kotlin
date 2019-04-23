@@ -48,7 +48,7 @@ class KotlinPullUpData(val sourceClass: KtClassOrObject,
 
     val memberDescriptors = membersToMove.keysToMap {
         when (it) {
-            is KtPsiClassWrapper -> it.psiClass.getJavaClassDescriptor(resolutionFacade)!!
+            is KtPsiClassWrapper -> (it as KtPsiClassWrapper).psiClass.getJavaClassDescriptor(resolutionFacade)!!
             is KtParameter -> sourceClassContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it]!!
             else -> sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!!
         }

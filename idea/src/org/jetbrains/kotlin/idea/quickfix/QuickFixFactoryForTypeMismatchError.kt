@@ -95,15 +95,15 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             Errors.CONSTANT_EXPECTED_TYPE_MISMATCH -> {
                 val diagnosticWithParameters = Errors.CONSTANT_EXPECTED_TYPE_MISMATCH.cast(diagnostic)
                 expectedType = diagnosticWithParameters.b
-                expressionType = context.getType(diagnosticElement)
+                expressionType = context.getType(diagnosticElement as KtExpression)
             }
             Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED -> {
-                val constantValue = context[BindingContext.COMPILE_TIME_VALUE, diagnosticElement]
+                val constantValue = context[BindingContext.COMPILE_TIME_VALUE, diagnosticElement as KtExpression]
                 if (constantValue is IntegerValueTypeConstant) {
                     // Here we have unsigned type (despite really constant is signed)
-                    expectedType = constantValue.getType(NO_EXPECTED_TYPE)
+                    expectedType = (constantValue as IntegerValueTypeConstant).getType(NO_EXPECTED_TYPE)
                     val signedConstantValue = with(IntegerValueTypeConstant) {
-                        constantValue.convertToSignedConstant(diagnosticElement.findModuleDescriptor())
+                        (constantValue as IntegerValueTypeConstant).convertToSignedConstant((diagnosticElement as KtExpression).findModuleDescriptor())
                     }
                     // And here we have signed type
                     expressionType = signedConstantValue.getType(NO_EXPECTED_TYPE)
@@ -115,41 +115,41 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             }
         }
         if (expressionType == null) {
-            LOG.error("No type inferred: " + diagnosticElement.text)
+            LOG.error("No type inferred: " + (diagnosticElement as KtExpression).text)
             return emptyList()
         }
 
-        if (expressionType.isSignedOrUnsignedNumberType() && expectedType.isSignedOrUnsignedNumberType()) {
+        if (expressionType!!.isSignedOrUnsignedNumberType() && expectedType.isSignedOrUnsignedNumberType()) {
             var wrongPrimitiveLiteralFix: WrongPrimitiveLiteralFix? = null
             if (diagnosticElement is KtConstantExpression && !KotlinBuiltIns.isChar(expectedType)) {
-                wrongPrimitiveLiteralFix = WrongPrimitiveLiteralFix(diagnosticElement, expectedType)
-                actions.add(wrongPrimitiveLiteralFix)
+                wrongPrimitiveLiteralFix = WrongPrimitiveLiteralFix(diagnosticElement as KtConstantExpression, expectedType)
+                actions.add(wrongPrimitiveLiteralFix!!)
             }
-            actions.add(NumberConversionFix(diagnosticElement, expectedType, wrongPrimitiveLiteralFix))
-            actions.add(RoundNumberFix(diagnosticElement, expectedType, wrongPrimitiveLiteralFix))
+            actions.add(NumberConversionFix(diagnosticElement as KtExpression, expectedType, wrongPrimitiveLiteralFix))
+            actions.add(RoundNumberFix(diagnosticElement as KtExpression, expectedType, wrongPrimitiveLiteralFix))
         }
 
         if (KotlinBuiltIns.isCharSequenceOrNullableCharSequence(expectedType) || KotlinBuiltIns.isStringOrNullableString(expectedType)) {
-            actions.add(AddToStringFix(diagnosticElement, false))
-            if (expectedType.isMarkedNullable && expressionType.isMarkedNullable) {
-                actions.add(AddToStringFix(diagnosticElement, true))
+            actions.add(AddToStringFix(diagnosticElement as KtExpression, false))
+            if (expectedType.isMarkedNullable && expressionType!!.isMarkedNullable) {
+                actions.add(AddToStringFix(diagnosticElement as KtExpression, true))
             }
         }
 
         if (expectedType.isInterface()) {
-            val expressionTypeDeclaration = expressionType.constructor.declarationDescriptor?.let {
+            val expressionTypeDeclaration = expressionType!!.constructor.declarationDescriptor?.let {
                 DescriptorToSourceUtils.descriptorToDeclaration(it)
             } as? KtClassOrObject
-            if (expressionTypeDeclaration != null && expectedType != TypeUtils.makeNotNullable(expressionType)) {
-                actions.add(LetImplementInterfaceFix(expressionTypeDeclaration, expectedType, expressionType))
+            if (expressionTypeDeclaration != null && expectedType != TypeUtils.makeNotNullable(expressionType!!)) {
+                actions.add(LetImplementInterfaceFix(expressionTypeDeclaration!!, expectedType, expressionType!!))
             }
         }
 
 
-        actions.addAll(WrapWithCollectionLiteralCallFix.create(expectedType, expressionType, diagnosticElement))
+        actions.addAll(WrapWithCollectionLiteralCallFix.create(expectedType, expressionType!!, diagnosticElement as KtExpression))
 
-        ConvertCollectionFix.getConversionTypeOrNull(expressionType, expectedType)?.let {
-            actions.add(ConvertCollectionFix(diagnosticElement, it))
+        ConvertCollectionFix.getConversionTypeOrNull(expressionType!!, expectedType)?.let {
+            actions.add(ConvertCollectionFix(diagnosticElement as KtExpression, it))
         }
 
         fun KtExpression.getTopMostQualifiedForSelectorIfAny(): KtExpression {
@@ -164,15 +164,15 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         // We don't want to cast a cast or type-asserted expression:
         if (diagnostic.factory != Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED &&
             diagnosticElement !is KtBinaryExpressionWithTypeRHS &&
-            diagnosticElement.parent !is KtBinaryExpressionWithTypeRHS
+            (diagnosticElement as KtExpression).parent !is KtBinaryExpressionWithTypeRHS
         ) {
-            actions.add(CastExpressionFix(diagnosticElement.getTopMostQualifiedForSelectorIfAny(), expectedType))
+            actions.add(CastExpressionFix((diagnosticElement as KtExpression).getTopMostQualifiedForSelectorIfAny(), expectedType))
         }
 
-        if (!expectedType.isMarkedNullable && TypeUtils.isNullableType(expressionType)) {
+        if (!expectedType.isMarkedNullable && TypeUtils.isNullableType(expressionType!!)) {
             val nullableExpected = expectedType.makeNullable()
-            if (expressionType.isSubtypeOf(nullableExpected)) {
-                actions.add(AddExclExclCallFix(diagnosticElement.getTopMostQualifiedForSelectorIfAny()))
+            if (expressionType!!.isSubtypeOf(nullableExpected)) {
+                actions.add(AddExclExclCallFix((diagnosticElement as KtExpression).getTopMostQualifiedForSelectorIfAny()))
             }
         }
 
@@ -192,45 +192,48 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         // Property initializer type mismatch property type:
         val property = PsiTreeUtil.getParentOfType(diagnosticElement, KtProperty::class.java)
         if (property != null) {
-            val getter = property.getter
-            val initializer = property.initializer
-            if (QuickFixUtil.canEvaluateTo(initializer, diagnosticElement)
-                || getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(getter, diagnosticElement)
+            val getter = property!!.getter
+            val initializer = property!!.initializer
+            if (QuickFixUtil.canEvaluateTo(initializer, diagnosticElement as KtExpression)
+                || getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(getter!!, diagnosticElement as KtExpression)
             ) {
-                addChangeTypeFix(property, expressionType, ::ChangeVariableTypeFix)
+                addChangeTypeFix(property!!, expressionType!!, ::ChangeVariableTypeFix)
             }
         }
 
-        val expressionParent = diagnosticElement.parent
+        val expressionParent = (diagnosticElement as KtExpression).parent
 
         // Mismatch in returned expression:
 
         val function = if (expressionParent is KtReturnExpression)
-            expressionParent.getTargetFunction(context)
+            (expressionParent as KtReturnExpression).getTargetFunction(context)
         else
             PsiTreeUtil.getParentOfType(diagnosticElement, KtFunction::class.java, true)
-        if (function is KtFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(function, diagnosticElement)) {
-            addChangeTypeFix(function, expressionType, ChangeCallableReturnTypeFix::ForEnclosing)
+        if (function is KtFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(
+                function as KtFunction,
+                diagnosticElement as KtExpression
+            )) {
+            addChangeTypeFix(function as KtFunction, expressionType!!, ChangeCallableReturnTypeFix::ForEnclosing)
         }
 
         // Fixing overloaded operators:
         if (diagnosticElement is KtOperationExpression) {
-            val resolvedCall = diagnosticElement.getResolvedCall(context)
+            val resolvedCall = (diagnosticElement as KtExpression).getResolvedCall(context)
             if (resolvedCall != null) {
-                val declaration = getFunctionDeclaration(resolvedCall)
+                val declaration = getFunctionDeclaration(resolvedCall!!)
                 if (declaration != null) {
-                    actions.add(ChangeCallableReturnTypeFix.ForCalled(declaration, expectedType))
+                    actions.add(ChangeCallableReturnTypeFix.ForCalled(declaration!!, expectedType))
                 }
             }
         }
 
         // Change function return type when TYPE_MISMATCH is reported on call expression:
         if (diagnosticElement is KtCallExpression) {
-            val resolvedCall = diagnosticElement.getResolvedCall(context)
+            val resolvedCall = (diagnosticElement as KtExpression).getResolvedCall(context)
             if (resolvedCall != null) {
-                val declaration = getFunctionDeclaration(resolvedCall)
+                val declaration = getFunctionDeclaration(resolvedCall!!)
                 if (declaration != null) {
-                    actions.add(ChangeCallableReturnTypeFix.ForCalled(declaration, expectedType))
+                    actions.add(ChangeCallableReturnTypeFix.ForCalled(declaration!!, expectedType))
                 }
             }
         }
@@ -238,33 +241,33 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         // KT-10063: arrayOf() bounding single array element
         val annotationEntry = PsiTreeUtil.getParentOfType(diagnosticElement, KtAnnotationEntry::class.java)
         if (annotationEntry != null) {
-            if (KotlinBuiltIns.isArray(expectedType) && expressionType.isSubtypeOf(expectedType.arguments[0].type)
+            if (KotlinBuiltIns.isArray(expectedType) && expressionType!!.isSubtypeOf(expectedType.arguments[0].type)
                 || KotlinBuiltIns.isPrimitiveArray(expectedType)
             ) {
-                actions.add(AddArrayOfTypeFix(diagnosticElement, expectedType))
+                actions.add(AddArrayOfTypeFix(diagnosticElement as KtExpression, expectedType))
                 if (diagnosticElement.languageVersionSettings.supportsFeature(LanguageFeature.ArrayLiteralsInAnnotations)) {
-                    actions.add(WrapWithArrayLiteralFix(diagnosticElement))
+                    actions.add(WrapWithArrayLiteralFix(diagnosticElement as KtExpression))
                 }
             }
         }
 
         diagnosticElement.getStrictParentOfType<KtParameter>()?.let {
             if (it.defaultValue == diagnosticElement) {
-                actions.add(ChangeParameterTypeFix(it, expressionType))
+                actions.add(ChangeParameterTypeFix(it, expressionType!!))
             }
         }
 
-        val resolvedCall = diagnosticElement.getParentResolvedCall(context, true)
+        val resolvedCall = (diagnosticElement as KtExpression).getParentResolvedCall(context, true)
         if (resolvedCall != null) {
             // to fix 'type mismatch' on 'if' branches
             // todo: the same with 'when'
-            val parentIf = QuickFixUtil.getParentIfForBranch(diagnosticElement)
-            val argumentExpression = parentIf ?: diagnosticElement
-            val valueArgument = resolvedCall.call.getValueArgumentForExpression(argumentExpression)
+            val parentIf = QuickFixUtil.getParentIfForBranch(diagnosticElement as KtExpression)
+            val argumentExpression = parentIf ?: diagnosticElement as KtExpression
+            val valueArgument = resolvedCall!!.call.getValueArgumentForExpression(argumentExpression)
             if (valueArgument != null) {
-                val correspondingParameterDescriptor = resolvedCall.getParameterForArgument(valueArgument)
+                val correspondingParameterDescriptor = resolvedCall!!.getParameterForArgument(valueArgument)
                 val correspondingParameter = QuickFixUtil.safeGetDeclaration(correspondingParameterDescriptor) as? KtParameter
-                val expressionFromArgument = valueArgument.getArgumentExpression()
+                val expressionFromArgument = valueArgument!!.getArgumentExpression()
                 val valueArgumentType = when (diagnostic.factory) {
                     Errors.NULL_FOR_NONNULL_TYPE, Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED -> expressionType
                     else -> expressionFromArgument?.let { context.getType(it) }
@@ -272,17 +275,17 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                 if (valueArgumentType != null) {
                     if (correspondingParameter != null) {
                         val callable = PsiTreeUtil.getParentOfType(correspondingParameter, KtCallableDeclaration::class.java, true)
-                        val scope = callable?.getResolutionScope(context, callable.getResolutionFacade())
-                        val typeToInsert = valueArgumentType.approximateWithResolvableType(scope, true)
-                        actions.add(ChangeParameterTypeFix(correspondingParameter, typeToInsert))
+                        val scope = callable?.getResolutionScope(context, callable!!.getResolutionFacade())
+                        val typeToInsert = valueArgumentType!!.approximateWithResolvableType(scope, true)
+                        actions.add(ChangeParameterTypeFix(correspondingParameter!!, typeToInsert))
                     }
                     val parameterVarargType = correspondingParameterDescriptor?.varargElementType
-                    if ((parameterVarargType != null || resolvedCall.resultingDescriptor.fqNameSafe == FqName("kotlin.collections.mapOf"))
-                        && KotlinBuiltIns.isArray(valueArgumentType)
-                        && expressionType.arguments.isNotEmpty()
-                        && expressionType.arguments[0].type.constructor == expectedType.constructor
+                    if ((parameterVarargType != null || resolvedCall!!.resultingDescriptor.fqNameSafe == FqName("kotlin.collections.mapOf"))
+                        && KotlinBuiltIns.isArray(valueArgumentType!!)
+                        && expressionType!!.arguments.isNotEmpty()
+                        && expressionType!!.arguments[0].type.constructor == expectedType.constructor
                     ) {
-                        actions.add(ChangeToUseSpreadOperatorFix(diagnosticElement))
+                        actions.add(ChangeToUseSpreadOperatorFix(diagnosticElement as KtExpression))
                     }
                 }
             }
@@ -296,7 +299,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         private fun getFunctionDeclaration(resolvedCall: ResolvedCall<*>): KtFunction? {
             val result = QuickFixUtil.safeGetDeclaration(resolvedCall.resultingDescriptor)
             if (result is KtFunction) {
-                return result
+                return result as KtFunction
             }
             return null
         }

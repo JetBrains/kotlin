@@ -90,7 +90,7 @@ class LookupElementsCollector(
         withReceiverCast: Boolean = false,
         prohibitDuplicates: Boolean = false
     ) {
-        if (prohibitDuplicates && descriptor is CallableDescriptor && descriptor in processedCallables) return
+        if (prohibitDuplicates && descriptor is CallableDescriptor && descriptor as CallableDescriptor in processedCallables) return
 
         var lookupElements = lookupElementFactory.createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes = true)
 
@@ -100,7 +100,7 @@ class LookupElementsCollector(
 
         addElements(lookupElements, notImported)
 
-        if (prohibitDuplicates && descriptor is CallableDescriptor) processedCallables.add(descriptor)
+        if (prohibitDuplicates && descriptor is CallableDescriptor) processedCallables.add(descriptor as CallableDescriptor)
     }
 
     fun addElement(element: LookupElement, notImported: Boolean = false) {
@@ -149,7 +149,7 @@ class LookupElementsCollector(
         val declarationLookupObject = result.`object` as? DeclarationLookupObject
         if (declarationLookupObject != null) {
             result = object : LookupElementDecorator<LookupElement>(result) {
-                override fun getPsiElement() = declarationLookupObject.psiElement
+                override fun getPsiElement() = declarationLookupObject!!.psiElement
             }
         }
 

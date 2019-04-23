@@ -203,16 +203,16 @@ object FindTransformationMatcher : TransformationMatcher {
     ): KtExpression {
         return if (filter == null) {
             if (argument != null) {
-                chainedCallGenerator.generate("$stdlibFunName($0)", argument)
+                chainedCallGenerator.generate("$stdlibFunName($0)", argument!!)
             }
             else {
                 chainedCallGenerator.generate("$stdlibFunName()")
             }
         }
         else {
-            val lambda = generateLambda(inputVariable, filter, chainedCallGenerator.reformat)
+            val lambda = generateLambda(inputVariable, filter!!, chainedCallGenerator.reformat)
             if (argument != null) {
-                chainedCallGenerator.generate("$stdlibFunName($0) $1:'{}'", argument, lambda)
+                chainedCallGenerator.generate("$stdlibFunName($0) $1:'{}'", argument!!, lambda)
             }
             else {
                 chainedCallGenerator.generate("$stdlibFunName $0:'{}'", lambda)
@@ -237,10 +237,10 @@ object FindTransformationMatcher : TransformationMatcher {
 
         if (indexVariable != null) {
             if (filterTransformation == null) return null // makes no sense, indexVariable must be always null
-            if (filterTransformation.indexVariable != null) return null // cannot use index in condition for indexOfFirst/indexOfLast
+            if (filterTransformation!!.indexVariable != null) return null // cannot use index in condition for indexOfFirst/indexOfLast
 
             //TODO: what if value when not found is not "-1"?
-            if (valueIfFound.isVariableReference(indexVariable) && valueIfNotFound.text == "-1") {
+            if (valueIfFound.isVariableReference(indexVariable!!) && valueIfNotFound.text == "-1") {
                 val filterExpression = filterCondition!!.asExpression(reformat)
                 val containsArgument = filterExpression.isFilterForContainsOperation(inputVariable, loop)
                 return if (containsArgument != null) {
@@ -297,13 +297,13 @@ object FindTransformationMatcher : TransformationMatcher {
                     // specially handle the case when the result expression is "<input variable>.<some call>" or "<input variable>?.<some call>"
                     val qualifiedExpression = valueIfFound as? KtQualifiedExpression
                     if (qualifiedExpression != null) {
-                        val receiver = qualifiedExpression.receiverExpression
-                        val selector = qualifiedExpression.selectorExpression
-                        if (receiver.isVariableReference(inputVariable) && selector != null && !inputVariable.hasUsages(selector)) {
+                        val receiver = qualifiedExpression!!.receiverExpression
+                        val selector = qualifiedExpression!!.selectorExpression
+                        if (receiver.isVariableReference(inputVariable) && selector != null && !inputVariable.hasUsages(selector!!)) {
                             return object: FindOperationGenerator("firstOrNull", filterCondition != null, chainCallCount = 2) {
                                 override fun generate(chainedCallGenerator: ChainedCallGenerator): KtExpression {
                                     val findFirstCall = generateChainedCall(functionName, chainedCallGenerator, inputVariable, filterCondition?.asExpression(reformat))
-                                    return chainedCallGenerator.generate("$0", selector, receiver = findFirstCall, safeCall = true)
+                                    return chainedCallGenerator.generate("$0", selector!!, receiver = findFirstCall, safeCall = true)
                                 }
                             }.useElvisOperatorIfNeeded()
                         }
@@ -348,15 +348,15 @@ object FindTransformationMatcher : TransformationMatcher {
             return SimpleGenerator(if (negated) "none" else "any", inputVariable, null)
         }
 
-        val filterExpression = filter.asExpression(reformat)
+        val filterExpression = filter!!.asExpression(reformat)
         val containsArgument = filterExpression.isFilterForContainsOperation(inputVariable, loop)
         if (containsArgument != null) {
             val generator = SimpleGenerator("contains", inputVariable, null, containsArgument)
             return if (negated) NegatingFindOpetationGenerator(generator) else generator
         }
 
-        if (filterExpression is KtPrefixExpression && filterExpression.operationToken == KtTokens.EXCL && negated) {
-            return SimpleGenerator("all", inputVariable, filter.asNegatedExpression(reformat))
+        if (filterExpression is KtPrefixExpression && (filterExpression as KtPrefixExpression).operationToken == KtTokens.EXCL && negated) {
+            return SimpleGenerator("all", inputVariable, filter!!.asNegatedExpression(reformat))
         }
 
         return SimpleGenerator(if (negated) "none" else "any", inputVariable, filterExpression)

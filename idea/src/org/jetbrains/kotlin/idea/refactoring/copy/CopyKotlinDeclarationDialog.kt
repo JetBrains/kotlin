@@ -150,7 +150,7 @@ class CopyKotlinDeclarationDialog(
         }
 
         targetDirectory?.getTargetIfExists(defaultTargetDirectory)?.let {
-            val targetFileName = newName + "." + originalFile.virtualFile.extension
+            val targetFileName = newName!! + "." + originalFile.virtualFile.extension
             if (it.findFile(targetFileName) == originalFile) {
                 return "Can't copy class to the containing file"
             }
@@ -164,7 +164,7 @@ class CopyKotlinDeclarationDialog(
 
         val errorString = checkForErrors()
         if (errorString != null) {
-            if (errorString.isNotEmpty()) {
+            if (errorString!!.isNotEmpty()) {
                 Messages.showMessageDialog(project, errorString, RefactoringBundle.message("error.title"), Messages.getErrorIcon())
             }
             classNameField.requestFocusInWindow()

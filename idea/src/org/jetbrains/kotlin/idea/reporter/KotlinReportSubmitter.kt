@@ -83,7 +83,7 @@ class KotlinReportSubmitter : ITNReporterCompat() {
             val currentPluginReleaseDate = readStoredPluginReleaseDate()
             if (currentPluginReleaseDate != null) {
                 isFatalErrorReportingDisabledInRelease =
-                    if (isFatalErrorReportingDisabled(currentPluginReleaseDate)) ThreeState.YES else ThreeState.NO
+                    if (isFatalErrorReportingDisabled(currentPluginReleaseDate!!)) ThreeState.YES else ThreeState.NO
                 return
             }
 
@@ -105,7 +105,7 @@ class KotlinReportSubmitter : ITNReporterCompat() {
                     }
 
                 if (releaseDate != null) {
-                    writePluginReleaseValue(releaseDate)
+                    writePluginReleaseValue(releaseDate!!)
                 } else {
                     // Will try to fetch the same release date on IDE restart
                 }
@@ -116,7 +116,7 @@ class KotlinReportSubmitter : ITNReporterCompat() {
 
         private fun isFatalErrorReportingWithDefault(releaseDate: LocalDate?): ThreeState {
             return if (releaseDate != null) {
-                if (isFatalErrorReportingDisabled(releaseDate)) ThreeState.YES else ThreeState.NO
+                if (isFatalErrorReportingDisabled(releaseDate!!)) ThreeState.YES else ThreeState.NO
             } else {
                 // Disable reporting by default until we obtain a valid release date.
                 // We might fail reporting exceptions that happened before initialization but after successful release date fetching
@@ -263,14 +263,14 @@ class KotlinReportSubmitter : ITNReporterCompat() {
                 val rc = showDialog(
                     parentComponent,
                     "You're running Kotlin plugin version ${KotlinPluginUtil.getPluginVersion()}, " +
-                            "while the latest version is ${status.pluginDescriptor.version}",
+                            "while the latest version is ${(status as PluginUpdateStatus.Update).pluginDescriptor.version}",
                     "Update Kotlin Plugin",
                     arrayOf("Update", "Ignore"),
                     0, Messages.getInformationIcon()
                 )
 
                 if (rc == 0) {
-                    KotlinPluginUpdater.getInstance().installPluginUpdate(status)
+                    KotlinPluginUpdater.getInstance().installPluginUpdate(status as PluginUpdateStatus.Update)
                 }
             } else {
                 hasLatestVersion = true
@@ -284,7 +284,7 @@ class KotlinReportSubmitter : ITNReporterCompat() {
 
     fun showDialog(parent: Component?, message: String, title: String, options: Array<String>, defaultOptionIndex: Int, icon: Icon?): Int {
         return if (parent != null) {
-            Messages.showDialog(parent, message, title, options, defaultOptionIndex, icon)
+            Messages.showDialog(parent!!, message, title, options, defaultOptionIndex, icon)
         } else {
             Messages.showDialog(message, title, options, defaultOptionIndex, icon)
         }

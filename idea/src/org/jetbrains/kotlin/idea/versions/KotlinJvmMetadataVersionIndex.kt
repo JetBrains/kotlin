@@ -69,13 +69,13 @@ object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmM
                         override fun visit(name: String, value: Any) {
                             when (name) {
                                 METADATA_VERSION_FIELD_NAME -> if (value is IntArray) {
-                                    versionArray = value
+                                    versionArray = value as IntArray
                                 }
                                 KIND_FIELD_NAME -> if (value is Int) {
-                                    kind = KotlinClassHeader.Kind.getById(value)
+                                    kind = KotlinClassHeader.Kind.getById(value as Int)
                                 }
                                 METADATA_EXTRA_INT_FIELD_NAME -> if (value is Int) {
-                                    isStrictSemantics = (value and METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0
+                                    isStrictSemantics = (value as Int and METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0
                                 }
                             }
                         }
@@ -95,6 +95,6 @@ object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmM
             version = JvmMetadataVersion.INVALID_VERSION
         }
 
-        if (version != null) mapOf(version to null) else emptyMap()
+        if (version != null) mapOf(version!! to null) else emptyMap()
     }
 }

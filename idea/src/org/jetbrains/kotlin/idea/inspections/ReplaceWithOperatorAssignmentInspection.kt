@@ -63,8 +63,8 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
     override fun inspectionHighlightType(element: KtBinaryExpression): ProblemHighlightType {
         val left = element.left as? KtNameReferenceExpression
         if (left != null) {
-            val context = left.analyze(BodyResolveMode.PARTIAL)
-            val leftType = left.getType(context)
+            val context = left!!.analyze(BodyResolveMode.PARTIAL)
+            val leftType = left!!.getType(context)
             if (leftType?.isReadOnlyCollectionOrMap(element.builtIns) == true) return ProblemHighlightType.INFORMATION
         }
         return ProblemHighlightType.GENERIC_ERROR_OR_WARNING
@@ -76,7 +76,7 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
         bindingContext: BindingContext
     ): Boolean {
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, expression.operationReference]?.containingDeclaration
-        val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(descriptor.defaultType)
+        val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.isPrimitiveType((descriptor as ClassDescriptor).defaultType)
 
         val operationToken = expression.operationToken
         val expressionLeft = expression.left
@@ -91,10 +91,10 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
             }
 
             expressionLeft is KtBinaryExpression -> {
-                val sameCommutativeOperation = expressionLeft.operationToken == operationToken && isCommutative(operationToken)
+                val sameCommutativeOperation = (expressionLeft as KtBinaryExpression).operationToken == operationToken && isCommutative(operationToken)
                 isPrimitiveOperation && sameCommutativeOperation && checkExpressionRepeat(
                     variableExpression,
-                    expressionLeft,
+                    expressionLeft as KtBinaryExpression,
                     bindingContext
                 )
             }
@@ -113,7 +113,7 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
             operationToken == KtTokens.PERC
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        (element as? KtBinaryExpression)?.replace(buildOperatorAssignment(element))
+        (element as? KtBinaryExpression)?.replace(buildOperatorAssignment(element as KtBinaryExpression))
     }
 
     private fun buildOperatorAssignment(element: KtBinaryExpression): KtBinaryExpression {

@@ -68,8 +68,8 @@ class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIntention
     private fun extractData(nameExpr: KtSimpleNameExpression): Data? {
         val parent = nameExpr.parent
         val expression = (when (parent) {
-            is KtCallExpression -> parent.parent as? KtDotQualifiedExpression
-            is KtBinaryExpression -> parent
+            is KtCallExpression -> (parent as KtCallExpression).parent as? KtDotQualifiedExpression
+            is KtBinaryExpression -> parent as KtBinaryExpression
             else -> null
         } ?: return null) as KtExpression //TODO: submit bug
 

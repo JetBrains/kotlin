@@ -84,8 +84,8 @@ open class KotlinChangeInfo(
 
     var receiverParameterInfo: KotlinParameterInfo? = receiver
         set(value) {
-            if (value != null && value !in newParameters) {
-                newParameters.add(value)
+            if (value != null && value!! !in newParameters) {
+                newParameters.add(value!!)
             }
             field = value
         }
@@ -189,7 +189,7 @@ open class KotlinChangeInfo(
 
     fun isReceiverTypeChanged(): Boolean {
         val receiverInfo = receiverParameterInfo ?: return originalReceiverTypeInfo != null
-        return originalReceiverTypeInfo == null || !receiverInfo.currentTypeInfo.isEquivalentTo(originalReceiverTypeInfo)
+        return originalReceiverTypeInfo == null || !receiverInfo.currentTypeInfo.isEquivalentTo(originalReceiverTypeInfo!!)
     }
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
@@ -209,7 +209,7 @@ open class KotlinChangeInfo(
                         is KtNamedFunction, is KtConstructor<*>, is KtClassOrObject ->
                             KotlinCallerUsage(it as KtNamedDeclaration)
                         is PsiMethod ->
-                            CallerUsageInfo(it, true, true)
+                            CallerUsageInfo(it as PsiMethod, true, true)
                         else ->
                             return
                     }
@@ -277,7 +277,7 @@ open class KotlinChangeInfo(
 
     fun isRefactoringTarget(inheritedCallableDescriptor: CallableDescriptor?): Boolean {
         return inheritedCallableDescriptor != null
-                && method == DescriptorToSourceUtils.descriptorToDeclaration(inheritedCallableDescriptor)
+                && method == DescriptorToSourceUtils.descriptorToDeclaration(inheritedCallableDescriptor!!)
     }
 
     fun getNewParametersSignature(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
@@ -548,10 +548,10 @@ fun ChangeInfo.toJetChangeInfo(
         val defaultValueText = info.defaultValue
         val defaultValueExpr =
             when {
-                info is KotlinAwareJavaParameterInfoImpl -> info.kotlinDefaultValue
+                info is KotlinAwareJavaParameterInfoImpl -> (info as KotlinAwareJavaParameterInfoImpl).kotlinDefaultValue
                 language.`is`(JavaLanguage.INSTANCE) && !defaultValueText.isNullOrEmpty() -> {
                     PsiElementFactory.SERVICE.getInstance(method.project)
-                        .createExpressionFromText(defaultValueText, null)
+                        .createExpressionFromText(defaultValueText!!, null)
                         .j2k()
                 }
                 else -> null

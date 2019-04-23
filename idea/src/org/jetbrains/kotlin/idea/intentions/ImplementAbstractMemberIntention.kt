@@ -81,9 +81,9 @@ abstract class ImplementAbstractMemberIntentionBase :
 
         fun acceptSubClass(subClass: PsiElement): Boolean {
             val classDescriptor = when (subClass) {
-                is KtLightClass -> subClass.kotlinOrigin?.resolveToDescriptorIfAny()
-                is KtEnumEntry -> subClass.resolveToDescriptorIfAny()
-                is PsiClass -> subClass.getJavaClassDescriptor()
+                is KtLightClass -> (subClass as KtLightClass).kotlinOrigin?.resolveToDescriptorIfAny()
+                is KtEnumEntry -> (subClass as KtEnumEntry).resolveToDescriptorIfAny()
+                is PsiClass -> (subClass as PsiClass).getJavaClassDescriptor()
                 else -> null
             } ?: return false
             return acceptSubClass(classDescriptor, memberDescriptor)
@@ -145,9 +145,9 @@ abstract class ImplementAbstractMemberIntentionBase :
                         val descriptor = OpenFileDescriptor(project, targetClass.containingFile.virtualFile)
                         val targetEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true)!!
                         when (targetClass) {
-                            is KtLightClass -> targetClass.kotlinOrigin?.let { implementInKotlinClass(targetEditor, member, it) }
-                            is KtEnumEntry -> implementInKotlinClass(targetEditor, member, targetClass)
-                            is PsiClass -> implementInJavaClass(member, targetClass)
+                            is KtLightClass -> (targetClass as KtLightClass).kotlinOrigin?.let { implementInKotlinClass(targetEditor, member, it) }
+                            is KtEnumEntry -> implementInKotlinClass(targetEditor, member, targetClass as KtEnumEntry)
+                            is PsiClass -> implementInJavaClass(member, targetClass as PsiClass)
                         }
                     }
                     catch(e: IncorrectOperationException) {
@@ -165,10 +165,10 @@ abstract class ImplementAbstractMemberIntentionBase :
             val baseComparator = psiClassRenderer.comparator
             return Comparator { o1, o2 ->
                 when {
-                    o1 is KtEnumEntry && o2 is KtEnumEntry -> o1.name!!.compareTo(o2.name!!)
+                    o1 is KtEnumEntry && o2 is KtEnumEntry -> (o1 as KtEnumEntry).name!!.compareTo((o2 as KtEnumEntry).name!!)
                     o1 is KtEnumEntry -> -1
                     o2 is KtEnumEntry -> 1
-                    o1 is PsiClass && o2 is PsiClass -> baseComparator.compare(o1, o2)
+                    o1 is PsiClass && o2 is PsiClass -> baseComparator.compare(o1 as PsiClass, o2 as PsiClass)
                     else -> 0
                 }
             }
@@ -178,15 +178,15 @@ abstract class ImplementAbstractMemberIntentionBase :
 
         override fun getElementText(element: PsiElement?): String? {
             return when (element) {
-                is KtEnumEntry -> element.name
-                is PsiClass -> psiClassRenderer.getElementText(element)
+                is KtEnumEntry -> (element as KtEnumEntry).name
+                is PsiClass -> psiClassRenderer.getElementText(element as PsiClass)
                 else -> null
             }
         }
 
         override fun getContainerText(element: PsiElement?, name: String?): String? {
             return when (element) {
-                is KtEnumEntry -> element.containingClassOrObject?.fqName?.asString()
+                is KtEnumEntry -> (element as KtEnumEntry).containingClassOrObject?.fqName?.asString()
                 is PsiClass -> PsiClassListCellRenderer.getContainerTextStatic(element)
                 else -> null
             }
@@ -224,7 +224,7 @@ abstract class ImplementAbstractMemberIntentionBase :
                     implementInClass(element, list.selectedValues.toList() as List<KtClassOrObject>)
                 }
                 .createPopup()
-                .showInBestPositionFor(editor)
+                .showInBestPositionFor(editor!!)
     }
 }
 

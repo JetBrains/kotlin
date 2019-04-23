@@ -30,8 +30,8 @@ class ReplaceSubstringWithDropLastIntention : ReplaceSubstringIntention("Replace
         val secondArgumentExpression = arguments[1].getArgumentExpression()
 
         if (secondArgumentExpression !is KtBinaryExpression) return null
-        if (secondArgumentExpression.operationReference.getReferencedNameElementType() != KtTokens.MINUS) return null
-        if (isLengthAccess(secondArgumentExpression.left, element.receiverExpression)) {
+        if ((secondArgumentExpression as KtBinaryExpression).operationReference.getReferencedNameElementType() != KtTokens.MINUS) return null
+        if (isLengthAccess((secondArgumentExpression as KtBinaryExpression).left, element.receiverExpression)) {
             return getTextRange(element)
         }
 
@@ -47,7 +47,7 @@ class ReplaceSubstringWithDropLastIntention : ReplaceSubstringIntention("Replace
 
     private fun isLengthAccess(expression: KtExpression?, expectedReceiver: KtExpression): Boolean {
         return expression is KtDotQualifiedExpression
-               && expression.selectorExpression.let { it is KtNameReferenceExpression && it.getReferencedName() == "length" }
-               && expression.receiverExpression.evaluatesTo(expectedReceiver)
+               && (expression as KtDotQualifiedExpression).selectorExpression.let { it is KtNameReferenceExpression && (it as KtNameReferenceExpression).getReferencedName() == "length" }
+               && (expression as KtDotQualifiedExpression).receiverExpression.evaluatesTo(expectedReceiver)
     }
 }

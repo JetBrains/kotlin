@@ -85,8 +85,8 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
                 val offset = lookup.currentItem?.getUserData(AUTO_POPUP_AT)
                 if (offset != null) {
                     lastReminiscence?.dispose()
-                    if (offset <= lookup.editor.document.textLength) {
-                        lastReminiscence = Reminiscence(lookup.editor, offset)
+                    if (offset!! <= lookup.editor.document.textLength) {
+                        lastReminiscence = Reminiscence(lookup.editor, offset!!)
                     }
                 }
             }

@@ -71,21 +71,21 @@ class KotlinPushDownHandler : AbstractPullPushMembersHandler(
             return
         }
 
-        if (!(classOrObject is KtClass && classOrObject.isInheritable())) {
-            reportFinalClassOrObject(project, editor, classOrObject)
+        if (!(classOrObject is KtClass && (classOrObject as KtClass).isInheritable())) {
+            reportFinalClassOrObject(project, editor, classOrObject!!)
             return
         }
 
-        val members = KotlinMemberInfoStorage(classOrObject).getClassMemberInfos(classOrObject).filter { it.member !is KtParameter }
+        val members = KotlinMemberInfoStorage(classOrObject as KtClass).getClassMemberInfos(classOrObject).filter { it.member !is KtParameter }
         if (ApplicationManager.getApplication().isUnitTestMode) {
             val helper = dataContext?.getData(PUSH_DOWN_TEST_HELPER_KEY) as TestHelper
             val selectedMembers = helper.adjustMembers(members)
-            KotlinPushDownProcessor(project, classOrObject, selectedMembers).run()
+            KotlinPushDownProcessor(project, classOrObject as KtClass, selectedMembers).run()
         }
         else {
             val manager = PsiManager.getInstance(project)
             members.filter { manager.areElementsEquivalent(it.member, member) }.forEach { it.isChecked = true }
-            KotlinPushDownDialog(project, members, classOrObject).show()
+            KotlinPushDownDialog(project, members, classOrObject as KtClass).show()
         }
     }
 

@@ -76,7 +76,7 @@ class KotlinFacetEditorGeneralTab(
                         ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments
                 editableJsArguments = editableCommonArguments as? K2JSCompilerArguments
                         ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments
-                editableCompilerSettings = configuration.settings.compilerSettings!!
+                editableCompilerSettings = configuration!!.settings.compilerSettings!!
             }
 
             compilerConfigurable = KotlinCompilerConfigurableTab(
@@ -312,7 +312,7 @@ class KotlinFacetEditorGeneralTab(
                         }
                         compilerArguments = it.createArguments {
                             if (platformArguments != null) {
-                                mergeBeans(platformArguments, this)
+                                mergeBeans(platformArguments!!, this)
                             }
                             copyInheritedFields(compilerArguments!!, this)
                         }

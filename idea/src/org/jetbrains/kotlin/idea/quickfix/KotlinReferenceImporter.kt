@@ -49,16 +49,16 @@ class KotlinReferenceImporter : ReferenceImporter {
 
         if (!CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY) return false
 
-        val importFix: ImportFixBase<out KtExpression>? = findImportFixAt(editor, file, offset)
-        if (importFix != null && !importFix.isOutdated()) {
-            val addImportAction = importFix.createAction(file.project, editor, nameExpression)
+        val importFix: ImportFixBase<out KtExpression>? = findImportFixAt(editor, file as KtFile, offset)
+        if (importFix != null && !importFix!!.isOutdated()) {
+            val addImportAction = importFix!!.createAction((file as KtFile).project, editor, nameExpression)
             if (addImportAction.isUnambiguous()) {
                 addImportAction.execute()
             }
             return true
         }
 
-        return nameExpression.autoImport(editor, file)
+        return nameExpression.autoImport(editor, file as KtFile)
     }
 
     private fun findImportFixAt(
@@ -92,7 +92,7 @@ class KotlinReferenceImporter : ReferenceImporter {
             for (element in elements) {
                 if (!allowCaretNearRef && element.endOffset == caretOffset) continue
 
-                if (element.autoImport(editor, file)) {
+                if (element.autoImport(editor, file as KtFile)) {
                     return true
                 }
             }
@@ -119,7 +119,7 @@ class KotlinReferenceImporter : ReferenceImporter {
             val descriptors = file.resolveImportReference(suggestions.single())
 
             // we do not auto-import nested classes because this will probably add qualification into the text and this will confuse the user
-            if (descriptors.any { it is ClassDescriptor && it.containingDeclaration is ClassDescriptor }) return false
+            if (descriptors.any { it is ClassDescriptor && (it as ClassDescriptor).containingDeclaration is ClassDescriptor }) return false
 
             var result = false
             CommandProcessor.getInstance().runUndoTransparentAction {

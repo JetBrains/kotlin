@@ -31,11 +31,11 @@ class ReplaceArrayOfWithLiteralInspection : AbstractKotlinInspection() {
             val parent = expression.parent
             when (parent) {
                 is KtValueArgument -> {
-                    if (parent.parent.parent !is KtAnnotationEntry) return
-                    if (parent.getSpreadElement() != null && !parent.isNamed()) return
+                    if ((parent as KtValueArgument).parent.parent !is KtAnnotationEntry) return
+                    if ((parent as KtValueArgument).getSpreadElement() != null && !(parent as KtValueArgument).isNamed()) return
                 }
                 is KtParameter -> {
-                    val constructor = parent.parent.parent as? KtPrimaryConstructor ?: return
+                    val constructor = (parent as KtParameter).parent.parent as? KtPrimaryConstructor ?: return
                     val containingClass = constructor.getContainingClassOrObject()
                     if (!containingClass.isAnnotation()) return
                 }

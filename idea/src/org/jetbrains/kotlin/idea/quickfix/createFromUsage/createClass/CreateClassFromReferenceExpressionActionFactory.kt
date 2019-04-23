@@ -39,8 +39,8 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
     private fun getFullCallExpression(element: KtSimpleNameExpression): KtExpression? {
         return element.parent.let {
             when {
-                it is KtCallExpression && it.calleeExpression == element -> return null
-                it is KtQualifiedExpression && it.selectorExpression == element -> it
+                it is KtCallExpression && (it as KtCallExpression).calleeExpression == element -> return null
+                it is KtQualifiedExpression && (it as KtQualifiedExpression).selectorExpression == element -> it as KtQualifiedExpression
                 else -> element
             }
         }
@@ -51,8 +51,8 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
     override fun getPossibleClassKinds(element: KtSimpleNameExpression, diagnostic: Diagnostic): List<ClassKind> {
         fun isEnum(element: PsiElement): Boolean {
             return when (element) {
-                is KtClass -> element.isEnum()
-                is PsiClass -> element.isEnum
+                is KtClass -> (element as KtClass).isEnum()
+                is PsiClass -> (element as PsiClass).isEnum
                 else -> false
             }
         }
@@ -88,7 +88,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
                     }
         }
         val parent = element.parent
-        if (parent is KtClassLiteralExpression && parent.receiverExpression == element) {
+        if (parent is KtClassLiteralExpression && (parent as KtClassLiteralExpression).receiverExpression == element) {
             return listOf(ClassKind.PLAIN_CLASS, ClassKind.ENUM_CLASS, ClassKind.INTERFACE, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT)
         }
 
@@ -104,7 +104,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
 
         return allKinds.filter { classKind ->
             targetParents.any { targetParent ->
-                (expectedType == null || getClassKindFilter(expectedType, targetParent)(classKind)) && when (classKind) {
+                (expectedType == null || getClassKindFilter(expectedType!!, targetParent)(classKind)) && when (classKind) {
                     ClassKind.OBJECT -> true
                     ClassKind.ENUM_ENTRY -> isEnum(targetParent)
                     else -> false

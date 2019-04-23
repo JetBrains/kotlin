@@ -27,7 +27,7 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
 
     private fun VarianceCheckerCore.checkClassOrObject(klass: KtClassOrObject): Boolean {
         if (klass is KtClass) {
-            if (!checkClassHeader(klass)) return false
+            if (!checkClassHeader(klass as KtClass)) return false
             if (klass.getSuperTypeList()?.anyDescendantOfType<KtClassOrObject> { !checkClassOrObject(it) } == true) return false
         }
         for (member in klass.declarations + klass.primaryConstructorParameters) {
@@ -37,10 +37,13 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
                              } as? MemberDescriptor ?: continue
             when (member) {
                 is KtClassOrObject -> {
-                    if (!checkClassOrObject(member)) return false
+                    if (!checkClassOrObject(member as KtClassOrObject)) return false
                 }
                 is KtCallableDeclaration -> {
-                    if (descriptor is CallableMemberDescriptor && !checkMember(member, descriptor)) return false
+                    if (descriptor is CallableMemberDescriptor && !checkMember(
+                            member as KtCallableDeclaration,
+                            descriptor as CallableMemberDescriptor
+                        )) return false
                     if (member.anyDescendantOfType<KtClassOrObject> { !checkClassOrObject(it) }) return false
                 }
             }

@@ -30,30 +30,30 @@ class KotlinTypeDeclarationProvider : TypeDeclarationProvider {
 
         if (symbol is PsiWhiteSpace) {
             // Navigate to type of first parameter in lambda, works with the help of KotlinTargetElementEvaluator for the 'it' case
-            val lBraceElement = symbol.containingFile.findElementAt(maxOf(symbol.textOffset - 1, 0))
+            val lBraceElement = (symbol as PsiWhiteSpace).containingFile.findElementAt(maxOf((symbol as PsiWhiteSpace).textOffset - 1, 0))
             if (lBraceElement?.text == "{") {
-                val functionLiteral = lBraceElement.parent as? KtFunctionLiteral
+                val functionLiteral = lBraceElement!!.parent as? KtFunctionLiteral
                 if (functionLiteral != null) {
-                    return functionLiteral.getTypeDeclarationFromCallable { descriptor -> descriptor.valueParameters.firstOrNull()?.type }
+                    return functionLiteral!!.getTypeDeclarationFromCallable { descriptor -> descriptor.valueParameters.firstOrNull()?.type }
                 }
             }
         }
 
         if (symbol is KtFunctionLiteral) {
             // Navigate to receiver type of extension lambda
-            return symbol.getTypeDeclarationFromCallable { descriptor -> descriptor.extensionReceiverParameter?.type }
+            return (symbol as KtFunctionLiteral).getTypeDeclarationFromCallable { descriptor -> descriptor.extensionReceiverParameter?.type }
         }
 
         if (symbol is KtTypeReference) {
-            val declaration = symbol.parent
-            if (declaration is KtCallableDeclaration && declaration.receiverTypeReference == symbol) {
+            val declaration = (symbol as KtTypeReference).parent
+            if (declaration is KtCallableDeclaration && (declaration as KtCallableDeclaration).receiverTypeReference == symbol) {
                 // Navigate to function receiver type, works with the help of KotlinTargetElementEvaluator for the 'this' in extension declaration
-                return declaration.getTypeDeclarationFromCallable { descriptor -> descriptor.extensionReceiverParameter?.type }
+                return (declaration as KtCallableDeclaration).getTypeDeclarationFromCallable { descriptor -> descriptor.extensionReceiverParameter?.type }
             }
         }
 
         if (symbol !is KtDeclaration) return emptyArray()
-        return symbol.getTypeDeclarationFromCallable { descriptor -> descriptor.returnType }
+        return (symbol as KtDeclaration).getTypeDeclarationFromCallable { descriptor -> descriptor.returnType }
     }
 
     private fun KtDeclaration.getTypeDeclarationFromCallable(typeFromDescriptor: (CallableDescriptor) -> KotlinType?): Array<PsiElement>? {

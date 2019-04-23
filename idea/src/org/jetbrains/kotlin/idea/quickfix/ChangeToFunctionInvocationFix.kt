@@ -31,13 +31,13 @@ class ChangeToFunctionInvocationFix(element: KtExpression) : KotlinQuickFixActio
         val psiFactory = KtPsiFactory(element)
         val nextLiteralStringEntry = element.parent.nextSibling as? KtLiteralStringTemplateEntry
         val nextText = nextLiteralStringEntry?.text
-        if (nextText != null && nextText.startsWith("(") && nextText.contains(")")) {
-            val parentheses = nextText.takeWhile { it != ')' } + ")"
-            val newNextText = nextText.removePrefix(parentheses)
+        if (nextText != null && nextText!!.startsWith("(") && nextText!!.contains(")")) {
+            val parentheses = nextText!!.takeWhile { it != ')' } + ")"
+            val newNextText = nextText!!.removePrefix(parentheses)
             if (newNextText.isNotEmpty()) {
-                nextLiteralStringEntry.replace(psiFactory.createLiteralStringTemplateEntry(newNextText))
+                nextLiteralStringEntry!!.replace(psiFactory.createLiteralStringTemplateEntry(newNextText))
             } else {
-                nextLiteralStringEntry.delete()
+                nextLiteralStringEntry!!.delete()
             }
             element.replace(KtPsiFactory(file).createExpressionByPattern("$0$1", element, parentheses))
         } else {

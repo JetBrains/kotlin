@@ -73,9 +73,9 @@ sealed class CreateActualFix<D : KtNamedDeclaration>(
             val actualModule = (actualModuleDescriptor.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module ?: return null
             val actualPlatform = actualModuleDescriptor.getMultiTargetPlatform() as? MultiTargetPlatform.Specific ?: return null
             return when (declaration) {
-                is KtClassOrObject -> CreateActualClassFix(declaration, actualModule, actualPlatform)
-                is KtFunction -> CreateActualFunctionFix(declaration, actualModule, actualPlatform)
-                is KtProperty -> CreateActualPropertyFix(declaration, actualModule, actualPlatform)
+                is KtClassOrObject -> CreateActualClassFix(declaration as KtClassOrObject, actualModule, actualPlatform)
+                is KtFunction -> CreateActualFunctionFix(declaration as KtFunction, actualModule, actualPlatform)
+                is KtProperty -> CreateActualPropertyFix(declaration as KtProperty, actualModule, actualPlatform)
                 else -> null
             }
         }
@@ -96,7 +96,7 @@ class CreateActualPropertyFix(
     actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtProperty>(property, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, false, element, descriptor) }
+    descriptor?.let { generateProperty(project, false, element, descriptor!!) }
 })
 
 class CreateActualFunctionFix(
@@ -105,6 +105,6 @@ class CreateActualFunctionFix(
     actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtFunction>(function, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, false, element, descriptor) }
+    descriptor?.let { generateFunction(project, false, element, descriptor!!) }
 })
 

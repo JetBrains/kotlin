@@ -119,13 +119,13 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         if (file !is KtFile) return null
-        val data = analyzeImports(file) ?: return null
+        val data = analyzeImports(file as KtFile) ?: return null
 
         val problems = data.unusedImports.map {
             val fixes = arrayListOf<LocalQuickFix>()
-            fixes.add(OptimizeImportsQuickFix(file))
-            if (!CodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) {
-                fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
+            fixes.add(OptimizeImportsQuickFix(file as KtFile))
+            if (!CodeInsightWorkspaceSettings.getInstance((file as KtFile).project).optimizeImportsOnTheFly) {
+                fixes.add(EnableOptimizeImportsOnTheFlyFix(file as KtFile))
             }
             manager.createProblemDescriptor(
                 it,
@@ -137,7 +137,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         }
 
         if (isOnTheFly) {
-            scheduleOptimizeImportsOnTheFly(file, data.optimizerData)
+            scheduleOptimizeImportsOnTheFly(file as KtFile, data.optimizerData)
         }
 
         return problems.toTypedArray()
@@ -161,8 +161,8 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             ApplicationManager.getApplication().invokeLater {
                 val editor = PsiUtilBase.findEditor(file)
                 val currentModificationCount = PsiModificationTracker.SERVICE.getInstance(project).modificationCount
-                if (editor != null && currentModificationCount == modificationCount && timeToOptimizeImportsOnTheFly(file, editor, project)) {
-                    optimizeImportsOnTheFly(file, optimizedImports, editor, project)
+                if (editor != null && currentModificationCount == modificationCount && timeToOptimizeImportsOnTheFly(file, editor!!, project)) {
+                    optimizeImportsOnTheFly(file, optimizedImports, editor!!, project)
                 }
             }
         }

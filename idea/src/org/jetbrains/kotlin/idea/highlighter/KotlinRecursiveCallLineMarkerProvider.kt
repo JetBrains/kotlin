@@ -51,7 +51,7 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
             ProgressManager.checkCanceled()
             if (element is KtElement) {
                 val lineNumber = element.getLineNumber()
-                if (lineNumber !in markedLineNumbers && isRecursiveCall(element)) {
+                if (lineNumber !in markedLineNumbers && isRecursiveCall(element as KtElement)) {
                     markedLineNumbers.add(lineNumber)
                     result.add(RecursiveMethodCallMarkerInfo(getElementForLineMark(element)))
                 }
@@ -63,15 +63,15 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         for (parent in element.parents) {
             when (parent) {
                 is KtFunctionLiteral -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(
-                        parent,
-                        parent.analyze(),
+                        parent as KtFunctionLiteral,
+                        (parent as KtFunctionLiteral).analyze(),
                         false
                     )
                 ) return null
                 is KtNamedFunction -> {
-                    when (parent.parent) {
-                        is KtBlockExpression, is KtClassBody, is KtFile, is KtScript -> return parent
-                        else -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return null
+                    when ((parent as KtNamedFunction).parent) {
+                        is KtBlockExpression, is KtClassBody, is KtFile, is KtScript -> return parent as KtNamedFunction
+                        else -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(parent as KtNamedFunction, (parent as KtNamedFunction).analyze(), false)) return null
                     }
                 }
                 is KtClassOrObject -> return null
@@ -106,7 +106,7 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         fun isDifferentReceiver(receiver: Receiver?): Boolean {
             if (receiver !is ReceiverValue) return false
 
-            val receiverOwner = receiver.getReceiverTargetDescriptor(bindingContext) ?: return true
+            val receiverOwner = (receiver as ReceiverValue).getReceiverTargetDescriptor(bindingContext) ?: return true
 
             return when (receiverOwner) {
                 is SimpleFunctionDescriptor -> receiverOwner != enclosingFunctionDescriptor
@@ -140,7 +140,7 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
 
 internal fun getElementForLineMark(callElement: PsiElement): PsiElement =
     when (callElement) {
-        is KtSimpleNameExpression -> callElement.getReferencedNameElement()
+        is KtSimpleNameExpression -> (callElement as KtSimpleNameExpression).getReferencedNameElement()
         else ->
             // a fallback,
             //but who knows what to reference in KtArrayAccessExpression ?
@@ -158,14 +158,14 @@ private fun getCallNameFromPsi(element: KtElement): Name? {
             when (elementParent) {
                 is KtCallExpression -> return Name.identifier(element.getText())
                 is KtOperationExpression -> {
-                    val operationReference = elementParent.operationReference
+                    val operationReference = (elementParent as KtOperationExpression).operationReference
                     if (element == operationReference) {
                         val node = operationReference.getReferencedNameElementType()
                         return if (node is KtToken) {
                             val conventionName = if (elementParent is KtPrefixExpression)
-                                OperatorConventions.getNameForOperationSymbol(node, true, false)
+                                OperatorConventions.getNameForOperationSymbol(node as KtToken, true, false)
                             else
-                                OperatorConventions.getNameForOperationSymbol(node)
+                                OperatorConventions.getNameForOperationSymbol(node as KtToken)
 
                             conventionName ?: Name.identifier(element.getText())
                         } else {

@@ -35,7 +35,7 @@ class RedundantNotNullExtensionReceiverOfInlineInspection : AbstractKotlinInspec
         val descriptor = resultingDescriptor
         val extensionReceiverType = descriptor?.extensionReceiverParameter?.type
         return if (extensionReceiverType != null) {
-            !extensionReceiverType.isNullable() && (extensionReceiver == thisReceiverValue || extensionReceiver.isThisExpressionReceiver())
+            !extensionReceiverType!!.isNullable() && (extensionReceiver == thisReceiverValue || extensionReceiver.isThisExpressionReceiver())
         } else {
             dispatchReceiver == thisReceiverValue || dispatchReceiver.isThisExpressionReceiver()
         }
@@ -66,30 +66,30 @@ class RedundantNotNullExtensionReceiverOfInlineInspection : AbstractKotlinInspec
                         }
                         is KtThisExpression -> {
                             val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, it]
-                            expectedType != null && !expectedType.isNullable()
+                            expectedType != null && !expectedType!!.isNullable()
                         }
                         is KtBinaryExpressionWithTypeRHS -> {
-                            val type = context[BindingContext.TYPE, it.right]
-                            it.left is KtThisExpression && type != null && !type.isNullable()
-                                    && it.operationReference.getReferencedNameElementType() == KtTokens.AS_KEYWORD
+                            val type = context[BindingContext.TYPE, (it as KtBinaryExpressionWithTypeRHS).right]
+                            (it as KtBinaryExpressionWithTypeRHS).left is KtThisExpression && type != null && !type!!.isNullable()
+                                    && (it as KtBinaryExpressionWithTypeRHS).operationReference.getReferencedNameElementType() == KtTokens.AS_KEYWORD
                         }
                         is KtForExpression -> {
-                            it.loopRange is KtThisExpression
+                            (it as KtForExpression).loopRange is KtThisExpression
                         }
                         is KtBinaryExpression -> {
-                            if (it.operationToken == KtTokens.EQEQ ||
-                                it.operationToken == KtTokens.EQEQEQ ||
-                                it.operationToken == KtTokens.EXCLEQ ||
-                                it.operationToken == KtTokens.EXCLEQEQEQ
+                            if ((it as KtBinaryExpression).operationToken == KtTokens.EQEQ ||
+                                (it as KtBinaryExpression).operationToken == KtTokens.EQEQEQ ||
+                                (it as KtBinaryExpression).operationToken == KtTokens.EXCLEQ ||
+                                (it as KtBinaryExpression).operationToken == KtTokens.EXCLEQEQEQ
                             ) {
                                 false
                             } else {
-                                val resolvedCall = it.operationReference.getResolvedCall(context)
+                                val resolvedCall = (it as KtBinaryExpression).operationReference.getResolvedCall(context)
                                 resolvedCall.usesNotNullThisReceiverIn(it, receiverValue)
                             }
                         }
                         is KtOperationReferenceExpression -> {
-                            if (it.parent is KtBinaryExpression) {
+                            if ((it as KtOperationReferenceExpression).parent is KtBinaryExpression) {
                                 false
                             } else {
                                 val resolvedCall = it.getResolvedCall(context)

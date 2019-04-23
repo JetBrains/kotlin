@@ -60,7 +60,7 @@ open class AddModifierFix(
         element?.addModifier(modifier)
 
         if (modifier == ABSTRACT_KEYWORD && (element is KtProperty || element is KtNamedFunction)) {
-            element.containingClass()?.run {
+            element!!.containingClass()?.run {
                 if (!hasModifier(ABSTRACT_KEYWORD) && !hasModifier(SEALED_KEYWORD)) {
                     addModifier(ABSTRACT_KEYWORD)
                 }
@@ -71,7 +71,7 @@ open class AddModifierFix(
     override fun invokeImpl(project: Project, editor: Editor?, file: PsiFile) {
         val originalElement = element
         if (originalElement is KtDeclaration && modifier.isMultiplatformPersistent()) {
-            originalElement.runOnExpectAndAllActuals { invokeOnElement(it) }
+            (originalElement as KtDeclaration).runOnExpectAndAllActuals { invokeOnElement(it) }
         }
         invokeOnElement(originalElement)
     }
@@ -91,12 +91,12 @@ open class AddModifierFix(
         fun getElementName(modifierListOwner: KtModifierListOwner): String {
             var name: String? = null
             if (modifierListOwner is PsiNameIdentifierOwner) {
-                val nameIdentifier = modifierListOwner.nameIdentifier
+                val nameIdentifier = (modifierListOwner as PsiNameIdentifierOwner).nameIdentifier
                 if (nameIdentifier != null) {
-                    name = nameIdentifier.text
+                    name = nameIdentifier!!.text
                 }
             } else if (modifierListOwner is KtPropertyAccessor) {
-                name = modifierListOwner.namePlaceholder.text
+                name = (modifierListOwner as KtPropertyAccessor).namePlaceholder.text
             }
             if (name == null) {
                 name = modifierListOwner.text
@@ -126,7 +126,7 @@ open class AddModifierFix(
                     if (modifierListOwner is KtObjectDeclaration) return null
                     if (modifierListOwner is KtEnumEntry) return null
                     if (modifierListOwner is KtDeclaration && modifierListOwner !is KtClass) {
-                        val parentClassOrObject = modifierListOwner.containingClassOrObject ?: return null
+                        val parentClassOrObject = (modifierListOwner as KtDeclaration).containingClassOrObject ?: return null
                         if (parentClassOrObject is KtObjectDeclaration) return null
                         if (parentClassOrObject is KtEnumEntry) return null
                     }
@@ -138,11 +138,11 @@ open class AddModifierFix(
                 INNER_KEYWORD -> {
                     if (modifierListOwner is KtObjectDeclaration) return null
                     if (modifierListOwner is KtClass) {
-                        if (modifierListOwner.isInterface() ||
-                            modifierListOwner.isSealed() ||
-                            modifierListOwner.isEnum() ||
-                            modifierListOwner.isData() ||
-                            modifierListOwner.isAnnotation()
+                        if ((modifierListOwner as KtClass).isInterface() ||
+                            (modifierListOwner as KtClass).isSealed() ||
+                            (modifierListOwner as KtClass).isEnum() ||
+                            (modifierListOwner as KtClass).isData() ||
+                            (modifierListOwner as KtClass).isAnnotation()
                         ) return null
                     }
                 }

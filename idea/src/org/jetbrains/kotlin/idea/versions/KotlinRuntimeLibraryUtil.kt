@@ -218,14 +218,14 @@ fun getStdlibArtifactId(sdk: Sdk?, version: String): String {
     val sdkVersion = sdk?.version
     if (hasJdkLikeUpdatedRuntime(version)) {
         return when {
-            sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) -> MAVEN_STDLIB_ID_JDK8
+            sdkVersion != null && sdkVersion!!.isAtLeast(JavaSdkVersion.JDK_1_8) -> MAVEN_STDLIB_ID_JDK8
             sdkVersion == JavaSdkVersion.JDK_1_7 -> MAVEN_STDLIB_ID_JDK7
             else -> MAVEN_STDLIB_ID
         }
     }
 
     return when {
-        sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) -> MAVEN_STDLIB_ID_JRE8
+        sdkVersion != null && sdkVersion!!.isAtLeast(JavaSdkVersion.JDK_1_8) -> MAVEN_STDLIB_ID_JRE8
         sdkVersion == JavaSdkVersion.JDK_1_7 -> MAVEN_STDLIB_ID_JRE7
         else -> MAVEN_STDLIB_ID
     }
@@ -238,8 +238,8 @@ fun getDefaultJvmTarget(sdk: Sdk?, version: String): JvmTarget? {
     val sdkVersion = sdk?.version
     return when {
         sdkVersion == null -> null
-        sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) -> JvmTarget.JVM_1_8
-        sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_6) -> JvmTarget.JVM_1_6
+        sdkVersion!!.isAtLeast(JavaSdkVersion.JDK_1_8) -> JvmTarget.JVM_1_8
+        sdkVersion!!.isAtLeast(JavaSdkVersion.JDK_1_6) -> JvmTarget.JVM_1_6
         else -> null
     }
 }

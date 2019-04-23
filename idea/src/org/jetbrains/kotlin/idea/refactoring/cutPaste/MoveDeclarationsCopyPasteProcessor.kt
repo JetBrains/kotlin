@@ -62,13 +62,13 @@ class MoveDeclarationsCopyPasteProcessor : CopyPastePostProcessor<MoveDeclaratio
         if (file !is KtFile) return emptyList()
         if (startOffsets.size != 1) return emptyList()
 
-        val declarations = rangeToDeclarations(file, startOffsets[0], endOffsets[0])
+        val declarations = rangeToDeclarations(file as KtFile, startOffsets[0], endOffsets[0])
         if (declarations.isEmpty()) return emptyList()
 
         val parent = declarations.asSequence().map { it.parent }.distinct().singleOrNull() ?: return emptyList()
         val sourceObjectFqName = when (parent) {
             is KtFile -> null
-            is KtClassBody -> (parent.parent as? KtObjectDeclaration)?.fqName?.asString() ?: return emptyList()
+            is KtClassBody -> ((parent as KtClassBody).parent as? KtObjectDeclaration)?.fqName?.asString() ?: return emptyList()
             else -> return emptyList()
         }
 
@@ -76,7 +76,7 @@ class MoveDeclarationsCopyPasteProcessor : CopyPastePostProcessor<MoveDeclaratio
         val declarationNames = declarations.asSequence().map { it.name!! }.toSet()
 
         val stubTexts = declarations.map { MoveDeclarationsTransferableData.STUB_RENDERER.render(it.unsafeResolveToDescriptor()) }
-        return listOf(MoveDeclarationsTransferableData(file.virtualFile.url, sourceObjectFqName, stubTexts, declarationNames))
+        return listOf(MoveDeclarationsTransferableData((file as KtFile).virtualFile.url, sourceObjectFqName, stubTexts, declarationNames))
     }
 
     override fun extractTransferableData(content: Transferable): List<MoveDeclarationsTransferableData> {

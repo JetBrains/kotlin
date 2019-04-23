@@ -65,16 +65,16 @@ abstract class AbstractPullPushMembersHandler(
         val target = (file.findElementAt(offset) ?: return).parentsWithSelf.firstOrNull {
             it is KtClassOrObject
             || ((it is KtNamedFunction || it is KtProperty) && it.parent is KtClassBody)
-            || it is KtParameter && it.hasValOrVar() && it.ownerFunction is KtPrimaryConstructor
+            || it is KtParameter && (it as KtParameter).hasValOrVar() && (it as KtParameter).ownerFunction is KtPrimaryConstructor
         }
 
         if (target == null) {
             reportWrongPosition(project, editor)
             return
         }
-        if (!target.canRefactor()) return
+        if (!target!!.canRefactor()) return
 
-        invoke(project, arrayOf(target), dataContext)
+        invoke(project, arrayOf(target!!), dataContext)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
@@ -84,8 +84,8 @@ abstract class AbstractPullPushMembersHandler(
 
         val (classOrObject, member) = when (element) {
             is KtNamedFunction, is KtProperty -> element.getStrictParentOfType<KtClassOrObject>() to element as KtNamedDeclaration?
-            is KtParameter -> element.getContainingClass() to element
-            is KtClassOrObject -> element to null
+            is KtParameter -> (element as KtParameter).getContainingClass() to element as KtParameter
+            is KtClassOrObject -> element as KtClassOrObject to null
             else -> {
                 reportWrongPosition(project, editor)
                 return
@@ -99,8 +99,8 @@ abstract class AbstractPullPushMembersHandler(
         return elements.mapTo(HashSet<PsiElement>()) {
             when (it) {
                 is KtNamedFunction, is KtProperty -> (it.parent as? KtClassBody)?.parent as? KtClassOrObject
-                is KtParameter -> it.getContainingClass()
-                is KtClassOrObject -> it
+                is KtParameter -> (it as KtParameter).getContainingClass()
+                is KtClassOrObject -> it as KtClassOrObject
                 else -> null
             } ?: return false
         }.size == 1

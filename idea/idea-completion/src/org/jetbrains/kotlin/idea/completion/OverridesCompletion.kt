@@ -61,7 +61,7 @@ class OverridesCompletion(
 
         for (memberObject in members) {
             val descriptor = memberObject.descriptor
-            if (declaration != null && !canOverride(descriptor, declaration)) continue
+            if (declaration != null && !canOverride(descriptor, declaration!!)) continue
             if (isConstructorParameter && descriptor !is PropertyDescriptor) continue
 
             var lookupElement = lookupElementFactory.createLookupElement(descriptor)
@@ -169,8 +169,8 @@ class OverridesCompletion(
 
             is KtValVarKeywordOwner -> {
                 if (descriptorToOverride !is PropertyDescriptor) return false
-                return if (declaration.valOrVarKeyword?.node?.elementType == KtTokens.VAL_KEYWORD) {
-                    !descriptorToOverride.isVar
+                return if ((declaration as KtValVarKeywordOwner).valOrVarKeyword?.node?.elementType == KtTokens.VAL_KEYWORD) {
+                    !(descriptorToOverride as PropertyDescriptor).isVar
                 } else {
                     true // var can override either var or val
                 }

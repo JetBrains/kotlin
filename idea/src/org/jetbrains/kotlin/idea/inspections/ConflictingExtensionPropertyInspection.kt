@@ -93,7 +93,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
 
         if (setter != null) {
             val setMethod = syntheticProperty.setMethod ?: return false // synthetic property is val but our property is var
-            if (!checkSetterBodyIsSetMethodCall(setter, setMethod)) return false
+            if (!checkSetterBodyIsSetMethodCall(setter!!, setMethod)) return false
         }
 
         return true
@@ -123,12 +123,12 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
     private fun KtExpression?.isGetMethodCall(getMethod: FunctionDescriptor): Boolean = when (this) {
         is KtCallExpression -> {
             val resolvedCall = resolveToCall()
-            resolvedCall != null && resolvedCall.isReallySuccess() && resolvedCall.resultingDescriptor.original == getMethod.original
+            resolvedCall != null && resolvedCall!!.isReallySuccess() && resolvedCall!!.resultingDescriptor.original == getMethod.original
         }
 
         is KtQualifiedExpression -> {
             val receiver = receiverExpression
-            receiver is KtThisExpression && receiver.labelQualifier == null && selectorExpression.isGetMethodCall(getMethod)
+            receiver is KtThisExpression && (receiver as KtThisExpression).labelQualifier == null && selectorExpression.isGetMethodCall(getMethod)
         }
 
         else -> false
@@ -139,12 +139,12 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
             is KtCallExpression -> {
                 if ((valueArguments.singleOrNull()?.getArgumentExpression() as? KtSimpleNameExpression)?.getReferencedNameAsName() != valueParameterName) return false
                 val resolvedCall = resolveToCall()
-                return resolvedCall != null && resolvedCall.isReallySuccess() && resolvedCall.resultingDescriptor.original == setMethod.original
+                return resolvedCall != null && resolvedCall!!.isReallySuccess() && resolvedCall!!.resultingDescriptor.original == setMethod.original
             }
 
             is KtQualifiedExpression -> {
                 val receiver = receiverExpression
-                return receiver is KtThisExpression && receiver.labelQualifier == null && selectorExpression.isSetMethodCall(setMethod, valueParameterName)
+                return receiver is KtThisExpression && (receiver as KtThisExpression).labelQualifier == null && selectorExpression.isSetMethodCall(setMethod, valueParameterName)
             }
 
             else -> return false

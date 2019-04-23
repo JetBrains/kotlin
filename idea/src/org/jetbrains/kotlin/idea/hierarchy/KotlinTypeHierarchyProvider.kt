@@ -47,11 +47,11 @@ class KotlinTypeHierarchyProvider : JavaTypeHierarchyProvider() {
     private fun getOriginalPsiClassOrCreateLightClass(classOrObject: KtClassOrObject, module: Module?): PsiClass? {
         val fqName = classOrObject.fqName
         if (fqName != null && module?.platform.isJvm) {
-            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())
+            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(fqName!!.toUnsafe())
             if (javaClassId != null) {
                 return JavaPsiFacade.getInstance(classOrObject.project).findClass(
-                        javaClassId.asSingleFqName().asString(),
-                        GlobalSearchScope.allScope(classOrObject.project)
+                    javaClassId!!.asSingleFqName().asString(),
+                    GlobalSearchScope.allScope(classOrObject.project)
                 )
             }
         }
@@ -67,15 +67,15 @@ class KotlinTypeHierarchyProvider : JavaTypeHierarchyProvider() {
 
         return when (target) {
             is PsiClass -> target
-            is KtConstructor<*> -> getOriginalPsiClassOrCreateLightClass(target.getContainingClassOrObject(), module)
-            is KtClassOrObject -> getOriginalPsiClassOrCreateLightClass(target, module)
+            is KtConstructor<*> -> getOriginalPsiClassOrCreateLightClass((target as KtConstructor<*>).getContainingClassOrObject(), module)
+            is KtClassOrObject -> getOriginalPsiClassOrCreateLightClass(target as KtClassOrObject, module)
             is KtNamedFunction -> { // Factory methods
-                val functionName = target.name
-                val functionDescriptor = target.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return null
+                val functionName = (target as KtNamedFunction).name
+                val functionDescriptor = (target as KtNamedFunction).resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return null
                 val type = functionDescriptor.returnType ?: return null
                 val returnTypeText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
                 if (returnTypeText != functionName) return null
-                val classOrObject = KotlinClassShortNameIndex.getInstance()[functionName, project, project.allScope()].singleOrNull()
+                val classOrObject = KotlinClassShortNameIndex.getInstance()[functionName!!, project, project.allScope()].singleOrNull()
                                     ?: return null
                 getOriginalPsiClassOrCreateLightClass(classOrObject, module)
             }
@@ -95,17 +95,17 @@ class KotlinTypeHierarchyProvider : JavaTypeHierarchyProvider() {
 
         val editor = PlatformDataKeys.EDITOR.getData(dataContext)
         if (editor != null) {
-            val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return null
+            val file = PsiDocumentManager.getInstance(project).getPsiFile(editor!!.document) ?: return null
             if (!ProjectRootsUtil.isInProjectOrLibSource(file)) return null
-            val psiElement = getTargetByReference(project, editor, file.module) ?: getTargetByContainingElement(editor, file)
-            if (psiElement is PsiNamedElement && psiElement.name == null) {
+            val psiElement = getTargetByReference(project, editor!!, file.module) ?: getTargetByContainingElement(editor!!, file)
+            if (psiElement is PsiNamedElement && (psiElement as PsiNamedElement).name == null) {
                 return null
             }
             return psiElement
         }
 
         val element = LangDataKeys.PSI_ELEMENT.getData(dataContext)
-        if (element is KtClassOrObject) return getOriginalPsiClassOrCreateLightClass(element, element.module)
+        if (element is KtClassOrObject) return getOriginalPsiClassOrCreateLightClass(element as KtClassOrObject, (element as KtClassOrObject).module)
 
         return null
     }

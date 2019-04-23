@@ -29,8 +29,8 @@ class RemoveRedundantSpreadOperatorInspection : AbstractKotlinInspection() {
             val endOffset =
                 when (argumentExpression) {
                     is KtCallExpression -> {
-                        if (!argumentExpression.isArrayOfMethod()) return
-                        argumentExpression.calleeExpression!!.endOffset - argumentOffset
+                        if (!(argumentExpression as KtCallExpression).isArrayOfMethod()) return
+                        (argumentExpression as KtCallExpression).calleeExpression!!.endOffset - argumentOffset
                     }
                     is KtCollectionLiteralExpression -> startOffset + 1
                     else -> return
@@ -62,10 +62,10 @@ class RemoveRedundantSpreadOperatorQuickfix : LocalQuickFix {
         // Arguments under arrayOf or []
         val innerArgumentExpressions =
             when (spreadArgumentExpression) {
-                is KtCallExpression -> spreadArgumentExpression.valueArgumentList?.arguments?.map {
+                is KtCallExpression -> (spreadArgumentExpression as KtCallExpression).valueArgumentList?.arguments?.map {
                     it.getArgumentExpression() to it.isSpread
                 }
-                is KtCollectionLiteralExpression -> spreadArgumentExpression.getInnerExpressions().map { it to false }
+                is KtCollectionLiteralExpression -> (spreadArgumentExpression as KtCollectionLiteralExpression).getInnerExpressions().map { it to false }
                 else -> null
             } ?: return
 

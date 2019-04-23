@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 class KotlinElementDescriptionProvider : ElementDescriptionProvider {
     private tailrec fun KtNamedDeclaration.parentForFqName(): KtNamedDeclaration? {
         val parent = getStrictParentOfType<KtNamedDeclaration>() ?: return null
-        if (parent is KtProperty && parent.isLocal) return parent.parentForFqName()
+        if (parent is KtProperty && (parent as KtProperty).isLocal) return parent.parentForFqName()
         return parent
     }
 
@@ -50,7 +50,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
 
     private fun KtNamedDeclaration.fqName(): FqNameUnsafe {
         containingClassOrObject?.let {
-            if (it is KtObjectDeclaration && it.isCompanion()) {
+            if (it is KtObjectDeclaration && (it as KtObjectDeclaration).isCompanion()) {
                 return it.fqName().child(name())
             }
             return FqNameUnsafe("${it.name()}.${name()}")
@@ -117,13 +117,13 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
         val targetElement = if (shouldUnwrap) element.unwrapped ?: element else element
 
         fun elementKind() = when (targetElement) {
-            is KtClass -> if (targetElement.isInterface()) "interface" else "class"
-            is KtObjectDeclaration -> if (targetElement.isCompanion()) "companion object" else "object"
+            is KtClass -> if ((targetElement as KtClass).isInterface()) "interface" else "class"
+            is KtObjectDeclaration -> if ((targetElement as KtObjectDeclaration).isCompanion()) "companion object" else "object"
             is KtNamedFunction -> "function"
-            is KtPropertyAccessor -> (if (targetElement.isGetter) "getter" else "setter") + " for property "
+            is KtPropertyAccessor -> (if ((targetElement as KtPropertyAccessor).isGetter) "getter" else "setter") + " for property "
             is KtFunctionLiteral -> "lambda"
             is KtPrimaryConstructor, is KtSecondaryConstructor -> "constructor"
-            is KtProperty -> if (targetElement.isLocal) "variable" else "property"
+            is KtProperty -> if ((targetElement as KtProperty).isLocal) "variable" else "property"
             is KtTypeParameter -> "type parameter"
             is KtParameter -> "parameter"
             is KtDestructuringDeclarationEntry -> "variable"
@@ -137,43 +137,43 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
         }
 
         val namedElement = if (targetElement is KtPropertyAccessor) {
-            targetElement.parent as? KtProperty
+            (targetElement as KtPropertyAccessor).parent as? KtProperty
         } else targetElement as? PsiNamedElement
 
         @Suppress("FoldInitializerAndIfToElvis")
         if (namedElement == null) {
             return if (targetElement is KtElement) "'" + StringUtil.shortenTextWithEllipsis(
-                targetElement.text.collapseSpaces(),
+                (targetElement as KtElement).text.collapseSpaces(),
                 53,
                 0
             ) + "'" else null
         }
 
-        if (namedElement.language != KotlinLanguage.INSTANCE) return null
+        if (namedElement!!.language != KotlinLanguage.INSTANCE) return null
 
         return when (location) {
             is UsageViewTypeLocation -> elementKind()
-            is UsageViewShortNameLocation, is UsageViewLongNameLocation -> namedElement.name
+            is UsageViewShortNameLocation, is UsageViewLongNameLocation -> namedElement!!.name
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null
                 if (namedElement !is KtNamedDeclaration) return null
-                val renderFqName = location.includeParent() &&
+                val renderFqName = (location as RefactoringDescriptionLocation).includeParent() &&
                         namedElement !is KtTypeParameter &&
                         namedElement !is KtParameter &&
                         namedElement !is KtConstructor<*>
-                val desc = when (namedElement) {
+                val desc = when (namedElement as KtNamedDeclaration) {
                     is KtFunction -> {
                         val baseText = buildString {
-                            append(namedElement.name ?: "")
-                            namedElement.valueParameters.joinTo(this, prefix = "(", postfix = ")") {
+                            append((namedElement as KtFunction).name ?: "")
+                            (namedElement as KtFunction).valueParameters.joinTo(this, prefix = "(", postfix = ")") {
                                 (if (it.isVarArg) "vararg " else "") + (it.typeReference?.renderShort() ?: "")
                             }
-                            namedElement.receiverTypeReference?.let { append(" on ").append(it.renderShort()) }
+                            (namedElement as KtFunction).receiverTypeReference?.let { append(" on ").append(it.renderShort()) }
                         }
-                        val parentFqName = if (renderFqName) namedElement.fqName().parent() else null
-                        if (parentFqName?.isRoot != false) baseText else "${parentFqName.asString()}.$baseText"
+                        val parentFqName = if (renderFqName) (namedElement as KtNamedDeclaration).fqName().parent() else null
+                        if (parentFqName?.isRoot != false) baseText else "${parentFqName!!.asString()}.$baseText"
                     }
-                    else -> (if (renderFqName) namedElement.fqName().asString() else namedElement.name) ?: ""
+                    else -> (if (renderFqName) (namedElement as KtNamedDeclaration).fqName().asString() else (namedElement as KtNamedDeclaration).name) ?: ""
                 }
 
                 "$kind ${CommonRefactoringUtil.htmlEmphasize(desc)}"
@@ -181,7 +181,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is HighlightUsagesDescriptionLocation -> {
                 val kind = elementKind() ?: return null
                 if (namedElement !is KtNamedDeclaration) return null
-                "$kind ${namedElement.name}"
+                "$kind ${(namedElement as KtNamedDeclaration).name}"
             }
             else -> null
         }

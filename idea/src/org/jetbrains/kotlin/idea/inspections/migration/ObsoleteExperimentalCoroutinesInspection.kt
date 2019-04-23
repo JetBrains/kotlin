@@ -206,7 +206,7 @@ private class ObsoleteTopLevelFunctionUsage(
                 val element = descriptor.psiElement
                 if (element !is KtSimpleNameExpression) return
 
-                element.mainReference.bindToFqName(FqName(fqName), KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
+                (element as KtSimpleNameExpression).mainReference.bindToFqName(FqName(fqName), KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
 
                 performDelayedRefactoringRequests(project)
             }
@@ -244,12 +244,12 @@ private class ObsoleteExtensionFunctionUsage(
 
                 val importFun =
                     KotlinTopLevelFunctionFqnNameIndex.getInstance()
-                        .get(fqName, element.project, GlobalSearchScope.allScope(element.project))
+                        .get(fqName, (element as KtSimpleNameExpression).project, GlobalSearchScope.allScope((element as KtSimpleNameExpression).project))
                         .asSequence()
                         .map { it.resolveToDescriptorIfAny() }
-                        .find { it != null && it.importableFqName?.asString() == fqName } ?: return
+                        .find { it != null && it!!.importableFqName?.asString() == fqName } ?: return
 
-                ImportInsertHelper.getInstance(element.project).importDescriptor(element.containingKtFile, importFun, false)
+                ImportInsertHelper.getInstance((element as KtSimpleNameExpression).project).importDescriptor((element as KtSimpleNameExpression).containingKtFile, importFun, false)
             }
         }
     }
@@ -318,8 +318,8 @@ private class ExperimentalImportUsage : CoroutineMigrationProblem {
             override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
                 val element = descriptor.psiElement
                 val simpleNameExpression = when (element) {
-                    is KtSimpleNameExpression -> element
-                    is KtDotQualifiedExpression -> element.selectorExpression as? KtSimpleNameExpression
+                    is KtSimpleNameExpression -> element as KtSimpleNameExpression
+                    is KtDotQualifiedExpression -> (element as KtDotQualifiedExpression).selectorExpression as? KtSimpleNameExpression
                     else -> null
                 } ?: return
 

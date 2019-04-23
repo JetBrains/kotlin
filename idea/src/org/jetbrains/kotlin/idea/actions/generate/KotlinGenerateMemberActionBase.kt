@@ -49,7 +49,7 @@ abstract class KotlinGenerateMemberActionBase<Info : Any> : KotlinGenerateAction
             val newMembers = generateMembers(project, editor, membersInfo)
             GlobalInspectionContextBase.cleanupElements(project, null, *newMembers.toTypedArray())
             if (editor != null) {
-                newMembers.firstOrNull()?.let { GenerateMembersUtil.positionCaret(editor, it, false) }
+                newMembers.firstOrNull()?.let { GenerateMembersUtil.positionCaret(editor!!, it, false) }
             }
         }
     }

@@ -59,16 +59,16 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
 
         private fun IfThenToSelectData.clausesReplaceableByElvis(): Boolean =
             when {
-                baseClause == null || negatedClause == null || negatedClause.isNullOrBlockExpression() ->
+                baseClause == null || negatedClause == null || negatedClause!!.isNullOrBlockExpression() ->
                     false
-                negatedClause is KtThrowExpression && negatedClause.throwsNullPointerExceptionWithNoArguments() ->
+                negatedClause is KtThrowExpression && (negatedClause as KtThrowExpression).throwsNullPointerExceptionWithNoArguments() ->
                     false
-                baseClause.evaluatesTo(receiverExpression) ->
+                baseClause!!.evaluatesTo(receiverExpression) ->
                     true
-                baseClause.anyArgumentEvaluatesTo(receiverExpression) ->
+                baseClause!!.anyArgumentEvaluatesTo(receiverExpression) ->
                     true
-                hasImplicitReceiverReplaceableBySafeCall() || baseClause.hasFirstReceiverOf(receiverExpression) ->
-                    !baseClause.hasNullableType(context)
+                hasImplicitReceiverReplaceableBySafeCall() || baseClause!!.hasFirstReceiverOf(receiverExpression) ->
+                    !baseClause!!.hasNullableType(context)
                 else ->
                     false
             }
@@ -100,7 +100,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
             if (editor != null) {
                 elvis.inlineLeftSideIfApplicableWithPrompt(editor)
                 with(IfThenToSafeAccessInspection) {
-                    (elvis.left as? KtSafeQualifiedExpression)?.renameLetParameter(editor)
+                    (elvis.left as? KtSafeQualifiedExpression)?.renameLetParameter(editor!!)
                 }
             }
         }

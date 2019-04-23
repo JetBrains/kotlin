@@ -75,44 +75,44 @@ class KotlinPullUpHandler : AbstractPullPushMembersHandler(
             return
         }
 
-        val classDescriptor = classOrObject.unsafeResolveToDescriptor() as ClassDescriptor
+        val classDescriptor = classOrObject!!.unsafeResolveToDescriptor() as ClassDescriptor
         val superClasses = classDescriptor.defaultType
                 .supertypes()
                 .mapNotNull {
                     val descriptor = it.constructor.declarationDescriptor
                     val declaration = descriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                     if ((declaration is KtClass || declaration is PsiClass)
-                        && declaration.canRefactor()) declaration as PsiNamedElement else null
+                        && declaration!!.canRefactor()) declaration as PsiNamedElement else null
                 }
                 .sortedBy { it.qualifiedClassNameForRendering() }
 
         if (superClasses.isEmpty()) {
-            val containingClass = classOrObject.getStrictParentOfType<KtClassOrObject>()
+            val containingClass = classOrObject!!.getStrictParentOfType<KtClassOrObject>()
             if (containingClass != null) {
                 invoke(project, editor, containingClass, classOrObject, dataContext)
             }
             else {
-                reportNoSuperClasses(project, editor, classOrObject)
+                reportNoSuperClasses(project, editor, classOrObject!!)
             }
             return
         }
 
-        val memberInfoStorage = KotlinMemberInfoStorage(classOrObject)
+        val memberInfoStorage = KotlinMemberInfoStorage(classOrObject!!)
         val members = memberInfoStorage.getClassMemberInfos(classOrObject)
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
             val helper = dataContext?.getData(PULL_UP_TEST_HELPER_KEY) as TestHelper
             val selectedMembers = helper.adjustMembers(members)
             val targetClass = helper.chooseSuperClass(superClasses)
-            checkConflicts(project, classOrObject, targetClass, selectedMembers) {
-                KotlinPullUpDialog.createProcessor(classOrObject, targetClass, selectedMembers).run()
+            checkConflicts(project, classOrObject!!, targetClass, selectedMembers) {
+                KotlinPullUpDialog.createProcessor(classOrObject!!, targetClass, selectedMembers).run()
             }
         }
         else {
-            val manager = classOrObject.manager
+            val manager = classOrObject!!.manager
             members.filter { manager.areElementsEquivalent(it.member, member) }.forEach { it.isChecked = true }
 
-            KotlinPullUpDialog(project, classOrObject, superClasses, memberInfoStorage).show()
+            KotlinPullUpDialog(project, classOrObject!!, superClasses, memberInfoStorage).show()
         }
     }
 

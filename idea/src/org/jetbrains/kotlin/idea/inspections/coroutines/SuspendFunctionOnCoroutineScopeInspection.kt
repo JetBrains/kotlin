@@ -57,9 +57,9 @@ class SuspendFunctionOnCoroutineScopeInspection : AbstractKotlinInspection() {
 
             fun checkSuspiciousReceiver(receiver: ReceiverValue, problemExpression: KtExpression) {
                 when (receiver) {
-                    is ImplicitReceiver -> if (!receiver.declarationDescriptor.isReceiverOfAnalyzedFunction()) return
+                    is ImplicitReceiver -> if (!(receiver as ImplicitReceiver).declarationDescriptor.isReceiverOfAnalyzedFunction()) return
                     is ExpressionReceiver -> {
-                        val receiverThisExpression = receiver.expression as? KtThisExpression ?: return
+                        val receiverThisExpression = (receiver as ExpressionReceiver).expression as? KtThisExpression ?: return
                         if (receiverThisExpression.getTargetLabel() != null) {
                             val instanceReference = receiverThisExpression.instanceReference
                             if (context[BindingContext.REFERENCE_TARGET, instanceReference]?.isReceiverOfAnalyzedFunction() != true) return
@@ -81,7 +81,7 @@ class SuspendFunctionOnCoroutineScopeInspection : AbstractKotlinInspection() {
                 }
                 if (memberOfCoroutineScope) {
                     val containingDeclaration = function.containingClassOrObject
-                    if (containingDeclaration is KtClass && !containingDeclaration.isInterface() && function.hasBody()) {
+                    if (containingDeclaration is KtClass && !(containingDeclaration as KtClass).isInterface() && function.hasBody()) {
                         fixes += IntentionWrapper(MoveMemberToCompanionObjectIntention(), file)
                     }
                 }
@@ -152,11 +152,11 @@ class SuspendFunctionOnCoroutineScopeInspection : AbstractKotlinInspection() {
                     val receiverExpression = it.receiverExpression as? KtThisExpression
                     val selectorExpression = it.selectorExpression
                     if (receiverExpression?.getTargetLabel() != null && selectorExpression != null) {
-                        if (context[BindingContext.REFERENCE_TARGET, receiverExpression.instanceReference] == functionDescriptor) {
+                        if (context[BindingContext.REFERENCE_TARGET, receiverExpression!!.instanceReference] == functionDescriptor) {
                             if (it === expressionToWrap) {
-                                expressionToWrap = it.replaced(selectorExpression)
+                                expressionToWrap = it.replaced(selectorExpression!!)
                             } else {
-                                it.replace(selectorExpression)
+                                it.replace(selectorExpression!!)
                             }
                         }
                     }
@@ -170,16 +170,16 @@ class SuspendFunctionOnCoroutineScopeInspection : AbstractKotlinInspection() {
                     expressionToWrap != bodyExpression -> expressionToWrap.replaced(
                         factory.createExpressionByPattern("$COROUTINE_SCOPE_WRAPPER { $0 }", expressionToWrap)
                     )
-                    blockExpression == null -> bodyExpression.replaced(
-                        factory.createExpressionByPattern("$COROUTINE_SCOPE_WRAPPER { $0 }", bodyExpression)
+                    blockExpression == null -> bodyExpression!!.replaced(
+                        factory.createExpressionByPattern("$COROUTINE_SCOPE_WRAPPER { $0 }", bodyExpression!!)
                     )
                     else -> {
                         val bodyText = buildString {
-                            for (statement in blockExpression.statements) {
+                            for (statement in blockExpression!!.statements) {
                                 append(statement.text)
                             }
                         }
-                        blockExpression.replaced(
+                        blockExpression!!.replaced(
                             factory.createBlock("$COROUTINE_SCOPE_WRAPPER { $bodyText }")
                         )
                     }
@@ -190,7 +190,7 @@ class SuspendFunctionOnCoroutineScopeInspection : AbstractKotlinInspection() {
 
             val receiverTypeReference = function.receiverTypeReference
             if (removeReceiver && !wrapCallOnly && receiverTypeReference != null) {
-                UnusedReceiverParameterInspection.RemoveReceiverFix.apply(receiverTypeReference, project)
+                UnusedReceiverParameterInspection.RemoveReceiverFix.apply(receiverTypeReference!!, project)
             }
         }
     }

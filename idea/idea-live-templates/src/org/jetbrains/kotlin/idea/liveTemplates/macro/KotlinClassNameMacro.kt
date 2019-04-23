@@ -30,7 +30,7 @@ class KotlinClassNameMacro : KotlinMacro() {
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val element = context.psiElementAtStartOffset?.parentsWithSelf?.firstOrNull {
-            it is KtClassOrObject && it.name != null && !it.hasModifier(KtTokens.COMPANION_KEYWORD)
+            it is KtClassOrObject && (it as KtClassOrObject).name != null && !(it as KtClassOrObject).hasModifier(KtTokens.COMPANION_KEYWORD)
         } ?: return null
         return TextResult((element as KtClassOrObject).name!!)
     }

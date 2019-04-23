@@ -29,7 +29,7 @@ class ConsoleModuleDialog(private val project: Project) {
 
     fun showIfNeeded(dataContext: DataContext) {
         val module = getModule(dataContext)
-        if (module != null) return runConsole(module)
+        if (module != null) return runConsole(module!!)
 
         val modules = ModuleManager.getInstance(project).modules
 

@@ -72,8 +72,8 @@ class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement
 
     private fun getExclExclPostfixExpression(): KtPostfixExpression? {
         val operationParent = element?.parent
-        if (operationParent is KtPostfixExpression && operationParent.baseExpression != null) {
-            return operationParent
+        if (operationParent is KtPostfixExpression && (operationParent as KtPostfixExpression).baseExpression != null) {
+            return operationParent as KtPostfixExpression
         }
         return null
     }
@@ -113,40 +113,40 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
         if ((psiElement as? KtExpression).isNullExpression()) {
             return null
         }
-        if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
-            return (psiElement.prevSibling as? KtExpression).expressionForCall()
+        if (psiElement is LeafPsiElement && (psiElement as LeafPsiElement).elementType == KtTokens.DOT) {
+            return ((psiElement as LeafPsiElement).prevSibling as? KtExpression).expressionForCall()
         }
         return when (psiElement) {
-            is KtArrayAccessExpression -> psiElement.expressionForCall()
+            is KtArrayAccessExpression -> (psiElement as KtArrayAccessExpression).expressionForCall()
             is KtOperationReferenceExpression -> {
-                when (val parent = psiElement.parent) {
-                    is KtUnaryExpression -> parent.baseExpression.expressionForCall()
+                when (val parent = (psiElement as KtOperationReferenceExpression).parent) {
+                    is KtUnaryExpression -> (parent as KtUnaryExpression).baseExpression.expressionForCall()
                     is KtBinaryExpression -> {
-                        val receiver = if (KtPsiUtil.isInOrNotInOperation(parent)) parent.right else parent.left
+                        val receiver = if (KtPsiUtil.isInOrNotInOperation(parent as KtBinaryExpression)) (parent as KtBinaryExpression).right else (parent as KtBinaryExpression).left
                         receiver.expressionForCall()
                     }
                     else -> null
                 }
             }
             is KtExpression -> {
-                val context = psiElement.analyze()
-                if (checkImplicitReceivers && psiElement.getResolvedCall(context)?.getImplicitReceiverValue() != null) {
-                    val expressionToReplace = psiElement.parent as? KtCallExpression ?: psiElement
+                val context = (psiElement as KtExpression).analyze()
+                if (checkImplicitReceivers && (psiElement as KtExpression).getResolvedCall(context)?.getImplicitReceiverValue() != null) {
+                    val expressionToReplace = (psiElement as KtExpression).parent as? KtCallExpression ?: psiElement as KtExpression
                     expressionToReplace.expressionForCall(implicitReceiver = true)
                 } else {
-                    context[BindingContext.EXPRESSION_TYPE_INFO, psiElement]?.let {
+                    context[BindingContext.EXPRESSION_TYPE_INFO, psiElement as KtExpression]?.let {
                         val type = it.type
 
-                        val dataFlowValueFactory = psiElement.getResolutionFacade().frontendService<DataFlowValueFactory>()
+                        val dataFlowValueFactory = (psiElement as KtExpression).getResolutionFacade().frontendService<DataFlowValueFactory>()
 
                         if (type != null) {
                             val nullability = it.dataFlowInfo.getStableNullability(
-                                dataFlowValueFactory.createDataFlowValue(psiElement, type, context, psiElement.findModuleDescriptor())
+                                dataFlowValueFactory.createDataFlowValue(psiElement as KtExpression, type!!, context, (psiElement as KtExpression).findModuleDescriptor())
                             )
                             if (!nullability.canBeNonNull()) return null
                         }
                     }
-                    psiElement.expressionForCall()
+                    (psiElement as KtExpression).expressionForCall()
                 }
             }
             else -> null
@@ -157,7 +157,7 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
         override fun createAction(diagnostic: Diagnostic): IntentionAction {
             val psiElement = diagnostic.psiElement
             if (diagnostic.factory == UNSAFE_CALL && psiElement is KtArrayAccessExpression) {
-                psiElement.arrayExpression?.let { return AddExclExclCallFix(it) }
+                (psiElement as KtArrayAccessExpression).arrayExpression?.let { return AddExclExclCallFix(it) }
             }
             return AddExclExclCallFix(psiElement)
         }
@@ -171,13 +171,13 @@ object SmartCastImpossibleExclExclFixFactory : KotlinSingleIntentionActionFactor
 
         val analyze = element.analyze(BodyResolveMode.PARTIAL)
         val type = analyze.getType(element)
-        if (type == null || !TypeUtils.isNullableType(type)) return null
+        if (type == null || !TypeUtils.isNullableType(type!!)) return null
 
         val diagnosticWithParameters = Errors.SMARTCAST_IMPOSSIBLE.cast(diagnostic)
         val expectedType = diagnosticWithParameters.a
         if (TypeUtils.isNullableType(expectedType)) return null
         val nullableExpectedType = TypeUtils.makeNullable(expectedType)
-        if (!type.isSubtypeOf(nullableExpectedType)) return null
+        if (!type!!.isSubtypeOf(nullableExpectedType)) return null
 
         return AddExclExclCallFix(element, checkImplicitReceivers = false)
     }
@@ -189,14 +189,14 @@ object MissingIteratorExclExclFixFactory : KotlinSingleIntentionActionFactory() 
 
         val analyze = element.analyze(BodyResolveMode.PARTIAL)
         val type = analyze.getType(element)
-        if (type == null || !TypeUtils.isNullableType(type)) return null
+        if (type == null || !TypeUtils.isNullableType(type!!)) return null
 
-        val descriptor = type.constructor.declarationDescriptor
+        val descriptor = type!!.constructor.declarationDescriptor
 
         fun hasIteratorFunction(classifierDescriptor: ClassifierDescriptor?): Boolean {
             if (classifierDescriptor !is ClassDescriptor) return false
 
-            val memberScope = classifierDescriptor.unsubstitutedMemberScope
+            val memberScope = (classifierDescriptor as ClassDescriptor).unsubstitutedMemberScope
             val functions = memberScope.getContributedFunctions(OperatorNameConventions.ITERATOR, NoLookupLocation.FROM_IDE)
 
             return functions.any { it.isValidOperator() }
@@ -204,7 +204,7 @@ object MissingIteratorExclExclFixFactory : KotlinSingleIntentionActionFactory() 
 
         when (descriptor) {
             is TypeParameterDescriptor -> {
-                if (descriptor.upperBounds.none { hasIteratorFunction(it.constructor.declarationDescriptor) }) return null
+                if ((descriptor as TypeParameterDescriptor).upperBounds.none { hasIteratorFunction(it.constructor.declarationDescriptor) }) return null
             }
             is ClassifierDescriptor -> {
                 if (!hasIteratorFunction(descriptor)) return null

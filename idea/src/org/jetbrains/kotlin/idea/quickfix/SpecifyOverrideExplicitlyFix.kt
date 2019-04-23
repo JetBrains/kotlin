@@ -55,26 +55,26 @@ class SpecifyOverrideExplicitlyFix(
         } ?: return
         for (specifier in element.superTypeListEntries) {
             if (specifier is KtDelegatedSuperTypeEntry) {
-                val superType = specifier.typeReference?.let { context[BindingContext.TYPE, it] } ?: continue
+                val superType = (specifier as KtDelegatedSuperTypeEntry).typeReference?.let { context[BindingContext.TYPE, it] } ?: continue
                 val superTypeDescriptor = superType.constructor.declarationDescriptor as? ClassDescriptor ?: continue
                 val overriddenDescriptor = delegatedDescriptor.overriddenDescriptors.find {
                     it.containingDeclaration == superTypeDescriptor
                 } ?: continue
 
-                val delegateExpression = specifier.delegateExpression as? KtNameReferenceExpression
+                val delegateExpression = (specifier as KtDelegatedSuperTypeEntry).delegateExpression as? KtNameReferenceExpression
                 val delegateTargetDescriptor = context[BindingContext.REFERENCE_TARGET, delegateExpression] ?: return
                 if (delegateTargetDescriptor is ValueParameterDescriptor &&
-                    delegateTargetDescriptor.containingDeclaration.let {
+                    (delegateTargetDescriptor as ValueParameterDescriptor).containingDeclaration.let {
                         it is ConstructorDescriptor &&
-                        it.isPrimary &&
-                        it.containingDeclaration == delegatedDescriptor.containingDeclaration
+                        (it as ConstructorDescriptor).isPrimary &&
+                        (it as ConstructorDescriptor).containingDeclaration == delegatedDescriptor.containingDeclaration
                     }) {
                     val delegateParameter = DescriptorToSourceUtils.descriptorToDeclaration(
                             delegateTargetDescriptor) as? KtParameter
-                    if (delegateParameter != null && !delegateParameter.hasValOrVar()) {
+                    if (delegateParameter != null && !delegateParameter!!.hasValOrVar()) {
                         val factory = KtPsiFactory(project)
-                        delegateParameter.addModifier(KtTokens.PRIVATE_KEYWORD)
-                        delegateParameter.addAfter(factory.createValKeyword(), delegateParameter.modifierList)
+                        delegateParameter!!.addModifier(KtTokens.PRIVATE_KEYWORD)
+                        delegateParameter!!.addAfter(factory.createValKeyword(), delegateParameter!!.modifierList)
                     }
                 }
 
@@ -96,7 +96,7 @@ class SpecifyOverrideExplicitlyFix(
             val hidesOverrideError = Errors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE.cast(diagnostic)
             val klass = hidesOverrideError.psiElement
             if (klass.superTypeListEntries.any {
-                it is KtDelegatedSuperTypeEntry && it.delegateExpression !is KtNameReferenceExpression
+                it is KtDelegatedSuperTypeEntry && (it as KtDelegatedSuperTypeEntry).delegateExpression !is KtNameReferenceExpression
             }) {
                 return null
             }

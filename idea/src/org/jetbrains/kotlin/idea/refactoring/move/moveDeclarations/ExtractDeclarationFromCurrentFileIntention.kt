@@ -58,8 +58,8 @@ class ExtractDeclarationFromCurrentFileIntention :
         if (descriptor.getSuperClassNotAny()?.modality == Modality.SEALED) return null
 
         val keyword = when (element) {
-            is KtClass -> element.getClassOrInterfaceKeyword()
-            is KtObjectDeclaration -> element.getObjectKeyword()
+            is KtClass -> (element as KtClass).getClassOrInterfaceKeyword()
+            is KtObjectDeclaration -> (element as KtObjectDeclaration).getObjectKeyword()
             else -> return null
         }
         val startOffset = keyword?.startOffset ?: return null
@@ -76,7 +76,7 @@ class ExtractDeclarationFromCurrentFileIntention :
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val file = element.containingKtFile
         val project = file.project
-        val originalOffset = editor.caretModel.offset - element.startOffset
+        val originalOffset = editor!!.caretModel.offset - element.startOffset
         val directory = file.containingDirectory ?: return
         val packageName = file.packageFqName
         val targetFileName = "${element.name}.kt"

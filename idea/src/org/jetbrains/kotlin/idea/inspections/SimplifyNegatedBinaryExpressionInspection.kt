@@ -65,8 +65,8 @@ class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInsp
 
         val expression = KtPsiUtil.deparenthesize(element.baseExpression) as? KtOperationExpression ?: return false
         when (expression) {
-            is KtIsExpression -> if (expression.typeReference == null) return false
-            is KtBinaryExpression -> if (expression.left == null || expression.right == null) return false
+            is KtIsExpression -> if ((expression as KtIsExpression).typeReference == null) return false
+            is KtBinaryExpression -> if ((expression as KtBinaryExpression).left == null || (expression as KtBinaryExpression).right == null) return false
             else -> return false
         }
 
@@ -81,9 +81,9 @@ class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInsp
         val psiFactory = KtPsiFactory(expression)
         val newExpression = when (expression) {
             is KtIsExpression ->
-                psiFactory.createExpressionByPattern("$0 $1 $2", expression.leftHandSide, operation, expression.typeReference!!)
+                psiFactory.createExpressionByPattern("$0 $1 $2", (expression as KtIsExpression).leftHandSide, operation, (expression as KtIsExpression).typeReference!!)
             is KtBinaryExpression ->
-                psiFactory.createExpressionByPattern("$0 $1 $2", expression.left!!, operation, expression.right!!)
+                psiFactory.createExpressionByPattern("$0 $1 $2", (expression as KtBinaryExpression).left!!, operation, (expression as KtBinaryExpression).right!!)
             else ->
                 throw IllegalArgumentException()
         }

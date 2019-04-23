@@ -71,7 +71,7 @@ class MoveDeclarationsPassFactory(highlightingPassRegistrar: TextEditorHighlight
             val info = HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION)
                     .range(cookie.bounds.range!!)
                     .createUnconditionally()
-            QuickFixAction.registerQuickFixAction(info, MoveDeclarationsIntentionAction(processor, cookie.bounds, cookie.modificationCount))
+            QuickFixAction.registerQuickFixAction(info, MoveDeclarationsIntentionAction(processor!!, cookie.bounds, cookie.modificationCount))
 
             return info
         }

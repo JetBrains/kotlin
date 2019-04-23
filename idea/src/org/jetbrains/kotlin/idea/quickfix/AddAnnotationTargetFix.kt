@@ -101,7 +101,7 @@ private fun getActualTargetList(annotated: PsiTarget): AnnotationChecker.Compani
         is PsiClass -> T_CLASSIFIER
         is PsiMethod ->
             when {
-                annotated.isConstructor -> T_CONSTRUCTOR
+                (annotated as PsiMethod).isConstructor -> T_CONSTRUCTOR
                 else -> T_MEMBER_FUNCTION
             }
         is PsiExpression -> T_EXPRESSION
@@ -134,7 +134,7 @@ private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
             return emptyList()
         }
         val property = annotatedElement as? KtProperty
-        if (property != null && (LightClassUtil.getLightClassPropertyMethods(property).backingField == null || property.hasDelegate())) {
+        if (property != null && (LightClassUtil.getLightClassPropertyMethods(property!!).backingField == null || property!!.hasDelegate())) {
             return emptyList()
         }
     } else {
@@ -156,7 +156,7 @@ private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, 
         if (retentionEntry == null) {
             addAnnotationEntry(newRetentionEntry)
         } else {
-            retentionEntry.replace(newRetentionEntry)
+            retentionEntry!!.replace(newRetentionEntry)
         }
     }
 
@@ -174,7 +174,7 @@ private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, 
         val arguments = targetAnnotationEntry.valueArguments.mapNotNull { it.getArgumentExpression()?.text }
         for (target in annotationTargets) {
             val text = target.asNameString()
-            if (text !in arguments) valueArgumentList.addArgument(psiFactory.createArgument(text))
+            if (text !in arguments) valueArgumentList!!.addArgument(psiFactory.createArgument(text))
         }
     }
 }

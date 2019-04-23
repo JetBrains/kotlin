@@ -61,7 +61,7 @@ class AddLoopLabelFix(
             assert(element is KtBreakExpression || element is KtContinueExpression)
             assert((element as? KtLabeledExpression)?.getLabelName() == null)
             val loop = element?.getStrictParentOfType<KtLoopExpression>() ?: return null
-            return AddLoopLabelFix(loop, element)
+            return AddLoopLabelFix(loop, element!!)
         }
 
         private fun collectUsedLabels(element: KtElement): Set<String> {
@@ -74,7 +74,7 @@ class AddLoopLabelFix(
             })
             element.parents.forEach {
                 if (it is KtLabeledExpression) {
-                    usedLabels.add(it.getLabelName()!!)
+                    usedLabels.add((it as KtLabeledExpression).getLabelName()!!)
                 }
             }
             return usedLabels

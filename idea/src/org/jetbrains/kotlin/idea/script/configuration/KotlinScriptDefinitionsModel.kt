@@ -42,7 +42,7 @@ class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<
         override fun valueOf(item: KotlinScriptDefinitionsModelDescriptor): String {
             val definition = item.definition
             return when (definition) {
-                is KotlinScriptDefinitionFromAnnotatedTemplate -> definition.scriptFilePattern.pattern
+                is KotlinScriptDefinitionFromAnnotatedTemplate -> (definition as KotlinScriptDefinitionFromAnnotatedTemplate).scriptFilePattern.pattern
                 is KotlinScriptDefinitionAdapterFromNewAPIBase -> definition.fileExtension
                 is StandardIdeScriptDefinition -> KotlinParserDefinition.STD_SCRIPT_EXT
                 else -> ""

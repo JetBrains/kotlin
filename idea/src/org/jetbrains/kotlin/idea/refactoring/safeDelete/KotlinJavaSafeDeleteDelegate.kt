@@ -37,14 +37,14 @@ class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
     ) {
         if (reference !is KtReference) return
 
-        val element = reference.element
+        val element = (reference as KtReference).element
 
         val callExpression = element.getNonStrictParentOfType<KtCallExpression>() ?: return
 
         val calleeExpression = callExpression.calleeExpression
         if (!(calleeExpression is KtReferenceExpression && calleeExpression.isAncestor(element))) return
 
-        val descriptor = calleeExpression.resolveToCall()?.resultingDescriptor ?: return
+        val descriptor = (calleeExpression as KtReferenceExpression).resolveToCall()?.resultingDescriptor ?: return
 
         val originalDeclaration = method.unwrapped
         if (originalDeclaration !is PsiMethod && originalDeclaration !is KtDeclaration) return

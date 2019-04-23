@@ -169,9 +169,9 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
     private fun JvmClass.toKtClassOrFile(): KtElement? {
         val psi = sourceElement
         return when (psi) {
-            is KtClassOrObject -> psi
-            is KtLightClassForSourceDeclaration -> psi.kotlinOrigin
-            is KtLightClassForFacade -> psi.files.firstOrNull()
+            is KtClassOrObject -> psi as KtClassOrObject
+            is KtLightClassForSourceDeclaration -> (psi as KtLightClassForSourceDeclaration).kotlinOrigin
+            is KtLightClassForFacade -> (psi as KtLightClassForFacade).files.firstOrNull()
             else -> null
         }
     }
@@ -471,7 +471,7 @@ internal fun addAnnotationEntry(
 
         if (KotlinTarget.PROPERTY !in applicableTargetSet) return@prefixEvaluation ""
 
-        "${annotationTarget.renderName}:"
+        "${annotationTarget!!.renderName}:"
     }
 
     // could be generated via descriptor when KT-30478 is fixed
@@ -493,8 +493,8 @@ internal fun addAnnotationEntry(
 
 private fun renderAttributeValue(annotationAttributeRequest: AnnotationAttributeValueRequest) =
     when (annotationAttributeRequest) {
-        is AnnotationAttributeValueRequest.PrimitiveValue -> annotationAttributeRequest.value
-        is AnnotationAttributeValueRequest.StringValue -> "\"" + annotationAttributeRequest.value + "\""
+        is AnnotationAttributeValueRequest.PrimitiveValue -> (annotationAttributeRequest as AnnotationAttributeValueRequest.PrimitiveValue).value
+        is AnnotationAttributeValueRequest.StringValue -> "\"" + (annotationAttributeRequest as AnnotationAttributeValueRequest.StringValue).value + "\""
     }
 
 

@@ -44,7 +44,7 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
 
         val argumentExpression = valueArguments.firstOrNull()?.getArgumentExpression()
         if (argumentExpression is KtCallExpression
-            && argumentExpression.calleeExpression?.getCallableDescriptor()?.fqNameSafe != FqName("kotlin.arrayOf")
+            && (argumentExpression as KtCallExpression).calleeExpression?.getCallableDescriptor()?.fqNameSafe != FqName("kotlin.arrayOf")
         ) return false
 
         return valueArguments.none { it.hasType(type, context) }
@@ -61,32 +61,32 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
 
         val context = element.analyze(BodyResolveMode.PARTIAL)
         val annotationEntry = containingDeclaration.findThrowsAnnotation(context)
-        if (annotationEntry == null || annotationEntry.valueArguments.isEmpty()) {
+        if (annotationEntry == null || annotationEntry!!.valueArguments.isEmpty()) {
             annotationEntry?.delete()
             val whiteSpaceText = if (containingDeclaration is KtPropertyAccessor) " " else "\n"
             containingDeclaration.addAnnotation(throwsAnnotationFqName, annotationArgumentText, whiteSpaceText)
         } else {
             val factory = KtPsiFactory(element)
-            val argument = annotationEntry.valueArguments.firstOrNull()
+            val argument = annotationEntry!!.valueArguments.firstOrNull()
             val expression = argument?.getArgumentExpression()
             val added = when {
                 argument?.getArgumentName() == null ->
-                    annotationEntry.valueArgumentList?.addArgument(factory.createArgument(annotationArgumentText))
+                    annotationEntry!!.valueArgumentList?.addArgument(factory.createArgument(annotationArgumentText))
                 expression is KtCallExpression ->
-                    expression.valueArgumentList?.addArgument(factory.createArgument(annotationArgumentText))
+                    (expression as KtCallExpression).valueArgumentList?.addArgument(factory.createArgument(annotationArgumentText))
                 expression is KtClassLiteralExpression -> {
-                    expression.replaced(
-                        factory.createCollectionLiteral(listOf(expression), annotationArgumentText)
+                    (expression as KtClassLiteralExpression).replaced(
+                        factory.createCollectionLiteral(listOf(expression as KtClassLiteralExpression), annotationArgumentText)
                     ).getInnerExpressions().lastOrNull()
                 }
                 expression is KtCollectionLiteralExpression -> {
-                    expression.replaced(
-                        factory.createCollectionLiteral(expression.getInnerExpressions(), annotationArgumentText)
+                    (expression as KtCollectionLiteralExpression).replaced(
+                        factory.createCollectionLiteral((expression as KtCollectionLiteralExpression).getInnerExpressions(), annotationArgumentText)
                     ).getInnerExpressions().lastOrNull()
                 }
                 else -> null
             }
-            if (added != null) ShortenReferences.DEFAULT.process(added)
+            if (added != null) ShortenReferences.DEFAULT.process(added!!)
         }
     }
 }
@@ -117,9 +117,9 @@ private fun KtDeclaration.findThrowsAnnotation(context: BindingContext): KtAnnot
 private fun ValueArgument.hasType(type: KotlinType, context: BindingContext): Boolean {
     val argumentExpression = getArgumentExpression()
     val expressions = when (argumentExpression) {
-        is KtClassLiteralExpression -> listOf(argumentExpression)
-        is KtCollectionLiteralExpression -> argumentExpression.getInnerExpressions().filterIsInstance(KtClassLiteralExpression::class.java)
-        is KtCallExpression -> argumentExpression.valueArguments.mapNotNull { it.getArgumentExpression() as? KtClassLiteralExpression }
+        is KtClassLiteralExpression -> listOf(argumentExpression as KtClassLiteralExpression)
+        is KtCollectionLiteralExpression -> (argumentExpression as KtCollectionLiteralExpression).getInnerExpressions().filterIsInstance(KtClassLiteralExpression::class.java)
+        is KtCallExpression -> (argumentExpression as KtCallExpression).valueArguments.mapNotNull { it.getArgumentExpression() as? KtClassLiteralExpression }
         else -> emptyList()
     }
     return expressions.any { it.getType(context)?.arguments?.firstOrNull()?.type == type }

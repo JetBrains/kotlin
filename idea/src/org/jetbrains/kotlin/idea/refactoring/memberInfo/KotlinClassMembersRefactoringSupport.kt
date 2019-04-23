@@ -34,7 +34,7 @@ class KotlinClassMembersRefactoringSupport : ClassMembersRefactoringSupport {
         val member = memberInfo.member
         return member is KtNamedFunction
                || member is KtProperty
-               || (member is KtParameter && member.isPropertyParameter())
+               || (member is KtParameter && (member as KtParameter).isPropertyParameter())
                || (member is KtClassOrObject && memberInfo.overrides == null)
     }
 
@@ -58,8 +58,8 @@ class KotlinClassMembersRefactoringSupport : ClassMembersRefactoringSupport {
 
                                 if (pullUpData != null) {
                                     val memberDescriptor = referencedMember.unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
-                                    val memberInSuper = memberDescriptor.substitute(pullUpData.sourceToTargetClassSubstitutor) ?: return
-                                    if (pullUpData.targetClassDescriptor.findCallableMemberBySignature(memberInSuper as CallableMemberDescriptor) != null) return
+                                    val memberInSuper = memberDescriptor.substitute(pullUpData!!.sourceToTargetClassSubstitutor) ?: return
+                                    if (pullUpData!!.targetClassDescriptor.findCallableMemberBySignature(memberInSuper as CallableMemberDescriptor) != null) return
                                 }
 
                                 myCollection.add(referencedMember)

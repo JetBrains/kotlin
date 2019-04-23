@@ -94,12 +94,12 @@ class KotlinImportOptimizer : ImportOptimizer {
         override fun visitKtElement(element: KtElement) {
             for (reference in element.references) {
                 if (reference !is KtReference) continue
-                abstractRefs.add(AbstractReferenceImpl(reference))
+                abstractRefs.add(AbstractReferenceImpl(reference as KtReference))
 
-                val names = reference.resolvesByNames
+                val names = (reference as KtReference).resolvesByNames
 
                 val bindingContext = element.analyze()
-                val targets = reference.targets(bindingContext)
+                val targets = (reference as KtReference).targets(bindingContext)
                 for (target in targets) {
                     val importableDescriptor = target.getImportableDescriptor()
                     if (importableDescriptor.name !in names) continue // resolved via alias
@@ -109,7 +109,7 @@ class KotlinImportOptimizer : ImportOptimizer {
                     if (target is PackageViewDescriptor && parentFqName == FqName.ROOT) continue // no need to import top-level packages
                     if (target !is PackageViewDescriptor && parentFqName == currentPackageName) continue
 
-                    if (!reference.canBeResolvedViaImport(target, bindingContext)) continue
+                    if (!(reference as KtReference).canBeResolvedViaImport(target, bindingContext)) continue
 
                     if (isAccessibleAsMember(importableDescriptor, element, bindingContext)) continue
 
@@ -126,15 +126,15 @@ class KotlinImportOptimizer : ImportOptimizer {
             fun isInScope(scope: HierarchicalScope): Boolean {
                 return when (target) {
                     is FunctionDescriptor ->
-                        scope.findFunction(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
+                        scope.findFunction((target as FunctionDescriptor).name, NoLookupLocation.FROM_IDE) { it == target } != null
                             && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     is PropertyDescriptor ->
-                        scope.findVariable(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
+                        scope.findVariable((target as PropertyDescriptor).name, NoLookupLocation.FROM_IDE) { it == target } != null
                             && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     is ClassDescriptor ->
-                        scope.findClassifier(target.name, NoLookupLocation.FROM_IDE) == target
+                        scope.findClassifier((target as ClassDescriptor).name, NoLookupLocation.FROM_IDE) == target
                             && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     else -> false
@@ -159,9 +159,9 @@ class KotlinImportOptimizer : ImportOptimizer {
                 get() {
                     val resolvesByNames = reference.resolvesByNames
                     if (reference is KtInvokeFunctionReference) {
-                        val additionalNames = (reference.element.calleeExpression as? KtNameReferenceExpression)?.mainReference?.resolvesByNames
+                        val additionalNames = ((reference as KtInvokeFunctionReference).element.calleeExpression as? KtNameReferenceExpression)?.mainReference?.resolvesByNames
                         if (additionalNames != null) {
-                            return resolvesByNames + additionalNames
+                            return resolvesByNames + additionalNames!!
                         }
                     }
                     return resolvesByNames

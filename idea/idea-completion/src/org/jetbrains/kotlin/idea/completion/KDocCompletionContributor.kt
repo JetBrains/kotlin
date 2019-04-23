@@ -146,7 +146,7 @@ object KDocTagCompletionProvider : CompletionProvider<CompletionParameters>() {
         val kdocOwner = parameters.position.getNonStrictParentOfType<KDoc>()?.getOwner()
         val resultWithPrefix = result.withPrefixMatcher(prefix)
         KDocKnownTag.values().forEach {
-            if (kdocOwner == null || it.isApplicable(kdocOwner)) {
+            if (kdocOwner == null || it.isApplicable(kdocOwner!!)) {
                 resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name.toLowerCase()))
             }
         }
@@ -155,7 +155,7 @@ object KDocTagCompletionProvider : CompletionProvider<CompletionParameters>() {
     private fun KDocKnownTag.isApplicable(declaration: KtDeclaration) = when (this) {
         KDocKnownTag.CONSTRUCTOR, KDocKnownTag.PROPERTY -> declaration is KtClassOrObject
         KDocKnownTag.RETURN -> declaration is KtNamedFunction
-        KDocKnownTag.RECEIVER -> declaration is KtNamedFunction && declaration.receiverTypeReference != null
+        KDocKnownTag.RECEIVER -> declaration is KtNamedFunction && (declaration as KtNamedFunction).receiverTypeReference != null
         else -> true
     }
 }

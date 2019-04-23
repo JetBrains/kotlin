@@ -32,7 +32,7 @@ class SpecifyTypeExplicitlyInDestructuringAssignmentIntention : SelfTargetingRan
     override fun applyTo(element: KtDestructuringDeclaration, editor: Editor?) {
         val entries = element.noTypeReferenceEntries()
         if (editor != null && element.getParentOfType<KtParameterList>(false) == null)
-            SpecifyTypeExplicitlyIntention.addTypeAnnotationWithTemplate(editor, entries.iterator())
+            SpecifyTypeExplicitlyIntention.addTypeAnnotationWithTemplate(editor!!, entries.iterator())
         else
             entries.forEach {
                 it.setType(SpecifyTypeExplicitlyIntention.getTypeForDeclaration(it))

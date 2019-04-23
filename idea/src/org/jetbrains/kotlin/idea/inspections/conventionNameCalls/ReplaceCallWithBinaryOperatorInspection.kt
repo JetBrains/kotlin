@@ -157,7 +157,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
             OperatorNameConventions.EQUALS -> {
                 if (!dotQualified.isAnyEquals()) return null
                 val prefixExpression = dotQualified.getWrappingPrefixExpressionIfAny()
-                if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
+                if (prefixExpression != null && prefixExpression!!.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
                 else KtTokens.EQEQ
             }
             OperatorNameConventions.COMPARE_TO -> {

@@ -119,7 +119,7 @@ internal fun createExpressionSelector(
 ): PostfixTemplateExpressionSelector {
     val predicate: ((KtExpression, BindingContext) -> Boolean)? =
         if (typePredicate != null) { expression, bindingContext ->
-            expression.getType(bindingContext)?.let(typePredicate) ?: false
+            expression.getType(bindingContext)?.let(typePredicate!!) ?: false
         }
         else null
     return createExpressionSelectorWithComplexFilter(checkCanBeUsedAsValue, statementsOnly, predicate)
@@ -142,23 +142,23 @@ private class KtExpressionPostfixTemplateSelector(
         if (element !is KtExpression) return false
 
         // Can't be independent expressions
-        if (element.isSelector || element.parent is KtUserType || element.isOperationReference || element is KtBlockExpression) return false
+        if ((element as KtExpression).isSelector || (element as KtExpression).parent is KtUserType || (element as KtExpression).isOperationReference || element is KtBlockExpression) return false
 
         // Both KtLambdaExpression and KtFunctionLiteral have the same offset, so we add only one of them -> KtLambdaExpression
         if (element is KtFunctionLiteral) return false
 
-        val bindingContext by lazy { element.analyze(BodyResolveMode.PARTIAL) }
+        val bindingContext by lazy { (element as KtExpression).analyze(BodyResolveMode.PARTIAL) }
 
         if (statementsOnly) {
             // We use getQualifiedExpressionForReceiverOrThis because when postfix completion is run on some statement like:
             // foo().try<caret>
             // `element` points to `foo()` call, while we need to select the whole statement with `try` selector
             // to check if it's in a statement position
-            if (!KtPsiUtil.isStatement(element.getQualifiedExpressionForReceiverOrThis())) return false
+            if (!KtPsiUtil.isStatement((element as KtExpression).getQualifiedExpressionForReceiverOrThis())) return false
         }
-        if (checkCanBeUsedAsValue && !element.canBeUsedAsValue()) return false
+        if (checkCanBeUsedAsValue && !(element as KtExpression).canBeUsedAsValue()) return false
 
-        return predicate?.invoke(element, bindingContext) ?: true
+        return predicate?.invoke(element as KtExpression, bindingContext) ?: true
     }
 
     private fun KtExpression.canBeUsedAsValue() =
@@ -184,8 +184,8 @@ private class KtExpressionPostfixTemplateSelector(
         val boundExpression = expressions.firstOrNull { it.parent.endOffset > offset }
         val boundElementParent = boundExpression?.parent
         val filteredByOffset = expressions.takeWhile { it != boundElementParent }.toMutableList()
-        if (boundElementParent is KtDotQualifiedExpression && boundExpression == boundElementParent.receiverExpression) {
-            val qualifiedExpressionEnd = boundElementParent.endOffset
+        if (boundElementParent is KtDotQualifiedExpression && boundExpression == (boundElementParent as KtDotQualifiedExpression).receiverExpression) {
+            val qualifiedExpressionEnd = (boundElementParent as KtDotQualifiedExpression).endOffset
             expressions
                 .dropWhile { it != boundElementParent }
                 .drop(1)

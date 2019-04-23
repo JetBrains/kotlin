@@ -66,7 +66,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
 
         val newPackageName = FqNameUnsafe(newPackage.qualifiedName)
         if (oldPackageName.asString() == newPackageName.asString()
-            && ModuleUtilCore.findModuleForPsiElement(this) == ModuleUtilCore.findModuleForPsiElement(newParent)) return null
+            && ModuleUtilCore.findModuleForPsiElement(this) == ModuleUtilCore.findModuleForPsiElement(newParent!!)) return null
         if (!newPackageName.hasIdentifiersOnly()) return null
 
         return ContainerChangeInfo(ContainerInfo.Package(oldPackageName), ContainerInfo.Package(newPackageName.toSafe()))
@@ -74,9 +74,9 @@ class MoveKotlinFileHandler : MoveFileHandler() {
 
     fun initMoveProcessor(psiFile: PsiFile, newParent: PsiDirectory?, withConflicts: Boolean): MoveKotlinDeclarationsProcessor? {
         if (psiFile !is KtFile) return null
-        val packageNameInfo = psiFile.getPackageNameInfo(newParent, false) ?: return null
+        val packageNameInfo = (psiFile as KtFile).getPackageNameInfo(newParent, false) ?: return null
 
-        val project = psiFile.project
+        val project = (psiFile as KtFile).project
 
         val newPackage = packageNameInfo.newContainer
         val moveTarget = when (newPackage) {
@@ -85,7 +85,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
             else -> KotlinMoveTargetForDeferredFile(newPackage.fqName!!, newParent) {
                 newParent?.let {
                     MoveFilesOrDirectoriesUtil.doMoveFile(psiFile, it)
-                    it.findFile(psiFile.name) as? KtFile
+                    it.findFile((psiFile as KtFile).name) as? KtFile
                 }
             }
         }
@@ -93,10 +93,10 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         return MoveKotlinDeclarationsProcessor(
             MoveDeclarationsDescriptor(
                 project = project,
-                moveSource = MoveSource(psiFile),
+                moveSource = MoveSource(psiFile as KtFile),
                 moveTarget = moveTarget,
                 delegate = MoveDeclarationsDelegate.TopLevel,
-                allElementsToMove = psiFile.allElementsToMove,
+                allElementsToMove = (psiFile as KtFile).allElementsToMove,
                 analyzeConflicts = withConflicts
             )
         )
@@ -123,7 +123,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
     ): List<UsageInfo> {
         if (psiFile !is KtFile) return emptyList()
 
-        val usages = arrayListOf<UsageInfo>(FileInfo(psiFile))
+        val usages = arrayListOf<UsageInfo>(FileInfo(psiFile as KtFile))
         initMoveProcessor(psiFile, newParent, withConflicts)?.let {
             usages += it.findUsages()
             usages += it.getConflictsAsUsages()
@@ -136,10 +136,10 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         val moveProcessor = initMoveProcessor(file, moveDestination, false) ?: return
         val moveContext = MoveContext(file, moveProcessor)
         oldToNewMap[moveContext] = moveContext
-        val packageNameInfo = file.getPackageNameInfo(moveDestination, true) ?: return
+        val packageNameInfo = (file as KtFile).getPackageNameInfo(moveDestination, true) ?: return
         val newFqName = packageNameInfo.newContainer.fqName
         if (newFqName != null) {
-            file.packageDirective?.fqName = newFqName.quoteIfNeeded()
+            (file as KtFile).packageDirective?.fqName = newFqName!!.quoteIfNeeded()
         }
     }
 
@@ -149,7 +149,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>) {
         val currentFile = (usageInfos?.firstOrNull() as? FileInfo)?.element
-        val moveContext = oldToNewMap.keys.firstOrNull { it is MoveContext && it.file == currentFile} as? MoveContext ?: return
+        val moveContext = oldToNewMap.keys.firstOrNull { it is MoveContext && (it as MoveContext).file == currentFile} as? MoveContext ?: return
         retargetUsages(usageInfos, moveContext.declarationMoveProcessor)
     }
 

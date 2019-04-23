@@ -81,25 +81,25 @@ open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
 
         val errorMessage = when (elementToExtract) {
             is KtSimpleNameExpression -> {
-                if (!(isTypeConstructorReference(elementToExtract) || isDoubleColonReceiver(elementToExtract))) "Type reference is expected" else null
+                if (!(isTypeConstructorReference(elementToExtract as KtSimpleNameExpression) || isDoubleColonReceiver(elementToExtract as KtSimpleNameExpression))) "Type reference is expected" else null
             }
             !is KtTypeElement -> "No type to refactor"
             else -> null
         }
-        if (errorMessage != null) return showErrorHint(project, editor, errorMessage, REFACTORING_NAME)
+        if (errorMessage != null) return showErrorHint(project, editor, errorMessage!!, REFACTORING_NAME)
 
         val introduceData = when (elementToExtract) {
-            is KtTypeElement -> IntroduceTypeAliasData(elementToExtract, targetSibling)
+            is KtTypeElement -> IntroduceTypeAliasData(elementToExtract as KtTypeElement, targetSibling)
             else -> IntroduceTypeAliasData(elementToExtract!!.getStrictParentOfType<KtTypeElement>() ?: elementToExtract as KtElement, targetSibling, true)
         }
         val analysisResult = introduceData.analyze()
         when (analysisResult) {
             is IntroduceTypeAliasAnalysisResult.Error -> {
-                return showErrorHint(project, editor, analysisResult.message, REFACTORING_NAME)
+                return showErrorHint(project, editor, (analysisResult as IntroduceTypeAliasAnalysisResult.Error).message, REFACTORING_NAME)
             }
 
             is IntroduceTypeAliasAnalysisResult.Success -> {
-                val originalDescriptor = analysisResult.descriptor
+                val originalDescriptor = (analysisResult as IntroduceTypeAliasAnalysisResult.Success).descriptor
                 if (ApplicationManager.getApplication().isUnitTestMode) {
                     val (descriptor, conflicts) = descriptorSubstitutor!!(originalDescriptor).validate()
                     project.checkConflictsInteractively(conflicts) { runRefactoring(descriptor, project, editor) }
@@ -117,11 +117,11 @@ open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
         val offset = if (editor.selectionModel.hasSelection()) editor.selectionModel.selectionStart else editor.caretModel.offset
 
         val refExpression = file.findElementAt(offset)?.getNonStrictParentOfType<KtSimpleNameExpression>()
-        if (refExpression != null && isDoubleColonReceiver(refExpression)) {
-            return doInvoke(project, editor, listOf(refExpression), refExpression.getOutermostParentContainedIn(file)!!)
+        if (refExpression != null && isDoubleColonReceiver(refExpression!!)) {
+            return doInvoke(project, editor, listOf(refExpression!!), refExpression!!.getOutermostParentContainedIn(file)!!)
         }
 
-        selectElements(editor, file) { elements, targetSibling -> doInvoke(project, editor, elements, targetSibling) }
+        selectElements(editor, file as KtFile) { elements, targetSibling -> doInvoke(project, editor, elements, targetSibling) }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

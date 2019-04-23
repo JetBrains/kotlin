@@ -61,10 +61,10 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
 
         if (scope is GlobalSearchScope) {
             if (options.fastTrack == null) {
-                return processUsagesInText(element, processor, scope)
+                return processUsagesInText(element, processor, scope as GlobalSearchScope)
             }
             options.fastTrack.searchCustom {
-                processUsagesInText(element, processor, scope)
+                processUsagesInText(element, processor, scope as GlobalSearchScope)
             }
         }
         return true

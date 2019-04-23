@@ -84,7 +84,7 @@ class ChangeSuspendInHierarchyFix(
 
             val name = (baseClass as? PsiNamedElement)?.name ?: return@forEach
             progressIndicator.text = "Looking for class $name inheritors..."
-            val classes = listOf(baseClass) + HierarchySearchRequest(baseClass, baseClass.useScope).searchInheritors()
+            val classes = listOf(baseClass as PsiNamedElement) + HierarchySearchRequest(baseClass as PsiNamedElement, (baseClass as PsiNamedElement).useScope).searchInheritors()
             classes.mapNotNullTo(result) {
                 val subClass = it.unwrapped as? KtClassOrObject ?: return@mapNotNullTo null
                 val classDescriptor = subClass.unsafeResolveToDescriptor() as ClassDescriptor
@@ -126,8 +126,8 @@ class ChangeSuspendInHierarchyFix(
                     val classDescriptor = containingDeclaration as? ClassDescriptorWithResolutionScopes ?: return emptyList()
                     DescriptorUtils.getSuperclassDescriptors(classDescriptor).flatMap { superClassDescriptor ->
                         if (superClassDescriptor !is ClassDescriptorWithResolutionScopes) return@flatMap emptyList<FunctionDescriptor>()
-                        val candidates = superClassDescriptor.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
-                        val substitutor = getTypeSubstitutor(superClassDescriptor.defaultType, classDescriptor.defaultType)
+                        val candidates = (superClassDescriptor as ClassDescriptorWithResolutionScopes).unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
+                        val substitutor = getTypeSubstitutor((superClassDescriptor as ClassDescriptorWithResolutionScopes).defaultType, classDescriptor.defaultType)
                                           ?: return@flatMap emptyList<FunctionDescriptor>()
                         candidates.filter {
                             val signature = it.substitute(substitutor) as FunctionDescriptor
@@ -155,14 +155,14 @@ class ChangeSuspendInHierarchyFix(
             val currentClassDescriptor = currentDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
             return filter {
                 if (it !is FunctionDescriptor || it == currentDescriptor) return@filter false
-                if (it.isSuspend == currentDescriptor.isSuspend) return@filter false
-                val containingClassDescriptor = it.containingDeclaration as? ClassDescriptor ?: return@filter false
+                if ((it as FunctionDescriptor).isSuspend == currentDescriptor.isSuspend) return@filter false
+                val containingClassDescriptor = (it as FunctionDescriptor).containingDeclaration as? ClassDescriptor ?: return@filter false
                 if (!currentClassDescriptor.isSubclassOf(containingClassDescriptor)) return@filter false
                 val substitutor = getTypeSubstitutor(
                         containingClassDescriptor.defaultType,
                         currentClassDescriptor.defaultType
                 ) ?: return@filter false
-                val signatureInCurrentClass = it.substitute(substitutor) ?: return@filter false
+                val signatureInCurrentClass = (it as FunctionDescriptor).substitute(substitutor) ?: return@filter false
                 OverridingUtil.DEFAULT.isOverridableBy(signatureInCurrentClass, currentDescriptor, null).result ==
                         OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT
             }

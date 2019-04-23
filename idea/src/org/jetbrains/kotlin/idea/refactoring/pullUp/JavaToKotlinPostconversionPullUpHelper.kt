@@ -44,7 +44,7 @@ class JavaToKotlinPostconversionPullUpHelper(private val data: PullUpData) : Pul
 
     override fun updateUsage(element: PsiElement?) {
         if (element !is KtSimpleNameExpression) return
-        val qualifier = element.getReceiverExpression()?.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return
+        val qualifier = (element as KtSimpleNameExpression).getReceiverExpression()?.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return
         qualifier.mainReference.bindToElement(data.targetClass.unwrapped!!)
     }
 }

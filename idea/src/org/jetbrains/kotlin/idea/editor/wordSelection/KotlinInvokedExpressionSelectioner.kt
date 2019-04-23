@@ -32,7 +32,7 @@ class KotlinInvokedExpressionSelectioner : ExtendWordSelectionHandlerBase() {
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         if (e !is KtDotQualifiedExpression) return null
-        val endOffset = e.selectorExpression?.children?.firstOrNull { it is KtNameReferenceExpression }?.endOffset ?: return null
+        val endOffset = (e as KtDotQualifiedExpression).selectorExpression?.children?.firstOrNull { it is KtNameReferenceExpression }?.endOffset ?: return null
         return listOf(TextRange(e.startOffset, endOffset))
     }
 }

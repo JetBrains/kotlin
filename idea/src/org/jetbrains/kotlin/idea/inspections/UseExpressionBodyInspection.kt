@@ -52,7 +52,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         val toHighlight = valueStatement.toHighlight()
         return when {
             valueStatement !is KtReturnExpression -> Status(toHighlight, "block body", INFORMATION)
-            valueStatement.returnedExpression is KtWhenExpression -> Status(toHighlight, "'return when'", INFORMATION)
+            (valueStatement as KtReturnExpression).returnedExpression is KtWhenExpression -> Status(toHighlight, "'return when'", INFORMATION)
             valueStatement.isOneLiner() -> Status(toHighlight, "one-line return", GENERIC_ERROR_OR_WARNING)
             else -> Status(toHighlight, "return", INFORMATION)
         }
@@ -61,12 +61,12 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         declarationVisitor(fun(declaration) {
             if (declaration !is KtDeclarationWithBody) return
-            val (toHighlightElement, suffix, highlightType) = statusFor(declaration) ?: return
+            val (toHighlightElement, suffix, highlightType) = statusFor(declaration as KtDeclarationWithBody) ?: return
             // Change range to start with left brace
             val hasHighlighting = highlightType != INFORMATION
 
             fun defaultLevel(): HighlightDisplayLevel {
-                val project = declaration.project
+                val project = (declaration as KtDeclarationWithBody).project
                 val inspectionProfileManager = ProjectInspectionProfileManager.getInstance(project)
                 val inspectionProfile = inspectionProfileManager.currentProfile
                 val state = inspectionProfile.getToolDefaultState("UseExpressionBody", project)
@@ -78,7 +78,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
                     it
                 } else {
                     // Extend range to [left brace..end of highlight element]
-                    val offset = (declaration.blockExpression()?.lBrace?.startOffset ?: it.startOffset) - it.startOffset
+                    val offset = ((declaration as KtDeclarationWithBody).blockExpression()?.lBrace?.startOffset ?: it.startOffset) - it.startOffset
                     it.shiftRight(offset).grown(-offset)
                 }
             }
@@ -119,7 +119,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
 
             else -> {
                 // assignment does not have value
-                if (statement is KtBinaryExpression && statement.operationToken in KtTokens.ALL_ASSIGNMENTS) return null
+                if (statement is KtBinaryExpression && (statement as KtBinaryExpression).operationToken in KtTokens.ALL_ASSIGNMENTS) return null
 
                 val context = statement.analyze()
                 val expressionType = context.getType(statement) ?: return null
@@ -166,8 +166,8 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
 
         if (!declaration.hasDeclaredReturnType() && declaration is KtNamedFunction && block.statements.isNotEmpty()) {
             val valueType = value.analyze().getType(value)
-            if (valueType == null || !KotlinBuiltIns.isUnit(valueType)) {
-                declaration.setType(KotlinBuiltIns.FQ_NAMES.unit.asString(), shortenReferences = true)
+            if (valueType == null || !KotlinBuiltIns.isUnit(valueType!!)) {
+                (declaration as KtNamedFunction).setType(KotlinBuiltIns.FQ_NAMES.unit.asString(), shortenReferences = true)
             }
         }
 
@@ -182,17 +182,17 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         commentSaver.restore(newBody)
 
         if (deleteTypeHandler != null && declaration is KtCallableDeclaration) {
-            if (declaration.hasDeclaredReturnType() && declaration.canOmitDeclaredType(newBody, canChangeTypeToSubtype = true)) {
-                deleteTypeHandler(declaration)
+            if (declaration.hasDeclaredReturnType() && (declaration as KtCallableDeclaration).canOmitDeclaredType(newBody, canChangeTypeToSubtype = true)) {
+                (deleteTypeHandler as (KtCallableDeclaration) -> Unit)(declaration as KtCallableDeclaration)
             }
         }
 
         val editor = declaration.findExistingEditor()
         if (editor != null) {
             val startOffset = newBody.startOffset
-            val document = editor.document
+            val document = editor!!.document
             val startLine = document.getLineNumber(startOffset)
-            val rightMargin = editor.settings.getRightMargin(editor.project)
+            val rightMargin = editor!!.settings.getRightMargin(editor!!.project)
             if (document.getLineEndOffset(startLine) - document.getLineStartOffset(startLine) >= rightMargin) {
                 declaration.addBefore(factory.createNewLine(), newBody)
             }

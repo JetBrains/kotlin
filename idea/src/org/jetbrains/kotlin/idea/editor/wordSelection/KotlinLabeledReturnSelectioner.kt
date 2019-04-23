@@ -18,7 +18,7 @@ class KotlinLabeledReturnSelectioner : ExtendWordSelectionHandlerBase() {
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         if (e !is KtReturnExpression) return null
-        val labelQualifier = e.labelQualifier ?: return null
+        val labelQualifier = (e as KtReturnExpression).labelQualifier ?: return null
         return listOf(TextRange(e.startOffset, labelQualifier.endOffset))
     }
 }

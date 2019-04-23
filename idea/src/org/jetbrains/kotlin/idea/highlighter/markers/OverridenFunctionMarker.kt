@@ -63,7 +63,7 @@ internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiElement,
                 val declaration = mappingToJava[superMember]
                 if (declaration != null) {
                     mappingToJava.remove(superMember)
-                    overridden.add(declaration)
+                    overridden.add(declaration as T)
                 }
             }
 
@@ -94,7 +94,7 @@ fun getSubclassedClassTooltip(klass: PsiClass): String? {
     val shortcuts = ActionManager.getInstance().getAction(IdeActions.ACTION_GOTO_IMPLEMENTATION).shortcutSet.shortcuts
     val shortcut = shortcuts.firstOrNull()
     var postfix = "<br><div style='margin-top: 5px'><font size='2'>Click"
-    if (shortcut != null) postfix += " or press " + KeymapUtil.getShortcutText(shortcut)
+    if (shortcut != null) postfix += " or press " + KeymapUtil.getShortcutText(shortcut!!)
     postfix += " to navigate</font></div>"
 
     val renderer = DeclarationByModuleRenderer()
@@ -103,7 +103,7 @@ fun getSubclassedClassTooltip(klass: PsiClass): String? {
         prefix = "<html><body>$start", postfix = "$postfix</body</html>", separator = "<br>"
     ) {
         val moduleNameRequired = if (it is KtLightClass) {
-            val origin = it.kotlinOrigin
+            val origin = (it as KtLightClass).kotlinOrigin
             origin?.hasActualModifier() == true || origin?.isExpectDeclaration() == true
         } else false
         val moduleName = it.module?.name

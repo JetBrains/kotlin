@@ -33,8 +33,8 @@ fun elvisOrEmpty(notNullNeeded: Boolean): String = if (notNullNeeded) "?:" else 
 fun KtExpression.shouldHaveNotNullType(): Boolean {
     val parent = parent
     val type = when (parent) {
-                   is KtBinaryExpression -> parent.left?.let { it.getType(it.analyze()) }
-                   is KtProperty -> parent.typeReference?.let { it.analyze()[BindingContext.TYPE, it] }
+                   is KtBinaryExpression -> (parent as KtBinaryExpression).left?.let { it.getType(it.analyze()) }
+                   is KtProperty -> (parent as KtProperty).typeReference?.let { it.analyze()[BindingContext.TYPE, it] }
                    else -> null
                } ?: return false
     return !type.isMarkedNullable

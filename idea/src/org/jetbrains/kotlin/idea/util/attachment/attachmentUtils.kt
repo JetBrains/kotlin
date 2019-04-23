@@ -25,21 +25,21 @@ fun attachmentByPsiFileAsArray(file: PsiFile?): Array<Attachment> {
     if (attachment == null) {
         return arrayOf()
     }
-    return arrayOf(attachment)
+    return arrayOf(attachment!!)
 }
 
 fun attachmentByPsiFile(file: PsiFile?): Attachment? {
     if (file == null) return null
 
-    val virtualFile = file.virtualFile
+    val virtualFile = file!!.virtualFile
     if (virtualFile != null) return AttachmentFactory.createAttachment(virtualFile)
 
-    val text = try { file.text
+    val text = try { file!!.text
     } catch(e: Exception) { null }
-    val name = try { file.name
+    val name = try { file!!.name
     } catch(e: Exception) { null }
 
-    if (text != null && name != null) return Attachment(name, text)
+    if (text != null && name != null) return Attachment(name!!, text!!)
 
     return null
 }
@@ -48,9 +48,9 @@ fun mergeAttachments(vararg attachments: Attachment?): Attachment {
     val builder = StringBuilder()
     attachments.forEach {
         if (it != null) {
-            builder.append("----- START ${it.path} -----\n")
-            builder.append(it.displayText)
-            builder.append("\n----- END ${it.path} -----\n\n")
+            builder.append("----- START ${it!!.path} -----\n")
+            builder.append(it!!.displayText)
+            builder.append("\n----- END ${it!!.path} -----\n\n")
         }
     }
 

@@ -29,7 +29,7 @@ abstract class ReplaceSizeCheckIntention(text: String) : SelfTargetingOffsetInde
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val target = getTargetExpression(element)
         if (target !is KtDotQualifiedExpression) return
-        val createExpression = KtPsiFactory(element).createExpression("${target.receiverExpression.text}.${getGenerateMethodSymbol()}")
+        val createExpression = KtPsiFactory(element).createExpression("${(target as KtDotQualifiedExpression).receiverExpression.text}.${getGenerateMethodSymbol()}")
         element.replaced(createExpression)
     }
 

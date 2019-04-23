@@ -67,7 +67,7 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
         val upperBoundType = getUnsubstitutedTypeConstraintInfo(element)?.let {
             it.performSubstitution(it.typeParameter.typeConstructor to TypeProjectionImpl(fakeTypeParameter.defaultType))?.upperBound
         }
-        if (upperBoundType != null && upperBoundType.containsError()) return null
+        if (upperBoundType != null && upperBoundType!!.containsError()) return null
         return CreateTypeParameterData(declaration, listOf(TypeParameterInfo(newName, upperBoundType, fakeTypeParameter)))
     }
 
@@ -107,9 +107,9 @@ fun getPossibleTypeParameterContainers(startFrom: PsiElement): List<KtTypeParame
     return (if (stopAt != null) startFrom.parents.takeWhile { it != stopAt } else startFrom.parents)
             .filterIsInstance<KtTypeParameterListOwner>()
             .filter {
-                ((it is KtClass && !it.isInterface() && it !is KtEnumEntry) ||
+                ((it is KtClass && !(it as KtClass).isInterface() && it !is KtEnumEntry) ||
                  it is KtNamedFunction ||
-                 (it is KtProperty && !it.isLocal) ||
+                 (it is KtProperty && !(it as KtProperty).isLocal) ||
                  it is KtTypeAlias) && it.nameIdentifier != null
             }
             .toList()

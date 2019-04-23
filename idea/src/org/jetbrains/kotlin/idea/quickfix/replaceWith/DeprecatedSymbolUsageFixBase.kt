@@ -95,7 +95,7 @@ abstract class DeprecatedSymbolUsageFixBase(
             val imports = importValues.map { (it as StringValue).value }
 
             // should not be available for descriptors with optional parameters if we cannot fetch default values for them (currently for library with no sources)
-            if (descriptor is CallableDescriptor && descriptor.valueParameters.any {
+            if (descriptor is CallableDescriptor && (descriptor as CallableDescriptor).valueParameters.any {
                     it.hasDefaultValue() && OptionalParametersHelper.defaultParameterValue(it, project) == null
                 }
             ) return null
@@ -108,11 +108,11 @@ abstract class DeprecatedSymbolUsageFixBase(
             descriptor: DeclarationDescriptor
         ): String {
             if (element == null) return this
-            val expressionFromPattern = KtPsiFactory(element).createExpressionIfPossible(this) as? KtCallExpression ?: return this
+            val expressionFromPattern = KtPsiFactory(element!!).createExpressionIfPossible(this) as? KtCallExpression ?: return this
             val methodFromPattern = expressionFromPattern.referenceExpression()?.let { name ->
-                KotlinShortNamesCache(element.project).getMethodsByName(
+                KotlinShortNamesCache(element!!.project).getMethodsByName(
                     name.text,
-                    element.resolveScope
+                    element!!.resolveScope
                 ).firstOrNull()
             }
 
@@ -121,11 +121,11 @@ abstract class DeprecatedSymbolUsageFixBase(
                 ?: patternTypeArgumentList?.arguments?.size
                 ?: return this
 
-            val typeArgumentList = (element.parent as? KtCallExpression)?.typeArgumentList
-            return if (descriptor is CallableDescriptor && descriptor.typeParametersCount == patternTypeArgumentCount ||
+            val typeArgumentList = (element!!.parent as? KtCallExpression)?.typeArgumentList
+            return if (descriptor is CallableDescriptor && (descriptor as CallableDescriptor).typeParametersCount == patternTypeArgumentCount ||
                 patternTypeArgumentCount == typeArgumentList?.arguments?.size
             ) {
-                if (typeArgumentList != null) expressionFromPattern.replaceOrCreateTypeArgumentList(typeArgumentList.copy() as KtTypeArgumentList)
+                if (typeArgumentList != null) expressionFromPattern.replaceOrCreateTypeArgumentList(typeArgumentList!!.copy() as KtTypeArgumentList)
                 else patternTypeArgumentList?.delete()
                 expressionFromPattern.text
             } else this
@@ -141,8 +141,8 @@ abstract class DeprecatedSymbolUsageFixBase(
             val psiElement = deprecatedDiagnostic.psiElement
 
             val nameExpression: KtSimpleNameExpression = when (psiElement) {
-                is KtSimpleNameExpression -> psiElement
-                is KtConstructorCalleeExpression -> psiElement.constructorReferenceExpression
+                is KtSimpleNameExpression -> psiElement as KtSimpleNameExpression
+                is KtConstructorCalleeExpression -> (psiElement as KtConstructorCalleeExpression).constructorReferenceExpression
                 else -> null
             } ?: return null
 
@@ -173,7 +173,7 @@ abstract class DeprecatedSymbolUsageFixBase(
 
             var replacePatternFromSymbol = fetchReplaceWithPattern(target, resolutionFacade.project, element)
             if (replacePatternFromSymbol == null && target is ConstructorDescriptor) {
-                target = target.containingDeclaration
+                target = (target as ConstructorDescriptor).containingDeclaration
                 replacePatternFromSymbol = fetchReplaceWithPattern(target, resolutionFacade.project, element)
             }
 
@@ -185,13 +185,14 @@ abstract class DeprecatedSymbolUsageFixBase(
                     val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
                     if (!resolvedCall.isReallySuccess()) return null
                     val replacement = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(
-                        replaceWith, target, resolutionFacade, reformat
+                        replaceWith, target as CallableDescriptor, resolutionFacade, reformat
                     ) ?: return null
                     return CallableUsageReplacementStrategy(replacement, inlineSetter = false)
                 }
 
                 is ClassifierDescriptorWithTypeParameters -> {
-                    val replacementType = ReplaceWithAnnotationAnalyzer.analyzeClassifierReplacement(replaceWith, target, resolutionFacade)
+                    val replacementType = ReplaceWithAnnotationAnalyzer.analyzeClassifierReplacement(replaceWith,
+                                                                                                     target as ClassifierDescriptorWithTypeParameters, resolutionFacade)
                     return when {
                         replacementType != null -> {
                             if (editor != null) {
@@ -201,15 +202,15 @@ abstract class DeprecatedSymbolUsageFixBase(
                                     ?.getStrictParentOfType<KtTypeAlias>()
                                 if (typeAlias != null) {
                                     val usedConstructorWithOwnReplaceWith = usedConstructorsWithOwnReplaceWith(
-                                        element.project, target, typeAlias, element
+                                        element.project, target as ClassifierDescriptorWithTypeParameters, typeAlias!!, element
                                     )
 
                                     if (usedConstructorWithOwnReplaceWith != null) {
                                         val constructorStr = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(
-                                            usedConstructorWithOwnReplaceWith
+                                            usedConstructorWithOwnReplaceWith!!
                                         )
                                         HintManager.getInstance().showErrorHint(
-                                            editor,
+                                            editor!!,
                                             "There is own 'ReplaceWith' on '$constructorStr' that is used through this alias. " +
                                                     "Please replace usages first."
                                         )
@@ -222,7 +223,7 @@ abstract class DeprecatedSymbolUsageFixBase(
                             ClassUsageReplacementStrategy(replacementType, null, element.project)
                         }
                         target is ClassDescriptor -> {
-                            val constructor = target.unsubstitutedPrimaryConstructor ?: return null
+                            val constructor = (target as ClassDescriptor).unsubstitutedPrimaryConstructor ?: return null
                             val replacementExpression = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(
                                 replaceWith,
                                 constructor,
@@ -257,8 +258,8 @@ abstract class DeprecatedSymbolUsageFixBase(
             ReferencesSearch.search(typeAlias, searchAliasConstructorUsagesScope).find { reference ->
                 val element = reference.element
 
-                if (element is KtSimpleNameExpression && element.isCallee()) {
-                    val aliasConstructors = element.resolveMainReferenceToDescriptors().filterIsInstance<TypeAliasConstructorDescriptor>()
+                if (element is KtSimpleNameExpression && (element as KtSimpleNameExpression).isCallee()) {
+                    val aliasConstructors = (element as KtSimpleNameExpression).resolveMainReferenceToDescriptors().filterIsInstance<TypeAliasConstructorDescriptor>()
                     for (referenceConstructor in aliasConstructors) {
                         if (referenceConstructor.underlyingConstructorDescriptor in specialReplaceWithForConstructor) {
                             return referenceConstructor.underlyingConstructorDescriptor

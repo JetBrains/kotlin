@@ -119,7 +119,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
         if (!wasInMultilineString) return Result.Continue
         wasInMultilineString = false
 
-        val project = file.project
+        val project = (file as KtFile).project
         val document = editor.document
         PsiDocumentManager.getInstance(project).commitDocument(document)
 
@@ -136,7 +136,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
             getMarginCharFromTrimMarginCallsInChain(literal) ?: getMarginCharFromLiteral(literal)
 
         runWriteAction {
-            val settings = MultilineSettings(file.project)
+            val settings = MultilineSettings((file as KtFile).project)
 
             val caretMarker = document.createRangeMarker(offset, offset)
             caretMarker.isGreedyToRight = true
@@ -192,9 +192,9 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
                 val nonBlankNotFirstLines = lines.subList(1, lines.size).filterNot { it.isBlank() || it.trimStart() == MULTILINE_QUOTE }
 
                 val marginCharToInsert = if (marginChar != null &&
-                    !prefixStripped.startsWith(marginChar) &&
+                    !prefixStripped.startsWith(marginChar!!) &&
                     nonBlankNotFirstLines.isNotEmpty() &&
-                    nonBlankNotFirstLines.none { it.trimStart().startsWith(marginChar) }
+                    nonBlankNotFirstLines.none { it.trimStart().startsWith(marginChar!!) }
                 ) {
 
                     // We have margin char but decide not to insert it
@@ -203,7 +203,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
                     marginChar
                 }
 
-                if (marginCharToInsert == null || !currentLine.trimStart().startsWith(marginCharToInsert)) {
+                if (marginCharToInsert == null || !currentLine.trimStart().startsWith(marginCharToInsert!!)) {
                     val indentLength = when {
                         isInBrace -> settings.indentLength(nextLine)
                         !isPrevLineFirst -> settings.indentLength(prevLine)
@@ -213,7 +213,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
                     forceIndent(caretOffset(), indentLength, marginCharToInsert, document, settings)
 
                     val wsAfterMargin = when {
-                        marginCharToInsert != null && prefixStripped.startsWith(marginCharToInsert) -> {
+                        marginCharToInsert != null && prefixStripped.startsWith(marginCharToInsert!!) -> {
                             prefixStripped.substring(1).takeWhile { it == ' ' || it == '\t' }
                         }
                         else -> ""
@@ -273,19 +273,19 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
         fun findString(element: PsiElement?, offset: Int): KtStringTemplateExpression? {
             if (element !is LeafPsiElement) return null
 
-            when (element.elementType) {
+            when ((element as LeafPsiElement).elementType) {
                 KtTokens.REGULAR_STRING_PART -> {
                     // Ok
                 }
                 KtTokens.CLOSING_QUOTE, KtTokens.SHORT_TEMPLATE_ENTRY_START, KtTokens.LONG_TEMPLATE_ENTRY_START -> {
-                    if (element.startOffset != offset) {
+                    if ((element as LeafPsiElement).startOffset != offset) {
                         return null
                     }
                 }
                 else -> return null
             }
 
-            return element.parents.firstIsInstanceOrNull()
+            return (element as LeafPsiElement).parents.firstIsInstanceOrNull()
         }
 
         fun inMultilineString(element: PsiElement?, offset: Int) =
@@ -309,7 +309,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
             var previous: PsiElement = str
             return str.parents
                 .takeWhile { parent ->
-                    if (parent is KtQualifiedExpression && parent.receiverExpression == previous) {
+                    if (parent is KtQualifiedExpression && (parent as KtQualifiedExpression).receiverExpression == previous) {
                         previous = parent
                         true
                     } else {

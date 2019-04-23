@@ -37,7 +37,7 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
         return if (value != null && settings.isShowMembers) {
             value.getStructureDeclarations().map { declaration ->
                 if (declaration is KtClassOrObject)
-                    KtClassOrObjectTreeNode(project, declaration, settings)
+                    KtClassOrObjectTreeNode(project, declaration as KtClassOrObject, settings)
                 else
                     KtDeclarationTreeNode(project, declaration, settings)
             }
@@ -84,11 +84,11 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
     }
 
     private fun canRepresentPsiElement(value: PsiElement?, element: Any?, settings: ViewSettings): Boolean {
-        if (value == null || !value.isValid) {
+        if (value == null || !value!!.isValid) {
             return false
         }
 
-        val file = value.containingFile
+        val file = value!!.containingFile
         if (file != null && (file === element || file.virtualFile === element)) {
             return true
         }
@@ -98,8 +98,8 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
         }
 
         if (!settings.isShowMembers) {
-            if (element is PsiElement && element.containingFile != null) {
-                val elementFile = element.containingFile
+            if (element is PsiElement && (element as PsiElement).containingFile != null) {
+                val elementFile = (element as PsiElement).containingFile
                 if (elementFile != null && file != null) {
                     return elementFile == file
                 }

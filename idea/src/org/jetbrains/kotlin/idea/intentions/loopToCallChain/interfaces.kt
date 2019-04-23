@@ -50,7 +50,7 @@ interface Transformation {
 
     fun buildPresentation(prevTransformationsPresentation: String?): String {
         return if (prevTransformationsPresentation != null)
-            prevTransformationsPresentation + "." + presentation
+            prevTransformationsPresentation!! + "." + presentation
         else
             presentation
     }

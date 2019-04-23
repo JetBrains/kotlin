@@ -72,7 +72,7 @@ class KotlinOverrideHierarchyBrowser(
     override fun getContentDisplayName(typeName: String, element: PsiElement): String? {
         val targetElement = element.unwrapped
         if (targetElement is KtDeclaration) {
-            return ElementDescriptionUtil.getElementDescription(targetElement, UsageViewLongNameLocation.INSTANCE)
+            return ElementDescriptionUtil.getElementDescription(targetElement as KtDeclaration, UsageViewLongNameLocation.INSTANCE)
         }
         return super.getContentDisplayName(typeName, element)
     }

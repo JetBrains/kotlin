@@ -50,7 +50,7 @@ class NullChecksToSafeCallInspection : AbstractKotlinInspection() {
                 appendFixedText(if (isAnd) "!= null" else "== null")
             })
             if (isNullChecksToSafeCallFixAvailable(parent as? KtBinaryExpression ?: return)) {
-                applyFix(parent)
+                applyFix(parent as KtBinaryExpression)
             }
         }
     }
@@ -65,7 +65,7 @@ class NullChecksToSafeCallInspection : AbstractKotlinInspection() {
 
             val resolvedCall = rte.getResolvedCall(context) ?: return false
             val extensionReceiver = resolvedCall.extensionReceiver
-            if (extensionReceiver != null && TypeUtils.isNullableType(extensionReceiver.type)) return false
+            if (extensionReceiver != null && TypeUtils.isNullableType(extensionReceiver!!.type)) return false
 
             return rte.receiverExpression.text.afterIgnoreCalls() == lte.text.afterIgnoreCalls()
         }

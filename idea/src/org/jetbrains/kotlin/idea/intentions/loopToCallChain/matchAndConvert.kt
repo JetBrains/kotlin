@@ -87,10 +87,10 @@ fun match(loop: KtForExpression, useLazySequence: Boolean, reformat: Boolean): M
 
             val match = matcher.match(state)
             if (match != null) {
-                when (match) {
+                when (match!!) {
                     is TransformationMatch.Sequence -> {
                         // check that old input variable is not needed anymore
-                        var newState = match.newState
+                        var newState = (match as TransformationMatch.Sequence).newState
                         if (state.inputVariable != newState.inputVariable && state.inputVariable.hasUsages(newState.statements)) return null
 
                         if (matcher.shouldUseInputVariables
@@ -100,7 +100,7 @@ fun match(loop: KtForExpression, useLazySequence: Boolean, reformat: Boolean): M
                             continue@MatchersLoop
                         }
 
-                        if (state.indexVariable != null && match.sequenceTransformations.any { it.affectsIndex }) {
+                        if (state.indexVariable != null && (match as TransformationMatch.Sequence).sequenceTransformations.any { it.affectsIndex }) {
                             // index variable is still needed but index in the new sequence is different
                             if (state.indexVariable!!.hasUsages(newState.statements)) return null
                             newState = newState.copy(indexVariable = null)
@@ -112,7 +112,7 @@ fun match(loop: KtForExpression, useLazySequence: Boolean, reformat: Boolean): M
                             if (countAfter != countBefore) continue@MatchersLoop // some embedded break or continue in the matched part
                         }
 
-                        state.previousTransformations += match.sequenceTransformations
+                        state.previousTransformations += (match as TransformationMatch.Sequence).sequenceTransformations
                         state = newState
                         continue@MatchLoop
                     }
@@ -120,9 +120,9 @@ fun match(loop: KtForExpression, useLazySequence: Boolean, reformat: Boolean): M
                     is TransformationMatch.Result -> {
                         if (restContainsEmbeddedBreakOrContinue && !matcher.embeddedBreakOrContinuePossible) continue@MatchersLoop
 
-                        state.previousTransformations += match.sequenceTransformations
+                        state.previousTransformations += (match as TransformationMatch.Result).sequenceTransformations
 
-                        var result = TransformationMatch.Result(match.resultTransformation, state.previousTransformations)
+                        var result = TransformationMatch.Result((match as TransformationMatch.Result).resultTransformation, state.previousTransformations)
                         result = mergeTransformations(result, reformat)
 
                         if (useLazySequence) {
@@ -183,14 +183,14 @@ private fun extractLoopData(loop: KtForExpression): LoopData? {
     val loopRange = loop.loopRange ?: return null
 
     val destructuringParameter = loop.destructuringDeclaration
-    if (destructuringParameter != null && destructuringParameter.entries.size == 2) {
+    if (destructuringParameter != null && destructuringParameter!!.entries.size == 2) {
         val qualifiedExpression = loopRange as? KtDotQualifiedExpression
         if (qualifiedExpression != null) {
-            val call = qualifiedExpression.selectorExpression as? KtCallExpression
-            if (call != null && call.calleeExpression.isSimpleName(Name.identifier("withIndex")) && call.valueArguments.isEmpty()) {
-                val receiver = qualifiedExpression.receiverExpression
+            val call = qualifiedExpression!!.selectorExpression as? KtCallExpression
+            if (call != null && call!!.calleeExpression.isSimpleName(Name.identifier("withIndex")) && call!!.valueArguments.isEmpty()) {
+                val receiver = qualifiedExpression!!.receiverExpression
                 if (!isExpressionTypeSupported(receiver)) return null
-                return LoopData(destructuringParameter.entries[1], destructuringParameter.entries[0], receiver)
+                return LoopData(destructuringParameter!!.entries[1], destructuringParameter!!.entries[0], receiver)
             }
         }
     }

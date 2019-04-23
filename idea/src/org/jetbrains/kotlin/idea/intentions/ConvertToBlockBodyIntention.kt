@@ -36,7 +36,7 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
 
         when (element) {
             is KtNamedFunction -> {
-                val returnType = element.returnType() ?: return false
+                val returnType = (element as KtNamedFunction).returnType() ?: return false
                 if (!element.hasDeclaredReturnType() && returnType.isError) return false// do not convert when type is implicit and unknown
                 return true
             }
@@ -61,31 +61,31 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
             fun generateBody(returnsValue: Boolean): KtExpression {
                 val bodyType = body.analyze().getType(body)
                 val factory = KtPsiFactory(declaration)
-                if (bodyType != null && bodyType.isUnit() && body is KtNameReferenceExpression) return factory.createEmptyBody()
-                val unitWhenAsResult = (bodyType == null || bodyType.isUnit()) && body.resultingWhens().isNotEmpty()
+                if (bodyType != null && bodyType!!.isUnit() && body is KtNameReferenceExpression) return factory.createEmptyBody()
+                val unitWhenAsResult = (bodyType == null || bodyType!!.isUnit()) && body.resultingWhens().isNotEmpty()
                 val needReturn = returnsValue &&
-                        (bodyType == null || (!bodyType.isUnit() && !bodyType.isNothing()))
+                        (bodyType == null || (!bodyType!!.isUnit() && !bodyType!!.isNothing()))
                 val statement = if (needReturn || unitWhenAsResult) factory.createExpressionByPattern("return $0", body) else body
                 return factory.createSingleStatementBlock(statement)
             }
 
             val newBody = when (declaration) {
                 is KtNamedFunction -> {
-                    val returnType = declaration.returnType()!!
+                    val returnType = (declaration as KtNamedFunction).returnType()!!
                     if (!declaration.hasDeclaredReturnType() && !returnType.isUnit()) {
-                        declaration.setType(returnType)
+                        (declaration as KtNamedFunction).setType(returnType)
                     }
                     generateBody(!returnType.isUnit() && !returnType.isNothing())
                 }
 
                 is KtPropertyAccessor -> {
-                    val parent = declaration.parent
-                    if (parent is KtProperty && parent.typeReference == null) {
-                        val descriptor = parent.resolveToDescriptorIfAny()
-                        (descriptor as? CallableDescriptor)?.returnType?.let { parent.setType(it) }
+                    val parent = (declaration as KtPropertyAccessor).parent
+                    if (parent is KtProperty && (parent as KtProperty).typeReference == null) {
+                        val descriptor = (parent as KtProperty).resolveToDescriptorIfAny()
+                        (descriptor as? CallableDescriptor)?.returnType?.let { (parent as KtProperty).setType(it) }
                     }
 
-                    generateBody(declaration.isGetter)
+                    generateBody((declaration as KtPropertyAccessor).isGetter)
                 }
 
                 else -> throw RuntimeException("Unknown declaration type: $declaration")

@@ -78,9 +78,9 @@ class KotlinMethodNode(
 
     override fun customizeRendererText(renderer: ColoredTreeCellRenderer) {
         val descriptor = when (myMethod) {
-            is KtFunction -> myMethod.unsafeResolveToDescriptor() as FunctionDescriptor
-            is KtClass -> (myMethod.unsafeResolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor ?: return
-            is PsiMethod -> myMethod.getJavaMethodDescriptor() ?: return
+            is KtFunction -> (myMethod as KtFunction).unsafeResolveToDescriptor() as FunctionDescriptor
+            is KtClass -> ((myMethod as KtClass).unsafeResolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor ?: return
+            is PsiMethod -> (myMethod as PsiMethod).getJavaMethodDescriptor() ?: return
             else -> throw AssertionError("Invalid declaration: ${myMethod.getElementTextWithContext()}")
         }
         val containerName = generateSequence<DeclarationDescriptor>(descriptor) { it.containingDeclaration }

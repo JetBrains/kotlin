@@ -36,7 +36,7 @@ abstract class MissingConditionFixer<T : PsiElement> : SmartEnterProcessorWithFi
                 var stopOffset = doc.getLineEndOffset(doc.getLineNumber(workElement.range.start))
                 val then = getBody(workElement)
                 if (then != null) {
-                    stopOffset = min(stopOffset, then.range.start)
+                    stopOffset = min(stopOffset, then!!.range.start)
                 }
 
                 stopOffset = min(stopOffset, workElement.range.end)
@@ -44,11 +44,11 @@ abstract class MissingConditionFixer<T : PsiElement> : SmartEnterProcessorWithFi
                 doc.replaceString(workElement.range.start, stopOffset, "$keyword ()")
                 processor.registerUnresolvedError(workElement.range.start + "$keyword (".length)
             } else {
-                processor.registerUnresolvedError(lParen.range.end)
+                processor.registerUnresolvedError(lParen!!.range.end)
             }
         } else {
             if (rParen == null) {
-                doc.insertString(condition.range.end, ")")
+                doc.insertString(condition!!.range.end, ")")
             }
         }
     }

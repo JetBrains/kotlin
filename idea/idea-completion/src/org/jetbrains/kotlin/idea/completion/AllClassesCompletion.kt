@@ -76,11 +76,11 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
     private fun collectClassesFromScope(scope: MemberScope, collector: (ClassDescriptor) -> Unit) {
         for (descriptor in scope.getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS)) {
             if (descriptor is ClassDescriptor) {
-                if (kindFilter(descriptor.kind) && prefixMatcher.prefixMatches(descriptor.name.asString())) {
-                    collector(descriptor)
+                if (kindFilter((descriptor as ClassDescriptor).kind) && prefixMatcher.prefixMatches((descriptor as ClassDescriptor).name.asString())) {
+                    collector(descriptor as ClassDescriptor)
                 }
 
-                collectClassesFromScope(descriptor.unsubstitutedInnerClassesScope, collector)
+                collectClassesFromScope((descriptor as ClassDescriptor).unsubstitutedInnerClassesScope, collector)
             }
         }
     }
@@ -113,6 +113,6 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
     private fun isNotToBeUsed(javaClass: PsiClass): Boolean {
         if (includeJavaClassesNotToBeUsed) return false
         val fqName = javaClass.getKotlinFqName()
-        return fqName != null && isJavaClassNotToBeUsedInKotlin(fqName)
+        return fqName != null && isJavaClassNotToBeUsedInKotlin(fqName!!)
     }
 }

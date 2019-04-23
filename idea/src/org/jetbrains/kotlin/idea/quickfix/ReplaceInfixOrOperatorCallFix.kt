@@ -49,29 +49,31 @@ class ReplaceInfixOrOperatorCallFix(
             is KtArrayAccessExpression -> {
                 val assignment = element.getAssignmentByLHS()
                 val right = assignment?.right
-                val arrayExpression = element.arrayExpression ?: return
+                val arrayExpression = (element as KtArrayAccessExpression).arrayExpression ?: return
                 if (assignment != null) {
                     if (right == null) return
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.set($1, $2)", arrayExpression, element.indexExpressions.joinToString(", ") { it.text }, right)
-                    assignment.replace(newExpression)
+                        "$0?.set($1, $2)", arrayExpression, (element as KtArrayAccessExpression).indexExpressions.joinToString(", ") { it.text },
+                        right!!
+                    )
+                    assignment!!.replace(newExpression)
                 }
                 else {
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.get($1)$elvis", arrayExpression, element.indexExpressions.joinToString(", ") { it.text })
-                    replacement = element.replace(newExpression)
+                            "$0?.get($1)$elvis", arrayExpression, (element as KtArrayAccessExpression).indexExpressions.joinToString(", ") { it.text })
+                    replacement = (element as KtArrayAccessExpression).replace(newExpression)
                 }
             }
             is KtCallExpression -> {
                 val newExpression = psiFactory.createExpressionByPattern(
-                        "$0?.invoke($1)$elvis", element.calleeExpression ?: return, element.valueArguments.joinToString(", ") { it.text })
-                replacement = element.replace(newExpression)
+                    "$0?.invoke($1)$elvis", (element as KtCallExpression).calleeExpression ?: return, (element as KtCallExpression).valueArguments.joinToString(", ") { it.text })
+                replacement = (element as KtCallExpression).replace(newExpression)
             }
             is KtBinaryExpression -> {
-                replacement = if (element.operationToken == KtTokens.IDENTIFIER) {
+                replacement = if ((element as KtBinaryExpression).operationToken == KtTokens.IDENTIFIER) {
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.$1($2)$elvis", element.left ?: return, element.operationReference.text, element.right ?: return)
-                    element.replace(newExpression)
+                        "$0?.$1($2)$elvis", (element as KtBinaryExpression).left ?: return, (element as KtBinaryExpression).operationReference.text, (element as KtBinaryExpression).right ?: return)
+                    (element as KtBinaryExpression).replace(newExpression)
                 }
                 else {
                     val nameExpression = OperatorToFunctionIntention.convert(element).second
@@ -94,25 +96,25 @@ class ReplaceInfixOrOperatorCallFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val expression = diagnostic.psiElement
             if (expression is KtArrayAccessExpression && diagnostic.factory != Errors.UNSAFE_IMPLICIT_INVOKE_CALL) {
-                if (expression.arrayExpression == null) return null
-                return ReplaceInfixOrOperatorCallFix(expression, expression.shouldHaveNotNullType())
+                if ((expression as KtArrayAccessExpression).arrayExpression == null) return null
+                return ReplaceInfixOrOperatorCallFix(expression as KtArrayAccessExpression, (expression as KtArrayAccessExpression).shouldHaveNotNullType())
             }
             val parent = expression.parent
             return when (parent) {
                 is KtBinaryExpression -> {
                     when {
-                        parent.left == null || parent.right == null -> null
-                        parent.operationToken == KtTokens.EQ -> null
-                        parent.operationToken in OperatorConventions.COMPARISON_OPERATIONS -> null
-                        else -> ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
+                        (parent as KtBinaryExpression).left == null || (parent as KtBinaryExpression).right == null -> null
+                        (parent as KtBinaryExpression).operationToken == KtTokens.EQ -> null
+                        (parent as KtBinaryExpression).operationToken in OperatorConventions.COMPARISON_OPERATIONS -> null
+                        else -> ReplaceInfixOrOperatorCallFix(parent as KtBinaryExpression, (parent as KtBinaryExpression).shouldHaveNotNullType())
                     }
                 }
                 is KtCallExpression -> {
                     when {
-                        parent.calleeExpression == null -> null
-                        parent.parent is KtQualifiedExpression -> null
-                        parent.resolveToCall(BodyResolveMode.FULL)?.getImplicitReceiverValue() != null -> null
-                        else -> ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
+                        (parent as KtCallExpression).calleeExpression == null -> null
+                        (parent as KtCallExpression).parent is KtQualifiedExpression -> null
+                        (parent as KtCallExpression).resolveToCall(BodyResolveMode.FULL)?.getImplicitReceiverValue() != null -> null
+                        else -> ReplaceInfixOrOperatorCallFix(parent as KtCallExpression, (parent as KtCallExpression).shouldHaveNotNullType())
                     }
                 }
                 else -> null

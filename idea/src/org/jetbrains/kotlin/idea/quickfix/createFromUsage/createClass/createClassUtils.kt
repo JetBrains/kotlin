@@ -62,10 +62,10 @@ internal fun getTargetParentsByQualifier(
         !isQualified ->
             element.parents.filterIsInstance<KtClassOrObject>().toList() + file
         qualifierDescriptor is ClassDescriptor ->
-            listOfNotNull(DescriptorToSourceUtilsIde.getAnyDeclaration(project, qualifierDescriptor))
+            listOfNotNull(DescriptorToSourceUtilsIde.getAnyDeclaration(project, qualifierDescriptor as ClassDescriptor))
         qualifierDescriptor is PackageViewDescriptor ->
-            if (qualifierDescriptor.fqName != file.packageFqName) {
-                listOfNotNull(JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.fqName.asString()))
+            if ((qualifierDescriptor as PackageViewDescriptor).fqName != file.packageFqName) {
+                listOfNotNull(JavaPsiFacade.getInstance(project).findPackage((qualifierDescriptor as PackageViewDescriptor).fqName.asString()))
             } else listOf(file)
         else ->
             emptyList()
@@ -81,9 +81,9 @@ internal fun getTargetParentsByCall(call: Call, context: BindingContext): List<P
         is Qualifier -> getTargetParentsByQualifier(
             callElement,
             true,
-            context[BindingContext.REFERENCE_TARGET, receiver.referenceExpression]
+            context[BindingContext.REFERENCE_TARGET, (receiver as Qualifier).referenceExpression]
         )
-        is ReceiverValue -> getTargetParentsByQualifier(callElement, true, receiver.type.constructor.declarationDescriptor)
+        is ReceiverValue -> getTargetParentsByQualifier(callElement, true, (receiver as ReceiverValue).type.constructor.declarationDescriptor)
         else -> throw AssertionError("Unexpected receiver: $receiver")
     }
 }
@@ -123,8 +123,8 @@ internal fun KtSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent
 
     val basePackage: PsiPackage =
         when (targetParent) {
-            is KtFile -> JavaPsiFacade.getInstance(targetParent.project).findPackage(targetParent.packageFqName.asString())
-            is PsiPackage -> targetParent
+            is KtFile -> JavaPsiFacade.getInstance((targetParent as KtFile).project).findPackage((targetParent as KtFile).packageFqName.asString())
+            is PsiPackage -> targetParent as PsiPackage
             else -> null
         }
             ?: return null
@@ -171,7 +171,7 @@ fun getUnsubstitutedTypeConstraintInfo(element: KtTypeElement): UnsubstitutedTyp
     val typeParameter = containingType.constructor.parameters.getOrNull(argumentList.arguments.indexOf(containingTypeArg))
     val upperBound = typeParameter?.upperBounds?.singleOrNull() ?: return null
     val substitution = getTypeSubstitution(baseType, containingType) ?: return null
-    return UnsubstitutedTypeConstraintInfo(typeParameter, substitution, upperBound)
+    return UnsubstitutedTypeConstraintInfo(typeParameter!!, substitution, upperBound)
 }
 
 fun getTypeConstraintInfo(element: KtTypeElement) = getUnsubstitutedTypeConstraintInfo(element)?.performSubstitution()

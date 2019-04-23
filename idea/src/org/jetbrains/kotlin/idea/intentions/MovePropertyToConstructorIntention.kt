@@ -57,7 +57,7 @@ class MovePropertyToConstructorIntention :
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         fun KtProperty.isDeclaredInSupportedClass(): Boolean {
             val parent = getStrictParentOfType<KtClassOrObject>()
-            return parent is KtClass && !parent.isInterface() && !parent.isExpectDeclaration()
+            return parent is KtClass && !(parent as KtClass).isInterface() && !(parent as KtClass).isExpectDeclaration()
         }
 
         return !element.isLocal
@@ -84,20 +84,20 @@ class MovePropertyToConstructorIntention :
 
         if (constructorParameter != null) {
             val parameterAnnotationsText =
-                constructorParameter.modifierList?.annotationEntries?.joinToString(separator = " ") { it.text }
+                constructorParameter!!.modifierList?.annotationEntries?.joinToString(separator = " ") { it.text }
 
             val parameterText = buildString {
                 element.modifierList?.getModifiersText()?.let(this::append)
                 propertyAnnotationsText?.takeIf(String::isNotBlank)?.let { appendWithSpaceBefore(it) }
                 parameterAnnotationsText?.let { appendWithSpaceBefore(it) }
-                if (constructorParameter.isVarArg) appendWithSpaceBefore(VARARG_KEYWORD.value)
+                if (constructorParameter!!.isVarArg) appendWithSpaceBefore(VARARG_KEYWORD.value)
                 appendWithSpaceBefore(element.valOrVarKeyword.text)
                 element.name?.let { appendWithSpaceBefore(it) }
-                constructorParameter.typeReference?.text?.let { append(": $it") }
-                constructorParameter.defaultValue?.text?.let { append(" = $it") }
+                constructorParameter!!.typeReference?.text?.let { append(": $it") }
+                constructorParameter!!.defaultValue?.text?.let { append(" = $it") }
             }
 
-            constructorParameter.replace(factory.createParameter(parameterText)).apply {
+            constructorParameter!!.replace(factory.createParameter(parameterText)).apply {
                 commentSaver.restore(this)
             }
         } else {

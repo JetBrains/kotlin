@@ -72,13 +72,13 @@ class ConvertBinaryExpressionWithDemorgansLawIntention : SelfTargetingOffsetInde
         while (true) {
             if (remainingExpression !is KtBinaryExpression) break
 
-            val operation = remainingExpression.operationToken
+            val operation = (remainingExpression as KtBinaryExpression).operationToken
             if (operation != KtTokens.ANDAND && operation != KtTokens.OROR) break
 
             if (operation != firstOperator) return null //Boolean sequence must be homogenous
 
-            result.add(remainingExpression.right ?: return null)
-            remainingExpression = remainingExpression.left ?: return null
+            result.add((remainingExpression as KtBinaryExpression).right ?: return null)
+            remainingExpression = (remainingExpression as KtBinaryExpression).left ?: return null
         }
 
         result.add(remainingExpression)

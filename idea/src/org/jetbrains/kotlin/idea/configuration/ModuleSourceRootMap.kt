@@ -51,7 +51,7 @@ class ModuleSourceRootMap(val modules: Collection<Module>) {
         return modules
             .groupBy { module ->
                 val externalPath = module.externalProjectPath
-                if (externalPath == null) module else (baseModuleByExternalPath[externalPath] ?: module)
+                if (externalPath == null) module else (baseModuleByExternalPath[externalPath!!] ?: module)
             }
             .map { (module, sourceRootModules) ->
                 ModuleSourceRootGroup(
@@ -65,7 +65,7 @@ class ModuleSourceRootMap(val modules: Collection<Module>) {
 
     fun getWholeModuleGroup(module: Module): ModuleSourceRootGroup {
         val externalPath = module.externalProjectPath
-        val baseModule = (if (externalPath != null) baseModuleByExternalPath[externalPath] else null) ?: return ModuleSourceRootGroup(
+        val baseModule = (if (externalPath != null) baseModuleByExternalPath[externalPath!!] else null) ?: return ModuleSourceRootGroup(
             module,
             listOf(module)
         )

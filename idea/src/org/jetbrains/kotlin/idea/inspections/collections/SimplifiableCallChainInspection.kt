@@ -23,9 +23,9 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                 // Do not apply on maps due to lack of relevant stdlib functions
                 val firstReceiverType = firstResolvedCall.extensionReceiver?.type
                 if (firstReceiverType != null) {
-                    if (conversion.replacement == "mapNotNull" && KotlinBuiltIns.isPrimitiveArray(firstReceiverType)) return@check false
+                    if (conversion.replacement == "mapNotNull" && KotlinBuiltIns.isPrimitiveArray(firstReceiverType!!)) return@check false
                     val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return@check false
-                    val firstReceiverRawType = firstReceiverType.constructor.declarationDescriptor?.defaultType
+                    val firstReceiverRawType = firstReceiverType!!.constructor.declarationDescriptor?.defaultType
                     if (firstReceiverRawType.isMap(builtIns)) return@check false
                 }
                 if (conversion.replacement.startsWith("joinTo")) {
@@ -51,7 +51,7 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                         val lastArgument = callExpression.valueArgumentList?.arguments?.singleOrNull()
                         val argumentExpression = lastArgument?.getArgumentExpression()
                         if (argumentExpression != null) {
-                            lastArgument.replace(createArgument(argumentExpression, lastArgumentName))
+                            lastArgument!!.replace(createArgument(argumentExpression, lastArgumentName))
                         }
                     }
                 }

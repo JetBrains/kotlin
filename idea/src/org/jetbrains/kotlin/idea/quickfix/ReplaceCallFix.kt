@@ -85,12 +85,12 @@ class ReplaceWithSafeCallFix(
             val psiElement = diagnostic.psiElement
             val qualifiedExpression = psiElement.parent as? KtDotQualifiedExpression
             if (qualifiedExpression != null) {
-                return ReplaceWithSafeCallFix(qualifiedExpression, qualifiedExpression.shouldHaveNotNullType())
+                return ReplaceWithSafeCallFix(qualifiedExpression!!, qualifiedExpression!!.shouldHaveNotNullType())
             }
             else {
                 if (psiElement !is KtNameReferenceExpression) return null
-                if (psiElement.getResolvedCall(psiElement.analyze())?.getImplicitReceiverValue() != null) {
-                    val expressionToReplace: KtExpression = psiElement.parent as? KtCallExpression ?: psiElement
+                if ((psiElement as KtNameReferenceExpression).getResolvedCall((psiElement as KtNameReferenceExpression).analyze())?.getImplicitReceiverValue() != null) {
+                    val expressionToReplace: KtExpression = (psiElement as KtNameReferenceExpression).parent as? KtCallExpression ?: psiElement as KtNameReferenceExpression
                     return ReplaceImplicitReceiverCallFix(expressionToReplace, expressionToReplace.shouldHaveNotNullType())
                 }
                 return null

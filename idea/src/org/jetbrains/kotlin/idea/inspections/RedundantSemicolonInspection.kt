@@ -97,7 +97,7 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
         }
 
         val prevNameReference = semicolon.getPrevSiblingIgnoringWhitespaceAndComments() as? KtNameReferenceExpression
-        if (prevNameReference != null && prevNameReference.text in softModifierKeywords
+        if (prevNameReference != null && prevNameReference!!.text in softModifierKeywords
             && semicolon.getNextSiblingIgnoringWhitespaceAndComments() is KtDeclaration
         ) return false
 

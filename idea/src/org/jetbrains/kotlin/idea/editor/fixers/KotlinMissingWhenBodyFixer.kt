@@ -28,13 +28,13 @@ class KotlinMissingWhenBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSma
 
         val doc = editor.document
 
-        val openBrace = element.openBrace
-        val closeBrace = element.closeBrace
+        val openBrace = (element as KtWhenExpression).openBrace
+        val closeBrace = (element as KtWhenExpression).closeBrace
 
-        if (openBrace == null && closeBrace == null && element.entries.isEmpty()) {
-            val openBraceAfter = element.insertOpenBraceAfter()
+        if (openBrace == null && closeBrace == null && (element as KtWhenExpression).entries.isEmpty()) {
+            val openBraceAfter = (element as KtWhenExpression).insertOpenBraceAfter()
             if (openBraceAfter != null) {
-                doc.insertString(openBraceAfter.range.end, "{}")
+                doc.insertString(openBraceAfter!!.range.end, "{}")
             }
         }
     }

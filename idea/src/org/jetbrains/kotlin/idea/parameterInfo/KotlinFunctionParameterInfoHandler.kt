@@ -318,7 +318,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
     private fun ValueParameterDescriptor.renderDefaultValue(project: Project): String {
         val expression = OptionalParametersHelper.defaultParameterValueExpression(this, project)
         if (expression != null) {
-            val text = expression.text
+            val text = expression!!.text
             if (text.length <= 32) {
                 return text
             }
@@ -349,7 +349,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         bindingContext: BindingContext
     ): Boolean {
         val target = call.getResolvedCall(bindingContext)?.resultingDescriptor as? FunctionDescriptor
-        return target != null && descriptorsEqual(target, functionDescriptor)
+        return target != null && descriptorsEqual(target!!, functionDescriptor)
     }
 
     private data class SignatureInfo(

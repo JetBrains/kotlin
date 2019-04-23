@@ -108,7 +108,7 @@ internal class KotlinSelectNestedClassRefactoringDialog private constructor (
             val project = nestedClass.project
             val dialog = when {
                 targetContainer != null && targetContainer !is KtClassOrObject ||
-                nestedClass is KtClass && nestedClass.isInner() -> {
+                nestedClass is KtClass && (nestedClass as KtClass).isInner() -> {
                     MoveKotlinNestedClassesToUpperLevelDialog(nestedClass, targetContainer)
                 }
                 nestedClass is KtEnumEntry -> return

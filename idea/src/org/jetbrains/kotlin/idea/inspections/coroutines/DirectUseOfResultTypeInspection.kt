@@ -42,8 +42,8 @@ class DirectUseOfResultTypeInspection : AbstractIsResultInspection(
     private fun FunctionDescriptor.hasCorrespondingNonCatchingFunction(returnType: KotlinType, nameWithoutCatching: String): Boolean? {
         val containingDescriptor = containingDeclaration
         val scope = when (containingDescriptor) {
-            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
+            is ClassDescriptor -> (containingDescriptor as ClassDescriptor).unsubstitutedMemberScope
+            is PackageFragmentDescriptor -> (containingDescriptor as PackageFragmentDescriptor).getMemberScope()
             else -> return null
         }
         val returnTypeArgument = returnType.arguments.firstOrNull()?.type
@@ -52,9 +52,9 @@ class DirectUseOfResultTypeInspection : AbstractIsResultInspection(
             return true
         }
         if (extensionReceiverType != null) {
-            val extensionClassDescriptor = extensionReceiverType.constructor.declarationDescriptor as? ClassDescriptor
+            val extensionClassDescriptor = extensionReceiverType!!.constructor.declarationDescriptor as? ClassDescriptor
             if (extensionClassDescriptor != null) {
-                val extensionClassScope = extensionClassDescriptor.unsubstitutedMemberScope
+                val extensionClassScope = extensionClassDescriptor!!.unsubstitutedMemberScope
                 if (extensionClassScope.hasCorrespondingNonCatchingFunction(
                         nameWithoutCatching, valueParameters, returnTypeArgument, extensionReceiverType = null
                     )

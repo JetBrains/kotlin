@@ -125,9 +125,9 @@ data class ExtractionData(
     }
 
     private fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
-        if (!(descriptor is ValueParameterDescriptor && (context[BindingContext.AUTO_CREATED_IT, descriptor] == true))) return false
-        val function = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.containingDeclaration) as? KtFunctionLiteral
-        return function == null || !function.isInsideOf(physicalElements)
+        if (!(descriptor is ValueParameterDescriptor && (context[BindingContext.AUTO_CREATED_IT, descriptor as ValueParameterDescriptor] == true))) return false
+        val function = DescriptorToSourceUtils.descriptorToDeclaration((descriptor as ValueParameterDescriptor).containingDeclaration) as? KtFunctionLiteral
+        return function == null || !function!!.isInsideOf(physicalElements)
     }
 
     private tailrec fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiElement? {
@@ -139,7 +139,7 @@ data class ExtractionData(
         return when {
             isExtractableIt(descriptor, context) -> itFakeDeclaration
             isSynthesizedInvoke(descriptor) -> synthesizedInvokeDeclaration
-            descriptor is SyntheticJavaPropertyDescriptor -> getDeclaration(descriptor.getMethod, context)
+            descriptor is SyntheticJavaPropertyDescriptor -> getDeclaration((descriptor as SyntheticJavaPropertyDescriptor).getMethod, context)
             else -> declaration
         }
     }
@@ -224,7 +224,7 @@ data class ExtractionData(
                     (originalResolveResult.resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
                 shouldSkipPrimaryReceiver = smartCast == null
                         && !DescriptorUtils.isCompanionObject(receiverDescriptor)
-                        && qualifiedExpression.receiverExpression !is KtSuperExpression
+                        && qualifiedExpression!!.receiverExpression !is KtSuperExpression
                 if (shouldSkipPrimaryReceiver && originalResolveResult.resolvedCall?.hasBothReceivers() != true) continue
             } else {
                 if (newRef.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null) continue
@@ -236,7 +236,7 @@ data class ExtractionData(
             val parent = newRef.parent
 
             // Skip P in type references like 'P.Q'
-            if (parent is KtUserType && (parent.parent as? KtUserType)?.qualifier == parent) continue
+            if (parent is KtUserType && ((parent as KtUserType).parent as? KtUserType)?.qualifier == parent) continue
 
             val descriptor = context[BindingContext.REFERENCE_TARGET, newRef]
             val isBadRef = !(compareDescriptors(project, originalResolveResult.descriptor, descriptor)
@@ -250,14 +250,14 @@ data class ExtractionData(
                 val originalVariableCall = originalResolvedCall?.variableCall
                 val invokeDescriptor = originalFunctionCall?.resultingDescriptor
                 if (invokeDescriptor != null) {
-                    val invokeDeclaration = getDeclaration(invokeDescriptor, context) ?: synthesizedInvokeDeclaration
+                    val invokeDeclaration = getDeclaration(invokeDescriptor!!, context) ?: synthesizedInvokeDeclaration
                     val variableResolveResult = originalResolveResult.copy(
                         resolvedCall = originalVariableCall!!,
-                        descriptor = originalVariableCall.resultingDescriptor
+                        descriptor = originalVariableCall!!.resultingDescriptor
                     )
                     val functionResolveResult = originalResolveResult.copy(
                         resolvedCall = originalFunctionCall,
-                        descriptor = originalFunctionCall.resultingDescriptor,
+                        descriptor = originalFunctionCall!!.resultingDescriptor,
                         declaration = invokeDeclaration
                     )
                     referencesInfo.add(

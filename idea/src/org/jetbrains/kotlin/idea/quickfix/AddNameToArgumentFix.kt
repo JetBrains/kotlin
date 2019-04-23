@@ -49,10 +49,10 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
         val element = element ?: return
         val possibleNames = calculatePossibleArgumentNames()
         assert(possibleNames.isNotEmpty()) { "isAvailable() should be checked before invoke()" }
-        if (possibleNames.size == 1 || editor == null || !editor.component.isShowing) {
+        if (possibleNames.size == 1 || editor == null || !editor!!.component.isShowing) {
             addName(project, element, possibleNames.first())
         } else {
-            chooseNameAndAdd(project, editor, possibleNames)
+            chooseNameAndAdd(project, editor!!, possibleNames)
         }
     }
 
@@ -77,7 +77,7 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
             .asSequence()
             .map { resolvedCall.getArgumentMapping(it) }
             .filterIsInstance<ArgumentMatch>()
-            .filter { argumentMatch -> argumentType == null || argumentType.isError || !argumentMatch.isError() }
+            .filter { argumentMatch -> argumentType == null || argumentType!!.isError || !argumentMatch.isError() }
             .map { it.valueParameter }
             .toSet()
 

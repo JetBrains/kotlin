@@ -90,7 +90,7 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
 
                 fun isWrongAccessorReference(): Boolean {
                     if (ref is KtSimpleNameReference) {
-                        val readWriteAccess = ref.expression.readWriteAccess(true)
+                        val readWriteAccess = (ref as KtSimpleNameReference).expression.readWriteAccess(true)
                         return readWriteAccess.isRead != isGetter && readWriteAccess.isWrite == isGetter
                     }
                     if (ref is SyntheticPropertyAccessorReference) {
@@ -103,11 +103,11 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
                     if (isWrongAccessorReference()) return true
                     if (refElement !is PsiMethod) return true
 
-                    val refMethodClass = refElement.containingClass ?: return true
+                    val refMethodClass = (refElement as PsiMethod).containingClass ?: return true
                     val substitutor = TypeConversionUtil.getClassSubstitutor(myContainingClass, refMethodClass, PsiSubstitutor.EMPTY)
                     if (substitutor != null) {
-                        val superSignature = method.getSignature(substitutor)
-                        val refSignature = refElement.getSignature(PsiSubstitutor.EMPTY)
+                        val superSignature = method.getSignature(substitutor!!)
+                        val refSignature = (refElement as PsiMethod).getSignature(PsiSubstitutor.EMPTY)
 
                         if (MethodSignatureUtil.isSubsignature(superSignature, refSignature)) {
                             return super.processInexactReference(ref, refElement, method, consumer)
@@ -116,11 +116,11 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
                     return true
                 }
 
-                fun countNonFinalLightMethods() = refElement
+                fun countNonFinalLightMethods() = (refElement as KtCallableDeclaration)
                     .toLightMethods()
                     .filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
 
-                val lightMethods = when (refElement) {
+                val lightMethods = when (refElement as KtCallableDeclaration) {
                     is KtProperty, is KtParameter -> {
                         if (isWrongAccessorReference()) return true
                         countNonFinalLightMethods().filter { JvmAbi.isGetterName(it.name) == isGetter }

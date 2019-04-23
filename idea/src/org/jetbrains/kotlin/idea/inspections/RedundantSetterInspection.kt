@@ -36,7 +36,7 @@ private fun KtPropertyAccessor.isRedundantSetter(): Boolean {
     if (hasLowerVisibilityThanProperty()) return false
     val expression = bodyExpression ?: return true
     if (expression is KtBlockExpression) {
-        val statement = expression.statements.takeIf { it.size == 1 }?.firstOrNull() ?: return false
+        val statement = (expression as KtBlockExpression).statements.takeIf { it.size == 1 }?.firstOrNull() ?: return false
         val parameter = valueParameters.takeIf { it.size == 1 }?.firstOrNull() ?: return false
         val binaryExpression = statement as? KtBinaryExpression ?: return false
         return binaryExpression.operationToken == KtTokens.EQ

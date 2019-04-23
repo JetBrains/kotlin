@@ -65,15 +65,15 @@ open class SpecifyExplicitLambdaSignatureIntention : SelfTargetingOffsetIndepend
         fun KtFunctionLiteral.setParameterListIfAny(psiFactory: KtPsiFactory, newParameterList: KtParameterList?) {
             val oldParameterList = valueParameterList
             if (oldParameterList != null && newParameterList != null) {
-                oldParameterList.replace(newParameterList)
+                oldParameterList!!.replace(newParameterList!!)
             } else {
                 val openBraceElement = lBrace
                 val nextSibling = openBraceElement.nextSibling
-                val addNewline = nextSibling is PsiWhiteSpace && nextSibling.text?.contains("\n") ?: false
+                val addNewline = nextSibling is PsiWhiteSpace && (nextSibling as PsiWhiteSpace).text?.contains("\n") ?: false
                 val (whitespace, arrow) = psiFactory.createWhitespaceAndArrow()
                 addRangeAfter(whitespace, arrow, openBraceElement)
                 if (newParameterList != null) {
-                    addAfter(newParameterList, openBraceElement)
+                    addAfter(newParameterList!!, openBraceElement)
                 }
                 if (addNewline) {
                     addAfter(psiFactory.createNewLine(), openBraceElement)

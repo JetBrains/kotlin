@@ -52,16 +52,16 @@ interface AddValVarToConstructorParameterAction {
 
         val parameter = element.createSmartPointer().let {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
-            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor!!.document)
             it.element
         } ?: return
 
-        editor.caretModel.moveToOffset(parameter.startOffset)
+        editor!!.caretModel.moveToOffset(parameter.startOffset)
 
         TemplateBuilderImpl(parameter)
             .apply { replaceElement(parameter.valOrVarKeyword ?: return@apply, ValVarExpression) }
             .buildInlineTemplate()
-            .let { TemplateManager.getInstance(project).startTemplate(editor, it) }
+            .let { TemplateManager.getInstance(project).startTemplate(editor!!, it) }
     }
 
     class Intention :

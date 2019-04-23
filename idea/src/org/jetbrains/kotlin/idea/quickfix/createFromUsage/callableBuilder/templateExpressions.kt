@@ -57,27 +57,27 @@ internal class ParameterNameExpression(
         val names = LinkedHashSet(this.names.toList())
 
         // find the parameter list
-        val project = context.project ?: return null
-        val offset = context.startOffset
+        val project = context!!.project ?: return null
+        val offset = context!!.startOffset
         PsiDocumentManager.getInstance(project).commitAllDocuments()
-        val editor = context.editor ?: return null
+        val editor = context!!.editor ?: return null
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) as KtFile
         val elementAt = file.findElementAt(offset)
         val declaration = PsiTreeUtil.getParentOfType(elementAt, KtFunction::class.java, KtClass::class.java) ?: return arrayOf()
         val parameterList = when (declaration) {
-            is KtFunction -> declaration.valueParameterList!!
-            is KtClass -> declaration.getPrimaryConstructorParameterList()!!
+            is KtFunction -> (declaration as KtFunction).valueParameterList!!
+            is KtClass -> (declaration as KtClass).getPrimaryConstructorParameterList()!!
             else -> throw AssertionError("Unexpected declaration: ${declaration.text}")
         }
 
         // add names based on selected type
         val parameter = elementAt?.getStrictParentOfType<KtParameter>()
         if (parameter != null) {
-            val parameterTypeRef = parameter.typeReference
+            val parameterTypeRef = parameter!!.typeReference
             if (parameterTypeRef != null) {
-                val suggestedNamesBasedOnType = parameterTypeToNamesMap[parameterTypeRef.text]
+                val suggestedNamesBasedOnType = parameterTypeToNamesMap[parameterTypeRef!!.text]
                 if (suggestedNamesBasedOnType != null) {
-                    names.addAll(suggestedNamesBasedOnType)
+                    names.addAll(suggestedNamesBasedOnType!!)
                 }
             }
         }
@@ -144,11 +144,11 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
 
     override fun calculateResult(context: ExpressionContext?): Result {
         context!!
-        val project = context.project!!
-        val offset = context.startOffset
+        val project = context!!.project!!
+        val offset = context!!.startOffset
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
-        val editor = context.editor!!
+        val editor = context!!.editor!!
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) as KtFile
         val elementAt = file.findElementAt(offset)
         val declaration = elementAt?.getStrictParentOfType<KtNamedDeclaration>() ?: return TextResult("")
@@ -158,17 +158,17 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
         for (parameter in declaration.getValueParameters()) {
             val parameterTypeRef = parameter.typeReference
             if (parameterTypeRef != null) {
-                val typeParameterNamesFromParameter = parameterTypeToTypeParameterNamesMap[parameterTypeRef.text]
+                val typeParameterNamesFromParameter = parameterTypeToTypeParameterNamesMap[parameterTypeRef!!.text]
                 if (typeParameterNamesFromParameter != null) {
-                    renderedTypeParameters.addAll(typeParameterNamesFromParameter)
+                    renderedTypeParameters.addAll(typeParameterNamesFromParameter!!)
                 }
             }
         }
         val returnTypeRef = declaration.getReturnTypeReference()
         if (returnTypeRef != null) {
-            val typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap[returnTypeRef.text]
+            val typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap[returnTypeRef!!.text]
             if (typeParameterNamesFromReturnType != null) {
-                renderedTypeParameters.addAll(typeParameterNamesFromReturnType)
+                renderedTypeParameters.addAll(typeParameterNamesFromReturnType!!)
             }
         }
 

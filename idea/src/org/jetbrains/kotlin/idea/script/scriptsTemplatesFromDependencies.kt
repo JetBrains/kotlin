@@ -52,8 +52,8 @@ class ScriptTemplatesFromDependenciesProvider(project: Project) : AsyncScriptDef
         }
         if (templatesCopy != null) {
             return loadDefinitionsFromTemplates(
-                templateClassNames = templatesCopy.templates,
-                templateClasspath = templatesCopy.classpath,
+                templateClassNames = templatesCopy!!.templates,
+                templateClasspath = templatesCopy!!.classpath,
                 environment = mapOf(
                     "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File)
                 )

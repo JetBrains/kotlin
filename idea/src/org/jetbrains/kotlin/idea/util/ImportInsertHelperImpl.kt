@@ -81,7 +81,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             is PackageViewDescriptor -> false // now package cannot be imported
 
             is ClassDescriptor -> {
-                importable.containingDeclaration is PackageFragmentDescriptor
+                (importable as ClassDescriptor).containingDeclaration is PackageFragmentDescriptor
                         || codeStyleSettings.IMPORT_NESTED_CLASSES
             }
 
@@ -144,7 +144,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 else -> null
             }
             if (conflict != null
-                && imports.any { !it.isAllUnder && it.importPath?.fqName == conflict.importableFqName && it.importPath?.importedName == name }
+                && imports.any { !it.isAllUnder && it.importPath?.fqName == conflict!!.importableFqName && it.importPath?.importedName == name }
             ) {
                 return ImportDescriptorResult.FAIL
             }
@@ -203,7 +203,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
 
             val importsFromPackage = imports.count {
                 val path = it.importPath
-                path != null && !path.isAllUnder && !path.hasAlias() && path.fqName.parent() == containerFqName
+                path != null && !path!!.isAllUnder && !path!!.hasAlias() && path!!.fqName.parent() == containerFqName
             }
             val nameCountToUseStar = if (target.containingDeclaration is ClassDescriptor)
                 codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
@@ -216,7 +216,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             if (containerFqName.isRoot) return false
 
             val container = target.containingDeclaration
-            if (container is ClassDescriptor && container.kind == ClassKind.OBJECT) return false // cannot import with '*' from object
+            if (container is ClassDescriptor && (container as ClassDescriptor).kind == ClassKind.OBJECT) return false // cannot import with '*' from object
 
             return true
         }
@@ -232,8 +232,8 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
 
             fun isVisible(descriptor: DeclarationDescriptor): Boolean {
                 if (descriptor !is DeclarationDescriptorWithVisibility) return true
-                val visibility = descriptor.visibility
-                return !visibility.mustCheckInImports() || Visibilities.isVisibleIgnoringReceiver(descriptor, filePackage)
+                val visibility = (descriptor as DeclarationDescriptorWithVisibility).visibility
+                return !visibility.mustCheckInImports() || Visibilities.isVisibleIgnoringReceiver(descriptor as DeclarationDescriptorWithVisibility, filePackage)
             }
 
             val kindFilter = DescriptorKindFilter.ALL.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
@@ -243,7 +243,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 val descriptors = ref.resolveTargets()
                 val fqName: FqName? = descriptors.filter(::isVisible).map { it.importableFqName }.toSet().singleOrNull()
                 return if (fqName != null) {
-                    Pair(fqName, descriptors.elementAt(0).javaClass)
+                    Pair(fqName!!, descriptors.elementAt(0).javaClass)
                 } else null
             }
 
@@ -257,7 +257,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                     if (allNamesToImport.contains(refName)) {
                         val target = targetFqNameAndType(expression)
                         if (target != null) {
-                            futureCheckMap += Pair(expression, target)
+                            futureCheckMap += Pair(expression, target!!)
                         }
                     }
                 }
@@ -311,7 +311,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 // check if there is a conflicting class imported with * import
                 // (not with explicit import - explicit imports are checked before this method invocation)
                 val classifier = topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE)
-                if (classifier != null && detectNeededImports(listOf(classifier)).isNotEmpty()) {
+                if (classifier != null && detectNeededImports(listOf(classifier!!)).isNotEmpty()) {
                     return ImportDescriptorResult.FAIL
                 }
             }
@@ -370,9 +370,9 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                     val descriptor = classesToCheck[refName]
                     if (descriptor != null) {
                         val targetFqName = targetFqName(expression)
-                        if (targetFqName != null && targetFqName == DescriptorUtils.getFqNameSafe(descriptor)) {
+                        if (targetFqName != null && targetFqName == DescriptorUtils.getFqNameSafe(descriptor!!)) {
                             classesToCheck.remove(refName)
-                            result.add(descriptor)
+                            result.add(descriptor!!)
                         }
                     }
                 }
@@ -396,24 +396,24 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             val psiFactory = KtPsiFactory(project)
             if (file is KtCodeFragment) {
                 val newDirective = psiFactory.createImportDirective(importPath)
-                file.addImportsFromString(newDirective.text)
+                (file as KtCodeFragment).addImportsFromString(newDirective.text)
                 return newDirective
             }
 
             val importList = file.importList
             if (importList != null) {
                 val newDirective = psiFactory.createImportDirective(importPath)
-                val imports = importList.imports
+                val imports = importList!!.imports
                 return if (imports.isEmpty()) { //TODO: strange hack
-                    importList.add(psiFactory.createNewLine())
-                    importList.add(newDirective) as KtImportDirective
+                    importList!!.add(psiFactory.createNewLine())
+                    importList!!.add(newDirective) as KtImportDirective
                 } else {
                     val insertAfter = imports
                         .lastOrNull {
                             val directivePath = it.importPath
-                            directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
+                            directivePath != null && ImportPathComparator.compare(directivePath!!, importPath) <= 0
                         }
-                    importList.addAfter(newDirective, insertAfter) as KtImportDirective
+                    importList!!.addAfter(newDirective, insertAfter) as KtImportDirective
                 }
             } else {
                 error("Trying to insert import $fqName into a file ${file.name} of type ${file::class.java} with no import list.")

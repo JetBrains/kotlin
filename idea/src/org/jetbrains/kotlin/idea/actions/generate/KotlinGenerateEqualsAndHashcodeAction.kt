@@ -79,9 +79,9 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
     override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
         return targetClass is KtClass
                 && targetClass !is KtEnumEntry
-                && !targetClass.isEnum()
+                && !(targetClass as KtClass).isEnum()
                 && !targetClass.isAnnotation()
-                && !targetClass.isInterface()
+                && !(targetClass as KtClass).isInterface()
     }
 
     override fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info? {
@@ -96,12 +96,12 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         var needEquals = equalsDescriptor == null
         var needHashCode = hashCodeDescriptor == null
         if (!needEquals && !needHashCode) {
-            if (!confirmMemberRewrite(klass, equalsDescriptor!!, hashCodeDescriptor!!)) return null
+            if (!confirmMemberRewrite(klass as KtClass, equalsDescriptor!!, hashCodeDescriptor!!)) return null
 
             runWriteAction {
                 try {
-                    equalsDescriptor.source.getPsi()?.delete()
-                    hashCodeDescriptor.source.getPsi()?.delete()
+                    equalsDescriptor!!.source.getPsi()?.delete()
+                    hashCodeDescriptor!!.source.getPsi()?.delete()
                     needEquals = true
                     needHashCode = true
                 } catch (e: IncorrectOperationException) {
@@ -117,7 +117,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             return Info(needEquals, needHashCode, classDescriptor, descriptors, descriptors)
         }
 
-        return with(KotlinGenerateEqualsWizard(project, klass, properties, needEquals, needHashCode)) {
+        return with(KotlinGenerateEqualsWizard(project, klass as KtClass, properties, needEquals, needHashCode)) {
             if (!klass.hasExpectModifier() && !showAndGet()) return null
 
             Info(needEquals,

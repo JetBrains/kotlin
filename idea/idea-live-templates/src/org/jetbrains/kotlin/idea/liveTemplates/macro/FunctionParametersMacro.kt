@@ -37,12 +37,12 @@ class FunctionParametersMacro : KotlinMacro() {
         while (place != null) {
             if (place is KtFunction) {
                 val result = ArrayList<Result>()
-                for (param in place.valueParameters) {
+                for (param in (place as KtFunction).valueParameters) {
                     result.add(TextResult(param.name!!))
                 }
                 return ListResult(result)
             }
-            place = place.parent
+            place = place!!.parent
         }
         return null
     }

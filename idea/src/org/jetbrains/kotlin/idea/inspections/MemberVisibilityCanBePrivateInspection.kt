@@ -79,7 +79,7 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
         if (declaration.annotationEntries.isNotEmpty()) return false
 
         val classOrObject = declaration.containingClassOrObject ?: return false
-        val inheritable = classOrObject is KtClass && classOrObject.isInheritable()
+        val inheritable = classOrObject is KtClass && (classOrObject as KtClass).isInheritable()
         if (!inheritable && declaration.hasModifier(KtTokens.PROTECTED_KEYWORD)) return false //reported by ProtectedInFinalInspection
         if (declaration.isOverridable()) return false
 
@@ -100,16 +100,16 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
         if (!declaration.canBePrivate()) return false
 
         // properties can be referred by component1/component2, which is too expensive to search, don't analyze them
-        if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return false
+        if (declaration is KtParameter && (declaration as KtParameter).dataClassComponentFunction() != null) return false
 
         val psiSearchHelper = PsiSearchHelper.getInstance(declaration.project)
         val useScope = declaration.useScope
         val name = declaration.name ?: return false
         val restrictedScope = if (useScope is GlobalSearchScope) {
-            when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope, null, null)) {
+            when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope as GlobalSearchScope, null, null)) {
                 PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES -> return false
                 PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES -> return false
-                PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES -> KotlinSourceFilterScope.projectSources(useScope, declaration.project)
+                PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES -> KotlinSourceFilterScope.projectSources(useScope as GlobalSearchScope, declaration.project)
             }
         } else useScope
 

@@ -53,7 +53,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         }
         val primaryConstructor = element.primaryConstructor
         if (!element.isInterface() && primaryConstructor != null) {
-            val constructors = element.secondaryConstructors + primaryConstructor
+            val constructors = element.secondaryConstructors + primaryConstructor!!
             if (constructors.none() {
                 !it.isPrivate() &&
                 it.getValueParameters().all { it.hasDefaultValue() }
@@ -82,16 +82,16 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
 
         val name = element.name ?: throw IllegalStateException("This intention should not be applied to anonymous classes")
         if (element.isSealed()) {
-            createSealedSubclass(element, name, editor)
+            createSealedSubclass(element, name, editor!!)
         }
         else {
-            createExternalSubclass(element, name, editor)
+            createExternalSubclass(element, name, editor!!)
         }
     }
 
     private fun defaultTargetName(baseName: String) = "$baseName$IMPL_SUFFIX"
 
-    private fun KtClassOrObject.hasSameDeclaration(name: String) = declarations.any { it is KtNamedDeclaration && it.name == name }
+    private fun KtClassOrObject.hasSameDeclaration(name: String) = declarations.any { it is KtNamedDeclaration && (it as KtNamedDeclaration).name == name }
 
     private fun targetNameWithoutConflicts(baseName: String, container: KtClassOrObject?) =
             KotlinNameSuggester.suggestNameByName(defaultTargetName(baseName)) { container?.hasSameDeclaration(it) != true }
@@ -112,14 +112,14 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         var container: KtClassOrObject = baseClass
         var name = baseName
         var visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, Visibilities.PUBLIC)
-        while (!container.isPrivate() && !container.isProtected() && !(container is KtClass && container.isInner())) {
+        while (!container.isPrivate() && !container.isProtected() && !(container is KtClass && (container as KtClass).isInner())) {
             val parent = container.containingClassOrObject
             if (parent != null) {
-                val parentName = parent.name
+                val parentName = parent!!.name
                 if (parentName != null) {
-                    container = parent
+                    container = parent!!
                     name = "$parentName.$name"
-                    val parentVisibility = ModifiersChecker.resolveVisibilityFromModifiers(parent, visibility)
+                    val parentVisibility = ModifiersChecker.resolveVisibilityFromModifiers(parent!!, visibility)
                     if (Visibilities.compare(parentVisibility, visibility) ?: 0 < 0) {
                         visibility = parentVisibility
                     }

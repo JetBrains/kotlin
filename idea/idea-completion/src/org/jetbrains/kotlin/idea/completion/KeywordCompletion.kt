@@ -109,11 +109,11 @@ object KeywordCompletion {
                 fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
 
                 var next = position.nextLeaf { !(it.isSpace() || it.text == "$") }?.text
-                if (next != null && next.startsWith("$")) {
-                    next = next.substring(1)
+                if (next != null && next!!.startsWith("$")) {
+                    next = next!!.substring(1)
                 }
-                if (next != nextKeyword.value)
-                    keyword += " " + nextKeyword.value
+                if (next != nextKeyword!!.value)
+                    keyword += " " + nextKeyword!!.value
                 else
                     applicableAsCompound = true
             }
@@ -127,7 +127,7 @@ object KeywordCompletion {
 
             val constructText = KEYWORD_CONSTRUCTS[keywordToken]
             if (constructText != null && !applicableAsCompound) {
-                val element = createKeywordConstructLookupElement(position.project, keyword, constructText)
+                val element = createKeywordConstructLookupElement(position.project, keyword, constructText!!)
                 consumer(element)
             } else {
                 if (listOf(CLASS_KEYWORD, OBJECT_KEYWORD, INTERFACE_KEYWORD).any { keyword.endsWith(it.value) }) {
@@ -170,7 +170,7 @@ object KeywordCompletion {
         if (!Name.isValidIdentifier(name)
             || Name.identifier(name).render() != name
             || !name[0].isUpperCase()
-            || file.declarations.any { it is KtClassOrObject && it.name == name }
+            || file.declarations.any { it is KtClassOrObject && (it as KtClassOrObject).name == name }
         ) return null
         return name
     }
@@ -198,7 +198,7 @@ object KeywordCompletion {
 
     private class CommentFilter() : ElementFilter {
         override fun isAcceptable(element : Any?, context : PsiElement?)
-                = (element is PsiElement) && KtPsiUtil.isInComment(element)
+                = (element is PsiElement) && KtPsiUtil.isInComment(element as PsiElement)
 
         override fun isClassAcceptable(hintClass: Class<out Any?>)
                 = true
@@ -230,19 +230,19 @@ object KeywordCompletion {
         var parent = position.parent
         var prevParent = position
         while (parent != null) {
-            when (parent) {
+            when (parent as PsiElement?) {
                 is KtBlockExpression -> {
                     var prefixText = "fun foo() { "
                     if (prevParent is KtExpression) {
                         // check that we are right after a try-expression without finally-block or after if-expression without else
                         val prevLeaf = prevParent.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment && it !is PsiErrorElement }
                         if (prevLeaf != null) {
-                            val isAfterThen = prevLeaf.goUpWhileIsLastChild().any { it.node.elementType == KtNodeTypes.THEN }
+                            val isAfterThen = prevLeaf!!.goUpWhileIsLastChild().any { it.node.elementType == KtNodeTypes.THEN }
 
                             var isAfterTry = false
                             var isAfterCatch = false
-                            if (prevLeaf.node.elementType == KtTokens.RBRACE) {
-                                val blockParent = (prevLeaf.parent as? KtBlockExpression)?.parent
+                            if (prevLeaf!!.node.elementType == KtTokens.RBRACE) {
+                                val blockParent = (prevLeaf!!.parent as? KtBlockExpression)?.parent
                                 when (blockParent) {
                                     is KtTryExpression -> isAfterTry = true
                                     is KtCatchClause -> { isAfterTry = true; isAfterCatch = true }
@@ -272,7 +272,7 @@ object KeywordCompletion {
                                 .siblings(forward = false, withItself = false)
                                 .firstIsInstanceOrNull<KtExpression>()
                         if (lastExpression != null) {
-                            val contextAfterExpression = lastExpression
+                            val contextAfterExpression = lastExpression!!
                                     .siblings(forward = true, withItself = false)
                                     .takeWhile { it != prevParent }
                                     .joinToString { it.text }
@@ -282,21 +282,21 @@ object KeywordCompletion {
                 }
 
                 is KtDeclarationWithInitializer -> {
-                    val initializer = parent.initializer
+                    val initializer = (parent as KtDeclarationWithInitializer).initializer
                     if (prevParent == initializer) {
-                        return buildFilterWithContext("val v = ", initializer, position)
+                        return buildFilterWithContext("val v = ", initializer!!, position)
                     }
                 }
 
                 is KtParameter -> {
-                    val default = parent.defaultValue
+                    val default = (parent as KtParameter).defaultValue
                     if (prevParent == default) {
-                        return buildFilterWithContext("val v = ", default, position)
+                        return buildFilterWithContext("val v = ", default!!, position)
                     }
                 }
 
                 is KtDeclaration -> {
-                    val scope = parent.parent
+                    val scope = (parent as KtDeclaration).parent
                     when (scope) {
                         is KtClassOrObject -> {
                             return if (parent is KtPrimaryConstructor) {
@@ -377,7 +377,7 @@ object KeywordCompletion {
                     val container = elementAt.parent.parent
                     val possibleTargets = when (container) {
                         is KtParameter -> {
-                            if (container.ownerFunction is KtPrimaryConstructor)
+                            if ((container as KtParameter).ownerFunction is KtPrimaryConstructor)
                                 listOf(VALUE_PARAMETER, MEMBER_PROPERTY)
                             else
                                 listOf(VALUE_PARAMETER)
@@ -393,9 +393,9 @@ object KeywordCompletion {
 
                         else -> listOf()
                     }
-                    val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType]?.intersect(possibleTargets)
+                    val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType as KtModifierKeywordToken]?.intersect(possibleTargets)
                     if (modifierTargets != null && possibleTargets.isNotEmpty() &&
-                        modifierTargets.none {
+                        modifierTargets!!.none {
                             isModifierTargetSupportedAtLanguageLevel(keywordTokenType, it, languageVersionSettings)
                         }) return false
 
@@ -405,19 +405,19 @@ object KeywordCompletion {
 
                         is KtClass -> {
                             when {
-                                ownerDeclaration.isInterface() -> KotlinTarget.INTERFACE
-                                ownerDeclaration.isEnum() -> KotlinTarget.ENUM_CLASS
-                                ownerDeclaration.isAnnotation() -> KotlinTarget.ANNOTATION_CLASS
+                                (ownerDeclaration as KtClass).isInterface() -> KotlinTarget.INTERFACE
+                                (ownerDeclaration as KtClass).isEnum() -> KotlinTarget.ENUM_CLASS
+                                (ownerDeclaration as KtClass).isAnnotation() -> KotlinTarget.ANNOTATION_CLASS
                                 else -> KotlinTarget.CLASS_ONLY
                             }
                         }
 
-                        is KtObjectDeclaration -> if (ownerDeclaration.isObjectLiteral()) KotlinTarget.OBJECT_LITERAL else KotlinTarget.OBJECT
+                        is KtObjectDeclaration -> if ((ownerDeclaration as KtObjectDeclaration).isObjectLiteral()) KotlinTarget.OBJECT_LITERAL else KotlinTarget.OBJECT
 
                         else -> return keywordTokenType != CONST_KEYWORD
                     }
 
-                    if (!ModifierCheckerCore.isPossibleParentTarget(keywordTokenType, parentTarget, languageVersionSettings)) return false
+                    if (!ModifierCheckerCore.isPossibleParentTarget(keywordTokenType as KtModifierKeywordToken, parentTarget, languageVersionSettings)) return false
 
                     if (keywordTokenType == CONST_KEYWORD) {
                         return when (parentTarget) {
@@ -500,7 +500,7 @@ object KeywordCompletion {
         if (position == scope) return
 
         if (position is KtCodeFragment) {
-            val ktContext = position.context as? KtElement ?: return
+            val ktContext = (position as KtCodeFragment).context as? KtElement ?: return
             buildReducedContextBefore(builder, ktContext, scope)
             return
         } else if (position is PsiFile) {
@@ -535,7 +535,7 @@ object KeywordCompletion {
         }
         else {
             while (child != null) {
-                when (child) {
+                when (child as PsiElement?) {
                     is KtBlockExpression, is KtClassBody -> append("{}")
                     else -> appendReducedText(child)
                 }

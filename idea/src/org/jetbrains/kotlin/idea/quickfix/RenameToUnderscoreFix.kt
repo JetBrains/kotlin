@@ -40,7 +40,7 @@ class RenameToUnderscoreFix(element: KtCallableDeclaration) : KotlinQuickFixActi
                     val parameter = diagnostic.psiElement as? KtParameter
                     val owner = parameter?.parent?.parent
 
-                    if (owner is KtFunctionLiteral || (owner is KtNamedFunction && owner.name == null))
+                    if (owner is KtFunctionLiteral || (owner is KtNamedFunction && (owner as KtNamedFunction).name == null))
                         parameter
                     else
                         null
@@ -51,11 +51,11 @@ class RenameToUnderscoreFix(element: KtCallableDeclaration) : KotlinQuickFixActi
             }
 
             if (declaration?.nameIdentifier == null ||
-                !declaration.languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
+                !declaration!!.languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
                 return null
             }
 
-            return RenameToUnderscoreFix(declaration)
+            return RenameToUnderscoreFix(declaration!!)
         }
     }
 }

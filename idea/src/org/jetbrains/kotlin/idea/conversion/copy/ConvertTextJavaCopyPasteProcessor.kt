@@ -65,7 +65,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }
 
     override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List<TextBlockTransferableData> {
-        if (file is KtFile) return listOf(CopiedKotlinCode(file.text, startOffsets, endOffsets))
+        if (file is KtFile) return listOf(CopiedKotlinCode((file as KtFile).text, startOffsets, endOffsets))
         return emptyList()
     }
 

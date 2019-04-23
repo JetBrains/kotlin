@@ -43,7 +43,7 @@ class ConvertNullablePropertyToLateinitIntention : SelfTargetingIntention<KtProp
         if (KotlinBuiltIns.isPrimitiveType(type) || type.isInlineClassType() || TypeUtils.isNullableType(type)) return false
 
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? VariableDescriptor ?: return false
-        if (descriptor is PropertyDescriptor && context[BindingContext.BACKING_FIELD_REQUIRED, descriptor] == false) return false
+        if (descriptor is PropertyDescriptor && context[BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor] == false) return false
         if (descriptor.extensionReceiverParameter != null) return false
 
         return true

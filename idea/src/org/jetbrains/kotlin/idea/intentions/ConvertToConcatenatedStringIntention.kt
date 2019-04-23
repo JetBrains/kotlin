@@ -35,7 +35,7 @@ class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentInten
         val entries = element.entries
 
         val text = entries
-                .filterNot { it is KtStringTemplateEntryWithExpression && it.expression == null }
+                .filterNot { it is KtStringTemplateEntryWithExpression && (it as KtStringTemplateEntryWithExpression).expression == null }
                 .mapIndexed { index, entry ->
                     entry.toSeparateString(quote, convertExplicitly = (index == 0), isFinalEntry = (index == entries.lastIndex))
                 }
@@ -69,7 +69,7 @@ class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentInten
     private fun needsParenthesis(expression: KtExpression, isFinalEntry: Boolean): Boolean {
         return when (expression) {
             is KtBinaryExpression -> true
-            is KtIfExpression -> expression.`else` !is KtBlockExpression && !isFinalEntry
+            is KtIfExpression -> (expression as KtIfExpression).`else` !is KtBlockExpression && !isFinalEntry
             else -> false
         }
     }

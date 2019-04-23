@@ -22,13 +22,13 @@ class PublicApiImplicitTypeInspection(
     { element, inspection ->
         element.containingClassOrObject?.isLocal != true &&
                 when (element) {
-                    is KtFunction -> !element.isLocal
-                    is KtProperty -> !element.isLocal
+                    is KtFunction -> !(element as KtFunction).isLocal
+                    is KtProperty -> !(element as KtProperty).isLocal
                     else -> false
                 } && run {
             val callableMemberDescriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor
             val forInternal = (inspection as PublicApiImplicitTypeInspection).reportInternal
-            val forPrivate = inspection.reportPrivate
+            val forPrivate = (inspection as PublicApiImplicitTypeInspection).reportPrivate
 
             val visibility = callableMemberDescriptor?.effectiveVisibility()?.toVisibility()
             visibility?.isPublicAPI == true || (forInternal && visibility == Visibilities.INTERNAL) ||

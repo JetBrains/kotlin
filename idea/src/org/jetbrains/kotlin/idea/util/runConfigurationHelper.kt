@@ -41,7 +41,7 @@ class JavaParametersBuilder(private val project: Project) {
      * @see [com.intellij.execution.ShortenCommandLine.getDefaultMethod]
      */
     private fun getDefaultShortenCommandLineMethod(rootPath: String?): ShortenCommandLine {
-        if (rootPath != null && JdkUtil.isModularRuntime(rootPath)) return ShortenCommandLine.ARGS_FILE
+        if (rootPath != null && JdkUtil.isModularRuntime(rootPath!!)) return ShortenCommandLine.ARGS_FILE
         return if (JdkUtil.useClasspathJar()) ShortenCommandLine.MANIFEST else ShortenCommandLine.CLASSPATH_FILE
     }
 
@@ -52,8 +52,8 @@ class JavaParametersBuilder(private val project: Project) {
 
     fun withSdkFrom(module: Module?, setDefault: Boolean = false): JavaParametersBuilder {
         if (module != null) {
-            val sdk = module.let { ModuleRootManager.getInstance(module).sdk }
-            if (sdk != null && sdk.sdkType is JavaSdkType && File(sdk.homePath).exists()) {
+            val sdk = module!!.let { ModuleRootManager.getInstance(module!!).sdk }
+            if (sdk != null && sdk!!.sdkType is JavaSdkType && File(sdk!!.homePath).exists()) {
                 this.sdk = sdk
             }
         }

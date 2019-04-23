@@ -77,20 +77,20 @@ internal class ExpressionReplacementPerformer(
 
         return if (parent is KtStringTemplateEntryWithExpression
             // Do not mix raw and non-raw templates
-            && parent.parent.firstChild.text == templateExpression.firstChild.text
+            && (parent as KtStringTemplateEntryWithExpression).parent.firstChild.text == templateExpression.firstChild.text
         ) {
 
             val entriesToAdd = templateExpression.entries
-            val grandParentTemplateExpression = parent.parent as KtStringTemplateExpression
+            val grandParentTemplateExpression = (parent as KtStringTemplateEntryWithExpression).parent as KtStringTemplateExpression
             val result = if (entriesToAdd.isNotEmpty()) {
                 grandParentTemplateExpression.addRangeBefore(entriesToAdd.first(), entriesToAdd.last(), parent)
-                val lastNewEntry = parent.prevSibling
-                val nextElement = parent.nextSibling
+                val lastNewEntry = (parent as KtStringTemplateEntryWithExpression).prevSibling
+                val nextElement = (parent as KtStringTemplateEntryWithExpression).nextSibling
                 if (lastNewEntry is KtSimpleNameStringTemplateEntry &&
-                    lastNewEntry.expression != null &&
+                    (lastNewEntry as KtSimpleNameStringTemplateEntry).expression != null &&
                     !canPlaceAfterSimpleNameEntry(nextElement)
                 ) {
-                    lastNewEntry.replace(KtPsiFactory(this).createBlockStringTemplateEntry(lastNewEntry.expression!!))
+                    lastNewEntry.replace(KtPsiFactory(this).createBlockStringTemplateEntry((lastNewEntry as KtSimpleNameStringTemplateEntry).expression!!))
                 }
                 grandParentTemplateExpression
             } else null
@@ -117,9 +117,9 @@ internal class ExpressionReplacementPerformer(
 
         val mainExpression = codeToInline.mainExpression
         val replaced: KtExpression? = when (mainExpression) {
-            is KtStringTemplateExpression -> elementToBeReplaced.replacedWithStringTemplate(mainExpression)
+            is KtStringTemplateExpression -> elementToBeReplaced.replacedWithStringTemplate(mainExpression as KtStringTemplateExpression)
 
-            is KtExpression -> elementToBeReplaced.replaced(mainExpression)
+            is KtExpression -> elementToBeReplaced.replaced(mainExpression!!)
 
             else -> {
                 // NB: Unit is never used as expression
@@ -139,10 +139,10 @@ internal class ExpressionReplacementPerformer(
 
         var range = if (replaced != null) {
             if (insertedStatements.isEmpty()) {
-                PsiChildRange.singleElement(replaced)
+                PsiChildRange.singleElement(replaced!!)
             } else {
                 val statement = insertedStatements.first()
-                PsiChildRange(statement, replaced.parentsWithSelf.first { it.parent == statement.parent })
+                PsiChildRange(statement, replaced!!.parentsWithSelf.first { it.parent == statement.parent })
             }
         } else {
             if (insertedStatements.isEmpty()) {
@@ -166,8 +166,8 @@ internal class ExpressionReplacementPerformer(
         val templateEntry = resultExpression?.parent as? KtBlockStringTemplateEntry
         if (templateEntry != null) {
             val intention = RemoveCurlyBracesFromTemplateIntention()
-            if (intention.isApplicableTo(templateEntry)) {
-                val newEntry = templateEntry.dropBraces()
+            if (intention.isApplicableTo(templateEntry!!)) {
+                val newEntry = templateEntry!!.dropBraces()
                 return newEntry.expression
             }
         }
@@ -185,22 +185,22 @@ internal class ExpressionReplacementPerformer(
             val parent = element.parent
             when (element) {
                 is KtContainerNodeForControlStructureBody -> { // control statement without block
-                    return element.expression!!.replaceWithBlock()
+                    return (element as KtContainerNodeForControlStructureBody).expression!!.replaceWithBlock()
                 }
 
                 is KtExpression -> {
                     if (parent is KtWhenEntry) { // when entry without block
-                        return element.replaceWithBlock()
+                        return (element as KtExpression).replaceWithBlock()
                     }
 
                     if (parent is KtDeclarationWithBody) {
                         withElementToBeReplacedPreserved {
-                            ConvertToBlockBodyIntention.convert(parent)
+                            ConvertToBlockBodyIntention.convert(parent as KtDeclarationWithBody)
                         }
-                        return (parent.bodyExpression as KtBlockExpression).statements.single()
+                        return ((parent as KtDeclarationWithBody).bodyExpression as KtBlockExpression).statements.single()
                     }
 
-                    if (parent is KtBlockExpression) return element
+                    if (parent is KtBlockExpression) return element as KtExpression
                 }
             }
         }

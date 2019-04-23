@@ -34,7 +34,7 @@ class KotlinGotoTargetRenderProvider : GotoTargetRendererProvider {
                 KtLightClassListCellRenderer()
             }
             is KtDeclaration -> {
-                if (element.isEffectivelyActual()) {
+                if ((element as KtDeclaration).isEffectivelyActual()) {
                     DeclarationByModuleRenderer()
                 } else {
                     null

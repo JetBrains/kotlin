@@ -50,7 +50,7 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
             return null
         }
 
-        val analysisResult = file.analyzeWithAllCompilerChecks()
+        val analysisResult = (file as KtFile).analyzeWithAllCompilerChecks()
         if (analysisResult.isError()) {
             throw ProcessCanceledException(analysisResult.error)
         }
@@ -59,10 +59,10 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
 
         val problemDescriptors = arrayListOf<ProblemDescriptor>()
 
-        val importsToRemove = file.importDirectives.filter { DeprecatedSymbolUsageFix.isImportToBeRemoved(it) }
+        val importsToRemove = (file as KtFile).importDirectives.filter { DeprecatedSymbolUsageFix.isImportToBeRemoved(it) }
         for (import in importsToRemove) {
             val removeImportFix = RemoveImportFix(import)
-            val problemDescriptor = createProblemDescriptor(import, removeImportFix.text, listOf(removeImportFix), file, manager)
+            val problemDescriptor = createProblemDescriptor(import, removeImportFix.text, listOf(removeImportFix), file as KtFile, manager)
             problemDescriptors.add(problemDescriptor)
         }
 
@@ -71,7 +71,7 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
                 if (diagnostic.isCleanup()) {
                     val fixes = diagnostic.toCleanupFixes()
                     if (fixes.isNotEmpty()) {
-                        problemDescriptors.add(diagnostic.toProblemDescriptor(fixes, file, manager))
+                        problemDescriptors.add(diagnostic.toProblemDescriptor(fixes, file as KtFile, manager))
                     }
                 }
             }

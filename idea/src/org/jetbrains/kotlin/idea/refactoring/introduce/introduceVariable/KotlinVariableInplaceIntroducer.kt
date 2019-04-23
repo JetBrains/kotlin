@@ -86,7 +86,7 @@ class KotlinVariableInplaceIntroducer(
             }
 
             if (expressionType != null && !noTypeInference) {
-                val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(expressionType)
+                val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(expressionType!!)
                 expressionTypeCheckBox = NonFocusableCheckBox("Specify type explicitly").apply {
                     isSelected = false
                     setMnemonic('t')
@@ -133,7 +133,7 @@ class KotlinVariableInplaceIntroducer(
 
         val templateState = TemplateManagerImpl.getTemplateState(InjectedLanguageUtil.getTopLevelEditor(myEditor))
         if (templateState != null && addedVariable.typeReference != null) {
-            templateState.addTemplateStateListener(SpecifyTypeExplicitlyIntention.createTypeReferencePostprocessor(addedVariable))
+            templateState!!.addTemplateStateListener(SpecifyTypeExplicitlyIntention.createTypeReferencePostprocessor(addedVariable))
         }
 
         return result

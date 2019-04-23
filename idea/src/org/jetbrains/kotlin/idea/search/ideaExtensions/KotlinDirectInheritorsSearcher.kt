@@ -36,7 +36,7 @@ open class KotlinDirectInheritorsSearcher : QueryExecutorBase<PsiClass, DirectCl
 
         val name = baseClass.name ?: return
 
-        val file = if (baseClass is KtFakeLightClass) baseClass.kotlinOrigin.containingFile else baseClass.containingFile
+        val file = if (baseClass is KtFakeLightClass) (baseClass as KtFakeLightClass).kotlinOrigin.containingFile else baseClass.containingFile
 
         val originalScope = queryParameters.scope
         val scope = originalScope as? GlobalSearchScope ?: file.fileScope() ?: return

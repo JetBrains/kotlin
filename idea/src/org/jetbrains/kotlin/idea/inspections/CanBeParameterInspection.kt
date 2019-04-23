@@ -44,11 +44,11 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
         // receiver.x
         val parent = element.parent
         if (parent is KtQualifiedExpression) {
-            if (parent.selectorExpression == element) return true
+            if ((parent as KtQualifiedExpression).selectorExpression == element) return true
         }
         // x += something
         if (parent is KtBinaryExpression &&
-            parent.left == element &&
+            (parent as KtBinaryExpression).left == element &&
             KtPsiUtil.isAssignment(parent)
         ) return true
         // init / constructor / non-local property?
@@ -60,10 +60,10 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
                 KtFunction::class.java, KtObjectDeclaration::class.java,
                 KtSuperTypeCallEntry::class.java
             ) ?: return true
-        } while (parameterUser is KtProperty && parameterUser.isLocal)
+        } while (parameterUser is KtProperty && (parameterUser as KtProperty).isLocal)
         return when (parameterUser) {
-            is KtProperty -> parameterUser.containingClassOrObject !== klass
-            is KtClassInitializer -> parameterUser.containingDeclaration !== klass
+            is KtProperty -> (parameterUser as KtProperty).containingClassOrObject !== klass
+            is KtClassInitializer -> (parameterUser as KtClassInitializer).containingDeclaration !== klass
             is KtFunction, is KtObjectDeclaration, is KtPropertyAccessor -> true
             is KtSuperTypeCallEntry -> parameterUser.getStrictParentOfType<KtClassOrObject>() !== klass
             else -> true
@@ -85,7 +85,7 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
             val restrictedScope = if (useScope is GlobalSearchScope) {
                 val psiSearchHelper = PsiSearchHelper.getInstance(parameter.project)
                 for (accessorName in parameter.getAccessorNames()) {
-                    when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(accessorName, useScope, null, null)) {
+                    when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(accessorName, useScope as GlobalSearchScope, null, null)) {
                         ZERO_OCCURRENCES -> {
                         } // go on
                         else -> return         // accessor in use: should remain a property
@@ -93,8 +93,8 @@ class CanBeParameterInspection : AbstractKotlinInspection() {
                 }
                 // TOO_MANY_OCCURRENCES: too expensive
                 // ZERO_OCCURRENCES: unused at all, reported elsewhere
-                if (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope, null, null) != FEW_OCCURRENCES) return
-                KotlinSourceFilterScope.projectSources(useScope, parameter.project)
+                if (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope as GlobalSearchScope, null, null) != FEW_OCCURRENCES) return
+                KotlinSourceFilterScope.projectSources(useScope as GlobalSearchScope, parameter.project)
             } else useScope
             // Find all references and check them
             val references = ReferencesSearch.search(parameter, restrictedScope)

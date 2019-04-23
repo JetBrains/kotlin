@@ -45,9 +45,9 @@ class KotlinFormattingModelBuilder : FormattingModelBuilder {
         }
 
         if (element is PsiFile) {
-            val collectChangesModel = createCollectFormattingChangesModel(element, block)
+            val collectChangesModel = createCollectFormattingChangesModel(element as PsiFile, block)
             if (collectChangesModel != null) {
-                return collectChangesModel
+                return collectChangesModel!!
             }
         }
 

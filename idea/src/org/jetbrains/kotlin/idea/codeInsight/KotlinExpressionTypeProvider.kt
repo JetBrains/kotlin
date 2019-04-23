@@ -65,7 +65,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         val candidates = elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filter { it.shouldShowType() }.toList()
         val fileEditor = elementAt.containingFile?.virtualFile?.let { FileEditorManager.getInstance(elementAt.project).getSelectedEditor(it) }
         val selectionTextRange = if (fileEditor is TextEditor) {
-            EditorUtil.getSelectionInAnyMode(fileEditor.editor)
+            EditorUtil.getSelectionInAnyMode((fileEditor as TextEditor).editor)
         } else {
             TextRange.EMPTY_RANGE
         }
@@ -111,7 +111,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         if (element is KtCallableDeclaration) {
             val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableDescriptor
             if (descriptor != null) {
-                return descriptor.returnType?.let { typeRenderer.renderType(it) } ?: "Type is unknown"
+                return descriptor!!.returnType?.let { typeRenderer.renderType(it) } ?: "Type is unknown"
             }
         }
 
@@ -121,7 +121,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         val result = expressionType?.let { typeRenderer.renderType(it) } ?: return "Type is unknown"
 
         val dataFlowValueFactory = element.getResolutionFacade().frontendService<DataFlowValueFactory>()
-        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(element, expressionType, bindingContext, element.findModuleDescriptor())
+        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(element, expressionType!!, bindingContext, element.findModuleDescriptor())
         val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue, element.languageVersionSettings)
         if (!types.isEmpty()) {
             return types.joinToString(separator = " & ") { typeRenderer.renderType(it) } + " (smart cast from " + result + ")"
@@ -129,9 +129,9 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
 
         val smartCast = bindingContext[BindingContext.SMARTCAST, element]
         if (smartCast != null && element is KtReferenceExpression) {
-            val declaredType = (bindingContext[BindingContext.REFERENCE_TARGET, element] as? CallableDescriptor)?.returnType
+            val declaredType = (bindingContext[BindingContext.REFERENCE_TARGET, element as KtReferenceExpression] as? CallableDescriptor)?.returnType
             if (declaredType != null) {
-                return result + " (smart cast from " + typeRenderer.renderType(declaredType) + ")"
+                return result + " (smart cast from " + typeRenderer.renderType(declaredType!!) + ")"
             }
         }
         return result

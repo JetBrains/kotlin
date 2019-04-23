@@ -121,7 +121,7 @@ class KtParameterPattern : PsiElementPattern<KtParameter, KtParameterPattern>(Kt
             if (ktParameter.annotationEntries.isEmpty()) return@withPatternCondition false
 
             val parameterDescriptor = ktParameter.resolveToParameterDescriptorIfAny()
-            parameterDescriptor is ValueParameterDescriptor && parameterDescriptor.annotations.any { annotation ->
+            parameterDescriptor is ValueParameterDescriptor && parameterDescriptor!!.annotations.any { annotation ->
                 annotation.fqName?.asString() == fqName
             }
         }

@@ -34,7 +34,7 @@ class KotlinCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
 
         val name = props[FileTemplate.ATTRIBUTE_NAME] as? String
         if (name != null) {
-            props[FileTemplate.ATTRIBUTE_NAME] = name.quoteIfNeeded()
+            props[FileTemplate.ATTRIBUTE_NAME] = name!!.quoteIfNeeded()
         }
     }
 }

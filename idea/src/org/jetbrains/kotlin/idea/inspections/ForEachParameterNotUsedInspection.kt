@@ -42,15 +42,15 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
             val calleeExpression = it.calleeExpression as? KtNameReferenceExpression
             if (calleeExpression?.getReferencedName() != FOREACH_NAME) return
             val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression()
-            if (lambda == null || lambda.functionLiteral.arrow != null) return
+            if (lambda == null || lambda!!.functionLiteral.arrow != null) return
             val context = it.analyze()
             when (it.getResolvedCall(context)?.resultingDescriptor?.fqNameOrNull()) {
                 COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME, TEXT_FOREACH_FQNAME -> {
-                    val descriptor = context[BindingContext.FUNCTION, lambda.functionLiteral] ?: return
+                    val descriptor = context[BindingContext.FUNCTION, lambda!!.functionLiteral] ?: return
                     val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return
 
                     if (iterableParameter !is WithDestructuringDeclaration &&
-                        !lambda.bodyExpression.usesDescriptor(iterableParameter, context)
+                        !lambda!!.bodyExpression.usesDescriptor(iterableParameter, context)
                     ) {
                         val fixes = mutableListOf<LocalQuickFix>()
                         if (it.parent is KtDotQualifiedExpression) {
@@ -58,7 +58,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
                         }
                         fixes += IntroduceAnonymousParameterFix()
                         holder.registerProblem(
-                            calleeExpression,
+                            calleeExpression!!,
                             "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                             *fixes.toTypedArray()
@@ -95,8 +95,8 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
             val collection = callExpression.builtIns.collection
             val charSequence = callExpression.builtIns.charSequence
             val sizeText = when {
-                receiverClass != null && DescriptorUtils.isSubclass(receiverClass, collection) -> "size"
-                receiverClass != null && DescriptorUtils.isSubclass(receiverClass, charSequence) -> "length"
+                receiverClass != null && DescriptorUtils.isSubclass(receiverClass!!, collection) -> "size"
+                receiverClass != null && DescriptorUtils.isSubclass(receiverClass!!, charSequence) -> "length"
                 else -> "count()"
             }
             val lambdaExpression = callExpression.lambdaArguments.singleOrNull()?.getArgumentExpression() ?: return
@@ -119,7 +119,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
                         val resolvedCall = element.getResolvedCall(context) ?: return
 
                         used = descriptor == when (resolvedCall) {
-                            is VariableAsFunctionResolvedCall -> resolvedCall.variableCall.candidateDescriptor
+                            is VariableAsFunctionResolvedCall -> (resolvedCall as VariableAsFunctionResolvedCall).variableCall.candidateDescriptor
                             else -> resolvedCall.candidateDescriptor
                         }
                     }

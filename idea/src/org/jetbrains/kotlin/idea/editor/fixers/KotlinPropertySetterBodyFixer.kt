@@ -32,24 +32,24 @@ class KotlinPropertySetterBodyFixer : SmartEnterProcessorWithFixers.Fixer<Kotlin
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtPropertyAccessor) return
 
-        if (!psiElement.isSetter) return
+        if (!(psiElement as KtPropertyAccessor).isSetter) return
 
-        if (psiElement.bodyExpression != null || psiElement.equalsToken != null) return
+        if ((psiElement as KtPropertyAccessor).bodyExpression != null || (psiElement as KtPropertyAccessor).equalsToken != null) return
 
         val parentDeclaration = psiElement.getStrictParentOfType<KtDeclaration>()
         if (parentDeclaration is KtClassOrObject) {
-            if (KtPsiUtil.isTrait(parentDeclaration) || psiElement.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+            if (KtPsiUtil.isTrait(parentDeclaration as KtClassOrObject) || (psiElement as KtPropertyAccessor).hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 return
             }
         }
 
         //setter without parameter and body is valid
-        if (psiElement.namePlaceholder.endOffset == psiElement.endOffset) return
+        if ((psiElement as KtPropertyAccessor).namePlaceholder.endOffset == psiElement.endOffset) return
 
         val doc = editor.document
         var endOffset = psiElement.range.end
 
-        if (psiElement.text?.last() == ';') {
+        if ((psiElement as KtPropertyAccessor).text?.last() == ';') {
             doc.deleteString(endOffset - 1, endOffset)
             endOffset--
         }

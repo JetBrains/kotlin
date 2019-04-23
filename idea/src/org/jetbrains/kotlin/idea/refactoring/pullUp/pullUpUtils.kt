@@ -43,7 +43,7 @@ fun KtProperty.mustBeAbstractInInterface() =
         hasInitializer() || hasDelegate() || (!hasInitializer() && !hasDelegate() && accessors.isEmpty())
 
 fun KtNamedDeclaration.isAbstractInInterface(originalClass: KtClassOrObject) =
-        originalClass is KtClass && originalClass.isInterface() && isAbstract()
+        originalClass is KtClass && (originalClass as KtClass).isInterface() && isAbstract()
 
 fun KtNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean {
     return when (this) {
@@ -59,25 +59,25 @@ fun KtNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean 
 }
 
 fun addMemberToTarget(targetMember: KtNamedDeclaration, targetClass: KtClassOrObject): KtNamedDeclaration {
-    if (targetClass is KtClass && targetClass.isInterface()) {
+    if (targetClass is KtClass && (targetClass as KtClass).isInterface()) {
         targetMember.removeModifier(KtTokens.FINAL_KEYWORD)
     }
 
     if (targetMember is KtParameter) {
         val parameterList = (targetClass as KtClass).createPrimaryConstructorIfAbsent().valueParameterList!!
         val anchor = parameterList.parameters.firstOrNull { it.isVarArg || it.hasDefaultValue() }
-        return parameterList.addParameterBefore(targetMember, anchor)
+        return parameterList.addParameterBefore(targetMember as KtParameter, anchor)
     }
 
     val anchor = targetClass.declarations.asSequence().filterIsInstance(targetMember::class.java).lastOrNull()
     return when {
-        anchor == null && targetMember is KtProperty -> targetClass.addDeclarationBefore(targetMember, null)
+        anchor == null && targetMember is KtProperty -> targetClass.addDeclarationBefore(targetMember as KtProperty, null)
         else -> targetClass.addDeclarationAfter(targetMember, anchor)
     }
 }
 
 private fun KtParameter.needToBeAbstract(targetClass: KtClassOrObject): Boolean {
-    return hasModifier(KtTokens.ABSTRACT_KEYWORD) || targetClass is KtClass && targetClass.isInterface()
+    return hasModifier(KtTokens.ABSTRACT_KEYWORD) || targetClass is KtClass && (targetClass as KtClass).isInterface()
 }
 
 private fun KtParameter.toProperty(): KtProperty =
@@ -88,7 +88,7 @@ private fun KtParameter.toProperty(): KtProperty =
             val generatedTypeRef = it.typeReference
             if (originalTypeRef != null && generatedTypeRef != null) {
                 // Preserve copyable user data of original type reference
-                generatedTypeRef.replace(originalTypeRef)
+                generatedTypeRef!!.replace(originalTypeRef!!)
             }
         }
 
@@ -97,10 +97,10 @@ fun doAddCallableMember(
         clashingSuper: KtCallableDeclaration?,
         targetClass: KtClassOrObject
 ): KtCallableDeclaration {
-    val memberToAdd = if (memberCopy is KtParameter && memberCopy.needToBeAbstract(targetClass)) memberCopy.toProperty() else memberCopy
+    val memberToAdd = if (memberCopy is KtParameter && (memberCopy as KtParameter).needToBeAbstract(targetClass)) (memberCopy as KtParameter).toProperty() else memberCopy
 
-    if (clashingSuper != null && clashingSuper.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
-        return clashingSuper.replaced(if (memberToAdd is KtParameter && clashingSuper is KtProperty) memberToAdd.toProperty() else memberToAdd)
+    if (clashingSuper != null && clashingSuper!!.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+        return clashingSuper!!.replaced(if (memberToAdd is KtParameter && clashingSuper is KtProperty) (memberToAdd as KtParameter).toProperty() else memberToAdd)
     }
 
     return addMemberToTarget(memberToAdd, targetClass) as KtCallableDeclaration
@@ -140,26 +140,26 @@ fun makeAbstract(member: KtCallableDeclaration,
     val builtIns = originalMemberDescriptor.builtIns
     if (member.typeReference == null) {
         var type = originalMemberDescriptor.returnType
-        if (type == null || type.isError) {
+        if (type == null || type!!.isError) {
             type = builtIns.nullableAnyType
         }
         else {
-            type = substitutor.substitute(type.anonymousObjectSuperTypeOrNull() ?: type, Variance.INVARIANT)
+            type = substitutor.substitute(type!!.anonymousObjectSuperTypeOrNull() ?: type!!, Variance.INVARIANT)
                    ?: builtIns.nullableAnyType
         }
 
-        if (member is KtProperty || !type.isUnit()) {
-            member.setType(type, false)
+        if (member is KtProperty || !type!!.isUnit()) {
+            member.setType(type!!, false)
         }
     }
 
     val deleteFrom = when (member) {
         is KtProperty -> {
-            member.equalsToken ?: member.delegate ?: member.accessors.firstOrNull()
+            (member as KtProperty).equalsToken ?: (member as KtProperty).delegate ?: (member as KtProperty).accessors.firstOrNull()
         }
 
         is KtNamedFunction -> {
-            member.equalsToken ?: member.bodyExpression
+            (member as KtNamedFunction).equalsToken ?: (member as KtNamedFunction).bodyExpression
         }
 
         else -> null
@@ -183,9 +183,9 @@ fun addSuperTypeEntry(
     if (targetClassDescriptor == referencedClass || DescriptorUtils.isDirectSubclass(targetClassDescriptor, referencedClass)) return
 
     val typeInTargetClass = substitutor.substitute(referencedType, Variance.INVARIANT)
-    if (!(typeInTargetClass != null && !typeInTargetClass.isError)) return
+    if (!(typeInTargetClass != null && !typeInTargetClass!!.isError)) return
 
-    val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass)
+    val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass!!)
     val newSpecifier = KtPsiFactory(targetClass).createSuperTypeEntry(renderedType)
     targetClass.addSuperTypeListEntry(newSpecifier).addToShorteningWaitSet()
 }

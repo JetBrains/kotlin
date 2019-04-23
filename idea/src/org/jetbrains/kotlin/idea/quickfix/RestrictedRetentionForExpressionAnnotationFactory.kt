@@ -30,11 +30,11 @@ object RestrictedRetentionForExpressionAnnotationFactory : KotlinIntentionAction
         val containingClass = annotationEntry.containingClass() ?: return emptyList()
         val retentionAnnotation = containingClass.annotation(KotlinBuiltIns.FQ_NAMES.retention)
         val targetAnnotation = containingClass.annotation(KotlinBuiltIns.FQ_NAMES.target)
-        val expressionTargetArgument = if (targetAnnotation != null) findExpressionTargetArgument(targetAnnotation) else null
+        val expressionTargetArgument = if (targetAnnotation != null) findExpressionTargetArgument(targetAnnotation!!) else null
 
         return listOfNotNull(
-            if (expressionTargetArgument != null) RemoveExpressionTargetFix(expressionTargetArgument) else null,
-            if (retentionAnnotation == null) AddSourceRetentionFix(containingClass) else ChangeRetentionToSourceFix(retentionAnnotation)
+            if (expressionTargetArgument != null) RemoveExpressionTargetFix(expressionTargetArgument!!) else null,
+            if (retentionAnnotation == null) AddSourceRetentionFix(containingClass) else ChangeRetentionToSourceFix(retentionAnnotation!!)
         )
     }
 
@@ -90,7 +90,7 @@ object RestrictedRetentionForExpressionAnnotationFactory : KotlinIntentionAction
                 retentionAnnotation.valueArgumentList?.addArgument(psiFactory.createArgument(sourceRetention))
             }
             if (added != null) {
-                ShortenReferences.DEFAULT.process(added)
+                ShortenReferences.DEFAULT.process(added!!)
             }
         }
     }

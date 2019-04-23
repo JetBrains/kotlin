@@ -114,11 +114,11 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             val expression = RemoveUselessCastFix.invoke(element)
 
             val variable = expression.parent as? KtProperty
-            if (variable != null && expression == variable.initializer && variable.isLocal) {
-                val ref = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll().singleOrNull()
-                if (ref != null && ref.element is KtSimpleNameExpression) {
-                    ref.element.replace(expression)
-                    variable.delete()
+            if (variable != null && expression == variable!!.initializer && variable!!.isLocal) {
+                val ref = ReferencesSearch.search(variable!!, LocalSearchScope(variable!!.containingFile)).findAll().singleOrNull()
+                if (ref != null && ref!!.element is KtSimpleNameExpression) {
+                    ref!!.element.replace(expression)
+                    variable!!.delete()
                 }
             }
         }
@@ -138,8 +138,8 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             }
             else {
                 {
-                    if (!property.isVar) {
-                        property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
+                    if (!property!!.isVar) {
+                        property!!.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
                     }
                 }
             }
@@ -172,7 +172,7 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
                 if (!additionalChecker(tElement)) return null
                 return {
                     if (intention.applicabilityRange(tElement) != null) { // check availability of the intention again because something could change
-                        intention.applyTo(element, null)
+                        intention.applyTo(element as TElement, null)
                     }
                 }
             }
@@ -235,10 +235,10 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         override val writeActionNeeded = true
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
+            if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element as KtTypeArgumentList, approximateFlexible = true)) return null
 
             return {
-                if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) {
+                if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(element as KtTypeArgumentList, approximateFlexible = true)) {
                     element.delete()
                 }
             }
@@ -249,9 +249,9 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         override val writeActionNeeded = true
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is KtCallableDeclaration || !element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
-            val modifier = element.visibilityModifierType() ?: return null
-            return { element.setVisibility(modifier) }
+            if (element !is KtCallableDeclaration || !(element as KtCallableDeclaration).hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
+            val modifier = (element as KtCallableDeclaration).visibilityModifierType() ?: return null
+            return { (element as KtCallableDeclaration).setVisibility(modifier) }
         }
     }
 
@@ -261,8 +261,10 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         private val intention = ConvertToStringTemplateIntention()
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element is KtBinaryExpression && intention.isApplicableTo(element) && ConvertToStringTemplateIntention.shouldSuggestToConvert(element)) {
-                return { intention.applyTo(element, null) }
+            if (element is KtBinaryExpression && intention.isApplicableTo(element as KtBinaryExpression) && ConvertToStringTemplateIntention.shouldSuggestToConvert(
+                    element as KtBinaryExpression
+                )) {
+                return { intention.applyTo(element as KtBinaryExpression, null) }
             }
             else {
                 return null
@@ -277,8 +279,8 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtCallExpression) return null
-            val propertyName = intention.detectPropertyNameToUse(element) ?: return null
-            return { intention.applyTo(element, propertyName, reformat = true) }
+            val propertyName = intention.detectPropertyNameToUse(element as KtCallExpression) ?: return null
+            return { intention.applyTo(element as KtCallExpression, propertyName, reformat = true) }
         }
     }
 
@@ -288,11 +290,11 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtCallExpression) return null
 
-            val expressions = RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
+            val expressions = RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element as KtCallExpression)
             if (expressions.isEmpty()) return null
 
             return {
-                RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
+                RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element as KtCallExpression)
                     .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
             }
         }
@@ -305,11 +307,11 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             if (element !is KtPropertyAccessor) return null
 
             val inspection = UseExpressionBodyInspection(convertEmptyToUnit = false)
-            if (!inspection.isActiveFor(element)) return null
+            if (!inspection.isActiveFor(element as KtPropertyAccessor)) return null
 
             return {
-                if (inspection.isActiveFor(element)) {
-                    inspection.simplify(element, false)
+                if (inspection.isActiveFor(element as KtPropertyAccessor)) {
+                    inspection.simplify(element as KtPropertyAccessor, false)
                 }
             }
         }
@@ -322,13 +324,13 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             if (element !is KtBinaryExpressionWithTypeRHS) return null
 
             val context = element.analyze()
-            val leftType = context.getType(element.left) ?: return null
-            val rightType = context.get(BindingContext.TYPE, element.right) ?: return null
+            val leftType = context.getType((element as KtBinaryExpressionWithTypeRHS).left) ?: return null
+            val rightType = context.get(BindingContext.TYPE, (element as KtBinaryExpressionWithTypeRHS).right) ?: return null
 
             if (!leftType.isMarkedNullable && rightType.isMarkedNullable) {
                 return {
-                    val type = element.right?.typeElement as? KtNullableType
-                    type?.replace(type.innerType!!)
+                    val type = (element as KtBinaryExpressionWithTypeRHS).right?.typeElement as? KtNullableType
+                    type?.replace(type!!.innerType!!)
                 }
             }
 
@@ -341,22 +343,22 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtBinaryExpression ||
-                element.operationToken != KtTokens.PLUS ||
-                diagnostics.forElement(element.operationReference).none {
+                (element as KtBinaryExpression).operationToken != KtTokens.PLUS ||
+                diagnostics.forElement((element as KtBinaryExpression).operationReference).none {
                     it.factory == Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
                             || it.factory  == Errors.NONE_APPLICABLE
                 })
                 return null
 
             val bindingContext = element.analyze()
-            val rightType = element.right?.getType(bindingContext) ?: return null
+            val rightType = (element as KtBinaryExpression).right?.getType(bindingContext) ?: return null
 
             if (KotlinBuiltIns.isString(rightType)) {
                 return {
                     val factory = KtPsiFactory(element)
-                    element.left!!.replace(factory.buildExpression {
+                    (element as KtBinaryExpression).left!!.replace(factory.buildExpression {
                         appendFixedText("(")
-                        appendExpression(element.left)
+                        appendExpression((element as KtBinaryExpression).left)
                         appendFixedText(").toString()")
                     })
                 }
@@ -371,11 +373,11 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtSimpleNameExpression || diagnostics.forElement(element).none { it.factory == Errors.UNINITIALIZED_VARIABLE }) return null
 
-            val resolved = element.mainReference.resolve() ?: return null
+            val resolved = (element as KtSimpleNameExpression).mainReference.resolve() ?: return null
             if (resolved.isAncestor(element, strict = true)) {
-                if (resolved is KtVariableDeclaration && resolved.hasInitializer()) {
+                if (resolved is KtVariableDeclaration && (resolved as KtVariableDeclaration).hasInitializer()) {
                     val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
-                    if (resolved.initializer!!.getChildOfType<KtClassOrObject>() == anonymousObject) {
+                    if ((resolved as KtVariableDeclaration).initializer!!.getChildOfType<KtClassOrObject>() == anonymousObject) {
                         return { element.replaced(KtPsiFactory(element).createThisExpression()) }
                     }
                 }
@@ -395,7 +397,7 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
 
             val variable = anonymousObject.getParentOfType<KtVariableDeclaration>(true) ?: return null
 
-            if (variable.nameAsName == element.getReferencedNameAsName() &&
+            if (variable.nameAsName == (element as KtSimpleNameExpression).getReferencedNameAsName() &&
                 variable.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject) {
                 return { element.replaced(KtPsiFactory(element).createThisExpression()) }
             }

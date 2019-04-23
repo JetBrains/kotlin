@@ -38,7 +38,7 @@ private fun KtPropertyAccessor.isRedundantGetter(): Boolean {
         return expression.isFieldText()
     }
     if (expression is KtBlockExpression) {
-        val statement = expression.statements.takeIf { it.size == 1 }?.firstOrNull() ?: return false
+        val statement = (expression as KtBlockExpression).statements.takeIf { it.size == 1 }?.firstOrNull() ?: return false
         val returnExpression = statement as? KtReturnExpression ?: return false
         return returnExpression.returnedExpression?.isFieldText() == true
     }

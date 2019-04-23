@@ -98,7 +98,7 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
         val psiFactory = KtPsiFactory(expression)
         val dot = buildString {
             if (first is KtQualifiedExpression
-                && first.receiverExpression.siblings().filterIsInstance<PsiWhiteSpace>().any { it.textContains('\n') }
+                && (first as KtQualifiedExpression).receiverExpression.siblings().filterIsInstance<PsiWhiteSpace>().any { it.textContains('\n') }
             ) append("\n")
             if (first is KtSafeQualifiedExpression) append("?")
             append(".")
@@ -108,7 +108,7 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
         val firstReplaced = first.replaced(
             psiFactory.buildExpression {
                 if (first is KtQualifiedExpression) {
-                    appendExpression(first.receiverExpression)
+                    appendExpression((first as KtQualifiedExpression).receiverExpression)
                     appendFixedText(dot)
                 }
                 appendExpression(psiFactory.createExpression("asSequence()"))
@@ -164,10 +164,10 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
         calls.add(call)
         val receiver = qualified.receiverExpression
         if (receiver is KtCallExpression && receiver.implicitReceiver(context) != null) {
-            calls.add(receiver)
+            calls.add(receiver as KtCallExpression)
             return
         }
-        if (receiver is KtQualifiedExpression) collect(receiver)
+        if (receiver is KtQualifiedExpression) collect(receiver as KtQualifiedExpression)
     }
     collect(this)
 

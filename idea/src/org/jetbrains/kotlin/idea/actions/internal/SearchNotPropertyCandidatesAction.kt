@@ -75,18 +75,18 @@ class SearchNotPropertyCandidatesAction : AnAction() {
             progress("Step 1: Collecting ${processed.size}:$pFunctions:${matchedDescriptors.size}", "$desc")
             when (desc) {
 
-                is ModuleDescriptor -> recursive(desc.getPackage(FqName("java")))
-                is ClassDescriptor -> desc.unsubstitutedMemberScope.getContributedDescriptors { true }.forEach(::recursive)
-                is PackageViewDescriptor -> desc.memberScope.getContributedDescriptors { true }.forEach(::recursive)
+                is ModuleDescriptor -> recursive((desc as ModuleDescriptor).getPackage(FqName("java")))
+                is ClassDescriptor -> (desc as ClassDescriptor).unsubstitutedMemberScope.getContributedDescriptors { true }.forEach(::recursive)
+                is PackageViewDescriptor -> (desc as PackageViewDescriptor).memberScope.getContributedDescriptors { true }.forEach(::recursive)
 
                 is FunctionDescriptor -> {
-                    if (desc.isFromJava) {
+                    if ((desc as FunctionDescriptor).isFromJava) {
                         val name = desc.fqNameUnsafe.shortName().asString()
                         if (name.length > 3 &&
-                            ((name.startsWith("get") && desc.valueParameters.isEmpty() && desc.returnType != null) ||
-                             (name.startsWith("set") && desc.valueParameters.size == 1))) {
-                            if (desc in matchedDescriptors) return
-                            matchedDescriptors += desc
+                            ((name.startsWith("get") && (desc as FunctionDescriptor).valueParameters.isEmpty() && (desc as FunctionDescriptor).returnType != null) ||
+                             (name.startsWith("set") && (desc as FunctionDescriptor).valueParameters.size == 1))) {
+                            if (desc as FunctionDescriptor in matchedDescriptors) return
+                            matchedDescriptors += desc as FunctionDescriptor
                         }
                     }
                     pFunctions++
@@ -138,7 +138,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
             descriptors.forEach {
                 val source = DescriptorToSourceUtilsIde.getAllDeclarations(project, it).filterIsInstance<PsiMethod>().firstOrNull()
                 if (source != null) {
-                    if (source.body != null || source.hasModifierProperty(PsiModifier.ABSTRACT))
+                    if (source!!.body != null || source!!.hasModifierProperty(PsiModifier.ABSTRACT))
                         nonTrivial += it
                     impl = true
                 }

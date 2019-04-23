@@ -168,7 +168,7 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
 
         fun isVisible(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor is DeclarationDescriptorWithVisibility) {
-                return descriptor.isVisible(element, callTypeAndReceiver.receiver as? KtExpression, bindingContext, resolutionFacade)
+                return (descriptor as DeclarationDescriptorWithVisibility).isVisible(element, callTypeAndReceiver.receiver as? KtExpression, bindingContext, resolutionFacade)
             }
 
             return true
@@ -252,7 +252,7 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, f
         val result = ArrayList<DeclarationDescriptor>()
 
         if (expression is KtSimpleNameExpression) {
-            if (!expression.isImportDirectiveExpression() && !isSelectorInQualified(expression)) {
+            if (!(expression as KtSimpleNameExpression).isImportDirectiveExpression() && !isSelectorInQualified(expression as KtSimpleNameExpression)) {
                 val filterByCallType = callTypeAndReceiver.toFilter()
 
                 indicesHelper.getClassesByName(expression, name).filterTo(result, filterByCallType)
@@ -450,8 +450,8 @@ internal open class ArrayAccessorImportFix(
             assert(factory == Errors.NO_GET_METHOD || factory == Errors.NO_SET_METHOD)
 
             val element = diagnostic.psiElement
-            if (element is KtArrayAccessExpression && element.arrayExpression != null) {
-                return ArrayAccessorImportFix(element, listOf(importName(diagnostic)), true)
+            if (element is KtArrayAccessExpression && (element as KtArrayAccessExpression).arrayExpression != null) {
+                return ArrayAccessorImportFix(element as KtArrayAccessExpression, listOf(importName(diagnostic)), true)
             }
 
             return null
@@ -594,8 +594,8 @@ internal class ImportForMismatchingArgumentsFix(
         val result = ArrayList<FunctionDescriptor>()
 
         fun processDescriptor(descriptor: CallableDescriptor) {
-            if (descriptor is FunctionDescriptor && filterFunction(descriptor)) {
-                result.add(descriptor)
+            if (descriptor is FunctionDescriptor && filterFunction(descriptor as FunctionDescriptor)) {
+                result.add(descriptor as FunctionDescriptor)
             }
         }
 
@@ -629,7 +629,7 @@ internal object ImportForMissingOperatorFactory : ImportFixBase.Factory() {
         when (val name = operatorDescriptor.name) {
             OperatorNameConventions.GET, OperatorNameConventions.SET -> {
                 if (element is KtArrayAccessExpression) {
-                    return object : ArrayAccessorImportFix(element, listOf(name), false) {
+                    return object : ArrayAccessorImportFix(element as KtArrayAccessExpression, listOf(name), false) {
                         override fun getSupportedErrors() = listOf(Errors.OPERATOR_MODIFIER_REQUIRED)
                     }
                 }

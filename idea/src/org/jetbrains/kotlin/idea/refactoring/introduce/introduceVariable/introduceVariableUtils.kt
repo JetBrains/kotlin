@@ -69,7 +69,7 @@ private fun getApplicableComponentFunctions(
                 val newContext = componentCallExpr.analyzeInContext(scope, contextExpression)
                 componentCallExpr.getResolvedCall(newContext)?.resultingDescriptor as? FunctionDescriptor
             }
-            .takeWhile { it != null && it.isValidOperator() }
+            .takeWhile { it != null && it!!.isValidOperator() }
             .toList() as List<FunctionDescriptor>
 }
 
@@ -95,7 +95,7 @@ internal fun chooseApplicableComponentFunctions(
             .setRequestFocus(true)
             .setItemChoosenCallback { callback(if (list.selectedIndex == 0) emptyList() else functions) }
             .createPopup()
-            .showInBestPositionFor(editor)
+            .showInBestPositionFor(editor!!)
 }
 
 internal fun suggestNamesForComponent(descriptor: FunctionDescriptor, project: Project, validator: (String) -> Boolean): Set<String> {

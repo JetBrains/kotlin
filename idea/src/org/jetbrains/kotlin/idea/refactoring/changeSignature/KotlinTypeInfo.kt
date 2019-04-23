@@ -23,7 +23,7 @@ data class KotlinTypeInfo(val isCovariant: Boolean, val type: KotlinType? = null
 
 fun KotlinTypeInfo.render(): String {
     return when {
-        text != null -> text
+        text != null -> text!!
         type != null -> renderType()
         else -> ""
     }

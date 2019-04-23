@@ -61,9 +61,9 @@ class RenameJvmNameHandler : PsiElementRenameHandler() {
         val annotationList = PsiTreeUtil.getParentOfType(entry, KtModifierList::class.java, KtFileAnnotationList::class.java)
         val newElement = when (annotationList) {
             is KtModifierList ->
-                (annotationList.parent as? KtDeclaration)?.toLightMethods()?.firstOrNull { it.name == name } ?: return null
+                ((annotationList as KtModifierList).parent as? KtDeclaration)?.toLightMethods()?.firstOrNull { it.name == name } ?: return null
 
-            is KtFileAnnotationList -> annotationList.getContainingKtFile().findFacadeClass() ?: return null
+            is KtFileAnnotationList -> (annotationList as KtFileAnnotationList).getContainingKtFile().findFacadeClass() ?: return null
 
             else -> return null
         }

@@ -33,8 +33,8 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
         return elements.map {
             when {
                 it is PsiFile || it is PsiDirectory -> it
-                it is PsiClass && it.containingClass == null -> it.containingFile
-                it is KtClassOrObject && it.parent is KtFile -> it.parent
+                it is PsiClass && (it as PsiClass).containingClass == null -> (it as PsiClass).containingFile
+                it is KtClassOrObject && (it as KtClassOrObject).parent is KtFile -> (it as KtClassOrObject).parent
                 else -> return null
             }
         }.toTypedArray()
@@ -64,7 +64,7 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
 
     override fun tryToMove(element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?): Boolean {
         if (element is KtLightClassForFacade) {
-            doMove(project, element.files.toTypedArray(), dataContext?.getData(LangDataKeys.TARGET_PSI_ELEMENT), null)
+            doMove(project, (element as KtLightClassForFacade).files.toTypedArray(), dataContext?.getData(LangDataKeys.TARGET_PSI_ELEMENT), null)
             return true
         }
 

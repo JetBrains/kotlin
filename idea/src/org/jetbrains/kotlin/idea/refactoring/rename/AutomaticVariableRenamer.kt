@@ -92,17 +92,17 @@ class AutomaticVariableRenamer(
     override fun nameToCanonicalName(name: String, element: PsiNamedElement): String? {
         if (element !is KtNamedDeclaration) return name
 
-        val psiVariable = element.toLightElements().firstIsInstanceOrNull<PsiVariable>()
+        val psiVariable = (element as KtNamedDeclaration).toLightElements().firstIsInstanceOrNull<PsiVariable>()
         val propertyName = if (psiVariable != null) {
-            val codeStyleManager = JavaCodeStyleManager.getInstance(psiVariable.project)
-            codeStyleManager.variableNameToPropertyName(name, codeStyleManager.getVariableKind(psiVariable))
+            val codeStyleManager = JavaCodeStyleManager.getInstance(psiVariable!!.project)
+            codeStyleManager.variableNameToPropertyName(name, codeStyleManager.getVariableKind(psiVariable!!))
         }
         else name
 
-        if (element in toUnpluralize) {
+        if (element as KtNamedDeclaration in toUnpluralize) {
             val singular = StringUtil.unpluralize(propertyName)
             if (singular != null) return singular
-            toUnpluralize.remove(element)
+            toUnpluralize.remove(element as KtNamedDeclaration)
         }
         return propertyName
     }
@@ -110,14 +110,14 @@ class AutomaticVariableRenamer(
     override fun canonicalNameToName(canonicalName: String, element: PsiNamedElement): String? {
         if (element !is KtNamedDeclaration) return canonicalName
 
-        val psiVariable = element.toLightElements().firstIsInstanceOrNull<PsiVariable>()
+        val psiVariable = (element as KtNamedDeclaration).toLightElements().firstIsInstanceOrNull<PsiVariable>()
         val varName = if (psiVariable != null) {
-            val codeStyleManager = JavaCodeStyleManager.getInstance(psiVariable.project)
-            codeStyleManager.propertyNameToVariableName(canonicalName, codeStyleManager.getVariableKind(psiVariable))
+            val codeStyleManager = JavaCodeStyleManager.getInstance(psiVariable!!.project)
+            codeStyleManager.propertyNameToVariableName(canonicalName, codeStyleManager.getVariableKind(psiVariable!!))
         }
         else canonicalName
 
-        return if (element in toUnpluralize)
+        return if (element as KtNamedDeclaration in toUnpluralize)
             StringUtil.pluralize(varName)
         else
             varName
@@ -158,7 +158,7 @@ class AutomaticVariableRenamerFactoryForJavaClass : AutomaticVariableRenamerFact
 }
 
 class AutomaticVariableInJavaRenamerFactory: AutomaticRenamerFactory {
-    override fun isApplicable(element: PsiElement) = element is KtClass && element.toLightClass() != null
+    override fun isApplicable(element: PsiElement) = element is KtClass && (element as KtClass).toLightClass() != null
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
             // Using java variable renamer for java usages

@@ -49,7 +49,7 @@ class KotlinBytecodeDecompilerTask(val file: KtFile) : Task.Backgroundable(file.
                 val root: VirtualFile = getOrCreateDummyRoot()
                 val decompiledFileName = FileUtil.getNameWithoutExtension(file.name) + ".decompiled.java"
                 val result = DummyFileSystem.getInstance().createChildFile(null, root, decompiledFileName)
-                VfsUtil.saveText(result, decompiledText)
+                VfsUtil.saveText(result, decompiledText!!)
 
                 result.isKotlinDecompiledFile = true
 

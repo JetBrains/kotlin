@@ -39,12 +39,12 @@ class ChangeSuperTypeListEntryTypeArgumentFix(
         val psiFactory = KtPsiFactory(superTypeListEntry)
         val newElement = when (superTypeListEntry) {
             is KtSuperTypeEntry -> {
-                val classReference = superTypeListEntry.typeAsUserType?.referenceExpression?.text ?: return
+                val classReference = (superTypeListEntry as KtSuperTypeEntry).typeAsUserType?.referenceExpression?.text ?: return
                 psiFactory.createSuperTypeEntry("$classReference$typeArgumentList")
             }
             is KtSuperTypeCallEntry -> {
-                val classReference = superTypeListEntry.calleeExpression.constructorReferenceExpression?.text ?: return
-                val valueArgumentList = superTypeListEntry.valueArgumentList?.text ?: return
+                val classReference = (superTypeListEntry as KtSuperTypeCallEntry).calleeExpression.constructorReferenceExpression?.text ?: return
+                val valueArgumentList = (superTypeListEntry as KtSuperTypeCallEntry).valueArgumentList?.text ?: return
                 psiFactory.createSuperTypeCallEntry("$classReference$typeArgumentList$valueArgumentList")
             }
             else -> return
@@ -73,10 +73,10 @@ class ChangeSuperTypeListEntryTypeArgumentFix(
             val superTypeListEntry = containingClass.superTypeListEntries.find {
                 when (it) {
                     is KtSuperTypeEntry -> {
-                        (it.typeAsUserType?.referenceExpression?.mainReference?.resolve() as? KtClass)?.descriptor == superClassDescriptor
+                        ((it as KtSuperTypeEntry).typeAsUserType?.referenceExpression?.mainReference?.resolve() as? KtClass)?.descriptor == superClassDescriptor
                     }
                     is KtSuperTypeCallEntry -> {
-                        it.calleeExpression.resolveToCall()?.resultingDescriptor?.returnType?.constructor?.declarationDescriptor == superClassDescriptor
+                        (it as KtSuperTypeCallEntry).calleeExpression.resolveToCall()?.resultingDescriptor?.returnType?.constructor?.declarationDescriptor == superClassDescriptor
                     }
                     else -> false
                 }

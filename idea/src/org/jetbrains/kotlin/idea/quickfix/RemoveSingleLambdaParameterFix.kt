@@ -48,7 +48,7 @@ class RemoveSingleLambdaParameterFix(element: KtParameter) : KotlinQuickFixActio
             val lambda = parameterList.parent.parent as? KtLambdaExpression ?: return null
 
             val property = lambda.getStrictParentOfType<KtProperty>()
-            if (property != null && property.typeReference == null) return null
+            if (property != null && property!!.typeReference == null) return null
 
             return RemoveSingleLambdaParameterFix(parameter)
         }

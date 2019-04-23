@@ -59,7 +59,7 @@ object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFact
         } ?: anyType
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
 
-        val needVal = callable is KtPrimaryConstructor && ((callable.getContainingClassOrObject() as? KtClass)?.isData() ?: false)
+        val needVal = callable is KtPrimaryConstructor && (((callable as KtPrimaryConstructor).getContainingClassOrObject() as? KtClass)?.isData() ?: false)
 
         val parameterInfo = KotlinParameterInfo(
                 callableDescriptor = functionDescriptor,

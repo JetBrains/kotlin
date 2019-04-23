@@ -119,7 +119,7 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
         val newElement = expression.replace(newExpression)
 
         if (editor != null) {
-            moveCaret(editor, isSet, newElement)
+            moveCaret(editor!!, isSet, newElement)
         }
     }
 

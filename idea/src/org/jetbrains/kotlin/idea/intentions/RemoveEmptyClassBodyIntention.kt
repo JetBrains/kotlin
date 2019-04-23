@@ -44,14 +44,14 @@ class RemoveEmptyClassBodyIntention : SelfTargetingOffsetIndependentIntention<Kt
 
     private fun addSemicolonAfterEmptyCompanion(element: PsiElement, editor: Editor?) {
         if (element !is KtObjectDeclaration) return
-        if (!element.isCompanion() || element.nameIdentifier != null) return
+        if (!(element as KtObjectDeclaration).isCompanion() || (element as KtObjectDeclaration).nameIdentifier != null) return
 
         val next = element.getNextSiblingIgnoringWhitespaceAndComments() ?: return
         if (next.node.elementType == KtTokens.SEMICOLON) return
         val firstChildNode = next.firstChild?.node ?: return
         if (firstChildNode.elementType in KtTokens.KEYWORDS) return
 
-        element.parent.addAfter(KtPsiFactory(element).createSemicolon(), element)
+        (element as KtObjectDeclaration).parent.addAfter(KtPsiFactory(element).createSemicolon(), element)
         editor?.caretModel?.moveToOffset(element.endOffset + 1)
     }
 

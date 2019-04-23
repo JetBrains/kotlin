@@ -63,7 +63,7 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtP
 
         val hasVararg = element.hasModifier(KtTokens.VARARG_KEYWORD)
         if (parameterAnnotationsText != null) {
-            element.modifierList?.replace(KtPsiFactory(element).createModifierList(parameterAnnotationsText))
+            element.modifierList?.replace(KtPsiFactory(element).createModifierList(parameterAnnotationsText!!))
         }
         else {
             element.modifierList?.delete()

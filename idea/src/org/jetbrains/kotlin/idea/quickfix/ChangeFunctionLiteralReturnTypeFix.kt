@@ -64,25 +64,25 @@ class ChangeFunctionLiteralReturnTypeFix(
 
         val correspondingProperty = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtProperty::class.java)
         if (correspondingProperty != null &&
-            correspondingProperty.initializer?.let { QuickFixUtil.canEvaluateTo(it, functionLiteralExpression) } ?: true
+            correspondingProperty!!.initializer?.let { QuickFixUtil.canEvaluateTo(it, functionLiteralExpression) } ?: true
         ) {
-            val correspondingPropertyTypeRef = correspondingProperty.typeReference
+            val correspondingPropertyTypeRef = correspondingProperty!!.typeReference
             val propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef)
-            return if (propertyType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, propertyType))
-                ChangeVariableTypeFix(correspondingProperty, eventualFunctionLiteralType)
+            return if (propertyType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, propertyType!!))
+                ChangeVariableTypeFix(correspondingProperty!!, eventualFunctionLiteralType)
             else
                 null
         }
 
         val resolvedCall = functionLiteralExpression.getParentResolvedCall(context, true)
         if (resolvedCall != null) {
-            val valueArgument = resolvedCall.call.getValueArgumentForExpression(functionLiteralExpression)
-            val correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument)
+            val valueArgument = resolvedCall!!.call.getValueArgumentForExpression(functionLiteralExpression)
+            val correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall!!, valueArgument)
             if (correspondingParameter != null) {
-                val correspondingParameterTypeRef = correspondingParameter.typeReference
+                val correspondingParameterTypeRef = correspondingParameter!!.typeReference
                 val parameterType = context.get(BindingContext.TYPE, correspondingParameterTypeRef)
-                return if (parameterType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parameterType))
-                    ChangeParameterTypeFix(correspondingParameter, eventualFunctionLiteralType)
+                return if (parameterType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parameterType!!))
+                    ChangeParameterTypeFix(correspondingParameter!!, eventualFunctionLiteralType)
                 else
                     null
             }
@@ -90,11 +90,13 @@ class ChangeFunctionLiteralReturnTypeFix(
 
 
         val parentFunction = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtFunction::class.java, true)
-        if (parentFunction != null && QuickFixUtil.canFunctionOrGetterReturnExpression(parentFunction, functionLiteralExpression)) {
-            val parentFunctionReturnTypeRef = parentFunction.typeReference
+        if (parentFunction != null && QuickFixUtil.canFunctionOrGetterReturnExpression(parentFunction!!, functionLiteralExpression)) {
+            val parentFunctionReturnTypeRef = parentFunction!!.typeReference
             val parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef)
-            return if (parentFunctionReturnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parentFunctionReturnType))
-                ChangeCallableReturnTypeFix.ForEnclosing(parentFunction, eventualFunctionLiteralType)
+            return if (parentFunctionReturnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType,
+                                                                                                  parentFunctionReturnType!!
+                ))
+                ChangeCallableReturnTypeFix.ForEnclosing(parentFunction!!, eventualFunctionLiteralType)
             else
                 null
         }
@@ -107,7 +109,7 @@ class ChangeFunctionLiteralReturnTypeFix(
     override fun getFamilyName() = KotlinBundle.message("change.type.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
-        return functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor!!, file)
+        return functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix!!.isAvailable(project, editor!!, file)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -115,8 +117,8 @@ class ChangeFunctionLiteralReturnTypeFix(
             val newTypeRef = it.replace(KtPsiFactory(file).createType(typeSourceCode)) as KtTypeReference
             ShortenReferences.DEFAULT.process(newTypeRef)
         }
-        if (appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor!!, file)) {
-            appropriateQuickFix.invoke(project, editor, file)
+        if (appropriateQuickFix != null && appropriateQuickFix!!.isAvailable(project, editor!!, file)) {
+            appropriateQuickFix!!.invoke(project, editor, file)
         }
     }
 

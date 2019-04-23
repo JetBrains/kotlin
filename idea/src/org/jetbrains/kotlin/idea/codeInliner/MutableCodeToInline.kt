@@ -46,7 +46,7 @@ internal class MutableCodeToInline(
                 val action = it.getCopyableUserData(POST_INSERTION_ACTION)
                 if (action != null) {
                     it.putCopyableUserData(POST_INSERTION_ACTION, null)
-                    action.invoke(it)
+                    action!!.invoke(it)
                 }
             }
         }

@@ -41,7 +41,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
         if (!isApplicableToNoParentCheck(element)) return false
 
         val parent = element.parent
-        if (parent is KtBinaryExpression && isApplicableToNoParentCheck(parent)) return false
+        if (parent is KtBinaryExpression && isApplicableToNoParentCheck(parent as KtBinaryExpression)) return false
 
         return true
     }
@@ -68,9 +68,9 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
         private fun fold(left: KtExpression?, right: String, factory: KtPsiFactory): KtStringTemplateExpression {
             val forceBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
 
-            return if (left is KtBinaryExpression && isApplicableToNoParentCheck(left)) {
-                val leftRight = buildText(left.right, forceBraces)
-                fold(left.left, leftRight + right, factory)
+            return if (left is KtBinaryExpression && isApplicableToNoParentCheck(left as KtBinaryExpression)) {
+                val leftRight = buildText((left as KtBinaryExpression).right, forceBraces)
+                fold((left as KtBinaryExpression).left, leftRight + right, factory)
             } else {
                 val leftText = buildText(left, forceBraces)
                 factory.createExpression("\"$leftText$right\"") as KtStringTemplateExpression
@@ -79,8 +79,8 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
 
         fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
             if (expr == null) return ""
-            val expression = KtPsiUtil.safeDeparenthesize(expr).let {
-                if ((it as? KtDotQualifiedExpression)?.isToString() == true) it.receiverExpression else it
+            val expression = KtPsiUtil.safeDeparenthesize(expr!!).let {
+                if ((it as? KtDotQualifiedExpression)?.isToString() == true) (it as KtDotQualifiedExpression).receiverExpression else it
             }
             val expressionText = expression.text
             when (expression) {
@@ -90,7 +90,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
 
                     val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
                     if (constant != null) {
-                        val stringValue = constant.getValue(type).toString()
+                        val stringValue = constant!!.getValue(type).toString()
                         if (KotlinBuiltIns.isChar(type) || stringValue == expressionText) {
                             return buildString {
                                 StringUtil.escapeStringCharacters(stringValue.length, stringValue, if (forceBraces) "\"$" else "\"", this)
@@ -111,9 +111,9 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
                         if (base.endsWith('$')) {
                             return base.dropLast(1) + "\\$"
                         } else {
-                            val lastPart = expression.children.lastOrNull()
+                            val lastPart = (expression as KtStringTemplateExpression).children.lastOrNull()
                             if (lastPart is KtSimpleNameStringTemplateEntry) {
-                                return base.dropLast(lastPart.textLength) + "\${" + lastPart.text.drop(1) + "}"
+                                return base.dropLast((lastPart as KtSimpleNameStringTemplateEntry).textLength) + "\${" + (lastPart as KtSimpleNameStringTemplateEntry).text.drop(1) + "}"
                             }
                         }
                     }
@@ -124,7 +124,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
                     return "$" + (if (forceBraces) "{$expressionText}" else expressionText)
 
                 is KtThisExpression ->
-                    return "$" + (if (forceBraces || expression.labelQualifier != null) "{$expressionText}" else expressionText)
+                    return "$" + (if (forceBraces || (expression as KtThisExpression).labelQualifier != null) "{$expressionText}" else expressionText)
             }
 
             return "\${$expressionText}"
@@ -138,8 +138,8 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
         }
 
         private fun isSuitable(expression: KtExpression): Boolean {
-            if (expression is KtBinaryExpression && expression.operationToken == KtTokens.PLUS) {
-                return isSuitable(expression.left ?: return false) && isSuitable(expression.right ?: return false)
+            if (expression is KtBinaryExpression && (expression as KtBinaryExpression).operationToken == KtTokens.PLUS) {
+                return isSuitable((expression as KtBinaryExpression).left ?: return false) && isSuitable((expression as KtBinaryExpression).right ?: return false)
             }
 
             if (PsiUtilCore.hasErrorElementChild(expression)) return false

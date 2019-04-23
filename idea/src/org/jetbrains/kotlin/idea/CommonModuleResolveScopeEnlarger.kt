@@ -29,7 +29,7 @@ class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {
         var result = GlobalSearchScope.EMPTY_SCOPE
         for (entry in ModuleRootManager.getInstance(implementingModule).orderEntries) {
             if (entry is JdkOrderEntry) {
-                val scopeForSdk = LibraryScopeCache.getInstance(project).getScopeForSdk(entry)
+                val scopeForSdk = LibraryScopeCache.getInstance(project).getScopeForSdk(entry as JdkOrderEntry)
                 result = result.uniteWith(scopeForSdk)
             }
         }

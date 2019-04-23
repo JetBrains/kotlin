@@ -103,8 +103,8 @@ class NamingConventionInspectionSettings(
     fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
         val name = element.name
         val nameIdentifier = element.nameIdentifier
-        if (name != null && nameIdentifier != null && nameRegex?.matches(name) == false) {
-            val message = getNameMismatchMessage(name)
+        if (name != null && nameIdentifier != null && nameRegex?.matches(name!!) == false) {
+            val message = getNameMismatchMessage(name!!)
             holder.registerProblem(
                 element.nameIdentifier!!,
                 "$entityName name <code>#ref</code> $message #loc",
@@ -355,7 +355,7 @@ private class PackageNameInspectionLocal(
             }
 
             return if (partErrorMessage != null) {
-                CheckResult(partErrorMessage, true)
+                CheckResult(partErrorMessage!!, true)
             } else {
                 CheckResult(namingSettings.getDefaultErrorMessage(), false)
             }
@@ -365,7 +365,7 @@ private class PackageNameInspectionLocal(
     private class RenamePackageFix : RenameIdentifierFix() {
         override fun getElementToRename(element: PsiElement): PsiElement? {
             val packageDirective = element as? KtPackageDirective ?: return null
-            return JavaPsiFacade.getInstance(element.project).findPackage(packageDirective.qualifiedName)
+            return JavaPsiFacade.getInstance((element as KtPackageDirective).project).findPackage(packageDirective.qualifiedName)
         }
     }
 
@@ -407,14 +407,14 @@ class PackageNameInspection : BaseGlobalInspection() {
     ): Array<CommonProblemDescriptor>? {
         when (refEntity) {
             is RefFile -> {
-                val psiFile = refEntity.psiFile
-                if (psiFile is KtFile && !psiFile.isInjectedFragment && !psiFile.packageMatchesDirectoryOrImplicit()) {
-                    val packageDirective = psiFile.packageDirective
+                val psiFile = (refEntity as RefFile).psiFile
+                if (psiFile is KtFile && !(psiFile as KtFile).isInjectedFragment && !(psiFile as KtFile).packageMatchesDirectoryOrImplicit()) {
+                    val packageDirective = (psiFile as KtFile).packageDirective
                     if (packageDirective != null) {
-                        val qualifiedName = packageDirective.qualifiedName
-                        val checkResult = PackageNameInspectionLocal.checkPackageDirective(packageDirective, namingSettings)
+                        val qualifiedName = packageDirective!!.qualifiedName
+                        val checkResult = PackageNameInspectionLocal.checkPackageDirective(packageDirective!!, namingSettings)
                         if (checkResult != null) {
-                            return arrayOf(inspectionManager.createProblemDescriptor(checkResult.toErrorMessage(qualifiedName)))
+                            return arrayOf(inspectionManager.createProblemDescriptor(checkResult!!.toErrorMessage(qualifiedName)))
                         }
                     }
                 }
@@ -428,7 +428,7 @@ class PackageNameInspection : BaseGlobalInspection() {
 
                 val checkResult = PackageNameInspectionLocal.checkQualifiedName(name, namingSettings)
                 if (checkResult != null) {
-                    return arrayOf(inspectionManager.createProblemDescriptor(checkResult.toErrorMessage(name)))
+                    return arrayOf(inspectionManager.createProblemDescriptor(checkResult!!.toErrorMessage(name)))
                 }
             }
 

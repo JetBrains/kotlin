@@ -74,7 +74,7 @@ open class RemovePsiElementSimpleFix(element: PsiElement, private val text: Stri
                     val initializer = expression.initializer
                     if (initializer != null && initializer !is KtConstantExpression) {
                         val commentSaver = CommentSaver(expression)
-                        val replaced = expression.replace(initializer)
+                        val replaced = expression.replace(initializer!!)
                         commentSaver.restore(replaced)
                     } else {
                         expression.delete()

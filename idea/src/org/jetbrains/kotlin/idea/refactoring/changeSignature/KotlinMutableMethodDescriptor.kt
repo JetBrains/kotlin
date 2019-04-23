@@ -23,8 +23,8 @@ class KotlinMutableMethodDescriptor(override val original: KotlinMethodDescripto
 
     override var receiver: KotlinParameterInfo? = original.receiver
         set(value: KotlinParameterInfo?) {
-            if (value != null && value !in parameters) {
-                parameters.add(value)
+            if (value != null && value!! !in parameters) {
+                parameters.add(value!!)
             }
             field = value
         }

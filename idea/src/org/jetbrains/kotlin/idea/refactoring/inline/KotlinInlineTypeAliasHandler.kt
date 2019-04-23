@@ -111,7 +111,7 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
                 .filterNotNull()
                 .mapNotNull {
                     val type = context[BindingContext.ABBREVIATED_TYPE, it.typeReference] ?: context[BindingContext.TYPE, it.typeReference]
-                    if (type != null) TypeProjectionImpl(type) else null
+                    if (type != null) TypeProjectionImpl(type!!) else null
                 }
                 .toList()
             if (argumentTypes.size != typeConstructorsToInline.size) return null
@@ -137,8 +137,8 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
             val importDirective = usage.getStrictParentOfType<KtImportDirective>()
             if (importDirective != null) {
                 val reference = usage.getQualifiedElementSelector()?.mainReference
-                if (reference != null && reference.multiResolve(false).size <= 1) {
-                    importDirective.delete()
+                if (reference != null && reference!!.multiResolve(false).size <= 1) {
+                    importDirective!!.delete()
                 }
 
                 return null
@@ -162,7 +162,7 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
 
                 val originalTypeArgumentList = callElement.typeArgumentList
                 if (originalTypeArgumentList != null) {
-                    originalTypeArgumentList.replaced(expandedTypeArgumentList)
+                    originalTypeArgumentList!!.replaced(expandedTypeArgumentList)
                 }
                 else {
                     callElement.addAfter(expandedTypeArgumentList, callElement.calleeExpression)
@@ -179,8 +179,8 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
         project.executeWriteCommand(RefactoringBundle.message("inline.command", name)) {
             val inlinedElements = usages.mapNotNull {
                 val inlinedElement = when (it) {
-                                         is KtUserType -> inlineIntoType(it)
-                                         is KtReferenceExpression -> inlineIntoCall(it)
+                                         is KtUserType -> inlineIntoType(it as KtUserType)
+                                         is KtReferenceExpression -> inlineIntoCall(it as KtReferenceExpression)
                                          else -> null
                                      } ?: return@mapNotNull null
 

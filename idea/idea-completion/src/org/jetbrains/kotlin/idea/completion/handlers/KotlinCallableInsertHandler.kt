@@ -48,10 +48,10 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
         val file = context.file
         val o = item.`object`
         if (file is KtFile && o is DeclarationLookupObject) {
-            val descriptor = o.descriptor as? CallableDescriptor ?: return
+            val descriptor = (o as DeclarationLookupObject).descriptor as? CallableDescriptor ?: return
             if (descriptor.extensionReceiverParameter != null || callType == CallType.CALLABLE_REFERENCE) {
                 if (DescriptorUtils.isTopLevelDeclaration(descriptor) && !descriptor.isArtificialImportAliasedDescriptor) {
-                    ImportInsertHelper.getInstance(context.project).importDescriptor(file, descriptor)
+                    ImportInsertHelper.getInstance(context.project).importDescriptor(file as KtFile, descriptor)
                 }
             } else if (callType == CallType.DEFAULT) {
                 if (descriptor.isArtificialImportAliasedDescriptor) return
@@ -64,7 +64,7 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
 
                 psiDocumentManager.commitAllDocuments()
 
-                shortenReferences.process(file, context.startOffset, context.tailOffset - 1)
+                shortenReferences.process(file as KtFile, context.startOffset, context.tailOffset - 1)
 
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
 

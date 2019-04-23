@@ -95,7 +95,7 @@ class ConvertFunctionToPropertyIntention :
             }.asString()
 
             val replaced = originalFunction.replaced(psiFactory.createDeclaration<KtProperty>(propertyString))
-            if (editor != null && moveCaret) editor.caretModel.moveToOffset(replaced.nameIdentifier!!.endOffset)
+            if (editor != null && moveCaret) editor!!.caretModel.moveToOffset(replaced.nameIdentifier!!.endOffset)
         }
 
         override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
@@ -114,15 +114,15 @@ class ConvertFunctionToPropertyIntention :
                 }
 
                 if (callable is KtNamedFunction) {
-                    if (callable.typeReference == null) {
-                        val functionDescriptor = callable.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) as FunctionDescriptor
+                    if ((callable as KtNamedFunction).typeReference == null) {
+                        val functionDescriptor = (callable as KtNamedFunction).unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) as FunctionDescriptor
                         val type = functionDescriptor.returnType
                         val typeToInsert = when {
-                            type == null || type.isError -> null
-                            type.constructor.isDenotable -> type
-                            else -> type.supertypes().firstOrNull { it.constructor.isDenotable }
+                            type == null || type!!.isError -> null
+                            type!!.constructor.isDenotable -> type
+                            else -> type!!.supertypes().firstOrNull { it.constructor.isDenotable }
                         } ?: functionDescriptor.builtIns.nullableAnyType
-                        callable.typeFqNameToAdd = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToInsert)
+                        (callable as KtNamedFunction).typeFqNameToAdd = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToInsert)
                     }
 
                     callableDescriptor.getContainingScope()
@@ -131,30 +131,30 @@ class ConvertFunctionToPropertyIntention :
                         ?.let { reportDeclarationConflict(conflicts, it) { s -> "$s already exists" } }
                 }
 
-                if (callable is PsiMethod) callable.checkDeclarationConflict(getterName, conflicts, callables)
+                if (callable is PsiMethod) (callable as PsiMethod).checkDeclarationConflict(getterName, conflicts, callables)
 
                 val usages = ReferencesSearch.search(callable)
                 for (usage in usages) {
                     if (usage is KtSimpleNameReference) {
-                        val expression = usage.expression
+                        val expression = (usage as KtSimpleNameReference).expression
                         val callElement = expression.getParentOfTypeAndBranch<KtCallElement> { calleeExpression }
                         if (callElement != null && expression.getStrictParentOfType<KtCallableReferenceExpression>() == null) {
-                            if (callElement.typeArguments.isNotEmpty()) {
+                            if (callElement!!.typeArguments.isNotEmpty()) {
                                 conflicts.putValue(
                                     callElement,
-                                    "Type arguments will be lost after conversion: ${StringUtil.htmlEmphasize(callElement.text)}"
+                                    "Type arguments will be lost after conversion: ${StringUtil.htmlEmphasize(callElement!!.text)}"
                                 )
                             }
 
-                            if (callElement.valueArguments.isNotEmpty()) {
+                            if (callElement!!.valueArguments.isNotEmpty()) {
                                 conflicts.putValue(
                                     callElement,
-                                    "Call with arguments will be skipped: ${StringUtil.htmlEmphasize(callElement.text)}"
+                                    "Call with arguments will be skipped: ${StringUtil.htmlEmphasize(callElement!!.text)}"
                                 )
                                 continue
                             }
 
-                            kotlinCalls.add(callElement)
+                            kotlinCalls.add(callElement!!)
                         } else {
                             kotlinRefsToRename.add(usage)
                         }
@@ -175,8 +175,8 @@ class ConvertFunctionToPropertyIntention :
                     foreignRefs.forEach { it.handleElementRename(newGetterName) }
                     callables.forEach {
                         when (it) {
-                            is KtNamedFunction -> convertFunction(it, psiFactory, moveCaret = it == mainElement)
-                            is PsiMethod -> it.name = newGetterName
+                            is KtNamedFunction -> convertFunction(it as KtNamedFunction, psiFactory, moveCaret = it == mainElement)
+                            is PsiMethod -> (it as PsiMethod).name = newGetterName
                         }
                     }
 
@@ -187,7 +187,7 @@ class ConvertFunctionToPropertyIntention :
 
         private fun findMainElement(callables: List<PsiElement>): PsiElement? {
             if (editor == null) return null
-            val offset = editor.caretModel.offset
+            val offset = editor!!.caretModel.offset
             return callables.find { file == it.containingFile && offset in it.textRange }
         }
     }

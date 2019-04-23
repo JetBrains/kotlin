@@ -37,7 +37,7 @@ class ValToObjectIntention : SelfTargetingIntention<KtProperty>(KtProperty::clas
         if (element.annotationEntries.isNotEmpty()) return false
 
         // disable if has non-Kotlin usages
-        return ReferencesSearch.search(element).all { it is KtReference && it.element.parent !is KtCallableReferenceExpression }
+        return ReferencesSearch.search(element).all { it is KtReference && (it as KtReference).element.parent !is KtCallableReferenceExpression }
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {

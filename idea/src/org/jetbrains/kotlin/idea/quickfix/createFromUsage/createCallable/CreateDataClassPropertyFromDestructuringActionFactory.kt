@@ -71,7 +71,7 @@ object CreateDataClassPropertyFromDestructuringActionFactory : CreateParameterFr
                 val typeReference = newParameter.typeReference ?: return@let
                 val templateBuilder = TemplateBuilderImpl(typeReference)
                 templateBuilder.replaceElement(typeReference, ConstantNode(typeReference.text))
-                templateBuilder.run(editor, true)
+                templateBuilder.run(editor!!, true)
             }
         }
     }

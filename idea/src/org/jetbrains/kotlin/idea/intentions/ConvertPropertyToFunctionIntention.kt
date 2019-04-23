@@ -65,16 +65,16 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
             property.addAfter(psiFactory.createParameterList("()"), property.nameIdentifier)
             if (property.initializer == null) {
                 if (getter != null) {
-                    val dropGetterTo = (getter.equalsToken ?: getter.bodyExpression)
+                    val dropGetterTo = (getter!!.equalsToken ?: getter!!.bodyExpression)
                         ?.siblings(forward = false, withItself = false)
                         ?.firstOrNull { it !is PsiWhiteSpace }
-                    getter.deleteChildRange(getter.firstChild, dropGetterTo)
+                    getter!!.deleteChildRange(getter!!.firstChild, dropGetterTo)
 
-                    val dropPropertyFrom = getter
+                    val dropPropertyFrom = getter!!
                         .siblings(forward = false, withItself = false)
                         .first { it !is PsiWhiteSpace }
                         .nextSibling
-                    property.deleteChildRange(dropPropertyFrom, getter.prevSibling)
+                    property.deleteChildRange(dropPropertyFrom, getter!!.prevSibling)
                 }
             }
             property.setName(newName)
@@ -108,7 +108,7 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                         if (callable is KtParameter) {
                             conflicts.putValue(
                                 callable,
-                                if (callable.hasActualModifier()) "Property has an actual declaration in the class constructor"
+                                if ((callable as KtParameter).hasActualModifier()) "Property has an actual declaration in the class constructor"
                                 else "Property overloaded in child class constructor"
                             )
                         }
@@ -118,13 +118,13 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                                 ?.findFunction(callableDescriptor.name, NoLookupLocation.FROM_IDE) { it.valueParameters.isEmpty() }
                                 ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                                 ?.let { reportDeclarationConflict(conflicts, it) { s -> "$s already exists" } }
-                        } else if (callable is PsiMethod) callable.checkDeclarationConflict(propertyName, conflicts, callables)
+                        } else if (callable is PsiMethod) (callable as PsiMethod).checkDeclarationConflict(propertyName, conflicts, callables)
 
                         val usages = ReferencesSearch.search(callable)
                         for (usage in usages) {
                             if (usage is KtReference) {
                                 if (usage is KtSimpleNameReference) {
-                                    val expression = usage.expression
+                                    val expression = (usage as KtSimpleNameReference).expression
                                     if (expression.getCall(expression.analyze(BodyResolveMode.PARTIAL)) != null
                                         && expression.getStrictParentOfType<KtCallableReferenceExpression>() == null
                                     ) {
@@ -133,7 +133,7 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                                         refsToRename.add(usage)
                                     }
                                 } else {
-                                    val refElement = usage.element
+                                    val refElement = (usage as KtReference).element
                                     conflicts.putValue(
                                         refElement,
                                         "Unrecognized reference will be skipped: " + StringUtil.htmlEmphasize(refElement.text)
@@ -148,7 +148,7 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
 
                             if (usage is PsiJavaReference) {
                                 if (usage.resolve() is PsiField && usage is PsiReferenceExpression) {
-                                    javaRefsToReplaceWithCall.add(usage)
+                                    javaRefsToReplaceWithCall.add(usage as PsiReferenceExpression)
                                 }
                                 continue
                             }
@@ -176,8 +176,8 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                     }
                     callables.forEach {
                         when (it) {
-                            is KtProperty -> convertProperty(it, kotlinPsiFactory)
-                            is PsiMethod -> it.name = newName
+                            is KtProperty -> convertProperty(it as KtProperty, kotlinPsiFactory)
+                            is PsiMethod -> (it as PsiMethod).name = newName
                         }
                     }
                 }

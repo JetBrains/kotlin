@@ -50,17 +50,17 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExp
 
         val useCallExpression = factory.buildExpression {
             if (resourceName != null) {
-                appendName(resourceName)
+                appendName(resourceName!!)
                 appendFixedText(".")
             }
             else if (finallyExpressionReceiver is KtThisExpression) {
-                appendFixedText(finallyExpressionReceiver.text)
+                appendFixedText((finallyExpressionReceiver as KtThisExpression).text)
                 appendFixedText(".")
             }
             appendFixedText("use {")
 
             if (resourceName != null) {
-                appendName(resourceName)
+                appendName(resourceName!!)
                 appendFixedText("->")
             }
             appendFixedText("\n")
@@ -71,8 +71,8 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExp
 
         val result = element.replace(useCallExpression) as KtExpression
         val call = when (result) {
-            is KtQualifiedExpression -> result.selectorExpression as? KtCallExpression ?: return
-            is KtCallExpression -> result
+            is KtQualifiedExpression -> (result as KtQualifiedExpression).selectorExpression as? KtCallExpression ?: return
+            is KtCallExpression -> result as KtCallExpression
             else -> return
         }
         val lambda = call.lambdaArguments.firstOrNull() ?: return
@@ -99,7 +99,7 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExp
 
         when (receiver) {
             is ExpressionReceiver -> {
-                val expression = receiver.expression
+                val expression = (receiver as ExpressionReceiver).expression
                 if (expression !is KtThisExpression) {
                     val resourceReference = expression as? KtReferenceExpression ?: return null
                     val resourceDescriptor =

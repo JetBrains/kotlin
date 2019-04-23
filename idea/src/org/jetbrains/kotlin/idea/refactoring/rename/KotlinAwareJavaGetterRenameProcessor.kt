@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
-    override fun canProcessElement(element: PsiElement) = element is PsiMethod && element !is KtLightMethod && JvmAbi.isGetterName(element.name)
+    override fun canProcessElement(element: PsiElement) = element is PsiMethod && element !is KtLightMethod && JvmAbi.isGetterName((element as PsiMethod).name)
 
     override fun findReferences(element: PsiElement): MutableCollection<PsiReference> {
         val getterReferences = super.findReferences(element)

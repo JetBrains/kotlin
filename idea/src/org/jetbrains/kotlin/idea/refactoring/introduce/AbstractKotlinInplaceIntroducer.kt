@@ -84,10 +84,10 @@ abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
         val leaf = containingFile.findElementAt(marker.startOffset) ?: return null
 
         leaf.getParentOfTypeAndBranch<KtProperty> { nameIdentifier }?.let {
-            return it.replaced(KtPsiFactory(myProject).createDeclaration(exprText))
+            return it.replaced(KtPsiFactory(myProject).createDeclaration(exprText!!))
         }
 
-        val occurrenceExprText = (myExpr as? KtProperty)?.name ?: exprText
+        val occurrenceExprText = (myExpr as? KtProperty)?.name ?: exprText!!
         return leaf
                 .getNonStrictParentOfType<KtSimpleNameExpression>()
                 ?.replaced(KtPsiFactory(myProject).createExpression(occurrenceExprText))

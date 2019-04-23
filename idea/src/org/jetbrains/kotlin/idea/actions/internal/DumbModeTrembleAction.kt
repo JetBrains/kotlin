@@ -38,7 +38,7 @@ class DumbModeTrembleAction: DumbAwareAction() {
             return
         }
 
-        val isTrembleDumb = isTrembleDumb(project)
+        val isTrembleDumb = isTrembleDumb(project!!)
         e.presentation.text = if (isTrembleDumb) "Disable Tremble Dumb Mode" else "Enable Tremble Dumb Mode"
     }
 

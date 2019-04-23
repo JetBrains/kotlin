@@ -144,8 +144,8 @@ class ExtractSuperRefactoring(
             val elementsToMove = getElementsToMove(memberInfos, originalClass, isExtractInterface).keys
 
             val moveTarget = if (targetParent is PsiDirectory) {
-                val targetPackage = targetParent.getPackage() ?: return conflicts
-                KotlinMoveTargetForDeferredFile(FqName(targetPackage.qualifiedName), targetParent) { null }
+                val targetPackage = (targetParent as PsiDirectory).getPackage() ?: return conflicts
+                KotlinMoveTargetForDeferredFile(FqName(targetPackage.qualifiedName), targetParent as PsiDirectory) { null }
             }
             else {
                 KotlinMoveTargetForExistingElement(targetParent as KtElement)
@@ -171,7 +171,7 @@ class ExtractSuperRefactoring(
                     }
                     conflictChecker.checkAllConflicts(usages, LinkedHashSet<UsageInfo>(), conflicts)
                     if (targetParent is PsiDirectory) {
-                        ExtractSuperClassUtil.checkSuperAccessible(targetParent, conflicts, originalClass.toLightClass())
+                        ExtractSuperClassUtil.checkSuperAccessible(targetParent as PsiDirectory, conflicts, originalClass.toLightClass())
                     }
 
                     checkVisibilityInAbstractedMembers(memberInfos, originalClass.getResolutionFacade(), conflicts)
@@ -189,9 +189,9 @@ class ExtractSuperRefactoring(
     private val bindingContext = extractInfo.originalClass.analyze(BodyResolveMode.PARTIAL)
 
     private fun collectTypeParameters(refTarget: PsiElement?) {
-        if (refTarget is KtTypeParameter && refTarget.getStrictParentOfType<KtTypeParameterListOwner>() == extractInfo.originalClass) {
-            typeParameters += refTarget
-            refTarget.accept(
+        if (refTarget is KtTypeParameter && (refTarget as KtTypeParameter).getStrictParentOfType<KtTypeParameterListOwner>() == extractInfo.originalClass) {
+            typeParameters += refTarget as KtTypeParameter
+            (refTarget as KtTypeParameter).accept(
                     object : KtTreeVisitorVoid() {
                         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                             (expression.mainReference.resolve() as? KtTypeParameter)?.let { typeParameters += it }
@@ -225,9 +225,9 @@ class ExtractSuperRefactoring(
         val kind = if (extractInfo.isInterface) "interface" else "class"
         val prototype = psiFactory.createClass("$kind $newClassName")
         val newClass = if (targetParent is PsiDirectory) {
-            val file = targetParent.findFile(extractInfo.targetFileName) ?: run {
+            val file = (targetParent as PsiDirectory).findFile(extractInfo.targetFileName) ?: run {
                 val template = FileTemplateManager.getInstance(project).getInternalTemplate("Kotlin File")
-                NewKotlinFileAction.createFileFromTemplate(extractInfo.targetFileName, template, targetParent) ?: return null
+                NewKotlinFileAction.createFileFromTemplate(extractInfo.targetFileName, template, targetParent as PsiDirectory) ?: return null
             }
             file.add(prototype) as KtClass
         }
@@ -268,15 +268,15 @@ class ExtractSuperRefactoring(
             psiFactory.createSuperTypeEntry(superTypeText)
         }
         if (superClassEntry != null) {
-            val qualifiedTypeRefText = bindingContext[BindingContext.TYPE, superClassEntry.typeReference]?.let {
+            val qualifiedTypeRefText = bindingContext[BindingContext.TYPE, superClassEntry!!.typeReference]?.let {
                 IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
             }
             val superClassEntryToAdd = if (qualifiedTypeRefText != null) {
-                superClassEntry.copied().apply { typeReference?.replace(psiFactory.createType(qualifiedTypeRefText)) }
+                superClassEntry!!.copied().apply { typeReference?.replace(psiFactory.createType(qualifiedTypeRefText!!)) }
             }
-            else superClassEntry
+            else superClassEntry!!
             newClass.addSuperTypeListEntry(superClassEntryToAdd)
-            ShortenReferences.DEFAULT.process(superClassEntry.replaced(newSuperTypeListEntry))
+            ShortenReferences.DEFAULT.process(superClassEntry!!.replaced(newSuperTypeListEntry))
         }
         else {
             ShortenReferences.DEFAULT.process(originalClass.addSuperTypeListEntry(newSuperTypeListEntry))

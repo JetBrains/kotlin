@@ -77,7 +77,7 @@ class JavaToKotlinPushDownDelegate : JavaPushDownDelegate() {
                     val ktMember = member.j2k() as? KtCallableDeclaration ?: continue@members
                     ktMember.removeModifier(KtTokens.DEFAULT_VISIBILITY_KEYWORD)
                     val isStatic = member.hasModifierProperty(PsiModifier.STATIC)
-                    val targetMemberClass = if (isStatic && subClass is KtClass) subClass.getOrCreateCompanionObject() else subClass
+                    val targetMemberClass = if (isStatic && subClass is KtClass) (subClass as KtClass).getOrCreateCompanionObject() else subClass
                     val targetMemberClassDescriptor = resolutionFacade.resolveToDescriptor(targetMemberClass) as ClassDescriptor
                     if (member.hasModifierProperty(PsiModifier.ABSTRACT)) {
                         hasAbstractMembers = true
@@ -98,7 +98,7 @@ class JavaToKotlinPushDownDelegate : JavaPushDownDelegate() {
 
                 is PsiClass -> {
                     if (memberInfo.overrides != null) {
-                        val typeText = RefactoringUtil.findReferenceToClass(superClass.implementsList, member)?.j2kText() ?: continue@members
+                        val typeText = RefactoringUtil.findReferenceToClass(superClass.implementsList, member as PsiClass)?.j2kText() ?: continue@members
                         subClass.addSuperTypeListEntry(psiFactory.createSuperTypeEntry(typeText))
                     }
                     else {

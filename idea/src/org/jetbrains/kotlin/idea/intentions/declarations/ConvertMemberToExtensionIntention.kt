@@ -59,14 +59,14 @@ class ConvertMemberToExtensionIntention :
         if (element.receiverTypeReference != null) return false
         if (element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
         when (element) {
-            is KtProperty -> if (element.hasInitializer()) return false
+            is KtProperty -> if ((element as KtProperty).hasInitializer()) return false
             is KtSecondaryConstructor -> return false
         }
         return true
     }
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
-        if (!element.withExpectedActuals().all { it is KtCallableDeclaration && isApplicable(it) }) return null
+        if (!element.withExpectedActuals().all { it is KtCallableDeclaration && isApplicable(it as KtCallableDeclaration) }) return null
         return (element.nameIdentifier ?: return null).textRange
     }
 
@@ -95,15 +95,15 @@ class ConvertMemberToExtensionIntention :
                         val bodyToSelect = getBodyForSelection(extension, bodyTypeToSelect)
 
                         if (bodyToSelect != null) {
-                            val range = bodyToSelect.textRange
+                            val range = bodyToSelect!!.textRange
                             moveCaret(range.startOffset, ScrollType.CENTER)
 
-                            val parent = bodyToSelect.parent
+                            val parent = bodyToSelect!!.parent
                             val lastSibling =
                                 if (parent is KtBlockExpression)
-                                    parent.rBrace?.siblings(forward = false, withItself = false)?.first { it !is PsiWhiteSpace }
+                                    (parent as KtBlockExpression).rBrace?.siblings(forward = false, withItself = false)?.first { it !is PsiWhiteSpace }
                                 else
-                                    bodyToSelect.siblings(forward = true, withItself = false).lastOrNull()
+                                    bodyToSelect!!.siblings(forward = true, withItself = false).lastOrNull()
                             val endOffset = lastSibling?.endOffset ?: range.endOffset
                             selectionModel.setSelection(range.startOffset, endOffset)
                         } else {
@@ -163,12 +163,12 @@ class ConvertMemberToExtensionIntention :
         for (ref in ReferencesSearch.search(element)) {
             when (ref) {
                 is KtReference -> {
-                    val refFile = ref.element.containingKtFile
+                    val refFile = (ref as KtReference).element.containingKtFile
                     if (refFile != file) {
                         ktFilesToAddImports.add(refFile)
                     }
                 }
-                is PsiReferenceExpression -> javaCallsToFix.addIfNotNull(ref.parent as? PsiMethodCallExpression)
+                is PsiReferenceExpression -> javaCallsToFix.addIfNotNull((ref as PsiReferenceExpression).parent as? PsiMethodCallExpression)
             }
         }
 
@@ -185,9 +185,9 @@ class ConvertMemberToExtensionIntention :
 
         if (typeParameterList != null) {
             if (extension.typeParameterList != null) {
-                extension.typeParameterList!!.replace(typeParameterList)
+                extension.typeParameterList!!.replace(typeParameterList!!)
             } else {
-                extension.addBefore(typeParameterList, extension.receiverTypeReference)
+                extension.addBefore(typeParameterList!!, extension.receiverTypeReference)
                 extension.addBefore(psiFactory.createWhiteSpace(), extension.receiverTypeReference)
             }
         }
@@ -213,7 +213,7 @@ class ConvertMemberToExtensionIntention :
 
         when (extension) {
             is KtFunction -> {
-                if (!extension.hasBody() && !isEffectivelyExpected) {
+                if (!(extension as KtFunction).hasBody() && !isEffectivelyExpected) {
                     //TODO: methods in PSI for setBody
                     extension.add(psiFactory.createBlock(bodyText))
                     bodyTypeToSelect = GeneratedBodyType.FUNCTION
@@ -227,26 +227,26 @@ class ConvertMemberToExtensionIntention :
                     val templateGetter = templateProperty.getter!!
                     val templateSetter = templateProperty.setter!!
 
-                    var getter = extension.getter
+                    var getter = (extension as KtProperty).getter
                     if (getter == null) {
-                        getter = extension.addAfter(templateGetter, extension.typeReference) as KtPropertyAccessor
+                        getter = extension.addAfter(templateGetter, (extension as KtProperty).typeReference) as KtPropertyAccessor
                         extension.addBefore(psiFactory.createNewLine(), getter)
                         bodyTypeToSelect = GeneratedBodyType.GETTER
-                    } else if (!getter.hasBody()) {
-                        getter = getter.replace(templateGetter) as KtPropertyAccessor
+                    } else if (!getter!!.hasBody()) {
+                        getter = getter!!.replace(templateGetter) as KtPropertyAccessor
                         bodyTypeToSelect = GeneratedBodyType.GETTER
                     }
 
-                    if (extension.isVar) {
-                        var setter = extension.setter
+                    if ((extension as KtProperty).isVar) {
+                        var setter = (extension as KtProperty).setter
                         if (setter == null) {
                             setter = extension.addAfter(templateSetter, getter) as KtPropertyAccessor
                             extension.addBefore(psiFactory.createNewLine(), setter)
                             if (bodyTypeToSelect == GeneratedBodyType.NOTHING) {
                                 bodyTypeToSelect = GeneratedBodyType.SETTER
                             }
-                        } else if (!setter.hasBody()) {
-                            setter.replace(templateSetter) as KtPropertyAccessor
+                        } else if (!setter!!.hasBody()) {
+                            setter!!.replace(templateSetter) as KtPropertyAccessor
                             if (bodyTypeToSelect == GeneratedBodyType.NOTHING) {
                                 bodyTypeToSelect = GeneratedBodyType.SETTER
                             }
@@ -282,7 +282,7 @@ class ConvertMemberToExtensionIntention :
 
     private fun askIfExpectedIsAllowed(file: KtFile): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            return file.allChildren.any { it is PsiComment && it.text.trim() == "// ALLOW_EXPECT_WITHOUT_ACTUAL" }
+            return file.allChildren.any { it is PsiComment && (it as PsiComment).text.trim() == "// ALLOW_EXPECT_WITHOUT_ACTUAL" }
         }
 
         return Messages.showYesNoDialog(
@@ -308,7 +308,7 @@ class ConvertMemberToExtensionIntention :
         val classVisibility = element.containingClass()?.visibilityModifierType()
         val (extension, bodyTypeToSelect) = processSingleDeclaration(element, allowExpected)
         if (classVisibility != null && extension.visibilityModifier() == null) {
-            extension.addModifier(classVisibility)
+            extension.addModifier(classVisibility!!)
         }
         return extension to bodyTypeToSelect
     }

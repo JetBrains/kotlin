@@ -33,11 +33,11 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
             val qualifiedExpression = when (bodyExpression) {
                 is KtDotQualifiedExpression -> bodyExpression
                 is KtBlockExpression -> {
-                    val body = bodyExpression.statements.singleOrNull()
+                    val body = (bodyExpression as KtBlockExpression).statements.singleOrNull()
                     when (body) {
-                        is KtReturnExpression -> body.returnedExpression
-                        is KtDotQualifiedExpression -> body.takeIf { _ ->
-                            function.typeReference.let { it == null || it.text == "Unit" }
+                        is KtReturnExpression -> (body as KtReturnExpression).returnedExpression
+                        is KtDotQualifiedExpression -> (body as KtDotQualifiedExpression).takeIf { _ ->
+                            function.typeReference.let { it == null || it!!.text == "Unit" }
                         }
                         else -> null
                     }

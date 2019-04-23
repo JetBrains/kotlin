@@ -161,34 +161,34 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
                 PsiDocumentManager.getInstance(project).commitDocument(document)
 
                 openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
-                closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)
+                closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset!! + 1)
             }
 
             if (insertLambda && lambdaInfo!!.explicitParameters) {
-                val placeholderRange = TextRange(openingBracketOffset, closeBracketOffset!! + 1)
+                val placeholderRange = TextRange(openingBracketOffset!!, closeBracketOffset!! + 1)
                 val explicitParameterTypes =
-                    LambdaSignatureTemplates.explicitParameterTypesRequired(context.file as KtFile, placeholderRange, lambdaInfo.lambdaType)
+                    LambdaSignatureTemplates.explicitParameterTypesRequired(context.file as KtFile, placeholderRange, lambdaInfo!!.lambdaType)
                 LambdaSignatureTemplates.insertTemplate(
                     context,
                     placeholderRange,
-                    lambdaInfo.lambdaType,
+                    lambdaInfo!!.lambdaType,
                     explicitParameterTypes,
                     signatureOnly = false
                 )
                 return
             }
 
-            document.insertString(openingBracketOffset + 1, argumentText)
+            document.insertString(openingBracketOffset!! + 1, argumentText)
             if (closeBracketOffset != null) {
                 closeBracketOffset += argumentText.length
             }
 
             if (!insertTypeArguments) {
                 if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == null) {
-                    editor.caretModel.moveToOffset(openingBracketOffset + 1 + inBracketsShift)
+                    editor.caretModel.moveToOffset(openingBracketOffset!! + 1 + inBracketsShift)
                     AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
                 } else {
-                    editor.caretModel.moveToOffset(closeBracketOffset + 1)
+                    editor.caretModel.moveToOffset(closeBracketOffset!! + 1)
                 }
             }
         }

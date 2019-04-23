@@ -89,8 +89,8 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
                         val lastStatement = bodyExpression.statements.lastOrNull()
                         if (lastStatement != null && lastStatement !is KtReturnExpression) {
                             val foldableReturns = BranchedFoldingUtils.getFoldableReturns(lastStatement)
-                            if (foldableReturns == null || foldableReturns.isEmpty()) {
-                                lastStatement.replace(psiFactory.createExpressionByPattern("return $0", lastStatement))
+                            if (foldableReturns == null || foldableReturns!!.isEmpty()) {
+                                lastStatement!!.replace(psiFactory.createExpressionByPattern("return $0", lastStatement!!))
                             }
                         }
                         val renderType = typeSourceCode.renderType(it)

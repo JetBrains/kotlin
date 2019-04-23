@@ -59,7 +59,7 @@ abstract class BaseKotlinVariableMacro<TState> : KotlinMacro() {
         val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL_FOR_COMPLETION)
 
         fun isVisible(descriptor: DeclarationDescriptor): Boolean {
-            return descriptor !is DeclarationDescriptorWithVisibility || descriptor.isVisible(contextElement, null, bindingContext, resolutionFacade)
+            return descriptor !is DeclarationDescriptorWithVisibility || (descriptor as DeclarationDescriptorWithVisibility).isVisible(contextElement, null, bindingContext, resolutionFacade)
         }
 
         val state = initState(contextElement, bindingContext)

@@ -33,7 +33,7 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
                     "Redundant visibility modifier",
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     IntentionWrapper(
-                        RemoveModifierFix(declaration, redundantVisibility, isRedundant = true),
+                        RemoveModifierFix(declaration, redundantVisibility!!, isRedundant = true),
                         declaration.containingFile
                     )
                 )

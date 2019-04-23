@@ -33,7 +33,7 @@ class MoveKotlinClassHandler : MoveClassHandler {
      */
     override fun preprocessUsages(results: MutableCollection<UsageInfo>) {
         results.removeAll { usageInfo ->
-            usageInfo is MoveRenameUsageInfo && usageInfo.referencedElement is KtLightClass
+            usageInfo is MoveRenameUsageInfo && (usageInfo as MoveRenameUsageInfo).referencedElement is KtLightClass
         }
     }
 

@@ -82,9 +82,9 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         val left = left
         val leftReference = when (left) {
             is KtReferenceExpression ->
-                left
+                left as KtReferenceExpression
             is KtDotQualifiedExpression ->
-                if (left.receiverExpression is KtThisExpression) left.selectorExpression as? KtReferenceExpression else null
+                if ((left as KtDotQualifiedExpression).receiverExpression is KtThisExpression) (left as KtDotQualifiedExpression).selectorExpression as? KtReferenceExpression else null
             else ->
                 null
         }
@@ -109,7 +109,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
                         null to null
                     }
             if (rightDescriptor == null || leftDescriptor == null) continue
-            parameterToPropertyMap[rightDescriptor] = leftDescriptor
+            parameterToPropertyMap[rightDescriptor!!] = leftDescriptor!!
         }
         return initializer
     }
@@ -127,23 +127,23 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             val propertyDescriptor = parameterToPropertyMap[parameterDescriptor]
             var propertyCommentSaver: CommentSaver? = null
             if (parameterDescriptor != null && propertyDescriptor != null) {
-                val property = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtProperty
+                val property = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor!!) as? KtProperty
                 if (property != null) {
-                    if (propertyDescriptor.name == parameterDescriptor.name &&
-                        propertyDescriptor.type == parameterDescriptor.type &&
-                        propertyDescriptor.accessors.all { it.isDefault }
+                    if (propertyDescriptor!!.name == parameterDescriptor!!.name &&
+                        propertyDescriptor!!.type == parameterDescriptor!!.type &&
+                        propertyDescriptor!!.accessors.all { it.isDefault }
                     ) {
-                        propertyCommentSaver = CommentSaver(property)
-                        val valOrVar = if (property.isVar) factory.createVarKeyword() else factory.createValKeyword()
+                        propertyCommentSaver = CommentSaver(property!!)
+                        val valOrVar = if (property!!.isVar) factory.createVarKeyword() else factory.createValKeyword()
                         newParameter.addBefore(valOrVar, newParameter.nameIdentifier)
-                        val propertyModifiers = property.modifierList?.text
+                        val propertyModifiers = property!!.modifierList?.text
                         if (propertyModifiers != null) {
-                            val newModifiers = factory.createModifierList(propertyModifiers)
+                            val newModifiers = factory.createModifierList(propertyModifiers!!)
                             newParameter.addBefore(newModifiers, newParameter.valOrVarKeyword)
                         }
-                        property.delete()
+                        property!!.delete()
                     } else {
-                        property.initializer = factory.createSimpleName(parameterDescriptor.name.asString())
+                        property!!.initializer = factory.createSimpleName(parameterDescriptor!!.name.asString())
                     }
                 }
             }

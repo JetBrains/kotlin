@@ -50,16 +50,16 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             val selectorDescriptor = selectorExpression?.getResolvedCall(context)?.resultingDescriptor
             when (selectorDescriptor) {
                 is PropertyDescriptor -> {
-                    val name = selectorDescriptor.name
+                    val name = (selectorDescriptor as PropertyDescriptor).name
                     if (containingClassDescriptor.findMemberVariable(name) != null) return
                     val variable = expression.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
-                    if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return
+                    if (variable != null && variable!!.isLocalOrExtension(containingClassDescriptor)) return
                 }
                 is FunctionDescriptor -> {
-                    val name = selectorDescriptor.name
+                    val name = (selectorDescriptor as FunctionDescriptor).name
                     if (containingClassDescriptor.findMemberFunction(name) != null) return
                     val function = expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)
-                    if (function != null && function.isLocalOrExtension(containingClassDescriptor)) return
+                    if (function != null && function!!.isLocalOrExtension(containingClassDescriptor)) return
                 }
             }
 

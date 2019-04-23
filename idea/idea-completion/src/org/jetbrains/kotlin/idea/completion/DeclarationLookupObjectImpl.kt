@@ -40,7 +40,7 @@ abstract class DeclarationLookupObjectImpl(
     override val importableFqName: FqName?
         get() {
             return if (descriptor != null)
-                descriptor.importableFqName
+                descriptor!!.importableFqName
             else
                 (psiElement as? PsiClass)?.qualifiedName?.let(::FqName)
         }
@@ -49,7 +49,7 @@ abstract class DeclarationLookupObjectImpl(
 
     override fun hashCode(): Int {
         return if (descriptor != null)
-            descriptor.original.hashCode()
+            descriptor!!.original.hashCode()
         else
             psiElement!!.hashCode()
     }
@@ -67,7 +67,7 @@ abstract class DeclarationLookupObjectImpl(
     override val isDeprecated: Boolean
         get() {
             return if (descriptor != null)
-                KotlinBuiltIns.isDeprecated(descriptor)
+                KotlinBuiltIns.isDeprecated(descriptor!!)
             else
                 (psiElement as? PsiDocCommentOwner)?.isDeprecated == true
         }

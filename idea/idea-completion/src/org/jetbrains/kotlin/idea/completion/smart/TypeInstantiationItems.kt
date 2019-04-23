@@ -95,8 +95,8 @@ class TypeInstantiationItems(
 
         val classifier = fuzzyType.type.constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters ?: return
         val classDescriptor = when (classifier) {
-            is ClassDescriptor -> classifier
-            is TypeAliasDescriptor -> classifier.classDescriptor
+            is ClassDescriptor -> classifier as ClassDescriptor
+            is TypeAliasDescriptor -> (classifier as TypeAliasDescriptor).classDescriptor
             else -> null
         }
 
@@ -109,15 +109,15 @@ class TypeInstantiationItems(
             items.addIfNotNull(createTypeInstantiationItem(typeAliasFuzzyType, classDescriptor, tail))
         }
 
-        if (classDescriptor != null && !forOrdinaryCompletion && !KotlinBuiltIns.isAny(classDescriptor)) { // do not search inheritors of Any
+        if (classDescriptor != null && !forOrdinaryCompletion && !KotlinBuiltIns.isAny(classDescriptor!!)) { // do not search inheritors of Any
             val typeArgs = fuzzyType.type.arguments
-            inheritanceSearchers.addInheritorSearcher(classDescriptor, classDescriptor, typeArgs, fuzzyType.freeParameters, tail)
+            inheritanceSearchers.addInheritorSearcher(classDescriptor!!, classDescriptor!!, typeArgs, fuzzyType.freeParameters, tail)
 
             val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(DescriptorUtils.getFqName(classifier))
             if (javaClassId != null) {
-                val javaAnalog = resolutionFacade.moduleDescriptor.resolveTopLevelClass(javaClassId.asSingleFqName(), NoLookupLocation.FROM_IDE)
+                val javaAnalog = resolutionFacade.moduleDescriptor.resolveTopLevelClass(javaClassId!!.asSingleFqName(), NoLookupLocation.FROM_IDE)
                 if (javaAnalog != null) {
-                    inheritanceSearchers.addInheritorSearcher(javaAnalog, classDescriptor, typeArgs, fuzzyType.freeParameters, tail)
+                    inheritanceSearchers.addInheritorSearcher(javaAnalog!!, classDescriptor!!, typeArgs, fuzzyType.freeParameters, tail)
                 }
             }
         }
@@ -128,13 +128,13 @@ class TypeInstantiationItems(
     ) {
         val _declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(resolutionFacade.project, descriptor) ?: return
         val declaration = if (_declaration is KtDeclaration)
-            toFromOriginalFileMapper.toOriginalFile(_declaration) ?: return
+            toFromOriginalFileMapper.toOriginalFile(_declaration as KtDeclaration) ?: return
         else
             _declaration
 
         val psiClass: PsiClass = when (declaration) {
-            is PsiClass -> declaration
-            is KtClassOrObject -> declaration.toLightClass() ?: return
+            is PsiClass -> declaration as PsiClass
+            is KtClassOrObject -> (declaration as KtClassOrObject).toLightClass() ?: return
             else -> return
         }
         add(InheritanceSearcher(psiClass, kotlinClassDescriptor, typeArgs, freeParameters, tail))
@@ -286,11 +286,11 @@ class TypeInstantiationItems(
             override fun equals(other: Any?): Boolean {
                 if (other === this) return true
                 if (other !is InstantiationLookupElement) return false
-                if (getLookupString() != other.lookupString) return false
+                if (getLookupString() != (other as InstantiationLookupElement).lookupString) return false
                 val presentation1 = LookupElementPresentation()
                 val presentation2 = LookupElementPresentation()
                 renderElement(presentation1)
-                other.renderElement(presentation2)
+                (other as InstantiationLookupElement).renderElement(presentation2)
                 return presentation1.itemText == presentation2.itemText && presentation1.tailText == presentation2.tailText
             }
 
@@ -312,8 +312,8 @@ class TypeInstantiationItems(
             val samConstructor = run {
                 val container = classifier.containingDeclaration
                 val scope = when (container) {
-                    is PackageFragmentDescriptor -> container.getMemberScope()
-                    is ClassDescriptor -> container.unsubstitutedMemberScope
+                    is PackageFragmentDescriptor -> (container as PackageFragmentDescriptor).getMemberScope()
+                    is ClassDescriptor -> (container as ClassDescriptor).unsubstitutedMemberScope
                     else -> return
                 }
                 scope.collectSyntheticStaticMembersAndConstructors(resolutionFacade, DescriptorKindFilter.FUNCTIONS, { classifier.name == it })

@@ -14,7 +14,7 @@ abstract class AbstractImplicitTypeInspection(
     SpecifyTypeExplicitlyIntention::class,
     { element, inspection ->
         with(inspection as AbstractImplicitTypeInspection) {
-            element.typeReference == null && additionalChecker(element, inspection)
+            element.typeReference == null && additionalChecker(element, inspection as AbstractImplicitTypeInspection)
         }
     }
 ) {

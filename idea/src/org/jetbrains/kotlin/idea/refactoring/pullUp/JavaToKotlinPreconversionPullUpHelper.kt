@@ -94,7 +94,7 @@ class JavaToKotlinPreconversionPullUpHelper(
         }
 
         if (member is PsiField && !info.isStatic) {
-            collectFieldReferencesToEncapsulate(member)
+            collectFieldReferencesToEncapsulate(member as PsiField)
         }
 
         val superInterfaceCount = getCurrentSuperInterfaceCount()
@@ -166,7 +166,7 @@ class JavaToKotlinPreconversionPullUpHelper(
         }
 
         if (originalMember is PsiField) {
-            val usages = fieldsToUsages[originalMember] ?: return
+            val usages = fieldsToUsages[originalMember as PsiField] ?: return
             for (usage in usages) {
                 val fieldDescriptor = usage.fieldDescriptor
                 val targetLightClass = (usage.reference?.resolve() as? PsiField)?.containingClass ?: return

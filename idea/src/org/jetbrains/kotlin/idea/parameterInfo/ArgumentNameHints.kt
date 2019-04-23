@@ -27,7 +27,7 @@ fun provideArgumentNameHints(element: KtCallElement): List<InlayInfo> {
     val call = element.getCall(ctx) ?: return emptyList()
     val resolvedCall = call.getResolvedCall(ctx)
     if (resolvedCall != null) {
-        return getArgumentNameHintsForCallCandidate(resolvedCall, call.valueArgumentList)
+        return getArgumentNameHintsForCallCandidate(resolvedCall!!, call.valueArgumentList)
     }
     val candidates = call.resolveCandidates(ctx, element.getResolutionFacade())
     if (candidates.isEmpty()) return emptyList()
@@ -63,7 +63,7 @@ private fun getArgumentNameHintsForCallCandidate(
                 if (!arg.isNamed() && !valueParam.name.isSpecial && argExp.isUnclearExpression()) {
                     val prefix = if (valueParam.varargElementType != null) "..." else ""
                     val offset = if (arg == valueArgumentList?.arguments?.firstOrNull() && valueParam.varargElementType != null)
-                        valueArgumentList.leftParenthesis?.textRange?.endOffset ?: argExp.startOffset
+                        valueArgumentList!!.leftParenthesis?.textRange?.endOffset ?: argExp.startOffset
                     else
                         arg.getSpreadElement()?.startOffset ?: argExp.startOffset
                     return@mapNotNull InlayInfo(prefix + valueParam.name.identifier, offset)

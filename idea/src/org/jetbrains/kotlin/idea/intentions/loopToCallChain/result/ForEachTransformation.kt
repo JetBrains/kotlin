@@ -69,7 +69,7 @@ class ForEachTransformation(
                         val isWrite = nameExpr.readWriteAccess(useResolveForReadWrite = false) != ReferenceAccess.READ
                         if (isWrite) {
                             val variable = nameExpr.mainReference.resolve() as? KtCallableDeclaration
-                            if (variable != null && variable.countUsages(state.outerLoop) > 1) return@anyDescendantOfType true
+                            if (variable != null && variable!!.countUsages(state.outerLoop) > 1) return@anyDescendantOfType true
                         }
                     }
                     false

@@ -47,7 +47,7 @@ class KotlinChangeSignatureProcessor(
     override fun setPrepareSuccessfulSwingThreadCallback(callback: Runnable?) {
         val actualCallback = if (callback != null) {
             Runnable {
-                callback.run()
+                callback!!.run()
                 setPrepareSuccessfulSwingThreadCallback(null)
             }
         } else null

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.SmartList
 
 class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
-    override fun canProcessElement(element: PsiElement) = element is KtParameter && element.ownerFunction is KtFunction
+    override fun canProcessElement(element: PsiElement) = element is KtParameter && (element as KtParameter).ownerFunction is KtFunction
 
     override fun isToSearchInComments(psiElement: PsiElement) = JavaRefactoringSettings.getInstance().RENAME_SEARCH_IN_COMMENTS_FOR_VARIABLE
 

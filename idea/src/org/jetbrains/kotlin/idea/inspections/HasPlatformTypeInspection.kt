@@ -56,7 +56,7 @@ class HasPlatformTypeInspection(
             if (expression != null &&
                 (!reportPlatformArguments || !TypeUtils.makeNotNullable(type).isFlexibleRecursive())
             ) {
-                return listOf(IntentionWrapper(AddExclExclCallFix(expression), element.containingFile))
+                return listOf(IntentionWrapper(AddExclExclCallFix(expression!!), element.containingFile))
             }
         }
 

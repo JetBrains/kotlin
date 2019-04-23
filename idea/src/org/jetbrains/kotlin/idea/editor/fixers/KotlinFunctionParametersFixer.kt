@@ -28,20 +28,20 @@ class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<Kotlin
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtNamedFunction) return
 
-        val parameterList = psiElement.valueParameterList
+        val parameterList = (psiElement as KtNamedFunction).valueParameterList
         if (parameterList == null) {
-            val identifier = psiElement.nameIdentifier ?: return
+            val identifier = (psiElement as KtNamedFunction).nameIdentifier ?: return
 
             // Insert () after name or after type parameters list when it placed after name
-            val offset = max(identifier.range.end, psiElement.typeParameterList?.range?.end ?: psiElement.range.start)
+            val offset = max(identifier.range.end, (psiElement as KtNamedFunction).typeParameterList?.range?.end ?: psiElement.range.start)
             editor.document.insertString(offset, "()")
             processor.registerUnresolvedError(offset + 1)
         } else {
-            val rParen = parameterList.lastChild ?: return
+            val rParen = parameterList!!.lastChild ?: return
 
             if (")" != rParen.text) {
-                val params = parameterList.parameters
-                val offset = if (params.isEmpty()) parameterList.range.start + 1 else params.last().range.end
+                val params = parameterList!!.parameters
+                val offset = if (params.isEmpty()) parameterList!!.range.start + 1 else params.last().range.end
                 editor.document.insertString(offset, ")")
             }
         }

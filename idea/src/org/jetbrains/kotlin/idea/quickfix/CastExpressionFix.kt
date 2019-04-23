@@ -38,7 +38,7 @@ class CastExpressionFix(element: KtExpression, type: KotlinType) : KotlinQuickFi
     private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES.renderType(type)
     private val upOrDownCast: Boolean = run {
         val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element)
-        expressionType != null && (type.isSubtypeOf(expressionType) || expressionType.isSubtypeOf(type))
+        expressionType != null && (type.isSubtypeOf(expressionType!!) || expressionType!!.isSubtypeOf(type))
         && expressionType != type.makeNullable() //covered by AddExclExclCallFix
     }
 

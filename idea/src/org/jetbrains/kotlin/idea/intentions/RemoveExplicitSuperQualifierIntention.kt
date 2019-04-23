@@ -70,7 +70,7 @@ class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSupe
         val factory = KtPsiFactory(superExpression)
         val labelName = superExpression.getLabelNameAsName()
         return (if (labelName != null)
-            factory.createExpressionByPattern("super@$0", labelName, reformat = reformat)
+            factory.createExpressionByPattern("super@$0", labelName!!, reformat = reformat)
         else
             factory.createExpression("super")) as KtSuperExpression
     }

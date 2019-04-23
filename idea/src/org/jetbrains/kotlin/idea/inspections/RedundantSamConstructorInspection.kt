@@ -50,14 +50,14 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             if (samConstructorCalls.isEmpty()) return
             val single = samConstructorCalls.singleOrNull()
             if (single != null) {
-                val calleeExpression = single.calleeExpression ?: return
+                val calleeExpression = single!!.calleeExpression ?: return
                 val problemDescriptor = holder.manager.createProblemDescriptor(
-                    single.getQualifiedExpressionForSelector()?.receiverExpression ?: calleeExpression,
-                    single.typeArgumentList ?: calleeExpression,
+                    single!!.getQualifiedExpressionForSelector()?.receiverExpression ?: calleeExpression,
+                    single!!.typeArgumentList ?: calleeExpression,
                     "Redundant SAM-constructor",
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     isOnTheFly,
-                    createQuickFix(single)
+                    createQuickFix(single!!)
                 )
 
                 holder.registerProblem(problemDescriptor)
@@ -170,7 +170,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                     val samValueArgument = it.samConstructorValueArgument()
                     val samConstructorName = (it.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
                     samValueArgument == null || samConstructorName == null ||
-                            samValueArgument.hasLabeledReturnPreventingConversion(samConstructorName)
+                            samValueArgument!!.hasLabeledReturnPreventingConversion(samConstructorName!!)
                 }) return emptyList()
 
             val originalFunctionDescriptor = functionResolvedCall.resultingDescriptor.original as? FunctionDescriptor ?: return emptyList()
@@ -218,7 +218,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
         private fun ValueArgument.toCallExpression(): KtCallExpression? {
             val argumentExpression = getArgumentExpression()
             return (if (argumentExpression is KtDotQualifiedExpression)
-                argumentExpression.selectorExpression
+                (argumentExpression as KtDotQualifiedExpression).selectorExpression
             else
                 argumentExpression) as? KtCallExpression
         }

@@ -68,7 +68,7 @@ open class CreateParameterFromUsageFix<E : KtElement>(
                 }
 
                 override fun onRefactoringDone() {
-                    onComplete(editor)
+                    (onComplete as (Editor?) -> Unit)(editor)
                 }
             }.run()
         }
@@ -84,8 +84,8 @@ open class CreateParameterFromUsageFix<E : KtElement>(
             val builder = CallableBuilderConfiguration(listOf(info), element).createBuilder()
             val receiverTypeCandidate = builder.computeTypeCandidates(info.receiverTypeInfo).firstOrNull()
             if (receiverTypeCandidate != null) {
-                builder.placement = CallablePlacement.WithReceiver(receiverTypeCandidate)
-                receiverClassDescriptor = receiverTypeCandidate.theType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+                builder.placement = CallablePlacement.WithReceiver(receiverTypeCandidate!!)
+                receiverClassDescriptor = receiverTypeCandidate!!.theType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
             }
             else {
                 if (element !is KtSimpleNameExpression) return null
@@ -93,7 +93,7 @@ open class CreateParameterFromUsageFix<E : KtElement>(
                 val classOrObject = element.getStrictParentOfType<KtClassOrObject>() ?: return null
                 receiverClassDescriptor = classOrObject.resolveToDescriptorIfAny() ?: return null
 
-                val paramInfo = CreateParameterByRefActionFactory.extractFixData(element)?.parameterInfo
+                val paramInfo = CreateParameterByRefActionFactory.extractFixData(element as KtSimpleNameExpression)?.parameterInfo
                 if (paramInfo?.callableDescriptor == receiverClassDescriptor.unsubstitutedPrimaryConstructor) return null
             }
 
@@ -103,7 +103,7 @@ open class CreateParameterFromUsageFix<E : KtElement>(
             val constructorDescriptor = receiverClassDescriptor.unsubstitutedPrimaryConstructor ?: return null
 
             val paramType = info.returnTypeInfo.getPossibleTypes(builder).firstOrNull()
-            if (paramType != null && paramType.hasTypeParametersToAdd(constructorDescriptor, builder.currentFileContext)) return null
+            if (paramType != null && paramType!!.hasTypeParametersToAdd(constructorDescriptor, builder.currentFileContext)) return null
 
             val paramInfo = KotlinParameterInfo(
                     callableDescriptor = constructorDescriptor,

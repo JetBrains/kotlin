@@ -34,7 +34,7 @@ class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         if (e is KtDestructuringDeclaration) {
-            return selectMultiDeclaration(editorText, e)
+            return selectMultiDeclaration(editorText, e as KtDestructuringDeclaration)
         }
 
         val result = ArrayList<TextRange>()
@@ -81,8 +81,8 @@ class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
         val lpar = e.lPar
         val rpar = e.rPar
         if (lpar != null && rpar != null) {
-            result.addRange(editorText, TextRange(lpar.textRange.endOffset, rpar.textRange.startOffset))
-            result.addRange(editorText, TextRange(lpar.textRange.startOffset, rpar.textRange.endOffset))
+            result.addRange(editorText, TextRange(lpar!!.textRange.endOffset, rpar!!.textRange.startOffset))
+            result.addRange(editorText, TextRange(lpar!!.textRange.startOffset, rpar!!.textRange.endOffset))
         }
         return result
     }

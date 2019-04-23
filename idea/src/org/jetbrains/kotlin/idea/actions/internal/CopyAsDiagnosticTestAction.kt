@@ -38,7 +38,7 @@ class CopyAsDiagnosticTestAction : AnAction() {
         // Parameters `languageVersionSettings`, `dataFlowValueFactory` and `moduleDescriptor` are not-null only for compiler diagnostic tests
         val diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
             bindingContext,
-            psiFile,
+            psiFile as KtFile,
             false,
             mutableListOf(),
             null,
@@ -47,7 +47,7 @@ class CopyAsDiagnosticTestAction : AnAction() {
             null,
             null
         )
-        val result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, diagnostics).toString()
+        val result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile as KtFile, diagnostics).toString()
 
         val clipboard = Toolkit.getDefaultToolkit().systemClipboard
         clipboard.setContents(StringSelection(result)) { _, _ -> }

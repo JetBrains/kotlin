@@ -55,7 +55,7 @@ fun formatPsiClass(
 fun formatClass(classDescriptor: DeclarationDescriptor, inCode: Boolean): String {
     val element = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor)
     return if (element is PsiClass) {
-        formatPsiClass(element, false, inCode)
+        formatPsiClass(element as PsiClass, false, inCode)
     }
     else {
         wrapOrSkip(formatClassDescriptor(classDescriptor), inCode)
@@ -65,7 +65,7 @@ fun formatClass(classDescriptor: DeclarationDescriptor, inCode: Boolean): String
 fun formatFunction(functionDescriptor: DeclarationDescriptor, inCode: Boolean): String {
     val element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)
     return if (element is PsiMethod) {
-        formatPsiMethod(element, false, inCode)
+        formatPsiMethod(element as PsiMethod, false, inCode)
     }
     else {
         wrapOrSkip(formatFunctionDescriptor(functionDescriptor), inCode)
@@ -94,7 +94,7 @@ fun formatPsiMethod(
 fun formatJavaOrLightMethod(method: PsiMethod): String {
     val originalDeclaration = method.unwrapped
     return if (originalDeclaration is KtDeclaration) {
-        formatFunctionDescriptor(originalDeclaration.unsafeResolveToDescriptor())
+        formatFunctionDescriptor((originalDeclaration as KtDeclaration).unsafeResolveToDescriptor())
     }
     else {
         formatPsiMethod(method, false, false)

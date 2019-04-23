@@ -71,7 +71,7 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
                     "Call on collection type may be reduced",
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     isOnTheFly,
-                    RenameUselessCallFix(newName)
+                    RenameUselessCallFix(newName!!)
             )
             holder.registerProblem(descriptor)
         }

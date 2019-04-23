@@ -38,8 +38,8 @@ class KotlinClassesWithAnnotatedMembersSearcher : ScopedQueryExecutor<PsiClass, 
                                                                        queryParameters.scope,
                                                                        { it.getNonStrictParentOfType<KtClassOrObject>() !in processed }) { declaration ->
             val ktClass = declaration.getNonStrictParentOfType<KtClassOrObject>()
-            if (ktClass != null && processed.add(ktClass)) {
-                val lightClass = ktClass.toLightClass()
+            if (ktClass != null && processed.add(ktClass!!)) {
+                val lightClass = ktClass!!.toLightClass()
                 if (lightClass != null) consumer.process(lightClass) else true
             } else
                 true

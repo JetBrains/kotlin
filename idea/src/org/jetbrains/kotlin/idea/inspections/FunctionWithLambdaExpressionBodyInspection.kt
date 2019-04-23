@@ -94,6 +94,6 @@ class FunctionWithLambdaExpressionBodyInspection : AbstractKotlinInspection() {
 private fun KtCallableDeclaration.setTypeIfNeed() {
     val type = (resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType
     if (type?.isNothing() == true) {
-        this.setType(type)
+        this.setType(type!!)
     }
 }

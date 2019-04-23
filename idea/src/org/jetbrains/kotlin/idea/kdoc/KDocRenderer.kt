@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 object KDocRenderer {
     fun renderKDoc(docComment: KDocTag): String {
         return if (docComment is KDocSection) {
-            renderKDocContent(docComment) + renderKDocSection(docComment)
+            renderKDocContent(docComment) + renderKDocSection(docComment as KDocSection)
         } else {
             renderKDocContent(docComment)
         }
@@ -89,7 +89,7 @@ object KDocRenderer {
         is KtDeclarationWithBody -> {
             val bodyExpression = bodyExpression
             when (bodyExpression) {
-                is KtBlockExpression -> bodyExpression.text.removeSurrounding("{", "}")
+                is KtBlockExpression -> (bodyExpression as KtBlockExpression).text.removeSurrounding("{", "}")
                 else -> bodyExpression!!.text
             }
         }
@@ -124,7 +124,7 @@ object KDocRenderer {
                             if (target == null)
                                 to.append("// Unresolved")
                             else {
-                                to.append(trimCommonIndent(target.extractExampleText()))
+                                to.append(trimCommonIndent(target!!.extractExampleText()))
                             }
                         }
                     }
@@ -166,7 +166,7 @@ object KDocRenderer {
     private fun renderTag(tag: KDocTag?, title: String, to: StringBuilder) {
         if (tag != null) {
             to.renderSection(title) {
-                append(markdownToHtml(tag.getContent()))
+                append(markdownToHtml(tag!!.getContent()))
             }
         }
     }
@@ -178,7 +178,7 @@ object KDocRenderer {
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
         val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
         return if (maybeSingleParagraph != null && !allowSingleParagraph) {
-            maybeSingleParagraph.children.joinToString("") {
+            maybeSingleParagraph!!.children.joinToString("") {
                 if (it.text == "\n") " " else it.toHtml()
             }
         } else {
@@ -239,7 +239,7 @@ object KDocRenderer {
                 MarkdownElementTypes.CODE_SPAN -> {
                     val startDelimiter = node.child(MarkdownTokenTypes.BACKTICK)?.text
                     if (startDelimiter != null) {
-                        val text = node.text.substring(startDelimiter.length).removeSuffix(startDelimiter)
+                        val text = node.text.substring(startDelimiter!!.length).removeSuffix(startDelimiter!!)
                         sb.append("<code>").append(text.htmlEscape()).append("</code>")
                     }
                 }
@@ -257,7 +257,7 @@ object KDocRenderer {
                         ?.dropWhile { it.type == MarkdownTokenTypes.LBRACKET }
                         ?.dropLastWhile { it.type == MarkdownTokenTypes.RBRACKET }
                     if (linkLabelContent != null) {
-                        val label = linkLabelContent.joinToString(separator = "") { it.text }
+                        val label = linkLabelContent!!.joinToString(separator = "") { it.text }
                         val linkText = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml() ?: label
                         DocumentationManagerUtil.createHyperlink(sb, label, linkText, true)
                     } else {

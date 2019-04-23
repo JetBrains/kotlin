@@ -97,12 +97,12 @@ abstract class CompletionSession(
     init {
         val reference = (position.parent as? KtSimpleNameExpression)?.mainReference
         if (reference != null) {
-            if (reference.expression is KtLabelReferenceExpression) {
+            if (reference!!.expression is KtLabelReferenceExpression) {
                 this.nameExpression = null
-                this.expression = reference.expression.parent.parent as? KtExpressionWithLabel
+                this.expression = reference!!.expression.parent.parent as? KtExpressionWithLabel
             }
             else {
-                this.nameExpression = reference.expression
+                this.nameExpression = reference!!.expression
                 this.expression = nameExpression
             }
         }
@@ -137,8 +137,8 @@ abstract class CompletionSession(
                                                                     isVisibleFilter,
                                                                     NotPropertiesService.getNotProperties(position))
 
-    protected val callTypeAndReceiver = if (nameExpression == null) CallTypeAndReceiver.UNKNOWN else CallTypeAndReceiver.detect(nameExpression)
-    protected val receiverTypes = nameExpression?.let { detectReceiverTypes(bindingContext, nameExpression, callTypeAndReceiver) }
+    protected val callTypeAndReceiver = if (nameExpression == null) CallTypeAndReceiver.UNKNOWN else CallTypeAndReceiver.detect(nameExpression!!)
+    protected val receiverTypes = nameExpression?.let { detectReceiverTypes(bindingContext, nameExpression!!, callTypeAndReceiver) }
 
 
     protected val basicLookupElementFactory = BasicLookupElementFactory(project, InsertHandlerProvider(callTypeAndReceiver.callType) { expectedInfos })
@@ -171,10 +171,10 @@ abstract class CompletionSession(
             if (descriptor.importableFqName?.let(::isJavaClassNotToBeUsedInKotlin) == true) return false
         }
 
-        if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
+        if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor as TypeParameterDescriptor)) return false
 
         if (descriptor is DeclarationDescriptorWithVisibility) {
-            val visible = descriptor.isVisible(position, callTypeAndReceiver.receiver as? KtExpression, bindingContext, resolutionFacade)
+            val visible = (descriptor as DeclarationDescriptorWithVisibility).isVisible(position, callTypeAndReceiver.receiver as? KtExpression, bindingContext, resolutionFacade)
             if (visible) return true
             return completeNonAccessible && (!descriptor.isFromLibrary() || isDebuggerContext)
         }
@@ -199,8 +199,8 @@ abstract class CompletionSession(
         var parent: DeclarationDescriptor? = inDescriptor
         while (parent != null) {
             if (parent == owner) return true
-            if (parent is ClassDescriptor && !parent.isInner) return false
-            parent = parent.containingDeclaration
+            if (parent is ClassDescriptor && !(parent as ClassDescriptor).isInner) return false
+            parent = parent!!.containingDeclaration
         }
         return true
     }
@@ -309,7 +309,7 @@ abstract class CompletionSession(
 
     protected val referenceVariantsCollector = if (nameExpression != null) {
         ReferenceVariantsCollector(referenceVariantsHelper, indicesHelper(true), prefixMatcher,
-                                   nameExpression, callTypeAndReceiver, resolutionFacade, bindingContext,
+                                   nameExpression!!, callTypeAndReceiver, resolutionFacade, bindingContext,
                                    importableFqNameClassifier, configuration)
     }
     else {
@@ -322,7 +322,9 @@ abstract class CompletionSession(
 
     protected fun referenceVariantsWithSingleFunctionTypeParameter(): ReferenceVariants? {
         val variants = referenceVariantsCollector?.allCollected ?: return null
-        val filter = { descriptor: DeclarationDescriptor -> descriptor is FunctionDescriptor && LookupElementFactory.hasSingleFunctionTypeParameter(descriptor) }
+        val filter = { descriptor: DeclarationDescriptor -> descriptor is FunctionDescriptor && LookupElementFactory.hasSingleFunctionTypeParameter(
+            descriptor as FunctionDescriptor
+        ) }
         return ReferenceVariants(variants.imported.filter(filter), variants.notImportedExtensions.filter(filter))
     }
 
@@ -337,7 +339,7 @@ abstract class CompletionSession(
         val runtimeType = evaluator(explicitReceiver)
         if (runtimeType == null || runtimeType == type) return null
 
-        val expressionReceiver = ExpressionReceiver.create(explicitReceiver, runtimeType, bindingContext)
+        val expressionReceiver = ExpressionReceiver.create(explicitReceiver, runtimeType!!, bindingContext)
         val (variants, notImportedExtensions) = ReferenceVariantsCollector(
                 referenceVariantsHelper, indicesHelper(true), prefixMatcher,
                 nameExpression!!, callTypeAndReceiver, resolutionFacade, bindingContext,
@@ -347,7 +349,7 @@ abstract class CompletionSession(
         val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants.notImportedExtensions)
 
         val runtimeVariants = ReferenceVariants(filteredVariants, filteredNotImportedExtensions)
-        return Pair(runtimeVariants, lookupElementFactory.copy(receiverTypes = listOf(ReceiverType(runtimeType, 0))))
+        return Pair(runtimeVariants, lookupElementFactory.copy(receiverTypes = listOf(ReceiverType(runtimeType!!, 0))))
     }
 
     private fun <TDescriptor : DeclarationDescriptor> filterVariantsForRuntimeReceiverType(
@@ -358,7 +360,7 @@ abstract class CompletionSession(
         val result = ArrayList<TDescriptor>()
         for (variant in runtimeVariants) {
             val candidates = baseVariantsByName[variant.name]
-            if (candidates == null || candidates.none { compareDescriptors(project, variant, it) }) {
+            if (candidates == null || candidates!!.none { compareDescriptors(project, variant, it) }) {
                 result.add(variant)
             }
         }
@@ -377,7 +379,7 @@ abstract class CompletionSession(
                 ?.createNonImportedDeclarationsFilter<CallableDescriptor>(referenceVariantsCollector!!.allCollected.imported)
         indicesHelper(true).processTopLevelCallables({ prefixMatcher.prefixMatches(it) }) {
             if (shadowedFilter != null) {
-                shadowedFilter(listOf(it)).singleOrNull()?.let(processor)
+                (shadowedFilter as (Collection<CallableDescriptor>) -> Collection<CallableDescriptor>)(listOf(it)).singleOrNull()?.let(processor)
             }
             else {
                 processor(it)

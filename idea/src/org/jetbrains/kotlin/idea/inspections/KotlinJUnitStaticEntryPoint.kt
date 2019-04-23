@@ -37,8 +37,8 @@ class KotlinJUnitStaticEntryPoint(@JvmField var wasSelected: Boolean = true) : E
                                                 "org.junit.runners.Parameterized.Parameters")
 
     override fun isEntryPoint(psiElement: PsiElement) = psiElement is PsiMethod &&
-            AnnotationUtil.isAnnotated(psiElement, staticJUnitAnnotations) &&
-            AnnotationUtil.isAnnotated(psiElement, listOf("kotlin.jvm.JvmStatic"))
+            AnnotationUtil.isAnnotated(psiElement as PsiMethod, staticJUnitAnnotations) &&
+            AnnotationUtil.isAnnotated(psiElement as PsiMethod, listOf("kotlin.jvm.JvmStatic"))
 
     override fun readExternal(element: Element) {
         DefaultJDOMExternalizer.readExternal(this, element)

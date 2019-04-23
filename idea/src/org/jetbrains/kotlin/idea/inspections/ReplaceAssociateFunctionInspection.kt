@@ -127,7 +127,7 @@ private class ReplaceAssociateFunctionFix(private val function: AssociateFunctio
                 appendFixedText(functionName)
                 val valueArgumentList = callExpression.valueArgumentList
                 if (valueArgumentList != null) {
-                    appendValueArgumentList(valueArgumentList)
+                    appendValueArgumentList(valueArgumentList!!)
                 }
                 if (callExpression.lambdaArguments.isNotEmpty()) {
                     appendLambda(lambda)

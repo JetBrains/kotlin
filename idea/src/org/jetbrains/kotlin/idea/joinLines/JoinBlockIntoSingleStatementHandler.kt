@@ -49,15 +49,15 @@ class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
         // handle nested if's
         val pparent = parent.parent
         if (pparent is KtIfExpression) {
-            if (block == pparent.then && statement is KtIfExpression && statement.`else` == null) {
+            if (block == (pparent as KtIfExpression).then && statement is KtIfExpression && (statement as KtIfExpression).`else` == null) {
                 // if outer if has else-branch and inner does not have it, do not remove braces otherwise else-branch will belong to different if!
-                if (pparent.`else` != null) return -1
+                if ((pparent as KtIfExpression).`else` != null) return -1
 
-                return MergeIfsIntention.applyTo(pparent)
+                return MergeIfsIntention.applyTo(pparent as KtIfExpression)
             }
 
-            if (block == pparent.`else`) {
-                val ifParent = pparent.parent
+            if (block == (pparent as KtIfExpression).`else`) {
+                val ifParent = (pparent as KtIfExpression).parent
                 if (!(
                         ifParent is KtBlockExpression ||
                         ifParent is KtDeclaration ||
@@ -68,8 +68,8 @@ class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
         }
 
         return if (oneLineReturnFunction != null) {
-            useExpressionBodyInspection.simplify(oneLineReturnFunction, false)
-            oneLineReturnFunction.bodyExpression!!.startOffset
+            useExpressionBodyInspection.simplify(oneLineReturnFunction!!, false)
+            oneLineReturnFunction!!.bodyExpression!!.startOffset
         }
         else {
             val newStatement = block.replace(statement)

@@ -152,7 +152,7 @@ class KotlinIntroduceParameterDialog private constructor(
         panel.add(typeField, gbConstraints)
 
         if (lambdaExtractionDescriptor != null
-            && (lambdaExtractionDescriptor.parameters.isNotEmpty() || lambdaExtractionDescriptor.receiverParameter != null)) {
+            && (lambdaExtractionDescriptor!!.parameters.isNotEmpty() || lambdaExtractionDescriptor!!.receiverParameter != null)) {
             val parameterTablePanel = object : ExtractFunctionParameterTablePanel() {
                 override fun onEnterAction() {
                     doOKAction()
@@ -162,7 +162,7 @@ class KotlinIntroduceParameterDialog private constructor(
                     doCancelAction()
                 }
             }
-            parameterTablePanel.init(lambdaExtractionDescriptor.receiverParameter, lambdaExtractionDescriptor.parameters)
+            parameterTablePanel.init(lambdaExtractionDescriptor!!.receiverParameter, lambdaExtractionDescriptor!!.parameters)
 
             gbConstraints.insets = Insets(4, 4, 4, 8)
             gbConstraints.gridwidth = 1
@@ -215,7 +215,7 @@ class KotlinIntroduceParameterDialog private constructor(
         }
 
         for (parameter in descriptor.parametersToRemove) {
-            val removeWhat = if (parameter is KtParameter) "parameter '${parameter.name}'" else "receiver"
+            val removeWhat = if (parameter is KtParameter) "parameter '${(parameter as KtParameter).name}'" else "receiver"
             val cb = NonFocusableCheckBox("Remove $removeWhat no longer used")
 
             removeParamsCheckBoxes[cb] = parameter

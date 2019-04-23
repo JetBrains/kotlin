@@ -97,7 +97,7 @@ fun getSmartSelectSuggestions(
     if (element is PsiWhiteSpace) return getSmartSelectSuggestions(file, offset - 1, elementKind)
 
     val elements = ArrayList<KtElement>()
-    while (element != null && !(element is KtBlockExpression && element.parent !is KtFunctionLiteral) &&
+    while (element != null && !(element is KtBlockExpression && (element as KtBlockExpression).parent !is KtFunctionLiteral) &&
            element !is KtNamedFunction
            && element !is KtClassBody) {
         var addElement = false
@@ -106,7 +106,7 @@ fun getSmartSelectSuggestions(
         if (element is KtTypeElement) {
             addElement =
                     elementKind == CodeInsightUtils.ElementKind.TYPE_ELEMENT
-                    && element.getParentOfTypeAndBranch<KtUserType>(true) { qualifier } == null
+                    && (element as KtTypeElement).getParentOfTypeAndBranch<KtUserType>(true) { qualifier } == null
             if (!addElement) {
                 keepPrevious = false
             }
@@ -121,27 +121,27 @@ fun getSmartSelectSuggestions(
                 else if (KtPsiUtil.isLabelIdentifierExpression(element)) {
                     addElement = false
                 }
-                else if (element.parent is KtQualifiedExpression) {
-                    val qualifiedExpression = element.parent as KtQualifiedExpression
+                else if ((element as KtExpression).parent is KtQualifiedExpression) {
+                    val qualifiedExpression = (element as KtExpression).parent as KtQualifiedExpression
                     if (qualifiedExpression.receiverExpression !== element) {
                         addElement = false
                     }
                 }
-                else if (element.parent is KtCallElement
-                         || element.parent is KtThisExpression
+                else if ((element as KtExpression).parent is KtCallElement
+                         || (element as KtExpression).parent is KtThisExpression
                          || PsiTreeUtil.getParentOfType(element, KtSuperExpression::class.java) != null) {
                     addElement = false
                 }
-                else if (element.parent is KtOperationExpression) {
-                    val operationExpression = element.parent as KtOperationExpression
+                else if ((element as KtExpression).parent is KtOperationExpression) {
+                    val operationExpression = (element as KtExpression).parent as KtOperationExpression
                     if (operationExpression.operationReference === element) {
                         addElement = false
                     }
                 }
                 if (addElement) {
-                    val bindingContext = element.analyze(BodyResolveMode.FULL)
-                    val expressionType = bindingContext.getType(element)
-                    if (expressionType == null || KotlinBuiltIns.isUnit(expressionType)) {
+                    val bindingContext = (element as KtExpression).analyze(BodyResolveMode.FULL)
+                    val expressionType = bindingContext.getType(element as KtExpression)
+                    if (expressionType == null || KotlinBuiltIns.isUnit(expressionType!!)) {
                         addElement = false
                     }
                 }
@@ -156,7 +156,7 @@ fun getSmartSelectSuggestions(
             elements.clear()
         }
 
-        element = element.parent
+        element = element!!.parent
     }
     return elements
 }
@@ -194,7 +194,7 @@ private fun smartSelectElement(
             val rendererComponent = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
             val element = value as KtElement?
             if (element!!.isValid) {
-                text = getExpressionShortText(element)
+                text = getExpressionShortText(element!!)
             }
             return rendererComponent
         }

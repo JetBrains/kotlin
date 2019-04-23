@@ -44,19 +44,19 @@ class KotlinCodeHintsModel(val project: Project) : EditorFactoryListenerWrapper 
                     .entries
                     .firstOrNull { (marker, _) ->
                         val textRange = marker.range
-                        if (textRange == null || !(textRange.startOffset <= offset && offset <= textRange.endOffset)) {
+                        if (textRange == null || !(textRange!!.startOffset <= offset && offset <= textRange!!.endOffset)) {
                             return@firstOrNull false
                         }
 
                         val document = marker.document
-                        val hasNewLine = document.getText(textRange).contains('\n')
+                        val hasNewLine = document.getText(textRange!!).contains('\n')
                         if (!hasNewLine) {
-                            textRange.endOffset == offset
+                            textRange!!.endOffset == offset
                         } else {
                             // New line may appear after session of fast typing with one or several enter hitting.
                             // We can't believe startOffset too because typing session may had started with
                             // typing adding several chars at the original line.
-                            val originalLineNumber = document.getLineNumber(textRange.startOffset)
+                            val originalLineNumber = document.getLineNumber(textRange!!.startOffset)
                             val currentOriginalLineEnd = document.getLineEndOffset(originalLineNumber)
 
                             currentOriginalLineEnd == offset

@@ -63,7 +63,7 @@ private fun applicableMigrationToolsImpl(migrationInfo: MigrationInfo?): List<In
         .map { it.tool }
         .filter { toolWrapper: InspectionToolWrapper<*, *> ->
             val tool = toolWrapper.tool
-            tool is MigrationFix && (migrationInfo == null || tool.isApplicable(migrationInfo))
+            tool is MigrationFix && (migrationInfo == null || (tool as MigrationFix).isApplicable(migrationInfo!!))
         }
         .toList()
 }

@@ -69,7 +69,7 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntenti
     private fun targetFunctionLiteral(element: PsiElement, caretOffset: Int): KtFunctionLiteral? {
         val expression = element.getParentOfType<KtNameReferenceExpression>(true)
         if (expression != null) {
-            val target = expression.resolveMainReferenceToDescriptors().singleOrNull() as? ParameterDescriptor ?: return null
+            val target = expression!!.resolveMainReferenceToDescriptors().singleOrNull() as? ParameterDescriptor ?: return null
             val functionDescriptor = target.containingDeclaration as? AnonymousFunctionDescriptor ?: return null
             return DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? KtFunctionLiteral
         }

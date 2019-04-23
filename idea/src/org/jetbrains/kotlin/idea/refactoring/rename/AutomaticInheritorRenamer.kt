@@ -32,7 +32,7 @@ class AutomaticInheritorRenamer(klass: KtClass, newName: String): AutomaticRenam
     init {
         val lightClass = klass.toLightClass()
         if (lightClass != null) {
-            for (inheritorLightClass in ClassInheritorsSearch.search(lightClass, true).findAll()) {
+            for (inheritorLightClass in ClassInheritorsSearch.search(lightClass!!, true).findAll()) {
                 if ((inheritorLightClass.unwrapped as? PsiNamedElement)?.name != null) {
                     myElements.add(inheritorLightClass.unwrapped as PsiNamedElement)
                 }

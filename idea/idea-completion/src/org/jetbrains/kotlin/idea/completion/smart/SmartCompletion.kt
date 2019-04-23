@@ -102,7 +102,7 @@ class SmartCompletion(
         val postProcessedSearcher = if (inheritanceSearcher != null)
             object : InheritanceItemsSearcher {
                 override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
-                    inheritanceSearcher.search(nameFilter, { consumer(postProcess(it)) })
+                    inheritanceSearcher!!.search(nameFilter, { consumer(postProcess(it)) })
                 }
             }
         else
@@ -114,28 +114,28 @@ class SmartCompletion(
         val parent = expressionWithType.parent
         when (parent) {
             is KtBinaryExpression -> {
-                if (parent.right == expressionWithType) {
-                    val operationToken = parent.operationToken
+                if ((parent as KtBinaryExpression).right == expressionWithType) {
+                    val operationToken = (parent as KtBinaryExpression).operationToken
                     if (operationToken == KtTokens.EQ || operationToken in COMPARISON_TOKENS) {
-                        val left = parent.left
+                        val left = (parent as KtBinaryExpression).left
                         if (left is KtReferenceExpression) {
-                            return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left]?.let(::setOf).orEmpty()
+                            return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left as KtReferenceExpression]?.let(::setOf).orEmpty()
                         }
                     }
                 }
             }
 
             is KtWhenConditionWithExpression -> {
-                val entry = parent.parent as KtWhenEntry
+                val entry = (parent as KtWhenConditionWithExpression).parent as KtWhenEntry
                 val whenExpression = entry.parent as KtWhenExpression
                 val subject = whenExpression.subjectExpression ?: return@lazy emptySet()
 
                 val descriptorsToSkip = HashSet<DeclarationDescriptor>()
 
                 if (subject is KtSimpleNameExpression) {
-                    val variable = bindingContext[BindingContext.REFERENCE_TARGET, subject] as? VariableDescriptor
+                    val variable = bindingContext[BindingContext.REFERENCE_TARGET, subject as KtSimpleNameExpression] as? VariableDescriptor
                     if (variable != null) {
-                        descriptorsToSkip.add(variable)
+                        descriptorsToSkip.add(variable!!)
                     }
                 }
 
@@ -184,7 +184,7 @@ class SmartCompletion(
         val asTypePositionItems = buildForAsTypePosition(lookupElementFactory.basicFactory)
         if (asTypePositionItems != null) {
             assert(expectedInfos.isEmpty())
-            return Pair(asTypePositionItems, null)
+            return Pair(asTypePositionItems!!, null)
         }
 
         val items = ArrayList<LookupElement>()
@@ -216,7 +216,7 @@ class SmartCompletion(
 
                 if (expression is KtSimpleNameExpression) {
                     StaticMembers(bindingContext, lookupElementFactory, resolutionFacade, moduleDescriptor)
-                            .addToCollection(items, expectedInfos, expression, descriptorsToSkip)
+                            .addToCollection(items, expectedInfos, expression as KtSimpleNameExpression, descriptorsToSkip)
                 }
 
                 ClassLiteralItems.addToCollection(items, expectedInfos, lookupElementFactory.basicFactory, isJvmModule)
@@ -230,7 +230,7 @@ class SmartCompletion(
 
                     val whenCondition = expressionWithType.parent as? KtWhenConditionWithExpression
                     if (whenCondition != null) {
-                        val entry = whenCondition.parent as KtWhenEntry
+                        val entry = whenCondition!!.parent as KtWhenEntry
                         val whenExpression = entry.parent as KtWhenExpression
                         val entries = whenExpression.entries
                         if (whenExpression.elseExpression == null && entry == entries.last() && entries.size != 1) {
@@ -270,7 +270,7 @@ class SmartCompletion(
                     if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
                         val offset = context.offsetMap.tryGetOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
                         if (offset != null) {
-                            context.document.deleteString(context.tailOffset, offset)
+                            context.document.deleteString(context.tailOffset, offset!!)
                         }
                     }
 
@@ -341,12 +341,12 @@ class SmartCompletion(
         // if our expression is initializer of implicitly typed variable - take type of variable from original file (+ the same for function)
         val declaration = implicitlyTypedDeclarationFromInitializer(expression)
         if (declaration != null) {
-            val originalDeclaration = toFromOriginalFileMapper.toOriginalFile(declaration)
+            val originalDeclaration = toFromOriginalFileMapper.toOriginalFile(declaration!!)
             if (originalDeclaration != null) {
-                val originalDescriptor = originalDeclaration.resolveToDescriptorIfAny() as? CallableDescriptor
+                val originalDescriptor = originalDeclaration!!.resolveToDescriptorIfAny() as? CallableDescriptor
                 val returnType = originalDescriptor?.returnType
-                if (returnType != null && !returnType.isError) {
-                    return listOf(ExpectedInfo(returnType, declaration.name, null))
+                if (returnType != null && !returnType!!.isError) {
+                    return listOf(ExpectedInfo(returnType!!, declaration!!.name, null))
                 }
             }
         }
@@ -370,8 +370,8 @@ class SmartCompletion(
     private fun implicitlyTypedDeclarationFromInitializer(expression: KtExpression): KtDeclaration? {
         val parent = expression.parent
         when (parent) {
-            is KtVariableDeclaration -> if (expression == parent.initializer && parent.typeReference == null) return parent
-            is KtNamedFunction -> if (expression == parent.initializer && parent.typeReference == null) return parent
+            is KtVariableDeclaration -> if (expression == (parent as KtVariableDeclaration).initializer && (parent as KtVariableDeclaration).typeReference == null) return parent as KtVariableDeclaration
+            is KtNamedFunction -> if (expression == (parent as KtNamedFunction).initializer && (parent as KtNamedFunction).typeReference == null) return parent as KtNamedFunction
         }
         return null
     }
@@ -408,14 +408,14 @@ class SmartCompletion(
         when (descriptor) {
             is CallableDescriptor -> {
                 // members and extensions are not supported after "::" currently
-                if (descriptor.dispatchReceiverParameter == null && descriptor.extensionReceiverParameter == null) {
-                    addIfNotNull(toLookupElement(descriptor))
+                if ((descriptor as CallableDescriptor).dispatchReceiverParameter == null && (descriptor as CallableDescriptor).extensionReceiverParameter == null) {
+                    addIfNotNull(toLookupElement(descriptor as CallableDescriptor))
                 }
             }
 
             is ClassDescriptor -> {
-                if (descriptor.modality != Modality.ABSTRACT && !descriptor.isInner) {
-                    descriptor.constructors
+                if ((descriptor as ClassDescriptor).modality != Modality.ABSTRACT && !(descriptor as ClassDescriptor).isInner) {
+                    (descriptor as ClassDescriptor).constructors
                             .filter(visibilityFilter)
                             .mapNotNullTo(this, ::toLookupElement)
                 }
@@ -437,7 +437,7 @@ class SmartCompletion(
         val items = ArrayList<LookupElement>()
         for ((type, infos) in expectedInfosGrouped) {
             if (type == null) continue
-            val lookupElement = lookupElementFactory.createLookupElementForType(type) ?: continue
+            val lookupElement = lookupElementFactory.createLookupElementForType(type!!) ?: continue
             items.add(lookupElement.addTailAndNameSimilarity(infos))
         }
         return items
