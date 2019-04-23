@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.settings;
 
 import com.intellij.openapi.components.ServiceManager;
@@ -102,7 +102,6 @@ public class GradleExtensionsSettings {
           GradleExtension gradleExtension = new GradleExtension();
           gradleExtension.name = extension.getName();
           gradleExtension.rootTypeFqn = extension.getTypeFqn();
-          gradleExtension.namedObjectTypeFqn = extension.getNamedObjectTypeFqn();
           extensionsData.extensions.put(extension.getName(), gradleExtension);
         }
         for (org.jetbrains.plugins.gradle.model.GradleConvention convention : gradleExtensions.getConventions()) {
