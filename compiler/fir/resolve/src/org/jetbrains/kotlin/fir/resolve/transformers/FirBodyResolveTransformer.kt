@@ -96,7 +96,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup(scopes) {
             val type = regularClass.defaultType()
-            scopes.addIfNotNull(type.scope(session, ScopeSession()))
+            scopes.addIfNotNull(type.scope(session, scopeSession))
             withLabelAndReceiverType(regularClass.name, regularClass, type) {
                 super.transformRegularClass(regularClass, data)
             }
@@ -141,6 +141,8 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         }
         return result
     }
+
+    val scopeSession = ScopeSession()
 
     val scopes = mutableListOf<FirScope>()
     private val localScopes = mutableListOf<FirLocalScope>()
@@ -271,7 +273,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         val receiverTypeRef = anonymousFunction.receiverTypeRef
         fun transform(): FirAnonymousFunction {
             return withScopeCleanup(scopes) {
-                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session, ScopeSession()))
+                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session, scopeSession))
                 val result =
                     super.transformAnonymousFunction(
                         anonymousFunction,
@@ -602,7 +604,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         fun transform(): CompositeTransformResult<FirDeclaration> {
             localScopes.lastOrNull()?.storeDeclaration(namedFunction)
             return withScopeCleanup(scopes) {
-                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session, ScopeSession()))
+                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session, scopeSession))
 
 
                 val result = super.transformNamedFunction(namedFunction, namedFunction.returnTypeRef).single as FirNamedFunction
