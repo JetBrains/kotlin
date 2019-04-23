@@ -1153,7 +1153,11 @@ abstract class IrModuleDeserializer(
     private val allKnownOrigins =
         IrDeclarationOrigin::class.nestedClasses.toList() + DeclarationFactory.FIELD_FOR_OUTER_THIS::class
     val originIndex = allKnownOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
-    fun deserializeIrDeclarationOrigin(proto: KotlinIr.IrDeclarationOrigin) = originIndex[deserializeString(proto.custom)]!!
+
+    fun deserializeIrDeclarationOrigin(proto: KotlinIr.IrDeclarationOrigin): IrDeclarationOriginImpl {
+        val originName = deserializeString(proto.custom)
+        return originIndex[originName] ?: object : IrDeclarationOriginImpl(originName) {}
+    }
 
     open fun deserializeDeclaration(proto: KotlinIr.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
 
