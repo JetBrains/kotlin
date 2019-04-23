@@ -2192,6 +2192,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
                 runTest("jps-plugin/testData/incremental/withJava/other/multifilePackagePartMethodAdded/");
             }
 
+            @TestMetadata("multifilePartsWithProperties")
+            public void testMultifilePartsWithProperties() throws Exception {
+                runTest("jps-plugin/testData/incremental/withJava/other/multifilePartsWithProperties/");
+            }
+
             @TestMetadata("optionalParameter")
             public void testOptionalParameter() throws Exception {
                 runTest("jps-plugin/testData/incremental/withJava/other/optionalParameter/");
@@ -2497,6 +2502,19 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
                 public void testAllFilesPresentInMultifilePackagePartMethodAdded() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other/multifilePackagePartMethodAdded"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                }
+            }
+
+            @TestMetadata("jps-plugin/testData/incremental/withJava/other/multifilePartsWithProperties")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class MultifilePartsWithProperties extends AbstractIncrementalJvmJpsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInMultifilePartsWithProperties() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other/multifilePartsWithProperties"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
                 }
             }
 
