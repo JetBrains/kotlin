@@ -22,7 +22,7 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.expressions.UInjectionHost
 
 class KotlinStringTemplateUPolyadicExpression(
-    override val psi: KtStringTemplateExpression,
+    override val sourcePsi: KtStringTemplateExpression,
     givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent),
     UPolyadicExpression,
@@ -30,7 +30,7 @@ class KotlinStringTemplateUPolyadicExpression(
     KotlinEvaluatableUElement,
     UInjectionHost {
     override val operands: List<UExpression> by lz {
-        psi.entries.map {
+        sourcePsi.entries.map {
             KotlinConverter.convertEntry(
                 it,
                 this,
@@ -40,7 +40,7 @@ class KotlinStringTemplateUPolyadicExpression(
     }
     override val operator = UastBinaryOperator.PLUS
 
-    override val psiLanguageInjectionHost: PsiLanguageInjectionHost get() = psi
+    override val psiLanguageInjectionHost: PsiLanguageInjectionHost get() = sourcePsi
     override val isString: Boolean get() = true
 
     override fun asRenderString(): String = if (operands.isEmpty()) "\"\"" else super<UPolyadicExpression>.asRenderString()

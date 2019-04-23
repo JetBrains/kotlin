@@ -27,29 +27,29 @@ import org.jetbrains.uast.UMultiResolvable
 import org.jetbrains.uast.kotlin.internal.getResolveResultVariants
 
 class KotlinUCallableReferenceExpression(
-        override val psi: KtCallableReferenceExpression,
+        override val sourcePsi: KtCallableReferenceExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UCallableReferenceExpression, UMultiResolvable, KotlinUElementWithType {
     override val qualifierExpression: UExpression?
         get() {
             if (qualifierType != null) return null
-            val receiverExpression = psi.receiverExpression ?: return null
+            val receiverExpression = sourcePsi.receiverExpression ?: return null
             return KotlinConverter.convertExpression(receiverExpression, this)
         }
 
     override val qualifierType by lz {
-        val ktType = psi.analyze()[DOUBLE_COLON_LHS, psi.receiverExpression]?.type ?: return@lz null
-        ktType.toPsiType(this, psi, boxed = true)
+        val ktType = sourcePsi.analyze()[DOUBLE_COLON_LHS, sourcePsi.receiverExpression]?.type ?: return@lz null
+        ktType.toPsiType(this, sourcePsi, boxed = true)
     }
 
     override val callableName: String
-        get() = psi.callableReference.getReferencedName()
+        get() = sourcePsi.callableReference.getReferencedName()
 
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name
 
-    override fun resolve() = psi.callableReference.resolveCallToDeclaration()
+    override fun resolve() = sourcePsi.callableReference.resolveCallToDeclaration()
 
-    override fun multiResolve(): Iterable<ResolveResult> = getResolveResultVariants(psi.callableReference)
+    override fun multiResolve(): Iterable<ResolveResult> = getResolveResultVariants(sourcePsi.callableReference)
 
 }

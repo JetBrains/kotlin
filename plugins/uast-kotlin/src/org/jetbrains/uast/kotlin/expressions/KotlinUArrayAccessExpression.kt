@@ -21,9 +21,9 @@ import org.jetbrains.uast.UArrayAccessExpression
 import org.jetbrains.uast.UElement
 
 class KotlinUArrayAccessExpression(
-        override val psi: KtArrayAccessExpression,
+        override val sourcePsi: KtArrayAccessExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UArrayAccessExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
-    override val receiver by lz { KotlinConverter.convertOrEmpty(psi.arrayExpression, this) }
-    override val indices by lz { psi.indexExpressions.map { KotlinConverter.convertOrEmpty(it, this) } }
+    override val receiver by lz { KotlinConverter.convertOrEmpty(sourcePsi.arrayExpression, this) }
+    override val indices by lz { sourcePsi.indexExpressions.map { KotlinConverter.convertOrEmpty(it, this) } }
 }

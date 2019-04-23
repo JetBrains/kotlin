@@ -22,19 +22,19 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
 
 class KotlinUTypeCheckExpression(
-        override val psi: KtIsExpression,
+        override val sourcePsi: KtIsExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UBinaryExpressionWithType, KotlinUElementWithType, KotlinEvaluatableUElement {
-    override val operand by lz { KotlinConverter.convertOrEmpty(psi.leftHandSide, this) }
+    override val operand by lz { KotlinConverter.convertOrEmpty(sourcePsi.leftHandSide, this) }
     
-    override val type by lz { psi.typeReference.toPsiType(this) }
+    override val type by lz { sourcePsi.typeReference.toPsiType(this) }
     
-    override val typeReference = psi.typeReference?.let {
+    override val typeReference = sourcePsi.typeReference?.let {
         LazyKotlinUTypeReferenceExpression(it, this) { it.toPsiType(this) }
     }
     
     override val operationKind =
-            if(psi.isNegated)
+            if(sourcePsi.isNegated)
                 KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
             else
                 UastBinaryExpressionWithTypeKind.INSTANCE_CHECK

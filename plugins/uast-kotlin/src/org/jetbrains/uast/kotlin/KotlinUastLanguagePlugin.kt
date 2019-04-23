@@ -134,7 +134,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return when (element) {
             is KotlinUSimpleReferenceExpression.KotlinAccessorCallExpression -> element.setterValue != null
             is KotlinAbstractUExpression -> {
-                val ktElement = element.psi as? KtElement ?: return false
+                val ktElement = element.sourcePsi as? KtElement ?: return false
                 ktElement.analyze()[BindingContext.USED_AS_EXPRESSION, ktElement] ?: false
             }
             else -> false
@@ -239,7 +239,7 @@ internal object KotlinConverter {
                 }
             }
             is KtLiteralStringTemplateEntry, is KtEscapeStringTemplateEntry -> el<ULiteralExpression>(build(::KotlinStringULiteralExpression))
-            is KtStringTemplateEntry -> element.expression?.let { convertExpression(it, givenParent, expectedTypes) } ?: expr<UExpression> { UastEmptyExpression(null) }
+            is KtStringTemplateEntry -> element.expression?.let { convertExpression(it, givenParent, expectedTypes) } ?: expr<UExpression> { UastEmptyExpression(givenParent) }
             is KtWhenEntry -> el<USwitchClauseExpressionWithBody>(build(::KotlinUSwitchEntry))
             is KtWhenCondition -> convertWhenCondition(element, givenParent, expectedTypes)
             is KtTypeReference -> el<UTypeReferenceExpression> { LazyKotlinUTypeReferenceExpression(element, givenParent) }
@@ -341,7 +341,7 @@ internal object KotlinConverter {
                         val initializer = psiFactory.createAnalyzableExpression("${tempAssignment.name}.component${i + 1}()",
                                                                                 expression.containingFile)
                         initializer.destructuringDeclarationInitializer = true
-                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.psi, declarationsExpression, initializer), entry, declarationsExpression)
+                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.javaPsi, declarationsExpression, initializer), entry, declarationsExpression)
                     }
                     declarations = listOf(tempAssignment) + destructuringAssignments
                 }
@@ -387,7 +387,7 @@ internal object KotlinConverter {
                     KotlinUDeclarationsExpression(givenParent).apply {
                         declarations = listOf(KotlinUClass.create(lightClass, this))
                     }
-                } ?: UastEmptyExpression(null)
+                } ?: UastEmptyExpression(givenParent)
             }
             is KtFunction -> if (expression.name.isNullOrEmpty()) {
                 expr<ULambdaExpression>(build(::createLocalFunctionLambdaExpression))
@@ -433,7 +433,7 @@ internal object KotlinConverter {
                 is KtWhenConditionWithExpression ->
                     condition.expression?.let { KotlinConverter.convertExpression(it, givenParent, requiredType) }
 
-                else -> expr<UExpression> { UastEmptyExpression(null) }
+                else -> expr<UExpression> { UastEmptyExpression(givenParent) }
             }
         }
     }
@@ -627,7 +627,7 @@ internal object KotlinConverter {
 
 
     internal fun convertOrEmpty(expression: KtExpression?, parent: UElement?): UExpression {
-        return expression?.let { convertExpression(it, parent, DEFAULT_EXPRESSION_TYPES_LIST) } ?: UastEmptyExpression(null)
+        return expression?.let { convertExpression(it, parent, DEFAULT_EXPRESSION_TYPES_LIST) } ?: UastEmptyExpression(parent)
     }
 
     internal fun convertOrNull(expression: KtExpression?, parent: UElement?): UExpression? {
@@ -656,7 +656,7 @@ private fun convertVariablesDeclaration(
     val declarationsExpression = parent as? KotlinUDeclarationsExpression
             ?: psi.parent.toUElementOfType<UDeclarationsExpression>() as? KotlinUDeclarationsExpression
             ?: KotlinUDeclarationsExpression(null, parent, psi)
-    val parentPsiElement = parent?.psi
+    val parentPsiElement = parent?.javaPsi //TODO: looks weird. mb look for the first non-null `javaPsi` in `parents` ?
     val variable = KotlinUAnnotatedLocalVariable(
             UastKotlinPsiVariable.create(psi, parentPsiElement, declarationsExpression), psi, declarationsExpression) { annotationParent ->
         psi.annotationEntries.map { KotlinUAnnotation(it, annotationParent) }

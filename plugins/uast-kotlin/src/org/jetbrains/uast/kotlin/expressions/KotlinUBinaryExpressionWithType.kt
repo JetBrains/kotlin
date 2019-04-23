@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.uast.*
 
 class KotlinUBinaryExpressionWithType(
-        override val psi: KtBinaryExpressionWithTypeRHS,
+        override val sourcePsi: KtBinaryExpressionWithTypeRHS,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UBinaryExpressionWithType,
         KotlinUElementWithType, KotlinEvaluatableUElement {
     
-    override val operand by lz { KotlinConverter.convertOrEmpty(psi.left, this) }
-    override val type by lz { psi.right.toPsiType(this) }
+    override val operand by lz { KotlinConverter.convertOrEmpty(sourcePsi.left, this) }
+    override val type by lz { sourcePsi.right.toPsiType(this) }
     
-    override val typeReference by lz { 
-        psi.right?.let { LazyKotlinUTypeReferenceExpression(it, this) }
+    override val typeReference by lz {
+        sourcePsi.right?.let { LazyKotlinUTypeReferenceExpression(it, this) }
     }
     
-    override val operationKind = when (psi.operationReference.getReferencedNameElementType()) {
+    override val operationKind = when (sourcePsi.operationReference.getReferencedNameElementType()) {
         KtTokens.AS_KEYWORD -> UastBinaryExpressionWithTypeKind.TYPE_CAST
         KtTokens.AS_SAFE -> KotlinBinaryExpressionWithTypeKinds.SAFE_TYPE_CAST
         else -> UastBinaryExpressionWithTypeKind.UNKNOWN

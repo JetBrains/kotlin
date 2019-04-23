@@ -223,7 +223,7 @@ private fun getMethodSignatureFromDescriptor(context: KtElement, descriptor: Cal
 internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.SYNCHRONIZED, initializer)
 
 internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: Boolean): PsiType =
-    toPsiType(source.getParentOfType<UDeclaration>(false)?.psi, element, boxed)
+    toPsiType(source.getParentOfType<UDeclaration>(false)?.javaPsi as? PsiModifierListOwner, element, boxed)
 
 internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, context: KtElement, boxed: Boolean): PsiType {
     if (this.isError) return UastErrorType
@@ -363,7 +363,7 @@ internal fun KtElement.analyze(): BindingContext {
 }
 
 internal inline fun <reified T : UDeclaration, reified P : PsiElement> unwrap(element: P): P {
-    val unwrapped = if (element is T) element.psi else element
+    val unwrapped = if (element is T) element.javaPsi else element
     assert(unwrapped !is UElement)
     return unwrapped as P
 }
@@ -381,23 +381,23 @@ internal fun KotlinType.getFunctionalInterfaceType(source: UElement, element: Kt
     takeIf { it.isInterface() && !it.isBuiltinFunctionalTypeOrSubtype }?.toPsiType(source, element, false)
 
 internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
-    val parent = psi.parent
-    if (parent is KtBinaryExpressionWithTypeRHS) return parent.right?.getType()?.getFunctionalInterfaceType(this, psi)
+    val parent = sourcePsi.parent
+    if (parent is KtBinaryExpressionWithTypeRHS) return parent.right?.getType()?.getFunctionalInterfaceType(this, sourcePsi)
     if (parent is KtValueArgument) run {
         val callExpression = parent.parents.take(2).firstIsInstanceOrNull<KtCallExpression>() ?: return@run
         val resolvedCall = callExpression.getResolvedCall(callExpression.analyze()) ?: return@run
         val candidateDescriptor = resolvedCall.candidateDescriptor as? SyntheticMemberDescriptor<*> ?: return@run
         when (candidateDescriptor) {
-            is SamConstructorDescriptor -> return candidateDescriptor.returnType?.getFunctionalInterfaceType(this, psi)
+            is SamConstructorDescriptor -> return candidateDescriptor.returnType?.getFunctionalInterfaceType(this, sourcePsi)
             is SamAdapterDescriptor<*>, is SamAdapterExtensionFunctionDescriptor -> {
                 val index = (resolvedCall.getArgumentMapping(parent) as? ArgumentMatch)?.valueParameter?.index ?: return@run
                 val functionDescriptor = candidateDescriptor.baseDescriptorForSynthetic as? FunctionDescriptor ?: return@run
                 val parameterDescriptor = functionDescriptor.valueParameters.getOrNull(index) ?: return@run
-                return parameterDescriptor.type.getFunctionalInterfaceType(this, psi)
+                return parameterDescriptor.type.getFunctionalInterfaceType(this, sourcePsi)
             }
         }
     }
-    return psi.getExpectedType()?.getFunctionalInterfaceType(this, psi)
+    return sourcePsi.getExpectedType()?.getFunctionalInterfaceType(this, sourcePsi)
 }
 
 internal fun unwrapFakeFileForLightClass(file: PsiFile): PsiFile = (file as? FakeFileForLightClass)?.ktFile ?: file

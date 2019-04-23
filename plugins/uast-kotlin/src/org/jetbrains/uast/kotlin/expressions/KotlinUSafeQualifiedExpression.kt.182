@@ -22,16 +22,16 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UQualifiedReferenceExpression
 
 class KotlinUSafeQualifiedExpression(
-        override val psi: KtSafeQualifiedExpression,
+        override val sourcePsi: KtSafeQualifiedExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UQualifiedReferenceExpression,
         KotlinUElementWithType, KotlinEvaluatableUElement {
-    override val receiver by lz { KotlinConverter.convertOrEmpty(psi.receiverExpression, this) }
-    override val selector by lz { KotlinConverter.convertOrEmpty(psi.selectorExpression, this) }
+    override val receiver by lz { KotlinConverter.convertOrEmpty(sourcePsi.receiverExpression, this) }
+    override val selector by lz { KotlinConverter.convertOrEmpty(sourcePsi.selectorExpression, this) }
     override val accessType = KotlinQualifiedExpressionAccessTypes.SAFE
 
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name
 
-    override fun resolve() = psi.selectorExpression?.resolveCallToDeclaration()
+    override fun resolve() = sourcePsi.selectorExpression?.resolveCallToDeclaration()
 }

@@ -78,8 +78,8 @@ private fun createElvisExpressions(
 }
 
 fun createElvisExpression(elvisExpression: KtBinaryExpression, givenParent: UElement?): UExpression {
-    val left = elvisExpression.left ?: return UastEmptyExpression(null)
-    val right = elvisExpression.right ?: return UastEmptyExpression(null)
+    val left = elvisExpression.left ?: return UastEmptyExpression(givenParent)
+    val right = elvisExpression.right ?: return UastEmptyExpression(givenParent)
 
     return KotlinUElvisExpression(elvisExpression, left, right, givenParent)
 }

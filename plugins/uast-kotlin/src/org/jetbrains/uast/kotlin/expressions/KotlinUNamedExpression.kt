@@ -68,7 +68,7 @@ class KotlinUVarargExpression(
         valueArgs.map {
             it.getArgumentExpression()?.let { argumentExpression ->
                 getLanguagePlugin().convert<UExpression>(argumentExpression, this)
-            } ?: UastEmptyExpression(null)
+            } ?: UastEmptyExpression(this)
         }
     }
 

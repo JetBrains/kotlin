@@ -28,7 +28,7 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUBinaryExpression(
-        override val psi: KtBinaryExpression,
+        override val sourcePsi: KtBinaryExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UBinaryExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     private companion object {
@@ -39,15 +39,15 @@ class KotlinUBinaryExpression(
         )
     }
 
-    override val leftOperand by lz { KotlinConverter.convertOrEmpty(psi.left, this) }
-    override val rightOperand by lz { KotlinConverter.convertOrEmpty(psi.right, this) }
+    override val leftOperand by lz { KotlinConverter.convertOrEmpty(sourcePsi.left, this) }
+    override val rightOperand by lz { KotlinConverter.convertOrEmpty(sourcePsi.right, this) }
 
     override val operatorIdentifier: UIdentifier?
-        get() = KotlinUIdentifier(psi.operationReference.getReferencedNameElement(), this)
+        get() = KotlinUIdentifier(sourcePsi.operationReference.getReferencedNameElement(), this)
 
-    override fun resolveOperator() = psi.operationReference.resolveCallToDeclaration() as? PsiMethod
+    override fun resolveOperator() = sourcePsi.operationReference.resolveCallToDeclaration() as? PsiMethod
 
-    override val operator = when (psi.operationToken) {
+    override val operator = when (sourcePsi.operationToken) {
         KtTokens.EQ -> UastBinaryOperator.ASSIGN
         KtTokens.PLUS -> UastBinaryOperator.PLUS
         KtTokens.MINUS -> UastBinaryOperator.MINUS
@@ -74,8 +74,8 @@ class KotlinUBinaryExpression(
         KtTokens.RANGE -> KotlinBinaryOperators.RANGE_TO
         else -> run { // Handle bitwise operators
             val other = UastBinaryOperator.OTHER
-            val ref = psi.operationReference
-            val resolvedCall = psi.operationReference.getResolvedCall(ref.analyze()) ?: return@run other
+            val ref = sourcePsi.operationReference
+            val resolvedCall = sourcePsi.operationReference.getResolvedCall(ref.analyze()) ?: return@run other
             val resultingDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return@run other
             val applicableOperator = BITWISE_OPERATORS[resultingDescriptor.name.asString()] ?: return@run other
 
