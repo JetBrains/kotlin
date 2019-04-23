@@ -23,7 +23,6 @@ import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil
 import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil.processAllDeclarations
 import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.getDelegatesToInfo
 import org.jetbrains.plugins.groovy.lang.resolve.imports.importedNameKey
-import org.jetbrains.plugins.groovy.lang.resolve.processReceiverType
 import org.jetbrains.plugins.groovy.lang.resolve.processors.AccessorResolverProcessor
 import org.jetbrains.plugins.groovy.lang.resolve.processors.ClassHint
 import org.jetbrains.plugins.groovy.lang.resolve.processors.MethodResolverProcessor
@@ -51,19 +50,6 @@ internal fun PsiFile?.isGradleScript() = this?.originalFile?.virtualFile?.extens
 
 @JvmField
 val RESOLVED_CODE: Key<Boolean?> = Key.create("gradle.resolved")
-
-// TODO extract API for delegation
-fun processDelegatedDeclarations(processor: PsiScopeProcessor, state: ResolveState, place: PsiElement, vararg fqns: String): Boolean {
-  val javaPsiFacade = JavaPsiFacade.getInstance(place.project)
-  for (fqn in fqns) {
-    val clazz = javaPsiFacade.findClass(fqn, place.resolveScope) ?: continue
-    val type = javaPsiFacade.elementFactory.createType(clazz)
-    if (!type.processReceiverType(processor, state, place)) {
-      return false
-    }
-  }
-  return true
-}
 
 fun processDeclarations(aClass: PsiClass,
                         processor: PsiScopeProcessor,

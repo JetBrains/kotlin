@@ -2,10 +2,8 @@
 package org.jetbrains.plugins.gradle.service.resolve
 
 import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
-import com.intellij.psi.ResolveState
-import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.util.ProcessingContext
 import groovy.lang.Closure
 import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.*
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
@@ -15,15 +13,15 @@ import org.jetbrains.plugins.groovy.lang.psi.patterns.GroovyClosurePattern
 import org.jetbrains.plugins.groovy.lang.psi.patterns.groovyClosure
 import org.jetbrains.plugins.groovy.lang.psi.patterns.psiMethod
 import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DelegatesToInfo
-import org.jetbrains.plugins.groovy.lang.resolve.processReceiverType
 
 /**
  * @author Vladislav.Soroka
  */
 class GradleProjectContributor : GradleMethodContextContributor {
   companion object {
-    val projectClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT,
-                                                                                  "project", "configure", "subprojects", "allprojects"))
+    val projectClosure: GroovyClosurePattern = groovyClosure().inMethod(
+      psiMethod(GRADLE_API_PROJECT, "project", "configure", "subprojects", "allprojects")
+    ).inMethodResult(saveProjectType)
     val copySpecClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "copy", "copySpec"))
     val fileTreeClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "fileTree"))
     val filesClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "files"))
@@ -32,8 +30,10 @@ class GradleProjectContributor : GradleMethodContextContributor {
   }
 
   override fun getDelegatesToInfo(closure: GrClosableBlock): DelegatesToInfo? {
-    if (projectClosure.accepts(closure)) {
-      return DelegatesToInfo(createType(GRADLE_API_PROJECT, closure), Closure.DELEGATE_FIRST)
+    val context = ProcessingContext()
+    if (projectClosure.accepts(closure, context)) {
+      val projectType = createType(GRADLE_API_PROJECT, closure)
+      return DelegatesToInfo(context[projectTypeKey]?.setType(projectType) ?: projectType, Closure.DELEGATE_FIRST)
     }
     if (copySpecClosure.accepts(closure)) {
       return DelegatesToInfo(createType(GRADLE_API_FILE_COPY_SPEC, closure), Closure.DELEGATE_FIRST)

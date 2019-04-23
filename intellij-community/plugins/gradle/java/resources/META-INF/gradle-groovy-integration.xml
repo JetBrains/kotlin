@@ -64,7 +64,6 @@
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleNonCodeMembersContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleScriptContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleSetterAsMethodContributor"/>
-    <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleConventionsContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleArtifactHandlerContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleTaskContainerContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleNamedDomainCollectionContributor"/>

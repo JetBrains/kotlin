@@ -14,12 +14,9 @@ import static org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassName
 @CompileStatic
 class GradleConventionsTest extends GradleHighlightingBaseTest implements ResolveTest {
 
-  // The test should fail when conventions would be taken from Gradle import
-  // instead of being processed in org.jetbrains.plugins.gradle.service.resolve.GradleConventionsContributor unconditionally.
-  // In such case `apply plugin: 'java'` is required to fix the test.
   @Test
   void test() {
-    importProject("")
+    importProject("apply plugin: 'java'")
     new RunAll().append {
       'property read'()
     } append {
