@@ -170,6 +170,7 @@ class DiagnosticReporterByTrackingStrategy(
                     context.statementFilter
                 )
                 val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
+                val call = if (call.callElement is KtBinaryExpression) null else call
                 SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
                     recordExpressionType = true
