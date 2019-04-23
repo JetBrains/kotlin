@@ -216,10 +216,19 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         }
         // can it be done in more concise way? e.g. additional builder function?
         call.dispatchReceiver = irGet(saveFunc.valueParameters[0])
-        val serialObjectSymbol = saveFunc.valueParameters[1]
+        val objectToSerialize = saveFunc.valueParameters[1]
         val localOutput = irTemporary(call, "output")
 
-        fun SerializableProperty.irGet(): IrGetField = irGetField(irGet(serialObjectSymbol), irField)
+        fun SerializableProperty.irGet(): IrGetField {
+            val ownerType = (descriptor.containingDeclaration as? ClassDescriptor)?.defaultType?.toIrType() ?:
+                throw IllegalStateException("Serializable property must be contained in class")
+            return irGetField(
+                irGet(
+                    type = ownerType,
+                    variable = objectToSerialize.symbol
+                ), irField
+            )
+        }
 
         //  internal serialization via virtual calls?
         for ((index, property) in serializableProperties.filter { !it.transient }.withIndex()) {
