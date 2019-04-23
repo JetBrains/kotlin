@@ -58,9 +58,7 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
 
       for (name in keyList) {
         def value = extension.findByName(name)
-
         if (value == null) continue
-        if (name == 'idea') continue
 
         def rootTypeFqn = getType(value)
         result.extensions.add(new DefaultGradleExtension(name, rootTypeFqn))

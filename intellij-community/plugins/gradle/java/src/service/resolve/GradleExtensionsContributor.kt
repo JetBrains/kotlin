@@ -177,19 +177,3 @@ class GradleExtensionsContributor : GradleMethodContextContributor {
     }
   }
 }
-
-fun processExtension(processor: PsiScopeProcessor,
-                     state: ResolveState,
-                     place: PsiElement,
-                     extension: GradleExtension): Boolean {
-  val classHint = processor.getHint(ElementClassHint.KEY)
-  val shouldProcessMethods = ResolveUtil.shouldProcessMethods(classHint)
-  val extensionClosure = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, extension.name))
-  val psiElement = psiElement()
-  if (psiElement.inside(extensionClosure).accepts(place)) {
-    if (shouldProcessMethods && !GradleResolverUtil.processDeclarations(processor, state, place, extension.rootTypeFqn)) {
-      return false
-    }
-  }
-  return true
-}
