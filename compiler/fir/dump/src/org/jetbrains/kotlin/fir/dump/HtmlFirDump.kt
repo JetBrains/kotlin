@@ -878,9 +878,20 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
+    private fun ConeSymbol.describe(): String {
+        return when (this) {
+            is ConeClassLikeSymbol -> classId.asString()
+            is ConeCallableSymbol -> callableId.toString()
+            else -> ""
+        }
+    }
+
     private fun FlowContent.symbolRef(symbol: ConeSymbol?, body: FlowContent.() -> Unit) {
         val link = if (symbol == null) null else linkResolver.nearSymbolLocation(symbol)
         declarationRef(link, setOf("symbol")) {
+            if (symbol != null) {
+                title = symbol.describe()
+            }
             body()
         }
     }
