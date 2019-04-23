@@ -242,6 +242,7 @@ val coreLibProjects = listOf(
         ":kotlin-stdlib",
         ":kotlin-stdlib-common",
         ":kotlin-stdlib-js",
+        ":kotlin-stdlib-js-ir",
         ":kotlin-stdlib-jdk7",
         ":kotlin-stdlib-jdk8",
         ":kotlin-test:kotlin-test-common",

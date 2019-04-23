@@ -1,0 +1,69 @@
+description = 'Kotlin Test for JS IR'
+
+apply plugin: 'kotlin-platform-js'
+
+
+dependencies {
+    expectedBy project(':kotlin-test:kotlin-test-common')
+    expectedBy project(':kotlin-test:kotlin-test-annotations-common')
+    compile project(':kotlin-stdlib-js-ir')
+}
+
+compileKotlin2Js {
+    kotlinOptions {
+        moduleKind = "umd"
+        freeCompilerArgs = [
+                "-Xir",
+                "-Xir-produce-only=klib",
+                "-Xallow-kotlin-package",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+        ]
+    }
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir "${projectDir}/../js/src"
+        }
+    }
+}
+
+compileTestKotlin2Js {
+    kotlinOptions.freeCompilerArgs = [
+        "-Xir",
+        "-Xir-produce-only=js",
+        "-Xallow-kotlin-package",
+    ]
+    kotlinOptions {
+        metaInfo = false
+        moduleKind = "umd"
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from(sourceSets.main.allSource)
+}
+
+archivesBaseName = 'kotlin-test-js-ir'
+
+jar {
+    manifestAttributes(manifest, project, 'Test')
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+if (project.findProperty("kotlin.stdlib.js.ir.publish")?.toBoolean() == true) {
+    configurePublishing(project)
+}
+
+if (project.findProperty("kotlin.stdlib.js.ir.dist")?.toBoolean() == true) {
+    configureDist(project)
+
+    dist {
+        from(jar, sourcesJar)
+    }
+}
