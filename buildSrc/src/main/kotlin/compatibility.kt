@@ -18,5 +18,8 @@ fun Project.enableTasksIfAtLeast(productVersion: String, expectedProductBranch: 
         return // OK, nothing to disable
 
     // otherwise: disable anything but "clean" and tasks from "help" group
-    tasks.filter { it.name != "clean" && it.group != "help" }.forEach { it.enabled = false }
+    tasks.filter { it.name != "clean" && it.group != "help" }.forEach { task ->
+        task.enabled = false
+        logger.kotlinInfo { "Task ${task.path} has been disabled due to condition mismatch: $productVersion is NOT at least $expectedProductBranch" }
+    }
 }

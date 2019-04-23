@@ -20,10 +20,17 @@ fun Project.patchFileTemplates(originalPluginJar: Configuration) = tasks.creatin
 
     from(zipTree(originalPluginJar.singleFile).matching { include("fileTemplates/**/*.ft") })
     destinationDir = file("$buildDir/$name")
+
     filter(
          mapOf("negate" to true, "contains" to filteredItems),
          LineContains::class.java
     )
+
+    eachFile {
+        logger.kotlinInfo {
+            "File \"${this.path}\" in task ${this@patchFileTemplates.path} has been patched to remove lines with the following items: $filteredItems"
+        }
+    }
 }
 
 // Disable `KotlinMPPGradleProjectTaskRunner` in CIDR plugins
@@ -33,5 +40,6 @@ fun Project.patchGradleXml(originalPluginJar: Configuration) = tasks.creating(Co
 
     from(zipTree(originalPluginJar.singleFile).matching { include(gradleXmlPath) })
     destinationDir = file("$buildDir/$name")
+
     commentXmlFiles(mapOf(gradleXmlPath to filteredItems))
 }

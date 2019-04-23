@@ -12,6 +12,7 @@ import org.gradle.api.Action
 import org.gradle.api.file.CopySourceSpec
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.AbstractCopyTask
 import org.w3c.dom.Attr
@@ -45,6 +46,10 @@ internal fun AbstractCopyTask.commentXmlFiles(fileToMarkers: Map<String, List<St
                 notDone -= path to marker
             }
             data
+        }
+
+        logger.kotlinInfo {
+            "File \"${this.path}\" in task ${this@commentXmlFiles.path} has been patched to comment lines with the following items: $markers"
         }
     }
 
@@ -93,3 +98,7 @@ internal var Property<String>.value
 internal var DirectoryProperty.value: File
     get() = get().asFile
     set(value) = set(value)
+
+internal fun Logger.kotlinInfo(message: () -> String) {
+    if (isInfoEnabled) { info("[KOTLIN] ${message()}") }
+}
