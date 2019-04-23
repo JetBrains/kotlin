@@ -295,9 +295,13 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         }
     }
 
+    private val noExpectedType = FirImplicitTypeRefImpl(session, null)
+
     private fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
 
-        val functionCall = functionCall.transformChildren(this, null) as FirFunctionCall
+        val functionCall =
+            (functionCall.transformExplicitReceiver(this, noExpectedType) as FirFunctionCall)
+                .transformArguments(this, null) as FirFunctionCall
 
         val name = functionCall.calleeReference.name
 

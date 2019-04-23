@@ -39,5 +39,9 @@ class FirDelegatedConstructorCallImpl(
         return super<FirAbstractCall>.transformChildren(transformer, data)
     }
 
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        return this
+    }
+
     override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
 }

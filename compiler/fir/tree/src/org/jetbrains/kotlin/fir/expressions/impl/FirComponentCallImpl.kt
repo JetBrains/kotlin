@@ -24,6 +24,11 @@ class FirComponentCallImpl(
     override val componentIndex: Int,
     override var explicitReceiver: FirExpression
 ) : FirAbstractCall(session, psi), FirComponentCall {
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        explicitReceiver = explicitReceiver.transformSingle(transformer, data)
+        return this
+    }
+
     override var calleeReference: FirNamedReference =
         FirSimpleNamedReference(session, psi, Name.identifier("component$componentIndex"))
 

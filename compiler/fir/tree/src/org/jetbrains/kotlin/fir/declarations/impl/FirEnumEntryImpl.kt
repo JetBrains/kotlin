@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
@@ -54,5 +55,11 @@ class FirEnumEntryImpl(
         arguments.transformInplace(transformer, data)
 
         return super<FirClassImpl>.transformChildren(transformer, data)
+    }
+
+    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirCall {
+        arguments.transformInplace(transformer, data)
+
+        return this
     }
 }

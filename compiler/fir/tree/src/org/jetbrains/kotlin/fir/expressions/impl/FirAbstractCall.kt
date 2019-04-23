@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirAbstractElement
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirAbstractCall(
@@ -23,5 +20,10 @@ abstract class FirAbstractCall(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         arguments.transformInplace(transformer, data)
         return super<FirAbstractExpression>.transformChildren(transformer, data)
+    }
+
+    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirCall {
+        arguments.transformInplace(transformer, data)
+        return this
     }
 }

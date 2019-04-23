@@ -26,4 +26,6 @@ interface FirQualifiedAccess : FirStatement {
         explicitReceiver?.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }
+
+    fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 }

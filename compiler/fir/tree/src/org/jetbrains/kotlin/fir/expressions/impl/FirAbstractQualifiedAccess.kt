@@ -30,4 +30,9 @@ abstract class FirAbstractQualifiedAccess(
         calleeReference = calleeReference.transformSingle(transformer, data)
         return this
     }
+
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
+        return this
+    }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.BaseTransformedType
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
@@ -21,4 +22,6 @@ interface FirCall : FirExpression {
         }
         super.acceptChildren(visitor, data)
     }
+
+    fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirCall
 }
