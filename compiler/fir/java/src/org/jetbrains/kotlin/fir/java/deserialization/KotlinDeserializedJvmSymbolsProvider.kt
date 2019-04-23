@@ -280,48 +280,54 @@ class KotlinDeserializedJvmSymbolsProvider(
         parentContext: FirDeserializationContext? = null
     ): FirClassSymbol? {
         if (!hasTopLevelClassOf(classId)) return null
-        return classesCache.getOrPut(classId) {
-            //return null
-            val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId)
-            if (kotlinJvmBinaryClass == null) {
-                val outerClassId = classId.outerClassId ?: return null
-                val outerJvmBinaryClass = kotlinClassFinder.findKotlinClass(outerClassId) ?: return null
-                if (outerJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
-                val (nameResolver, outerClassProto) = outerJvmBinaryClass.readClassDataFrom() ?: return null
-                if (outerClassProto.enumEntryList.none { nameResolver.getName(it.name) == classId.shortClassName }) {
-                    return null
+        if (classesCache.containsKey(classId)) return classesCache[classId]
+
+
+//        return classesCache.getOrPut(classId) {
+        //return null
+        val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId)
+        if (kotlinJvmBinaryClass == null) {
+            val outerClassId = classId.outerClassId ?: return null
+            val outerJvmBinaryClass = kotlinClassFinder.findKotlinClass(outerClassId) ?: return null
+            if (outerJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
+            val (nameResolver, outerClassProto) = outerJvmBinaryClass.readClassDataFrom() ?: return null
+            if (outerClassProto.enumEntryList.none { nameResolver.getName(it.name) == classId.shortClassName }) {
+                return null
+            }
+
+            val symbol = FirClassSymbol(classId)
+            FirEnumEntryImpl(session, null, symbol, classId.shortClassName)
+            classesCache[classId] = symbol
+        } else {
+            if (kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
+            val (nameResolver, classProto) = kotlinJvmBinaryClass.readClassDataFrom() ?: return null
+
+            val symbol = FirClassSymbol(classId)
+            deserializeClassToSymbol(
+                classId, classProto, symbol, nameResolver, session,
+                parentContext ?: FirDeserializationContext.createForClass(
+                    classId, classProto, nameResolver, session,
+                    JvmBinaryAnnotationDeserializer(session, nameResolver)
+                ),
+                this::findAndDeserializeClass
+            )
+            classesCache[classId] = symbol
+            val annotations = mutableListOf<FirAnnotationCall>()
+            kotlinJvmBinaryClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
+                override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                    return loadAnnotationIfNotSpecial(classId, annotations)
                 }
 
-                val symbol = FirClassSymbol(classId)
-                FirEnumEntryImpl(session, null, symbol, classId.shortClassName)
-                symbol
-            } else {
-                if (kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
-                val (nameResolver, classProto) = kotlinJvmBinaryClass.readClassDataFrom() ?: return null
+                override fun visitEnd() {
+                }
 
-                val symbol = FirClassSymbol(classId)
-                deserializeClassToSymbol(
-                    classId, classProto, symbol, nameResolver, session,
-                    parentContext ?: FirDeserializationContext.createForClass(
-                        classId, classProto, nameResolver, session,
-                        JvmBinaryAnnotationDeserializer(session, nameResolver)
-                    ),
-                    this::findAndDeserializeClass
-                )
-                val annotations = mutableListOf<FirAnnotationCall>()
-                kotlinJvmBinaryClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
-                    override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                        return loadAnnotationIfNotSpecial(classId, annotations)
-                    }
 
-                    override fun visitEnd() {
-                    }
-
-                }, null)
-                (symbol.fir as FirAbstractAnnotatedElement).annotations += annotations
-                symbol
-            }
+            }, null)
+            (symbol.fir as FirAbstractAnnotatedElement).annotations += annotations
         }
+
+        return classesCache[classId]
+//        }
     }
 
     private fun loadFunctionsByName(part: PackagePartsCacheData, name: Name): List<FirCallableSymbol> {
