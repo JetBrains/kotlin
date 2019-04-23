@@ -10,5 +10,9 @@ open class KotlinFUSLogger {
         fun log(group: FUSEventGroups, event: String) {
             // Not whitelisted for 183
         }
+
+        fun log(group: FUSEventGroups, event: String, eventData: Map<String, String>) {
+            // Not whitelisted for 183
+        }
     }
 }

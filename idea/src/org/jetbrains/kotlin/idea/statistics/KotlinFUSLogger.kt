@@ -18,5 +18,13 @@ open class KotlinFUSLogger {
         fun log(group: FUSEventGroups, event: String) {
             FUCounterUsageLogger.getInstance().logEvent(group.GROUP_ID, event, context)
         }
+
+        fun log(group: FUSEventGroups, event: String, eventData: Map<String, String>) {
+            val localContext = context.copy()
+            for (entry in eventData) {
+                localContext.addData(entry.key, entry.value)
+            }
+            FUCounterUsageLogger.getInstance().logEvent(group.GROUP_ID, event, localContext)
+        }
     }
 }
