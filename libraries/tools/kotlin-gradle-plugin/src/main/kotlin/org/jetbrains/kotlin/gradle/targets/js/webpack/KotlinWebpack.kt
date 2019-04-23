@@ -13,7 +13,6 @@ import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
-import org.gradle.process.internal.ExecHandleState
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -61,6 +60,9 @@ open class KotlinWebpack : DefaultTask() {
     var bin: String = "webpack"
 
     @Input
+    var sourceMaps: Boolean = true
+
+    @Input
     @Optional
     var devServer: KotlinWebpackConfig.DevServer? = null
 
@@ -75,7 +77,8 @@ open class KotlinWebpack : DefaultTask() {
             outputPath,
             configDirectory,
             if (report) reportDir else null,
-            devServer
+            devServer,
+            sourceMaps = sourceMaps
         )
     )
 
@@ -117,6 +120,10 @@ open class KotlinWebpack : DefaultTask() {
                 runtimeOnly(npm("webpack", "4.29.6"))
                 runtimeOnly(npm("webpack-cli", "3.3.0"))
                 runtimeOnly(npm("webpack-bundle-analyzer", "3.3.2"))
+
+                // for source map support only
+                runtimeOnly(npm("source-map-loader", "0.2.4"))
+                runtimeOnly(npm("source-map-support", "0.5.12"))
             }
 
             project.createOrRegisterTask<KotlinWebpack>("webpack") {
