@@ -104,11 +104,10 @@ fun KJvmCompiledScript<*>.getOrCreateActualClassloader(evaluationConfiguration: 
         val module = compiledModule
             ?: throw IllegalStateException("Illegal call sequence, actualClassloader should be set before calling function on the class without module")
         val baseClassLoader = evaluationConfiguration[ScriptEvaluationConfiguration.jvm.baseClassLoader]
-        val moduleClassLoader = module.createClassLoader(baseClassLoader)
         val classLoaderWithDeps =
-            if (evaluationConfiguration[ScriptEvaluationConfiguration.jvm.loadDependencies] == false) moduleClassLoader
-            else makeClassLoaderFromDependencies(moduleClassLoader)
-        return classLoaderWithDeps
+            if (evaluationConfiguration[ScriptEvaluationConfiguration.jvm.loadDependencies] == false) baseClassLoader
+            else makeClassLoaderFromDependencies(baseClassLoader)
+        return module.createClassLoader(classLoaderWithDeps)
     }
 
 fun getConfigurationWithClassloader(
@@ -130,7 +129,7 @@ fun getConfigurationWithClassloader(
         }
     }
 
-private fun CompiledScript<*>.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader): ClassLoader {
+private fun CompiledScript<*>.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader?): ClassLoader? {
     val processedScripts = mutableSetOf<CompiledScript<*>>()
     fun seq(res: Sequence<CompiledScript<*>>, script: CompiledScript<*>): Sequence<CompiledScript<*>> {
         if (processedScripts.contains(script)) return res
