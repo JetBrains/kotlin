@@ -268,7 +268,6 @@ public class GradleExtensionsSettings {
   public static class GradleExtension implements TypeAware {
     public String name;
     public String rootTypeFqn = CommonClassNames.JAVA_LANG_OBJECT_SHORT;
-    public String namedObjectTypeFqn;
 
     @Override
     public String getTypeFqn() {
