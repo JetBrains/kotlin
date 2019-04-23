@@ -360,7 +360,7 @@ internal fun generateIncrementOrDecrementBlock(
         val resultName = Name.special("<unary-result>")
         val resultInitializer = FirFunctionCallImpl(session, baseExpression).apply {
             this.calleeReference = FirSimpleNamedReference(session, baseExpression.operationReference, callName)
-            this.arguments += generateAccessExpression(session, baseExpression, tempName)
+            this.explicitReceiver = generateAccessExpression(session, baseExpression, tempName)
         }
         val resultVar = generateTemporaryVariable(session, baseExpression, resultName, resultInitializer)
         val assignment = argument.generateAssignment(

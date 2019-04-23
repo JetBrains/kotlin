@@ -32,7 +32,7 @@ FILE: destructuring.kt
         lvar y: <implicit> = <destruct>#.component2()
         lvar z: String = <destruct>#.component3()
         lval <unary>: <implicit> = x#
-        x# = inc#(<unary>#)
+        x# = <unary>#.inc#()
         <unary>#
         y# *= Double(2.0)
         z# = String()
