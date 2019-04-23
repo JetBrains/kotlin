@@ -83,7 +83,7 @@ class StableNamesCollector : IrElementVisitorVoid {
     }
 }
 
-private val RESERVED_IDENTIFIERS = setOf(
+val RESERVED_IDENTIFIERS = setOf(
     // keywords
     "await", "break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if",
     "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with",

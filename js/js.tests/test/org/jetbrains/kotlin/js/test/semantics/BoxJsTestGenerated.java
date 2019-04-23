@@ -1403,6 +1403,29 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/export")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Export extends AbstractBoxJsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInExport() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/export"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("nonIndetifierModuleName.kt")
+        public void testNonIndetifierModuleName() throws Exception {
+            runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
+        }
+
+        @TestMetadata("reservedModuleName.kt")
+        public void testReservedModuleName() throws Exception {
+            runTest("js/js.translator/testData/box/export/reservedModuleName.kt");
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/expression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

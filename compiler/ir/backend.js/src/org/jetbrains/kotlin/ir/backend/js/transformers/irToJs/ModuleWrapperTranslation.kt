@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.utils.RESERVED_IDENTIFIERS
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.naming.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object ModuleWrapperTranslation {
     object Namer {
-        fun requiresEscaping(name: String) = false
+        fun requiresEscaping(name: String) =
+            !name.isValidES5Identifier() || name in RESERVED_IDENTIFIERS
     }
 
     fun wrap(

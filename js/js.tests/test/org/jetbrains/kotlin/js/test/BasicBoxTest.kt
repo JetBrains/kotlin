@@ -116,6 +116,9 @@ abstract class BasicBoxTest(
         val outputPrefixFile = getOutputPrefixFile(filePath)
         val outputPostfixFile = getOutputPostfixFile(filePath)
 
+        val runPlainBoxFunction = RUN_PLAIN_BOX_FUNCTION.matcher(fileContent).find()
+        val inferMainModule = INFER_MAIN_MODULE.matcher(fileContent).find()
+
         TestFileFactoryImpl(coroutinesPackage).use { testFactory ->
             val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true, coroutinesPackage)
             val modules = inputFiles
@@ -128,10 +131,16 @@ abstract class BasicBoxTest(
 
             val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependencies.mapNotNull { modules[it] } }
 
-            val testPackage = testFactory.testPackage
+            val testPackage = if (runPlainBoxFunction) null else testFactory.testPackage
+
             val testFunction = TEST_FUNCTION
 
-            val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
+            val mainModuleName = when {
+                inferMainModule -> orderedModules.last().name
+                TEST_MODULE in modules -> TEST_MODULE
+                else -> DEFAULT_MODULE
+            }
+            val testModuleName = if (runPlainBoxFunction) null else mainModuleName
             val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
 
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
@@ -202,7 +211,7 @@ abstract class BasicBoxTest(
             }
 
             if (!dontRunGeneratedCode) {
-                runGeneratedCode(allJsFiles, mainModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+                runGeneratedCode(allJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
             }
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
@@ -244,7 +253,7 @@ abstract class BasicBoxTest(
                         allJsFiles = allJsFiles,
                         generatedJsFiles = generatedJsFiles,
                         expectedResult = expectedResult,
-                        testModuleName = mainModuleName,
+                        testModuleName = testModuleName,
                         testPackage = testPackage,
                         testFunction = testFunction,
                         withModuleSystem = withModuleSystem,
@@ -648,7 +657,7 @@ abstract class BasicBoxTest(
 
     private fun minifyAndRun(
             workDir: File, allJsFiles: List<String>, generatedJsFiles: List<Pair<String, TestModule>>,
-            expectedResult: String, testModuleName: String, testPackage: String?, testFunction: String, withModuleSystem: Boolean,
+            expectedResult: String, testModuleName: String?, testPackage: String?, testFunction: String, withModuleSystem: Boolean,
             minificationThresholdChecker: (Int) -> Unit
     ) {
         val kotlinJsLib = DIST_DIR_JS_PATH + "kotlin.js"
@@ -814,6 +823,13 @@ abstract class BasicBoxTest(
 
         private val MODULE_KIND_PATTERN = Pattern.compile("^// *MODULE_KIND: *(.+)$", Pattern.MULTILINE)
         private val NO_MODULE_SYSTEM_PATTERN = Pattern.compile("^// *NO_JS_MODULE_SYSTEM", Pattern.MULTILINE)
+
+        // Infer main module using dependency graph
+        private val INFER_MAIN_MODULE = Pattern.compile("^// *INFER_MAIN_MODULE", Pattern.MULTILINE)
+
+        // Run top level box function
+        private val RUN_PLAIN_BOX_FUNCTION = Pattern.compile("^// *RUN_PLAIN_BOX_FUNCTION", Pattern.MULTILINE)
+
         private val NO_INLINE_PATTERN = Pattern.compile("^// *NO_INLINE *$", Pattern.MULTILINE)
         private val SKIP_NODE_JS = Pattern.compile("^// *SKIP_NODE_JS *$", Pattern.MULTILINE)
         private val SKIP_MINIFICATION = Pattern.compile("^// *SKIP_MINIFICATION *$", Pattern.MULTILINE)
