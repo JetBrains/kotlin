@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
@@ -54,5 +55,14 @@ class FirClassDeclaredMemberScope(
             }
         }
         return NEXT
+    }
+
+    override fun processClassifiersByName(name: Name, position: FirPosition, processor: (ConeClassifierSymbol) -> Boolean): Boolean {
+        val matchedClass = classIndex[classId.createNestedClassId(name)]
+        if (matchedClass != null && !processor(matchedClass)) {
+            return false
+        }
+
+        return super.processClassifiersByName(name, position, processor)
     }
 }
