@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -1071,6 +1069,30 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generate(unitExpression.typeRef)
     }
 
+    private fun FlowContent.generate(breakExpression: FirBreakExpression) {
+        keyword("break")
+        span("label") {
+            +"@"
+            +(breakExpression.target.labelName ?: "")
+        }
+    }
+
+    private fun FlowContent.generate(continueExpression: FirContinueExpression) {
+        keyword("continue")
+        span("label") {
+            +"@"
+            +(continueExpression.target.labelName ?: "")
+        }
+    }
+
+
+    private fun FlowContent.generate(initializer: FirAnonymousInitializer) {
+        iline {
+            keyword("init")
+            generateBlockIfAny(initializer.body)
+        }
+    }
+
     private fun FlowContent.generate(stringConcatenationCall: FirStringConcatenationCall) {
         generateList(stringConcatenationCall.arguments, separator = " + ") {
             generate(it)
@@ -1088,6 +1110,8 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(expression: FirExpression) {
         exprType(expression.typeRef) {
             when (expression) {
+                is FirContinueExpression -> generate(expression)
+                is FirBreakExpression -> generate(expression)
                 is FirAnonymousObject -> generate(expression)
                 is FirUnitExpression -> generate(expression)
                 is FirStringConcatenationCall -> generate(expression)
@@ -1258,6 +1282,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(declaration: FirDeclaration) {
         when (declaration) {
+            is FirAnonymousInitializer -> generate(declaration)
             is FirMemberDeclaration -> generate(declaration)
             else -> unsupported(declaration)
         }
