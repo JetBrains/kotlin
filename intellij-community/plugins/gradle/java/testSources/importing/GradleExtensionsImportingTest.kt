@@ -45,7 +45,7 @@ class GradleExtensionsImportingTest : GradleImportingTestCase() {
         expectedExtensions = mapOf<String, String?>("ext" to extraPropertiesExtensionFqn,
                                                     "defaultArtifacts" to "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
                                                     "reporting" to "org.gradle.api.reporting.ReportingExtension")
-      baseVer <= GradleVersion.version("4.10.3") ->
+      baseVer < GradleVersion.version("4.10.3") ->
         expectedExtensions = mapOf<String, String?>("ext" to extraPropertiesExtensionFqn,
                                                     "defaultArtifacts" to "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
                                                     "reporting" to "org.gradle.api.reporting.ReportingExtension",
