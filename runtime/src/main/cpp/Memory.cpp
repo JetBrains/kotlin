@@ -510,8 +510,8 @@ inline container_size_t alignUp(container_size_t size, int alignment) {
   return (size + alignment - 1) & ~(alignment - 1);
 }
 
-inline ContainerHeader* realFrozenContainer(ContainerHeader* container) {
-  RuntimeAssert(container->frozen(), "Only makes sense on frozen objects");
+inline ContainerHeader* realShareableContainer(ContainerHeader* container) {
+  RuntimeAssert(container->shareable(), "Only makes sense on shareable objects");
   return reinterpret_cast<ObjHeader*>(container + 1)->container();
 }
 
@@ -1190,7 +1190,8 @@ ContainerHeader* AllocContainer(MemoryState* state, size_t size) {
  ContainerHeader* result = nullptr;
 #if USE_GC
   // We recycle elements of finalizer queue for new allocations, to avoid trashing memory manager.
-  ContainerHeader *container = state->finalizerQueue, *previous = nullptr;
+  ContainerHeader* container = state != nullptr ? state->finalizerQueue : nullptr;
+  ContainerHeader* previous = nullptr;
   while (container != nullptr) {
     // TODO: shall it be == instead?
     if (container->hasContainerSize() &&
@@ -1213,10 +1214,12 @@ ContainerHeader* AllocContainer(MemoryState* state, size_t size) {
     result = konanConstructSizedInstance<ContainerHeader>(alignUp(size, kObjectAlignment));
     atomicAdd(&allocCount, 1);
   }
-  CONTAINER_ALLOC_EVENT(state, size, result);
+  if (state != nullptr) {
+    CONTAINER_ALLOC_EVENT(state, size, result);
 #if TRACE_MEMORY
-  state->containers->insert(result);
+    state->containers->insert(result);
 #endif
+  }
   return result;
 }
 
@@ -1429,10 +1432,10 @@ void incrementStack(MemoryState* state) {
   }
 }
 
-void actualizeNewlyFrozenOnStack(MemoryState* state, const ContainerHeaderSet* newlyFrozen) {
+void actualizeNewlySharedOnStack(MemoryState* state, const ContainerHeaderSet* newlyShared) {
   // For all frozen objects in stack slots - perform reference increment.
   FrameOverlay* frame = currentFrame;
-  MEMORY_LOG("actualizeNewlyFrozenOnStack: newly frozen size is %d\n", newlyFrozen->size())
+  MEMORY_LOG("actualizeNewlySharedOnStack: newly shared size is %d\n", newlyShared->size())
   while (frame != nullptr) {
     MEMORY_LOG("current frame %p: %d parameters %d locals\n", frame, frame->parameters, frame->count)
     ObjHeader** current = reinterpret_cast<ObjHeader**>(frame + 1) + frame->parameters;
@@ -1443,7 +1446,7 @@ void actualizeNewlyFrozenOnStack(MemoryState* state, const ContainerHeaderSet* n
       if (obj != nullptr) {
         auto* container = obj->container();
         // No need to use atomic increment yet, object is still local.
-        if (container != nullptr && container->frozen() && newlyFrozen->count(container) != 0) {
+        if (container != nullptr && container->shareable() && newlyShared->count(container) != 0) {
           container->incRefCount<false>();
           MEMORY_LOG("incremented rc of %p to %d\n", container, container->refCount());
         }
@@ -1454,10 +1457,10 @@ void actualizeNewlyFrozenOnStack(MemoryState* state, const ContainerHeaderSet* n
 
   // And actualize RC of those objects using toRelease set.
   for (auto& container : *(state->toRelease)) {
-    if (!isMarkedAsRemoved(container) && container->frozen()) {
-      RuntimeAssert(newlyFrozen->count(container) != 0, "Must be newly frozen");
+    if (!isMarkedAsRemoved(container) && container->shareable()) {
+      RuntimeAssert(newlyShared->count(container) != 0, "Must be newly shared");
       // To account for aggregating containers.
-      ContainerHeader* realContainer = realFrozenContainer(container);
+      ContainerHeader* realContainer = realShareableContainer(container);
       auto newRc = realContainer->decRefCount<false>();
       MEMORY_LOG("decremented rc of %p to %d\n", realContainer, newRc);
       container = markAsRemoved(container);
@@ -2311,7 +2314,7 @@ void FreezeSubgraph(ObjHeader* root) {
     }
   }
   // Actualize reference counters of newly frozen objects.
-  actualizeNewlyFrozenOnStack(memoryState, &newlyFrozen);
+  actualizeNewlySharedOnStack(state, &newlyFrozen);
 #endif
 }
 
@@ -2421,6 +2424,9 @@ void Kotlin_Any_share(ObjHeader* obj) {
     if (Shareable(container)) return;
     RuntimeCheck(container->objectCount() == 1, "Must be a single object container");
     container->makeShareable();
+    ContainerHeaderSet newlyShared;
+    newlyShared.insert(container);
+    actualizeNewlySharedOnStack(memoryState, &newlyShared);
 }
 
 } // extern "C"
