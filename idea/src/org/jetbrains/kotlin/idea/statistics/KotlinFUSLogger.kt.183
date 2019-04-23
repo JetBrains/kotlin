@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.idea.statistics
 
-open class KotlinStatisticsTrigger {
+open class KotlinFUSLogger {
     companion object {
-        public fun trigger(trigger: KotlinEventTrigger, event: String) {
+        fun log(group: FUSEventGroups, event: String) {
             // Not whitelisted for 183
         }
     }

@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
-import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 
 class RenameSyntheticDeclarationByReferenceHandler : RenameHandler {
     override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
@@ -31,7 +31,7 @@ class RenameSyntheticDeclarationByReferenceHandler : RenameHandler {
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to synthetic declaration", "Rename", null)
-        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
+        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this::class.java.name)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

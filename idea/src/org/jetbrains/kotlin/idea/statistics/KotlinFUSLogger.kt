@@ -10,12 +10,13 @@ import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 
 
-open class KotlinStatisticsTrigger {
+open class KotlinFUSLogger {
+
     companion object {
         private val context = FeatureUsageData().addData("plugin_version", KotlinPluginUtil.getPluginVersion())
 
-        fun trigger(trigger: KotlinEventTrigger, event: String) {
-            FUCounterUsageLogger.getInstance().logEvent(trigger.GROUP_ID, event, context)
+        fun log(group: FUSEventGroups, event: String) {
+            FUCounterUsageLogger.getInstance().logEvent(group.GROUP_ID, event, context)
         }
     }
 }

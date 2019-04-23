@@ -9,13 +9,13 @@ import com.intellij.ide.scratch.ScratchFileCreationHelper
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 
 class KtScratchFileCreationHelper: ScratchFileCreationHelper() {
 
     override fun prepareText(project: Project, context: Context, dataContext: DataContext): Boolean {
-        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeNewFileTemplateTrigger, "Kotlin Scratch")
+        KotlinFUSLogger.log(FUSEventGroups.NewFileTemplate, "Kotlin Scratch")
 
         context.fileExtension = KotlinParserDefinition.STD_SCRIPT_SUFFIX
 

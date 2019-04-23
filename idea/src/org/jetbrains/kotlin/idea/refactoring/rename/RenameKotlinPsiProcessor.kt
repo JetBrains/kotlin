@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import java.util.ArrayList
 import kotlin.collections.*
 
@@ -69,7 +69,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element is KtNamedDeclaration
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this.javaClass.simpleName)
+        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this.javaClass.simpleName)
 
         val searchParameters = KotlinReferencesSearchParameters(
             element,

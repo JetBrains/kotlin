@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.DataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.PsiPrecedences
-import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalSourceSet
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency
@@ -199,8 +199,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         val mppModel = resolverCtx.getMppModel(gradleModule)
         if (mppModel != null) {
             mppModel.targets.forEach { target ->
-                KotlinStatisticsTrigger.trigger(
-                    KotlinEventTrigger.KotlinGradleTargetTrigger,
+                KotlinFUSLogger.log(
+                    FUSEventGroups.GradleTarget,
                     "MPP.${target.platform.id + (target.presetName?.let { ".$it" } ?: "")}"
                 )
             }
@@ -223,8 +223,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
 
-        KotlinStatisticsTrigger.trigger(
-            KotlinEventTrigger.KotlinGradleTargetTrigger,
+        KotlinFUSLogger.log(
+            FUSEventGroups.GradleTarget,
             gradleModel.kotlinTarget ?: "unknown"
         )
 
