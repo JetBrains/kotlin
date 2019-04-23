@@ -4525,6 +4525,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableInBinaryExpression.kt");
         }
 
+        @TestMetadata("notApplicableMultyLine.kt")
+        public void testNotApplicableMultyLine() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableMultyLine.kt");
+        }
+
         @TestMetadata("notApplicableOtherName.kt")
         public void testNotApplicableOtherName() throws Exception {
             runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableOtherName.kt");
