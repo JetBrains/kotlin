@@ -43,8 +43,6 @@ import com.intellij.pom.core.impl.PomModelImpl;
 import com.intellij.pom.tree.TreeAspect;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.*;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistryImpl;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
@@ -109,7 +107,6 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         registerComponentInstance(appContainer, PsiDocumentManager.class, new MockPsiDocumentManager());
         registerApplicationService(PsiBuilderFactory.class, new PsiBuilderFactoryImpl());
         registerApplicationService(DefaultASTFactory.class, new CoreASTFactory());
-        registerApplicationService(ReferenceProvidersRegistry.class, new ReferenceProvidersRegistryImpl());
 
         registerApplicationService(ProgressManager.class, new CoreProgressManager());
 
