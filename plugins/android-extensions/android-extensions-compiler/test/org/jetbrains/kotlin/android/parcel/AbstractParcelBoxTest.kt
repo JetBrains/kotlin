@@ -125,12 +125,10 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
         val junitCoreResourceName = JUnitCore::class.java.name.replace('.', '/') + ".class"
         val junitJar = File(JUnitCore::class.java.classLoader.getResource(junitCoreResourceName).file.substringBeforeLast('!'))
 
-        val androidExtensionsRuntimeCP =
-                (System.getenv("ANDROID_EXTENSIONS_RUNTIME_CLASSES")?.split(File.pathSeparator)
-                    ?: listOf("out/production/android-extensions-runtime")
-                ).map { File(it) }
+        val androidExtensionsRuntimeJars = System.getProperty("androidExtensionsRuntime.classpath")?.split(File.pathSeparator)?.map(::File)
+            ?: error("Unable to get a valid classpath from 'androidExtensionsRuntime.classpath' property")
 
-        return listOf(kotlinRuntimeJar) + layoutLibJars + robolectricJars + junitJar + androidExtensionsRuntimeCP
+        return listOf(kotlinRuntimeJar) + layoutLibJars + robolectricJars + junitJar + androidExtensionsRuntimeJars
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
