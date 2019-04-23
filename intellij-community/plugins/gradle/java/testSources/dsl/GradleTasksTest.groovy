@@ -23,9 +23,15 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
   void test() {
     importProject("apply plugin:'java'")
     new RunAll().append {
-      'task via script'()
+      'task ref'()
     } append {
-      'task container vs task'()
+      'task call'()
+    } append {
+      'task call delegate'()
+    } append {
+      'task container vs task ref'()
+    } append {
+      'task container vs task call'()
     } append {
       'task via TaskContainer'()
     } append {
@@ -37,15 +43,33 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
     } run()
   }
 
-  void 'task via script'() {
+  void 'task ref'() {
     doTest('<caret>javadoc') {
       testTask('javadoc', GRADLE_API_TASKS_JAVADOC_JAVADOC)
     }
   }
 
-  void 'task container vs task'() {
+  void 'task call'() {
+    doTest('<caret>javadoc {}') {
+      methodCallTest(PsiMethod, GRADLE_API_TASKS_JAVADOC_JAVADOC)
+    }
+  }
+
+  void 'task call delegate'() {
+    doTest('javadoc { <caret> }') {
+      closureDelegateTest(GRADLE_API_TASKS_JAVADOC_JAVADOC, 1)
+    }
+  }
+
+  void 'task container vs task ref'() {
     doTest('<caret>tasks') {
       referenceExpressionTest(PsiMethod, GRADLE_API_TASK_CONTAINER)
+    }
+  }
+
+  void 'task container vs task call'() {
+    doTest('<caret>tasks {}') {
+      methodCallTest(PsiMethod, GRADLE_API_TASKS_DIAGNOSTICS_TASK_REPORT_TASK)
     }
   }
 

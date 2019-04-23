@@ -57,7 +57,6 @@ class GradleExtensionsContributor : GradleMethodContextContributor {
     val shouldProcessProperties = ResolveUtil.shouldProcessProperties(classHint)
     val groovyPsiManager = GroovyPsiManager.getInstance(place.project)
     val resolveScope = place.resolveScope
-    val projectClass = JavaPsiFacade.getInstance(place.project).findClass(GRADLE_API_PROJECT, resolveScope) ?: return true
     val name = processor.getName(state)
 
     if (psiElement().inside(closureInLeftShiftMethod).accepts(place)) {
@@ -87,43 +86,6 @@ class GradleExtensionsContributor : GradleMethodContextContributor {
         }
       })).accepts(place)) {
         return true
-      }
-
-      var isTaskDeclaration = false
-      val parent = place.parent
-      val superParent = parent?.parent
-      if (superParent is GrCommandArgumentList && superParent.parent?.firstChild?.text == "task") {
-        isTaskDeclaration = true
-      }
-
-      if (shouldProcessMethods) {
-        extensionsData.tasksMap[name]?.let {
-          val returnClass = groovyPsiManager.createTypeByFQClassName(if (isTaskDeclaration) JAVA_LANG_STRING else it.typeFqn, resolveScope)
-          val methodBuilder = GrLightMethodBuilder(place.manager, it.name).apply {
-            containingClass = projectClass
-            returnType = returnClass
-            if (parent is GrMethodCallExpressionImpl && parent.argumentList.namedArguments.isNotEmpty()) {
-              addOptionalParameter("args", JAVA_UTIL_MAP)
-            }
-            val closureParam = addAndGetOptionalParameter("configuration", GROOVY_LANG_CLOSURE)
-            closureParam.putUserData(DELEGATES_TO_TYPE_KEY, it.typeFqn)
-            closureParam.putUserData(DELEGATES_TO_STRATEGY_KEY, Closure.OWNER_FIRST)
-          }
-          if (!processor.execute(methodBuilder, state)) return false
-        }
-      }
-      for (gradleTask in extensionsData.tasksMap.values) {
-        val taskClosure = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, gradleTask.name))
-        val psiElement = psiElement()
-        if (psiElement.inside(taskClosure).accepts(place)) {
-          if (shouldProcessMethods && !GradleResolverUtil.processDeclarations(processor, state, place, gradleTask.typeFqn)) {
-            place.putUserData(RESOLVED_CODE, null)
-            return false
-          }
-          else {
-            place.putUserData(RESOLVED_CODE, null)
-          }
-        }
       }
 
       if (name != null && place is GrReferenceExpression && !place.isQualified) {
