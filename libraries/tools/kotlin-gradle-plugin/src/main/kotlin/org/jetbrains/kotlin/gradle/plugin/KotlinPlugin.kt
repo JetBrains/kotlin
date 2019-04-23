@@ -569,9 +569,9 @@ internal open class KotlinPlugin(
         }
         (project.kotlinExtension as KotlinJvmProjectExtension).target = target
 
-        project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
-
         super.apply(project)
+
+        project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
     }
 }
 
