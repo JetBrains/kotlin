@@ -20,6 +20,7 @@ import com.intellij.build.events.impl.*;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationEvent;
 import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemBuildEvent;
+import org.gradle.internal.impldep.org.apache.commons.io.FilenameUtils;
 import org.gradle.tooling.events.*;
 import org.gradle.tooling.events.internal.DefaultOperationDescriptor;
 import org.gradle.tooling.events.task.TaskProgressEvent;
@@ -107,13 +108,28 @@ public class GradleProgressEventConverter {
     long total = -1;
     long progress = -1;
     String unit = "";
+    String operationName = event.getDescriptor().getName();
+    if (operationName.startsWith("Download ")) {
+      String path = operationName.substring("Download ".length());
+      operationName = "Download " + getFileName(path);
+    }
     if(event instanceof StatusEvent) {
       total = ((StatusEvent)event).getTotal();
       progress = ((StatusEvent)event).getProgress();
       unit = ((StatusEvent)event).getUnit();
     }
     return new ExternalSystemBuildEvent(
-      taskId, new ProgressBuildEventImpl(id, null, event.getEventTime(), event.getDescriptor().getName() + "...", total, progress, unit));
+      taskId, new ProgressBuildEventImpl(id, null, event.getEventTime(), operationName + "...", total, progress, unit));
+  }
+
+  @NotNull
+  private static String getFileName(String path) {
+    int index = FilenameUtils.indexOfLastSeparator(path);
+    if (index > 0 && index < path.length()) {
+      String fileName = path.substring(index + 1);
+      if (!fileName.isEmpty()) return fileName;
+    }
+    return path;
   }
 
   static class EventId {
