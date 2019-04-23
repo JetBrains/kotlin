@@ -67,9 +67,9 @@ class TextDiagnostic(
         return result
     }
 
-    fun asString(): String {
+    fun asString(withNewInference: Boolean = true, renderParameters: Boolean = true): String {
         val result = StringBuilder()
-        if (inferenceCompatibility.abbreviation != null) {
+        if (withNewInference && inferenceCompatibility.abbreviation != null) {
             result.append(inferenceCompatibility.abbreviation)
             result.append(";")
         }
@@ -78,9 +78,10 @@ class TextDiagnostic(
             result.append(":")
         }
         result.append(name)
-        if (parameters != null) {
+
+        if (renderParameters && parameters != null) {
             result.append("(")
-            result.append(StringUtil.join(parameters, { "\"$it\"" }, ", "))
+            result.append(StringUtil.join(parameters, { "\"${it.replace('\n', ' ')}\"" }, ", "))
             result.append(")")
         }
         return result.toString()
