@@ -1,10 +1,5 @@
-//SKIP-IF-RELEASE
-pluginManagement {
-#if($CIDR_PLUGIN_RESOLUTION_RULES)$CIDR_PLUGIN_RESOLUTION_RULES#end
+pluginManagement {@@MPP_PLUGIN_RESOLUTION_RULES@@
     repositories {
-        gradlePluginPortal()
-#foreach($repo in $CIDR_CUSTOM_PLUGIN_REPOS)
-        maven("$repo")
-#end
+        gradlePluginPortal()@@MPP_CUSTOM_PLUGIN_REPOS_8S@@
     }
 }

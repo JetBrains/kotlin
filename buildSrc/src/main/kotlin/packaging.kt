@@ -43,11 +43,7 @@ fun Project.packageCidrPlugin(
         from(otherPlatformDepsJars)
     }
 
-    into("templates") {
-        val templatesDir = project(predecessorProjectName).file("templates")
-        inputs.dir(templatesDir)
-        from(templatesDir)
-    }
+    includeProjectTemplates(project(predecessorProjectName))
 
     val ideaPluginDir = if (isStandaloneBuild) {
         // use dir where IDEA plugin has been already downloaded

@@ -1,1 +1,2 @@
 name=CSV Parser
+openInEditor=src/CSVParserMain/kotlin/CsvParser.kt

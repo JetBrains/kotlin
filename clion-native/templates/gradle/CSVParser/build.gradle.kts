@@ -1,19 +1,16 @@
 plugins {
-    kotlin("multiplatform") version "$CIDR_PLUGIN_VERSION"
+    kotlin("multiplatform") version "@@MPP_GRADLE_PLUGIN_VERSION@@"
 }
 
 repositories {
-    mavenCentral()
-#foreach($repo in $CIDR_CUSTOM_PLUGIN_REPOS)
-    maven("$repo")
-#end
+    mavenCentral()@@MPP_CUSTOM_PLUGIN_REPOS_4S@@
 }
 
 kotlin {
     // For ARM, preset function should be changed to iosArm32() or iosArm64()
     // For Linux, preset function should be changed to e.g. linuxX64()
     // For MacOS, preset function should be changed to e.g. macosX64()
-    $CIDR_MPP_PLATFORM("CSVParser") {
+    @@MPP_HOST_PLATFORM@@("CSVParser") {
         binaries {
             // Comment the next section to generate Kotlin/Native library (KLIB) instead of executable file:
             executable("CSVParserApp") {
