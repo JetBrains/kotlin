@@ -11,7 +11,6 @@ import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator
 import com.intellij.codeInsight.daemon.impl.MarkerType
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.colors.CodeInsightColors
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
@@ -48,10 +46,13 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import java.awt.event.MouseEvent
 import java.util.*
-import javax.swing.Icon
 import javax.swing.ListCellRenderer
 
-class KotlinLineMarkerProvider : LineMarkerProvider {
+class KotlinLineMarkerProvider : LineMarkerProviderDescriptor() {
+    override fun getName() = "Kotlin line markers"
+
+    override fun getOptions(): Array<Option> = KotlinLineMarkerOptions.options
+
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
         if (DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS) {
             if (element.canHaveSeparator()) {
@@ -83,6 +84,7 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
 
     override fun collectSlowLineMarkers(elements: List<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {
         if (elements.isEmpty()) return
+        if (KotlinLineMarkerOptions.options.none { option -> option.isEnabled }) return
 
         val first = elements.first()
         if (DumbService.getInstance(first.project).isDumb || !ProjectRootsUtil.isInProjectOrLibSource(first)) return
@@ -123,11 +125,6 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
         collectOverriddenPropertyAccessors(properties, result)
     }
 }
-
-private val OVERRIDING_MARK: Icon = AllIcons.Gutter.OverridingMethod
-private val IMPLEMENTING_MARK: Icon = AllIcons.Gutter.ImplementingMethod
-private val OVERRIDDEN_MARK: Icon = AllIcons.Gutter.OverridenMethod
-private val IMPLEMENTED_MARK: Icon = AllIcons.Gutter.ImplementedMethod
 
 data class NavigationPopupDescriptor(
     val targets: Collection<NavigatablePsiElement>,
@@ -253,6 +250,8 @@ private fun isImplementsAndNotOverrides(
 }
 
 private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: MutableCollection<LineMarkerInfo<*>>) {
+    if (!(KotlinLineMarkerOptions.implementingOption.isEnabled || KotlinLineMarkerOptions.overridingOption.isEnabled)) return
+
     assert(declaration is KtNamedFunction || declaration is KtProperty || declaration is KtParameter)
 
     if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
@@ -270,7 +269,7 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        if (implements) IMPLEMENTING_MARK else OVERRIDING_MARK,
+        if (implements) KotlinLineMarkerOptions.implementingOption.icon else KotlinLineMarkerOptions.overridingOption.icon,
         Pass.LINE_MARKERS,
         SuperDeclarationMarkerTooltip,
         SuperDeclarationMarkerNavigationHandler(),
@@ -285,6 +284,8 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
 }
 
 private fun collectInheritedClassMarker(element: KtClass, result: MutableCollection<LineMarkerInfo<*>>) {
+    if (!(KotlinLineMarkerOptions.implementedOption.isEnabled || KotlinLineMarkerOptions.overriddenOption.isEnabled)) return
+
     if (!element.isInheritable()) {
         return
     }
@@ -298,7 +299,7 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        if (element.isInterface()) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+        if (element.isInterface()) KotlinLineMarkerOptions.implementedOption.icon else KotlinLineMarkerOptions.overriddenOption.icon,
         Pass.LINE_MARKERS,
         SUBCLASSED_CLASS.tooltip,
         SUBCLASSED_CLASS.navigationHandler,
@@ -316,6 +317,8 @@ private fun collectOverriddenPropertyAccessors(
     properties: Collection<KtNamedDeclaration>,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
+    if (!(KotlinLineMarkerOptions.implementedOption.isEnabled || KotlinLineMarkerOptions.overriddenOption.isEnabled)) return
+
     val mappingToJava = HashMap<PsiElement, KtNamedDeclaration>()
     for (property in properties) {
         if (property.isOverridable()) {
@@ -334,7 +337,7 @@ private fun collectOverriddenPropertyAccessors(
         val lineMarkerInfo = LineMarkerInfo(
             anchor,
             anchor.textRange,
-            if (isImplemented(property)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+            if (isImplemented(property)) KotlinLineMarkerOptions.implementedOption.icon else KotlinLineMarkerOptions.overriddenOption.icon,
             Pass.LINE_MARKERS,
             OVERRIDDEN_PROPERTY.tooltip,
             OVERRIDDEN_PROPERTY.navigationHandler,
@@ -361,9 +364,18 @@ private fun collectMultiplatformMarkers(
     declaration: KtNamedDeclaration,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
-    when {
-        declaration.isExpectDeclaration() -> collectActualMarkers(declaration, result)
-        declaration.isEffectivelyActual() -> collectExpectedMarkers(declaration, result)
+    if (KotlinLineMarkerOptions.actualOption.isEnabled) {
+        if (declaration.isExpectDeclaration()) {
+            collectActualMarkers(declaration, result)
+            return
+        }
+    }
+
+    if (KotlinLineMarkerOptions.expectOption.isEnabled) {
+        if (!declaration.isExpectDeclaration() && declaration.isEffectivelyActual()) {
+            collectExpectedMarkers(declaration, result)
+            return
+        }
     }
 }
 
@@ -444,6 +456,7 @@ private fun collectActualMarkers(
     declaration: KtNamedDeclaration,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
+    if (!KotlinLineMarkerOptions.actualOption.isEnabled) return
     if (declaration.requiresNoMarkers()) return
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
@@ -456,7 +469,7 @@ private fun collectActualMarkers(
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        KotlinIcons.ACTUAL,
+        KotlinLineMarkerOptions.actualOption.icon,
         Pass.LINE_MARKERS,
         PLATFORM_ACTUAL.tooltip,
         PLATFORM_ACTUAL.navigationHandler,
@@ -474,6 +487,8 @@ private fun collectExpectedMarkers(
     declaration: KtNamedDeclaration,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
+    if (!KotlinLineMarkerOptions.expectOption.isEnabled) return
+
     if (declaration.requiresNoMarkers()) return
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
@@ -485,7 +500,7 @@ private fun collectExpectedMarkers(
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        KotlinIcons.EXPECT,
+        KotlinLineMarkerOptions.expectOption.icon,
         Pass.LINE_MARKERS,
         EXPECTED_DECLARATION.tooltip,
         EXPECTED_DECLARATION.navigationHandler,
@@ -500,6 +515,10 @@ private fun collectExpectedMarkers(
 }
 
 private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
+    if (!(KotlinLineMarkerOptions.implementedOption.isEnabled || KotlinLineMarkerOptions.overriddenOption.isEnabled)) {
+        return
+    }
+
     val mappingToJava = HashMap<PsiElement, KtNamedFunction>()
     for (function in functions) {
         if (function.isOverridable()) {
@@ -521,7 +540,7 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
         val lineMarkerInfo = LineMarkerInfo(
             anchor,
             anchor.textRange,
-            if (isImplemented(function)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
+            if (isImplemented(function)) KotlinLineMarkerOptions.implementedOption.icon else KotlinLineMarkerOptions.overriddenOption.icon,
             Pass.LINE_MARKERS, OVERRIDDEN_FUNCTION.tooltip,
             OVERRIDDEN_FUNCTION.navigationHandler,
             GutterIconRenderer.Alignment.RIGHT

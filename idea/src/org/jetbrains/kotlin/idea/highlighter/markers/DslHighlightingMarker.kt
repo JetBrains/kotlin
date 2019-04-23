@@ -38,6 +38,8 @@ fun collectHighlightingColorsMarkers(
     ktClass: KtClass,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
+    if (!KotlinLineMarkerOptions.dslOption.isEnabled) return
+
     val styleId = ktClass.styleIdForMarkerAnnotation() ?: return
 
     val anchor = ktClass.nameIdentifier ?: return
