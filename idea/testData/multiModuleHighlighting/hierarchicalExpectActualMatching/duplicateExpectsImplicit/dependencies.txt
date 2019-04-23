@@ -1,0 +1,6 @@
+MODULE right { platform=[JVM, Native]; root=right }
+MODULE left { platform=[JVM, JS]; root=left }
+MODULE bottom { platform=[JVM]; root=bottom }
+
+bottom -> right { kind=EXPECTED_BY }
+bottom -> left { kind=EXPECTED_BY }

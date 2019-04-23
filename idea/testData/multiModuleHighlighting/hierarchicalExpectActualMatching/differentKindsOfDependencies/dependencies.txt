@@ -1,0 +1,10 @@
+MODULE a-common { platform=[JVM, JS, Native]; root=a-common }
+MODULE a-js { platform=[JS]; root=a-js }
+MODULE a-jvm { platform=[JVM]; root=a-jvm }
+MODULE b-common { platform=[JVM, JS, Native]; root=b-common }
+
+a-js -> a-common { kind=EXPECTED_BY }
+a-jvm -> a-common { kind=EXPECTED_BY }
+
+
+a-common -> b-common { kind=DEPENDENCY }
