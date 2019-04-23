@@ -140,7 +140,7 @@ class PresentationFactory(val editor: EditorImpl) {
           hint = null
         }
         else -> {
-          if (hint?.isVisible == true) {
+          if (hint?.isVisible != true) {
             hint = showTooltip(editor, event, tooltip)
           }
         }
