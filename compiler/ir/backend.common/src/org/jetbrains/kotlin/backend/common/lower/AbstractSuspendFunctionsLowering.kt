@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-abstract class AbstractSuspendFunctionsLowering<C: CommonBackendContext>(val context: C, val symbolTable: SymbolTable) : FileLoweringPass {
+abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val context: C) : FileLoweringPass {
 
     protected object STATEMENT_ORIGIN_COROUTINE_IMPL : IrStatementOriginImpl("COROUTINE_IMPL")
     protected object DECLARATION_ORIGIN_COROUTINE_IMPL : IrDeclarationOriginImpl("COROUTINE_IMPL")
@@ -272,7 +272,7 @@ abstract class AbstractSuspendFunctionsLowering<C: CommonBackendContext>(val con
             IrClassImpl(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
-                symbolTable.referenceClass(d),
+                IrClassSymbolImpl(d),
                 "${irFunction.name}COROUTINE\$${coroutineId++}".synthesizedName,
                 ClassKind.CLASS,
                 irFunction.visibility,
@@ -377,7 +377,7 @@ abstract class AbstractSuspendFunctionsLowering<C: CommonBackendContext>(val con
             IrConstructorImpl(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
-                symbolTable.referenceConstructor(d),
+                IrConstructorSymbolImpl(d),
                 coroutineBaseClassConstructor.name,
                 irFunction.visibility,
                 coroutineClass.defaultType,
@@ -422,7 +422,7 @@ abstract class AbstractSuspendFunctionsLowering<C: CommonBackendContext>(val con
             IrConstructorImpl(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
-                symbolTable.referenceConstructor(d),
+                IrConstructorSymbolImpl(d),
                 coroutineBaseClassConstructor.name,
                 irFunction.visibility,
                 coroutineClass.defaultType,
@@ -467,7 +467,7 @@ abstract class AbstractSuspendFunctionsLowering<C: CommonBackendContext>(val con
             IrFunctionImpl(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
-                symbolTable.referenceSimpleFunction(d),
+                IrSimpleFunctionSymbolImpl(d),
                 Name.identifier("create"),
                 Visibilities.PROTECTED,
                 Modality.FINAL,
@@ -532,7 +532,7 @@ abstract class AbstractSuspendFunctionsLowering<C: CommonBackendContext>(val con
             IrFunctionImpl(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
-                symbolTable.referenceSimpleFunction(d),
+                IrSimpleFunctionSymbolImpl(d),
                 Name.identifier("invoke"),
                 Visibilities.PROTECTED,
                 Modality.FINAL,
@@ -590,7 +590,7 @@ abstract class AbstractSuspendFunctionsLowering<C: CommonBackendContext>(val con
                 IrFunctionImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_COROUTINE_IMPL,
-                    symbolTable.referenceSimpleFunction(d),
+                    IrSimpleFunctionSymbolImpl(d),
                     stateMachineFunction.name,
                     stateMachineFunction.visibility,
                     Modality.FINAL,
