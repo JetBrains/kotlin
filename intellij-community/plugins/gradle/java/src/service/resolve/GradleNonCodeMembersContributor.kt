@@ -4,32 +4,20 @@ package org.jetbrains.plugins.gradle.service.resolve
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.Ref
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
+import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.util.InheritanceUtil
-import com.intellij.psi.util.PsiTreeUtil
-import groovy.lang.Closure
-import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_NAMED_DOMAIN_OBJECT_CONTAINER
 import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_PROJECT
 import org.jetbrains.plugins.gradle.service.resolve.GradleExtensionsContributor.Companion.getDocumentation
 import org.jetbrains.plugins.gradle.settings.GradleExtensionsSettings
 import org.jetbrains.plugins.gradle.settings.GradleExtensionsSettings.GradleExtensionsData
 import org.jetbrains.plugins.groovy.dsl.holders.NonCodeMembersHolder
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
-import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.TypesUtil
-import org.jetbrains.plugins.groovy.lang.psi.impl.synthetic.GrLightField
-import org.jetbrains.plugins.groovy.lang.psi.impl.synthetic.GrLightMethodBuilder
 import org.jetbrains.plugins.groovy.lang.psi.impl.synthetic.GrLightVariable
-import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames.GROOVY_LANG_CLOSURE
 import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor
-import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil
-import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DELEGATES_TO_TYPE_KEY
-import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DELEGATES_TO_STRATEGY_KEY
-import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.getDelegatesToInfo
 import org.jetbrains.plugins.groovy.lang.resolve.shouldProcessProperties
 
 /**
@@ -70,7 +58,8 @@ class GradleNonCodeMembersContributor : NonCodeMembersContributor() {
       if (!processor.shouldProcessProperties()) {
         return
       }
-      val processVariable: (GradleExtensionsSettings.TypeAware) -> Boolean = {
+
+      extensionsData.findProperty(propCandidate)?.let {
         val docRef = Ref.create<String>()
         val variable = object : GrLightVariable(place.manager, propCandidate, it.typeFqn, place) {
           override fun getNavigationElement(): PsiElement {
@@ -84,9 +73,6 @@ class GradleNonCodeMembersContributor : NonCodeMembersContributor() {
         place.putUserData(NonCodeMembersHolder.DOCUMENTATION, doc)
         processor.execute(variable, state)
       }
-
-      extensionsData.tasksMap[propCandidate]?.let(processVariable)
-      extensionsData.findProperty(propCandidate)?.let(processVariable)
     }
     else {
       if (!shouldSkipDeclarationsAndSetters(aClass.qualifiedName)) {
