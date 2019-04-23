@@ -202,6 +202,7 @@ messages/**)
 -keep class org.jetbrains.org.objectweb.asm.tree.FieldNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.ParameterNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.TypeAnnotationNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.InsnList { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureReader { *; }
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureVisitor { *; }
