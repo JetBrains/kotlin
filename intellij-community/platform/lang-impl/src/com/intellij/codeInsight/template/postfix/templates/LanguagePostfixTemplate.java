@@ -6,8 +6,8 @@ import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.extensions.ExtensionPointName;
 
 public class LanguagePostfixTemplate extends LanguageExtension<PostfixTemplateProvider> {
-  public static final LanguagePostfixTemplate LANG_EP = new LanguagePostfixTemplate();
   public static final ExtensionPointName<LanguageExtensionPoint> EP_NAME = new ExtensionPointName<>("com.intellij.codeInsight.template.postfixTemplateProvider");
+  public static final LanguagePostfixTemplate LANG_EP = new LanguagePostfixTemplate();
 
   private LanguagePostfixTemplate() {
     super(EP_NAME.getName());
