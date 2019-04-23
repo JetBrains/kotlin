@@ -1,8 +1,5 @@
-import java.io.File
-import proguard.gradle.ProGuardTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer.COMPILE
-import org.gradle.api.file.DuplicatesStrategy
+import proguard.gradle.ProGuardTask
 
 description = "Kotlin Compiler"
 
@@ -21,7 +18,6 @@ val fatJarContents by configurations.creating
 
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
-val fatSourcesJarContents by configurations.creating
 val fatJar by configurations.creating
 val compilerJar by configurations.creating
 val runtimeJar by configurations.creating
@@ -40,12 +36,6 @@ val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName.jar")
 
 val compilerModules: Array<String> by rootProject.extra
 
-compilerModules.forEach { evaluationDependsOn(it) }
-
-val compiledModulesSources = compilerModules.map {
-    project(it).mainSourceSet.allSource
-}
-
 dependencies {
     compile(kotlinStdlib())
     compile(project(":kotlin-script-runtime"))
@@ -63,10 +53,6 @@ dependencies {
 
     compilerModules.forEach {
         fatJarContents(project(it)) { isTransitive = false }
-    }
-
-    compiledModulesSources.forEach {
-        fatSourcesJarContents(it)
     }
 
     trove4jJar(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
@@ -154,7 +140,11 @@ runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
 }
 
 sourcesJar {
-    from(fatSourcesJarContents)
+    from {
+        compilerModules.map {
+            project(it).mainSourceSet.allSource
+        }
+    }
 }
 
 javadocJar()
