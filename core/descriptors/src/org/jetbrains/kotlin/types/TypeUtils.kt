@@ -130,7 +130,7 @@ fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupe
 fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
     TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
 
-fun Collection<KotlinType>.closure(f: (KotlinType) -> Collection<KotlinType>): Collection<KotlinType> {
+fun <T> Collection<T>.closure(f: (T) -> Collection<T>): Collection<T> {
     if (size == 0) return this
 
     val result = HashSet(this)
@@ -138,7 +138,7 @@ fun Collection<KotlinType>.closure(f: (KotlinType) -> Collection<KotlinType>): C
     var oldSize = 0
     while (result.size > oldSize) {
         oldSize = result.size
-        val toAdd = hashSetOf<KotlinType>()
+        val toAdd = hashSetOf<T>()
         elementsToCheck.forEach { toAdd.addAll(f(it)) }
         result.addAll(toAdd)
         elementsToCheck = toAdd
