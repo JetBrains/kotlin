@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.codeInsight;
 
-import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -15,6 +14,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListenerKt;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -54,13 +54,15 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
         assertNotNull("Should be valid element", element);
 
-        long oobBeforeType = tracker.getOutOfCodeBlockModificationCount();
+        KtFile file = (KtFile) getFile();
+
+        long oobBeforeType = KotlinCodeBlockModificationListenerKt.getOutOfBlockModificationCount(file);
         long modificationCountBeforeType = tracker.getModificationCount();
 
         myFixture.type(getStringToType());
         PsiDocumentManager.getInstance(myFixture.getProject()).commitDocument(myFixture.getDocument(myFixture.getFile()));
 
-        long oobAfterCount = tracker.getOutOfCodeBlockModificationCount();
+        long oobAfterCount = KotlinCodeBlockModificationListenerKt.getOutOfBlockModificationCount(file);
         long modificationCountAfterType = tracker.getModificationCount();
 
         assertTrue("Modification tracker should always be changed after type", modificationCountBeforeType != modificationCountAfterType);
