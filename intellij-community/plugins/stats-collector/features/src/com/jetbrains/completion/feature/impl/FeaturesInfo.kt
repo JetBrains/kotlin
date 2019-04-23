@@ -48,10 +48,9 @@ class FeaturesInfo(private val knownFeatures: Set<String>,
 
   override fun unknownFeatures(features: Set<String>): List<String> {
     var result: MutableList<String>? = null
-    for (factor in features) {
-      val normalized = factor.substringBefore('@')
-      if (normalized !in knownFeatures) {
-        result = (result ?: mutableListOf()).apply { add(normalized) }
+    for (featureName in features) {
+      if (featureName !in knownFeatures) {
+        result = (result ?: mutableListOf()).apply { add(featureName) }
       }
     }
 

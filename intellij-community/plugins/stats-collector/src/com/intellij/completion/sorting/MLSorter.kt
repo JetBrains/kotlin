@@ -109,8 +109,8 @@ class MLSorter : CompletionFinalSorter() {
     return items
       .mapIndexed { position, lookupElement ->
         positionsBefore[lookupElement] = position
-        val relevance = buildRelevanceMap(lookupElement, relevanceObjects[lookupElement], lookup.prefixLength(),
-                                          position, parameters) ?: return null
+        val relevance = buildRelevanceMap(lookupElement, relevanceObjects[lookupElement]?.map { it.first to it.second },
+                                          lookup.prefixLength(), position, parameters) ?: return null
         val rank: Double = calculateElementRank(ranker, lookupElement, position, relevance, userFactors, prefixLength) ?: return null
 
         lookupElement to rank
@@ -121,25 +121,13 @@ class MLSorter : CompletionFinalSorter() {
   }
 
   private fun buildRelevanceMap(lookupElement: LookupElement,
-                                relevanceObjects: List<Pair<String, Any>>?,
+                                relevanceObjects: List<kotlin.Pair<String, Any?>>?,
                                 prefixLength: Int,
                                 position: Int,
                                 parameters: CompletionParameters): Map<String, Any>? {
     if (relevanceObjects == null) return null
 
-    val relevanceMap = mutableMapOf<String, Any>()
-    for (pair in relevanceObjects) {
-      val name = pair.first
-      val value = pair.second
-      if (value == null) continue
-      if (name == "proximity") {
-        val proximityMap = FeatureUtils.asProximityMap(value.toString())
-        relevanceMap.putAll(proximityMap)
-      }
-      else {
-        relevanceMap[name] = value
-      }
-    }
+    val relevanceMap = FeatureUtils.asRelevanceMap(relevanceObjects)
 
     relevanceMap["position"] = position
     relevanceMap["query_length"] = prefixLength
