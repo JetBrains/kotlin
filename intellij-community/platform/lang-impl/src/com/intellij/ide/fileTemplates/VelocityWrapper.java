@@ -32,7 +32,6 @@ import java.io.*;
  */
 class VelocityWrapper {
   private static final Logger LOG = Logger.getInstance("#com.intellij.ide.fileTemplates.VelocityWrapper");
-  private static final ThreadLocal<FileTemplateManager> ourTemplateManager = new ThreadLocal<>();
 
   static {
     try{
@@ -64,8 +63,7 @@ class VelocityWrapper {
 
         @Override
         public InputStream getResourceStream(String resourceName) throws ResourceNotFoundException {
-          FileTemplateManager templateManager = ourTemplateManager.get();
-          if (templateManager == null) templateManager = FileTemplateManager.getDefaultInstance();
+          FileTemplateManager templateManager = VelocityTemplateContext.getFromContext();
           final FileTemplate include = templateManager.getPattern(resourceName);
           if (include == null) {
             throw new ResourceNotFoundException("Template not found: " + resourceName);
@@ -104,13 +102,7 @@ class VelocityWrapper {
 
   static boolean evaluate(@Nullable Project project, Context context, @NotNull Writer writer, String templateContent)
     throws ParseErrorException, MethodInvocationException, ResourceNotFoundException {
-    try {
-      ourTemplateManager.set(project == null ? FileTemplateManager.getDefaultInstance() : FileTemplateManager.getInstance(project));
-      return Velocity.evaluate(context, writer, "", templateContent);
-    }
-    finally {
-      ourTemplateManager.set(null);
-    }
+    return VelocityTemplateContext.withContext(project, () -> Velocity.evaluate(context, writer, "", templateContent));
   }
 
 }
