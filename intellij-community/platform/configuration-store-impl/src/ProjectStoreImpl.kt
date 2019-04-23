@@ -33,16 +33,16 @@ import java.nio.file.Paths
 internal val IProjectStore.nameFile: Path
   get() = Paths.get(directoryStorePath, ProjectImpl.NAME_FILE)
 
-private open class ProjectStoreImpl(project: Project, private val pathMacroManager: PathMacroManager) : ProjectStoreBase(project) {
+private open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
   private var lastSavedProjectName: String? = null
 
   init {
     assert(!project.isDefault)
   }
 
-  final override fun getPathMacroManagerForDefaults() = pathMacroManager
+  final override fun getPathMacroManagerForDefaults() = PathMacroManager.getInstance(project)
 
-  override val storageManager = ProjectStateStorageManager(TrackingPathMacroSubstitutorImpl(pathMacroManager), project)
+  override val storageManager = ProjectStateStorageManager(TrackingPathMacroSubstitutorImpl(PathMacroManager.getInstance(project)), project)
 
   override fun setPath(path: String) {
     runBlocking {
@@ -146,7 +146,7 @@ private open class ProjectStoreImpl(project: Project, private val pathMacroManag
   }
 }
 
-private class ProjectWithModulesStoreImpl(project: Project, pathMacroManager: PathMacroManager) : ProjectStoreImpl(project, pathMacroManager) {
+private class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(project) {
   override suspend fun saveModules(errors: MutableList<Throwable>, isForceSavingAllSettings: Boolean): List<SaveSession> {
     val modules = ModuleManager.getInstance(project)?.modules ?: Module.EMPTY_ARRAY
     if (modules.isEmpty()) {
@@ -167,15 +167,13 @@ private class ProjectWithModulesStoreImpl(project: Project, pathMacroManager: Pa
   }
 }
 
-// used in upsource
-class PlatformLangProjectStoreClassProvider : ProjectStoreClassProvider {
+internal class PlatformLangProjectStoreClassProvider : ProjectStoreClassProvider {
   override fun getProjectStoreClass(isDefaultProject: Boolean): Class<out IComponentStore> {
     return if (isDefaultProject) DefaultProjectStoreImpl::class.java else ProjectWithModulesStoreImpl::class.java
   }
 }
 
-@Suppress("unused")
-private class PlatformProjectStoreClassProvider : ProjectStoreClassProvider {
+internal class PlatformProjectStoreClassProvider : ProjectStoreClassProvider {
   override fun getProjectStoreClass(isDefaultProject: Boolean): Class<out IComponentStore> {
     return if (isDefaultProject) DefaultProjectStoreImpl::class.java else ProjectStoreImpl::class.java
   }
