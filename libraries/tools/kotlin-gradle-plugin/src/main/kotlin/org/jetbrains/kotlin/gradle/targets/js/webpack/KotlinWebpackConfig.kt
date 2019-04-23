@@ -21,7 +21,8 @@ class KotlinWebpackConfig(
     val configDirectory: File,
     val reportDir: File?,
     var devServer: DevServer? = null,
-    val showProgress: Boolean = false
+    val showProgress: Boolean = false,
+    val sourceMaps: Boolean = false
 ) {
     @Suppress("unused")
     data class BundleAnalyzerPlugin(
@@ -54,7 +55,7 @@ class KotlinWebpackConfig(
             """  
 var config = {
   mode: 'development',
-  entry: '${entry.canonicalPath}',
+  entry: ['${entry.canonicalPath}'],
   output: {
     path: '${outputPath.canonicalPath}',
     filename: '${entry.name}'
@@ -66,11 +67,28 @@ var config = {
   },
   plugins: [],
   module: {
-    rules: []
-  }
-};"""
+    rules: [
+      {
+        test: /\.js${'$'}/,
+        use: ["source-map-loader"],
+        enforce: "pre"
+      }
+    ]
+  },
+  devtool: 'eval-source-map'
+};""".trim()
         )
         appendln()
+
+        if (sourceMaps) {
+            //language=JavaScript 1.8
+            appendln("""
+// source maps
+config.entry.push('source-map-support/browser-source-map-support.js');
+config.module.rules.push({test: /\.js${'$'}/, use: ['source-map-loader'], enforce: 'pre'});
+                """.trim())
+            appendln()
+        }
 
         if (devServer != null) {
             appendln("// dev server")
@@ -80,7 +98,7 @@ var config = {
 
         if (reportDir != null) {
             val reportBasePath = "${reportDir.canonicalPath}/${entry.name}"
-            val config = KotlinWebpackConfig.BundleAnalyzerPlugin(
+            val config = BundleAnalyzerPlugin(
                 "static",
                 "$reportBasePath.report.html",
                 false,
