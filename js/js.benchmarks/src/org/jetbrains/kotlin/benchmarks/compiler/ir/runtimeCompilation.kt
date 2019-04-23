@@ -37,147 +37,157 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.junit.Test
-import java.io.File
-
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
-import org.openjdk.jmh.runner.Runner
-import org.openjdk.jmh.runner.RunnerException
-import org.openjdk.jmh.runner.options.Options
-import org.openjdk.jmh.runner.options.OptionsBuilder
+import java.io.File
+import java.util.concurrent.TimeUnit
 
 @State(Scope.Benchmark)
+@Fork(1)
+@BenchmarkMode(Mode.AverageTime)
+@OperationsPerInvocation(1)
 open class GenerateIrRuntime {
 
-    private val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
+    companion object {
 
-    private val logger = object : LoggingContext {
-        override var inVerbosePhase = false
-        override fun log(message: () -> String) {}
-    }
+        private val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
 
-    private fun buildConfiguration(environment: KotlinCoreEnvironment): CompilerConfiguration {
-        val runtimeConfiguration = environment.configuration.copy()
-        runtimeConfiguration.put(CommonConfigurationKeys.MODULE_NAME, "JS_IR_RUNTIME")
-        runtimeConfiguration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.UMD)
+        private val logger = object : LoggingContext {
+            override var inVerbosePhase = false
+            override fun log(message: () -> String) {}
+        }
 
-        runtimeConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(
-            LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
-            specificFeatures = mapOf(
-                LanguageFeature.AllowContractsForCustomFunctions to LanguageFeature.State.ENABLED,
-                LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
-            ),
-            analysisFlags = mapOf(
-                AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
-                AnalysisFlags.allowResultReturnType to true
+        private fun buildConfiguration(runtimeConfiguration: CompilerConfiguration): CompilerConfiguration {
+            runtimeConfiguration.put(CommonConfigurationKeys.MODULE_NAME, "JS_IR_RUNTIME")
+            runtimeConfiguration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.UMD)
+
+            runtimeConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(
+                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
+                specificFeatures = mapOf(
+                    LanguageFeature.AllowContractsForCustomFunctions to LanguageFeature.State.ENABLED,
+                    LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
+                ),
+                analysisFlags = mapOf(
+                    AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
+                    AnalysisFlags.allowResultReturnType to true
+                )
             )
-        )
 
-        return runtimeConfiguration
+            return runtimeConfiguration
+        }
+
+
+        private fun metadataVersion(config: CompilerConfiguration) =
+            config[CommonConfigurationKeys.METADATA_VERSION] as? JsKlibMetadataVersion ?: JsKlibMetadataVersion.INSTANCE
+
+
+        private val environment =
+            KotlinCoreEnvironment.createForTests(Disposable {  }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+        private val configuration = buildConfiguration(environment.configuration)
+        private val project = environment.project
+        private val phaseConfig = PhaseConfig(jsPhases)
+
+        private val metadataVersion = metadataVersion(configuration)
+        private val languageVersionSettings = configuration.languageVersionSettings
+        private val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
+
+        private fun createPsiFile(fileName: String): KtFile {
+            val psiManager = PsiManager.getInstance(project)
+            val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+
+            val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
+
+            return psiManager.findFile(file) as KtFile
+        }
+
+        private fun File.listAllFiles(): List<File> {
+            return if (isDirectory) listFiles().flatMap { it.listAllFiles() }
+            else listOf(this)
+        }
+
+        private fun createPsiFileFromDir(path: String): List<KtFile> = File(path).listAllFiles().map { createPsiFile(it.path) }
+
+        private val fullRuntimeSourceSet = createPsiFileFromDir("compiler/ir/serialization.js/build/fullRuntime/src")
     }
-    private val CompilerConfiguration.metadataVersion
-        get() = get(CommonConfigurationKeys.METADATA_VERSION) as? JsKlibMetadataVersion ?: JsKlibMetadataVersion.INSTANCE
 
 
-    private val environment =
-        KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+    private val sharedSourceSet = fullRuntimeSourceSet
+    private var sharedAnalysisResult: AnalysisResult? = null
+    private var sharedModuleFragment: IrModuleFragment? = null
+    private var sharedModuleRef: KlibModuleRef? = null
 
-    private val configuration = buildConfiguration(environment)
-    private val project = environment.project
-    private val phaseConfig = PhaseConfig(jsPhases)
-
-    private val metadataVersion = configuration.metadataVersion
-    private val languageVersionSettings = configuration.languageVersionSettings
-    private val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
-
-
-    private fun createPsiFile(fileName: String): KtFile {
-        val psiManager = PsiManager.getInstance(environment.project)
-        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-
-        val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
-
-        return psiManager.findFile(file) as KtFile
+    @Setup
+    fun setupSharedData() {
+        val files = sharedSourceSet
+        val analysisResult = doFrontEnd(files).also { sharedAnalysisResult = it }
+        val moduleFragment = doPsi2Ir(files, analysisResult).also { sharedModuleFragment = it }
+        sharedModuleRef = doSerializeModule(moduleFragment, analysisResult.bindingContext)
     }
 
-    private fun File.listAllFiles(): List<File> {
-        return if (isDirectory) listFiles().flatMap { it.listAllFiles() }
-        else listOf(this)
-    }
-
-    private fun createPsiFileFromDir(path: String): List<KtFile> = File(path).listAllFiles().map { createPsiFile(it.path) }
-
-    private val fullRuntimeSourceSet = createPsiFileFromDir("compiler/ir/serialization.js/build/fullRuntime/src")
-    private val reducedRuntimeSourceSet = createPsiFileFromDir("compiler/ir/serialization.js/build/reducedRuntime/src")
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @Warmup(iterations = 20, batchSize = 1)
+    @Measurement(iterations = 5, batchSize = 1)
     fun runFullPipeline(bh: Blackhole) {
-        repeat(10) {
-            bh.consume(compile(fullRuntimeSourceSet))
-        }
+        bh.consume(compile(sharedSourceSet))
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @Warmup(iterations = 40, batchSize = 1)
+    @Measurement(iterations = 10, batchSize = 1)
     fun runWithoutFrontEnd(bh: Blackhole) {
-        val files = fullRuntimeSourceSet
-        val analysisResult = doFrontEnd(files)
+        val files = sharedSourceSet
+        val analysisResult = sharedAnalysisResult!!
 
-        repeat(10) {
-            val rawModuleFragment = doPsi2Ir(files, analysisResult)
-
-            val moduleRef = doSerializeModule(rawModuleFragment, analysisResult.bindingContext)
-
-            val (module, symbolTable, irBuiltIns) = doDeserializeModule(moduleRef)
-
-            bh.consume(doBackEnd(module, symbolTable, irBuiltIns))
-        }
+        val rawModuleFragment = doPsi2Ir(files, analysisResult)
+        val moduleRef = doSerializeModule(rawModuleFragment, analysisResult.bindingContext)
+        val (module, symbolTable, irBuiltIns) = doDeserializeModule(moduleRef)
+        bh.consume(doBackEnd(module, symbolTable, irBuiltIns))
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Warmup(iterations = 100, time = 2, timeUnit = TimeUnit.SECONDS, batchSize = 1)
+    @Measurement(iterations = 20, time = 2, timeUnit = TimeUnit.SECONDS, batchSize = 1)
     fun runPsi2Ir(bh: Blackhole) {
-        val files = fullRuntimeSourceSet
-        val analysisResult = doFrontEnd(files)
+        val files = sharedSourceSet
+        val analysisResult = sharedAnalysisResult!!
 
-        repeat(200) {
-            bh.consume(doPsi2Ir(files, analysisResult))
-        }
+        bh.consume(doPsi2Ir(files, analysisResult))
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Warmup(iterations = 100, time = 2, timeUnit = TimeUnit.SECONDS, batchSize = 1)
+    @Measurement(iterations = 20, time = 2, timeUnit = TimeUnit.SECONDS, batchSize = 1)
     fun runSerialization(bh: Blackhole) {
-        val files = fullRuntimeSourceSet
-        val analysisResult = doFrontEnd(files)
-        val rawModuleFragment = doPsi2Ir(files, analysisResult)
+        val analysisResult = sharedAnalysisResult!!
+        val rawModuleFragment = sharedModuleFragment!!
 
-        repeat(20) {
-            bh.consume(doSerializeModule(rawModuleFragment, analysisResult.bindingContext))
-        }
+        bh.consume(doSerializeModule(rawModuleFragment, analysisResult.bindingContext))
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Warmup(iterations = 50, batchSize = 1)
+    @Measurement(iterations = 10, batchSize = 1)
     fun runDeserialization(bh: Blackhole) {
-        val files = fullRuntimeSourceSet
-        val analysisResult = doFrontEnd(files)
-        val rawModuleFragment = doPsi2Ir(files, analysisResult)
-        val moduleRef = doSerializeModule(rawModuleFragment, analysisResult.bindingContext)
+        val moduleRef = sharedModuleRef!!
 
-        repeat(20) {
-            bh.consume(doDeserializeModule(moduleRef))
-        }
+        bh.consume(doDeserializeModule(moduleRef))
     }
 
     @Benchmark
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @Warmup(iterations = 50, batchSize = 1)
+    @Measurement(iterations = 10, batchSize = 1)
     fun runDeserializationAndBackend(bh: Blackhole) {
-        val files = fullRuntimeSourceSet
-        val analysisResult = doFrontEnd(files)
-        val rawModuleFragment = doPsi2Ir(files, analysisResult)
-        val moduleRef = doSerializeModule(rawModuleFragment, analysisResult.bindingContext)
+        val moduleRef = sharedModuleRef!!
 
-        repeat(100) {
-            val (module, symbolTable, irBuiltIns) = doDeserializeModule(moduleRef)
-            bh.consume(doBackEnd(module, symbolTable, irBuiltIns))
-        }
+        val (module, symbolTable, irBuiltIns) = doDeserializeModule(moduleRef)
+        bh.consume(doBackEnd(module, symbolTable, irBuiltIns))
     }
 
     private fun doFrontEnd(files: List<KtFile>): AnalysisResult {
@@ -292,16 +302,4 @@ open class GenerateIrRuntime {
 
         return jsProgram.toString()
     }
-
-
-    fun main(args: Array<String>) {
-        val opt = OptionsBuilder()
-            .include(GenerateIrRuntime::class.java.simpleName)
-            .build()
-
-        Runner(opt).run()
-    }
-
-
-
 }
