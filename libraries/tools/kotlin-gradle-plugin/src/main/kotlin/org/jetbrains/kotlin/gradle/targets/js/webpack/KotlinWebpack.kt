@@ -132,7 +132,7 @@ open class KotlinWebpack : DefaultTask() {
 
                 it.dependsOn(compileKotlinTask)
 
-                it.entry = npmProject.moduleOutput(compileKotlinTask)
+                it.entry = npmProject.compileOutput(compileKotlinTask)
 
                 it.outputs.upToDateWhen { false }
             }
@@ -148,7 +148,7 @@ open class KotlinWebpack : DefaultTask() {
                 it.dependsOn(compileKotlinTask)
 
                 it.bin = "webpack-dev-server"
-                it.entry = npmProject.moduleOutput(compileKotlinTask)
+                it.entry = npmProject.compileOutput(compileKotlinTask)
 
                 val projectDir = compilation.target.project.projectDir.canonicalPath
                 it.devServer = KotlinWebpackConfig.DevServer(

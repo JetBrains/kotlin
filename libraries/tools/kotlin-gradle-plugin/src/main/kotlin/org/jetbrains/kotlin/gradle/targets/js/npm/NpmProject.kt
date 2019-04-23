@@ -46,7 +46,7 @@ open class NpmProject(
             if (hoistGradleNodeModules) project.rootProject.npmProject.nodeModulesDir
             else nodeModulesDir
 
-    open fun moduleOutput(compilationTask: Kotlin2JsCompile): File {
+    open fun compileOutput(compilationTask: Kotlin2JsCompile): File {
         return compileOutputCopyDest?.resolve(compilationTask.outputFile.name) ?: compilationTask.outputFile
     }
 
