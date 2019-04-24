@@ -107,7 +107,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
           }
         }
         if (startIndex < 0) {
-          startIndex = 0;
+          startIndex = myRootChildren.size() - toRemove.size();
         }
       }
       myRootChildren.removeAll(toRemove);
