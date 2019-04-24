@@ -9,6 +9,7 @@ import org.jetbrains.plugins.gradle.service.resolve.GradleTaskProperty
 import org.jetbrains.plugins.groovy.util.ExpressionTest
 import org.junit.Test
 
+import static com.intellij.psi.CommonClassNames.JAVA_LANG_STRING
 import static org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.*
 
 @CompileStatic
@@ -40,6 +41,10 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
       'task in allProjects'()
     } append {
       'task in allProjects via explicit delegate'()
+    } append {
+      'task declaration configuration delegate'()
+    } append {
+      'task declaration configuration delegate with explicit type'()
     } run()
   }
 
@@ -100,5 +105,46 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
   private void testTask(String name, String type) {
     def property = referenceExpressionTest(GradleTaskProperty, type)
     assert property.name == name
+  }
+
+  void 'task declaration configuration delegate'() {
+    def data = [
+      "task(id2) { <caret> }",
+      "task(id3, { <caret> })",
+      "task(id5, description: 'oh') { <caret> }",
+      "task(id6, description: 'oh', { <caret> })",
+      "task id9() { <caret>}",
+      "task id8 { <caret> }",
+      "task id10({ <caret> })",
+      "task id12(description: 'hi') { <caret> }",
+      "task id13(description: 'hi', { <caret> })",
+    ]
+    def all = new RunAll()
+    for (entry in data) {
+      all = all.append {
+        doTest(entry) {
+          closureDelegateTest(GRADLE_API_TASK, 1)
+        }
+      }
+    }
+    all.run()
+  }
+
+  void 'task declaration configuration delegate with explicit type'() {
+    def data = [
+      "task(id5, type: String) { <caret> }",
+      "task(id6, type: String, { <caret> })",
+      "task id12(type: String) { <caret> }",
+      "task id13(type: String, { <caret> })",
+    ]
+    def all = new RunAll()
+    for (entry in data) {
+      all = all.append {
+        doTest(entry) {
+          closureDelegateTest(JAVA_LANG_STRING, 1)
+        }
+      }
+    }
+    all.run()
   }
 }

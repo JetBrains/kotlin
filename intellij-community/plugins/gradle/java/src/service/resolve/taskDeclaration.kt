@@ -3,8 +3,10 @@ package org.jetbrains.plugins.gradle.service.resolve
 
 import com.intellij.psi.CommonClassNames.JAVA_LANG_STRING
 import com.intellij.psi.PsiType
+import groovy.lang.Closure
 import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_TASK
 import org.jetbrains.plugins.groovy.lang.GroovyExpressionFilter
+import org.jetbrains.plugins.groovy.lang.psi.api.GrFunctionalExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrBinaryExpression
@@ -12,7 +14,11 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrExpres
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral
+import org.jetbrains.plugins.groovy.lang.psi.impl.signatures.GrClosureSignatureUtil.findCall
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.TypesUtil.createType
+import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil.unwrapClassType
+import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DelegatesToInfo
+import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.GrDelegatesToProvider
 import org.jetbrains.plugins.groovy.lang.typing.GrTypeCalculator
 
 class GradleTaskDeclarationExpressionFilter : GroovyExpressionFilter {
@@ -28,6 +34,19 @@ class GradleTaskDeclarationTypeCalculator : GrTypeCalculator<GrReferenceExpressi
     isTaskIdExpression(expression) -> createType(JAVA_LANG_STRING, expression.containingFile)
     isTaskIdInOperator(expression) -> createType(GRADLE_API_TASK, expression.containingFile)
     else -> null
+  }
+}
+
+class GradleTaskDeclarationClosureDelegateProvider : GrDelegatesToProvider {
+
+  override fun getDelegatesToInfo(expression: GrFunctionalExpression): DelegatesToInfo? {
+    val methodCall = findCall(expression) ?: return null
+    if (isTaskIdCall(methodCall) || isTopTaskCall(methodCall)) {
+      val explicitType = unwrapClassType(methodCall.argumentList.findNamedArgument("type")?.expression?.type)
+      val taskType = explicitType ?: createType(GRADLE_API_TASK, expression)
+      return DelegatesToInfo(taskType, Closure.DELEGATE_FIRST)
+    }
+    return null
   }
 }
 
@@ -85,25 +104,39 @@ private fun isTaskIdOperatorDown(expression: GrExpression): Boolean {
 }
 
 /**
- * Matches `id` in:           `task id`
- * which gets transformed to: `task("id")`
+ * Matches:
+ * - `task id`
+ * - `task(id) {}`
+ * - `task(id, namedArg: 42)`
+ * - `task(id, namedArg: 42) {}`
  */
-private fun isTaskIdExpression(expression: GrReferenceExpression): Boolean {
-  val argumentList = expression.parent as? GrArgumentList ?: return false
-  val methodCall = argumentList.parent as? GrMethodCall ?: return false
-  val expressions = argumentList.expressionArguments
-  if (expressions.isEmpty()) {
+private fun isTopTaskCall(methodCall: GrMethodCall): Boolean {
+  if (!checkTaskCall(methodCall)) {
     return false
   }
-  if (expression !== expressions[0]) {  // isFirstArgumentOfTaskMethod
+  val expressions = methodCall.expressionArguments
+  val expressionsCount = expressions.size
+  if (expressionsCount == 0) {
     return false
   }
-  val argsCount = expressions.size + methodCall.closureArguments.size + (if (argumentList.namedArguments.isEmpty()) 0 else 1)
+  val argsCount = expressionsCount + methodCall.closureArguments.size + (if (methodCall.namedArguments.isEmpty()) 0 else 1)
   if (argsCount > 3) {
     return false
   }
-  return checkTaskCall(methodCall) &&
-         expression.isDynamicVariable()
+  val taskId = expressions[0] as? GrReferenceExpression ?: return false
+  return taskId.isDynamicVariable()
+}
+
+/**
+ * Matches:
+ * - `id` in `task id`
+ * - `id` in `task(id) {}`
+ * - `id` in `task(id, namedArg: 42)`
+ * - `id` in `task(id, namedArg: 42) {}`
+ */
+private fun isTaskIdExpression(expression: GrReferenceExpression): Boolean {
+  val methodCall = findMethodCallByFirstArgument(expression) ?: return false
+  return isTopTaskCall(methodCall)
 }
 
 /**
@@ -130,10 +163,14 @@ private fun isTaskIdInOperator(expression: GrReferenceExpression): Boolean {
 }
 
 private fun isFirstArgumentOfTaskMethod(expression: GrExpression): Boolean {
-  val argumentList = expression.parent as? GrArgumentList ?: return false
-  if (expression != argumentList.expressionArguments[0]) return false
-  val methodCall = argumentList.parent as? GrMethodCall ?: return false
+  val methodCall = findMethodCallByFirstArgument(expression) ?: return false
   return checkTaskCall(methodCall)
+}
+
+private fun findMethodCallByFirstArgument(expression: GrExpression): GrMethodCall? {
+  val argumentList = expression.parent as? GrArgumentList ?: return null
+  if (expression != argumentList.expressionArguments[0]) return null
+  return argumentList.parent as? GrMethodCall
 }
 
 private fun checkTaskCall(methodCall: GrMethodCall): Boolean {

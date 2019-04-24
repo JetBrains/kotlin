@@ -59,12 +59,6 @@ class GradleExtensionsContributor : GradleMethodContextContributor {
     val resolveScope = place.resolveScope
     val name = processor.getName(state)
 
-    if (psiElement().inside(closureInLeftShiftMethod).accepts(place)) {
-      if (!GradleResolverUtil.processDeclarations(processor, state, place, GRADLE_API_DEFAULT_TASK)) {
-        return false
-      }
-    }
-
     if (place.getUserData(RESOLVED_CODE).let { it == null || !it }) {
       if (psiElement().withAncestor(2, groovyClosure().with(object : PatternCondition<GrClosableBlock?>("withDelegatesToInfo") {
         override fun accepts(t: GrClosableBlock, context: ProcessingContext?): Boolean {
@@ -108,12 +102,6 @@ class GradleExtensionsContributor : GradleMethodContextContributor {
   }
 
   companion object {
-    val closureInLeftShiftMethod: GroovyClosurePattern = groovyClosure().withTreeParent(
-      groovyBinaryExpression().with(object : PatternCondition<GrBinaryExpression?>("leftShiftCondition") {
-        override fun accepts(t: GrBinaryExpression, context: ProcessingContext?): Boolean {
-          return t.operationTokenType == COMPOSITE_LSHIFT_SIGN
-        }
-      }))
 
     fun getExtensionsFor(psiElement: PsiElement): GradleExtensionsSettings.GradleExtensionsData? {
       val project = psiElement.project
