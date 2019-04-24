@@ -362,7 +362,7 @@ class CandidateResolver(
                 if (type == null || (type.isError && !type.isFunctionPlaceholder)) {
                     matchStatus = ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
                 } else if (!noExpectedType(expectedType)) {
-                    if (!ArgumentTypeResolver.isSubtypeOfForArgumentType(type, expectedType)) {
+                    if (!argumentTypeResolver.isSubtypeOfForArgumentType(type, expectedType)) {
                         val smartCast = smartCastValueArgumentTypeIfPossible(expression, newContext.expectedType, type, newContext)
                         if (smartCast == null) {
                             resultStatus = tryNotNullableArgument(type, expectedType) ?: OTHER_ERROR
@@ -410,7 +410,7 @@ class CandidateResolver(
         if (!argumentType.isMarkedNullable || parameterType.isMarkedNullable) return null
 
         val notNullableArgumentType = argumentType.makeNotNullable()
-        val isApplicable = ArgumentTypeResolver.isSubtypeOfForArgumentType(notNullableArgumentType, parameterType)
+        val isApplicable = argumentTypeResolver.isSubtypeOfForArgumentType(notNullableArgumentType, parameterType)
         return if (isApplicable) NULLABLE_ARGUMENT_TYPE_MISMATCH else null
     }
 

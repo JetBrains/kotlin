@@ -55,7 +55,6 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ArgumentTypeResolver {
     @NotNull private final TypeResolver typeResolver;
-    @NotNull private final DoubleColonExpressionResolver doubleColonExpressionResolver;
     @NotNull private final KotlinBuiltIns builtIns;
     @NotNull private final ReflectionTypes reflectionTypes;
     @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
@@ -63,10 +62,10 @@ public class ArgumentTypeResolver {
     @NotNull private final ModuleDescriptor moduleDescriptor;
 
     private ExpressionTypingServices expressionTypingServices;
+    private DoubleColonExpressionResolver doubleColonExpressionResolver;
 
     public ArgumentTypeResolver(
             @NotNull TypeResolver typeResolver,
-            @NotNull DoubleColonExpressionResolver doubleColonExpressionResolver,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull ReflectionTypes reflectionTypes,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
@@ -74,7 +73,6 @@ public class ArgumentTypeResolver {
             @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.typeResolver = typeResolver;
-        this.doubleColonExpressionResolver = doubleColonExpressionResolver;
         this.builtIns = builtIns;
         this.reflectionTypes = reflectionTypes;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
@@ -88,7 +86,12 @@ public class ArgumentTypeResolver {
         this.expressionTypingServices = expressionTypingServices;
     }
 
-    public static boolean isSubtypeOfForArgumentType(
+    @Inject
+    public void setDoubleColonExpressionResolver(@NotNull DoubleColonExpressionResolver doubleColonExpressionResolver) {
+        this.doubleColonExpressionResolver = doubleColonExpressionResolver;
+    }
+
+    public boolean isSubtypeOfForArgumentType(
             @NotNull KotlinType actualType,
             @NotNull KotlinType expectedType
     ) {
@@ -98,6 +101,7 @@ public class ArgumentTypeResolver {
         }
         return KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
     }
+
 
     public void checkTypesWithNoCallee(
             @NotNull CallResolutionContext<?> context

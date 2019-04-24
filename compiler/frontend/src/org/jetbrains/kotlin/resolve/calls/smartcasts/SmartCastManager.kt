@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.expandIntersectionTypeIfNecessary
 import java.util.*
 
-class SmartCastManager {
+class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
 
     fun getSmartCastVariants(
         receiverToCast: ReceiverValue,
@@ -110,10 +110,10 @@ class SmartCastManager {
         context: ResolutionContext<*>
     ): ReceiverSmartCastResult? =
         when {
-            ArgumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, receiverParameterType) ->
+            argumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, receiverParameterType) ->
                 ReceiverSmartCastResult.OK
             getSmartCastVariantsExcludingReceiver(context, receiverArgument).any {
-                ArgumentTypeResolver.isSubtypeOfForArgumentType(it, receiverParameterType)
+                argumentTypeResolver.isSubtypeOfForArgumentType(it, receiverParameterType)
             } ->
                 ReceiverSmartCastResult.SMARTCAST_NEEDED_OR_NOT_NULL_EXPECTED
             else -> null
@@ -135,7 +135,7 @@ class SmartCastManager {
             listOf(expectedType)
 
         for (possibleType in c.dataFlowInfo.getCollectedTypes(dataFlowValue, c.languageVersionSettings)) {
-            if (expectedTypes.any { ArgumentTypeResolver.isSubtypeOfForArgumentType(possibleType, it) } &&
+            if (expectedTypes.any { argumentTypeResolver.isSubtypeOfForArgumentType(possibleType, it) } &&
                 (additionalPredicate == null || additionalPredicate(possibleType))
             ) {
                 if (expression != null) {
@@ -180,7 +180,7 @@ class SmartCastManager {
             val immanentlyNotNull = !dataFlowValue.immanentNullability.canBeNull()
             val nullableExpectedType = TypeUtils.makeNullable(expectedType)
 
-            if (ArgumentTypeResolver.isSubtypeOfForArgumentType(dataFlowValue.type, nullableExpectedType) &&
+            if (argumentTypeResolver.isSubtypeOfForArgumentType(dataFlowValue.type, nullableExpectedType) &&
                 (additionalPredicate == null || additionalPredicate(dataFlowValue.type))
             ) {
                 if (!immanentlyNotNull && expression != null) {
