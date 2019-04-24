@@ -1,5 +1,43 @@
 # CHANGELOG
 
+## 1.3.31
+
+### IDE
+
+#### Fixes
+
+- [`KT-30811`](https://youtrack.jetbrains.com/issue/KT-30811) USimpleNameReferenceExpression#resolve() returns null of interface reference in object declaration in Kotlin
+- [`KT-30845`](https://youtrack.jetbrains.com/issue/KT-30845) KotlinUSimpleReferenceExpression resolves to null for class type in variable declaration
+
+### IDE. Gradle
+
+- [`KT-30767`](https://youtrack.jetbrains.com/issue/KT-30767) Kotlin import uses too much memory when working with big projects
+
+### IDE. Gradle. Script
+
+- [`KT-21501`](https://youtrack.jetbrains.com/issue/KT-21501) build.gradle.kts displays failures if not using java sdk for module
+- [`KT-28727`](https://youtrack.jetbrains.com/issue/KT-28727) IDE, Gradle Kotlin DSL: "AssertionError: Unexpected flexible type in Js: raw"
+
+### IDE. Inspections and Intentions
+
+- [`KT-27972`](https://youtrack.jetbrains.com/issue/KT-27972) Quickfix for RETURN_TYPE_MISMATCH_ON_OVERRIDE: Change generic type argument of base class
+
+### IDE. Scratch
+
+- [`KT-26328`](https://youtrack.jetbrains.com/issue/KT-26328) Allow running Kotlin scratch files against plain Java projects without Kotlin libraries
+
+### IDE. Script
+
+- [`KT-26137`](https://youtrack.jetbrains.com/issue/KT-26137) Kotlin script dependency resolution never finishes and does not respond to stop command
+
+### Tools. CLI
+
+- [`KT-29805`](https://youtrack.jetbrains.com/issue/KT-29805) "java.lang.ClassNotFoundException: gnu.trove.THashMap" on starting experimental Kotlin compiler
+
+### Tools. J2K
+
+- [`KT-23023`](https://youtrack.jetbrains.com/issue/KT-23023) J2K: Inspection to convert Arrays.copyOf(a, size) to a.copyOf(size)
+
 ## 1.3.30
 
 ### Compiler
