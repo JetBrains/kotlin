@@ -10,8 +10,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasJvmUncheckedAnnotation
 import org.jetbrains.kotlin.resolve.isNullableUnderlyingType
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -113,6 +116,13 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
 
 }
 
+object RuntimeAssertionsTypeChecker3 : AdditionalAnnotationChecker {
+    override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
+        val z = entries[0].typeReference
+        println(1)
+    }
+}
+
 object RuntimeAssertionsOnGenericTypeReturningFunctionsCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val candidateDescriptor = resolvedCall.candidateDescriptor
@@ -124,6 +134,7 @@ object RuntimeAssertionsOnGenericTypeReturningFunctionsCallChecker : CallChecker
         if (isEnabledGeneratingNullChecksOnCallSite &&
             unsubstitutedReturnType.isTypeParameter() &&
             unsubstitutedReturnType.isNullable() &&
+            !inferredReturnType.hasJvmUncheckedAnnotation() &&
             !inferredReturnType.isNullable()
         ) {
             context.trace.record(

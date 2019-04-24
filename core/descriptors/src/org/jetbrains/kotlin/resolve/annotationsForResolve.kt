@@ -20,6 +20,7 @@ private val HIDES_MEMBERS_ANNOTATION_FQ_NAME = FqName("kotlin.internal.HidesMemb
 private val ONLY_INPUT_TYPES_FQ_NAME = FqName("kotlin.internal.OnlyInputTypes")
 private val DYNAMIC_EXTENSION_FQ_NAME = FqName("kotlin.internal.DynamicExtension")
 private val BUILDER_INFERENCE_ANNOTATION_FQ_NAME = FqName("kotlin.BuilderInference")
+private val JVM_UNCHECKED_ANNOTATION_FQ_NAME = FqName("kotlin.experimental.JvmUnchecked")
 
 // @HidesMembers annotation only has effect for members with these names
 val HIDES_MEMBERS_NAME_LIST = setOf(Name.identifier("forEach"))
@@ -42,6 +43,8 @@ fun TypeParameterDescriptor.hasOnlyInputTypesAnnotation(): Boolean = annotations
 
 fun CallableDescriptor.hasBuilderInferenceAnnotation(): Boolean =
     annotations.hasAnnotation(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
+
+fun KotlinType.hasJvmUncheckedAnnotation(): Boolean = annotations.hasAnnotation(JVM_UNCHECKED_ANNOTATION_FQ_NAME)
 
 fun getExactInAnnotations(): Annotations = AnnotationsWithOnly(EXACT_ANNOTATION_FQ_NAME)
 

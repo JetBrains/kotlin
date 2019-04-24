@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport
 
 object JvmPlatformConfigurator : PlatformConfiguratorBase(
     DynamicTypesSettings(),
+
     additionalDeclarationCheckers = listOf(
         JvmNameAnnotationChecker(),
         VolatileAnnotationChecker(),
@@ -72,7 +73,8 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
     additionalAnnotationCheckers = listOf(
         RepeatableAnnotationChecker,
         FileClassAnnotationsChecker,
-        ExplicitMetadataChecker
+        ExplicitMetadataChecker,
+        RuntimeAssertionsTypeChecker3
     ),
 
     identifierChecker = JvmSimpleNameBacktickChecker,

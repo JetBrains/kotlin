@@ -11679,6 +11679,59 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/delegation/delegationByProperty.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithJvmUncheckedAnnotation extends AbstractIrBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWithJvmUncheckedAnnotation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("anonymousFunction.kt")
+            public void testAnonymousFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation/anonymousFunction.kt");
+            }
+
+            @TestMetadata("delegationByFunction.kt")
+            public void testDelegationByFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation/delegationByFunction.kt");
+            }
+
+            @TestMetadata("inlineFunction.kt")
+            public void testInlineFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation/inlineFunction.kt");
+            }
+
+            @TestMetadata("inlineProperty.kt")
+            public void testInlineProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation/inlineProperty.kt");
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation/lambda.kt");
+            }
+
+            @TestMetadata("simpleFunction.kt")
+            public void testSimpleFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation/simpleFunction.kt");
+            }
+
+            @TestMetadata("simpleProperty.kt")
+            public void testSimpleProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation/simpleProperty.kt");
+            }
+
+            @TestMetadata("typeParameterFromClass.kt")
+            public void testTypeParameterFromClass() throws Exception {
+                runTest("compiler/testData/codegen/box/genericTypeReturnNullCheck/withJvmUncheckedAnnotation/typeParameterFromClass.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/hashPMap")
