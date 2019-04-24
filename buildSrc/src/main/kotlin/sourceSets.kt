@@ -26,11 +26,6 @@ fun Project.defaultSourceSets() {
     }
 }
 
-internal fun Project.getMainSourceSetOutput(projectPath: String): SourceSetOutput {
-    evaluationDependsOn(projectPath)
-    return project(projectPath).sourceSets.mainSourceSetOutput
-}
-
 internal val Project.mainSourceSetOutput: SourceSetOutput
     get() = sourceSets.mainSourceSetOutput
 

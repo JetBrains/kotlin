@@ -24,9 +24,8 @@ internal const val PLATFORM_DEPS_JAR_NAME = "kotlinNative-platformDeps.jar"
 
 // Prepare Kotlin plugin main JAR file.
 fun Project.pluginJar(
-        originalPluginJar: Configuration,
-        patchedFilesTasks: List<Task>,
-        projectsToShadow: List<String>
+    originalPluginJar: Configuration,
+    patchedFilesTasks: List<Task>
 ): Jar {
     val jarTask = tasks.findByName("jar") as Jar? ?: task<Jar>("jar")
 
@@ -41,11 +40,11 @@ fun Project.pluginJar(
         // Note: If there is a file with the same path inside of JAR file as in the output of one of
         // `patchedFilesTasks`, then the file from JAR will be ignored (due to DuplicatesStrategy.EXCLUDE).
         dependsOn(originalPluginJar)
-        from(zipTree(originalPluginJar.singleFile)) { exclude(PLUGIN_XML_PATH) }
+        from(provider { zipTree(originalPluginJar.singleFile) }) { exclude(PLUGIN_XML_PATH) }
 
-        for (p in projectsToShadow) {
-            dependsOn("$p:classes")
-            from(getMainSourceSetOutput(p)) { exclude(PLUGIN_XML_PATH) }
+        configurations.findByName("embedded")?.let { embedded ->
+            dependsOn(embedded)
+            from(provider { embedded.map(::zipTree) }) { exclude(PLUGIN_XML_PATH) }
         }
 
         archiveBaseName.value = project.the<BasePluginConvention>().archivesBaseName

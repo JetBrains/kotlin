@@ -14,13 +14,11 @@ val appcodePluginVersionFull: String by rootProject.extra
 val appcodePluginZipPath: File by rootProject.extra
 val appcodeCustomPluginRepoUrl: URL by rootProject.extra
 
-// Do not rename, used in pill importer
-val projectsToShadow: List<String> by extra(listOf(ultimatePath(":appcode-native")))
-
 val cidrPlugin: Configuration by configurations.creating
 
 dependencies {
     cidrPlugin(ultimateProjectDep(":prepare:cidr-plugin"))
+    embedded(ultimateProjectDep(":appcode-native")) { isTransitive = false }
 }
 
 val preparePluginXml: Task by preparePluginXml(
@@ -30,7 +28,7 @@ val preparePluginXml: Task by preparePluginXml(
         appcodePluginVersionFull
 )
 
-val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml), projectsToShadow)
+val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml))
 
 val platformDepsJar: Task by platformDepsJar("AppCode", appcodePlatformDepsDir)
 

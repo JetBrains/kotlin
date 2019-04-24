@@ -14,13 +14,11 @@ val clionPluginVersionFull: String by rootProject.extra
 val clionPluginZipPath: File by rootProject.extra
 val clionCustomPluginRepoUrl: URL by rootProject.extra
 
-// Do not rename, used in pill importer
-val projectsToShadow: List<String> by extra(listOf(ultimatePath(":clion-native")))
-
 val cidrPlugin: Configuration by configurations.creating
 
 dependencies {
     cidrPlugin(ultimateProjectDep(":prepare:cidr-plugin"))
+    embedded(ultimateProjectDep(":clion-native")) { isTransitive = false }
 }
 
 val preparePluginXml: Task by preparePluginXml(
@@ -30,7 +28,7 @@ val preparePluginXml: Task by preparePluginXml(
         clionPluginVersionFull
 )
 
-val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml), projectsToShadow)
+val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml))
 
 val platformDepsJar: Task by platformDepsJar("CLion", clionPlatformDepsDir)
 
