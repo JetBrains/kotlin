@@ -18,6 +18,7 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.jetbrains.completion.feature.impl.FeatureUtils
 
 class LookupStateManager {
     private val elementToId = mutableMapOf<String, Int>()
@@ -67,7 +68,7 @@ class LookupStateManager {
         val relevanceObjects = lookup.getRelevanceObjects(this, false)
         return this.map {
             val id = getElementId(it)!!
-            val relevanceMap = relevanceObjects[it]?.map { Pair(it.first, it.second?.toString()) }?.toMap()
+            val relevanceMap = relevanceObjects[it]?.associate { p -> FeatureUtils.normalizeFeatureName(p.first) to p.second?.toString() }
             LookupEntryInfo(id, it.lookupString.length, relevanceMap)
         }
     }

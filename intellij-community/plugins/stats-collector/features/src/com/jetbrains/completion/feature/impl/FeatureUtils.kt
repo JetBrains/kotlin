@@ -50,6 +50,8 @@ object FeatureUtils {
         return relevanceMap
     }
 
+    fun normalizeFeatureName(name: String): String = name.normalized()
+
     private fun String.normalized(): String {
         return substringBefore('@')
     }
