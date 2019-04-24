@@ -45,6 +45,8 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
       'task in allProjects via explicit delegate'()
     } append {
       'task declaration with unresolved identifier'()
+    } append {
+      'task declaration with unresolved identifier invalid'()
     } run()
   }
 
@@ -109,45 +111,39 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
 
   void 'task declaration with unresolved identifier'() {
     doHighlightingTest '''\
-def t1 = task(idt1)
-def t2 = task(idt2, {})
-def t2_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(groovy.lang.Closure<java.lang.Void>, ?)'">({}, <warning descr="Cannot resolve symbol 'idt2_'">idt2_</warning>)</warning>
-def t3 = task(description: 'oh', idt3)
-def t4 = task(description: 'hi', idt4, {})
-def t4_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], groovy.lang.Closure<java.lang.Void>, ?)'">(description: 'mark', {}, <warning descr="Cannot resolve symbol 'idt4_'">idt4_</warning>)</warning>
-def t5 = task idt5 << {}
-def t6 = task idt6 + {}
+task(id1)
+task(id2) {}
+task(id3, {})
+task(id4, description: 'oh')
+task(id5, description: 'oh') {}
+task(id6, description: 'oh', {})
 
-def insideClosure = {
-    def ct1 = task(cidt1)
-    def ct2 = task(cidt2, {})
-    def ct2_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(groovy.lang.Closure<java.lang.Void>, ?)'">({}, <warning descr="Cannot resolve symbol 'cidt2_'">cidt2_</warning>)</warning>
-    def ct3 = task(description: 'oh', cidt3)
-    def ct4 = task(description: 'hi', cidt4, {})
-    def ct4_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], groovy.lang.Closure<java.lang.Void>, ?)'">(description: 'mark', {}, <warning descr="Cannot resolve symbol 'cidt4_'">cidt4_</warning>)</warning>
-    def ct5 = task cidt5 << {}
-    def ct6 = task cidt6 + {}
-}
-insideClosure()
+task id7()
+task id8 {}
+task id9() {}
+task id10({})
 
-def insideMethod() {
-    def mt1 = task(midt1)
-    def mt2 = task(midt2, {})
-    def mt2_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(groovy.lang.Closure<java.lang.Void>, ?)'">({}, <warning descr="Cannot resolve symbol 'midt2_'">midt2_</warning>)</warning>
-    def mt3 = task(description: 'oh', midt3)
-    def mt4 = task(description: 'hi', midt4, {})
-    def mt4_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], groovy.lang.Closure<java.lang.Void>, ?)'">(description: 'mark', {}, <warning descr="Cannot resolve symbol 'midt4_'">midt4_</warning>)</warning>
-    def mt5 = task midt5 << {}
-    def mt6 = task midt6 + {}
-}
-insideMethod()
+task id11(description: 'hi')
+task id12(description: 'hi') {}
+task id13(description: 'hi', {})
 
-tasks.each {
-    println it
-}
+task id14 << {}
+''', GrUnresolvedAccessInspection, GroovyAssignabilityCheckInspection, GroovyAccessibilityInspection
+  }
 
-project.task <warning descr="Cannot resolve symbol 'pidt1_'"><weak_warning descr="Cannot infer argument types">pidt1_</weak_warning></warning>
-tasks.task <warning descr="Cannot resolve symbol 'tidt1_'"><weak_warning descr="Cannot infer argument types">tidt1_</weak_warning></warning>
+  void 'task declaration with unresolved identifier invalid'() {
+    doHighlightingTest '''\
+task <warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(java.lang.String, java.lang.Integer)'">id1, 42</warning>
+task <warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(java.lang.Integer, ?)'">42, <warning descr="Cannot resolve symbol 'id2'">id2</warning></warning>
+task <warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(java.lang.String, java.lang.Integer, java.lang.Integer)'">id3, 42, 43</warning>
+task <warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(?, java.lang.Integer, java.lang.Integer, java.lang.Integer)'"><warning descr="Cannot resolve symbol 'id4'">id4</warning>, 42, 43, 69</warning>
+task <warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], java.lang.String, java.lang.Integer)'">id5, description: 'a', 43</warning>
+task <warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], ?, java.lang.Integer, java.lang.Integer)'"><warning descr="Cannot resolve symbol 'id6'">id6</warning>, description: 'a', 43, 69</warning>
+
+task <weak_warning descr="Cannot infer argument types"><warning descr="Cannot resolve symbol 'id7'">id7</warning>(42)</weak_warning>
+task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(groovy.lang.Closure<java.lang.Void>, ?)'">({}, <warning descr="Cannot resolve symbol 'id8'">id8</warning>)</warning>
+
+task id9 + {}
 ''', GrUnresolvedAccessInspection, GroovyAssignabilityCheckInspection, GroovyAccessibilityInspection
   }
 }
