@@ -38,12 +38,12 @@ fi
       <dict>
         <key>Beginning</key>
         <string>plugins {
-    kotlin("multiplatform") version "1.3.30"
+    kotlin("multiplatform") version "@@MPP_GRADLE_PLUGIN_VERSION@@"
     kotlin("xcode-compat") version "0.1"
 }
 
 repositories {
-    mavenCentral()
+    mavenCentral()@@MPP_CUSTOM_PLUGIN_REPOS_4S@@
 }
 
 kotlin {

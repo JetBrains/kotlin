@@ -16,7 +16,7 @@ import java.io.File
 import java.util.*
 
 // All files that will be patched by templating engine:
-private val PATCHED_FILES = setOf("build.gradle.kts", "settings.gradle.kts")
+private val PATCHED_FILES = setOf("build.gradle.kts", "settings.gradle.kts", "TemplateInfo.plist")
 
 private const val CLION_TEMPLATE_INFO_FILE = "template.info"
 
