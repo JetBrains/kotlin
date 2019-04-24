@@ -132,15 +132,15 @@ public class RunnerLayout  {
       if (myLightWeightIds != null && myLightWeightIds.contains(eachState.getID())) {
         continue;
       }
-      parentNode.addContent(XmlSerializer.serialize(eachState));
+
+      Element element = XmlSerializer.serialize(eachState);
+      parentNode.addContent(element == null ? new Element("ViewImpl") : element);
     }
 
     for (TabImpl eachTab : myTabs) {
       if (isUsed(eachTab)) {
         Element element = XmlSerializer.serialize(eachTab);
-        if (element != null) {
-          parentNode.addContent(element);
-        }
+        parentNode.addContent(element == null ? new Element("TabImpl") : element);
       }
     }
 
