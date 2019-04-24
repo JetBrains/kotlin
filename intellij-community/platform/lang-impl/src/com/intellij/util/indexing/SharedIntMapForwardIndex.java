@@ -3,9 +3,7 @@ package com.intellij.util.indexing;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.io.ByteArraySequence;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
-import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.IntForwardIndex;
 import com.intellij.util.io.*;
 import org.jetbrains.annotations.NotNull;
@@ -20,11 +18,10 @@ public class SharedIntMapForwardIndex implements IntForwardIndex {
   private final File myVerificationIndexStorageFile;
   private final boolean myVerificationIndexHasChunks;
 
-  @NotNull
   private volatile PersistentHashMap<Integer, Integer> myPersistentMap;
 
   public SharedIntMapForwardIndex(@NotNull IndexExtension<?, ?, ?> extension,
-                                  @NotNull File verificationIndexStorageFile,
+                                  @Nullable File verificationIndexStorageFile,
                                   boolean verificationIndexHasChunks) throws IOException {
     myIndexId = (ID<?, ?>)extension.getName();
     myVerificationIndexStorageFile = verificationIndexStorageFile;
@@ -82,7 +79,7 @@ public class SharedIntMapForwardIndex implements IntForwardIndex {
         data = verificationValue;
       }
     }
-    return data;
+    return data == null ? 0 : data.intValue();
   }
 
   @Override
