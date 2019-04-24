@@ -523,18 +523,18 @@ open class CInteropProcess : DefaultTask() {
             addFileArgs("-header", headers)
 
             compilerOpts.forEach {
-                addArg("-compilerOpt", it)
+                addArg("-compiler-option", it)
             }
 
             linkerOpts.forEach {
-                addArg("-linkerOpt", it)
+                addArg("-linker-option", it)
             }
 
             libraries.files.filterExternalKlibs(project).forEach { library ->
                 addArg("-library", library.absolutePath)
             }
 
-            addArgs("-compilerOpt", allHeadersDirs.map { "-I${it.absolutePath}" })
+            addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
 
             addAll(extraOpts)
