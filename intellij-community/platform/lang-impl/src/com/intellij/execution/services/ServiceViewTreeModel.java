@@ -101,6 +101,9 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
         for (int i = contributors.length - 1; i >= 0; i--) {
           if (!contributorClass.isInstance(contributors[i])) {
             startIndex = indexes.getOrDefault(contributors[i], Integer.valueOf(-1));
+            if (startIndex == 0) {
+              break;
+            }
           }
           else {
             break;
