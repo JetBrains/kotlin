@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.options;
 
 import com.intellij.compiler.CompilerConfiguration;
@@ -100,34 +100,22 @@ public class JavaCompilersTab extends CompositeConfigurable<Configurable> implem
 
   @Override
   public boolean isModified() {
-    if (!Comparing.equal(mySelectedCompiler, myCompilerConfiguration.getDefaultCompiler())) {
-      return true;
-    }
-    if (myCbUseReleaseOption.isSelected() != myCompilerConfiguration.useReleaseOption()) {
-      return true;
-    }
-    if (super.isModified()) {
-      return true;
-    }
-    if (!Comparing.equal(myTargetLevelComponent.getProjectBytecodeTarget(), myCompilerConfiguration.getProjectBytecodeTarget())) {
-      return true;
-    }
-    if (!Comparing.equal(myTargetLevelComponent.getModulesBytecodeTargetMap(), myCompilerConfiguration.getModulesBytecodeTargetMap())) {
-      return true;
-    }
-    return false;
+    return !Comparing.equal(mySelectedCompiler, myCompilerConfiguration.getDefaultCompiler()) ||
+           myCbUseReleaseOption.isSelected() != myCompilerConfiguration.useReleaseOption() ||
+           !Comparing.equal(myTargetLevelComponent.getProjectBytecodeTarget(), myCompilerConfiguration.getProjectBytecodeTarget()) ||
+           !Comparing.equal(myTargetLevelComponent.getModulesBytecodeTargetMap(), myCompilerConfiguration.getModulesBytecodeTargetMap()) ||
+           super.isModified();
   }
 
   @Override
   public void apply() throws ConfigurationException {
     try {
-      myCompilerConfiguration.setUseReleaseOption(myCbUseReleaseOption.isSelected());
-
-      super.apply();
-
       myCompilerConfiguration.setDefaultCompiler(mySelectedCompiler);
+      myCompilerConfiguration.setUseReleaseOption(myCbUseReleaseOption.isSelected());
       myCompilerConfiguration.setProjectBytecodeTarget(myTargetLevelComponent.getProjectBytecodeTarget());
       myCompilerConfiguration.setModulesBytecodeTargetMap(myTargetLevelComponent.getModulesBytecodeTargetMap());
+
+      super.apply();
 
       myTargetLevelComponent.setProjectBytecodeTargetLevel(myCompilerConfiguration.getProjectBytecodeTarget());
       myTargetLevelComponent.setModuleTargetLevels(myCompilerConfiguration.getModulesBytecodeTargetMap());
@@ -140,11 +128,9 @@ public class JavaCompilersTab extends CompositeConfigurable<Configurable> implem
 
   @Override
   public void reset() {
-    myCbUseReleaseOption.setSelected(myCompilerConfiguration.useReleaseOption());
-
     super.reset();
-
     selectCompiler(myCompilerConfiguration.getDefaultCompiler());
+    myCbUseReleaseOption.setSelected(myCompilerConfiguration.useReleaseOption());
     myTargetLevelComponent.setProjectBytecodeTargetLevel(myCompilerConfiguration.getProjectBytecodeTarget());
     myTargetLevelComponent.setModuleTargetLevels(myCompilerConfiguration.getModulesBytecodeTargetMap());
   }
