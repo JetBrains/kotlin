@@ -24,7 +24,6 @@ import com.intellij.util.io.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.CalledInAny
 import java.nio.file.AccessDeniedException
 import java.nio.file.Path
@@ -153,7 +152,7 @@ private class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(p
       return emptyList()
     }
 
-    return withContext(createStoreEdtCoroutineContext(InTransactionRule(project))) {
+    return withEdtContext {
       // do no create with capacity because very rarely a lot of modules will be modified
       val saveSessions: MutableList<SaveSession> = SmartList<SaveSession>()
       // commit components
@@ -181,7 +180,7 @@ internal class PlatformProjectStoreClassProvider : ProjectStoreClassProvider {
 
 @CalledInAny
 internal suspend fun ensureFilesWritable(project: Project, files: Collection<VirtualFile>): ReadonlyStatusHandler.OperationStatus {
-  return withContext(storeEdtCoroutineContext) {
+  return withEdtContext(project) {
     ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(files)
   }
 }
