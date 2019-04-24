@@ -217,7 +217,7 @@ message IrBreak {
 }
 
 message IrBlock {
-  required bool is_lambda_origin = 1;
+  required IrStatementOrigin origin = 1;
   repeated IrStatement statement = 2;
 }
 
@@ -238,6 +238,7 @@ message IrCall {
   required IrSymbol symbol = 2;
   required MemberAccessCommon member_access = 3;
   optional IrSymbol super = 4;
+  required IrStatementOrigin origin = 5;
 }
 
 message IrConstructorCall {
@@ -248,7 +249,7 @@ message IrConstructorCall {
 
 message IrFunctionReference {
   required IrSymbol symbol = 1;
-  optional IrStatementOrigin origin = 2;
+  required IrStatementOrigin origin = 2;
   required MemberAccessCommon member_access = 3;
 }
 
@@ -263,13 +264,14 @@ message IrPropertyReference {
   optional IrSymbol field = 1;
   optional IrSymbol getter = 2;
   optional IrSymbol setter = 3;
-  optional IrStatementOrigin origin = 4;
+  required IrStatementOrigin origin = 4;
   required MemberAccessCommon member_access = 5;
   optional DescriptorReference descriptor_reference = 6; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
 }
 
 message IrComposite {
   repeated IrStatement statement = 1;
+  required IrStatementOrigin origin = 2;
 }
 
 message IrClassReference {
@@ -327,10 +329,12 @@ message FieldAccessCommon {
 
 message IrGetField {
   required FieldAccessCommon field_access = 1;
+  required IrStatementOrigin origin = 2;
 }
 
 message IrGetValue {
   required IrSymbol symbol = 1;
+  required IrStatementOrigin origin = 2;
 }
 
 message IrGetObject {
@@ -346,6 +350,7 @@ message Loop {
   required IrExpression condition = 2;
   optional String label = 3;
   optional IrExpression body = 4;
+  required IrStatementOrigin origin = 5;
 }
 
 message IrReturn {
@@ -356,11 +361,13 @@ message IrReturn {
 message IrSetField {
   required FieldAccessCommon field_access = 1;
   required IrExpression value = 2;
+  required IrStatementOrigin origin = 3;
 }
 
 message IrSetVariable {
   required IrSymbol symbol = 1;
   required IrExpression value = 2;
+  required IrStatementOrigin origin = 3;
 }
 
 message IrSpreadElement {
@@ -402,6 +409,7 @@ message IrVarargElement {
 
 message IrWhen {
   repeated IrStatement branch = 1;
+  required IrStatementOrigin origin = 2;
 }
 
 message IrWhile {
