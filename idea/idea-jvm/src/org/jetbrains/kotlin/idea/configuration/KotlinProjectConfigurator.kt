@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 enum class ConfigureKotlinStatus {
     /** Kotlin is correctly configured using this configurator. */

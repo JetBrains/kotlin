@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     override val builtIns: KotlinBuiltIns
@@ -24,6 +25,9 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
         return false
     }
+
+    override val platform: TargetPlatform?
+        get() = null
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         val symbolProvider = FirSymbolProvider.getInstance(session)

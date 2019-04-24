@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.konan.library.konanCommonLibraryPath
 import org.jetbrains.kotlin.konan.library.konanPlatformLibraryPath
-import org.jetbrains.kotlin.platform.impl.isKotlinNative
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.Assert.*
 import org.junit.Test
@@ -111,7 +111,7 @@ private fun assertValidModule(module: Module, projectRoot: String) {
         detectLibraryKind(library.getFiles(OrderRootType.CLASSES)) == NativeLibraryKind
     }
 
-    if (module.platform.isKotlinNative) {
+    if (module.platform.isNative()) {
         assertFalse("No Kotlin/Native libraries in $module", nativeLibraries.isEmpty())
         nativeLibraries.forEach { assertValidNativeLibrary(it, projectRoot) }
 

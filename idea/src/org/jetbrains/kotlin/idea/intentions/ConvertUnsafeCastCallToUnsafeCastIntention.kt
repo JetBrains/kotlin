@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.platform.js.isJs
 
 class ConvertUnsafeCastCallToUnsafeCastIntention : SelfTargetingIntention<KtDotQualifiedExpression>(
     KtDotQualifiedExpression::class.java, "Convert to unsafe cast"
 ) {
 
     override fun isApplicableTo(element: KtDotQualifiedExpression, caretOffset: Int): Boolean {
-        if (element.platform != JsPlatform) return false
+        if (!element.platform.isJs()) return false
         if ((element.selectorExpression as? KtCallExpression)?.calleeExpression?.text != "unsafeCast") return false
 
         val fqName = element.resolveToCall()?.resultingDescriptor?.fqNameOrNull()?.asString() ?: return false

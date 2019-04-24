@@ -25,7 +25,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.caches.resolve.resolution
@@ -41,11 +40,13 @@ import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.platform.idePlatformKind
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class ProjectResolutionFacade(
@@ -125,7 +126,7 @@ internal class ProjectResolutionFacade(
             packagePartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) },
             moduleByJavaClass = { javaClass: JavaClass ->
                 val psiClass = (javaClass as JavaClassImpl).psi
-                psiClass.getPlatformModuleInfo(JvmPlatform)?.platformModule ?: psiClass.getNullableModuleInfo()
+                psiClass.getPlatformModuleInfo(JvmPlatforms.defaultJvmPlatform)?.platformModule ?: psiClass.getNullableModuleInfo()
             }
         )
 
@@ -144,9 +145,9 @@ internal class ProjectResolutionFacade(
                 platform.idePlatformKind.resolution.resolverForModuleFactory
             },
             platformParameters = { platform ->
-                when (platform) {
-                    is JvmPlatform -> jvmPlatformParameters
-                    is CommonPlatform -> commonPlatformParameters
+                when {
+                    platform.isJvm() -> jvmPlatformParameters
+                    platform.isCommon() -> commonPlatformParameters
                     else -> PlatformAnalysisParameters.Empty
                 }
             },

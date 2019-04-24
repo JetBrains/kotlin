@@ -17,11 +17,6 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-object CommonPlatform : TargetPlatform("Default") {
-    override val platform: MultiTargetPlatform
-        get() = MultiTargetPlatform.Common
-}
-
 private object CommonPlatformConfigurator : PlatformConfiguratorBase(
     DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
     IdentifierChecker.Default, OverloadFilter.Default, PlatformToKotlinClassMap.EMPTY, DelegationFilter.Default,

@@ -66,11 +66,13 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import java.io.File
@@ -301,7 +303,11 @@ object KotlinToJVMBytecodeCompiler {
 
                 val dependencies: MutableList<ModuleInfo> = mutableListOf()
 
-                override val platform: TargetPlatform? get() = JvmPlatform
+                override val platform: TargetPlatform
+                    get() = JvmPlatforms.unspecifiedJvmPlatform
+
+                override val analyzerServices: PlatformDependentAnalyzerServices
+                    get() = JvmPlatformAnalyzerServices
 
                 override fun dependencies(): List<ModuleInfo> {
                     return dependencies

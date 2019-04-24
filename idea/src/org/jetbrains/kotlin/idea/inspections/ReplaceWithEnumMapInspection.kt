@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.types.typeUtil.isEnum
 
 private val hashMapCreationFqNames = setOf(
@@ -34,7 +34,7 @@ private val hashMapCreationFqNames = setOf(
 class ReplaceWithEnumMapInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return callExpressionVisitor(fun(element: KtCallExpression) {
-            if (element.platform !is JvmPlatform) return
+            if (!element.platform.isJvm()) return
             val context = element.analyze()
             val fqName = element.getResolvedCall(context)?.resultingDescriptor?.fqNameUnsafe?.asString() ?: return
             if (!hashMapCreationFqNames.contains(fqName)) return

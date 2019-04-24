@@ -9,8 +9,8 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor;
-import org.jetbrains.kotlin.js.resolve.JsPlatform;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.platform.TargetPlatform;
+import org.jetbrains.kotlin.platform.js.JsPlatforms;
 
 public abstract class AbstractJSBasicCompletionTest extends KotlinFixtureCompletionBaseTestCase {
     @NotNull
@@ -22,7 +22,7 @@ public abstract class AbstractJSBasicCompletionTest extends KotlinFixtureComplet
     @NotNull
     @Override
     public TargetPlatform getPlatform() {
-        return JsPlatform.INSTANCE;
+        return JsPlatforms.INSTANCE.getDefaultJsPlatform();
     }
 
     @NotNull

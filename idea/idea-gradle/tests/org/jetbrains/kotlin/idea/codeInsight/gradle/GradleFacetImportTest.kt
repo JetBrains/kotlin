@@ -47,12 +47,12 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJavaScript
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.Ignore
@@ -933,9 +933,9 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         configureByFiles()
         importProject()
 
-        checkStableModuleName("project_main", "project", JsPlatform, isProduction = true)
+        checkStableModuleName("project_main", "project", JsPlatforms.defaultJsPlatform, isProduction = true)
         // Note "_test" suffix: this is current behavior of K2JS Compiler
-        checkStableModuleName("project_test", "project_test", JsPlatform, isProduction = false)
+        checkStableModuleName("project_test", "project_test", JsPlatforms.defaultJsPlatform, isProduction = false)
 
         assertAllModulesConfigured()
     }
@@ -945,8 +945,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         configureByFiles()
         importProject()
 
-        checkStableModuleName("project_main", "project", JvmPlatform, isProduction = true)
-        checkStableModuleName("project_test", "project", JvmPlatform, isProduction = false)
+        checkStableModuleName("project_main", "project", JvmPlatforms.defaultJvmPlatform, isProduction = true)
+        checkStableModuleName("project_test", "project", JvmPlatforms.defaultJvmPlatform, isProduction = false)
 
         assertAllModulesConfigured()
     }

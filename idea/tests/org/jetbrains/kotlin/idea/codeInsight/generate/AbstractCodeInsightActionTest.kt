@@ -14,14 +14,14 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestActionEvent
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.idea.project.forcedTargetPlatform
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -78,9 +78,9 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
             val targetPlatformName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PLATFORM: ")
             if (targetPlatformName != null) {
                 val targetPlatform = when (targetPlatformName) {
-                    "JVM" -> JvmPlatform
-                    "JavaScript" -> JsPlatform
-                    "Common" -> CommonPlatform
+                    "JVM" -> JvmPlatforms.defaultJvmPlatform
+                    "JavaScript" -> JsPlatforms.defaultJsPlatform
+                    "Common" -> CommonPlatforms.defaultCommonPlatform
                     else -> error("Unexpected platform name: $targetPlatformName")
                 }
                 mainPsiFile.forcedTargetPlatform = targetPlatform

@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -223,7 +223,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         fun getActualText(
             bindingContext: BindingContext,
-            implementingModulesBindings: List<Pair<MultiTargetPlatform, BindingContext>>,
+            implementingModulesBindings: List<Pair<TargetPlatform, BindingContext>>,
             actualText: StringBuilder,
             skipJvmSignatureDiagnostics: Boolean,
             languageVersionSettings: LanguageVersionSettings,

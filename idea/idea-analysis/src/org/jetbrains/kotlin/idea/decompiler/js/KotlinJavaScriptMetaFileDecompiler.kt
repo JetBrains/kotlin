@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.decompiler.js
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.decompiler.common.FileWithMetadata
 import org.jetbrains.kotlin.idea.decompiler.common.KotlinMetadataDecompiler
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions

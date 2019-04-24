@@ -67,7 +67,7 @@ object TopDownAnalyzerFacadeForJS {
             ProjectContext(project),
             Name.special("<$moduleName>"),
             builtIns,
-            multiTargetPlatform = null
+            platform = null
         )
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
