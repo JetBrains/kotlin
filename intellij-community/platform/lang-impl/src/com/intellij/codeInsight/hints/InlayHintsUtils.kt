@@ -75,4 +75,12 @@ fun InlayPresentation.fireContentChanged() {
   fireContentChanged(Rectangle(width, height))
 }
 
+fun InlayPresentation.fireUpdateEvent(previousDimension: Dimension) {
+  val current = dimension()
+  if (previousDimension != current) {
+    fireSizeChanged(previousDimension, current)
+  }
+  fireContentChanged()
+}
+
 fun InlayPresentation.dimension() = Dimension(width, height)

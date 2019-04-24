@@ -42,7 +42,7 @@ class PresentationTest : TestCase() {
   fun testDynamicSize() {
     val first = ClickCheckingPresentation(SpacePresentation(1, 2), null)
     val second = ClickCheckingPresentation(SpacePresentation(3, 4), null)
-    val presentation = DynamicPresentation(first)
+    val presentation = DynamicDelegatePresentation(first)
     assertEquals(presentation.width, 1)
     assertEquals(presentation.height, 2)
     presentation.delegate = second
@@ -53,7 +53,7 @@ class PresentationTest : TestCase() {
   fun testDynamicClicks() {
     val first = ClickCheckingPresentation(SpacePresentation(5, 8), 1 to 1)
     val second = ClickCheckingPresentation(SpacePresentation(10, 15), null)
-    val presentation = DynamicPresentation(first)
+    val presentation = DynamicDelegatePresentation(first)
     click(presentation, 1, 1)
     presentation.delegate = second
     second.expectedClick = 2 to 2

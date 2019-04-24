@@ -12,7 +12,6 @@ class BackgroundInlayPresentation(
   presentation: InlayPresentation,
   var color: Color? = null
 ) : StaticDelegatePresentation(presentation) {
-  // TODO updateIfNecessary
   override fun paint(g: Graphics2D, attributes: TextAttributes) {
     val backgroundColor = color ?: attributes.backgroundColor
     val oldColor = g.color

@@ -10,16 +10,4 @@ data class SpacePresentation(override var width: Int, override var height: Int) 
   }
 
   override fun toString(): String = " "
-
-  override fun updateIfNecessary(newPresentation: InlayPresentation) : Boolean {
-    if (newPresentation !is SpacePresentation) throw IllegalArgumentException()
-    if (this == newPresentation) return false
-
-    val previous = Dimension(width, height)
-    width = newPresentation.width
-    height = newPresentation.height
-    val current = Dimension(width, height)
-    fireSizeChanged(previous, current)
-    return true
-  }
 }

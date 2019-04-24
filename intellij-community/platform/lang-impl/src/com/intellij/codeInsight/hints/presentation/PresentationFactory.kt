@@ -77,7 +77,7 @@ class PresentationFactory(val editor: EditorImpl) {
   }
 
   fun hyperlink(base: InlayPresentation): InlayPresentation {
-    val dynamic = DynamicPresentation(base)
+    val dynamic = DynamicDelegatePresentation(base)
     // TODO only with ctrl
     return onHover(dynamic) { event ->
       if (event != null) {
@@ -153,14 +153,9 @@ class PresentationFactory(val editor: EditorImpl) {
     return Point(e.xOnScreen - pointOnScreen.x, e.yOnScreen - pointOnScreen.y)
   }
 
-  fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
+  fun folding(placeholder: InlayPresentation, unwrapAction: PresentationSupplier): InlayPresentation {
     // TODO add folding style
-    var dynamic: DynamicPresentation? = null
-    val placeholderOnClick = onClick(placeholder) { _, _ ->
-      dynamic?.delegate = unwrapAction()
-    }
-    dynamic = DynamicPresentation(placeholderOnClick)
-    return dynamic
+    return ChangeOnClickPresentation(placeholder, unwrapAction)
   }
 
   fun asWrongReference(presentation: InlayPresentation) : InlayPresentation {

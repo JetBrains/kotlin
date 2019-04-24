@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.hints.presentation
 
+import com.intellij.codeInsight.hints.dimension
+import com.intellij.codeInsight.hints.fireUpdateEvent
 import com.intellij.openapi.editor.markup.TextAttributes
 import java.awt.Dimension
 import java.awt.Graphics2D
@@ -9,7 +11,7 @@ import java.awt.Rectangle
 import java.awt.event.MouseEvent
 
 abstract class StaticDelegatePresentation(val presentation: InlayPresentation) : InlayPresentation {
-  // Note: we can't use just delegation using "by", because we need special handling of updateIfNecessary
+  // Note: we can't use just delegation using "by", because we need special handling of updateState
 
   override val width: Int
     get() = presentation.width
@@ -36,9 +38,11 @@ abstract class StaticDelegatePresentation(val presentation: InlayPresentation) :
     presentation.removeListener(listener)
   }
 
-  override fun updateIfNecessary(newPresentation: InlayPresentation): Boolean {
-    if (newPresentation !is StaticDelegatePresentation) throw IllegalArgumentException()
-    return presentation.updateIfNecessary(newPresentation.presentation)
+  override fun updateState(previousPresentation: InlayPresentation) : Boolean {
+    if (previousPresentation !is StaticDelegatePresentation) {
+      return true
+    }
+    return presentation.updateState(previousPresentation.presentation)
   }
 
   override fun toString(): String {

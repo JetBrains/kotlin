@@ -4,6 +4,9 @@ package com.intellij.codeInsight.hints.presentation
 import java.awt.Point
 import java.awt.event.MouseEvent
 
+/**
+ * Pure presentation. If you need to preserve state between updates, you should use [StatefulPresentation] or [ChangeOnClickPresentation]
+ */
 class OnClickPresentation(
   presentation: InlayPresentation,
   val onClickAction: (MouseEvent, Point) -> Unit

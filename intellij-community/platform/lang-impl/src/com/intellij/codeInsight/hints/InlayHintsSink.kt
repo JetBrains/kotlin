@@ -48,14 +48,16 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
       // TODO probably sealed class to represent hints is required. Later, we will add it to the model and setup listeners
       val inlay = inlayModel.addInlineElement(offset, PresentationRenderer(presentation)) ?: return@forEachEntry true
       inlay.putUserData(INLAY_KEY, key)
-      presentation.addListener(object : PresentationListener {
-        // TODO be more accurate during invalidation
-        override fun contentChanged(area: Rectangle) = inlay.repaint()
-
-        override fun sizeChanged(previous: Dimension, current: Dimension) = inlay.updateSize()
-      })
+      presentation.addListener(InlayListener(inlay))
       true
     }
+  }
+
+  class InlayListener(private val inlay: Inlay<PresentationRenderer>) : PresentationListener {
+    // TODO be more accurate during invalidation (requires changes in Inlay)
+    override fun contentChanged(area: Rectangle) = inlay.repaint()
+
+    override fun sizeChanged(previous: Dimension, current: Dimension) = inlay.updateSize()
   }
 
   private fun updateOrDeleteExistingHints(existingInlays: List<Inlay<EditorCustomElementRenderer>>) {
@@ -63,14 +65,19 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
       val inlayKey = inlay.getUserData(INLAY_KEY) as SettingsKey<*>?
       if (inlayKey != key) continue
       val offset = inlay.offset
-      val presentation = hints[offset]
-      if (presentation == null) {
+      val newPresentation = hints[offset]
+      if (newPresentation == null) {
         Disposer.dispose(inlay)
       }
       else {
         val renderer = inlay.renderer as PresentationRenderer
-        val oldPresentation = renderer.presentation
-        oldPresentation.updateIfNecessary(presentation)
+        val previousPresentation = renderer.presentation
+        @Suppress("UNCHECKED_CAST")
+        newPresentation.addListener(InlayListener(inlay as Inlay<PresentationRenderer>))
+        if (newPresentation.updateState(previousPresentation)) {
+          newPresentation.fireUpdateEvent(previousPresentation.dimension())
+        }
+        renderer.presentation = newPresentation
         hints.remove(offset)
       }
     }

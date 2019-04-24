@@ -3,6 +3,7 @@ package com.intellij.codeInsight.hints.presentation
 
 import com.intellij.codeInsight.hints.dimension
 import com.intellij.codeInsight.hints.fireContentChanged
+import com.intellij.codeInsight.hints.fireUpdateEvent
 import com.intellij.openapi.editor.markup.TextAttributes
 import java.awt.Dimension
 import java.awt.Graphics2D
@@ -11,9 +12,9 @@ import java.awt.Rectangle
 import java.awt.event.MouseEvent
 
 /**
- * Presentation, that delegates to [delegate], which can be dynamically changed.
+ * Stateless presentation, that delegates to [delegate], which can be dynamically changed.
  */
-open class DynamicPresentation(delegate: InlayPresentation) : BasePresentation() {
+open class DynamicDelegatePresentation(delegate: InlayPresentation) : BasePresentation() {
   private var listener: DelegateListener
   init {
     listener = DelegateListener()
@@ -39,14 +40,12 @@ open class DynamicPresentation(delegate: InlayPresentation) : BasePresentation()
   override val height: Int
     get() = delegate.height
 
-  override fun updateIfNecessary(newPresentation: InlayPresentation) : Boolean {
-    if (newPresentation !is DynamicPresentation) throw IllegalArgumentException()
-    if (delegate.javaClass != newPresentation.delegate) {
-      // TODO actually handle situation?
-      // TODO keep key inside?
+  override fun updateState(previousPresentation: InlayPresentation): Boolean {
+    if (previousPresentation !is DynamicDelegatePresentation) {
+      fireUpdateEvent(previousPresentation.dimension())
       return true
     }
-    return delegate.updateIfNecessary(newPresentation.delegate)
+    return delegate.updateState(previousPresentation.delegate)
   }
 
   override fun paint(g: Graphics2D, attributes: TextAttributes) = delegate.paint(g, attributes)

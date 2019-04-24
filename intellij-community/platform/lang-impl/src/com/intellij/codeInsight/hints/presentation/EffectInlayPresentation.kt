@@ -18,22 +18,6 @@ class EffectInlayPresentation(
   var ascent: Int,
   var descent: Int
 ) : StaticDelegatePresentation(presentation) {
-  override fun updateIfNecessary(newPresentation: InlayPresentation) : Boolean {
-    if (newPresentation !is EffectInlayPresentation) throw IllegalArgumentException()
-    if (ascent == newPresentation.ascent
-        && descent == newPresentation.descent
-        && lineHeight == newPresentation.lineHeight
-        && font == newPresentation.font
-    ) {
-      return presentation.updateIfNecessary(newPresentation.presentation)
-    }
-    this.ascent = newPresentation.ascent
-    this.descent = newPresentation.descent
-    this.lineHeight = newPresentation.lineHeight
-    this.font = newPresentation.font
-    return true
-  }
-
   override fun paint(g: Graphics2D, attributes: TextAttributes) {
     presentation.paint(g, attributes)
     val effectColor = attributes.effectColor

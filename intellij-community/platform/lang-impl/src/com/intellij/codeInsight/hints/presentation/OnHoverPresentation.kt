@@ -3,6 +3,9 @@ package com.intellij.codeInsight.hints.presentation
 
 import java.awt.event.MouseEvent
 
+/**
+ * Pure presentation. If you need to preserve state between updates, you should use [StatefulPresentation]
+ */
 class OnHoverPresentation(
   presentation: InlayPresentation,
   val onHover: (MouseEvent?) -> Unit // When null comes, hover is finished

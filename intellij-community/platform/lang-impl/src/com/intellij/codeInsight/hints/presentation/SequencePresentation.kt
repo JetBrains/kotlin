@@ -13,23 +13,17 @@ import java.awt.event.MouseEvent
  * Allows to chain presentations into sequence. All presentations are aligned to upper border.
  */
 class SequencePresentation(private var presentations: List<InlayPresentation>) : BasePresentation() {
-  override fun updateIfNecessary(newPresentation: InlayPresentation) : Boolean {
-    if (newPresentation !is SequencePresentation) throw IllegalArgumentException()
-
-    if (newPresentation.presentations.size != presentations.size) {
-      presentations = newPresentation.presentations
-      fireContentChanged()
-    }
-
-    val newPresentations = newPresentation.presentations
+  override fun updateState(previousPresentation: InlayPresentation) : Boolean {
+    if (previousPresentation !is SequencePresentation) return true
+    if (previousPresentation.presentations.size != presentations.size) return true
+    val previousPresentations = previousPresentation.presentations
+    var changed = false
     for ((index, presentation) in presentations.withIndex()) {
-      val new = newPresentations[index]
-      if (presentation.updateIfNecessary(new)) {
-        fireContentChanged()
-        return true
+      if (presentation.updateState(previousPresentations[index])) {
+        changed = true
       }
     }
-    return false
+    return changed
   }
 
   init {
@@ -91,7 +85,7 @@ class SequencePresentation(private var presentations: List<InlayPresentation>) :
       it.mouseClicked(e, editorPoint)
     }
   }
-
+  // TODO make search simpler - consider little amount of presentations is the common case.
   private fun handleMouse(e: MouseEvent, action: (InlayPresentation) -> Unit) {
     val x = e.x
     val y = e.y

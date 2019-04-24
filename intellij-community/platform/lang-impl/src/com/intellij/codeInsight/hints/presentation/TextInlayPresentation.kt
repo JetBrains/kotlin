@@ -20,23 +20,6 @@ class TextInlayPresentation(
   private var yBaseline: Int,
   val fontProvider: (EditorFontType) -> Font // TODO this will always be different, but font should be considered in update!
 ) : BasePresentation() {
-  override fun updateIfNecessary(newPresentation: InlayPresentation): Boolean {
-    if (newPresentation !is TextInlayPresentation) throw IllegalArgumentException()
-    if (width == newPresentation.width
-        && height == newPresentation.height
-        && text == newPresentation.text
-        && yBaseline == newPresentation.yBaseline
-    ) return false
-    val previousDimension = dimension()
-    width = newPresentation.width
-    height = newPresentation.height
-    text = newPresentation.text
-    yBaseline = newPresentation.yBaseline
-    fireContentChanged()
-    // TODO size check
-    fireSizeChanged(previousDimension, dimension())
-    return true
-  }
 
   override fun paint(g: Graphics2D, attributes: TextAttributes) {
     val savedHint = g.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING)
