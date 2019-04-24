@@ -21,6 +21,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.project.ProjectReloadState
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.project.processOpenedProjects
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
@@ -343,7 +344,7 @@ private fun doReloadProject(project: Project) {
 
     // must compute here, before project dispose
     val presentableUrl = project1.presentableUrl
-    if (!ProjectUtil.closeAndDispose(project1)) {
+    if (!ProjectManagerEx.getInstanceEx().closeAndDispose(project1)) {
       return@invokeLater
     }
 
