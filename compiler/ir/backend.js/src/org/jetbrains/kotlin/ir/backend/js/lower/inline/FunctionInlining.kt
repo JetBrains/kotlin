@@ -45,23 +45,14 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     private val arrayConstructorTransformer = ArrayConstructorTransformer(context)
 
-    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val callSite = arrayConstructorTransformer.transformConstructorCall(super.visitConstructorCall(expression) as IrConstructorCall)
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+        expression.transformChildrenVoid(this)
 
-        if (!callSite.symbol.owner.needsInlining)
-            return callSite
-
-        val callee = getFunctionDeclaration(callSite.symbol)                   // Get declaration of the function to be inlined.
-        callee.transformChildrenVoid(this)                            // Process recursive inline.
-
-        val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
-        val inliner = Inliner(callSite, callee, currentScope!!, parent, context)
-        return inliner.inline()
-    }
-
-    override fun visitCall(expression: IrCall): IrExpression {
-        val callSite = super.visitCall(expression) as IrCall
-
+        val callSite = when (expression) {
+            is IrCall -> expression
+            is IrConstructorCall -> arrayConstructorTransformer.transformConstructorCall(expression)
+            else -> return expression
+        }
         if (!callSite.symbol.owner.needsInlining)
             return callSite
 
@@ -164,11 +155,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
                 copiedCallee.parent = constructedClass
                 val delegatingConstructorCall = statements[0] as IrDelegatingConstructorCall
                 irBuilder.run {
-                    val constructorCall = IrCallImpl(
+                    val constructorCall = IrConstructorCallImpl(
                         startOffset, endOffset,
                         callSite.type,
                         delegatingConstructorCall.symbol, delegatingConstructorCall.descriptor,
-                        constructedClass.typeParameters.size,
+                        constructedClass.typeParameters.size, 0,
                         delegatingConstructorCall.symbol.owner.valueParameters.size
                     ).apply {
                         delegatingConstructorCall.symbol.owner.valueParameters.forEach {
@@ -251,15 +242,13 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
                     val unboundArgsSet = unboundFunctionParameters.toSet()
                     val valueParameters = expression.getArgumentsWithIr().drop(1) // Skip dispatch receiver.
 
-                    val newCall = expression.run {
+                    val immediateCall = with(expression) {
                         if (function is IrConstructor) {
                             IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, function.symbol)
                         } else {
                             IrCallImpl(startOffset, endOffset, type, functionArgument.symbol)
                         }
-                    }
-
-                    val immediateCall = newCall.apply {
+                    }.apply {
                         functionParameters.forEach {
                             val argument =
                                 if (it !in unboundArgsSet)
@@ -277,12 +266,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
                             putTypeArgument(index, functionArgument.getTypeArgument(index))
                     }
 
-                    return if (immediateCall is IrCall) {
-                        this@FunctionInlining.visitCall(super.visitCall(immediateCall) as IrCall)
-                    } else {
-                        require(immediateCall is IrConstructorCall)
-                        this@FunctionInlining.visitConstructorCall(super.visitConstructorCall(immediateCall) as IrConstructorCall)
-                    }
+                    return this@FunctionInlining.visitExpression(super.visitExpression(immediateCall))
                 }
                 if (functionArgument !is IrBlock)
                     return super.visitCall(expression)
