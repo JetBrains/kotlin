@@ -14,18 +14,18 @@
     <integer>1</integer>
     <key>Nodes</key>
     <array>
-      <string>build.gradle</string>
+      <string>build.gradle.kts</string>
       <string>gradlew</string>
       <string>gradle/wrapper/gradle-wrapper.properties</string>
       <string>gradle/wrapper/gradle-wrapper.jar</string>
-      <string>settings.gradle</string>
+      <string>settings.gradle.kts</string>
     </array>
     <key>Definitions</key>
     <dict>
-      <key>build.gradle</key>
+      <key>build.gradle.kts</key>
       <dict>
         <key>Path</key>
-        <string>build.gradle</string>
+        <string>build.gradle.kts</string>
       </dict>
       <key>gradlew</key>
       <dict>
@@ -52,10 +52,10 @@
           <string>wrapper</string>
         </array>
       </dict>
-      <key>settings.gradle</key>
+      <key>settings.gradle.kts</key>
       <dict>
         <key>Path</key>
-        <string>settings.gradle</string>
+        <string>settings.gradle.kts</string>
       </dict>
     </dict>
   </dict>
