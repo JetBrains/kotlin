@@ -716,7 +716,6 @@ fun case_36(x: Any) {
 
     if (x == <!DEBUG_INFO_CONSTANT!>z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>x<!>.<!UNREACHABLE_CODE!>java<!>
     }
 }
 
@@ -735,7 +734,6 @@ fun case_38() {
     if (Object.prop_2 != <!DEBUG_INFO_CONSTANT!>z<!>)
     else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Number")!>Object.prop_2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>Object.prop_2<!>.<!UNREACHABLE_CODE!>java<!>
     }
 }
 
@@ -990,7 +988,6 @@ fun case_57(a: (() -> Unit)) {
 
     if (a == <!DEBUG_INFO_CONSTANT!>z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit & kotlin.Nothing")!>a<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>a<!>.<!UNREACHABLE_CODE!>java<!>
     }
 }
 
@@ -1001,7 +998,6 @@ fun case_58(a: ((Float) -> Int?)?, b: Float?, z: Nothing?) {
         <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Nothing?")!>b<!>
         if (<!DEBUG_INFO_CONSTANT!>a<!> != <!DEBUG_INFO_CONSTANT!>z<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("((kotlin.Float) -> kotlin.Int?)? & (kotlin.Float) -> kotlin.Int? & kotlin.Nothing")!>a<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("((kotlin.Float) -> kotlin.Int?)? & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>a<!>.<!UNREACHABLE_CODE!>java<!>
         }
     }
 }

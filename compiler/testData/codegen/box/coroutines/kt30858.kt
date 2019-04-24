@@ -19,7 +19,7 @@ fun myLaunch(
 public fun <E> myProduce(@BuilderInference block: suspend MyProducerScope<E>.() -> Unit) {}
 
 fun <T> MyReceiveChannel<T>.debounce(period: Long) {
-    myProduce {
+    myProduce<Any> {
         myConsumeEach {
             myLaunch {
                 myDelay(period)

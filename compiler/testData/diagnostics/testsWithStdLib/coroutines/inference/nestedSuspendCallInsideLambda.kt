@@ -3,7 +3,7 @@
 
 suspend fun wrapUp2() {
     withContext<Unit> {
-        <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>other<!>()
+        <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>other<!>()
     }
 }
 suspend fun <T> withContext(block: suspend () -> T) {}

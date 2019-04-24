@@ -7,13 +7,13 @@ interface A {
 
 fun foo(a: A) {
     val <!UNUSED_VARIABLE!>g<!> : () -> Unit = {
-        a.<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>gen<!>()  //it works: Unit is derived
+        a.<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>()  //it works: Unit is derived
     }
 
     val <!UNUSED_VARIABLE!>u<!>: Unit = a.gen() // Unit should be inferred
 
     if (true) {
-        a.<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>() // Shouldn't work: no info for inference
+        a.<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>() // Shouldn't work: no info for inference
     }
 
     val <!UNUSED_VARIABLE!>b<!> : () -> Unit = {
@@ -29,5 +29,5 @@ fun foo(a: A) {
         a.gen()  //type mismatch, but Int can be derived
     }
 
-    a.<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>() // Shouldn't work: no info for inference
+    a.<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>() // Shouldn't work: no info for inference
 }

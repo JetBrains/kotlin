@@ -11,15 +11,15 @@ fun a(): Unit = run {
 
 fun b(): Unit = run {
     // Ok, expected type is applied
-    <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>materialize<!>()
+    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
 }
 
 fun c(): Unit = run {
-    run {
+    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>run<!> {
         // Attention!
         // In OI expected type 'Unit' isn't applied here because of implementation quirks (note that OI still applies Unit in case 'e')
         // In NI, it is applied and call is correctly inferred, which is consistent with the previous case
-        <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }
 

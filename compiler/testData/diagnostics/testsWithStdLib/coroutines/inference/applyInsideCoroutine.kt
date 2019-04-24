@@ -9,26 +9,26 @@ class Controller<T> {
 
 fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
-val <!NI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test1<!> = <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test1 = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     apply {
-        yield(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!>)
+        yield(4)
     }
 }
 
-val <!NI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test2<!> = <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    yield(<!NI;TYPE_MISMATCH!>B<!>)
+val test2 = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    yield(B)
     apply {
-        yield(<!NI;TYPE_MISMATCH!>C<!>)
+        yield(C)
     }
 }
 
-val <!NI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test3<!> = <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test3 = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     this.<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>let<!> {
-        yield(<!NI;TYPE_MISMATCH!>B<!>)
+        yield(B)
     }
 
     apply {
-        yield(<!NI;TYPE_MISMATCH!>C<!>)
+        yield(C)
     }
 }
 

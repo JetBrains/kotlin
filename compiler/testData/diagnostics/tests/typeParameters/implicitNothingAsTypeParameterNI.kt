@@ -11,39 +11,39 @@ fun <T>test_5(): List<T> = 10 <!CAST_NEVER_SUCCEEDS!>as<!> List<T>
 fun <K, V>test_6(): Map<K, V> = 10 <!CAST_NEVER_SUCCEEDS!>as<!> Map<K, V>
 
 fun case_1() {
-    <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>test_5<!>()
-    <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>test_6<!>()
-    val <!UNUSED_VARIABLE!>x<!> = <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>test_6<!>()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_5<!>()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_6<!>()
+    val <!UNUSED_VARIABLE!>x<!> = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_6<!>()
 }
 
 fun case_2() {
-    test_1 { null!! }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_1<!> { null!! }
 }
 
 fun case_3() {
-    test_2 { null!! }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_2<!> { null!! }
 }
 
 fun case_4() {
-    test_3 { null!! }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_3<!> { null!! }
 }
 
 fun case_5() {
-    <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>test_4<!> { null!! }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_4<!> { null!! }
 }
 
 fun case_6() {
-    test_1 { throw Exception() }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_1<!> { throw <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>Exception<!>() }
 }
 
 fun case_7() {
-    test_2 { throw Exception() }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_2<!> { throw Exception() }
 }
 
 fun case_8() {
-    test_3 { throw Exception() }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_3<!> { throw <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>Exception<!>() }
 }
 
 fun case_9() {
-    <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>test_4<!> { throw Exception() }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test_4<!> { throw <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>Exception<!>() }
 }
