@@ -21,7 +21,7 @@ import org.jetbrains.structsBenchmarks.*
 import org.jetbrains.typesBenchmarks.*
 import org.jetbrains.kliopt.*
 
-class CinteropLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String): Launcher(numWarmIterations, numberOfAttempts, prefix) {
+class CinteropLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String) : Launcher(numWarmIterations, numberOfAttempts, prefix) {
     val stringBenchmark = StringBenchmark()
     val intMatrixBenchmark = IntMatrixBenchmark()
     val intBenchmark = IntBenchmark()
@@ -43,6 +43,7 @@ class CinteropLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: St
 
 fun main(args: Array<String>) {
     BenchmarksRunner.runBenchmarks(args, { parser: ArgParser ->
-        CinteropLauncher(parser.get<Int>("warmup")!!, parser.get<Int>("repeat")!!, parser.get<String>("prefix")!!).launch(parser.getAll<String>("filter"))
+        CinteropLauncher(parser.get<Int>("warmup")!!, parser.get<Int>("repeat")!!, parser.get<String>("prefix")!!)
+                .launch(parser.getAll<String>("filter"), parser.getAll<String>("filterRegex"))
     })
 }

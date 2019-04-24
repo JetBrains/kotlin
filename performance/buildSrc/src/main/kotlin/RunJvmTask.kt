@@ -13,27 +13,31 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import javax.inject.Inject
 import java.io.File
 
-open class RunJvmTask: JavaExec() {
+open class RunJvmTask : JavaExec() {
     var outputFileName: String? = null
     @Input
-    @Option(option = "filter", description = "filter")
+    @Option(option = "filter", description = "Benchmarks to run (comma-separated)")
     var filter: String = ""
+    @Input
+    @Option(option = "filterRegex", description = "Benchmarks to run, described by regular expressions (comma-separated)")
+    var filterRegex: String = ""
 
     override fun configure(configureClosure: Closure<Any>): Task {
         return super.configure(configureClosure)
     }
 
     private fun executeTask(output: java.io.OutputStream? = null) {
-        val filterArgs = filter.split("\\s*,\\s*".toRegex())
-                .map{ if (it.isNotEmpty()) listOf("-f", it) else listOf(null) }.flatten().filterNotNull()
+        val filterArgs = filter.splitCommaSeparatedOption("-f")
+        val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
         args(filterArgs)
+        args(filterRegexArgs)
         exec()
     }
 
     @TaskAction
     fun run() {
         if (outputFileName != null)
-            File(outputFileName).outputStream().use { output ->  executeTask(output)}
+            File(outputFileName).outputStream().use { output -> executeTask(output) }
         else
             executeTask()
     }

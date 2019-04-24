@@ -29,6 +29,11 @@ fun Array<String>.runCommand(workingDir: File = File("."),
     }
 }
 
+fun String.splitCommaSeparatedOption(optionName: String) =
+        split("\\s*,\\s*".toRegex()).map {
+            if (it.isNotEmpty()) listOf(optionName, it) else listOf(null)
+        }.flatten().filterNotNull()
+
 data class Commit(val revision: String, val developer: String, val webUrlWithDescription: String)
 
 val teamCityUrl = "http://buildserver.labs.intellij.net"

@@ -25,13 +25,18 @@ abstract class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int, v
 
     abstract val benchmarks: BenchmarksCollection
 
-    protected val benchmarkResults = mutableListOf<BenchmarkResult>()
-
-    fun launch(benchmarksToRun: Collection<String>? = null): List<BenchmarkResult> {
-        val runningBenchmarks = benchmarksToRun ?: benchmarks.keys
-        runningBenchmarks.forEach {
-            val benchmark = benchmarks[it]
-            benchmark ?: error("Benchmark $it wasn't found!")
+    fun launch(filters: Collection<String>? = null,
+               filterRegexes: Collection<String>? = null): List<BenchmarkResult> {
+        val regexes = filterRegexes?.map { it.toRegex() } ?: listOf()
+        val filterSet = filters?.toHashSet() ?: hashSetOf()
+        // Filter benchmarks using given filters, or run all benchmarks if none were given.
+        val runningBenchmarks = if (filterSet.isNotEmpty() || regexes.isNotEmpty()) {
+            benchmarks.filterKeys { benchmark -> benchmark in filterSet || regexes.any { it.matches(benchmark) } }
+        } else benchmarks
+        if (runningBenchmarks.isEmpty())
+            error("No matching benchmarks found")
+        val benchmarkResults = mutableListOf<BenchmarkResult>()
+        for ((name, benchmark) in runningBenchmarks) {
             var i = numWarmIterations
             while (i-- > 0) benchmark()
             cleanup()
@@ -60,7 +65,7 @@ abstract class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int, v
                 val scaledTime = time * 1.0 / autoEvaluatedNumberOfMeasureIteration
                 samples[k] = scaledTime
                 // Save benchmark object
-                benchmarkResults.add(BenchmarkResult("$prefix$it", BenchmarkResult.Status.PASSED,
+                benchmarkResults.add(BenchmarkResult("$prefix$name", BenchmarkResult.Status.PASSED,
                         scaledTime / 1000, BenchmarkResult.Metric.EXECUTION_TIME, scaledTime / 1000,
                         k + 1, numWarmIterations))
             }
@@ -73,10 +78,11 @@ object BenchmarksRunner {
     fun parse(args: Array<String>): ArgParser {
         val options = listOf(
                 OptionDescriptor(ArgType.Int(), "warmup", "w", "Number of warm up iterations", "20"),
-                OptionDescriptor(ArgType.Int(), "repeat", "r", "Number of each becnhmark run", "60"),
+                OptionDescriptor(ArgType.Int(), "repeat", "r", "Number of each benchmark run", "60"),
                 OptionDescriptor(ArgType.String(), "prefix", "p", "Prefix added to benchmark name", ""),
                 OptionDescriptor(ArgType.String(), "output", "o", "Output file"),
-                OptionDescriptor(ArgType.String(), "filter", "f", "Benchmark to run", isMultiple = true)
+                OptionDescriptor(ArgType.String(), "filter", "f", "Benchmark to run", isMultiple = true),
+                OptionDescriptor(ArgType.String(), "filterRegex", "fr", "Benchmark to run, described by a regular expression", isMultiple = true)
         )
 
         // Parse args.

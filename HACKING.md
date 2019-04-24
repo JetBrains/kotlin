@@ -110,16 +110,27 @@ To update the blackbox compiler tests set TeamCity build number in `gradle.prope
  
     ../gradlew :cinterop:konanRun
     
- **konanRun** task has parameter `filter` which allows to run only some subset of benchmarks :
+ **konanRun** task has parameter `filter` which allows to run only some subset of benchmarks:
  
     ../gradlew :cinterop:konanRun --filter=struct,macros
+    
+ Or you can use `filterRegex` if you want to specify the filter as regexes:
+ 
+    ../gradlew :ring:konanRun --filterRegex=String.*,Loop.*
     
  There are also tasks for running benchmarks on JVM (pay attention, some benchmarks e.g. cinterop benchmarks can't be run on JVM)
  
     ../gradlew jvmRun
     
- Files with results of benchmarks run are saved in `performance/build`. **nativeReport.json** - for konanRun and **jvmReport.json** for jvmRun.
-    
+ Files with results of benchmarks run are saved in `performance/build/nativeReport.json` for konanRun and `jvmReport.json` for jvmRun.
+ You can change the output filename by setting the `nativeJson` property for konanRun and `jvmJson` for jvmRun:
+
+    ../gradlew :ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
+
+ You can use the `compilerArgs` property to pass flags to the compiler used to compile the benchmarks:
+
+    ../gradlew konanRun -PcompilerArgs="--time -g"
+
  To compare different results run benchmarksAnalyzer tool:
  
     cd tools/benchmarksAnalyzer/build/bin/<target>/benchmarksAnalyzerReleaseExecutable/

@@ -15,14 +15,17 @@ import java.io.File
 
 open class RunKotlinNativeTask @Inject constructor(
         private val curTarget: KotlinTarget
-): DefaultTask() {
+) : DefaultTask() {
 
     var buildType = "RELEASE"
     var workingDir: Any = project.projectDir
     var outputFileName: String? = null
     @Input
-    @Option(option = "filter", description = "filter")
+    @Option(option = "filter", description = "Benchmarks to run (comma-separated)")
     var filter: String = ""
+    @Input
+    @Option(option = "filterRegex", description = "Benchmarks to run, described by regular expressions (comma-separated)")
+    var filterRegex: String = ""
 
     private var curArgs: List<String> = emptyList()
     private val curEnvironment: MutableMap<String, Any> = mutableMapOf()
@@ -46,11 +49,11 @@ open class RunKotlinNativeTask @Inject constructor(
     }
 
     private fun executeTask(output: java.io.OutputStream? = null) {
-        val filterArgs = filter.split("\\s*,\\s*".toRegex())
-                .map{ if (it.isNotEmpty()) listOf("-f", it) else listOf(null) }.flatten().filterNotNull()
+        val filterArgs = filter.splitCommaSeparatedOption("-f")
+        val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
         project.exec {
             it.executable = curTarget.compilations.main.getBinary("EXECUTABLE", buildType).toString()
-            it.args = curArgs + filterArgs
+            it.args = curArgs + filterArgs + filterRegexArgs
             it.environment = curEnvironment
             it.workingDir(workingDir)
             if (output != null)
@@ -61,7 +64,7 @@ open class RunKotlinNativeTask @Inject constructor(
     @TaskAction
     fun run() {
         if (outputFileName != null)
-            File(outputFileName).outputStream().use { output ->  executeTask(output)}
+            File(outputFileName).outputStream().use { output -> executeTask(output) }
         else
             executeTask()
     }

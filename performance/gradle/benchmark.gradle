@@ -13,7 +13,6 @@ repositories {
 
 }
 
-
 private def determinePreset() {
     def preset = MPPTools.defaultHostPreset(project)
     println("$project has been configured for ${preset.name} platform.")
@@ -53,14 +52,15 @@ kotlin {
             compilations.all {
                 tasks[compileKotlinTaskName].kotlinOptions {
                     jvmTarget = '1.8'
+                    suppressWarnings = true
+                    freeCompilerArgs = (project.hasProperty('compilerArgs') ? compilerArgs.split() : [])
                 }
-                tasks[compileKotlinTaskName].kotlinOptions.suppressWarnings = true
             }
         }
 
         fromPreset(hostPreset, 'native') {
             compilations.main.outputKinds('EXECUTABLE')
-            compilations.main.extraOpts '-opt'
+            compilations.main.extraOpts = (project.hasProperty('compilerArgs') ? compilerArgs.split() : []) + '-opt'
             compilations.main.buildTypes = [RELEASE]
         }
     }
