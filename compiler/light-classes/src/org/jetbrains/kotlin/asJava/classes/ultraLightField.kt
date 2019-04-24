@@ -68,11 +68,10 @@ internal open class KtUltraLightField(
     private val kotlinType: KotlinType? by lazyPub {
         when {
             declaration is KtProperty && declaration.hasDelegate() ->
-                propertyDescriptor
-                    ?.let {
-                        val context = LightClassGenerationSupport.getInstance(project).analyze(declaration)
-                        PropertyCodegen.getDelegateTypeForProperty(declaration, it, context)
-                    }
+                propertyDescriptor?.let {
+                    val context = LightClassGenerationSupport.getInstance(project).analyze(declaration)
+                    PropertyCodegen.getDelegateTypeForProperty(it, context)
+                }
             declaration is KtObjectDeclaration ->
                 (declaration.resolve() as? ClassDescriptor)?.defaultType
             declaration is KtEnumEntry -> {

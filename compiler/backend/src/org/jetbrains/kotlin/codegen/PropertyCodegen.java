@@ -106,8 +106,9 @@ public class PropertyCodegen {
             );
         }
 
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-        genDestructuringDeclaration(entry, propertyDescriptor);
+        if (!UnderscoreUtilKt.isSingleUnderscore(entry)) {
+            genDestructuringDeclaration((PropertyDescriptor) variableDescriptor);
+        }
     }
 
     public void generateInPackageFacade(@NotNull DeserializedPropertyDescriptor deserializedProperty) {
@@ -125,15 +126,15 @@ public class PropertyCodegen {
                kind == OwnerKind.DEFAULT_IMPLS || kind == OwnerKind.ERASED_INLINE_CLASS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
-        genBackingFieldAndAnnotations(declaration, descriptor);
+        genBackingFieldAndAnnotations(descriptor);
 
         boolean isDefaultGetterAndSetter = isDefaultAccessor(getter) && isDefaultAccessor(setter);
 
         if (isAccessorNeeded(declaration, descriptor, getter, isDefaultGetterAndSetter)) {
-            generateGetter(declaration, descriptor, getter);
+            generateGetter(descriptor, getter);
         }
         if (isAccessorNeeded(declaration, descriptor, setter, isDefaultGetterAndSetter)) {
-            generateSetter(declaration, descriptor, setter);
+            generateSetter(descriptor, setter);
         }
     }
 
@@ -141,29 +142,23 @@ public class PropertyCodegen {
         return accessor == null || !accessor.hasBody();
     }
 
-    private void genDestructuringDeclaration(
-            @NotNull KtDestructuringDeclarationEntry entry,
-            @NotNull PropertyDescriptor descriptor
-    ) {
+    private void genDestructuringDeclaration(@NotNull PropertyDescriptor descriptor) {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
-        if (UnderscoreUtilKt.isSingleUnderscore(entry)) return;
+        genBackingFieldAndAnnotations(descriptor);
 
-        genBackingFieldAndAnnotations(entry, descriptor);
-
-        generateGetter(entry, descriptor, null);
-        generateSetter(entry, descriptor, null);
+        generateGetter(descriptor, null);
+        generateSetter(descriptor, null);
     }
 
-    private void genBackingFieldAndAnnotations(@Nullable KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor) {
+    private void genBackingFieldAndAnnotations(@NotNull PropertyDescriptor descriptor) {
         // Fields and '$annotations' methods for non-private const properties are generated in the multi-file facade
         boolean isBackingFieldOwner = descriptor.isConst() && !Visibilities.isPrivate(descriptor.getVisibility())
                                       ? !(context instanceof MultifileClassPartContext)
                                       : CodegenContextUtil.isImplementationOwner(context, descriptor);
 
-        assert declaration != null : "Declaration is null: " + descriptor + " (context=" + context + ")";
-        generateBackingField(declaration, descriptor, isBackingFieldOwner);
+        generateBackingField(descriptor, isBackingFieldOwner);
         generateSyntheticMethodIfNeeded(descriptor, isBackingFieldOwner);
     }
 
@@ -244,12 +239,12 @@ public class PropertyCodegen {
         }
     }
 
-    public void generatePrimaryConstructorProperty(@NotNull KtParameter parameter, @NotNull PropertyDescriptor descriptor) {
-        genBackingFieldAndAnnotations(parameter, descriptor);
+    public void generatePrimaryConstructorProperty(@NotNull PropertyDescriptor descriptor) {
+        genBackingFieldAndAnnotations(descriptor);
 
         if (areAccessorsNeededForPrimaryConstructorProperty(descriptor, context.getContextKind())) {
-            generateGetter(parameter, descriptor, null);
-            generateSetter(parameter, descriptor, null);
+            generateGetter(descriptor, null);
+            generateSetter(descriptor, null);
         }
     }
 
@@ -312,17 +307,14 @@ public class PropertyCodegen {
         return null;
     }
 
-    private void generateBackingField(
-            @NotNull KtNamedDeclaration p,
-            @NotNull PropertyDescriptor descriptor,
-            boolean isBackingFieldOwner
-    ) {
+    private void generateBackingField(@NotNull PropertyDescriptor descriptor, boolean isBackingFieldOwner) {
         if (isJvmInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.DEFAULT_IMPLS ||
             kind == OwnerKind.ERASED_INLINE_CLASS) {
             return;
         }
 
-        boolean isDelegate = p instanceof KtProperty && ((KtProperty) p).hasDelegate();
+        @SuppressWarnings("deprecation")
+        boolean isDelegate = descriptor.isDelegated();
 
         Object defaultValue;
         if (isDelegate) {
@@ -341,7 +333,7 @@ public class PropertyCodegen {
             return;
         }
 
-        generateBackingField(p, descriptor, isDelegate, defaultValue, isBackingFieldOwner);
+        generateBackingField(descriptor, isDelegate, defaultValue, isBackingFieldOwner);
     }
 
     // Annotations on properties are stored in bytecode on an empty synthetic method. This way they're still
@@ -364,7 +356,6 @@ public class PropertyCodegen {
     }
 
     private void generateBackingField(
-            @NotNull KtNamedDeclaration element,
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean isDelegate,
             @Nullable Object defaultValue,
@@ -390,8 +381,7 @@ public class PropertyCodegen {
             modifiers |= ACC_SYNTHETIC;
         }
 
-        KotlinType kotlinType = isDelegate ? getDelegateTypeForProperty((KtProperty) element, propertyDescriptor, bindingContext)
-                                           : propertyDescriptor.getType();
+        KotlinType kotlinType = isDelegate ? getDelegateTypeForProperty(propertyDescriptor, bindingContext) : propertyDescriptor.getType();
         Type type = typeMapper.mapType(kotlinType);
 
         ClassBuilder builder = v;
@@ -419,7 +409,7 @@ public class PropertyCodegen {
 
         if (isBackingFieldOwner) {
             FieldVisitor fv = builder.newField(
-                    JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
+                    JvmDeclarationOriginKt.OtherOrigin(propertyDescriptor), modifiers, name, type.getDescriptor(),
                     isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
             );
 
@@ -431,21 +421,24 @@ public class PropertyCodegen {
 
     @NotNull
     public static KotlinType getDelegateTypeForProperty(
-            @NotNull KtProperty p,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull BindingContext bindingContext
     ) {
-        KotlinType delegateType = null;
-
         ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall =
                 bindingContext.get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor);
-        KtExpression delegateExpression = p.getDelegateExpression();
 
+        KtProperty property = (KtProperty) DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
+        KtExpression delegateExpression = property != null ? property.getDelegateExpression() : null;
+
+        KotlinType delegateType;
         if (provideDelegateResolvedCall != null) {
             delegateType = provideDelegateResolvedCall.getResultingDescriptor().getReturnType();
         }
         else if (delegateExpression != null) {
             delegateType = bindingContext.getType(delegateExpression);
+        }
+        else {
+            delegateType = null;
         }
 
         if (delegateType == null) {
@@ -469,51 +462,49 @@ public class PropertyCodegen {
         return false;
     }
 
-    private void generateGetter(
-            @Nullable KtNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable KtPropertyAccessor getter
-    ) {
-        generateAccessor(p, getter, descriptor.getGetter() != null
-                                    ? descriptor.getGetter()
-                                    : DescriptorFactory.createDefaultGetter(descriptor, Annotations.Companion.getEMPTY()));
+    private void generateGetter(@NotNull PropertyDescriptor descriptor, @Nullable KtPropertyAccessor getter) {
+        generateAccessor(
+                getter,
+                descriptor.getGetter() != null ? descriptor.getGetter() : DescriptorFactory.createDefaultGetter(
+                        descriptor, Annotations.Companion.getEMPTY()
+                )
+        );
     }
 
-    private void generateSetter(
-            @Nullable KtNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable KtPropertyAccessor setter
-    ) {
+    private void generateSetter(@NotNull PropertyDescriptor descriptor, @Nullable KtPropertyAccessor setter) {
         if (!descriptor.isVar()) return;
 
-        generateAccessor(p, setter, descriptor.getSetter() != null
-                                    ? descriptor.getSetter()
-                                    : DescriptorFactory.createDefaultSetter(
-                                            descriptor, Annotations.Companion.getEMPTY(), Annotations.Companion.getEMPTY()
-                                    ));
+        generateAccessor(
+                setter,
+                descriptor.getSetter() != null ? descriptor.getSetter() : DescriptorFactory.createDefaultSetter(
+                        descriptor, Annotations.Companion.getEMPTY(), Annotations.Companion.getEMPTY()
+                )
+        );
     }
 
-    private void generateAccessor(
-            @Nullable KtNamedDeclaration p,
-            @Nullable KtPropertyAccessor accessor,
-            @NotNull PropertyAccessorDescriptor accessorDescriptor
-    ) {
+    private void generateAccessor(@Nullable KtPropertyAccessor accessor, @NotNull PropertyAccessorDescriptor descriptor) {
         if (context instanceof MultifileClassFacadeContext &&
-            (Visibilities.isPrivate(accessorDescriptor.getVisibility()) ||
-             AsmUtil.getVisibilityAccessFlag(accessorDescriptor) == Opcodes.ACC_PRIVATE)) {
+            (Visibilities.isPrivate(descriptor.getVisibility()) ||
+             AsmUtil.getVisibilityAccessFlag(descriptor) == Opcodes.ACC_PRIVATE)) {
             return;
         }
 
         FunctionGenerationStrategy strategy;
         if (accessor == null || !accessor.hasBody()) {
-            if (p instanceof KtProperty && ((KtProperty) p).hasDelegate()) {
-                strategy = new DelegatedPropertyAccessorStrategy(state, accessorDescriptor);
+            @SuppressWarnings("deprecation")
+            boolean isDelegated = descriptor.getCorrespondingProperty().isDelegated();
+            if (isDelegated) {
+                strategy = new DelegatedPropertyAccessorStrategy(state, descriptor);
             }
             else {
-                strategy = new DefaultPropertyAccessorStrategy(state, accessorDescriptor);
+                strategy = new DefaultPropertyAccessorStrategy(state, descriptor);
             }
         }
         else {
             strategy = new FunctionGenerationStrategy.FunctionDefault(state, accessor);
         }
 
-        functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(accessor != null ? accessor : p, accessorDescriptor), accessorDescriptor, strategy);
+        functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), descriptor, strategy);
     }
 
     private static class DefaultPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
