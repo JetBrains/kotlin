@@ -56,7 +56,7 @@ open class DynamicDelegatePresentation(delegate: InlayPresentation) : BasePresen
 
   override fun mouseExited() = delegate.mouseExited()
 
-  override fun toString(): String = "delegate => $delegate"
+  override fun toString(): String = "<$delegate>"
 
   private inner class DelegateListener : PresentationListener {
     override fun contentChanged(area: Rectangle) = fireContentChanged(area)

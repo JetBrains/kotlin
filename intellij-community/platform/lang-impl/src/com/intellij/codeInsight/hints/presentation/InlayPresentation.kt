@@ -36,7 +36,7 @@ interface InlayPresentation : InputHandler {
 
   /**
    * This method is called, when pass collects new presentation at element, where old one exists
-   * After successful update some event should be fired.
+   * Should not fire any events inside (as an alternative, invalidation flag may be set) to avoid spam of events when too many changed.
    * By default we consider presentation has no state and just new presentation can be used.
    * @param previousPresentation presentation that was collected on the previous pass.
    * @return true, if something updated

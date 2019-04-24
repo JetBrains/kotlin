@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent
 
 /**
  * Partially reimplementation of [DynamicDelegatePresentation], but with state
- * @param S state, requires to implement meaningful equals
+ * @param S state, immutable object, requires to implement meaningful equals
  */
 abstract class StatefulPresentation<S: Any?>(
   state: S,

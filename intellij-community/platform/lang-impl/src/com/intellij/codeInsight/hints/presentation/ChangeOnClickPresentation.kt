@@ -17,7 +17,7 @@ class ChangeOnClickPresentation(
 
   override fun toString(): String = when {
     state.clicked -> "<clicked>"
-    else -> "<not clicked>"
+    else -> ""
   } + currentPresentation.toString()
 
   data class State(val clicked: Boolean, val onClick: PresentationSupplier)
