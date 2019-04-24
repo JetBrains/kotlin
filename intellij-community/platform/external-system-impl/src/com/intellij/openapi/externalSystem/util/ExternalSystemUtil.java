@@ -1008,49 +1008,44 @@ public class ExternalSystemUtil {
   /**
    * Tries to obtain external project info implied by the given settings and link that external project to the given ide project.
    *
-   * @param externalSystemId        target external system
-   * @param projectSettings         settings of the external project to link
-   * @param project                 target ide project to link external project to
-   * @param executionResultCallback it might take a while to resolve external project info, that's why it's possible to provide
-   *                                a callback to be notified on processing result. It receives {@code true} if an external
-   *                                project has been successfully linked to the given ide project;
-   *                                {@code false} otherwise (note that corresponding notification with error details is expected
-   *                                to be shown to the end-user then)
-   * @param isPreviewMode           flag which identifies if missing external project binaries should be downloaded
-   * @param progressExecutionMode   identifies how progress bar will be represented for the current processing
+   * @param externalSystemId      target external system
+   * @param projectSettings       settings of the external project to link
+   * @param project               target ide project to link external project to
+   * @param importResultCallback  it might take a while to resolve external project info, that's why it's possible to provide
+   *                              a callback to be notified on processing result. It receives {@code true} if an external
+   *                              project info has been successfully obtained, {@code false} otherwise.
+   * @param isPreviewMode         flag which identifies if missing external project binaries should be downloaded
+   * @param progressExecutionMode identifies how progress bar will be represented for the current processing
    */
-  @SuppressWarnings("UnusedDeclaration")
   public static void linkExternalProject(@NotNull final ProjectSystemId externalSystemId,
                                          @NotNull final ExternalProjectSettings projectSettings,
                                          @NotNull final Project project,
-                                         @Nullable final Consumer<? super Boolean> executionResultCallback,
+                                         @Nullable final Consumer<? super Boolean> importResultCallback,
                                          boolean isPreviewMode,
                                          @NotNull final ProgressExecutionMode progressExecutionMode) {
+    AbstractExternalSystemSettings systemSettings = ExternalSystemApiUtil.getSettings(project, externalSystemId);
+    //noinspection unchecked
+    systemSettings.linkProject(projectSettings);
+    ensureToolWindowInitialized(project, externalSystemId);
     ExternalProjectRefreshCallback callback = new ExternalProjectRefreshCallback() {
-      @SuppressWarnings("unchecked")
       @Override
       public void onSuccess(@Nullable final DataNode<ProjectData> externalProject) {
         if (externalProject == null) {
-          if (executionResultCallback != null) {
-            executionResultCallback.consume(false);
+          if (importResultCallback != null) {
+            importResultCallback.consume(false);
           }
           return;
         }
-        AbstractExternalSystemSettings systemSettings = ExternalSystemApiUtil.getSettings(project, externalSystemId);
-        Set<ExternalProjectSettings> projects = ContainerUtilRt.newHashSet(systemSettings.getLinkedProjectsSettings());
-        projects.add(projectSettings);
-        systemSettings.setLinkedProjectsSettings(projects);
-        ensureToolWindowInitialized(project, externalSystemId);
         ServiceManager.getService(ProjectDataManager.class).importData(externalProject, project, true);
-        if (executionResultCallback != null) {
-          executionResultCallback.consume(true);
+        if (importResultCallback != null) {
+          importResultCallback.consume(true);
         }
       }
 
       @Override
       public void onFailure(@NotNull String errorMessage, @Nullable String errorDetails) {
-        if (executionResultCallback != null) {
-          executionResultCallback.consume(false);
+        if (importResultCallback != null) {
+          importResultCallback.consume(false);
         }
       }
     };
