@@ -25,7 +25,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.platform.IdePlatform;
 import org.jetbrains.kotlin.platform.IdePlatformKindUtil;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.platform.TargetPlatform;
 
 public class ProjectStructureUtil {
     private static final Key<CachedValue<TargetPlatform>> PLATFORM_FOR_MODULE = Key.create("PLATFORM_FOR_MODULE");
