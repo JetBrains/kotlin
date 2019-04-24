@@ -20,13 +20,11 @@ dependencies {
 
     compileOnly kotlinStdlib()
     compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+
+    embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
 }
 
-evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
-
 jar {
-    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
-    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
     manifestAttributes(manifest, project)
 }
 

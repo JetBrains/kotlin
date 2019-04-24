@@ -3,17 +3,17 @@ apply plugin: 'kotlin'
 configureJvmProject(project)
 configurePublishing(project)
 
+dependencies {
+    embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
+}
+
 compileJava {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
     options.fork = false
 }
 
-evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
-
 jar {
-    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
-    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
     manifestAttributes(manifest, project)
 }
 

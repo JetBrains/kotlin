@@ -14,11 +14,6 @@ pill {
     variant = 'FULL'
 }
 
-repositories {
-    mavenLocal()
-    jcenter()
-}
-
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
     compile project(':kotlin-gradle-plugin-model')
@@ -31,9 +26,9 @@ dependencies {
 
     testCompile gradleApi()
     testCompile "junit:junit:4.12"
-}
 
-evaluationDependsOn(":kotlin-sam-with-receiver-compiler-plugin")
+    embedded(project(":kotlin-sam-with-receiver-compiler-plugin")) { transitive = false }
+}
 
 tasks.withType(project.compileKotlin.class) {
     kotlinOptions.languageVersion = "1.2"
@@ -42,8 +37,6 @@ tasks.withType(project.compileKotlin.class) {
 }
 
 jar {
-    from(project(":kotlin-sam-with-receiver-compiler-plugin").sourceSets.main.output.classesDirs)
-    from(project(":kotlin-sam-with-receiver-compiler-plugin").sourceSets.main.output.resourcesDir)
     manifestAttributes(manifest, project)
 }
 

@@ -10,11 +10,6 @@ compileJava {
     options.fork = false
 }
 
-repositories {
-    mavenLocal()
-    jcenter()
-}
-
 pill {
     variant = 'FULL'
 }
@@ -31,9 +26,9 @@ dependencies {
 
     testCompile gradleApi()
     testCompile "junit:junit:4.12"
-}
 
-evaluationDependsOn(":kotlin-noarg-compiler-plugin")
+    embedded(project(":kotlin-noarg-compiler-plugin")) { transitive = false }
+}
 
 tasks.withType(project.compileKotlin.class) {
     kotlinOptions.languageVersion = "1.2"
@@ -42,8 +37,6 @@ tasks.withType(project.compileKotlin.class) {
 }
 
 jar {
-    from(project(":kotlin-noarg-compiler-plugin").sourceSets.main.output.classesDirs)
-    from(project(":kotlin-noarg-compiler-plugin").sourceSets.main.output.resourcesDir)
     manifestAttributes(manifest, project)
 }
 
