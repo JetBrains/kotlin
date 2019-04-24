@@ -143,19 +143,21 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myRichCopyColorSchemeComboBox.setRenderer(SimpleListCellRenderer.create("", value ->
       RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? ACTIVE_COLOR_SCHEME : value));
 
-    for (EditorCaretStopPolicyItem.WordBoundary item : EditorCaretStopPolicyItem.WordBoundary.values()) {
-      final int insertionIndex = item.getOsDefault().isCurrentOsDefault() ? 0 : myWordBoundaryCaretStopComboBox.getItemCount();
-      myWordBoundaryCaretStopComboBox.insertItemAt(item, insertionIndex);
-    }
-
-    for (EditorCaretStopPolicyItem.LineBoundary item : EditorCaretStopPolicyItem.LineBoundary.values()) {
-      final int insertionIndex = item.getOsDefault().isCurrentOsDefault() ? 0 : myLineBoundaryCaretStopComboBox.getItemCount();
-      myLineBoundaryCaretStopComboBox.insertItemAt(item, insertionIndex);
-    }
+    initCaretStopComboBox(myWordBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.WordBoundary.values());
+    initCaretStopComboBox(myLineBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.LineBoundary.values());
 
     initQuickDocProcessing();
     initSoftWrapsSettingsProcessing();
     initVcsSettingsProcessing();
+  }
+
+  private static <E extends EditorCaretStopPolicyItem> void initCaretStopComboBox(@NotNull JComboBox<E> comboBox, @NotNull E[] values) {
+    final DefaultComboBoxModel<E> model = (DefaultComboBoxModel<E>)comboBox.getModel();
+    for (E item : values) {
+      final int insertionIndex = item.getOsDefault().isCurrentOsDefault() ? 0 : model.getSize();
+      model.insertElementAt(item, insertionIndex);
+    }
+    comboBox.setRenderer(new EditorCaretStopPolicyItem.ListItemRenderer());
   }
 
   @Override

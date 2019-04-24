@@ -6,6 +6,9 @@ import com.intellij.openapi.editor.actions.CaretStopBoundary
 import com.intellij.openapi.editor.actions.CaretStopOptions
 import com.intellij.openapi.editor.actions.CaretStopOptionsTransposed
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.ui.ColoredListCellRenderer
+import com.intellij.ui.SimpleTextAttributes
+import javax.swing.JList
 
 internal interface EditorCaretStopPolicyItem {
   val title: String
@@ -19,6 +22,27 @@ internal interface EditorCaretStopPolicyItem {
                                             ?: checkNotNull(enumValues<E>().find { it.osDefault.isCurrentOsDefault })
     internal fun String.appendHint(hint: String): String =
       if (hint.isBlank()) this else "$this ($hint)"
+  }
+
+  class ListItemRenderer : ColoredListCellRenderer<EditorCaretStopPolicyItem?>() {
+    init {
+      ipad.bottom = 0
+      ipad.top = 0
+      ipad.right = 0
+    }
+
+    override fun customizeCellRenderer(list: JList<out EditorCaretStopPolicyItem?>,
+                                       item: EditorCaretStopPolicyItem?,
+                                       index: Int,
+                                       selected: Boolean,
+                                       hasFocus: Boolean) {
+      if (item == null) return
+      append(item.title)
+      val hint = item.osDefault.hint
+      if (hint.isNotBlank()) {
+        append("  $hint", SimpleTextAttributes.GRAYED_ATTRIBUTES)
+      }
+    }
   }
 
   enum class OsDefault(val isCurrentOsDefault: Boolean = false,
