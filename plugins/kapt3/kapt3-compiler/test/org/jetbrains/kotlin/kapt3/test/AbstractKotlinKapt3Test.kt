@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.PsiManager
@@ -56,7 +57,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.nio.file.Files
 import java.util.*
 import com.sun.tools.javac.util.List as JavacList
 
@@ -70,7 +70,6 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     }
 
     val kaptFlags = mutableListOf<KaptFlag>()
-    private val tempFiles = mutableListOf<File>()
 
     override fun setUp() {
         super.setUp()
@@ -83,21 +82,16 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     }
 
     private fun createTempFile(prefix: String, suffix: String, text: String): File {
-        return File.createTempFile(prefix, suffix).apply {
+        return FileUtil.createTempFile(prefix, suffix, false).apply {
             writeText(text)
-            tempFiles += this
         }
-    }
-
-    private fun createTempDir(prefix: String): File {
-        return Files.createTempDirectory(prefix).toFile().apply { tempFiles += this }
     }
 
     override fun loadMultiFiles(files: List<TestFile>) {
         val project = myEnvironment.project
         val psiManager = PsiManager.getInstance(project)
 
-        val tmpDir = createTempDir("kaptTest")
+        val tmpDir = KotlinTestUtils.tmpDir("kaptTest")
 
         val ktFiles = ArrayList<KtFile>(files.size)
         for (file in files.sorted()) {
@@ -138,7 +132,6 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
                 key to value
             }.toMap()
 
-        var javaFiles: List<File>? = null
         var kaptContext: KaptContext? = null
 
         try {
@@ -146,7 +139,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
                 projectBaseDir = generationState.project.basePath?.let(::File)
                 compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
 
-                sourcesOutputDir = createTempDir("kaptRunner")
+                sourcesOutputDir = KotlinTestUtils.tmpDir("kaptRunner")
                 classesOutputDir = sourcesOutputDir
                 stubsOutputDir = sourcesOutputDir
                 incrementalDataOutputDir = sourcesOutputDir
@@ -163,7 +156,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
                 classBuilderFactory.origins, generationState
             )
 
-            javaFiles = files
+            val javaFiles = files
                 .filter { it.name.toLowerCase().endsWith(".java") }
                 .map { createTempFile(it.name.substringBeforeLast('.'), ".java", it.content) }
 
@@ -171,9 +164,6 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         } catch (e: Throwable) {
             throw RuntimeException(e)
         } finally {
-            javaFiles?.forEach { it.delete() }
-            tempFiles.forEach { if (it.isFile) it.delete() else it.deleteRecursively() }
-            tempFiles.clear()
             kaptContext?.close()
         }
     }
