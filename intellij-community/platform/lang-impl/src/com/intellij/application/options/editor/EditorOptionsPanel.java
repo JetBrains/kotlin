@@ -53,7 +53,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
-import java.util.Objects;
 
 public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvider> implements SearchableConfigurable {
   private static final String ID = "preferences.editor";
@@ -152,12 +151,20 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   }
 
   private static <E extends EditorCaretStopPolicyItem> void initCaretStopComboBox(@NotNull JComboBox<E> comboBox, @NotNull E[] values) {
-    final DefaultComboBoxModel<E> model = (DefaultComboBoxModel<E>)comboBox.getModel();
+    final DefaultComboBoxModel<E> model = new EditorCaretStopPolicyItem.SeparatorAwareComboBoxModel<>();
+
+    boolean lastWasOsDefault = false;
     for (E item : values) {
+      final boolean isOsDefault = item.getOsDefault() != EditorCaretStopPolicyItem.OsDefault.NONE;
+      if (lastWasOsDefault && !isOsDefault) model.addElement(null);
+      lastWasOsDefault = isOsDefault;
+
       final int insertionIndex = item.getOsDefault().isCurrentOsDefault() ? 0 : model.getSize();
       model.insertElementAt(item, insertionIndex);
     }
-    comboBox.setRenderer(new EditorCaretStopPolicyItem.ListItemRenderer());
+
+    comboBox.setModel(model);
+    comboBox.setRenderer(new EditorCaretStopPolicyItem.SeparatorAwareListItemRenderer());
   }
 
   @Override
@@ -502,13 +509,17 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
   @NotNull
   protected CaretStopOptions getCaretStopOptions() {
-    return new CaretStopOptionsTransposed(getCaretStopPolicy(myWordBoundaryCaretStopComboBox),
-                                          getCaretStopPolicy(myLineBoundaryCaretStopComboBox)).toCaretStopOptions();
+    return new CaretStopOptionsTransposed(
+      getCaretStopBoundary(myWordBoundaryCaretStopComboBox, CaretStopOptionsTransposed.DEFAULT.getWordBoundary()),
+      getCaretStopBoundary(myLineBoundaryCaretStopComboBox, CaretStopOptionsTransposed.DEFAULT.getLineBoundary())).toCaretStopOptions();
   }
 
   @NotNull
-  protected static CaretStopBoundary getCaretStopPolicy(@NotNull JComboBox<? extends EditorCaretStopPolicyItem> comboBox) {
-    return Objects.requireNonNull((EditorCaretStopPolicyItem)comboBox.getSelectedItem()).getCaretStopBoundary();
+  protected static CaretStopBoundary getCaretStopBoundary(@NotNull JComboBox<? extends EditorCaretStopPolicyItem> comboBox,
+                                                          @NotNull CaretStopBoundary defaultValue) {
+    final Object selectedItem = comboBox.getSelectedItem();
+    if (!(selectedItem instanceof EditorCaretStopPolicyItem)) return defaultValue;
+    return ((EditorCaretStopPolicyItem)selectedItem).getCaretStopBoundary();
   }
 
   @NotNull
