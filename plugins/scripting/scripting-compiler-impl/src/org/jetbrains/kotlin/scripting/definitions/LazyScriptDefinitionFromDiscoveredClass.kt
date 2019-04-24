@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.scripting.definitions
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.KotlinType
@@ -22,15 +21,15 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val annotationsFromAsm: ArrayList<BinAnnData>,
     private val className: String,
     private val classpath: List<File>,
-    private val messageCollector: MessageCollector
+    private val messageReporter: MessageReporter
 ) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
 
     constructor(
         classBytes: ByteArray,
         className: String,
         classpath: List<File>,
-        messageCollector: MessageCollector
-    ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
+        messageReporter: MessageReporter
+    ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageReporter)
 
     override val hostConfiguration: ScriptingHostConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
         ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
@@ -39,7 +38,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 
     override val scriptCompilationConfiguration: ScriptCompilationConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        messageCollector.report(
+        messageReporter(
             CompilerMessageSeverity.LOGGING,
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
@@ -50,10 +49,10 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
                 LazyScriptDefinitionFromDiscoveredClass::class
             )
         } catch (ex: ClassNotFoundException) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Cannot find script definition class $className")
+            messageReporter(CompilerMessageSeverity.ERROR, "Cannot find script definition class $className")
             InvalidScriptDefinition
         } catch (ex: Exception) {
-            messageCollector.report(
+            messageReporter(
                 CompilerMessageSeverity.ERROR,
                 "Error processing script definition class $className: ${ex.message}\nclasspath:\n${classpath.joinToString("\n", "    ")}"
             )

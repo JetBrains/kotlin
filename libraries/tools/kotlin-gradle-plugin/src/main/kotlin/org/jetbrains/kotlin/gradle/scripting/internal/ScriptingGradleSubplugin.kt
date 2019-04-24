@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.useLazyTaskConfiguration
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
+import org.jetbrains.kotlin.scripting.definitions.reporter
 import java.io.File
 
 private const val MIN_SUPPORTED_GRADLE_MAJOR_VERSION = 5
@@ -166,7 +167,7 @@ internal class DiscoverScriptExtensionsTransform : ArtifactTransform() {
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(
                 listOf(input), emptyMap(),
-                PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
+                PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false).reporter
             ).definitions
         val extensions = definitions.mapTo(arrayListOf()) { it.fileExtension }
         return if (extensions.isNotEmpty()) {
