@@ -44,7 +44,6 @@
       <element id="module-output" name="kotlin.core.descriptors.main" />
       <element id="module-output" name="kotlin.core.deserialization.main" />
       <element id="module-output" name="kotlin.compiler.frontend.java.main" />
-      <element id="module-output" name="kotlin.compiler.frontend.script.main" />
       <element id="module-output" name="kotlin.compiler.frontend.main" />
       <element id="module-output" name="kotlin.compiler.incremental-compilation-impl.main" />
       <element id="module-output" name="kotlin.compiler.ir.backend.common.main" />
@@ -68,6 +67,8 @@
       <element id="module-output" name="kotlin.compiler.util.main" />
       <element id="module-output" name="kotlin.compiler.frontend.common.main" />
       <element id="module-output" name="kotlin.core.type-system.main" />
+      <element id="module-output" name="kotlin.compiler.ir.serialization.common.main" />
+      <element id="module-output" name="kotlin.compiler.ir.serialization.js.main" />
     </root>
   </artifact>
 </component>
