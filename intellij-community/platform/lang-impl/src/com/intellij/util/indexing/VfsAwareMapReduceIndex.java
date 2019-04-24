@@ -44,7 +44,9 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   private final AtomicBoolean myInMemoryMode = new AtomicBoolean();
   private final TIntObjectHashMap<Map<Key, Value>> myInMemoryKeysAndValues = new TIntObjectHashMap<>();
+
   private final SnapshotInputMappingIndex<Key, Value, Input> mySnapshotInputMappings;
+  private final boolean myUpdateMappings;
 
   public VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, Input> extension,
                                 @NotNull IndexStorage<Key, Value> storage) throws IOException {
@@ -75,6 +77,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     super(extension, storage, forwardIndexMap, forwardIndexAccessor, null);
     SharedIndicesData.registerIndex((ID<Key, Value>)myIndexId, extension);
     mySnapshotInputMappings = snapshotInputMappings;
+    myUpdateMappings = snapshotInputMappings instanceof UpdatableSnapshotInputMappingIndex;
     installMemoryModeListener();
   }
 
@@ -95,7 +98,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
         if (data != null) {
           return data;
         } else {
-          containsSnapshotData = false;
+          containsSnapshotData = !myUpdateMappings;
         }
       }
       catch (IOException e) {
@@ -105,7 +108,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     data = super.mapInput(content);
     if (!containsSnapshotData) {
       try {
-        mySnapshotInputMappings.putData(content, data);
+        ((UpdatableSnapshotInputMappingIndex)mySnapshotInputMappings).putData(content, data);
       }
       catch (IOException e) {
         throw new RuntimeException(e);
@@ -283,9 +286,9 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   @Override
   protected void doClear() throws StorageException, IOException {
     super.doClear();
-    if (mySnapshotInputMappings != null) {
+    if (mySnapshotInputMappings != null && myUpdateMappings) {
       try {
-        mySnapshotInputMappings.clear();
+        ((UpdatableSnapshotInputMappingIndex)mySnapshotInputMappings).clear();
       }
       catch (IOException e) {
         LOG.error(e);
@@ -296,7 +299,9 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   @Override
   protected void doFlush() throws IOException, StorageException {
     super.doFlush();
-    if (mySnapshotInputMappings != null) mySnapshotInputMappings.flush();
+    if (mySnapshotInputMappings != null && myUpdateMappings) {
+      ((UpdatableSnapshotInputMappingIndex)mySnapshotInputMappings).flush();
+    }
   }
 
   @Override

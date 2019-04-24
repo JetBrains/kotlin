@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-class SnapshotInputMappings<Key, Value, Input> implements SnapshotInputMappingIndex<Key, Value, Input> {
+class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInputMappingIndex<Key, Value, Input> {
   private static final Logger LOG = Logger.getInstance(SnapshotInputMappings.class);
   private static final boolean doReadSavedPersistentData = SystemProperties.getBooleanProperty("idea.read.saved.persistent.index", true);
 
