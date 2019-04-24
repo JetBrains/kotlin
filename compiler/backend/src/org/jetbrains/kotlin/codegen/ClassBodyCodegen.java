@@ -195,7 +195,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
                         );
                     }
                     else {
-                        propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
+                        propertyCodegen.generatePrimaryConstructorProperty(propertyDescriptor);
                     }
                 }
             }
