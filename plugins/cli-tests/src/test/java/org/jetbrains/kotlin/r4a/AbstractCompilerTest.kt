@@ -62,20 +62,8 @@ abstract class AbstractCompilerTest : TestCase() {
     protected val defaultClassPath by lazy {
         listOf(
             assertExists(kotlinRuntimeJar("kotlin-stdlib")),
-            assertExists(
-                File(
-                    projectRoot,
-                    "out/support/compose-runtime/build/" +
-                            "intermediates/intermediate-jars/debug/classes.jar"
-                ).normalize()
-            ),
-            assertExists(
-                File(
-                    projectRoot,
-                    "out/support/ui-android-view-non-ir/build/" +
-                            "intermediates/intermediate-jars/debug/classes.jar"
-                ).normalize()
-            ),
+            assertExists(outputClassesJar("compose-runtime")),
+            assertExists(outputClassesJar("ui-android-view-non-ir")),
             assertExists(
                 File(projectRoot, "prebuilts/fullsdk-linux/platforms/android-28/android.jar")
             )
@@ -216,6 +204,15 @@ abstract class AbstractCompilerTest : TestCase() {
                 projectRoot,
                 "prebuilts/androidx/external/org/jetbrains/kotlin/$module/" +
                         "$KOTLIN_RUNTIME_VERSION/$module-$KOTLIN_RUNTIME_VERSION.jar")
+
+        fun outputClassesJar(module: String): File {
+            fun name(variant: String): File =
+                File(projectRoot, "out/support/$module/build/" +
+                        "intermediates//runtime_library_classes/$variant/classes.jar")
+            return name("release").let {
+                if (it.exists()) it else name("debug")
+            }
+        }
 
         init {
             System.setProperty("idea.home", homeDir)
