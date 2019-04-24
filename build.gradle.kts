@@ -7,10 +7,7 @@ plugins {
     kotlin("jvm")
 }
 
-val ideaProjectResources =  project(":idea").mainSourceSet.output.resourcesDir
-
-evaluationDependsOn(":prepare:idea-plugin")
-
+val ideaProjectResources = provider { project(":idea").mainSourceSet.output.resourcesDir }
 val intellijUltimateEnabled : Boolean by rootProject.extra
 
 val springClasspath by configurations.creating
