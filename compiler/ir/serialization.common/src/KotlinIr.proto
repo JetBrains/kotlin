@@ -258,6 +258,7 @@ message IrLocalDelegatedPropertyReference {
   optional IrSymbol getter = 2;
   optional IrSymbol setter = 3;
   required IrSymbol symbol = 4;
+  required IrStatementOrigin origin = 5;
 }
 
 message IrPropertyReference {

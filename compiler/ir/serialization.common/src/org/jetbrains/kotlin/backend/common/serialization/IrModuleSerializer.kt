@@ -430,6 +430,7 @@ open class IrModuleSerializer(
             .setDelegate(serializeIrSymbol(callable.delegate))
             .setGetter(serializeIrSymbol(callable.getter))
             .setSymbol(serializeIrSymbol(callable.symbol))
+            .setOrigin(serializeIrStatementOrigin(callable.origin))
 
         callable.setter?.let { proto.setSetter(serializeIrSymbol(it)) }
 
