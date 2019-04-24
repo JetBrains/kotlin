@@ -220,10 +220,10 @@ class RingLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String
                     "Calls.finalMethod" to callsBenchmark::finalMethodCall,
                     "Calls.openMethodMonomorphic" to callsBenchmark::classOpenMethodCall_MonomorphicCallsite,
                     "Calls.openMethodBimorphic" to callsBenchmark::classOpenMethodCall_BimorphicCallsite,
-                    "Calls.openMethodTrimorphic" to callsBenchmark::classOpenMethodCall_BimorphicCallsite,
+                    "Calls.openMethodTrimorphic" to callsBenchmark::classOpenMethodCall_TrimorphicCallsite,
                     "Calls.interfaceMethodMonomorphic" to callsBenchmark::interfaceMethodCall_MonomorphicCallsite,
                     "Calls.interfaceMethodBimorphic" to callsBenchmark::interfaceMethodCall_BimorphicCallsite,
-                    "Calls.interfaceMethodTrimorphic" to callsBenchmark::interfaceMethodCall_BimorphicCallsite,
+                    "Calls.interfaceMethodTrimorphic" to callsBenchmark::interfaceMethodCall_TrimorphicCallsite,
                     "Calls.returnBoxUnboxFolding" to callsBenchmark::returnBoxUnboxFolding,
                     "Calls.parameterBoxUnboxFolding" to callsBenchmark::parameterBoxUnboxFolding
             )
