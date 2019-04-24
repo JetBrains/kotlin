@@ -427,12 +427,15 @@ abstract class IrModuleDeserializer(
         val getter = deserializeIrSymbol(proto.getter) as IrSimpleFunctionSymbol
         val setter = if (proto.hasSetter()) deserializeIrSymbol(proto.setter) as IrSimpleFunctionSymbol else null
         val symbol = deserializeIrSymbol(proto.symbol) as IrLocalDelegatedPropertySymbol
+        val origin = deserializeIrStatementOrigin(proto.origin)
+
         return IrLocalDelegatedPropertyReferenceImpl(
             start, end, type,
             symbol,
             delegate,
             getter,
-            setter
+            setter,
+            origin
         )
     }
 
