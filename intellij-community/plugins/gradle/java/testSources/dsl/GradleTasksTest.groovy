@@ -109,6 +109,7 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
 
   void 'task declaration configuration delegate'() {
     def data = [
+      "task('s') { <caret> }",
       "task(id2) { <caret> }",
       "task(id3, { <caret> })",
       "task(id5, description: 'oh') { <caret> }",
@@ -119,32 +120,25 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
       "task id12(description: 'hi') { <caret> }",
       "task id13(description: 'hi', { <caret> })",
     ]
-    def all = new RunAll()
     for (entry in data) {
-      all = all.append {
-        doTest(entry) {
-          closureDelegateTest(GRADLE_API_TASK, 1)
-        }
+      doTest(entry) {
+        closureDelegateTest(GRADLE_API_TASK, 1)
       }
     }
-    all.run()
   }
 
   void 'task declaration configuration delegate with explicit type'() {
     def data = [
+      "task('s', type: String) { <caret> }",
       "task(id5, type: String) { <caret> }",
       "task(id6, type: String, { <caret> })",
       "task id12(type: String) { <caret> }",
       "task id13(type: String, { <caret> })",
     ]
-    def all = new RunAll()
     for (entry in data) {
-      all = all.append {
-        doTest(entry) {
-          closureDelegateTest(JAVA_LANG_STRING, 1)
-        }
+      doTest(entry) {
+        closureDelegateTest(JAVA_LANG_STRING, 1)
       }
     }
-    all.run()
   }
 }
