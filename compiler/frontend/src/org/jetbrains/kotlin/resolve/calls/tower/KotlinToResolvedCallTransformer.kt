@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSaf
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
@@ -69,7 +70,8 @@ class KotlinToResolvedCallTransformer(
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
     private val builtIns: KotlinBuiltIns,
-    private val typeSystemContext: TypeSystemInferenceExtensionContextDelegate
+    private val typeSystemContext: TypeSystemInferenceExtensionContextDelegate,
+    private val smartCastManager: SmartCastManager
 ) {
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
@@ -471,7 +473,8 @@ class KotlinToResolvedCallTransformer(
             newContext,
             completedCallAtom.atom.psiKotlinCall,
             context.dataFlowValueFactory,
-            allDiagnostics
+            allDiagnostics,
+            smartCastManager
         )
 
         for (diagnostic in allDiagnostics) {

@@ -61,6 +61,7 @@ public class DataFlowAnalyzer {
     private final LanguageVersionSettings languageVersionSettings;
     private final EffectSystem effectSystem;
     private final DataFlowValueFactory dataFlowValueFactory;
+    private final SmartCastManager smartCastManager;
 
     public DataFlowAnalyzer(
             @NotNull Iterable<AdditionalTypeChecker> additionalTypeCheckers,
@@ -70,7 +71,8 @@ public class DataFlowAnalyzer {
             @NotNull ExpressionTypingFacade facade,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull EffectSystem effectSystem,
-            @NotNull DataFlowValueFactory factory
+            @NotNull DataFlowValueFactory factory,
+            @NotNull SmartCastManager smartCastManager
     ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
@@ -80,6 +82,7 @@ public class DataFlowAnalyzer {
         this.languageVersionSettings = languageVersionSettings;
         this.effectSystem = effectSystem;
         this.dataFlowValueFactory = factory;
+        this.smartCastManager = smartCastManager;
     }
 
     // NB: use this method only for functions from 'Any'
@@ -349,7 +352,7 @@ public class DataFlowAnalyzer {
     ) {
         DataFlowValue dataFlowValue = dataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
-        return SmartCastManager.Companion.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, null, false);
+        return smartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, null, false, null);
     }
 
     public void recordExpectedType(@NotNull BindingTrace trace, @NotNull KtExpression expression, @NotNull KotlinType expectedType) {
