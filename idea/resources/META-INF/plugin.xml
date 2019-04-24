@@ -79,5 +79,6 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <statistics.counterUsagesCollector groupId="kotlin.gradle.library" version="1"/>
       <statistics.counterUsagesCollector groupId="kotlin.ide.action.refactoring" version="1"/>
       <statistics.counterUsagesCollector groupId="kotlin.ide.newFileTempl" version="1"/>
+      <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="1"/>
     </extensions>
 </idea-plugin>

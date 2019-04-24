@@ -12,7 +12,8 @@ enum class FUSEventGroups(groupIdSuffix: String) {
     MavenTarget("maven.target"),
     JPSTarget("jps.target"),
     Refactoring("ide.action.refactoring"),
-    NewFileTemplate("ide.newFileTempl");
+    NewFileTemplate("ide.newFileTempl"),
+    NPWizards("ide.npwizards");
 
     val GROUP_ID: String = "kotlin.$groupIdSuffix"
 }
