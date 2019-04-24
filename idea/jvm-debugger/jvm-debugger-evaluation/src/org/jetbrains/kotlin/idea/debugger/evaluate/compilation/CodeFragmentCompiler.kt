@@ -89,17 +89,21 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext) {
         val codegenInfo = CodeFragmentCodegenInfo(classDescriptor, methodDescriptor, parameterInfo.parameters)
         CodeFragmentCodegen.setCodeFragmentInfo(codeFragment, codegenInfo)
 
-        KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
+        try {
+            KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
-        val classes = generationState.factory.asList().filterClassFiles()
-            .map { ClassToLoad(it.internalClassName, it.relativePath, it.asByteArray()) }
+            val classes = generationState.factory.asList().filterClassFiles()
+                .map { ClassToLoad(it.internalClassName, it.relativePath, it.asByteArray()) }
 
-        val methodSignature = getMethodSignature(methodDescriptor, parameterInfo, generationState)
-        val functionSuffixes = getLocalFunctionSuffixes(parameterInfo.parameters, generationState.typeMapper)
+            val methodSignature = getMethodSignature(methodDescriptor, parameterInfo, generationState)
+            val functionSuffixes = getLocalFunctionSuffixes(parameterInfo.parameters, generationState.typeMapper)
 
-        generationState.destroy()
+            generationState.destroy()
 
-        return CompilationResult(classes, parameterInfo, functionSuffixes, methodSignature)
+            return CompilationResult(classes, parameterInfo, functionSuffixes, methodSignature)
+        } finally {
+            CodeFragmentCodegen.clearCodeFragmentInfo(codeFragment)
+        }
     }
 
     private fun getLocalFunctionSuffixes(

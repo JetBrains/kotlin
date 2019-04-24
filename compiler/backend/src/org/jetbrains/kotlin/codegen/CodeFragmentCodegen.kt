@@ -176,6 +176,10 @@ class CodeFragmentCodegen private constructor(
             codeFragment.putUserData(INFO_USERDATA_KEY, info)
         }
 
+        fun clearCodeFragmentInfo(codeFragment: KtCodeFragment) {
+            codeFragment.putUserData(INFO_USERDATA_KEY, null)
+        }
+
         @JvmStatic
         fun getCodeFragmentInfo(codeFragment: KtCodeFragment): CodeFragmentCodegenInfo {
             return codeFragment.getUserData(INFO_USERDATA_KEY) ?: error("Codegen info user data is not set")
