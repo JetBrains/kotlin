@@ -2,16 +2,15 @@
 package com.intellij.codeInsight.hints
 
 import com.intellij.codeInsight.hints.presentation.*
+import com.intellij.openapi.editor.impl.EditorImpl
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import java.awt.Point
 import java.awt.event.MouseEvent
 import javax.swing.JPanel
 
+
 class PresentationTest : TestCase() {
-  private fun click(presentation: InlayPresentation, x: Int, y: Int) {
-    val event = MouseEvent(JPanel(), 0, 0, 0, x, y, 0, true, 0)
-    presentation.mouseClicked(event, Point(x, y))
-  }
 
   fun testSequenceDimension() {
     val presentation = SequencePresentation(listOf(SpacePresentation(10, 8), SpacePresentation(30, 5)))
@@ -83,6 +82,24 @@ class PresentationTest : TestCase() {
     click(presentation, 1, 5)
   }
 
+  fun testFoldedStateIsNotUpdatedAndStatelessComponentIsUpdated() {
+    data class State(val data: String)
+    class Presentation(val inner: InlayPresentation, data: String) : StatefulPresentation<State>(State(data), StateMark("TestMark")) {
+      override fun getPresentation(): InlayPresentation = inner
+      override fun toString(): String = ""
+    }
+
+    val old = Presentation(Presentation(SpacePresentation(10, 20), "inner"), "outer")
+    val new = Presentation(Presentation(SpacePresentation(0, 1), "innerNew"), "outerNew")
+    new.updateState(old)
+    assertEquals("outer", new.state.data)
+    val newInner = new.inner as Presentation
+    assertEquals("inner", newInner.state.data)
+    val (width, height) = newInner.inner as SpacePresentation
+    assertEquals(0, width)
+    assertEquals(1, height)
+  }
+
   private class ClickCheckingPresentation(
     val presentation: InlayPresentation,
     var expectedClick: Pair<Int, Int>?
@@ -100,4 +117,38 @@ class PresentationTest : TestCase() {
       super.mouseClicked(e, editorPoint)
     }
   }
+}
+
+class HeavyPresentationTest : LightPlatformCodeInsightFixtureTestCase() {
+  fun testFoldedStateIsNotUpdatedAndStatelessComponentIsUpdated() {
+    myFixture.configureByText("__Dummy__.java", "class A {}")
+    val factory = PresentationFactory(myFixture.editor as EditorImpl)
+
+    val old = unwrapFolding(factory.folding(factory.text("outerPlaceholder"), object : PresentationSupplier {
+      override fun getPresentation(): InlayPresentation =
+        unwrapFolding(factory.folding(factory.text("innerPlaceholder"), object : PresentationSupplier {
+          override fun getPresentation() = factory.text("text")
+        }))
+    }))
+
+    val new = factory.folding(factory.text("outerPlaceholderNew"), object : PresentationSupplier {
+      override fun getPresentation(): InlayPresentation = factory.folding(
+        factory.text("innerPlaceholderNew"), object : PresentationSupplier {
+        override fun getPresentation(): InlayPresentation = factory.text("newText")
+      })
+    })
+    new.updateState(old)
+    assertEquals("<clicked><clicked>newText", new.toString())
+  }
+
+  private fun unwrapFolding(presentation: InlayPresentation): InlayPresentation {
+    presentation as ChangeOnClickPresentation
+    presentation.state = ChangeOnClickPresentation.State(true)
+    return presentation
+  }
+}
+
+private fun click(presentation: InlayPresentation, x: Int, y: Int) {
+  val event = MouseEvent(JPanel(), 0, 0, 0, x, y, 0, true, 0)
+  presentation.mouseClicked(event, Point(x, y))
 }
