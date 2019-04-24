@@ -16,27 +16,9 @@
 
 package org.jetbrains.kotlin.js.resolve
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.storage.StorageManager
 
 object JsPlatform : TargetPlatform("JS") {
     override val platform: MultiTargetPlatform
         get() = MultiTargetPlatform.Specific(platformName)
-}
-
-object JsPlatformCompilerServices : PlatformDependentCompilerServices() {
-    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
-        result.add(ImportPath.fromString("kotlin.js.*"))
-    }
-
-    override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
-
-    val builtIns: KotlinBuiltIns
-        get() = DefaultBuiltIns.Instance
-
-    override val excludedImports: List<FqName> =
-        listOf("Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json").map { FqName("kotlin.js.$it") }
 }
