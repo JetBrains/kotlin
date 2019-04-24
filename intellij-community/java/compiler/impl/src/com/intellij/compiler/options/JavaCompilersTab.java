@@ -19,12 +19,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * @author Eugene Zhuravlev
@@ -38,41 +35,39 @@ public class JavaCompilersTab extends CompositeConfigurable<Configurable> implem
   private final CardLayout myCardLayout;
 
   private final Project myProject;
-  private final BackendCompiler myDefaultCompiler;
-  private BackendCompiler mySelectedCompiler;
   private final CompilerConfigurationImpl myCompilerConfiguration;
+  private final BackendCompiler myDefaultCompiler;
   private final TargetOptionsComponent myTargetLevelComponent;
+  private final List<Configurable> myConfigurables;
+  private BackendCompiler mySelectedCompiler;
 
-  public JavaCompilersTab(final Project project) {
-    this(project, ((CompilerConfigurationImpl)CompilerConfiguration.getInstance(project)).getDefaultCompiler());
-  }
-
-  private JavaCompilersTab(final Project project, BackendCompiler defaultCompiler) {
+  public JavaCompilersTab(@NotNull Project project) {
     myProject = project;
-    myDefaultCompiler = defaultCompiler;
     myCompilerConfiguration = (CompilerConfigurationImpl)CompilerConfiguration.getInstance(project);
+    myDefaultCompiler = myCompilerConfiguration.getDefaultCompiler();
+    myTargetLevelComponent = new TargetOptionsComponent(project);
 
     myCardLayout = new CardLayout();
     myContentPanel.setLayout(myCardLayout);
-
     myTargetOptionsPanel.setLayout(new BorderLayout());
-    myTargetLevelComponent = new TargetOptionsComponent(project);
     myTargetOptionsPanel.add(myTargetLevelComponent, BorderLayout.CENTER);
 
-    final List<BackendCompiler> compilers = getCompilers();
-    final List<Configurable> configurables = getConfigurables();
-    for (int i = 0; i < configurables.size(); i++) {
-      myContentPanel.add(configurables.get(i).createComponent(), compilers.get(i).getId());
+    Collection<BackendCompiler> compilers = myCompilerConfiguration.getRegisteredJavaCompilers();
+    myConfigurables = new ArrayList<>(compilers.size());
+    for (BackendCompiler compiler : compilers) {
+      Configurable configurable = compiler.createConfigurable();
+      myConfigurables.add(configurable);
+      JComponent component = configurable.createComponent();
+      assert component != null : configurable.getClass();
+      myContentPanel.add(component, compiler.getId());
     }
-    myCompiler.setModel(new DefaultComboBoxModel<>(new Vector<>(compilers)));
+
+    myCompiler.setModel(new DefaultComboBoxModel<>(compilers.toArray(new BackendCompiler[0])));
     myCompiler.setRenderer(SimpleListCellRenderer.create("", BackendCompiler::getPresentableName));
-    myCompiler.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        final BackendCompiler compiler = (BackendCompiler)myCompiler.getSelectedItem();
-        if (compiler != null) {
-          selectCompiler(compiler);
-        }
+    myCompiler.addActionListener(e -> {
+      BackendCompiler compiler = (BackendCompiler)myCompiler.getSelectedItem();
+      if (compiler != null) {
+        selectCompiler(compiler);
       }
     });
   }
@@ -82,13 +77,15 @@ public class JavaCompilersTab extends CompositeConfigurable<Configurable> implem
     return CompilerBundle.message("java.compiler.description");
   }
 
+  @NotNull
   @Override
+  @SuppressWarnings("SpellCheckingInspection")
   public String getHelpTopic() {
     return "reference.projectsettings.compiler.javacompiler";
   }
 
-  @Override
   @NotNull
+  @Override
   public String getId() {
     return getHelpTopic();
   }
@@ -136,7 +133,7 @@ public class JavaCompilersTab extends CompositeConfigurable<Configurable> implem
   }
 
   private void selectCompiler(BackendCompiler compiler) {
-    if(compiler == null) {
+    if (compiler == null) {
       compiler = myDefaultCompiler;
     }
     myCompiler.setSelectedItem(compiler);
@@ -149,17 +146,6 @@ public class JavaCompilersTab extends CompositeConfigurable<Configurable> implem
   @NotNull
   @Override
   protected List<Configurable> createConfigurables() {
-    final Collection<BackendCompiler> compilers = getCompilers();
-    final List<Configurable> configurables = new ArrayList<>(compilers.size());
-    for (final BackendCompiler compiler : compilers) {
-      configurables.add(compiler.createConfigurable());
-    }
-    return configurables;
-  }
-
-  @NotNull
-  private List<BackendCompiler> getCompilers() {
-    final CompilerConfigurationImpl configuration = (CompilerConfigurationImpl)CompilerConfiguration.getInstance(myProject);
-    return (List<BackendCompiler>)configuration.getRegisteredJavaCompilers();
+    return myConfigurables;
   }
 }
