@@ -6,10 +6,21 @@ import java.awt.event.MouseEvent
 
 class ChangeOnClickPresentation(
   private val notClicked: InlayPresentation,
-  val onClick: PresentationSupplier
+  val onClick: () -> InlayPresentation
 ) : StatefulPresentation<ChangeOnClickPresentation.State>(State(false), ourMark) {
+  private var cached : InlayPresentation? = null
+
+  private fun getClickedPresentation(): InlayPresentation = when (val cachedVal = cached) {
+    null -> {
+      val presentation = onClick()
+      cached = presentation
+      presentation
+    }
+    else -> cachedVal
+  }
+
   override fun getPresentation(): InlayPresentation = when {
-    state.clicked -> onClick.getPresentation() // TODO cache it (may be called multiple times - and usually do called multiple times)
+    state.clicked -> getClickedPresentation()
     else -> notClicked
   }
 
@@ -31,11 +42,4 @@ class ChangeOnClickPresentation(
   companion object {
     val ourMark = StateMark<State>("ChangeOnClick")
   }
-}
-
-/**
- * Implementors of this interface must implement meaningful equals
- */
-interface PresentationSupplier {
-  fun getPresentation() : InlayPresentation
 }

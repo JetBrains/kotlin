@@ -153,7 +153,7 @@ class PresentationFactory(val editor: EditorImpl) {
     return Point(e.xOnScreen - pointOnScreen.x, e.yOnScreen - pointOnScreen.y)
   }
 
-  fun folding(placeholder: InlayPresentation, unwrapAction: PresentationSupplier): InlayPresentation {
+  fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
     // TODO add folding style
     return ChangeOnClickPresentation(placeholder, unwrapAction)
   }

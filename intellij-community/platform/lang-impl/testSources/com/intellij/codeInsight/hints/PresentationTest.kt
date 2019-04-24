@@ -124,19 +124,15 @@ class HeavyPresentationTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.configureByText("__Dummy__.java", "class A {}")
     val factory = PresentationFactory(myFixture.editor as EditorImpl)
 
-    val old = unwrapFolding(factory.folding(factory.text("outerPlaceholder"), object : PresentationSupplier {
-      override fun getPresentation(): InlayPresentation =
-        unwrapFolding(factory.folding(factory.text("innerPlaceholder"), object : PresentationSupplier {
-          override fun getPresentation() = factory.text("text")
-        }))
-    }))
-
-    val new = factory.folding(factory.text("outerPlaceholderNew"), object : PresentationSupplier {
-      override fun getPresentation(): InlayPresentation = factory.folding(
-        factory.text("innerPlaceholderNew"), object : PresentationSupplier {
-        override fun getPresentation(): InlayPresentation = factory.text("newText")
-      })
+    val old = unwrapFolding(factory.folding(factory.text("outerPlaceholder")) {
+      unwrapFolding(factory.folding(factory.text("innerPlaceholder")) {factory.text("text")})
     })
+
+    val new = factory.folding(factory.text("outerPlaceholderNew")) {
+      factory.folding(factory.text("innerPlaceholderNew")) {
+        factory.text("newText")
+      }
+    }
     new.updateState(old)
     assertEquals("<clicked><clicked>newText", new.toString())
   }
