@@ -74,15 +74,5 @@ class GradleNonCodeMembersContributor : NonCodeMembersContributor() {
         processor.execute(variable, state)
       }
     }
-    else {
-      if (!shouldSkipDeclarationsAndSetters(aClass.qualifiedName)) {
-        processDeclarations(aClass, processor, state, place)
-      }
-    }
-  }
-
-  private fun shouldSkipDeclarationsAndSetters(qualifiedName: String?): Boolean {
-    return qualifiedName in GradleSetterAsMethodContributor.knownDecoratedClasses
-           || qualifiedName in GradleConventionsContributor.conventions
   }
 }
