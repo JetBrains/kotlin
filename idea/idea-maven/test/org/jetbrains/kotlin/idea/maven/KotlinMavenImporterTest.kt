@@ -46,13 +46,13 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.platform.impl.*
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.junit.Assert
 import org.junit.runner.RunWith
 import java.io.File
@@ -2970,8 +2970,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         assertImporterStatePresent()
 
-        checkStableModuleName("project", "project", JvmPlatform, isProduction = true)
-        checkStableModuleName("project", "project", JvmPlatform, isProduction = false)
+        checkStableModuleName("project", "project", JvmPlatforms.defaultJvmPlatform, isProduction = true)
+        checkStableModuleName("project", "project", JvmPlatforms.defaultJvmPlatform, isProduction = false)
     }
 
     fun testStableModuleNameWhileUsngMaven_JS() {
@@ -3031,8 +3031,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         // Note that we check name induced by '-output-file' -- may be it's not the best
         // decision, but we don't have a better one
-        checkStableModuleName("project", "test", JsPlatform, isProduction = true)
-        checkStableModuleName("project", "test", JsPlatform, isProduction = false)
+        checkStableModuleName("project", "test", JsPlatforms.defaultJsPlatform, isProduction = true)
+        checkStableModuleName("project", "test", JsPlatforms.defaultJsPlatform, isProduction = false)
     }
 
     private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {

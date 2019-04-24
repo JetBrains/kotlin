@@ -22,7 +22,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -71,7 +72,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
 
     fun analyzeFiles(
         files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = mapOf(MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common),
+        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
         metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
     ): AnalysisResult {
         val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
@@ -120,8 +121,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion
+        languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -155,7 +155,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         metadataPartProvider: MetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings
     ): StorageComponentContainer = createContainer("ResolveCommonCode", CommonPlatformCompilerServices) {
-        configureModule(moduleContext, CommonPlatform, TargetPlatformVersion.NoVersion, CommonPlatformCompilerServices, bindingTrace)
+        configureModule(moduleContext, DefaultBuiltInPlatforms.commonPlatform, CommonPlatformCompilerServices, bindingTrace)
 
         useInstance(moduleContentScope)
         useInstance(LookupTracker.DO_NOTHING)

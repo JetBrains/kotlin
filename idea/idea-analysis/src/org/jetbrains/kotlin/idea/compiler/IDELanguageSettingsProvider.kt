@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -72,6 +72,7 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
         return result
     }
 
+    // TODO: remove!
     override fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion =
         when (moduleInfo) {
             is ModuleSourceInfo -> moduleInfo.module.platform?.version ?: TargetPlatformVersion.NoVersion

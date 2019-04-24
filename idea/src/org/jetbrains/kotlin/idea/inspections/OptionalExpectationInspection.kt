@@ -15,16 +15,16 @@ import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.expectactual.CreateActualClassFix
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.classOrObjectVisitor
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker.Companion.allStrongIncompatibilities
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.platform.oldFashionedDescription
 
 class OptionalExpectationInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
@@ -49,12 +49,14 @@ class OptionalExpectationInspection : AbstractKotlinInspection() {
                                 expectedOnes != null && ExpectedActualResolver.Compatibility.Compatible in expectedOnes.keys
                             })
                 ) continue
-                val platform = (actualModuleDescriptor.getMultiTargetPlatform() as? MultiTargetPlatform.Specific) ?: continue
+                val platform = actualModuleDescriptor.platform ?: continue
+                if (platform.isCommon()) continue
+
                 val displayedName = actualModuleDescriptor.getCapability(ModuleInfo.Capability)?.displayedName ?: ""
                 val actualModule = (actualModuleDescriptor.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module ?: continue
                 holder.registerProblem(
                     classOrObject.nameIdentifier ?: classOrObject,
-                    "Optionally expected annotation has no actual annotation in module $displayedName for platform ${platform.platform}",
+                    "Optionally expected annotation has no actual annotation in module $displayedName for platform ${platform.oldFashionedDescription}",
                     // NB: some highlighting is not suggested for this inspection
                     ProblemHighlightType.INFORMATION,
                     IntentionWrapper(CreateActualClassFix(classOrObject, actualModule, platform), classOrObject.containingFile)
