@@ -34,7 +34,7 @@ abstract class StatefulPresentation<S: Any?>(
     _state = value
     val presentation = getPresentation()
     updatePresentation(presentation)
-    fireUpdateEvent(previous)
+    fireUpdateEvent(previous) // TODO should not be here! After rewriting of Seq presentation should be deleted!
   }
 
   private var _currentPresentation: InlayPresentation? = null
@@ -73,11 +73,12 @@ abstract class StatefulPresentation<S: Any?>(
         val castedPrevious = stateMark.cast(previousState, previousMark)
         if (castedPrevious != null) {
           updateStateAndPresentation(castedPrevious)
+          // Updating just created presentation
+          currentPresentation.updateState(previousPresentation.currentPresentation)
           changed = true
         }
       }
     }
-    if (super.updateState(previousPresentation)) return true
     return changed
   }
 

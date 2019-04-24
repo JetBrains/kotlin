@@ -11,7 +11,7 @@ class ChangeOnClickPresentation(
   supplier: PresentationSupplier
 ) : StatefulPresentation<ChangeOnClickPresentation.State>(State(false, supplier), ourMark) {
   override fun getPresentation(): InlayPresentation = when {
-    state.clicked -> state.onClick.getPresentation()
+    state.clicked -> state.onClick.getPresentation() // TODO cache it (may be called multiple times - and usually do called multiple times)
     else -> notClicked
   }
 
