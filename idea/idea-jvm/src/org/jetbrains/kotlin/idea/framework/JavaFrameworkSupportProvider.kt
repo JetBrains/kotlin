@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import javax.swing.JComponent
 
 class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
@@ -53,6 +55,7 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                 if (isNewProject) {
                     ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
                 }
+                KotlinFUSLogger.log(FUSEventGroups.NPWizards, "KotlinJavaFrameworkSupportProvider")
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {
