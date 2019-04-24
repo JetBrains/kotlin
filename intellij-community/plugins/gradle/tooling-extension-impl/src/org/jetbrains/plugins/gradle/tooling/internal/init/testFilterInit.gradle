@@ -1,6 +1,3 @@
-
-import groovy.xml.MarkupBuilder
-import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
 import org.gradle.util.*
 
 String[] ijTestIncludes = ${TEST_NAME_INCLUDES}
@@ -10,7 +7,7 @@ boolean skipExecution
 gradle.addBuildListener(new BuildListener() {
   void	buildFinished(BuildResult result) {
     if(result.failure?.message?.startsWith("Task 'cleanTest' not found in") || result.failure?.message?.startsWith("Task 'test' not found in")) {
-      logConfigurationError(
+      IJTestEventLogger.logConfigurationError(
         "Unable to run unit tests",
         "Unable to run unit tests, since there is no 'test' task configured in the project." +
         "\n<br>You can add the following into the project gradle script: apply plugin: 'java'" +
@@ -28,7 +25,7 @@ gradle.addBuildListener(new BuildListener() {
 for (incl in ijTestIncludes) {
   if(incl != '*' && !ijTestFilteringSupported)  {
     skipExecution = true
-    logConfigurationError(
+    IJTestEventLogger.logConfigurationError(
       "Unable to configure test filtering",
       "Unable to configure test filtering for " + GradleVersion.current() +".<br>Please, use Gradle 1.10 or above or run all tests of a module.",
       true)
@@ -41,38 +38,11 @@ gradle.taskGraph.beforeTask { Task task ->
 
   if (task instanceof Test) {
     try {
-      try {
-        def urls = task.classpath.files.findAll{
-          it.name == 'idea_rt.jar' || it.name.startsWith('junit')
-        }.collect { it.toURI().toURL()}
-        def classLoader = Class.forName("org.gradle.launcher.daemon.bootstrap.DaemonMain").getClassLoader()
-        if(classLoader instanceof URLClassLoader) {
-          for (URL url : urls) {
-            classLoader.addURL(url)
-          }
-        } else {
-          logger.error("unable to enhance gradle daemon classloader with idea_rt.jar")
-        }
-      }
-      catch (all) {
-        logger.error("unable to enhance gradle daemon classloader with idea_rt.jar", all)
-      }
-
-      logTestReportLocation(task.reports?.html?.entryPoint?.path)
-
-      task.beforeSuite { descriptor -> logTestEvent("beforeSuite", descriptor, null, null) }
-      task.afterSuite { descriptor, result -> logTestEvent("afterSuite", descriptor, null, result) }
-
-      task.beforeTest { descriptor -> logTestEvent("beforeTest", descriptor, null, null) }
-      task.onOutput { descriptor, event -> logTestEvent("onOutput", descriptor, event, null) }
-      task.afterTest { descriptor, result -> logTestEvent("afterTest", descriptor, null, result) }
-
       if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
         task.filter {
           ijTestIncludes.each(){ includeTestsMatching "${it}" }
         }
       }
-      task.testLogging.showStandardStreams = false
     }
     catch (all) {
       logger.error("", all)
@@ -80,110 +50,4 @@ gradle.taskGraph.beforeTask { Task task ->
   }
 }
 
-static def logTestEvent(testEventType, TestDescriptorInternal testDescriptor, testEvent, testResult) {
-  def writer = new StringWriter()
-  def xml = new MarkupBuilder(writer)
-  xml.event(type: testEventType){
-    test(id: testDescriptor.id, parentId: testDescriptor.parent?.id ?: '') {
-      if(testDescriptor){
-        descriptor(name: testDescriptor.name ?: '', className: testDescriptor.className ?: '')
-      }
-      if(testEvent) {
-        def message = escapeCdata(testEvent.message)
-        event(destination: testEvent.destination){
-          xml.mkp.yieldUnescaped("$message")
-        }
-      }
-      if(testResult) {
-        def errorMsg = escapeCdata(testResult.exception?.message?:'')
-        def stackTrace = escapeCdata(getStackTrace(testResult.exception))
-        result(resultType: testResult.resultType ?: '', startTime: testResult.startTime, endTime: testResult.endTime){
-          def exception = testResult.exception
-          if(exception?.message?.trim()) xml.mkp.yieldUnescaped("<errorMsg>$errorMsg</errorMsg>")
-          if(exception) xml.mkp.yieldUnescaped("<stackTrace>$stackTrace</stackTrace>")
 
-          if('junit.framework.ComparisonFailure'.equals(exception?.class?.name) ||
-             'org.junit.ComparisonFailure'.equals(exception?.class?.name)) {
-            def expected = escapeCdata(exception.fExpected)
-            def actual = escapeCdata(exception.fActual)
-            failureType('comparison')
-            xml.mkp.yieldUnescaped("<expected>$expected</expected>")
-            xml.mkp.yieldUnescaped("<actual>$actual</actual>")
-            return
-          }
-          try {
-            def fileComparisonFailure
-            if ('com.intellij.rt.execution.junit.FileComparisonFailure'.equals(exception?.class?.name)) {
-              fileComparisonFailure = exception
-            } else if ('com.intellij.rt.execution.junit.FileComparisonFailure'.equals(exception?.cause?.class?.name)) {
-              fileComparisonFailure = exception.cause
-            }
-
-            if (fileComparisonFailure) {
-              def expected = escapeCdata(fileComparisonFailure.expected)
-              def actual = escapeCdata(fileComparisonFailure.actual)
-              def filePath = escapeCdata(fileComparisonFailure.filePath)
-              def actualFilePath
-              if (exception.hasProperty('actualFilePath')) {
-                actualFilePath = escapeCdata(fileComparisonFailure.actualFilePath)
-              }
-              failureType('comparison')
-              xml.mkp.yieldUnescaped("<expected>$expected</expected>")
-              xml.mkp.yieldUnescaped("<actual>$actual</actual>")
-              xml.mkp.yieldUnescaped("<filePath>$filePath</filePath>")
-              if (actualFilePath) xml.mkp.yieldUnescaped("<actualFilePath>$actualFilePath</actualFilePath>")
-              return
-            }
-          }
-          catch (ignore) {
-          }
-          if ('junit.framework.AssertionFailedError'.equals(exception?.class?.name) || exception instanceof AssertionError) {
-            failureType('assertionFailed')
-            return
-          }
-          failureType('error')
-        }
-      }
-    }
-  }
-
-  writeLog(writer.toString())
-}
-
-static def logTestReportLocation(def report) {
-  if(!report) return
-  def writer = new StringWriter()
-  def xml = new MarkupBuilder(writer)
-  xml.event(type: 'reportLocation', testReport: report)
-  writeLog(writer.toString());
-}
-
-static def logConfigurationError(aTitle, aMessage, boolean openSettings) {
-  def writer = new StringWriter()
-  def xml = new MarkupBuilder(writer)
-  xml.event(type: 'configurationError', openSettings: openSettings) {
-    title(aTitle)
-    message(aMessage)
-  }
-  writeLog(writer.toString());
-}
-
-static String escapeCdata(String s) {
-  return "<![CDATA[" + s?.getBytes("UTF-8")?.encodeBase64()?.toString() + "]]>";
-}
-
-static def getStackTrace(Throwable t) {
-  if(!t) return ''
-  StringWriter sw = new StringWriter()
-  t.printStackTrace(new PrintWriter(sw))
-  sw.toString()
-}
-
-static def wrap(String s) {
-  if(!s) return s;
-  s.replaceAll("\r\n|\n\r|\n|\r","<ijLogEol/>\n")
-}
-
-static def writeLog(s) {
-  println String.format("\n<ijLog>%s</ijLog>", wrap(s))
-}
