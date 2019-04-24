@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
+import org.jetbrains.kotlin.scripting.definitions.reporter
 import kotlin.script.experimental.intellij.ScriptDefinitionsProvider
 
 class BridgeScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionContributor {
@@ -34,7 +35,7 @@ class BridgeScriptDefinitionsContributor(private val project: Project) : ScriptD
                 else ScriptDefinitionsFromClasspathDiscoverySource(
                     classPath,
                     emptyMap(),
-                    messageCollector
+                    messageCollector.reporter
                 ).definitions
             explicitDefinitions + discoveredDefinitions
         }

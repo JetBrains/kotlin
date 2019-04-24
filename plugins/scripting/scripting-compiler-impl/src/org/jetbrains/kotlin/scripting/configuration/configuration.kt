@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.definitions.loadScriptTemplatesFromClasspath
+import org.jetbrains.kotlin.scripting.definitions.reporter
 
 const val KOTLIN_SCRIPTING_PLUGIN_ID = "kotlin.scripting"
 
@@ -21,7 +22,7 @@ fun configureScriptDefinitions(
 ) {
     // TODO: consider using escaping to allow kotlin escaped names in class names
     val templatesFromClasspath = loadScriptTemplatesFromClasspath(
-        scriptTemplates, configuration.jvmClasspathRoots, emptyList(), baseClassloader, scriptResolverEnv, messageCollector
+        scriptTemplates, configuration.jvmClasspathRoots, emptyList(), baseClassloader, scriptResolverEnv, messageCollector.reporter
     )
     configuration.addAll(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, templatesFromClasspath.toList())
 }

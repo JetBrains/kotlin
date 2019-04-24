@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.scripting.configuration.configureScriptDefinitions
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.reporter
 import java.io.File
 
 class ScriptingCompilerConfigurationExtension(val project: MockProject) : CompilerConfigurationExtension {
@@ -66,7 +67,7 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
                 ScriptDefinitionsFromClasspathDiscoverySource(
                     configuration.jvmClasspathRoots,
                     configuration.get(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION) ?: emptyMap(),
-                    messageCollector
+                    messageCollector.reporter
                 )
             )
         }

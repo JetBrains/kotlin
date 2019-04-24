@@ -23,10 +23,17 @@ import kotlin.script.templates.ScriptTemplateDefinition
 const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
 const val SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT = ".classname"
 
+typealias MessageReporter = (CompilerMessageSeverity, String) -> Unit
+
+val MessageCollector.reporter: MessageReporter
+    get() = { severity, message ->
+        this.report(severity, message)
+    }
+
 class ScriptDefinitionsFromClasspathDiscoverySource(
     private val classpath: List<File>,
     private val scriptResolverEnv: Map<String, Any?>,
-    private val messageCollector: MessageCollector
+    private val messageReporter: MessageReporter
 ) : ScriptDefinitionsSource {
 
     override val definitions: Sequence<KotlinScriptDefinition> = run {
@@ -34,7 +41,7 @@ class ScriptDefinitionsFromClasspathDiscoverySource(
             classpath,
             this::class.java.classLoader,
             scriptResolverEnv,
-            messageCollector
+            messageReporter
         )
     }
 }
@@ -44,7 +51,7 @@ private const val MANIFEST_RESOURCE_NAME = "/META-INF/MANIFEST.MF"
 fun discoverScriptTemplatesInClassLoader(
     classLoader: ClassLoader,
     scriptResolverEnv: Map<String, Any?>,
-    messageCollector: MessageCollector
+    messageReporter: MessageReporter
 ): Sequence<KotlinScriptDefinition> {
     val classpath = classLoader.getResources(MANIFEST_RESOURCE_NAME).asSequence().mapNotNull {
         try {
@@ -54,25 +61,25 @@ fun discoverScriptTemplatesInClassLoader(
         }
     }
     val classpathWithLoader = SimpleClasspathWithClassLoader(classpath.toList(), classLoader)
-    return scriptTemplatesDiscoverySequence(classpathWithLoader, scriptResolverEnv, messageCollector)
+    return scriptTemplatesDiscoverySequence(classpathWithLoader, scriptResolverEnv, messageReporter)
 }
 
 fun discoverScriptTemplatesInClasspath(
     classpath: List<File>,
     baseClassLoader: ClassLoader?,
     scriptResolverEnv: Map<String, Any?>,
-    messageCollector: MessageCollector
+    messageReporter: MessageReporter
 ): Sequence<KotlinScriptDefinition> {
     // TODO: try to find a way to reduce classpath (and classloader) to minimal one needed to load script definition and its dependencies
     val classpathWithLoader = LazyClasspathWithClassLoader(baseClassLoader) { classpath }
 
-    return scriptTemplatesDiscoverySequence(classpathWithLoader, scriptResolverEnv, messageCollector)
+    return scriptTemplatesDiscoverySequence(classpathWithLoader, scriptResolverEnv, messageReporter)
 }
 
 private fun scriptTemplatesDiscoverySequence(
     classpathWithLoader: ClasspathWithClassLoader,
     scriptResolverEnv: Map<String, Any?>,
-    messageCollector: MessageCollector
+    messageReporter: MessageReporter
 ): Sequence<KotlinScriptDefinition> {
     return sequence {
         // for jar files the definition class is expected in the same jar as the discovery file
@@ -96,10 +103,10 @@ private fun scriptTemplatesDiscoverySequence(
                                         jar,
                                         classpathWithLoader,
                                         scriptResolverEnv,
-                                        messageCollector
+                                        messageReporter
                                     )
                                 if (notFoundClasses.isNotEmpty()) {
-                                    messageCollector.report(
+                                    messageReporter(
                                         CompilerMessageSeverity.STRONG_WARNING,
                                         "Configure scripting: unable to find script definitions [${notFoundClasses.joinToString(", ")}]"
                                     )
@@ -115,7 +122,7 @@ private fun scriptTemplatesDiscoverySequence(
                         val discoveryMarkers = File(dep, SCRIPT_DEFINITION_MARKERS_PATH).listFiles()
                         if (discoveryMarkers?.isEmpty() == false) {
                             val (foundDefinitionClasses, notFoundDefinitions) = discoveryMarkers.map { it.name }
-                                .partitionLoadDirDefinitions(dep, classpathWithLoader, scriptResolverEnv, messageCollector)
+                                .partitionLoadDirDefinitions(dep, classpathWithLoader, scriptResolverEnv, messageReporter)
                             foundDefinitionClasses.forEach {
                                 yield(it)
                             }
@@ -124,11 +131,11 @@ private fun scriptTemplatesDiscoverySequence(
                     }
                     else -> {
                         // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
-                        messageCollector.report(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
+                        messageReporter(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
                     }
                 }
             } catch (e: IOException) {
-                messageCollector.report(
+                messageReporter(
                     CompilerMessageSeverity.STRONG_WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
                 )
             }
@@ -138,19 +145,19 @@ private fun scriptTemplatesDiscoverySequence(
             if (remainingDefinitionCandidates.isEmpty()) break
             try {
                 val (foundDefinitionClasses, notFoundDefinitions) =
-                    remainingDefinitionCandidates.partitionLoadDirDefinitions(dep, classpathWithLoader, scriptResolverEnv, messageCollector)
+                    remainingDefinitionCandidates.partitionLoadDirDefinitions(dep, classpathWithLoader, scriptResolverEnv, messageReporter)
                 foundDefinitionClasses.forEach {
                     yield(it)
                 }
                 remainingDefinitionCandidates = notFoundDefinitions
             } catch (e: IOException) {
-                messageCollector.report(
+                messageReporter(
                     CompilerMessageSeverity.STRONG_WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
                 )
             }
         }
         if (remainingDefinitionCandidates.isNotEmpty()) {
-            messageCollector.report(
+            messageReporter(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "The following script definitions are not found in the classpath: [${remainingDefinitionCandidates.joinToString()}]"
             )
@@ -164,7 +171,7 @@ fun loadScriptTemplatesFromClasspath(
     dependenciesClasspath: List<File>,
     baseClassLoader: ClassLoader,
     scriptResolverEnv: Map<String, Any?>,
-    messageCollector: MessageCollector
+    messageReporter: MessageReporter
 ): Sequence<KotlinScriptDefinition> =
     if (scriptTemplates.isEmpty()) emptySequence()
     else sequence {
@@ -174,7 +181,7 @@ fun loadScriptTemplatesFromClasspath(
                 baseClassLoader,
                 it,
                 scriptResolverEnv,
-                messageCollector
+                messageReporter
             )
         }
         initialLoadedDefinitions.forEach {
@@ -192,15 +199,15 @@ fun loadScriptTemplatesFromClasspath(
                 val (loadedDefinitions, notFoundTemplates) = when {
                     dep.isFile && dep.extension == "jar" -> { // checking for extension is the compiler current behaviour, so the same logic is implemented here
                         JarFile(dep).use { jar ->
-                            remainingTemplates.partitionLoadJarDefinitions(jar, classpathWithLoader, scriptResolverEnv, messageCollector)
+                            remainingTemplates.partitionLoadJarDefinitions(jar, classpathWithLoader, scriptResolverEnv, messageReporter)
                         }
                     }
                     dep.isDirectory -> {
-                        remainingTemplates.partitionLoadDirDefinitions(dep, classpathWithLoader, scriptResolverEnv, messageCollector)
+                        remainingTemplates.partitionLoadDirDefinitions(dep, classpathWithLoader, scriptResolverEnv, messageReporter)
                     }
                     else -> {
                         // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
-                        messageCollector.report(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
+                        messageReporter(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
                         DefinitionsLoadPartitionResult(
                             listOf(),
                             remainingTemplates
@@ -214,7 +221,7 @@ fun loadScriptTemplatesFromClasspath(
                     remainingTemplates = notFoundTemplates
                 }
             } catch (e: IOException) {
-                messageCollector.report(
+                messageReporter(
                     CompilerMessageSeverity.STRONG_WARNING,
                     "Configure scripting: unable to process classpath entry $dep: $e"
                 )
@@ -222,7 +229,7 @@ fun loadScriptTemplatesFromClasspath(
         }
 
         if (remainingTemplates.isNotEmpty()) {
-            messageCollector.report(
+            messageReporter(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "Configure scripting: unable to find script definition classes: ${remainingTemplates.joinToString(", ")}"
             )
@@ -237,7 +244,7 @@ private data class DefinitionsLoadPartitionResult(
 private inline fun List<String>.partitionLoadDefinitions(
     classpathWithLoader: ClasspathWithClassLoader,
     scriptResolverEnv: Map<String, Any?>,
-    messageCollector: MessageCollector,
+    noinline messageReporter: MessageReporter,
     getBytes: (String) -> ByteArray?
 ): DefinitionsLoadPartitionResult {
     val loaded = ArrayList<KotlinScriptDefinition>()
@@ -250,7 +257,7 @@ private inline fun List<String>.partitionLoadDefinitions(
                 definitionName,
                 classpathWithLoader,
                 scriptResolverEnv,
-                messageCollector
+                messageReporter
             )
         }
         when {
@@ -267,8 +274,8 @@ private fun List<String>.partitionLoadJarDefinitions(
     jar: JarFile,
     classpathWithLoader: ClasspathWithClassLoader,
     scriptResolverEnv: Map<String, Any?>,
-    messageCollector: MessageCollector
-): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, scriptResolverEnv, messageCollector) { definitionName ->
+    messageReporter: MessageReporter
+): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, scriptResolverEnv, messageReporter) { definitionName ->
     jar.getJarEntry("${definitionName.replace('.', '/')}.class")?.let { jar.getInputStream(it).readBytes() }
 }
 
@@ -276,8 +283,8 @@ private fun List<String>.partitionLoadDirDefinitions(
     dir: File,
     classpathWithLoader: ClasspathWithClassLoader,
     scriptResolverEnv: Map<String, Any?>,
-    messageCollector: MessageCollector
-): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, scriptResolverEnv, messageCollector) { definitionName ->
+    messageReporter: MessageReporter
+): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, scriptResolverEnv, messageReporter) { definitionName ->
     File(dir, "${definitionName.replace('.', '/')}.class").takeIf { it.exists() && it.isFile }?.readBytes()
 }
 
@@ -286,7 +293,7 @@ private fun loadScriptDefinition(
     templateClassName: String,
     classpathWithLoader: ClasspathWithClassLoader,
     scriptResolverEnv: Map<String, Any?>,
-    messageCollector: MessageCollector
+    messageReporter: MessageReporter
 ): KotlinScriptDefinition? {
     val anns = loadAnnotationsFromClass(templateClassBytes)
     for (ann in anns) {
@@ -296,21 +303,21 @@ private fun loadScriptDefinition(
                 anns,
                 templateClassName,
                 classpathWithLoader.classpath,
-                messageCollector
+                messageReporter
             )
         } else if (ann.name == ScriptTemplateDefinition::class.simpleName) {
             val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
             def = KotlinScriptDefinitionFromAnnotatedTemplate(templateClass, scriptResolverEnv, classpathWithLoader.classpath)
         }
         if (def != null) {
-            messageCollector.report(
+            messageReporter(
                 CompilerMessageSeverity.LOGGING,
                 "Configure scripting: Added template $templateClassName from ${classpathWithLoader.classpath}"
             )
             return def
         }
     }
-    messageCollector.report(
+    messageReporter(
         CompilerMessageSeverity.STRONG_WARNING,
         "Configure scripting: $templateClassName is not marked with any known kotlin script annotation"
     )
@@ -321,7 +328,7 @@ private fun loadScriptDefinition(
     classLoader: ClassLoader,
     template: String,
     scriptResolverEnv: Map<String, Any?>,
-    messageCollector: MessageCollector
+    messageReporter: MessageReporter
 ): KotlinScriptDefinition? {
     try {
         val cls = classLoader.loadClass(template)
@@ -339,7 +346,7 @@ private fun loadScriptDefinition(
             } else {
                 KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)
             }
-        messageCollector.report(
+        messageReporter(
             CompilerMessageSeverity.INFO,
             "Added script definition $template to configuration: name = ${def.name}, " +
                     "resolver = ${def.dependencyResolver.javaClass.name}"
@@ -349,7 +356,7 @@ private fun loadScriptDefinition(
         // not found - not an error, return null
     } catch (ex: Exception) {
         // other exceptions - might be an error
-        messageCollector.report(
+        messageReporter(
             CompilerMessageSeverity.STRONG_WARNING,
             "Error on loading script definition $template: ${ex.message}"
         )
