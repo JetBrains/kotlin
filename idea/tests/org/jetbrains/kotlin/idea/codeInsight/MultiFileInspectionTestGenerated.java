@@ -54,6 +54,11 @@ public class MultiFileInspectionTestGenerated extends AbstractMultiFileInspectio
         runTest("idea/testData/multiFileInspections/mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test");
     }
 
+    @TestMetadata("mismatchedProjectAndDirectoryRoot/mismatchedProjectAndDirectoryRoot.test")
+    public void testMismatchedProjectAndDirectoryRoot_MismatchedProjectAndDirectoryRoot() throws Exception {
+        runTest("idea/testData/multiFileInspections/mismatchedProjectAndDirectoryRoot/mismatchedProjectAndDirectoryRoot.test");
+    }
+
     @TestMetadata("platformExtensionReceiverOfInline/platformExtensionReceiverOfInline.test")
     public void testPlatformExtensionReceiverOfInline_PlatformExtensionReceiverOfInline() throws Exception {
         runTest("idea/testData/multiFileInspections/platformExtensionReceiverOfInline/platformExtensionReceiverOfInline.test");

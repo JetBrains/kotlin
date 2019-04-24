@@ -1,0 +1,6 @@
+
+class Foo
+
+fun foo() {
+
+}

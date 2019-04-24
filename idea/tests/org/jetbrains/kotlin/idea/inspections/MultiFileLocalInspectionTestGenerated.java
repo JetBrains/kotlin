@@ -44,6 +44,11 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
         runTest("idea/testData/multiFileLocalInspections/moveFileToPackageMatchingDirectory/moveToDefaultDirectory/moveToDefaultDirectory.test");
     }
 
+    @TestMetadata("moveFileToPackageMatchingDirectory/moveToDefaultDirectoryWithoutPackageKeyword/moveToDefaultDirectoryWithoutPackageKeyword.test")
+    public void testMoveFileToPackageMatchingDirectory_moveToDefaultDirectoryWithoutPackageKeyword_MoveToDefaultDirectoryWithoutPackageKeyword() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/moveFileToPackageMatchingDirectory/moveToDefaultDirectoryWithoutPackageKeyword/moveToDefaultDirectoryWithoutPackageKeyword.test");
+    }
+
     @TestMetadata("moveFileToPackageMatchingDirectory/moveToNonDefaultDirectory/moveToNonDefaultDirectory.test")
     public void testMoveFileToPackageMatchingDirectory_moveToNonDefaultDirectory_MoveToNonDefaultDirectory() throws Exception {
         runTest("idea/testData/multiFileLocalInspections/moveFileToPackageMatchingDirectory/moveToNonDefaultDirectory/moveToNonDefaultDirectory.test");
@@ -67,6 +72,11 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
     @TestMetadata("reconcilePackageWithDirectory/changeToNonDefaultPackage/changeToNonDefaultPackage.test")
     public void testReconcilePackageWithDirectory_changeToNonDefaultPackage_ChangeToNonDefaultPackage() throws Exception {
         runTest("idea/testData/multiFileLocalInspections/reconcilePackageWithDirectory/changeToNonDefaultPackage/changeToNonDefaultPackage.test");
+    }
+
+    @TestMetadata("reconcilePackageWithDirectory/changeToNonDefaultPackageFromRoot/changeToNonDefaultPackageFromRoot.test")
+    public void testReconcilePackageWithDirectory_changeToNonDefaultPackageFromRoot_ChangeToNonDefaultPackageFromRoot() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/reconcilePackageWithDirectory/changeToNonDefaultPackageFromRoot/changeToNonDefaultPackageFromRoot.test");
     }
 
     @TestMetadata("reconcilePackageWithDirectory/innerClass/innerClass.test")
