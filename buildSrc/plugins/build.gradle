@@ -43,13 +43,9 @@ dependencies {
     // Support composite build against kotlin-native-shared.
     // Gradle cannot substitute a dependency in buildSrc by an included build.
     // See: https://github.com/gradle/gradle/issues/3768.
-    // Thus we have to compile sources of the included shared once more
-    // and depend on them during buildSrc compilation.
-    // We don't add this dependency in the runtime scope because build scripts
-    // already depend on kotlin-native-shared and this dependency is correctly
-    // substituted by the included build.
-    if (hasProperty("sharedProjectPath")) {
-        compileOnly project(':shared')
+    // Thus we have to compile sources of the included shared once more to use it in buildSrc.
+    if (project.hasProperty("sharedProjectPath")) {
+        compile project(':shared')
     } else {
         // If there is no composite build against shared, add a dependency on a published jar.
         compile "org.jetbrains.kotlin:kotlin-native-shared:$sharedVersion"

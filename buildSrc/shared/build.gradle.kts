@@ -20,7 +20,7 @@ plugins {
 
 val sharedProject = file(property("sharedProjectPath")!!).resolve("src")
 
-kotlin.sourceSets["main"].kotlin.srcDirs.add(sharedProject)
+kotlin.sourceSets["main"].kotlin.srcDirs(sharedProject)
 
 dependencies {
     implementation(kotlin("stdlib"))
