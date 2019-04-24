@@ -113,11 +113,17 @@ public class PropertyCodegen {
 
     public void generateInPackageFacade(@NotNull DeserializedPropertyDescriptor deserializedProperty) {
         assert context instanceof MultifileClassFacadeContext : "should be called only for generating facade: " + context;
-        gen(null, deserializedProperty, null, null);
+
+        genBackingFieldAndAnnotations(deserializedProperty);
+
+        if (!isConstOrHasJvmFieldAnnotation(deserializedProperty)) {
+            generateGetter(deserializedProperty, null);
+            generateSetter(deserializedProperty, null);
+        }
     }
 
     private void gen(
-            @Nullable KtProperty declaration,
+            @NotNull KtProperty declaration,
             @NotNull PropertyDescriptor descriptor,
             @Nullable KtPropertyAccessor getter,
             @Nullable KtPropertyAccessor setter
@@ -169,7 +175,7 @@ public class PropertyCodegen {
      * @see JvmCodegenUtil#couldUseDirectAccessToProperty
      */
     private boolean isAccessorNeeded(
-            @Nullable KtProperty declaration,
+            @NotNull KtProperty declaration,
             @NotNull PropertyDescriptor descriptor,
             @Nullable KtPropertyAccessor accessor,
             boolean isDefaultGetterAndSetter
@@ -180,8 +186,6 @@ public class PropertyCodegen {
 
         // Don't generate accessors for interface properties with default accessors in DefaultImpls
         if (kind == OwnerKind.DEFAULT_IMPLS && isDefaultAccessor) return false;
-
-        if (declaration == null) return true;
 
         // Delegated or extension properties can only be referenced via accessors
         if (declaration.hasDelegate() || declaration.getReceiverTypeReference() != null) return true;
@@ -198,7 +202,7 @@ public class PropertyCodegen {
         }
 
         // Non-const properties from multifile classes have accessors regardless of visibility
-        if (isNonConstTopLevelPropertyInMultifileClass(declaration, descriptor)) return true;
+        if (isTopLevelPropertyInMultifileClass(declaration, descriptor)) return true;
 
         // Private class properties have accessors only in cases when those accessors are non-trivial
         if (Visibilities.isPrivate(descriptor.getVisibility())) {
@@ -207,6 +211,7 @@ public class PropertyCodegen {
 
         // Non-private properties with private setter should not be generated for trivial properties
         // as the class will use direct field access instead
+        //noinspection ConstantConditions
         if (accessor != null && accessor.isSetter() && Visibilities.isPrivate(descriptor.getSetter().getVisibility())) {
             return !isDefaultAccessor;
         }
@@ -214,12 +219,11 @@ public class PropertyCodegen {
         return true;
     }
 
-    private static boolean isNonConstTopLevelPropertyInMultifileClass(
+    private static boolean isTopLevelPropertyInMultifileClass(
             @NotNull KtProperty declaration,
             @NotNull PropertyDescriptor descriptor
     ) {
-        return !descriptor.isConst() &&
-               descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor &&
+        return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor &&
                JvmFileClassUtilKt.isInsideJvmMultifileClassFile(declaration);
     }
 
