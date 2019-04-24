@@ -137,7 +137,10 @@ public class RunnerLayout  {
 
     for (TabImpl eachTab : myTabs) {
       if (isUsed(eachTab)) {
-        parentNode.addContent(XmlSerializer.serialize(eachTab));
+        Element element = XmlSerializer.serialize(eachTab);
+        if (element != null) {
+          parentNode.addContent(element);
+        }
       }
     }
 
