@@ -28,18 +28,8 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         updateConfiguration(configuration)
 
         additionalDependencies = listOf(
-            assertExists(
-                File(
-                    "../../../../../out/support/compose-runtime/" +
-                            "build/intermediates/intermediate-jars/debug/classes.jar"
-                ).normalize()
-            ),
-            assertExists(
-                File(
-                    "../../../../../out/support/ui-android-view-non-ir/" +
-                            "build/intermediates/intermediate-jars/debug/classes.jar"
-                ).normalize()
-            ),
+            assertExists(outputClassesJar("compose-runtime")),
+            assertExists(outputClassesJar("ui-android-view-non-ir")),
             assertExists(
                 File("../../../../../prebuilts/fullsdk-linux/platforms/android-28/android.jar")
             )
