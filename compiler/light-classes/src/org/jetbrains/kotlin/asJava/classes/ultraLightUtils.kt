@@ -12,12 +12,10 @@ import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.impl.light.*
-import com.intellij.psi.search.SearchScope
 import com.intellij.util.BitUtil.isSet
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -40,7 +38,7 @@ import java.text.StringCharacterIterator
 internal fun buildTypeParameterList(
     declaration: CallableMemberDescriptor,
     owner: PsiTypeParameterListOwner,
-    support: UltraLightSupport
+    support: KtUltraLightSupport
 ): PsiTypeParameterList = buildTypeParameterList(
     declaration, owner, support,
     object : TypeParametersSupport<CallableMemberDescriptor, TypeParameterDescriptor> {
@@ -60,7 +58,7 @@ internal fun buildTypeParameterList(
 internal fun buildTypeParameterList(
     declaration: KtTypeParameterListOwner,
     owner: PsiTypeParameterListOwner,
-    support: UltraLightSupport
+    support: KtUltraLightSupport
 ): PsiTypeParameterList = buildTypeParameterList(
     declaration, owner, support,
     object : TypeParametersSupport<KtTypeParameterListOwner, KtTypeParameter> {
@@ -86,7 +84,7 @@ interface TypeParametersSupport<D, T> {
 internal fun <D, T> buildTypeParameterList(
     declaration: D,
     owner: PsiTypeParameterListOwner,
-    support: UltraLightSupport,
+    support: KtUltraLightSupport,
     typeParametersSupport: TypeParametersSupport<D, T>
 ): PsiTypeParameterList {
 
@@ -132,14 +130,14 @@ internal fun KtElement.analyze() = LightClassGenerationSupport.getInstance(proje
 
 // copy-pasted from kotlinInternalUastUtils.kt and post-processed
 internal fun KotlinType.asPsiType(
-    support: UltraLightSupport,
+    support: KtUltraLightSupport,
     mode: TypeMappingMode,
     psiContext: PsiElement
 ): PsiType = support.mapType(psiContext) { typeMapper, signatureWriter ->
     typeMapper.mapType(this, signatureWriter, mode)
 }
 
-internal fun UltraLightSupport.mapType(
+internal fun KtUltraLightSupport.mapType(
     psiContext: PsiElement,
     mapTypeToSignatureWriter: (KotlinTypeMapper, JvmSignatureWriter) -> Unit
 ): PsiType {

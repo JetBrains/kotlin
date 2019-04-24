@@ -12,6 +12,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.asJava.classes.KtLightClass;
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass;
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
@@ -294,9 +295,11 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
 
         assertNotNull(String.format("Failed to wrap jetClass '%s' to class", ktClass.getText()), lightClass);
 
-        // This invokes codegen with ClassBuilderMode = LIGHT_CLASSES
-        // No exception/error should happen here
-        lightClass.getClsDelegate();
+        if (!(lightClass instanceof KtUltraLightClass)){
+            // This invokes codegen with ClassBuilderMode = LIGHT_CLASSES
+            // No exception/error should happen here
+            lightClass.getClsDelegate();
+        }
     }
 
     @NotNull

@@ -15,7 +15,6 @@ import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassData
-import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.backend.common.CodegenUtil
@@ -26,14 +25,12 @@ import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -41,7 +38,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
@@ -51,7 +47,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_N
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 
-open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val support: UltraLightSupport) :
+open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val support: KtUltraLightSupport) :
     KtLightClassImpl(classOrObject) {
     companion object {
 
@@ -680,25 +676,11 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun getInitializers(): Array<PsiClassInitializer> = emptyArray()
 
     override fun getContainingClass(): PsiClass? =
-        if (tooComplex) super.getContainingClass() else classOrObject.containingClass()?.let(KtLightClassForSourceDeclaration::create)
+        if (tooComplex) super.getContainingClass()
+        else ((classOrObject.parent as? KtClassBody)?.parent as? KtClassOrObject)?.let(KtLightClassForSourceDeclaration::create)
 
     override fun getParent(): PsiElement? = if (tooComplex) super.getParent() else containingClass ?: containingFile
 
     override fun getScope(): PsiElement? = if (tooComplex) super.getScope() else parent
     override fun copy(): KtLightClassImpl = KtUltraLightClass(classOrObject.copy() as KtClassOrObject, support)
-}
-
-interface UltraLightSupport {
-    val moduleName: String
-    fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>?
-    fun isTooComplexForUltraLightGeneration(element: KtClassOrObject): Boolean
-    val deprecationResolver: DeprecationResolver
-    val typeMapper: KotlinTypeMapper
-    val moduleDescriptor: ModuleDescriptor
-}
-
-interface KtUltraLightElementWithNullabilityAnnotation<out T : KtDeclaration, out D : PsiModifierListOwner> : KtLightDeclaration<T, D>,
-    PsiModifierListOwner {
-    val kotlinTypeForNullabilityAnnotation: KotlinType?
-    val psiTypeForNullabilityAnnotation: PsiType?
 }

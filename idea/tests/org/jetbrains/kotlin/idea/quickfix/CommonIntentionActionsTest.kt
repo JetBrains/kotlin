@@ -283,8 +283,8 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         )
 
         TestCase.assertEquals(
-            "KtLightMethodImpl -> org.jetbrains.annotations.NotNull," +
-                    " KtLightFieldForDeclaration -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
+            "KtUltraLightMethodForSourceDeclaration -> org.jetbrains.annotations.NotNull," +
+                    " KtUltraLightField -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
             annotationsString(myFixture.findElementByText("bar", KtModifierListOwner::class.java))
         )
     }
@@ -335,14 +335,14 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         )
 
         TestCase.assertEquals(
-            "KtLightMethodImpl -> org.jetbrains.annotations.NotNull," +
-                    " KtLightFieldForDeclaration -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
+            "KtUltraLightMethodForSourceDeclaration -> org.jetbrains.annotations.NotNull," +
+                    " KtUltraLightField -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
             annotationsString(myFixture.findElementByText("bar", KtModifierListOwner::class.java))
         )
     }
 
     private fun annotationsString(findElementByText: KtModifierListOwner) = findElementByText.toLightElements()
-        .joinToString { elem -> "${elem.javaClass.simpleName} -> ${(elem as PsiModifierListOwner).annotations.joinToString { it.qualifiedName!! }}" }
+        .joinToString { elem -> "${elem.javaClass.simpleName} -> ${(elem as PsiModifierListOwner).annotations.mapNotNull { it.qualifiedName }.joinToString()}" }
 
     fun testDontMakePublicPublic() {
         myFixture.configureByText(

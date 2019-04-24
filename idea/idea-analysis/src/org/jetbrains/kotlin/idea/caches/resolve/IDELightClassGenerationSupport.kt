@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -72,7 +71,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         }
 
         val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
-        return KtUltraLightClass(element, object : UltraLightSupport {
+        return KtUltraLightClass(element, object : KtUltraLightSupport {
             override fun isTooComplexForUltraLightGeneration(element: KtClassOrObject): Boolean {
                 val facet = KotlinFacet.get(module)
                 val pluginClasspath = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
