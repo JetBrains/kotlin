@@ -1,10 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.highlighting
 
-import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -21,8 +19,6 @@ import org.jetbrains.annotations.Nullable
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 
 import java.nio.file.Paths
-
-import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait
 
 @CompileStatic
 abstract class GradleHighlightingBaseTest extends GradleImportingTestCase {
@@ -70,21 +66,6 @@ abstract class GradleHighlightingBaseTest extends GradleImportingTestCase {
 
   void doTest(@NotNull String text, Closure test) {
     doTest(text, getParentCalls(), test)
-  }
-
-  void doHighlightingTest(@NotNull String text, Class<? extends LocalInspectionTool>... c) {
-    def disposable = Disposer.newDisposable("gradle highlighting test")
-    try {
-      fixture.enableInspections(disposable, c)
-      runInEdtAndWait {
-        doTest(text) {
-          fixture.testHighlighting()
-        }
-      }
-    }
-    finally {
-      Disposer.dispose(disposable)
-    }
   }
 
   void doTest(@NotNull String text, @NotNull List<String> calls, Closure test) {
