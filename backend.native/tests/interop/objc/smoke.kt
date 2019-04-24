@@ -299,6 +299,14 @@ fun testVarargs() {
                     format = "%d %d %d"
             ).formatted
     )
+
+    assertEquals(
+            "7",
+            TestVarargsSubclass.stringWithFormat(
+                    "%d",
+                    7
+            )
+    )
 }
 
 fun testOverrideInit() {

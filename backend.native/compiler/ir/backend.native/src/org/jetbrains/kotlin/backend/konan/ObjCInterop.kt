@@ -147,32 +147,37 @@ class ObjCOverridabilityCondition : ExternalOverridabilityCondition {
             subDescriptor: CallableDescriptor,
             subClassDescriptor: ClassDescriptor?
     ): ExternalOverridabilityCondition.Result {
-
-        if (superDescriptor.name != subDescriptor.name) {
-            return ExternalOverridabilityCondition.Result.UNKNOWN
-        }
-
-        val superClass = superDescriptor.containingDeclaration as? ClassDescriptor
-        val subClass = subDescriptor.containingDeclaration as? ClassDescriptor
-
-        if (superClass == null || !superClass.isObjCClass() || subClass == null) {
-            return ExternalOverridabilityCondition.Result.UNKNOWN
-        }
-
-        return if (areSelectorsEqual(superDescriptor, subDescriptor)) {
-            // Also check the method signatures if the subclass is user-defined:
-            if (subClass.isExternalObjCClass()) {
-                ExternalOverridabilityCondition.Result.OVERRIDABLE
-            } else {
-                ExternalOverridabilityCondition.Result.UNKNOWN
+        if (superDescriptor.name == subDescriptor.name) { // Slow path:
+            if (superDescriptor is FunctionDescriptor && subDescriptor is FunctionDescriptor) {
+                superDescriptor.getExternalObjCMethodInfo()?.let { superInfo ->
+                    val subInfo = subDescriptor.getExternalObjCMethodInfo()
+                    if (subInfo != null) {
+                        // Overriding Objective-C method by Objective-C method in interop stubs.
+                        // Don't even check method signatures:
+                        return if (superInfo.selector == subInfo.selector) {
+                            ExternalOverridabilityCondition.Result.OVERRIDABLE
+                        } else {
+                            ExternalOverridabilityCondition.Result.INCOMPATIBLE
+                        }
+                    } else {
+                        // Overriding Objective-C method by Kotlin method.
+                        if (!parameterNamesMatch(superDescriptor, subDescriptor)) {
+                            return ExternalOverridabilityCondition.Result.INCOMPATIBLE
+                        }
+                    }
+                }
+            } else if (superDescriptor.isExternalObjCClassProperty() && subDescriptor.isExternalObjCClassProperty()) {
+                return ExternalOverridabilityCondition.Result.OVERRIDABLE
             }
-        } else {
-            ExternalOverridabilityCondition.Result.INCOMPATIBLE
         }
 
+        return ExternalOverridabilityCondition.Result.UNKNOWN
     }
 
-    private fun areSelectorsEqual(first: CallableDescriptor, second: CallableDescriptor): Boolean {
+    private fun CallableDescriptor.isExternalObjCClassProperty() = this is PropertyDescriptor &&
+            (this.containingDeclaration as? ClassDescriptor)?.isExternalObjCClass() == true
+
+    private fun parameterNamesMatch(first: FunctionDescriptor, second: FunctionDescriptor): Boolean {
         // The original Objective-C method selector is represented as
         // function name and parameter names (except first).
 

@@ -134,7 +134,7 @@ static CustomRetainMethodsImpl* retainedCustomRetainMethodsImpl;
 }
 
 +(instancetype _Nonnull)testVarargsWithFormat:(NSString*)format, ... {
-    TestVarargs* result = [[TestVarargs alloc] init];
+    TestVarargs* result = [[self alloc] init];
 
     va_list args;
     va_start(args, format);
@@ -144,6 +144,29 @@ static CustomRetainMethodsImpl* retainedCustomRetainMethodsImpl;
     return result;
 }
 
++(NSString* _Nonnull)stringWithFormat:(NSString*)format, ... {
+    va_list args;
+    va_start(args, format);
+    NSString* result = [[NSString alloc] initWithFormat:format arguments:args];
+    va_end(args);
+
+    return result;
+}
+
++(NSObject* _Nonnull)stringWithFormat:(NSString*)format args:(void*)args {
+    abort();
+}
+
+@end;
+
+@implementation TestVarargsSubclass
+-(instancetype _Nonnull)initWithFormat:(NSString*)format args:(void*)args {
+    abort();
+}
+
++(NSString* _Nonnull)stringWithFormat:(NSString*)format args:(void*)args {
+    abort();
+}
 @end;
 
 @implementation TestOverrideInit
