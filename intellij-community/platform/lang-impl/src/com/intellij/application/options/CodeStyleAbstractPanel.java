@@ -593,7 +593,13 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
   protected CodeStyleSettings getCurrentSettings() {
     return myCurrentSettings;
   }
-  
+
+  @Nullable
+  protected CodeStyleSettings getModelSettings() {
+    CodeStyleSchemesModel model = myModel;
+    return model != null ? model.getCloneSettings(model.getSelectedScheme()) : null;
+  }
+
   public void setupCopyFromMenu(JPopupMenu copyMenu) {
     copyMenu.removeAll();
   }
