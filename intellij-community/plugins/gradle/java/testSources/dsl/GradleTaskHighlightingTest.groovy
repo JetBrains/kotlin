@@ -42,9 +42,15 @@ task id8 {}
 task id9() {}
 task id10({})
 
-task id11(description: 'hi')
-task id12(description: 'hi') {}
-task id13(description: 'hi', {})
+task id11(type: Copy)
+task id12(type: Copy) {}
+task id13(type: Copy, {})
+//task mid11([type: Copy])    // invalid
+task mid12([type: Copy]) {}
+task mid13([type: Copy], {})
+//task emid11([:])            // invalid  
+task emid12([:]) {}
+task emid13([:], {})
 
 task id14 << {}
 '''
@@ -63,6 +69,9 @@ task <weak_warning descr="Cannot infer argument types"><warning descr="Cannot re
 task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(groovy.lang.Closure<java.lang.Void>, ?)'">({}, <warning descr="Cannot resolve symbol 'id8'">id8</warning>)</warning>
 
 task id9 + {}
+
+task <weak_warning descr="Cannot infer argument types"><warning descr="Cannot resolve symbol 'mid11'">mid11</warning>([type: Copy])</weak_warning>
+task <weak_warning descr="Cannot infer argument types"><warning descr="Cannot resolve symbol 'emid11'">emid11</warning>([:])</weak_warning>                             
 '''
   }
 }

@@ -8,6 +8,7 @@ import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADL
 import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_TASK
 import org.jetbrains.plugins.groovy.lang.GroovyExpressionFilter
 import org.jetbrains.plugins.groovy.lang.psi.api.GrFunctionalExpression
+import org.jetbrains.plugins.groovy.lang.psi.api.auxiliary.GrListOrMap
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrBinaryExpression
@@ -96,10 +97,17 @@ private fun isTaskIdCallDown(expression: GrExpression): Boolean {
 }
 
 private fun hasTaskIdCallArguments(expression: GrMethodCall): Boolean {
-  val expressions = expression.expressionArguments
+  val expressions = expression.expressionArguments + expression.closureArguments
   return when (expressions.size) {
-    0 -> expression.closureArguments.size in 0..1
-    1 -> expressions[0] is GrClosableBlock && !expression.hasClosureArguments()
+    0 -> true
+    1 -> expressions[0] is GrClosableBlock
+    2 -> {
+      val (first, second) = expressions
+      first is GrListOrMap &&
+      first.isMap &&
+      second is GrClosableBlock &&
+      expression.namedArguments.isEmpty()
+    }
     else -> false
   }
 }
