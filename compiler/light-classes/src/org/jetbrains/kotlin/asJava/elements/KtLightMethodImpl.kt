@@ -152,7 +152,7 @@ open class KtLightMethodImpl protected constructor(
         return typeParameters.all { processor.execute(it, state) }
     }
 
-    private val _memberIndex: MemberIndex?
+    protected open val memberIndex: MemberIndex?
         get() = (dummyDelegate ?: clsDelegate).memberIndex
 
     /* comparing origin and member index should be enough to determine equality:
@@ -165,9 +165,9 @@ open class KtLightMethodImpl protected constructor(
              this.name == other.name &&
              this.containingClass == other.containingClass &&
              this.lightMemberOrigin == other.lightMemberOrigin &&
-             this._memberIndex == other._memberIndex)
+             this.memberIndex == other.memberIndex)
 
-    override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMemberOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + (_memberIndex?.hashCode() ?: 0)
+    override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMemberOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + (memberIndex?.hashCode() ?: 0)
 
     override fun getDefaultValue() = (clsDelegate as? PsiAnnotationMethod)?.defaultValue
 

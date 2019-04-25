@@ -268,7 +268,9 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private fun propertyParameters() = classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() }
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
+
         val result = arrayListOf<KtLightMethod>()
+
         for (declaration in this.classOrObject.declarations.filterNot { isHiddenByDeprecation(it) }) {
             if (declaration.hasModifier(PRIVATE_KEYWORD) && isInterface) continue
             when (declaration) {
@@ -276,12 +278,15 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 is KtProperty -> result.addAll(propertyAccessors(declaration, declaration.isVar, false))
             }
         }
+
         for (parameter in propertyParameters()) {
             result.addAll(propertyAccessors(parameter, parameter.isMutable, false))
         }
+
         if (!isInterface) {
             result.addAll(createConstructors())
         }
+
         this.classOrObject.companionObjects.firstOrNull()?.let { companion ->
             for (declaration in companion.declarations.filterNot { isHiddenByDeprecation(it) }) {
                 when (declaration) {
@@ -338,7 +343,10 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }
     }
 
-    private fun addDelegatesToInterfaceMethods(superTypeEntry: KtDelegatedSuperTypeEntry, result: MutableList<KtLightMethod>) {
+    private fun addDelegatesToInterfaceMethods(
+        superTypeEntry: KtDelegatedSuperTypeEntry,
+        result: MutableList<KtLightMethod>
+    ) {
         val classDescriptor = classOrObject.resolve() as? ClassDescriptor ?: return
         val typeReference = superTypeEntry.typeReference ?: return
         val bindingContext = typeReference.analyze()
@@ -348,7 +356,10 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         for (delegate in DelegationResolver.getDelegates(classDescriptor, superClassDescriptor, delegationType).keys) {
             when (delegate) {
-                is PropertyDescriptor -> delegate.accessors.mapTo(result, this::createGeneratedMethodFromDescriptor)
+
+                is PropertyDescriptor -> delegate.accessors.mapTo(result) {
+                    createGeneratedMethodFromDescriptor(it)
+                }
                 is FunctionDescriptor -> result.add(createGeneratedMethodFromDescriptor(delegate))
             }
         }
@@ -376,7 +387,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 !classOrObject.hasModifier(SEALED_KEYWORD) &&
                 primary.valueParameters.isNotEmpty() &&
                 primary.valueParameters.all { it.defaultValue != null } &&
-                classOrObject.allConstructors.none { it.valueParameters.isEmpty() }
+                classOrObject.allConstructors.none { it.valueParameters.isEmpty() } &&
+                !primary.hasAnnotation(JVM_OVERLOADS_FQ_NAME)
     }
 
     private fun defaultConstructor(): KtUltraLightMethod {
@@ -412,19 +424,31 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     override fun getOwnMethods(): List<KtLightMethod> = if (tooComplex) super.getOwnMethods() else _ownMethods
 
-    private fun asJavaMethods(ktFunction: KtFunction, forceStatic: Boolean, forcePrivate: Boolean = false): Collection<KtLightMethod> {
+    private fun asJavaMethods(
+        ktFunction: KtFunction,
+        forceStatic: Boolean,
+        forcePrivate: Boolean = false
+    ): Collection<KtLightMethod> {
+
         if (ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return emptyList()
 
         val basicMethod = asJavaMethod(ktFunction, forceStatic, forcePrivate)
 
-        if (!ktFunction.hasAnnotation(JVM_OVERLOADS_FQ_NAME)) return listOf(basicMethod)
+        val result = mutableListOf(basicMethod)
 
-        val result = mutableListOf<KtLightMethod>()
-        val numberOfDefaultParameters = ktFunction.valueParameters.count(KtParameter::hasDefaultValue)
-        for (numberOfDefaultParametersToAdd in 0 until numberOfDefaultParameters) {
-            result.add(asJavaMethod(ktFunction, forceStatic, forcePrivate, numberOfDefaultParametersToAdd))
+        if (ktFunction.hasAnnotation(JVM_OVERLOADS_FQ_NAME)) {
+            val numberOfDefaultParameters = ktFunction.valueParameters.count(KtParameter::hasDefaultValue)
+            for (numberOfDefaultParametersToAdd in numberOfDefaultParameters - 1 downTo 0) {
+                result.add(
+                    asJavaMethod(
+                        ktFunction,
+                        forceStatic,
+                        forcePrivate,
+                        numberOfDefaultParametersToAdd = numberOfDefaultParametersToAdd
+                    )
+                )
+            }
         }
-        result.add(basicMethod)
 
         return result
     }
@@ -605,7 +629,12 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         return f.hasModifier(INTERNAL_KEYWORD)
     }
 
-    private fun propertyAccessors(declaration: KtCallableDeclaration, mutable: Boolean, onlyJvmStatic: Boolean): List<KtLightMethod> {
+    private fun propertyAccessors(
+        declaration: KtCallableDeclaration,
+        mutable: Boolean,
+        onlyJvmStatic: Boolean
+    ): List<KtLightMethod> {
+
         val propertyName = declaration.name ?: return emptyList()
         if (declaration.isConstOrJvmField()) return emptyList()
 

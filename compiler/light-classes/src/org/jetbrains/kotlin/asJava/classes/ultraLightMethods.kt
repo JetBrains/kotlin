@@ -12,6 +12,7 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.builder.MemberIndex
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.codegen.FunctionCodegen
@@ -36,6 +37,8 @@ internal abstract class KtUltraLightMethod(
     },
     containingClass
 ), KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiMethod> {
+
+    override val memberIndex: MemberIndex? = null
 
     override val psiTypeForNullabilityAnnotation: PsiType?
         get() = returnType
@@ -88,6 +91,10 @@ internal abstract class KtUltraLightMethod(
     override fun getThrowsList(): PsiReferenceList = _throwsList
 
     abstract fun computeDescriptor(): FunctionDescriptor?
+
+    override fun equals(other: Any?): Boolean = this === other
+
+    override fun hashCode(): Int = name.hashCode()
 }
 
 internal class KtUltraLightMethodForSourceDeclaration(
@@ -98,7 +105,8 @@ internal class KtUltraLightMethodForSourceDeclaration(
 ) : KtUltraLightMethod(
     delegate,
     declaration,
-    support, containingClass
+    support,
+    containingClass
 ) {
     override val kotlinTypeForNullabilityAnnotation: KotlinType?
         get() = kotlinOrigin?.getKotlinType()
@@ -125,6 +133,7 @@ internal class KtUltraLightMethodForDescriptor(
     support,
     containingClass
 ) {
+
     override fun buildTypeParameterList() = buildTypeParameterList(descriptor, this, support)
 
     override fun computeDescriptor() = descriptor
