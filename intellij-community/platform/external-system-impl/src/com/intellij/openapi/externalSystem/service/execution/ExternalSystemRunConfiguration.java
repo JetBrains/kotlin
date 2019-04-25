@@ -368,6 +368,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
               else {
                 processHandler.notifyTextAvailable(text, stdOut ? ProcessOutputTypes.STDOUT : ProcessOutputTypes.STDERR);
               }
+              messageDispatcher.setStdOut(stdOut);
               messageDispatcher.append(text);
             }
 
@@ -376,10 +377,8 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
               FailureResult failureResult =
                 ExternalSystemUtil.createFailureResult(executionName + " failed", e, id.getProjectSystemId(), myProject);
               if (progressListener != null) {
-                progressListener.onEvent(new FinishBuildEventImpl(
-                  id, null, System.currentTimeMillis(), "failed", failureResult));
+                progressListener.onEvent(new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "failed", failureResult));
               }
-              ExternalSystemUtil.printFailure(e, failureResult, consoleView, processHandler);
               processHandler.notifyProcessTerminated(1);
             }
 

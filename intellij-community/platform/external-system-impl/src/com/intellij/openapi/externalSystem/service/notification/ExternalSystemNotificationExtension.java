@@ -18,6 +18,7 @@ package com.intellij.openapi.externalSystem.service.notification;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,4 +45,16 @@ public interface ExternalSystemNotificationExtension {
   void customize(@NotNull NotificationData notificationData,
                  @NotNull Project project,
                  @Nullable Throwable error);
+
+  /**
+   * Allows to determine internal errors comes from external system which might be confusing for IDE users.
+   * Such errors shouldn't be shown to the end user on UI.
+   *
+   * @param error error occurred during external system processing
+   * @return true if the error shouldn't be shown to the end user on UI w/o additional processing, false otherwise
+   */
+  @ApiStatus.Experimental
+  default boolean isInternalError(@NotNull Throwable error) {
+    return false;
+  }
 }

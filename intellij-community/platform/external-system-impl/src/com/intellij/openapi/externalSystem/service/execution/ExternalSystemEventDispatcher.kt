@@ -18,6 +18,11 @@ import java.io.Closeable
 class ExternalSystemEventDispatcher(task: ExternalSystemTask,
                                     progressListener: BuildProgressListener?) : Closeable, Appendable, BuildProgressListener {
   private var outputMessageDispatcher: ExternalSystemOutputMessageDispatcher? = null
+  var stdOut: Boolean = true
+    set(value) {
+      field = value
+      outputMessageDispatcher?.stdOut = value
+    }
 
   init {
     val buildOutputParsers = SmartList<BuildOutputParser>()
@@ -74,6 +79,8 @@ private class DefaultOutputMessageDispatcher(buildId: Any,
                                              private val buildProgressListener: BuildProgressListener,
                                              parsers: List<BuildOutputParser>) :
   BuildOutputInstantReaderImpl(buildId, buildProgressListener, parsers), ExternalSystemOutputMessageDispatcher {
+  override var stdOut: Boolean = true
+
   override fun onEvent(event: BuildEvent) = buildProgressListener.onEvent(event)
 }
 
@@ -84,4 +91,6 @@ interface ExternalSystemOutputDispatcherFactory {
              parsers: List<BuildOutputParser>): ExternalSystemOutputMessageDispatcher
 }
 
-interface ExternalSystemOutputMessageDispatcher : Closeable, Appendable, BuildProgressListener
+interface ExternalSystemOutputMessageDispatcher : Closeable, Appendable, BuildProgressListener {
+  var stdOut: Boolean
+}

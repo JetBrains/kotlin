@@ -17,8 +17,12 @@ package com.intellij.openapi.externalSystem.service.notification;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.pom.Navigatable;
+import com.intellij.pom.NavigatableAdapter;
+import com.intellij.pom.NonNavigatable;
+import com.intellij.util.IJSwingUtilities;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -168,6 +172,22 @@ public class NotificationData implements Disposable {
 
   @Nullable
   public Navigatable getNavigatable() {
+    if (navigatable == null || navigatable == NonNavigatable.INSTANCE) {
+      for (String id : myListenerMap.keySet()) {
+        if (id.startsWith("openFile:")) {
+          return new NavigatableAdapter() {
+            @Override
+            public void navigate(boolean requestFocus) {
+              NotificationListener listener = myListenerMap.get(id);
+              if (listener != null) {
+                listener.hyperlinkUpdate(new Notification("", null, NotificationType.INFORMATION),
+                                         IJSwingUtilities.createHyperlinkEvent(id, listener));
+              }
+            }
+          };
+        }
+      }
+    }
     return navigatable;
   }
 

@@ -500,6 +500,7 @@ public class ExternalSystemUtil {
             @Override
             public void onTaskOutput(@NotNull ExternalSystemTaskId id, @NotNull String text, boolean stdOut) {
               processHandler.notifyTextAvailable(text, stdOut ? ProcessOutputTypes.STDOUT : ProcessOutputTypes.STDERR);
+              messageDispatcher.setStdOut(stdOut);
               messageDispatcher.append(text);
             }
 
@@ -509,9 +510,7 @@ public class ExternalSystemUtil {
                                                           externalSystemId.getReadableName(), projectName);
               com.intellij.build.events.FailureResult failureResult = createFailureResult(title, e, externalSystemId, project);
               String message = isPreviewMode ? "project preview creation failed" : "sync failed";
-              finishSyncEventSupplier.set(
-                () -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), message, failureResult));
-              printFailure(e, failureResult, consoleView, processHandler);
+              finishSyncEventSupplier.set(() -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), message, failureResult));
               processHandler.notifyProcessTerminated(1);
             }
 
@@ -688,11 +687,14 @@ public class ExternalSystemUtil {
 
   @NotNull
   public static FailureResultImpl createFailureResult(@NotNull String title,
-                                                                            @NotNull Exception exception,
-                                                                            @NotNull ProjectSystemId externalSystemId,
-                                                                            @NotNull Project project) {
+                                                      @NotNull Exception exception,
+                                                      @NotNull ProjectSystemId externalSystemId,
+                                                      @NotNull Project project) {
     ExternalSystemNotificationManager notificationManager = ExternalSystemNotificationManager.getInstance(project);
     NotificationData notificationData = notificationManager.createNotification(title, exception, externalSystemId, project);
+    if (notificationData == null) {
+      return new FailureResultImpl();
+    }
     return createFailureResult(exception, externalSystemId, project, notificationManager, notificationData);
   }
 
