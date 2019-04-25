@@ -39,18 +39,9 @@ internal val toArrayPhase = makeIrFilePhase(
 private class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
-        if (irClass.isJvmInterface) return
+        if (irClass.isJvmInterface || !irClass.isDirectCollectionSubClass()) return
 
         val irBuiltIns = context.irBuiltIns
-
-        if (!irClass.isCollectionSubClass()) return
-
-        if (irClass.hasSuperClass {
-                it != irClass &&
-                        it.isClass &&
-                        it.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB &&
-                        it.isCollectionSubClass()
-            }) return
 
         val toArrayName = Name.identifier("toArray")
         val genericToArray = irClass.declarations.find { it.isGenericToArray() }
@@ -305,15 +296,15 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
     }
 }
 
-private fun IrClass.hasSuperClass(pred: (IrClass) -> Boolean): Boolean =
-    DFS.ifAny(
-        listOf(this),
-        { irClass -> irClass.superTypes.mapNotNull { ((it as? IrSimpleType)?.classifier as? IrClassSymbol)?.owner } },
-        pred
-    )
+private val IrClass.superClasses
+    get() = superTypes.mapNotNull { it.getClass() }
 
 // Have to check by name, since irBuiltins is unreliable.
 private fun IrClass.isCollectionSubClass() =
-    hasSuperClass {
-        it.defaultType.isCollection()
+    DFS.ifAny(listOf(this), IrClass::superClasses) { it.defaultType.isCollection() }
+
+// If this class inherits from another Kotlin class that implements Collection, it already has toArray.
+private fun IrClass.isDirectCollectionSubClass() =
+    isCollectionSubClass() && !superClasses.any {
+        it.isClass && it.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && it.isCollectionSubClass()
     }
