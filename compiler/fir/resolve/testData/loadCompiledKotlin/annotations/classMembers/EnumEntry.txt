@@ -17,16 +17,16 @@ public final annotation class Bnno : R|kotlin/Annotation| {
 public final enum class Eee : R|kotlin/Enum<test/Eee>| {
     private constructor(): R|test/Eee|
 
-    public? final enum entry Entry1 {
+    public? final enum entry Entry1 : R|test/Eee| {
     }
 
-    public? final enum entry Entry2 {
+    public? final enum entry Entry2 : R|test/Eee| {
     }
 
-    public? final enum entry Entry3 {
+    public? final enum entry Entry3 : R|test/Eee| {
     }
 
-    public? final enum entry Entry4 {
+    public? final enum entry Entry4 : R|test/Eee| {
     }
 
 }

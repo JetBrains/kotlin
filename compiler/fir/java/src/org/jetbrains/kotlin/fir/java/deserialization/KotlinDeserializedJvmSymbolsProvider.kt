@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -296,7 +297,15 @@ class KotlinDeserializedJvmSymbolsProvider(
             }
 
             val symbol = FirClassSymbol(classId)
-            FirEnumEntryImpl(session, null, symbol, classId.shortClassName)
+            FirEnumEntryImpl(session, null, symbol, classId.shortClassName).apply {
+                superTypeRefs += FirResolvedTypeRefImpl(
+                    session,
+                    null,
+                    ConeClassTypeImpl(ConeClassLikeLookupTagImpl(outerClassId), emptyArray(), false),
+                    false,
+                    emptyList()
+                )
+            }
             classesCache[classId] = symbol
         } else {
             if (kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null

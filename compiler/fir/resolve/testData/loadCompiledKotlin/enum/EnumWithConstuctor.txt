@@ -7,13 +7,13 @@ public final enum class En : R|kotlin/Enum<test/En>| {
 
     private constructor(b: R|kotlin/Boolean| = STUB, i: R|kotlin/Int| = STUB): R|test/En|
 
-    public? final enum entry E1 {
+    public? final enum entry E1 : R|test/En| {
     }
 
-    public? final enum entry E2 {
+    public? final enum entry E2 : R|test/En| {
     }
 
-    public? final enum entry E3 {
+    public? final enum entry E3 : R|test/En| {
     }
 
 }

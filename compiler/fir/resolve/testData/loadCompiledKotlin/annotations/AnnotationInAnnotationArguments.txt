@@ -6,7 +6,7 @@
 public final enum class E : R|kotlin/Enum<test/E>| {
     private constructor(): R|test/E|
 
-    public? final enum entry ENTRY {
+    public? final enum entry ENTRY : R|test/E| {
     }
 
 }
