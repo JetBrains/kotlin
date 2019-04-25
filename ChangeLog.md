@@ -2,41 +2,30 @@
 
 ## 1.3.31
 
-### IDE
+### Compiler
 
-#### Fixes
-
-- [`KT-30811`](https://youtrack.jetbrains.com/issue/KT-30811) USimpleNameReferenceExpression#resolve() returns null of interface reference in object declaration in Kotlin
-- [`KT-30845`](https://youtrack.jetbrains.com/issue/KT-30845) KotlinUSimpleReferenceExpression resolves to null for class type in variable declaration
-
-### IDE. Gradle
-
-- [`KT-30767`](https://youtrack.jetbrains.com/issue/KT-30767) Kotlin import uses too much memory when working with big projects
-
-### IDE. Gradle. Script
-
-- [`KT-21501`](https://youtrack.jetbrains.com/issue/KT-21501) build.gradle.kts displays failures if not using java sdk for module
-- [`KT-28727`](https://youtrack.jetbrains.com/issue/KT-28727) IDE, Gradle Kotlin DSL: "AssertionError: Unexpected flexible type in Js: raw"
+- [`KT-26418`](https://youtrack.jetbrains.com/issue/KT-26418) Back-end (JVM) Internal error when compiling decorated suspend inline functions
+- [`KT-26925`](https://youtrack.jetbrains.com/issue/KT-26925) Decorated suspend inline function continuation resumes in wrong spot
+- [`KT-30706`](https://youtrack.jetbrains.com/issue/KT-30706) Passing noinline lambda as (cross)inline parameter result in wrong state-machine
+- [`KT-30707`](https://youtrack.jetbrains.com/issue/KT-30707) Java interop of coroutines inside inline functions is broken
+- [`KT-30997`](https://youtrack.jetbrains.com/issue/KT-30997) Crash with suspend crossinline
 
 ### IDE. Inspections and Intentions
 
-- [`KT-27972`](https://youtrack.jetbrains.com/issue/KT-27972) Quickfix for RETURN_TYPE_MISMATCH_ON_OVERRIDE: Change generic type argument of base class
+- [`KT-30879`](https://youtrack.jetbrains.com/issue/KT-30879) False positive "Redundant qualifier name"
+- [`KT-31112`](https://youtrack.jetbrains.com/issue/KT-31112) "Remove redundant qualifier name" inspection false positive for property with irrelevant import
 
-### IDE. Scratch
+### JavaScript
 
-- [`KT-26328`](https://youtrack.jetbrains.com/issue/KT-26328) Allow running Kotlin scratch files against plain Java projects without Kotlin libraries
+- [`KT-31007`](https://youtrack.jetbrains.com/issue/KT-31007) Kotlin/JS 1.3.30 - private method in an interface in the external library causes ReferenceError
 
-### IDE. Script
+### Tools. Gradle
 
-- [`KT-26137`](https://youtrack.jetbrains.com/issue/KT-26137) Kotlin script dependency resolution never finishes and does not respond to stop command
+- [`KT-31027`](https://youtrack.jetbrains.com/issue/KT-31027) java.lang.NoSuchMethodError: No static method hashCode(Z)I in class Ljava/lang/Boolean; or its super classes (declaration of 'java.lang.Boolean' appears in /system/framework/core-libart.jar)
 
-### Tools. CLI
+### Tools. kapt
 
-- [`KT-29805`](https://youtrack.jetbrains.com/issue/KT-29805) "java.lang.ClassNotFoundException: gnu.trove.THashMap" on starting experimental Kotlin compiler
-
-### Tools. J2K
-
-- [`KT-23023`](https://youtrack.jetbrains.com/issue/KT-23023) J2K: Inspection to convert Arrays.copyOf(a, size) to a.copyOf(size)
+- [`KT-30979`](https://youtrack.jetbrains.com/issue/KT-30979) Issue with Dagger2 providers MissingBinding with 1.3.30
 
 ## 1.3.30
 
