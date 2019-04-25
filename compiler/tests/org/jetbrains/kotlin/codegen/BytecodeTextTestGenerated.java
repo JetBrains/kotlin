@@ -3530,19 +3530,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
-        @TestMetadata("unsignedIntCompare_jvm16.kt")
-        public void testUnsignedIntCompare_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntCompare_jvm16.kt");
-        }
-
         @TestMetadata("unsignedIntCompare_jvm18.kt")
         public void testUnsignedIntCompare_jvm18() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntCompare_jvm18.kt");
-        }
-
-        @TestMetadata("unsignedIntDivide_jvm16.kt")
-        public void testUnsignedIntDivide_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntDivide_jvm16.kt");
         }
 
         @TestMetadata("unsignedIntDivide_jvm18.kt")
@@ -3550,19 +3540,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntDivide_jvm18.kt");
         }
 
-        @TestMetadata("unsignedIntRemainder_jvm16.kt")
-        public void testUnsignedIntRemainder_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntRemainder_jvm16.kt");
-        }
-
         @TestMetadata("unsignedIntRemainder_jvm18.kt")
         public void testUnsignedIntRemainder_jvm18() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntRemainder_jvm18.kt");
-        }
-
-        @TestMetadata("unsignedLongCompare_jvm16.kt")
-        public void testUnsignedLongCompare_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongCompare_jvm16.kt");
         }
 
         @TestMetadata("unsignedLongCompare_jvm18.kt")
@@ -3570,19 +3550,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongCompare_jvm18.kt");
         }
 
-        @TestMetadata("unsignedLongDivide_jvm16.kt")
-        public void testUnsignedLongDivide_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongDivide_jvm16.kt");
-        }
-
         @TestMetadata("unsignedLongDivide_jvm18.kt")
         public void testUnsignedLongDivide_jvm18() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongDivide_jvm18.kt");
-        }
-
-        @TestMetadata("unsignedLongRemainder_jvm16.kt")
-        public void testUnsignedLongRemainder_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedLongRemainder_jvm16.kt");
         }
 
         @TestMetadata("unsignedLongRemainder_jvm18.kt")

@@ -25023,34 +25023,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/unsignedTypes/signedToUnsignedLiteralConversion.kt");
         }
 
-        @TestMetadata("unsignedIntCompare_jvm16.kt")
-        public void testUnsignedIntCompare_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare_jvm16.kt");
+        @TestMetadata("unsignedIntCompare.kt")
+        public void testUnsignedIntCompare() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare.kt");
         }
 
-        @TestMetadata("unsignedIntCompare_jvm18.kt")
-        public void testUnsignedIntCompare_jvm18() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare_jvm18.kt");
+        @TestMetadata("unsignedIntDivide.kt")
+        public void testUnsignedIntDivide() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntDivide.kt");
         }
 
-        @TestMetadata("unsignedIntDivide_jvm16.kt")
-        public void testUnsignedIntDivide_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntDivide_jvm16.kt");
-        }
-
-        @TestMetadata("unsignedIntDivide_jvm18.kt")
-        public void testUnsignedIntDivide_jvm18() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntDivide_jvm18.kt");
-        }
-
-        @TestMetadata("unsignedIntRemainder_jvm16.kt")
-        public void testUnsignedIntRemainder_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntRemainder_jvm16.kt");
-        }
-
-        @TestMetadata("unsignedIntRemainder_jvm18.kt")
-        public void testUnsignedIntRemainder_jvm18() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntRemainder_jvm18.kt");
+        @TestMetadata("unsignedIntRemainder.kt")
+        public void testUnsignedIntRemainder() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntRemainder.kt");
         }
 
         @TestMetadata("unsignedLiteralsForMaxLongValue.kt")
@@ -25063,34 +25048,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsWithSignedOverflow.kt");
         }
 
-        @TestMetadata("unsignedLongCompare_jvm16.kt")
-        public void testUnsignedLongCompare_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongCompare_jvm16.kt");
+        @TestMetadata("unsignedLongCompare.kt")
+        public void testUnsignedLongCompare() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongCompare.kt");
         }
 
-        @TestMetadata("unsignedLongCompare_jvm18.kt")
-        public void testUnsignedLongCompare_jvm18() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongCompare_jvm18.kt");
+        @TestMetadata("unsignedLongDivide.kt")
+        public void testUnsignedLongDivide() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongDivide.kt");
         }
 
-        @TestMetadata("unsignedLongDivide_jvm16.kt")
-        public void testUnsignedLongDivide_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongDivide_jvm16.kt");
-        }
-
-        @TestMetadata("unsignedLongDivide_jvm18.kt")
-        public void testUnsignedLongDivide_jvm18() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongDivide_jvm18.kt");
-        }
-
-        @TestMetadata("unsignedLongRemainder_jvm16.kt")
-        public void testUnsignedLongRemainder_jvm16() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongRemainder_jvm16.kt");
-        }
-
-        @TestMetadata("unsignedLongRemainder_jvm18.kt")
-        public void testUnsignedLongRemainder_jvm18() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongRemainder_jvm18.kt");
+        @TestMetadata("unsignedLongRemainder.kt")
+        public void testUnsignedLongRemainder() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLongRemainder.kt");
         }
 
         @TestMetadata("unsignedRangeIterator.kt")

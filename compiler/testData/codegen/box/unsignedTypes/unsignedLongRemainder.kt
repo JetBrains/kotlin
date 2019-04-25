@@ -1,10 +1,10 @@
-// JVM_TARGET: 1.6
+// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 // IGNORE_BACKEND: JVM_IR
 
-val ua = 1234U
-val ub = 5678U
-val uc = 3456U
+val ua = 1234UL
+val ub = 5678UL
+val uc = 3456UL
 val u = ua * ub + uc
 
 fun box(): String {
@@ -13,5 +13,3 @@ fun box(): String {
 
     return "OK"
 }
-
-// 1 kotlin/UnsignedKt.uintRemainder
