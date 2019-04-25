@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
@@ -700,6 +701,20 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         require(result.single === this) { "become ${result.single}: `${result.single.render()}`, was ${this}: `${this.render()}`" }
     }
 
+
+    override fun transformGetClassCall(getClassCall: FirGetClassCall, data: Any?): CompositeTransformResult<FirStatement> {
+        val transformedGetClassCall = super.transformGetClassCall(getClassCall, data).single as FirGetClassCall
+        val kClassSymbol = ClassId.fromString("kotlin/reflect/KClass")(session.service())
+        transformedGetClassCall.resultType =
+                FirResolvedTypeRefImpl(
+                    session,
+                    null,
+                    kClassSymbol.constructType(arrayOf(transformedGetClassCall.argument.resultType.coneTypeUnsafe()), false),
+                    false,
+                    emptyList()
+                )
+        return transformedGetClassCall.compose()
+    }
 }
 
 
