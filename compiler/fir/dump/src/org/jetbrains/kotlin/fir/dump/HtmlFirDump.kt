@@ -610,9 +610,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(type: ConeClassType) {
         resolved {
-            val link = linkResolver.classLocation(type.lookupTag.classId)
-            declarationRef(link, setOf("class-fqn")) {
-                title = type.lookupTag.classId.asString()
+            symbolRef(type.lookupTag.toSymbol(session)) {
                 fqn(type.lookupTag.classId.relativeClassName)
             }
         }
@@ -908,8 +906,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.symbolRef(symbol: ConeSymbol?, body: FlowContent.() -> Unit) {
-        val link = if (symbol == null) null else linkResolver.nearSymbolLocation(symbol)
-        declarationRef(link, setOf("symbol")) {
+        val (link, classes) = when (symbol) {
+            null -> null to setOf()
+            is ConeClassLikeSymbol -> linkResolver.classLocation(symbol.classId) to setOf("class-fqn")
+            else -> linkResolver.nearSymbolLocation(symbol) to setOf("symbol")
+        }
+        declarationRef(link, classes) {
             if (symbol != null) {
                 title = symbol.describe()
             }
