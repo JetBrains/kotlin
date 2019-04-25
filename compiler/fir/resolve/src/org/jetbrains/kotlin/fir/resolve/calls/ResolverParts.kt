@@ -5,12 +5,22 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.firSafeNullable
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import java.lang.IllegalStateException
@@ -140,14 +150,57 @@ internal object DiscriminateSynthetics : CheckerStage() {
 
 }
 
+internal object CheckVisibility : CheckerStage() {
+
+    private fun ConeSymbol.packageFqName(): FqName {
+        return when (this) {
+            is ConeClassLikeSymbol -> classId.packageFqName
+            is ConeCallableSymbol -> callableId.packageName
+            else -> error("No package fq name for ${this}")
+        }
+    }
+
+    override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        val symbol = candidate.symbol
+        val declaration = symbol.firSafeNullable<FirMemberDeclaration>()
+        if (declaration != null && !declaration.visibility.isPublicAPI) {
+            val visible = when (declaration.visibility) {
+                JavaVisibilities.PACKAGE_VISIBILITY ->
+                    symbol.packageFqName() == callInfo.containingFile.packageFqName
+                Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
+                    if (declaration.session == callInfo.session) {
+                        val provider = callInfo.session.service<FirProvider>()
+                        val candidateFile = when (symbol) {
+                            is ConeCallableSymbol -> provider.getFirCallableContainerFile(symbol)
+                            is ConeClassLikeSymbol -> provider.getFirClassifierContainerFile(symbol.classId)
+                            else -> null
+                        }
+                        candidateFile == callInfo.containingFile
+                    } else {
+                        false
+                    }
+                }
+                Visibilities.INTERNAL ->
+                    declaration.session == callInfo.session
+                else -> true
+            }
+
+            if (!visible) {
+                sink.reportApplicability(CandidateApplicability.HIDDEN)
+            }
+        }
+    }
+}
+
 
 internal fun functionCallResolutionSequence() = listOf(
-    MapArguments, CheckExplicitReceiverConsistency, CreateFreshTypeVariableSubstitutorStage,
+    CheckVisibility, MapArguments, CheckExplicitReceiverConsistency, CreateFreshTypeVariableSubstitutorStage,
     CheckReceivers.Dispatch, CheckReceivers.Extension, CheckArguments
 )
 
 
 internal fun qualifiedAccessResolutionSequence() = listOf(
+    CheckVisibility,
     DiscriminateSynthetics,
     CheckExplicitReceiverConsistency,
     CreateFreshTypeVariableSubstitutorStage,

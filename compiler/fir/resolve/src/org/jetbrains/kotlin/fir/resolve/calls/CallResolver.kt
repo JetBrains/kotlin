@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -40,6 +38,9 @@ class CallInfo(
     val arguments: List<FirExpression>,
 
     val typeArguments: List<FirTypeProjection>,
+    val session: FirSession,
+    val containingFile: FirFile,
+    val container: FirDeclaration,
     val typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     val argumentCount get() = arguments.size

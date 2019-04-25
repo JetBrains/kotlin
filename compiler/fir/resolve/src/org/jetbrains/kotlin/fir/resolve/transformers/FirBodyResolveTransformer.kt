@@ -48,9 +48,12 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     private var packageFqName = FqName.ROOT
+    private lateinit var file: FirFile
+    private var container: FirDeclaration? = null
 
     override fun transformFile(file: FirFile, data: Any?): CompositeTransformResult<FirFile> {
         packageFqName = file.packageFqName
+        this.file = file
         return withScopeCleanup(scopes) {
             scopes.addImportingScopes(file, session)
             scopes += FirTopLevelDeclaredMemberScope(file, session)
@@ -210,7 +213,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
         val receiver = qualifiedAccess.explicitReceiver?.transformSingle(this, noExpectedType)
 
-        val info = CallInfo(CallKind.VariableAccess, receiver, emptyList(), emptyList()) { it.resultType }
+        val info = CallInfo(CallKind.VariableAccess, receiver, emptyList(), emptyList(), session, file, container!!) { it.resultType }
         val resolver = CallResolver(jump, inferenceComponents)
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
@@ -320,7 +323,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         val arguments = functionCall.arguments
         val typeArguments = functionCall.typeArguments
 
-        val info = CallInfo(CallKind.Function, explicitReceiver, arguments, typeArguments) { it.resultType }
+        val info = CallInfo(CallKind.Function, explicitReceiver, arguments, typeArguments, session, file, container!!) { it.resultType }
         val resolver = CallResolver(jump, inferenceComponents)
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
@@ -605,6 +608,14 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             replaceTypeRef(type)
         }
 
+
+    override fun transformDeclaration(declaration: FirDeclaration, data: Any?): CompositeTransformResult<FirDeclaration> {
+        val prevContainer = container
+        container = declaration
+        val result = super.transformDeclaration(declaration, data)
+        container = prevContainer
+        return result
+    }
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
         if (namedFunction.returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return namedFunction.compose()

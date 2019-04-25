@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compile(project(":core:descriptors"))
+    compile(project(":core:descriptors.jvm"))
     compile(project(":core:deserialization"))
     compile(project(":compiler:fir:cones"))
     compile(project(":compiler:fir:tree"))
