@@ -317,7 +317,12 @@ private val SourceSet.isTestSourceSet: Boolean
             || name.endsWith("Tests")
 
 private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? {
-    val compileArguments = kotlinCompileTask.invokeInternal("getSerializedCompilerArguments") as List<String>
+    val compileArguments = run {
+        val method = kotlinCompileTask::class.java.getMethod("getSerializedCompilerArguments")
+        method.isAccessible = true
+        method.invoke(kotlinCompileTask) as List<String>
+    }
+
     fun parseBoolean(name: String) = compileArguments.contains("-$name")
     fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
 
