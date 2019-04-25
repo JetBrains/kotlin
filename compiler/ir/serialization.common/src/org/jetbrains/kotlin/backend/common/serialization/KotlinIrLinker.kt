@@ -125,6 +125,10 @@ abstract class KotlinIrLinker(
                 IrValueParameterSymbolImpl(
                     descriptor as ParameterDescriptor? ?: WrappedReceiverParameterDescriptor()
                 )
+            KotlinIr.IrSymbolKind.PROPERTY_SYMBOL ->
+                symbolTable.referenceProperty(
+                    descriptor as PropertyDescriptor? ?: WrappedPropertyDescriptor()
+                )
             else -> TODO("Unexpected classifier symbol kind: ${proto.kind}")
         }
 
@@ -363,14 +367,6 @@ abstract class KotlinIrLinker(
         }
 
         return symbol.owner as IrDeclaration
-    }
-
-    override fun findDeserializedDeclaration(propertyDescriptor: PropertyDescriptor): IrProperty? {
-        val topLevelDesecriptor = findDeserializedDeclarationForDescriptor(propertyDescriptor)
-        if (topLevelDesecriptor == null) return null
-
-        return symbolTable.propertyTable[propertyDescriptor]
-            ?: error("findDeserializedDeclaration: property descriptor $propertyDescriptor} is not present in propertyTable after deserialization}")
     }
 
     // TODO: This is Native specific. Eliminate me.
