@@ -7,7 +7,6 @@ import com.intellij.ide.actions.GotoFileAction;
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
 import com.intellij.ide.util.gotoByName.GotoFileConfiguration;
 import com.intellij.ide.util.gotoByName.GotoFileModel;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -76,9 +75,8 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor {
 
   @NotNull
   @Override
-  public List<AnAction> getActions(@NotNull Disposable uiDisposable,
-                                   @NotNull Runnable rebuildRunnable) {
-    return doGetActions(includeNonProjectItemsText(), myFilter, uiDisposable, rebuildRunnable);
+  public List<AnAction> getActions(@NotNull Runnable onChanged) {
+    return doGetActions(includeNonProjectItemsText(), myFilter, onChanged);
   }
 
   @NotNull

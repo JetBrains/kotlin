@@ -8,7 +8,6 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.ui.search.BooleanOptionDescription;
 import com.intellij.ide.util.gotoByName.GotoActionItemProvider;
 import com.intellij.ide.util.gotoByName.GotoActionModel;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -108,7 +107,7 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
 
   @NotNull
   @Override
-  public List<AnAction> getActions(@NotNull Disposable uiDisposable, @NotNull Runnable rebuildRunnable) {
+  public List<AnAction> getActions(@NotNull Runnable onChanged) {
     return Collections.singletonList(new SearchEverywhereUI.CheckBoxAction(includeNonProjectItemsText()) {
       @Override
       public boolean isSelected(@NotNull AnActionEvent e) {
@@ -118,7 +117,7 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
       @Override
       public void setSelected(@NotNull AnActionEvent e, boolean state) {
         myDisabledActions = state;
-        rebuildRunnable.run();
+        onChanged.run();
       }
     });
   }

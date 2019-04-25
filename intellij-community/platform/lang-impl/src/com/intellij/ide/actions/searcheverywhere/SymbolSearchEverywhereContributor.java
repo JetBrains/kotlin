@@ -6,7 +6,6 @@ import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
 import com.intellij.lang.Language;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
@@ -62,9 +61,8 @@ public class SymbolSearchEverywhereContributor extends AbstractGotoSEContributor
 
   @NotNull
   @Override
-  public List<AnAction> getActions(@NotNull Disposable uiDisposable,
-                                   @NotNull Runnable rebuildRunnable) {
-    return doGetActions(includeNonProjectItemsText(), myFilter, uiDisposable, rebuildRunnable);
+  public List<AnAction> getActions(@NotNull Runnable onChanged) {
+    return doGetActions(includeNonProjectItemsText(), myFilter, onChanged);
   }
 
   public static class Factory implements SearchEverywhereContributorFactory<Object> {

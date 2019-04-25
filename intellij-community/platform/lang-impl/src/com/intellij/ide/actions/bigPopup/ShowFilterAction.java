@@ -4,8 +4,8 @@ package com.intellij.ide.actions.bigPopup;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.ElementsChooser;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -13,23 +13,20 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 
 public abstract class ShowFilterAction extends ToggleAction implements DumbAware {
-  @NotNull private final Disposable myParentDisposable;
-  @NotNull private final Project myProject;
   private JBPopup myFilterPopup;
 
-  public ShowFilterAction(@NotNull Disposable parentDisposable, @NotNull Project project) {
-    super("Filter", "Filter files by type", AllIcons.General.Filter);
-    myParentDisposable = parentDisposable;
-    myProject = project;
+  public ShowFilterAction() {
+    super("Filter", "Show filters popup", AllIcons.General.Filter);
   }
 
   @Override
@@ -40,7 +37,7 @@ public abstract class ShowFilterAction extends ToggleAction implements DumbAware
   @Override
   public void setSelected(@NotNull final AnActionEvent e, final boolean state) {
     if (state) {
-      showPopup(e.getInputEvent().getComponent());
+      showPopup(e.getRequiredData(CommonDataKeys.PROJECT), e.getInputEvent().getComponent());
     }
     else {
       if (myFilterPopup != null && !myFilterPopup.isDisposed()) {
@@ -61,8 +58,8 @@ public abstract class ShowFilterAction extends ToggleAction implements DumbAware
 
   protected abstract boolean isActive();
 
-  private void showPopup(Component anchor) {
-    if (myFilterPopup != null) {
+  private void showPopup(@NotNull Project project, @NotNull Component anchor) {
+    if (myFilterPopup != null || !anchor.isValid()) {
       return;
     }
     JBPopupListener popupCloseListener = new JBPopupListener() {
@@ -78,11 +75,26 @@ public abstract class ShowFilterAction extends ToggleAction implements DumbAware
       .setResizable(true)
       .setCancelOnClickOutside(false)
       .setMinSize(new Dimension(200, 200))
-      .setDimensionServiceKey(myProject, "Search_Everywhere_Filter_Popup", false)
+      .setDimensionServiceKey(project, getDimensionServiceKey(), false)
       .addListener(popupCloseListener)
       .createPopup();
-    Disposer.register(myParentDisposable, myFilterPopup);
+    anchor.addHierarchyListener(new HierarchyListener() {
+      @Override
+      public void hierarchyChanged(HierarchyEvent e) {
+        if (e.getID() == HierarchyEvent.HIERARCHY_CHANGED && !anchor.isValid()) {
+          anchor.removeHierarchyListener(this);
+          if (myFilterPopup != null) {
+            myFilterPopup.cancel();
+          }
+        }
+      }
+    });
     myFilterPopup.showUnderneathOf(anchor);
+  }
+
+  @NotNull
+  public String getDimensionServiceKey() {
+    return "ShowFilterAction_Filter_Popup";
   }
 
   private JComponent createFilterPanel() {

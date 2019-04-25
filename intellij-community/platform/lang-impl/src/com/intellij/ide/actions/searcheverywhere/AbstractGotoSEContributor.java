@@ -8,7 +8,6 @@ import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.ide.util.gotoByName.ChooseByNamePopup;
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -75,10 +74,9 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
   }
 
   @NotNull
-  protected List<AnAction> doGetActions(String everywhereText,
-                                        PersistentSearchEverywhereContributorFilter<?> filter,
-                                        Disposable uiDisposable,
-                                        Runnable rebuildRunnable) {
+  protected List<AnAction> doGetActions(@NotNull String everywhereText,
+                                        @Nullable PersistentSearchEverywhereContributorFilter<?> filter,
+                                        @NotNull Runnable onChanged) {
     if (myProject == null || filter == null) return Collections.emptyList();
     return Arrays.asList(new SearchEverywhereUI.CheckBoxAction(everywhereText) {
       @Override
@@ -89,16 +87,16 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
       @Override
       public void setSelected(@NotNull AnActionEvent e, boolean state) {
         myEverywhere = state;
-        rebuildRunnable.run();
+        onChanged.run();
       }
-    }, new SearchEverywhereUI.FiltersAction(myProject, filter, rebuildRunnable, uiDisposable));
+    }, new SearchEverywhereUI.FiltersAction(filter, onChanged));
   }
 
   @Override
   public void fetchElements(@NotNull String pattern,
                             @NotNull ProgressIndicator progressIndicator,
                             @NotNull Processor<? super Object> consumer) {
-    if (myProject == null) return; //nothing to search
+    if (myProject == null) return; //nowhere to search
     if (!isEmptyPatternSupported() && pattern.isEmpty()) return;
 
     ProgressIndicatorUtils.yieldToPendingWriteActions();

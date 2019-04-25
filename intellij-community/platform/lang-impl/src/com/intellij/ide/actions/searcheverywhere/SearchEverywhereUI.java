@@ -15,7 +15,6 @@ import com.intellij.ide.util.ElementsChooser;
 import com.intellij.ide.util.gotoByName.QuickSearchComponent;
 import com.intellij.ide.util.gotoByName.SearchEverywhereConfiguration;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.actionSystem.ex.CheckboxAction;
@@ -452,12 +451,10 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
             seManager.setEverywhere(true);
             rebuildList();
           }
-        }, new FiltersAction(
-          myProject, myContributorsFilter, SearchEverywhereUI.this::rebuildList, SearchEverywhereUI.this));
+        }, new FiltersAction(myContributorsFilter, SearchEverywhereUI.this::rebuildList));
       }
       else {
-        actions = new ArrayList<>(contributor.getActions(SearchEverywhereUI.this,
-                                                         SearchEverywhereUI.this::rebuildList));
+        actions = new ArrayList<>(contributor.getActions(SearchEverywhereUI.this::rebuildList));
       }
       everywhereAction = (CheckboxAction)ContainerUtil.find(actions, o -> o instanceof CheckboxAction);
       if (everywhereAction != null) {
@@ -1453,11 +1450,8 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     final PersistentSearchEverywhereContributorFilter<?> filter;
     final Runnable rebuildRunnable;
 
-    FiltersAction(@NotNull Project project,
-                  @NotNull PersistentSearchEverywhereContributorFilter<?> filter,
-                  Runnable rebuildRunnable,
-                  @NotNull Disposable parentDisposable) {
-      super(parentDisposable, project);
+    FiltersAction(@NotNull PersistentSearchEverywhereContributorFilter<?> filter,
+                  @NotNull Runnable rebuildRunnable) {
       this.filter = filter;
       this.rebuildRunnable = rebuildRunnable;
     }
