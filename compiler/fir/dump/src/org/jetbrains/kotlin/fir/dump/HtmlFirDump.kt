@@ -1210,6 +1210,15 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(valueParameter: FirValueParameter) {
+        if (valueParameter.isVararg) {
+            keyword("vararg ")
+        }
+        if (valueParameter.isCrossinline) {
+            keyword("crossinline ")
+        }
+        if (valueParameter.isNoinline) {
+            keyword("noinline ")
+        }
         symbolAnchor(valueParameter.symbol) { simpleName(valueParameter.name) }
         +": "
         generate(valueParameter.returnTypeRef)
