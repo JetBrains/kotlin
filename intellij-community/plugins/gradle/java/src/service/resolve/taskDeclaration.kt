@@ -10,6 +10,7 @@ import org.jetbrains.plugins.groovy.lang.GroovyExpressionFilter
 import org.jetbrains.plugins.groovy.lang.psi.api.GrFunctionalExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.auxiliary.GrListOrMap
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList
+import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrNamedArgument
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrBinaryExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrExpression
@@ -50,11 +51,27 @@ class GradleTaskDeclarationClosureDelegateProvider : GrDelegatesToProvider {
   override fun getDelegatesToInfo(expression: GrFunctionalExpression): DelegatesToInfo? {
     val methodCall = findCall(expression) ?: return null
     if (isTaskIdCall(methodCall) || projectTaskMethod.accepts(expression)) {
-      val explicitType = unwrapClassType(methodCall.argumentList.findNamedArgument("type")?.expression?.type)
-      val taskType = explicitType ?: createType(GRADLE_API_TASK, expression)
+      val taskType = getFromNamedArgument(methodCall) ?: createType(GRADLE_API_TASK, expression)
       return DelegatesToInfo(taskType, Closure.DELEGATE_FIRST)
     }
     return null
+  }
+
+  private fun getFromNamedArgument(methodCall: GrMethodCall): PsiType? {
+    val namedArgument = getNamedArgument(methodCall)
+    return unwrapClassType(namedArgument?.expression?.type)
+  }
+
+  private fun getNamedArgument(methodCall: GrMethodCall): GrNamedArgument? {
+    val namedArgument = methodCall.argumentList.findNamedArgument("type")
+    if (namedArgument != null) {
+      return namedArgument
+    }
+    val mapExpression = methodCall.expressionArguments.firstOrNull() as? GrListOrMap
+    if (mapExpression == null || !mapExpression.isMap) {
+      return null
+    }
+    return mapExpression.findNamedArgument("type")
   }
 }
 

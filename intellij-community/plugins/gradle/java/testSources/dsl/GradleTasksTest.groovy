@@ -3,6 +3,8 @@ package org.jetbrains.plugins.gradle.dsl
 
 import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.RunAll
+import com.intellij.util.SmartList
+import com.intellij.util.lang.CompoundRuntimeException
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
 import org.jetbrains.plugins.gradle.service.resolve.GradleTaskProperty
@@ -119,11 +121,24 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
       "task id10({ <caret> })",
       "task id12(description: 'hi') { <caret> }",
       "task id13(description: 'hi', { <caret> })",
+      "task mid12([description: 'hi']) { <caret> }",
+      "task mid13([description: 'hi'], { <caret> })",
+      "task emid12([:]) { <caret> }",
+      "task emid13([:], { <caret> })",
     ]
+    List<Throwable> exceptions = new SmartList<>()
     for (entry in data) {
-      doTest(entry) {
-        closureDelegateTest(GRADLE_API_TASK, 1)
+      try {
+        doTest(entry) {
+          closureDelegateTest(GRADLE_API_TASK, 1)
+        }
       }
+      catch (Throwable e) {
+        exceptions.add(e)
+      }
+    }
+    if (!exceptions.isEmpty()) {
+      throw new CompoundRuntimeException(exceptions)
     }
   }
 
@@ -134,11 +149,22 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
       "task(id6, type: String, { <caret> })",
       "task id12(type: String) { <caret> }",
       "task id13(type: String, { <caret> })",
+      "task mid12([type: String]) { <caret> }",
+      "task mid13([type: String], { <caret> })",
     ]
+    List<Throwable> exceptions = new SmartList<>()
     for (entry in data) {
-      doTest(entry) {
-        closureDelegateTest(JAVA_LANG_STRING, 1)
+      try {
+        doTest(entry) {
+          closureDelegateTest(JAVA_LANG_STRING, 1)
+        }
       }
+      catch (Throwable e) {
+        exceptions.add(e)
+      }
+    }
+    if (!exceptions.isEmpty()) {
+      throw new CompoundRuntimeException(exceptions)
     }
   }
 }
