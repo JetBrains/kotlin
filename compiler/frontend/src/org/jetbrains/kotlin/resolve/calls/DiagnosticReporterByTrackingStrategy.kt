@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.unCapture
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DiagnosticReporterByTrackingStrategy(
@@ -212,24 +213,42 @@ class DiagnosticReporterByTrackingStrategy(
                 val constraintError = diagnostic as NewConstraintError
                 val position = constraintError.position.from
                 val argument = (position as? ArgumentConstraintPosition)?.argument
-                        ?: (position as? ReceiverConstraintPosition)?.argument
+                    ?: (position as? ReceiverConstraintPosition)?.argument
                 argument?.let {
                     val expression = it.psiExpression ?: return
                     val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
                     if (reportConstantTypeMismatch(constraintError, deparenthesized)) return
-                    trace.report(Errors.TYPE_MISMATCH.on(deparenthesized, constraintError.upperKotlinType, constraintError.lowerKotlinType))
+                    trace.report(
+                        Errors.TYPE_MISMATCH.on(
+                            deparenthesized,
+                            constraintError.upperKotlinType.unCapture(),
+                            constraintError.lowerKotlinType.unCapture()
+                        )
+                    )
                 }
 
                 (position as? ExpectedTypeConstraintPosition)?.let {
                     val call = it.topLevelCall.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>()
                     reportIfNonNull(call) {
-                        trace.report(Errors.TYPE_MISMATCH.on(it, constraintError.upperKotlinType, constraintError.lowerKotlinType))
+                        trace.report(
+                            Errors.TYPE_MISMATCH.on(
+                                it,
+                                constraintError.upperKotlinType.unCapture(),
+                                constraintError.lowerKotlinType.unCapture()
+                            )
+                        )
                     }
                 }
 
                 (position as? ExplicitTypeParameterConstraintPosition)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
-                    trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, constraintError.upperKotlinType, constraintError.lowerKotlinType))
+                    trace.report(
+                        UPPER_BOUND_VIOLATED.on(
+                            typeArgumentReference,
+                            constraintError.upperKotlinType,
+                            constraintError.lowerKotlinType
+                        )
+                    )
                 }
             }
 

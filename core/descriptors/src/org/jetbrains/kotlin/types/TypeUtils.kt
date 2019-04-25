@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewCapturedType
+import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 enum class TypeNullability {
@@ -251,4 +253,26 @@ fun KotlinType.expandIntersectionTypeIfNecessary(): Collection<KotlinType> {
     } else {
         types
     }
+}
+
+fun KotlinType.unCapture(): KotlinType = unwrap().unCapture()
+
+fun UnwrappedType.unCapture(): UnwrappedType = when (this) {
+    is AbbreviatedType -> unCapture()
+    is SimpleType -> unCapture()
+    is FlexibleType -> FlexibleTypeImpl(lowerBound.unCapture(), upperBound.unCapture())
+}
+
+fun SimpleType.unCapture(): SimpleType {
+    val newArguments = arguments.map { projection ->
+        projection.type.constructor.safeAs<NewCapturedTypeConstructor>()?.let {
+            it.projection
+        } ?: projection
+    }
+    return replace(newArguments)
+}
+
+fun AbbreviatedType.unCapture(): SimpleType {
+    val newType = expandedType.unCapture()
+    return AbbreviatedType(newType, abbreviation)
 }
