@@ -92,7 +92,6 @@ class GradleMiscContributor : GradleMethodContextContributor {
         returnType = returnClass
       }
       methodBuilder.addAndGetParameter("configuration", GROOVY_LANG_CLOSURE).putUserData(DELEGATES_TO_TYPE_KEY, pluginDependenciesSpecFqn)
-      place.putUserData(RESOLVED_CODE, true)
       if (!processor.execute(methodBuilder, state)) return false
     }
 

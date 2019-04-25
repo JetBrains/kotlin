@@ -59,7 +59,7 @@ class GradleExtensionsContributor : GradleMethodContextContributor {
     val resolveScope = place.resolveScope
     val name = processor.getName(state)
 
-    if (place.getUserData(RESOLVED_CODE).let { it == null || !it }) {
+    if (true) {
       if (psiElement().withAncestor(2, groovyClosure().with(object : PatternCondition<GrClosableBlock?>("withDelegatesToInfo") {
         override fun accepts(t: GrClosableBlock, context: ProcessingContext?): Boolean {
           return getDelegatesToInfo(t) != null

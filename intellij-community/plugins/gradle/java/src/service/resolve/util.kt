@@ -29,6 +29,3 @@ val DELEGATED_TYPE: Key<Boolean> = Key.create("gradle.delegated.type")
 internal fun PsiClass?.isResolvedInGradleScript() = this is GroovyScriptClass && this.containingFile.isGradleScript()
 
 internal fun PsiFile?.isGradleScript() = this?.originalFile?.virtualFile?.extension == EXTENSION
-
-@JvmField
-val RESOLVED_CODE: Key<Boolean?> = Key.create("gradle.resolved")
