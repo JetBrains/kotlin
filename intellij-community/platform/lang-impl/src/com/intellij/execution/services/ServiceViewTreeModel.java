@@ -3,7 +3,6 @@ package com.intellij.execution.services;
 
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.tree.BaseTreeModel;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -163,9 +162,6 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
     Map<Object, ServiceGroupNode> groupNodes = new HashMap<>();
     for (T service : contributor.getServices(project)) {
       Object value = service instanceof ServiceViewProvidingContributor ? ((ServiceViewProvidingContributor)service).asService() : service;
-      if (value instanceof NodeDescriptor) {
-        AppUIUtil.invokeOnEdt(() -> ((NodeDescriptor)value).update(), project.getDisposed());
-      }
 
       if (contributor instanceof ServiceViewGroupingContributor) {
         ServiceViewGroupingContributor<T, Object> groupingContributor = (ServiceViewGroupingContributor<T, Object>)contributor;
@@ -197,6 +193,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
     private final ServiceViewContributor myContributor;
     private final ServiceViewDescriptor myViewDescriptor;
     private List<ServiceTreeNode> myChildren;
+    private boolean myPresentationUpdated;
 
     protected ServiceTreeNode(@NotNull Object value, @Nullable ServiceTreeNode parent, @NotNull ServiceViewContributor contributor,
                               @NotNull ServiceViewDescriptor viewDescriptor) {
@@ -220,6 +217,12 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
     @NotNull
     @Override
     public ServiceViewDescriptor getViewDescriptor() {
+      if (!myPresentationUpdated) {
+        myPresentationUpdated = true;
+        if (myValue instanceof NodeDescriptor) {
+          ((NodeDescriptor)myValue).update();
+        }
+      }
       return myViewDescriptor;
     }
 
