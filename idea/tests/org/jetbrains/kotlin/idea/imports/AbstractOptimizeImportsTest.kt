@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.AbstractImportsTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 
-abstract class AbstractOptimizeImportsTest() : AbstractImportsTest() {
+abstract class AbstractOptimizeImportsTest : AbstractImportsTest() {
     override fun doTest(file: KtFile): String {
         OptimizedImportsBuilder.testLog = StringBuilder()
         try {
             KotlinImportOptimizer().processFile(file).run()
             return OptimizedImportsBuilder.testLog.toString()
-        }
-        finally {
+        } finally {
             OptimizedImportsBuilder.testLog = null
         }
     }

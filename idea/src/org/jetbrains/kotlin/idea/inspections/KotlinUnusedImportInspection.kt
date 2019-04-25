@@ -161,7 +161,12 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             ApplicationManager.getApplication().invokeLater {
                 val editor = PsiUtilBase.findEditor(file)
                 val currentModificationCount = PsiModificationTracker.SERVICE.getInstance(project).modificationCount
-                if (editor != null && currentModificationCount == modificationCount && timeToOptimizeImportsOnTheFly(file, editor, project)) {
+                if (editor != null && currentModificationCount == modificationCount && timeToOptimizeImportsOnTheFly(
+                        file,
+                        editor,
+                        project
+                    )
+                ) {
                     optimizeImportsOnTheFly(file, optimizedImports, editor, project)
                 }
             }
