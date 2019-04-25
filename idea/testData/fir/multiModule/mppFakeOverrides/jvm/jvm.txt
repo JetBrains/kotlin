@@ -24,7 +24,7 @@ FILE: jvm.kt
         public final fun test(): R|kotlin/Unit| {
             R|FakeOverride</A.foo: R|kotlin/Unit|>|(String())
             R|/C.bar|(String())
-            <Ambiguity: baz, [/C.baz, /A.baz]>#(String())
+            R|FakeOverride</A.baz: R|kotlin/String|>|(String())
         }
 
     }
