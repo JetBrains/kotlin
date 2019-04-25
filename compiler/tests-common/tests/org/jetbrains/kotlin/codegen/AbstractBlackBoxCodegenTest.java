@@ -27,13 +27,9 @@ import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxM
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
-
-    private static final boolean IGNORE_EXPECTED_FAILURES =
-            Boolean.getBoolean("kotlin.suppress.expected.test.failures");
-
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files) throws Exception {
-        boolean isIgnored = IGNORE_EXPECTED_FAILURES && InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
+        boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
 
         compile(files, !isIgnored);
 
