@@ -365,11 +365,8 @@ private val Modality.flags: Int
 private val Visibility.flags: Int
     get() = AsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
 
-private val IrField.OtherOrigin: JvmDeclarationOrigin
-    get() = OtherOrigin(descriptor.psiElement, this.descriptor)
-
-internal val IrFunction.OtherOrigin: JvmDeclarationOrigin
-    get() = OtherOrigin(descriptor.psiElement, this.descriptor)
+internal val IrDeclaration.OtherOrigin: JvmDeclarationOrigin
+    get() = OtherOrigin(descriptor)
 
 private fun IrClass.getSuperClassInfo(typeMapper: IrTypeMapper): IrSuperClassInfo {
     if (isInterface) {
