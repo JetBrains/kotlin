@@ -34,7 +34,10 @@ apply plugin: 'org.anarres.jarjar'
 
 dependencies {
     api(KOTLIN_STDLIB)
-    api("org.jetbrains.kotlin:kotlin-compiler-embeddable")
+    api("org.jetbrains.kotlin:kotlin-compiler")
+    api("org.jetbrains.kotlin:kotlin-plugin")
+    api("org.jetbrains.kotlin:kotlin-intellij-core")
+    api("org.jetbrains.kotlin:kotlin-platform-api")
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {

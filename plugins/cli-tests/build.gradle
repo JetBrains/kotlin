@@ -29,7 +29,7 @@ dependencies {
     testImplementation(JUNIT)
     testImplementation(ROBOLECTRIC)
 
-    testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$R4A_VERSION")
+    testImplementation("org.jetbrains.kotlin:kotlin-compiler:$R4A_VERSION")
 
     testImplementation(project(":compose-runtime"))
     testImplementation(project(":ui-android-view-non-ir"))
@@ -65,5 +65,5 @@ androidx {
     mavenVersion = LibraryVersions.COMPOSE
     mavenGroup = LibraryGroups.COMPOSE
     inceptionYear = "2019"
-    description = "Contains support code for tree composition"
+    description = "Contains test for the compose compiler plugin"
 }

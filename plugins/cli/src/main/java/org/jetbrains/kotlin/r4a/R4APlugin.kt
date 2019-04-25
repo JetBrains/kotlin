@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.r4a
 
+import com.intellij.mock.MockProject
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.jvm.extensions.IrLoweringExtension
-import org.jetbrains.kotlin.com.intellij.mock.MockProject
-import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
