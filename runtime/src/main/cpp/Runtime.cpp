@@ -211,9 +211,9 @@ int Konan_Platform_getCpuArchitecture() {
   return 3;
 #elif KONAN_X64
   return 4;
-#elif KONAN_MIPS
+#elif KONAN_MIPS32
   return 5;
-#elif KONAN_MIPSEL
+#elif KONAN_MIPSEL32
   return 6;
 #elif KONAN_WASM
   return 7;
