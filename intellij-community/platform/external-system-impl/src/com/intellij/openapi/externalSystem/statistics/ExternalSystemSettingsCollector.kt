@@ -16,19 +16,19 @@ class ExternalSystemSettingsCollector : ProjectUsagesCollector() {
 
     for (manager in ExternalSystemApiUtil.getAllManagers()) {
       val systemId = getAnonymizedSystemId(manager.getSystemId())
-      fun addWithSustemId(desc: UsageDescriptor) {
+      fun addWithSystemId(desc: UsageDescriptor) {
         desc.data.addData("externalSystemId", systemId)
         usages.add(desc)
       }
 
       val projects = manager.getSettingsProvider().`fun`(project).getLinkedProjectsSettings()
 
-      addWithSustemId(getCountingUsage("numberOfLinkedProject", projects.size))
+      addWithSystemId(getCountingUsage("numberOfLinkedProject", projects.size))
 
       for (projectsSetting in projects) {
-        addWithSustemId(getBooleanUsage("autoImport", projectsSetting.isUseAutoImport))
-        addWithSustemId(getBooleanUsage("useQualifiedModuleNames", projectsSetting.isUseQualifiedModuleNames))
-        addWithSustemId(getCountingUsage("modules.count", projectsSetting.modules.size))
+        addWithSystemId(getBooleanUsage("autoImport", projectsSetting.isUseAutoImport))
+        addWithSystemId(getBooleanUsage("useQualifiedModuleNames", projectsSetting.isUseQualifiedModuleNames))
+        addWithSystemId(getCountingUsage("modules.count", projectsSetting.modules.size))
       }
     }
 
