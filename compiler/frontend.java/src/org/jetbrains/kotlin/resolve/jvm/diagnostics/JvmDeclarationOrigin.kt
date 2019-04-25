@@ -59,7 +59,8 @@ fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor? = null)
 fun OtherOriginFromPure(element: KtPureElement?, descriptor: DeclarationDescriptor? = null) =
     OtherOrigin(element?.psiOrParent, descriptor)
 
-fun OtherOrigin(descriptor: DeclarationDescriptor) = JvmDeclarationOrigin(OTHER, null, descriptor)
+fun OtherOrigin(descriptor: DeclarationDescriptor): JvmDeclarationOrigin =
+    JvmDeclarationOrigin(OTHER, DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor)
 
 fun Bridge(
     descriptor: DeclarationDescriptor,

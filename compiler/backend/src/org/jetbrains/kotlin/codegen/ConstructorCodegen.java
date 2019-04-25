@@ -134,7 +134,7 @@ public class ConstructorCodegen {
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
         functionCodegen.generateMethod(
-                JvmDeclarationOriginKt.OtherOrigin(constructor, constructorDescriptor),
+                JvmDeclarationOriginKt.OtherOrigin(constructorDescriptor),
                 constructorDescriptor, constructorContext,
                 new FunctionGenerationStrategy.CodegenBased(state) {
                     @Override
