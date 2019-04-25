@@ -110,19 +110,6 @@ class GradleExtensionsContributor : GradleMethodContextContributor {
       return GradleExtensionsSettings.getInstance(project).getExtensionsFor(module) ?: return null
     }
 
-    fun getDocumentation(gradleProp: GradleExtensionsSettings.TypeAware,
-                         lightVariable: GrLightVariable): String? {
-      if (gradleProp is GradleProp) {
-        return getDocumentation(gradleProp, lightVariable)
-      }
-      else if (gradleProp is GradleTask) {
-        return getDocumentation(gradleProp, lightVariable)
-      }
-      else {
-        return null
-      }
-    }
-
     fun getDocumentation(gradleProp: GradleProp,
                          lightVariable: GrLightVariable): String {
       val buffer = StringBuilder()
@@ -144,22 +131,6 @@ class GradleExtensionsContributor : GradleMethodContextContributor {
       buffer.append("</PRE>")
       if (hasInitializer) {
         buffer.append("<br><b>Initial value has been got during last import</b>")
-      }
-      return buffer.toString()
-    }
-
-    fun getDocumentation(gradleTask: GradleTask, lightVariable: GrLightVariable): String {
-      return getDocumentation(gradleTask, lightVariable.type, lightVariable)
-    }
-
-    fun getDocumentation(gradleTask: GradleTask, type: PsiType, context: PsiElement): String {
-      val buffer = StringBuilder()
-      buffer.append("<PRE>")
-      JavaDocInfoGenerator.generateType(buffer, type, context, true)
-      buffer.append(" " + gradleTask.name)
-      buffer.append("</PRE>")
-      if (!gradleTask.description.isNullOrBlank()) {
-        buffer.append(gradleTask.description)
       }
       return buffer.toString()
     }
