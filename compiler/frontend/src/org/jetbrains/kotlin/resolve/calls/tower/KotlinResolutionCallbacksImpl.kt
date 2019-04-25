@@ -205,7 +205,9 @@ class KotlinResolutionCallbacksImpl(
     }
 
     override fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom) {
-        kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace(candidate, trace, emptyList(), substitutor = null)
+        kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(
+            candidate, trace, emptyList(), substitutor = null
+        )
     }
 
     override fun createReceiverWithSmartCastInfo(resolvedAtom: ResolvedCallAtom): ReceiverValueWithSmartCastInfo? {

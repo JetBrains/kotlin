@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.Name
 
 object SYNTHESIZED_INIT_BLOCK: IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
 
-fun makeInitializersPhase(origin: IrDeclarationOrigin, clinitNeeded: Boolean)= makeIrFilePhase(
+fun makeInitializersPhase(origin: IrDeclarationOrigin, clinitNeeded: Boolean)= makeIrFilePhase<CommonBackendContext>(
     { context -> InitializersLowering(context, origin, clinitNeeded) },
     name = "Initializers",
     description = "Handle initializer statements",

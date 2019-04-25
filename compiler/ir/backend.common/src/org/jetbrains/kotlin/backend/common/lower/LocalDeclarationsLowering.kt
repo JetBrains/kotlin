@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import java.util.*
 
-val jvmLocalDeclarationsPhase = makeIrFilePhase(
+val jvmLocalDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     { context ->
         LocalDeclarationsLowering(context, object : LocalNameProvider {
             override fun localName(declaration: IrDeclarationWithName): String =

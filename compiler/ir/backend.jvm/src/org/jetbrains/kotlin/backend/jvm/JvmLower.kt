@@ -44,7 +44,7 @@ private val expectDeclarationsRemovingPhase = makeIrFilePhase(
     description = "Remove expect declaration from module fragment"
 )
 
-private val propertiesPhase = makeIrFilePhase(
+private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
     { context ->
         PropertiesLowering(context, JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS) { propertyName ->
             JvmAbi.getSyntheticMethodNameForAnnotatedProperty(propertyName)
@@ -55,7 +55,7 @@ private val propertiesPhase = makeIrFilePhase(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
-val jvmPhases = namedIrFilePhase(
+val jvmPhases = namedIrFilePhase<JvmBackendContext>(
     name = "IrLowering",
     description = "IR lowering",
     lower = expectDeclarationsRemovingPhase then
