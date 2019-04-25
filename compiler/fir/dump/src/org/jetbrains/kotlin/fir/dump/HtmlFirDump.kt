@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 import java.io.Writer
@@ -589,9 +591,21 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(flexibleType: ConeFlexibleType) {
-        generate(flexibleType.lowerBound)
-        +".."
-        generate(flexibleType.upperBound)
+        if (flexibleType.lowerBound.nullability == ConeNullability.NOT_NULL &&
+            flexibleType.upperBound.nullability == ConeNullability.NULLABLE &&
+            AbstractStrictEqualityTypeChecker.strictEqualTypes(
+                session.typeContext,
+                flexibleType.lowerBound,
+                flexibleType.upperBound.withNullability(ConeNullability.NOT_NULL)
+            )
+        ) {
+            generate(flexibleType.lowerBound)
+            +"!"
+        } else {
+            generate(flexibleType.lowerBound)
+            +".."
+            generate(flexibleType.upperBound)
+        }
     }
 
     private fun FlowContent.generate(type: ConeClassType) {
