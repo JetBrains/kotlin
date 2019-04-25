@@ -61,11 +61,14 @@ open class FirConstructorImpl : FirAbstractCallableMember, FirConstructor {
     override var body: FirBlock? = null
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        annotations.transformInplace(transformer, data)
         valueParameters.transformInplace(transformer, data)
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        status = status.transformSingle(transformer, data)
         delegatedConstructor?.transformSingle(transformer, data)
         body = body?.transformSingle(transformer, data)
 
-        return super<FirAbstractCallableMember>.transformChildren(transformer, data)
+        return this
     }
 
     companion object {

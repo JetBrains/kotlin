@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 open class FirClassImpl(
     session: FirSession,
@@ -69,6 +71,7 @@ open class FirClassImpl(
         superTypeRefs.transformInplace(transformer, data)
         val result = super<FirAbstractMemberDeclaration>.transformChildren(transformer, data) as FirRegularClass
 
+        declarations.firstIsInstanceOrNull<FirConstructorImpl>()?.typeParameters?.transformInplace(transformer, data)
         // Transform declarations in last turn
         declarations.transformInplace(transformer, data)
         companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.isCompanion }

@@ -1,11 +1,11 @@
 FILE: complexTypes.kt
     public? final? class C<T, out S> : kotlin/Any {
-        public? constructor<T, out S>(): R|a/b/C<T, S>| {
+        public? constructor<T, S>(): R|a/b/C<T, S>| {
             super<kotlin/Any>()
         }
 
         public? final? inner class D<R, in P> : kotlin/Any {
-            public? constructor<R, in P>(): R|a/b/C.D<R, P>| {
+            public? constructor<R, P>(): R|a/b/C.D<R, P>| {
                 super<kotlin/Any>()
             }
 

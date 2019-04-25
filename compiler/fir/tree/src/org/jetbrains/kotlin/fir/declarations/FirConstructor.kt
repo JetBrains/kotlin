@@ -23,11 +23,13 @@ interface FirConstructor : @VisitedSupertype FirFunction, FirCallableMemberDecla
         visitor.visitConstructor(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
+        acceptAnnotations(visitor, data)
+        status.accept(visitor, data)
         delegatedConstructor?.accept(visitor, data)
         for (parameter in valueParameters) {
             parameter.accept(visitor, data)
         }
+        returnTypeRef.accept(visitor, data)
         body?.accept(visitor, data)
     }
 }
