@@ -21,6 +21,7 @@ import org.gradle.internal.operations.BuildOperationExecutor
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.internal.remote.internal.inet.InetAddressFactory
 import org.jetbrains.kotlin.gradle.utils.injected
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 
@@ -33,14 +34,14 @@ open class AggregateTestReport : DefaultTask() {
      * Returns the set of binary test results to include in the report.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    val testResultDirs: FileCollection
+    val testResultDirs: Collection<File>
         @PathSensitive(PathSensitivity.NONE)
         @InputFiles
         @SkipWhenEmpty
         get() {
-            val dirs = UnionFileCollection()
+            val dirs = mutableListOf<File>()
             testTasks.forEach {
-                dirs.addToUnion(project.files(it.binResultsDir).builtBy(it))
+                dirs.add(it.binResultsDir)
             }
             return dirs
         }
@@ -49,7 +50,7 @@ open class AggregateTestReport : DefaultTask() {
     var ignoreFailures: Boolean = false
 
     @Nested
-    val reports: TestTaskReports
+    val reports: DefaultTestTaskReports
 
     protected open val instantiator: Instantiator
         @Inject get() = injected
@@ -121,7 +122,7 @@ open class AggregateTestReport : DefaultTask() {
                     testReport.generateReport(resultsProvider, html.destination)
                 }
             } else {
-                logger.info("{} - no binary test results found in dirs: {}.", path, testResultDirs.files)
+                logger.info("{} - no binary test results found in dirs: {}.", path, testResultDirs)
                 didWork = false
             }
         } finally {
@@ -148,7 +149,7 @@ open class AggregateTestReport : DefaultTask() {
         val resultsProviders = LinkedList<TestResultsProvider>()
         try {
             val resultDirs = testResultDirs
-            return if (resultDirs.files.size == 1) BinaryResultBackedTestResultsProvider(resultDirs.singleFile)
+            return if (resultDirs.size == 1) BinaryResultBackedTestResultsProvider(resultDirs.single())
             else AggregateTestResultsProvider(resultDirs.mapTo(resultsProviders) { BinaryResultBackedTestResultsProvider(it) })
         } catch (e: RuntimeException) {
             stoppable(resultsProviders).stop()

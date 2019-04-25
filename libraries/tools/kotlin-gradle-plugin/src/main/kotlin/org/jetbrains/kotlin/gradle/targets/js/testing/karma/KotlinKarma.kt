@@ -6,16 +6,47 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
 import com.google.gson.GsonBuilder
+import org.gradle.api.Project
+import org.gradle.api.tasks.Input
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
+import org.jetbrains.kotlin.gradle.targets.js.karmaChromeLauncher
+import org.jetbrains.kotlin.gradle.targets.js.karmaPhantomjsLauncher
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 
-class KotlinKarma : KotlinJsTestFramework {
+class KotlinKarma(val project: Project) : KotlinJsTestFramework {
+    private val config: KarmaConfig = KarmaConfig()
+    private val requiredDependencies = mutableSetOf<NpmPackageVersion>()
+
+    fun useChrome() = useBrowser("Chrome", karmaChromeLauncher)
+
+    fun useChromeCanary() = useBrowser("ChromeCanary", karmaChromeLauncher)
+
+    fun useChromeHeadless() = useBrowser("ChromeHeadless", karmaChromeLauncher)
+
+    fun usePhantomJS() = useBrowser("PhantomJS", karmaPhantomjsLauncher)
+
+    fun useFirefox() = useBrowser("Firefox", TODO())
+
+    fun useBrowser(id: String, dependency: NpmPackageVersion) {
+        config.browsers.add(id)
+        requiredDependencies.add(dependency)
+    }
+
+    fun useMocha() {
+
+    }
+
+    fun useWebpack() {
+
+    }
+
     override fun configure(dependenciesHolder: HasKotlinDependencies) {
         dependenciesHolder.dependencies {
             runtimeOnly(npm("karma", "4.0.1"))
@@ -38,12 +69,12 @@ class KotlinKarma : KotlinJsTestFramework {
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
             testNameSuffix = task.targetName,
-            prepandSuiteName = true,
+            prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true
         )
 
-        val npmProjectLayout = NpmProjectLayout[task.project]
+        val npmProjectLayout = NpmProject[task.project]
 
         val files = task.nodeModulesToLoad.map {
             npmProjectLayout.nodeModulesDir.resolve(it).also { file ->
