@@ -325,7 +325,17 @@ private fun Type.hasUnalignedMembers(): Boolean = when (this) {
 // TODO: should the recursive checks be made in indexer when computing `hasUnalignedFields`?
 }
 
-private val ObjCMethod.kotlinName: String get() = selector.split(":").first()
+private val ObjCMethod.kotlinName: String
+    get() {
+        val candidate = selector.split(":").first()
+        val trimmed = candidate.trimEnd('_')
+        return if (trimmed == "equals" && parameters.size == 1
+                || (trimmed == "hashCode" || trimmed == "toString") && parameters.size == 0) {
+            candidate + "_"
+        } else {
+            candidate
+        }
+    }
 
 private val ObjCClassOrProtocol.protocolsWithSupers: Sequence<ObjCProtocol>
     get() = this.protocols.asSequence().flatMap { sequenceOf(it) + it.protocolsWithSupers }
