@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -62,6 +61,27 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         }
     }
 
+    private var primaryConstructorParametersScope: FirLocalScope? = null
+
+    override fun transformConstructor(constructor: FirConstructor, data: Any?): CompositeTransformResult<FirDeclaration> {
+        if (constructor.isPrimary) {
+            primaryConstructorParametersScope = FirLocalScope().apply {
+                constructor.valueParameters.forEach { this.storeDeclaration(it) }
+            }
+        }
+        return super.transformConstructor(constructor, data)
+    }
+
+    override fun transformAnonymousInitializer(
+        anonymousInitializer: FirAnonymousInitializer,
+        data: Any?
+    ): CompositeTransformResult<FirDeclaration> {
+        return withScopeCleanup(localScopes) {
+            localScopes.addIfNotNull(primaryConstructorParametersScope)
+            super.transformAnonymousInitializer(anonymousInitializer, data)
+        }
+    }
+
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Any?): CompositeTransformResult<FirTypeRef> {
         if (data == null)
             return implicitTypeRef.compose()
@@ -99,11 +119,15 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup(scopes) {
+            val oldConstructorScope = primaryConstructorParametersScope
+            primaryConstructorParametersScope = null
             val type = regularClass.defaultType()
             scopes.addIfNotNull(type.scope(session, scopeSession))
-            withLabelAndReceiverType(regularClass.name, regularClass, type) {
+            val result = withLabelAndReceiverType(regularClass.name, regularClass, type) {
                 super.transformRegularClass(regularClass, data)
             }
+            primaryConstructorParametersScope = oldConstructorScope
+            result
         }
     }
 
@@ -685,7 +709,10 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     override fun transformProperty(property: FirProperty, data: Any?): CompositeTransformResult<FirDeclaration> {
         if (property.returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property.compose()
-        return transformVariable(property, data)
+        return withScopeCleanup(localScopes) {
+            localScopes.addIfNotNull(primaryConstructorParametersScope)
+            transformVariable(property, data)
+        }
     }
 
     override fun transformExpression(expression: FirExpression, data: Any?): CompositeTransformResult<FirStatement> {
