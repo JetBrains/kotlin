@@ -189,6 +189,7 @@ public final class Test {
     @lib.Anno(value = "3", construct = {"C"})
     @lib.Anno(value = "2", construct = {"A", "B"})
     @lib.Anno(value = "1")
+    @java.lang.Deprecated()
     public static void value$annotations() {
     }
 

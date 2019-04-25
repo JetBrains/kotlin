@@ -29,6 +29,7 @@ public final class Test {
 
     @Anno2()
     @Anno()
+    @java.lang.Deprecated()
     public static void prop$annotations() {
     }
 

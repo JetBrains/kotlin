@@ -939,6 +939,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         var annotations = visibleAnnotations?.fold(JavacList.nil<JCAnnotation>(), ::convertAndAdd) ?: JavacList.nil()
         annotations = invisibleAnnotations?.fold(annotations, ::convertAndAdd) ?: annotations
 
+        if (isDeprecated(access)) {
+            val type = treeMaker.Type(Type.getType(java.lang.Deprecated::class.java))
+            annotations = annotations.append(treeMaker.Annotation(type, JavacList.nil()))
+        }
+
         val flags = when (kind) {
             ElementKind.ENUM -> access and CLASS_MODIFIERS and Opcodes.ACC_ABSTRACT.inv().toLong()
             ElementKind.CLASS -> access and CLASS_MODIFIERS

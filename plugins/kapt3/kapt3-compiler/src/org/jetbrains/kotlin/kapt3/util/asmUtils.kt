@@ -29,6 +29,10 @@ internal fun isSynthetic(access: Int) = (access and Opcodes.ACC_SYNTHETIC) != 0
 internal fun isFinal(access: Int) = (access and Opcodes.ACC_FINAL) != 0
 internal fun isStatic(access: Int) = (access and Opcodes.ACC_STATIC) != 0
 internal fun isAbstract(access: Int) = (access and Opcodes.ACC_ABSTRACT) != 0
+
+private const val LONG_DEPRECATED = Opcodes.ACC_DEPRECATED.toLong()
+internal fun isDeprecated(access: Long) = (access and LONG_DEPRECATED) != 0L
+
 internal fun ClassNode.isEnum() = (access and Opcodes.ACC_ENUM) != 0
 internal fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) != 0
 internal fun MethodNode.isVarargs() = (access and Opcodes.ACC_VARARGS) != 0

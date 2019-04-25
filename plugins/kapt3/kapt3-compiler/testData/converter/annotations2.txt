@@ -30,6 +30,7 @@ public final class AnnotationsTest {
     }
 
     @Anno(value = "top-level-val")
+    @java.lang.Deprecated()
     public static void topLevelVal$annotations(int p0) {
     }
 
@@ -82,6 +83,7 @@ public abstract class Test {
     public abstract java.lang.String abstractMethod();
 
     @Anno(value = "abstract-val")
+    @java.lang.Deprecated()
     public static void abstractVal$annotations() {
     }
 
@@ -89,6 +91,7 @@ public abstract class Test {
     public abstract java.lang.String getAbstractVal();
 
     @Anno(value = "v-property")
+    @java.lang.Deprecated()
     public static void v$annotations() {
     }
 
