@@ -832,11 +832,13 @@ public class TemplateState implements Disposable {
     int start = mySegments.getSegmentStart(segmentNumber);
     int end = mySegments.getSegmentEnd(segmentNumber);
 
-    PsiDocumentManager.getInstance(myProject).commitDocument(myDocument);
+    if(!isQuick) {
+      PsiDocumentManager.getInstance(myProject).commitDocument(myDocument);
+    }
     PsiFile psiFile = getPsiFile();
     PsiElement element = psiFile != null ? psiFile.findElementAt(start) : null;
-    if (element != null) {
-      PsiUtilCore.ensureValid(element);
+    if (element != null && !element.isValid()) {
+      element = null;
     }
 
     ExpressionContext context = createExpressionContext(start);
@@ -858,8 +860,8 @@ public class TemplateState implements Disposable {
     if (defaultValue != null && resultIsNullOrEmpty) {
       result = defaultValue.calculateResult(context);
     }
-    if (element != null) {
-      PsiUtilCore.ensureValid(element);
+    if (element != null && !element.isValid()) {
+      element = null;
     }
     if (result == null || result.equalsToText(oldValue, element)) return;
 
