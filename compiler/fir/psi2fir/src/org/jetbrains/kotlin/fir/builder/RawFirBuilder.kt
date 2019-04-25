@@ -246,7 +246,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 when {
                     typeReference != null -> typeReference.toFirOrErrorType()
                     defaultTypeRef != null -> defaultTypeRef
-                    else -> null.toFirOrErrorType()
+                    else -> null.toFirOrImplicitType()
                 },
                 if (hasDefaultValue()) {
                     { defaultValue }.toFirExpression("Should have default value")
