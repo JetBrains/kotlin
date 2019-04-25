@@ -19,7 +19,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrRefere
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral
 import org.jetbrains.plugins.groovy.lang.psi.impl.signatures.GrClosureSignatureUtil.findCall
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.TypesUtil.createType
-import org.jetbrains.plugins.groovy.lang.psi.patterns.groovyClosure
+import org.jetbrains.plugins.groovy.lang.psi.patterns.groovyMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.patterns.psiMethod
 import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil.unwrapClassType
 import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DelegatesToInfo
@@ -45,12 +45,12 @@ class GradleTaskDeclarationTypeCalculator : GrTypeCalculator<GrReferenceExpressi
 class GradleTaskDeclarationClosureDelegateProvider : GrDelegatesToProvider {
 
   companion object {
-    private val projectTaskMethod = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "task"))
+    private val projectTaskMethod = groovyMethodCall.resolvesTo(psiMethod(GRADLE_API_PROJECT, "task"))
   }
 
   override fun getDelegatesToInfo(expression: GrFunctionalExpression): DelegatesToInfo? {
     val methodCall = findCall(expression) ?: return null
-    if (isTaskIdCall(methodCall) || projectTaskMethod.accepts(expression)) {
+    if (isTaskIdCall(methodCall) || projectTaskMethod.accepts(methodCall)) {
       val taskType = getFromNamedArgument(methodCall) ?: createType(GRADLE_API_TASK, expression)
       return DelegatesToInfo(taskType, Closure.DELEGATE_FIRST)
     }
