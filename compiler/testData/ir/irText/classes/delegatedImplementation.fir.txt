@@ -154,7 +154,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 VALUE_PARAMETER name:value index:0 type:kotlin.Int
                 BLOCK_BODY
-          CALL 'private constructor <init> () [primary] declared in <root>.otherImpl.<no name provided>' type=<root>.otherImpl.<no name provided> origin=null
+          CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.otherImpl.<no name provided>' type=<root>.otherImpl.<no name provided> origin=null
   CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 [primary]

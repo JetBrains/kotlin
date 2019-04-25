@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/javaConstructorWithTypeParameters.kt
   FUN name:test2 visibility:public modality:FINAL <> () returnType:<root>.J1 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): <root>.J1 declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (x1: IrErrorType) declared in <root>.J1' type=<root>.J1 origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (x1: X1 of <uninitialized parent>?) declared in <root>.J1' type=<root>.J1 origin=null
   FUN name:test3 visibility:public modality:FINAL <> (j1:<root>.J1<kotlin.Any>) returnType:IrErrorType 
     VALUE_PARAMETER name:j1 index:0 type:<root>.J1<kotlin.Any> 
     BLOCK_BODY

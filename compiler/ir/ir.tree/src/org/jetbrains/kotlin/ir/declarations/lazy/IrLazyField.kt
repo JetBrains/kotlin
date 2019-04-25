@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
@@ -61,7 +62,7 @@ class IrLazyField(
         symbol.bind(this)
     }
 
-    override val annotations: MutableList<IrCall> = mutableListOf()
+    override val annotations: MutableList<IrConstructorCall> = mutableListOf()
 
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
