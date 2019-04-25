@@ -5,11 +5,16 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.tree.BaseTreeModel;
 import com.intellij.ui.tree.Searchable;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.Invoker;
 import com.intellij.util.concurrency.InvokerSupplier;
+import com.intellij.util.containers.JBTreeTraverser;
+import com.intellij.util.containers.TreeTraversal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
 
@@ -135,6 +140,34 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
     treeStructureChanged(null, null, null);
   }
 
+  Promise<TreePath> findPath(@NotNull Object service, @NotNull Class<?> contributorClass) {
+    AsyncPromise<TreePath> result = new AsyncPromise<>();
+    getInvoker().runOrInvokeLater(() -> {
+      if (myRootChildren != null) {
+        ServiceTreeNode serviceNode = JBTreeTraverser.from((Function<ServiceTreeNode, List<ServiceTreeNode>>)node ->
+          contributorClass.isInstance(node.getContributor()) ? node.getChildren() : null)
+          .withRoots(myRootChildren)
+          .traverse(TreeTraversal.PLAIN_BFS)
+          .filter(node -> node.getValue().equals(service))
+          .first();
+        if (serviceNode != null) {
+          List<Object> path = new ArrayList<>();
+          while (serviceNode != null) {
+            path.add(serviceNode);
+            serviceNode = serviceNode.getParent();
+          }
+          path.add(myRoot);
+          Collections.reverse(path);
+          result.setResult(new TreePath(ArrayUtil.toObjectArray(path)));
+          return;
+        }
+      }
+
+      result.setError("Service not found");
+    });
+    return result;
+  }
+
   private static <T> List<ServiceTreeNode> getContributorChildren(Project project,
                                                                   ServiceTreeNode parent,
                                                                   ServiceViewContributor<T> contributor) {
@@ -142,13 +175,10 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
     Map<Object, ServiceGroupNode> groupNodes = new HashMap<>();
     for (T service : contributor.getServices(project)) {
       Object value = service instanceof ServiceViewProvidingContributor ? ((ServiceViewProvidingContributor)service).asService() : service;
-      ServiceTreeNode serviceNode = new ServiceNode(value, parent, contributor, contributor.getServiceDescriptor(service), project,
-                                                    service instanceof ServiceViewContributor ? (ServiceViewContributor)service : null);
       if (value instanceof NodeDescriptor) {
         ((NodeDescriptor)value).update();
       }
 
-      ServiceTreeNode child = serviceNode;
       if (contributor instanceof ServiceViewGroupingContributor) {
         ServiceViewGroupingContributor<T, Object> groupingContributor = (ServiceViewGroupingContributor<T, Object>)contributor;
         Object group = groupingContributor.groupBy(service);
@@ -158,11 +188,17 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
             groupNode = new ServiceGroupNode(group, parent, contributor, groupingContributor.getGroupDescriptor(group));
             groupNodes.put(group, groupNode);
           }
+          ServiceTreeNode serviceNode = new ServiceNode(value, groupNode, contributor, contributor.getServiceDescriptor(service), project,
+                                                        service instanceof ServiceViewContributor ? (ServiceViewContributor)service : null);
           groupNode.getChildren().add(serviceNode);
-          child = groupNode;
+          children.add(groupNode);
+          continue;
         }
       }
-      children.add(child);
+
+      ServiceTreeNode serviceNode = new ServiceNode(value, parent, contributor, contributor.getServiceDescriptor(service), project,
+                                                    service instanceof ServiceViewContributor ? (ServiceViewContributor)service : null);
+      children.add(serviceNode);
     }
     return new ArrayList<>(children);
   }

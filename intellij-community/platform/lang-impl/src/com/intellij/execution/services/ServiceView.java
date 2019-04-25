@@ -15,16 +15,21 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.Promise;
+import org.jetbrains.concurrency.Promises;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.List;
+import java.util.Queue;
 
 class ServiceView extends JPanel implements Disposable {
   private final Project myProject;
   private final ServiceViewState myState;
   private final ServiceViewTree myTree;
+  private final ServiceViewTreeModel myTreeModel;
   private final ServiceViewUi myUi;
 
   private ServiceViewItem myLastSelection;
@@ -35,16 +40,16 @@ class ServiceView extends JPanel implements Disposable {
     myState = state;
     myUi = ui;
 
-    ServiceViewTreeModel treeModel = new ServiceViewTreeModel(project);
-    myTree = new ServiceViewTree(treeModel, this);
+    myTreeModel = new ServiceViewTreeModel(project);
+    myTree = new ServiceViewTree(myTreeModel, this);
     ui.setMasterPanel(myTree, ServiceViewActionProvider.getInstance());
     add(myUi.getComponent(), BorderLayout.CENTER);
 
-    project.getMessageBus().connect(this).subscribe(ServiceViewEventListener.TOPIC, treeModel::refresh);
+    project.getMessageBus().connect(this).subscribe(ServiceViewEventListener.TOPIC, myTreeModel::refresh);
     myTree.addTreeSelectionListener(e -> onSelectionChanged());
 
-    treeModel.refreshAll();
-    state.treeState.applyTo(myTree, treeModel.getRoot());
+    myTreeModel.refreshAll();
+    state.treeState.applyTo(myTree, myTreeModel.getRoot());
 
     putClientProperty(DataManager.CLIENT_PROPERTY_DATA_PROVIDER, (DataProvider)dataId -> {
       if (PlatformDataKeys.HELP_ID.is(dataId)) {
@@ -78,10 +83,17 @@ class ServiceView extends JPanel implements Disposable {
   public void dispose() {
   }
 
-  void selectItem(Object item) {
-    if (myLastSelection == null || !myLastSelection.getValue().equals(item)) {
-      TreeUtil.select(myTree, new NodeSelectionVisitor(item), path -> {});
+  Promise<Void> select(@NotNull Object service, @NotNull Class<?> contributorClass) {
+    if (myLastSelection == null || !myLastSelection.getValue().equals(service)) {
+      AsyncPromise<Void> result = new AsyncPromise<>();
+      myTreeModel.findPath(service, contributorClass)
+        .onError(result::setError)
+        .onSuccess(path -> TreeUtil.promiseSelect(myTree, new PathSelectionVisitor(path))
+          .onError(result::setError)
+          .onSuccess(selectedPath -> result.setResult(null)));
+      return result;
     }
+    return Promises.resolvedPromise();
   }
 
   private void onSelectionChanged() {
@@ -108,20 +120,22 @@ class ServiceView extends JPanel implements Disposable {
     myUi.setDetailsComponent(newDescriptor == null ? null : newDescriptor.getContentComponent());
   }
 
-  private static class NodeSelectionVisitor implements TreeVisitor {
-    private final Object myValue;
+  private static class PathSelectionVisitor implements TreeVisitor {
+    private final Queue<Object> myPath;
 
-    NodeSelectionVisitor(Object value) {
-      myValue = value;
+    PathSelectionVisitor(TreePath path) {
+      myPath = ContainerUtil.newLinkedList(path.getPath());
     }
 
     @NotNull
     @Override
     public Action visit(@NotNull TreePath path) {
       Object node = path.getLastPathComponent();
-      if (node instanceof ServiceViewItem && ((ServiceViewItem)node).getValue().equals(myValue)) return Action.INTERRUPT;
-
-      return Action.CONTINUE;
+      if (node.equals(myPath.peek())) {
+        myPath.poll();
+        return myPath.isEmpty() ? Action.INTERRUPT : Action.CONTINUE;
+      }
+      return Action.SKIP_CHILDREN;
     }
   }
 }
