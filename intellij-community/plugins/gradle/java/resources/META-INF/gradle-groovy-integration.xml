@@ -15,7 +15,6 @@
     <resolve.contributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleArtifactsContributor"/>
     <resolve.contributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleJavaContributor"/>
     <resolve.contributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleMiscContributor"/>
-    <resolve.contributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleExtensionsContributor"/>
     <resolve.contributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleIdeaSettingsContributor"/>
     <pluginDescriptions implementation="org.jetbrains.plugins.gradle.codeInsight.GradlePluginDescriptions"/>
 
@@ -35,9 +34,6 @@
     <annotator language="Groovy" implementationClass="org.jetbrains.plugins.gradle.service.resolve.dsl.GradleDslAnnotator"/>
     <weigher key="completion" implementationClass="org.jetbrains.plugins.gradle.service.resolve.dsl.GradleCompletionWeigher"
              id="gradleWeigher" order="first"/>
-    <completion.contributor language="Groovy" order="first"
-                            implementationClass="org.jetbrains.plugins.gradle.codeInsight.PropertiesTasksCompletionContributor"/>
-
     <localInspection language="Groovy" groupPath="Gradle" shortName="MultipleRepositoryUrls"
                      bundle="i18n.GradleInspectionBundle"
                      key="multiple.repository.urls" groupKey="group.names.probable.bugs" groupBundle="messages.InspectionsBundle" enabledByDefault="true" level="WARNING"
@@ -61,12 +57,12 @@
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleProjectExtensionContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleProjectMembersContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleDependencyHandlerContributor"/>
-    <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleNonCodeMembersContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleScriptContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleSetterAsMethodContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleArtifactHandlerContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleTaskContainerContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleNamedDomainCollectionContributor"/>
+    <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleExtensionsContributor"/>
     <callTypeCalculator implementation="org.jetbrains.plugins.gradle.service.resolve.GradleProjectCallTypeCalculator"/>
     <callTypeCalculator implementation="org.jetbrains.plugins.gradle.service.resolve.GradleArtifactCallTypeCalculator"/>
     <delegatesToProvider implementation="org.jetbrains.plugins.gradle.service.resolve.GradleTaskDeclarationClosureDelegateProvider"/>

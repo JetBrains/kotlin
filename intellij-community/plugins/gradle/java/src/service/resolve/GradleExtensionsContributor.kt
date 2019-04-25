@@ -1,138 +1,47 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.resolve
 
-import com.intellij.codeInsight.javadoc.JavaDocInfoGenerator
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.util.Ref
-import com.intellij.patterns.ElementPattern
-import com.intellij.patterns.PatternCondition
-import com.intellij.patterns.PsiJavaPatterns.psiElement
-import com.intellij.psi.CommonClassNames.*
-import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import com.intellij.psi.ResolveState
-import com.intellij.psi.scope.ElementClassHint
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.util.ProcessingContext
-import groovy.lang.Closure
-import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.*
+import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_PROJECT
 import org.jetbrains.plugins.gradle.settings.GradleExtensionsSettings
-import org.jetbrains.plugins.gradle.settings.GradleExtensionsSettings.*
-import org.jetbrains.plugins.groovy.dsl.holders.NonCodeMembersHolder.DOCUMENTATION
-import org.jetbrains.plugins.groovy.lang.parser.GroovyElementTypes.COMPOSITE_LSHIFT_SIGN
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.*
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
-import org.jetbrains.plugins.groovy.lang.psi.impl.GroovyPsiManager
-import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.TypesUtil
-import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.path.GrMethodCallExpressionImpl
-import org.jetbrains.plugins.groovy.lang.psi.impl.synthetic.GrLightMethodBuilder
-import org.jetbrains.plugins.groovy.lang.psi.impl.synthetic.GrLightVariable
-import org.jetbrains.plugins.groovy.lang.psi.patterns.GroovyClosurePattern
-import org.jetbrains.plugins.groovy.lang.psi.patterns.GroovyPatterns.groovyBinaryExpression
-import org.jetbrains.plugins.groovy.lang.psi.patterns.groovyClosure
-import org.jetbrains.plugins.groovy.lang.psi.patterns.psiMethod
-import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames.GROOVY_LANG_CLOSURE
-import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil
-import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DELEGATES_TO_TYPE_KEY
-import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DELEGATES_TO_STRATEGY_KEY
-import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DelegatesToInfo
+import org.jetbrains.plugins.gradle.settings.GradleExtensionsSettings.GradleExtensionsData
+import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor
 import org.jetbrains.plugins.groovy.lang.resolve.getName
-import org.jetbrains.plugins.groovy.lang.resolve.shouldProcessMethods
 import org.jetbrains.plugins.groovy.lang.resolve.shouldProcessProperties
 
-/**
- * @author Vladislav.Soroka
- */
-class GradleExtensionsContributor : GradleMethodContextContributor {
+class GradleExtensionsContributor : NonCodeMembersContributor() {
 
-  override fun process(methodCallInfo: MutableList<String>,
-                       processor: PsiScopeProcessor,
-                       state: ResolveState,
-                       place: PsiElement): Boolean {
-    val extensionsData = getExtensionsFor(place) ?: return true
-    val classHint = processor.getHint(ElementClassHint.KEY)
-    val shouldProcessMethods = ResolveUtil.shouldProcessMethods(classHint)
-    val shouldProcessProperties = ResolveUtil.shouldProcessProperties(classHint)
-    val groovyPsiManager = GroovyPsiManager.getInstance(place.project)
-    val resolveScope = place.resolveScope
+  override fun getParentClassName(): String? = GRADLE_API_PROJECT
+
+  override fun processDynamicElements(qualifierType: PsiType,
+                                      aClass: PsiClass?,
+                                      processor: PsiScopeProcessor,
+                                      place: PsiElement,
+                                      state: ResolveState) {
+    if (qualifierType !is GradleProjectAwareType) return
+    if (!processor.shouldProcessProperties()) return
+    val file = place.containingFile
+    val data = getExtensionsFor(file) ?: return
     val name = processor.getName(state)
-
-    if (true) {
-      if (psiElement().withAncestor(2, groovyClosure().with(object : PatternCondition<GrClosableBlock?>("withDelegatesToInfo") {
-        override fun accepts(t: GrClosableBlock, context: ProcessingContext?): Boolean {
-          return getDelegatesToInfo(t) != null
-        }
-      })).accepts(place)) {
-        return true
-      }
-
-      if (name != null && place is GrReferenceExpression && !place.isQualified) {
-        val propExecutionResult = extensionsData.findProperty(name)?.let {
-          if (!shouldProcessMethods && shouldProcessProperties) {
-            val docRef = Ref.create<String>()
-            val variable = object : GrLightVariable(place.manager, name, it.typeFqn, place) {
-              override fun getNavigationElement(): PsiElement {
-                val navigationElement = super.getNavigationElement()
-                navigationElement.putUserData(DOCUMENTATION, docRef.get())
-                return navigationElement
-              }
-            }
-            val doc = getDocumentation(it, variable)
-            docRef.set(doc)
-            place.putUserData(DOCUMENTATION, doc)
-            return processor.execute(variable, state)
-          }
-          else if (shouldProcessMethods && it.typeFqn == GROOVY_LANG_CLOSURE) {
-            val returnClass = groovyPsiManager.createTypeByFQClassName(GROOVY_LANG_CLOSURE, resolveScope) ?: return true
-            val methodBuilder = GrLightMethodBuilder(place.manager, name).apply {
-              returnType = returnClass
-              addOptionalParameter("args", JAVA_LANG_OBJECT)
-            }
-            return processor.execute(methodBuilder, state)
-          }
-          true
-        }
-        if (propExecutionResult != null && propExecutionResult) return false
+    val properties = if (name == null) data.findAllProperties() else listOf(data.findProperty(name) ?: return)
+    for (property in properties) {
+      if (!processor.execute(GradleGroovyProperty(property, file), state)) {
+        return
       }
     }
-
-    return true
   }
 
   companion object {
-
-    fun getExtensionsFor(psiElement: PsiElement): GradleExtensionsSettings.GradleExtensionsData? {
+    fun getExtensionsFor(psiElement: PsiElement): GradleExtensionsData? {
       val project = psiElement.project
       val virtualFile = psiElement.containingFile?.originalFile?.virtualFile ?: return null
       val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(virtualFile)
       return GradleExtensionsSettings.getInstance(project).getExtensionsFor(module) ?: return null
-    }
-
-    fun getDocumentation(gradleProp: GradleProp,
-                         lightVariable: GrLightVariable): String {
-      val buffer = StringBuilder()
-      buffer.append("<PRE>")
-      JavaDocInfoGenerator.generateType(buffer, lightVariable.type, lightVariable, true)
-      buffer.append(" " + gradleProp.name)
-      val hasInitializer = !gradleProp.value.isNullOrBlank()
-      if (hasInitializer) {
-        buffer.append(" = ")
-        val longString = gradleProp.value!!.toString().length > 100
-        if (longString) {
-          buffer.append("<blockquote>")
-        }
-        buffer.append(gradleProp.value)
-        if (longString) {
-          buffer.append("</blockquote>")
-        }
-      }
-      buffer.append("</PRE>")
-      if (hasInitializer) {
-        buffer.append("<br><b>Initial value has been got during last import</b>")
-      }
-      return buffer.toString()
     }
   }
 }
