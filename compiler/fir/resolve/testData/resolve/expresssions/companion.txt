@@ -12,6 +12,9 @@ FILE: companion.kt
             public final fun foo(): R|kotlin/Unit| {
             }
 
+            public final val D: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
         }
 
         public final fun bar(): R|kotlin/Unit| {
@@ -32,6 +35,9 @@ FILE: companion.kt
             public final fun baz(): R|kotlin/Unit| {
             }
 
+            public final val C: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
         }
 
     }
@@ -39,4 +45,7 @@ FILE: companion.kt
         R|/A|.R|/A.Companion.foo|()
         R|/B|.<Inapplicable(WRONG_RECEIVER): [/A.bar]>#()
         R|/B|.R|/B.Companion.baz|()
+        lval x: R|kotlin/String| = R|/A|.R|/A.Companion.D|
+        lval y: R|kotlin/String| = R|/B|.R|/B.Companion.C|
+        lval z: <ERROR TYPE REF: Unresolved name: D> = R|/B|.<Unresolved name: D>#
     }
