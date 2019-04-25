@@ -120,6 +120,8 @@ open class IrModuleSerializer(
                 KotlinIr.IrSymbolKind.STANDALONE_FIELD_SYMBOL
             else
                 KotlinIr.IrSymbolKind.FIELD_SYMBOL
+        is IrPropertySymbol ->
+            KotlinIr.IrSymbolKind.PROPERTY_SYMBOL
         else ->
             TODO("Unexpected symbol kind: $symbol")
     }
@@ -434,13 +436,12 @@ open class IrModuleSerializer(
     private fun serializePropertyReference(callable: IrPropertyReference): KotlinIr.IrPropertyReference {
         val proto = KotlinIr.IrPropertyReference.newBuilder()
             .setMemberAccess(serializeMemberAccessCommon(callable))
+            .setSymbol(serializeIrSymbol(callable.symbol))
         callable.origin?.let { proto.origin = serializeIrStatementOrigin(it) }
         callable.field?.let { proto.field = serializeIrSymbol(it) }
         callable.getter?.let { proto.getter = serializeIrSymbol(it) }
         callable.setter?.let { proto.setter = serializeIrSymbol(it) }
 
-        val property = callable.getter!!.owner.correspondingProperty!!
-        descriptorReferenceSerializer.serializeDescriptorReference(property)?.let { proto.setDescriptorReference(it) }
         return proto.build()
     }
 
@@ -998,8 +999,7 @@ open class IrModuleSerializer(
             .setIsLateinit(property.isLateinit)
             .setIsDelegated(property.isDelegated)
             .setIsExternal(property.isExternal)
-
-        descriptorReferenceSerializer.serializeDescriptorReference(property)?.let { proto.setDescriptorReference(it) }
+            .setSymbol(serializeIrSymbol(property.symbol))
 
         val backingField = property.backingField
         val getter = property.getter

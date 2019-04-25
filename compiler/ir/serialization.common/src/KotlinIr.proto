@@ -127,6 +127,7 @@ enum IrSymbolKind {
   ANONYMOUS_INIT_SYMBOL = 10;
   STANDALONE_FIELD_SYMBOL = 11; // For fields without properties. WrappedFieldDescriptor, rather than WrappedPropertyDescriptor.
   RECEIVER_PARAMETER_SYMBOL = 12; // ReceiverParameterDescriptor rather than ValueParameterDescriptor.
+  PROPERTY_SYMBOL = 13;
 }
 
 message IrSymbolData {
@@ -266,7 +267,7 @@ message IrPropertyReference {
   optional IrSymbol setter = 3;
   optional IrStatementOrigin origin = 4;
   required MemberAccessCommon member_access = 5;
-  optional DescriptorReference descriptor_reference = 6; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+  required IrSymbol symbol = 6;
 }
 
 message IrComposite {
@@ -584,7 +585,7 @@ message IrLocalDelegatedProperty {
 }
 
 message IrProperty {
-  optional DescriptorReference descriptor_reference = 1; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
+  required IrSymbol symbol = 1;
   required String name = 2;
   required Visibility visibility = 3;
   required ModalityKind modality = 4;

@@ -95,7 +95,7 @@ class DeclarationStubGenerator(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original,
             isDelegated = @Suppress("DEPRECATION") descriptor.isDelegated
         ) {
-            deserializer?.findDeserializedDeclaration(descriptor)
+            deserializer?.findDeserializedDeclaration(referenced) as? IrProperty
                 ?: IrLazyProperty(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator, bindingContext)
         }
     }
