@@ -147,7 +147,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         return this?.let {
             FirResolvedTypeRefImpl(
                 session, null, it.constructType(emptyList(), isNullable = false),
-                isMarkedNullable = false, annotations = emptyList()
+                annotations = emptyList()
             )
         } ?: FirErrorTypeRefImpl(session, null, "Symbol not found for $classId")
 
@@ -302,7 +302,6 @@ class KotlinDeserializedJvmSymbolsProvider(
                     session,
                     null,
                     ConeClassTypeImpl(ConeClassLikeLookupTagImpl(outerClassId), emptyArray(), false),
-                    false,
                     emptyList()
                 )
             }

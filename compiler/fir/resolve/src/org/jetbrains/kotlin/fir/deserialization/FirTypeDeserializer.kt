@@ -98,7 +98,7 @@ class FirTypeDeserializer(
             val declaration = symbol.firUnsafe<FirTypeParameterImpl>()
             declaration.apply {
                 proto.upperBoundList.mapTo(bounds) {
-                    FirResolvedTypeRefImpl(session, null, type(it), false, emptyList())
+                    FirResolvedTypeRefImpl(session, null, type(it), emptyList())
                 }
             }
         }

@@ -218,8 +218,7 @@ class JavaSymbolProvider(
                                 this@JavaSymbolProvider.session, null,
                                 firSymbol.constructType(
                                     classTypeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(), false
-                                ),
-                                false, emptyList()
+                                )
                             )
                         ).apply {
                             this.typeParameters += typeParameters

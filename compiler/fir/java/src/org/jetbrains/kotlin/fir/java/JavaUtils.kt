@@ -90,7 +90,7 @@ internal fun JavaClassifierType.toFirResolvedTypeRef(
 ): FirResolvedTypeRef {
     val coneType = this.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false)
     return FirResolvedTypeRefImpl(
-        session, psi = null, type = coneType, isMarkedNullable = false,
+        session, psi = null, type = coneType,
         annotations = annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
     )
 }
@@ -173,7 +173,6 @@ internal fun JavaAnnotation.toFirAnnotationCall(
             session,
             psi = null,
             type = ConeClassTypeImpl(FirClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false),
-            isMarkedNullable = true,
             annotations = emptyList()
         )
     ).apply {
@@ -312,7 +311,7 @@ private fun JavaType.toFirResolvedTypeRef(
     if (this is JavaClassifierType) return toFirResolvedTypeRef(session, javaTypeParameterStack)
     return FirResolvedTypeRefImpl(
         session, psi = null, type = ConeClassErrorType("Unexpected JavaType: $this"),
-        isMarkedNullable = false, annotations = emptyList()
+        annotations = emptyList()
     )
 }
 

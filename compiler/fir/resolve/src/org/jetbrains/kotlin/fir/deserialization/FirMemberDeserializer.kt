@@ -143,7 +143,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 c.session,
                 null,
                 local.typeDeserializer.type(proto.underlyingType(c.typeTable)),
-                false,
                 emptyList() /* TODO */
             )
         ).apply {
@@ -247,9 +246,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 klass.symbol.toLookupTag(),
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(),
                 false
-            ),
-            isMarkedNullable = false,
-            annotations = emptyList()
+            )
         )
 
         return if (isPrimary) {
@@ -310,7 +307,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     private fun ProtoBuf.Type.toTypeRef(context: FirDeserializationContext): FirTypeRef {
         val coneType = context.typeDeserializer.type(this)
         return FirResolvedTypeRefImpl(
-            c.session, null, coneType, coneType.nullability.isNullable,
+            c.session, null, coneType,
             c.annotationDeserializer.loadTypeAnnotations(this)
         )
     }

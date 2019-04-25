@@ -94,8 +94,7 @@ abstract class AbstractAnnotationDeserializer(
             session, null, null,
             symbol?.let {
                 FirResolvedTypeRefImpl(
-                    session, null, it.constructType(emptyList(), isNullable = false),
-                    isMarkedNullable = false, annotations = emptyList()
+                    session, null, it.constructType(emptyList(), isNullable = false)
                 )
             } ?: FirErrorTypeRefImpl(session, null, "Symbol not found for $classId")
         ).apply {
@@ -127,8 +126,7 @@ abstract class AbstractAnnotationDeserializer(
                 arguments += FirClassReferenceExpressionImpl(
                     this@AbstractAnnotationDeserializer.session, null,
                     FirResolvedTypeRefImpl(
-                        this@AbstractAnnotationDeserializer.session, null, referencedType,
-                        isMarkedNullable = false, annotations = emptyList()
+                        this@AbstractAnnotationDeserializer.session, null, referencedType
                     )
                 )
             }

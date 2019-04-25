@@ -70,7 +70,7 @@ fun FirTypeRef.resolvedTypeFromPrototype(
     type: ConeKotlinType
 ): FirResolvedTypeRef {
     return FirResolvedTypeRefImpl(
-        session, psi, type, false, annotations
+        session, psi, type, annotations
     )
 }
 

@@ -56,7 +56,7 @@ class FirCallCompleterTransformer(
                             session,
                             argument?.psi,
                             Variance.INVARIANT,
-                            FirResolvedTypeRefImpl(session, null, type, false, emptyList())
+                            FirResolvedTypeRefImpl(session, null, type, emptyList())
                         )
                     }
                 }

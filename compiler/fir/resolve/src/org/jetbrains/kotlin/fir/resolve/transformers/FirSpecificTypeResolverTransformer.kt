@@ -48,7 +48,6 @@ class FirSpecificTypeResolverTransformer(
             session,
             typeRef.psi,
             resolvedType,
-            false,
             typeRef.annotations
         ).compose()
     }

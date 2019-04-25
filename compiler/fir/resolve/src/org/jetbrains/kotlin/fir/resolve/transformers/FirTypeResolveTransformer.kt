@@ -59,6 +59,13 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
         }
     }
 
+    override fun transformConstructor(constructor: FirConstructor, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        return withScopeCleanup {
+            constructor.addTypeParametersScope()
+            super.transformConstructor(constructor, data)
+        }
+    }
+
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup {
             typeAlias.addTypeParametersScope()

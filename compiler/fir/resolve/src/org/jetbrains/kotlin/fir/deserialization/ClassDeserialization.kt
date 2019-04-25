@@ -64,7 +64,7 @@ fun deserializeClassToSymbol(
 
         superTypesDeserialized.mapNotNullTo(superTypeRefs) {
             if (it == null) return@mapNotNullTo null
-            FirResolvedTypeRefImpl(session, null, it, false, emptyList())
+            FirResolvedTypeRefImpl(session, null, it)
         }
 
         addDeclarations(classProto.functionList.map(classDeserializer::loadFunction))

@@ -120,8 +120,7 @@ fun FirTypeRef.withReplacedConeType(session: FirSession, newType: ConeKotlinType
 
     return FirResolvedTypeRefImpl(
         session, psi, newType,
-        isMarkedNullable,
-        annotations
+        annotations = annotations
     )
 
 }

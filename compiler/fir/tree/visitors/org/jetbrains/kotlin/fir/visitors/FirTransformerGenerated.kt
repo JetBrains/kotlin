@@ -360,6 +360,18 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformTypeRef(implicitTypeRef, data)
     }
 
+    open fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
+        return transformTypeRef(resolvedTypeRef, data)
+    }
+
+    open fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
+        return transformResolvedTypeRef(errorTypeRef, data)
+    }
+
+    open fun transformResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
+        return transformResolvedTypeRef(resolvedFunctionTypeRef, data)
+    }
+
     open fun transformTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): CompositeTransformResult<FirTypeRef> {
         return transformTypeRef(typeRefWithNullability, data)
     }
@@ -370,18 +382,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
         return transformTypeRefWithNullability(functionTypeRef, data)
-    }
-
-    open fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRefWithNullability(resolvedTypeRef, data)
-    }
-
-    open fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
-        return transformResolvedTypeRef(errorTypeRef, data)
-    }
-
-    open fun transformResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
-        return transformResolvedTypeRef(resolvedFunctionTypeRef, data)
     }
 
     open fun transformUserTypeRef(userTypeRef: FirUserTypeRef, data: D): CompositeTransformResult<FirTypeRef> {

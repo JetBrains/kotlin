@@ -360,6 +360,18 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitTypeRef(implicitTypeRef, null)
     }
 
+    open fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+        visitTypeRef(resolvedTypeRef, null)
+    }
+
+    open fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
+        visitResolvedTypeRef(errorTypeRef, null)
+    }
+
+    open fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef) {
+        visitResolvedTypeRef(resolvedFunctionTypeRef, null)
+    }
+
     open fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability) {
         visitTypeRef(typeRefWithNullability, null)
     }
@@ -370,18 +382,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef) {
         visitTypeRefWithNullability(functionTypeRef, null)
-    }
-
-    open fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        visitTypeRefWithNullability(resolvedTypeRef, null)
-    }
-
-    open fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
-        visitResolvedTypeRef(errorTypeRef, null)
-    }
-
-    open fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef) {
-        visitResolvedTypeRef(resolvedFunctionTypeRef, null)
     }
 
     open fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {

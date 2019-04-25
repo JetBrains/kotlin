@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirResolvedTypeRef : FirTypeRefWithNullability {
+interface FirResolvedTypeRef : FirTypeRef {
     val type: ConeKotlinType
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
