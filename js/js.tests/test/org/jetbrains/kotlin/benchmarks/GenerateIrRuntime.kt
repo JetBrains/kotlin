@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.junit.Test
@@ -59,7 +60,7 @@ class GenerateIrRuntime {
                 LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
             ),
             analysisFlags = mapOf(
-                AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
+                AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental", "kotlin.ExperimentalMultiplatform"),
                 AnalysisFlags.allowResultReturnType to true
             )
         )
@@ -81,13 +82,17 @@ class GenerateIrRuntime {
     private val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
 
 
+    private fun isCommonSource(path: String) = listOf("common", "src", "unsigned").map {
+        "fullRuntime/src/libraries/stdlib/$it"
+    }.any { path.contains(it) }
+
     fun createPsiFile(fileName: String): KtFile {
         val psiManager = PsiManager.getInstance(environment.project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
         val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
 
-        return psiManager.findFile(file) as KtFile
+        return (psiManager.findFile(file) as KtFile).apply { isCommonSource = isCommonSource(fileName) }
     }
 
     private fun File.listAllFiles(): List<File> {
@@ -102,7 +107,7 @@ class GenerateIrRuntime {
 
     @Test
     fun runFullPipeline() {
-        repeat(1) {
+        repeat(20) {
             compile(fullRuntimeSourceSet)
         }
     }
@@ -139,7 +144,7 @@ class GenerateIrRuntime {
         val analysisResult = doFrontEnd(files)
         val rawModuleFragment = doPsi2Ir(files, analysisResult)
 
-        repeat(20) {
+        repeat(30) {
             doSerializeModule(rawModuleFragment, analysisResult.bindingContext)
         }
     }

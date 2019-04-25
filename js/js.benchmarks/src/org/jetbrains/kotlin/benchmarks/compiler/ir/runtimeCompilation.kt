@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.openjdk.jmh.annotations.*
@@ -68,7 +69,11 @@ open class GenerateIrRuntime {
                     LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
                 ),
                 analysisFlags = mapOf(
-                    AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
+                    AnalysisFlags.useExperimental to listOf(
+                        "kotlin.contracts.ExperimentalContracts",
+                        "kotlin.Experimental",
+                        "kotlin.ExperimentalMultiplatform"
+                    ),
                     AnalysisFlags.allowResultReturnType to true
                 )
             )
@@ -91,13 +96,19 @@ open class GenerateIrRuntime {
         private val languageVersionSettings = configuration.languageVersionSettings
         private val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
 
+        private val commonSourceDirectories = listOf("common", "src", "unsigned").map {
+            "fullRuntime/src/libraries/stdlib/$it"
+        }
+
+        private fun isCommonSource(path: String) = commonSourceDirectories.any { path.contains(it) }
+
         private fun createPsiFile(fileName: String): KtFile {
             val psiManager = PsiManager.getInstance(project)
             val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
             val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
 
-            return psiManager.findFile(file) as KtFile
+            return (psiManager.findFile(file) as KtFile).apply { isCommonSource = isCommonSource(fileName) }
         }
 
         private fun File.listAllFiles(): List<File> {
