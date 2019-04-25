@@ -125,6 +125,9 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
       "task mid13([description: 'hi'], { <caret> })",
       "task emid12([:]) { <caret> }",
       "task emid13([:], { <caret> })",
+      "tasks.create(name: 'cid1') { <caret> }",
+      "tasks.create([name: 'mcid1']) { <caret> }",
+      "tasks.create('eid1') { <caret> }",
     ]
     List<Throwable> exceptions = new SmartList<>()
     for (entry in data) {
@@ -151,6 +154,9 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
       "task id13(type: String, { <caret> })",
       "task mid12([type: String]) { <caret> }",
       "task mid13([type: String], { <caret> })",
+      "tasks.create(name: 'cid1', type: String) { <caret> }",
+      "tasks.create([name: 'mcid1', type: String]) { <caret> }",
+      "tasks.create('eid1', String) { <caret> }",
     ]
     List<Throwable> exceptions = new SmartList<>()
     for (entry in data) {
