@@ -20,6 +20,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FilePathReferenceProvider
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getContentRange
 import org.jetbrains.kotlin.psi.psiUtil.isPlain
 import org.jetbrains.kotlin.psi.psiUtil.plainContent
 
-class KotlinFilePathReferenceContributor : AbstractKotlinReferenceContributor() {
+class KotlinFilePathReferenceContributor : PsiReferenceContributor() {
     object KotlinFilePathReferenceProvider : FilePathReferenceProvider() {
         override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
             if (element !is KtStringTemplateExpression) return PsiReference.EMPTY_ARRAY
