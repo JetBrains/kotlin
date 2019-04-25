@@ -849,7 +849,13 @@ fun addTypeArgumentsIfNeeded(expression: KtExpression, typeArgumentList: KtTypeA
     val callElement = call.callElement as? KtCallExpression ?: return
     if (call.typeArgumentList != null) return
     val callee = call.calleeExpression ?: return
-    if (context.diagnostics.forElement(callee).all { it.factory != Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER }) return
+    if (context.diagnostics.forElement(callee).all {
+            it.factory != Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER &&
+                    it.factory != Errors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER
+        }
+    ) {
+        return
+    }
 
     callElement.addAfter(typeArgumentList, callElement.calleeExpression)
     ShortenReferences.DEFAULT.process(callElement.typeArgumentList!!)
