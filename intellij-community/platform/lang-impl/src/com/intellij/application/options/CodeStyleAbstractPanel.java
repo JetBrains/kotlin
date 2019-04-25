@@ -63,7 +63,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
 
   private final List<TextRange>       myPreviewRangesToHighlight = new ArrayList<>();
 
-  private final Editor myEditor;
+  private final EditorEx myEditor;
   private final CodeStyleSettings mySettings;
   private boolean myShouldUpdatePreview;
   protected static final int[] ourWrappings =
@@ -133,7 +133,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
   }
 
   @Nullable
-  private Editor createEditor() {
+  private EditorEx createEditor() {
     if (StringUtil.isEmpty(getPreviewText())) return null;
     EditorFactory editorFactory = EditorFactory.getInstance();
     Document editorDocument = editorFactory.createDocument("");
@@ -166,7 +166,6 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
       return;
     }
 
-    Project project = ProjectUtil.guessCurrentProject(getPanel());
     if (myEditor.isDisposed()) return;
 
     if (myLastDocumentModificationStamp != myEditor.getDocument().getModificationStamp()) {
@@ -176,8 +175,19 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
       myTextToReformat = StringUtil.convertLineSeparators(ObjectUtils.notNull(getPreviewText(), ""));
     }
 
+    updateEditorState(true);
+  }
+
+  protected void setEditorText(@NotNull String text, boolean updateHighlighter) {
+    myTextToReformat = StringUtil.convertLineSeparators(text);
+    if (updateHighlighter) updatePreviewHighlighter(myEditor);
+    updateEditorState(false);
+  }
+
+  private void updateEditorState(boolean collectChanges) {
     int currOffs = myEditor.getScrollingModel().getVerticalScrollOffset();
-    CommandProcessor.getInstance().executeCommand(project, () -> replaceText(project), null, null);
+    Project project = ProjectUtil.guessCurrentProject(getPanel());
+    CommandProcessor.getInstance().executeCommand(project, () -> replaceText(project, collectChanges), null, null);
 
     myEditor.getSettings().setRightMargin(getAdjustedRightMargin());
     myLastDocumentModificationStamp = myEditor.getDocument().getModificationStamp();
@@ -191,11 +201,11 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
 
   protected abstract int getRightMargin();
 
-  private void replaceText(final Project project) {
+  private void replaceText(final Project project, boolean collectChanges) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
         Document beforeReformat = null;
-        if (myEditor.getDocument().getTextLength() > 0) {
+        if (collectChanges && myEditor.getDocument().getTextLength() > 0) {
           beforeReformat = collectChangesBeforeCurrentSettingsAppliance(project);
         }
 
