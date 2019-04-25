@@ -3,26 +3,26 @@ FILE: unary.kt
         lvar x: <implicit> = Int(0)
         lval x1: <implicit> =  {
             lval <unary>: <implicit> = x#
-            x# = <unary>#.inc#()
-            <unary>#
+            x# = R|<local>/<unary>|.inc#()
+            R|<local>/<unary>|
         }
 
         lval x2: <implicit> =  {
             lval <unary>: <implicit> = x#
-            x# = <unary>#.inc#()
+            x# = R|<local>/<unary>|.inc#()
             x#
         }
 
         lval x3: <implicit> =  {
             lval <unary>: <implicit> = x#
-            x# = <unary>#.dec#()
+            x# = R|<local>/<unary>|.dec#()
             x#
         }
 
         lval x4: <implicit> =  {
             lval <unary>: <implicit> = x#
-            x# = <unary>#.dec#()
-            <unary>#
+            x# = R|<local>/<unary>|.dec#()
+            R|<local>/<unary>|
         }
 
         when () {
@@ -46,30 +46,30 @@ FILE: unary.kt
     public? final? fun test2(x: X): kotlin/Unit {
         lval x1: <implicit> =  {
             lval <unary>: <implicit> = x#.i#
-            x#.i# = <unary>#.inc#()
-            <unary>#
+            x#.i# = R|<local>/<unary>|.inc#()
+            R|<local>/<unary>|
         }
 
         lval x2: <implicit> =  {
             lval <unary>: <implicit> = x#.i#
-            lval <unary-result>: <implicit> = <unary>#.inc#()
-            x#.i# = <unary-result>#
-            <unary-result>#
+            lval <unary-result>: <implicit> = R|<local>/<unary>|.inc#()
+            x#.i# = R|<local>/<unary-result>|
+            R|<local>/<unary-result>|
         }
 
     }
     public? final? fun test3(arr: Array<Int>): kotlin/Unit {
         lval x1: <implicit> =  {
             lval <unary>: <implicit> = arr#.get#(Int(0))
-            arr#.set#(Int(0), <unary>#.inc#())
-            <unary>#
+            arr#.set#(Int(0), R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
         }
 
         lval x2: <implicit> =  {
             lval <unary>: <implicit> = arr#.get#(Int(1))
-            lval <unary-result>: <implicit> = <unary>#.inc#()
-            arr#.set#(Int(1), <unary-result>#)
-            <unary-result>#
+            lval <unary-result>: <implicit> = R|<local>/<unary>|.inc#()
+            arr#.set#(Int(1), R|<local>/<unary-result>|)
+            R|<local>/<unary-result>|
         }
 
     }
@@ -85,15 +85,15 @@ FILE: unary.kt
     public? final? fun test4(y: Y): kotlin/Unit {
         lval x1: <implicit> =  {
             lval <unary>: <implicit> = y#.arr#.get#(Int(0))
-            y#.arr#.set#(Int(0), <unary>#.inc#())
-            <unary>#
+            y#.arr#.set#(Int(0), R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
         }
 
         lval x2: <implicit> =  {
             lval <unary>: <implicit> = y#.arr#.get#(Int(1))
-            lval <unary-result>: <implicit> = <unary>#.inc#()
-            y#.arr#.set#(Int(1), <unary-result>#)
-            <unary-result>#
+            lval <unary-result>: <implicit> = R|<local>/<unary>|.inc#()
+            y#.arr#.set#(Int(1), R|<local>/<unary-result>|)
+            R|<local>/<unary-result>|
         }
 
     }

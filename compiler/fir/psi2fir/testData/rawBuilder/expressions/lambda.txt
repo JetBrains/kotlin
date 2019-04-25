@@ -30,8 +30,8 @@ FILE: lambda.kt
         }
 
         use#(<L> = use@fun <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> {
-            lval x: <implicit> = <destruct>#.component1()
-            lval y: <implicit> = <destruct>#.component2()
+            lval x: <implicit> = R|<local>/<destruct>|.component1()
+            lval y: <implicit> = R|<local>/<destruct>|.component2()
             x#.plus#(y#)
         }
         )

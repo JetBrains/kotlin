@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -196,7 +197,7 @@ internal fun FirExpression.generateNotNullOrOther(
         )
         branches += FirWhenBranchImpl(
             session, other.psi, FirElseIfTrueCondition(session, psi),
-            FirSingleExpressionBlock(session, generateAccessExpression(session, psi, subjectName))
+            FirSingleExpressionBlock(session, generateResolvedAccessExpression(session, psi, subjectVariable))
         )
     }
 }
@@ -343,6 +344,31 @@ internal fun FirExpression.generateContainsOperation(
     }
 }
 
+
+/**
+ * given:
+ * argument++
+ *
+ * result:
+ * {
+ *     val <unary> = argument
+ *     argument = <unary>.inc()
+ *     ^<unary>
+ * }
+ *
+ * given:
+ * ++argument
+ *
+ * result:
+ * {
+ *     val <unary> = argument
+ *     argument = <unary>.inc()
+ *     ^argument
+ * }
+ *
+ */
+
+// TODO: Refactor, support receiver capturing in case of a.b
 internal fun generateIncrementOrDecrementBlock(
     session: FirSession,
     baseExpression: KtUnaryExpression,
@@ -356,17 +382,18 @@ internal fun generateIncrementOrDecrementBlock(
     }
     return FirBlockImpl(session, baseExpression).apply {
         val tempName = Name.special("<unary>")
-        statements += generateTemporaryVariable(session, baseExpression, tempName, argument.convert())
+        val temporaryVariable = generateTemporaryVariable(session, baseExpression, tempName, argument.convert())
+        statements += temporaryVariable
         val resultName = Name.special("<unary-result>")
         val resultInitializer = FirFunctionCallImpl(session, baseExpression).apply {
             this.calleeReference = FirSimpleNamedReference(session, baseExpression.operationReference, callName)
-            this.explicitReceiver = generateAccessExpression(session, baseExpression, tempName)
+            this.explicitReceiver = generateResolvedAccessExpression(session, baseExpression, temporaryVariable)
         }
         val resultVar = generateTemporaryVariable(session, baseExpression, resultName, resultInitializer)
         val assignment = argument.generateAssignment(
             session, baseExpression,
             if (prefix && argument !is KtSimpleNameExpression)
-                generateAccessExpression(session, baseExpression, resultName)
+                generateResolvedAccessExpression(session, baseExpression, resultVar)
             else
                 resultInitializer,
             FirOperation.ASSIGN, convert
@@ -384,14 +411,14 @@ internal fun generateIncrementOrDecrementBlock(
             if (argument !is KtSimpleNameExpression) {
                 statements += resultVar
                 appendAssignment()
-                statements += generateAccessExpression(session, baseExpression, resultName)
+                statements += generateResolvedAccessExpression(session, baseExpression, resultVar)
             } else {
                 appendAssignment()
                 statements += generateAccessExpression(session, baseExpression, argument.getReferencedNameAsName())
             }
         } else {
             appendAssignment()
-            statements += generateAccessExpression(session, baseExpression, tempName)
+            statements += generateResolvedAccessExpression(session, baseExpression, temporaryVariable)
         }
     }
 }
@@ -399,6 +426,11 @@ internal fun generateIncrementOrDecrementBlock(
 internal fun generateAccessExpression(session: FirSession, psi: PsiElement?, name: Name): FirQualifiedAccessExpression =
     FirQualifiedAccessExpressionImpl(session, psi).apply {
         calleeReference = FirSimpleNamedReference(session, psi, name)
+    }
+
+internal fun generateResolvedAccessExpression(session: FirSession, psi: PsiElement?, variable: FirVariable): FirQualifiedAccessExpression =
+    FirQualifiedAccessExpressionImpl(session, psi).apply {
+        calleeReference = FirResolvedCallableReferenceImpl(session, psi, variable.name, variable.symbol)
     }
 
 internal fun generateDestructuringBlock(
@@ -418,7 +450,7 @@ internal fun generateDestructuringBlock(
             statements += FirVariableImpl(
                 session, entry, entry.nameAsSafeName,
                 entry.typeReference.toFirOrImplicitTypeRef(), isVar,
-                FirComponentCallImpl(session, entry, index + 1, generateAccessExpression(session, entry, container.name)),
+                FirComponentCallImpl(session, entry, index + 1, generateResolvedAccessExpression(session, entry, container)),
                 FirVariableSymbol(entry.nameAsSafeName) // TODO?
             ).apply {
                 entry.extractAnnotationsTo(this)

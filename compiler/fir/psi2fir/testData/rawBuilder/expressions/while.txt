@@ -3,13 +3,13 @@ FILE: while.kt
         lvar k: <implicit> = Int(0)
         some@while(<(k#, limit#)) {
             lval <unary>: <implicit> = k#
-            k# = <unary>#.inc#()
-            <unary>#
+            k# = R|<local>/<unary>|.inc#()
+            R|<local>/<unary>|
             println#(k#)
             while(==(k#, Int(13))) {
                 lval <unary>: <implicit> = k#
-                k# = <unary>#.inc#()
-                <unary>#
+                k# = R|<local>/<unary>|.inc#()
+                R|<local>/<unary>|
                 when () {
                     <(k#, limit#) ->  {
                         break@@@[<(k#, limit#)]
@@ -35,8 +35,8 @@ FILE: while.kt
         lvar k: <implicit> = limit#
         do {
             lval <unary>: <implicit> = k#
-            k# = <unary>#.dec#()
-            <unary>#
+            k# = R|<local>/<unary>|.dec#()
+            R|<local>/<unary>|
             println#(k#)
         }
         while(>=(k#, Int(0)))

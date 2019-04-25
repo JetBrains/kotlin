@@ -1,25 +1,25 @@
 FILE: for.kt
     public? final? fun foo(): kotlin/Unit {
         lval <range>: <implicit> = Int(1).rangeTo#(Int(10))
-        lval <iterator>: <implicit> = <range>#.iterator#()
-        while(<iterator>#.hasNext#()) {
-            lval i: <implicit> = <iterator>#.next#()
+        lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
+        while(R|<local>/<iterator>|.hasNext#()) {
+            lval i: <implicit> = R|<local>/<iterator>|.next#()
             println#(i#)
         }
 
     }
     public? final? fun bar(list: List<String>): kotlin/Unit {
         lval <range>: <implicit> = list#.subList#(Int(0), Int(10))
-        lval <iterator>: <implicit> = <range>#.iterator#()
-        while(<iterator>#.hasNext#()) {
-            lval element: <implicit> = <iterator>#.next#()
+        lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
+        while(R|<local>/<iterator>|.hasNext#()) {
+            lval element: <implicit> = R|<local>/<iterator>|.next#()
             println#(element#)
         }
 
         lval <range>: <implicit> = list#.subList#(Int(10), Int(20))
-        lval <iterator>: <implicit> = <range>#.iterator#()
-        while(<iterator>#.hasNext#()) {
-            lval element: <implicit> = <iterator>#.next#()
+        lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
+        while(R|<local>/<iterator>|.hasNext#()) {
+            lval element: <implicit> = R|<local>/<iterator>|.next#()
             println#(element#)
         }
 
@@ -46,11 +46,11 @@ FILE: for.kt
     }
     public? final? fun baz(set: Set<Some>): kotlin/Unit {
         lval <range>: <implicit> = set#
-        lval <iterator>: <implicit> = <range>#.iterator#()
-        while(<iterator>#.hasNext#()) {
-            lval <destruct>: <implicit> = <iterator>#.next#()
-            lval x: <implicit> = <destruct>#.component1()
-            lval y: <implicit> = <destruct>#.component2()
+        lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
+        while(R|<local>/<iterator>|.hasNext#()) {
+            lval <destruct>: <implicit> = R|<local>/<iterator>|.next#()
+            lval x: <implicit> = R|<local>/<destruct>|.component1()
+            lval y: <implicit> = R|<local>/<destruct>|.component2()
             println#(<strcat>(String(x = ), x#, String( y = ), y#))
         }
 

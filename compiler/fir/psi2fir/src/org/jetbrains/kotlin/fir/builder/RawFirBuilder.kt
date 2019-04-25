@@ -1091,21 +1091,22 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             val rangeExpression = expression.loopRange.toFirExpression("No range in for loop")
             val parameter = expression.loopParameter
             return FirBlockImpl(session, expression).apply {
-                val rangeName = Name.special("<range>")
-                statements += generateTemporaryVariable(this@RawFirBuilder.session, expression.loopRange, rangeName, rangeExpression)
-                val iteratorName = Name.special("<iterator>")
-                statements += generateTemporaryVariable(
-                    this@RawFirBuilder.session, expression.loopRange, iteratorName,
+                val rangeVal =
+                    generateTemporaryVariable(this@RawFirBuilder.session, expression.loopRange, Name.special("<range>"), rangeExpression)
+                statements += rangeVal
+                val iteratorVal = generateTemporaryVariable(
+                    this@RawFirBuilder.session, expression.loopRange, Name.special("<iterator>"),
                     FirFunctionCallImpl(this@RawFirBuilder.session, expression).apply {
                         calleeReference = FirSimpleNamedReference(this@RawFirBuilder.session, expression, Name.identifier("iterator"))
-                        explicitReceiver = generateAccessExpression(this@RawFirBuilder.session, expression.loopRange, rangeName)
+                        explicitReceiver = generateResolvedAccessExpression(this@RawFirBuilder.session, expression.loopRange, rangeVal)
                     }
                 )
+                statements += iteratorVal
                 statements += FirWhileLoopImpl(
                     this@RawFirBuilder.session, expression,
                     FirFunctionCallImpl(this@RawFirBuilder.session, expression).apply {
                         calleeReference = FirSimpleNamedReference(this@RawFirBuilder.session, expression, Name.identifier("hasNext"))
-                        explicitReceiver = generateAccessExpression(this@RawFirBuilder.session, expression, iteratorName)
+                        explicitReceiver = generateResolvedAccessExpression(this@RawFirBuilder.session, expression, iteratorVal)
                     }
                 ).configure {
                     // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
@@ -1121,7 +1122,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                             if (multiDeclaration != null) Name.special("<destruct>") else parameter.nameAsSafeName,
                             FirFunctionCallImpl(this@RawFirBuilder.session, expression).apply {
                                 calleeReference = FirSimpleNamedReference(this@RawFirBuilder.session, expression, Name.identifier("next"))
-                                explicitReceiver = generateAccessExpression(this@RawFirBuilder.session, expression, iteratorName)
+                                explicitReceiver = generateResolvedAccessExpression(this@RawFirBuilder.session, expression, iteratorVal)
                             }
                         )
                         if (multiDeclaration != null) {
