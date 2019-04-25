@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
+import org.jetbrains.kotlin.idea.caches.resolve.util.analyzeControlFlow
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -413,13 +414,7 @@ class ResolveElementCache(
         }
 
         if (bodyResolveMode.doControlFlowAnalysis) {
-            val controlFlowTrace = DelegatingBindingTrace(
-                trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true
-            )
-            ControlFlowInformationProvider(
-                resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
-            ).checkDeclaration()
-            controlFlowTrace.addOwnDataTo(trace, null, false)
+            analyzeControlFlow(resolveSession, resolveElement, trace)
         }
 
         return Pair(trace.bindingContext, statementFilterUsed)

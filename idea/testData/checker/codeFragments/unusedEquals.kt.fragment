@@ -1,0 +1,1 @@
+list.isAny { it == 2 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -33,7 +34,7 @@ import kotlin.test.assertTrue
 abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerTest() {
     override fun doTest(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
-        myFixture.checkHighlighting(true, false, false)
+        checkHighlighting(filePath)
     }
 
     fun doTestWithImport(filePath: String) {
@@ -47,6 +48,22 @@ abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerTest() {
                                  ?: error("Could not resolve descriptor to import: $it")
                 ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
             }
+        }
+
+        checkHighlighting(filePath)
+    }
+
+    private fun checkHighlighting(filePath: String) {
+        val inspectionName = InTextDirectivesUtils.findStringWithPrefixes(File(filePath).readText(), "// INSPECTION_CLASS: ")
+        if (inspectionName != null) {
+            val inspection = Class.forName(inspectionName).newInstance() as InspectionProfileEntry
+            myFixture.enableInspections(inspection)
+            try {
+                myFixture.checkHighlighting(true, false, false)
+            } finally {
+                myFixture.disableInspections(inspection)
+            }
+            return
         }
 
         myFixture.checkHighlighting(true, false, false)

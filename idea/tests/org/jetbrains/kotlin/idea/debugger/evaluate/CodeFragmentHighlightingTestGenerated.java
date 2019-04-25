@@ -141,6 +141,11 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             runTest("idea/testData/checker/codeFragments/startingFromReturn.kt");
         }
 
+        @TestMetadata("unusedEquals.kt")
+        public void testUnusedEquals() throws Exception {
+            runTest("idea/testData/checker/codeFragments/unusedEquals.kt");
+        }
+
         @TestMetadata("withoutBodyFunction.kt")
         public void testWithoutBodyFunction() throws Exception {
             runTest("idea/testData/checker/codeFragments/withoutBodyFunction.kt");

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.caches.resolve.util.analyzeControlFlow
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -27,21 +29,16 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes3
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
-import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScopes
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
-import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import javax.inject.Inject
 
 class CodeFragmentAnalyzer(
     private val resolveSession: ResolveSession,
     private val qualifierResolver: QualifiedExpressionResolver,
-    private val expressionTypingServices: ExpressionTypingServices,
     private val typeResolver: TypeResolver
 ) {
     @set:Inject // component dependency cycle
@@ -58,15 +55,8 @@ class CodeFragmentAnalyzer(
 
         when (val contentElement = codeFragment.getContentElement()) {
             is KtExpression -> {
-                PreliminaryDeclarationVisitor.createForExpression(
-                    contentElement, bindingTrace,
-                    expressionTypingServices.languageVersionSettings
-                )
-
-                expressionTypingServices.getTypeInfo(
-                    scope, contentElement, TypeUtils.NO_EXPECTED_TYPE,
-                    dataFlowInfo, InferenceSession.default, bindingTrace, false
-                )
+                contentElement.analyzeInContext(scope, trace = bindingTrace, dataFlowInfo = dataFlowInfo)
+                analyzeControlFlow(resolveSession, contentElement, bindingTrace)
             }
 
             is KtTypeReference -> {
