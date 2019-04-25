@@ -1,7 +1,14 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
@@ -9,31 +16,42 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal open class KotlinJsCompilationTestsConfigurator(val compilation: KotlinJsCompilation) {
-    private val target get() = compilation.target
-    private val disambiguationClassifier get() = target.disambiguationClassifier
-    private val project get() = target.project
-    private val compileTask get() = compilation.compileKotlinTask
+abstract class KotlinJsInnerTargetConfigurator(val target: KotlinOnlyTarget<KotlinJsCompilation>) {
+    val project get() = target.project
+    private val disambiguationClassifier get() = "browser"
 
-    private fun disambiguate(name: String, includeCompilation: Boolean = false): MutableList<String> {
+    fun configure() {
+        configureTests()
+        configureRun()
+    }
+
+    private fun disambiguate(name: String): MutableList<String> {
         val components = mutableListOf<String>()
 
-        components.addIfNotNull(disambiguationClassifier)
-        if (includeCompilation) components.add(compilation.name)
+        components.addIfNotNull(target.disambiguationClassifier)
+        components.add(disambiguationClassifier)
         components.add(name)
         return components
     }
 
-    private fun disambiguateCamelCased(name: String, includeCompilation: Boolean): String {
-        val components = disambiguate(name, includeCompilation)
+    protected fun disambiguateCamelCased(name: String): String {
+        val components = disambiguate(name)
 
         return components.first() + components.drop(1).joinToString("") { it.capitalize() }
     }
 
-    private val testTaskName: String
-        get() = disambiguateCamelCased("test", false)
+    private fun configureTests() {
+        target.compilations.all { compilation ->
+            if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME) {
+                configureTests(compilation)
+            }
+        }
+    }
 
-    fun configure() {
+    private fun configureTests(compilation: KotlinJsCompilation) {
+        val compileTask = compilation.compileKotlinTask
+        val testTaskName = disambiguateCamelCased("test")
+
         // apply plugin (cannot be done at task instantiation time)
         val nodeJs = NodeJsPlugin.apply(target.project).root
 
@@ -51,6 +69,8 @@ internal open class KotlinJsCompilationTestsConfigurator(val compilation: Kotlin
             testJs.nodeModulesToLoad.add(compileTask.outputFile.name)
 
             testJs.configureConventions()
+
+            project.tasks.maybeCreate("test").dependsOn(testJs)
         }
 
         registerTestTask(testJs)
@@ -64,7 +84,14 @@ internal open class KotlinJsCompilationTestsConfigurator(val compilation: Kotlin
         }
     }
 
-    protected open fun configureDefaultTestFramework(it: KotlinJsTest) {
-        it.useNodeJs { }
+    protected abstract fun configureDefaultTestFramework(it: KotlinJsTest)
+    fun configureRun() {
+        target.compilations.all { compilation ->
+            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+                configureRun(compilation)
+            }
+        }
     }
+
+    protected abstract fun configureRun(compilation: KotlinJsCompilation)
 }

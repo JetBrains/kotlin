@@ -79,8 +79,6 @@ open class NpmProject(
         else NpmProject[parent].findModuleEntry(name)
     }
 
-    open fun configureCompilation(compilation: KotlinJsCompilation) = Unit
-
     override fun toString() = "NpmProject($nodeWorkDir)"
 
     companion object {

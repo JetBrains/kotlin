@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.nodejs
+package org.jetbrains.kotlin.gradle.targets.js
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -15,14 +15,12 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
-class KotlinNodeJsSingleTargetConfigurator(kotlinPluginVersion: String) :
+class KotlinNodeJs(kotlinPluginVersion: String) :
     KotlinJsTargetConfigurator(kotlinPluginVersion) {
 
     override fun configureTarget(target: KotlinOnlyTarget<KotlinJsCompilation>) {
         super.configureTarget(target)
         configureApplication(target)
-
-
     }
 
     private fun configureApplication(target: KotlinOnlyTarget<KotlinJsCompilation>) {

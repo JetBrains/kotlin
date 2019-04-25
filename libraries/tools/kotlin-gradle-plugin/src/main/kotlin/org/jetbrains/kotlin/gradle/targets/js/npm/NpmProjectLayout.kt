@@ -39,15 +39,6 @@ enum class NpmProjectLayout {
             ) {
                 override val compileOutputCopyDest: File?
                     get() = nodeWorkDir
-
-                override fun configureCompilation(compilation: KotlinJsCompilation) {
-//                    val moduleName = compilation.compileKotlinTask.moduleName
-//                    workDir.mkdirs()
-//                    compilation.kotlinOptions.outputFile = workDir.resolve("$moduleName.js").absolutePath
-                }
-
-//                override fun moduleOutput(compilationTask: Kotlin2JsCompile) =
-//                    compilationTask.outputFile
             }
         }
     },

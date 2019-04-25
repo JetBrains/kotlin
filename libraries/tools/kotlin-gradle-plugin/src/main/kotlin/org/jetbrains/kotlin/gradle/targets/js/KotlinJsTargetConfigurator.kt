@@ -28,8 +28,6 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         super.configureCompilations(platformTarget)
 
         platformTarget.compilations.all {
-            platformTarget.project.npmProject.configureCompilation(it)
-
             it.compileKotlinTask.kotlinOptions {
                 moduleKind = "commonjs"
                 sourceMap = true
@@ -37,44 +35,4 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
             }
         }
     }
-
-    override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        target.compilations.all { compilation ->
-            if (isTestCompilation(compilation)) {
-                newTestsConfigurator(compilation).configure()
-            }
-        }
-    }
-
-    internal open fun newTestsConfigurator(compilation: KotlinJsCompilation) =
-        KotlinJsCompilationTestsConfigurator(compilation)
-
-    companion object {
-        internal fun isTestCompilation(it: KotlinJsCompilation) =
-            it.name == KotlinCompilation.TEST_COMPILATION_NAME
-    }
-}
-
-class KotlinJsSingleTargetConfigurator(kotlinPluginVersion: String) :
-    KotlinJsTargetConfigurator(kotlinPluginVersion) {
-
-    override fun configureTarget(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        super.configureTarget(target)
-        configureApplication(target)
-    }
-
-    private fun configureApplication(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        target.compilations.all {
-            if (it.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
-                KotlinWebpack.configure(it)
-            }
-        }
-    }
-
-    override fun newTestsConfigurator(compilation: KotlinJsCompilation) =
-        object : KotlinJsCompilationTestsConfigurator(compilation) {
-            override fun configureDefaultTestFramework(it: KotlinJsTest) {
-                it.useKarma { }
-            }
-        }
 }
