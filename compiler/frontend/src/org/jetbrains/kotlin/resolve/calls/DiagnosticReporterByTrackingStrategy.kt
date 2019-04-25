@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
@@ -86,7 +87,8 @@ class DiagnosticReporterByTrackingStrategy(
     override fun onCallReceiver(callReceiver: SimpleKotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
         when (diagnostic.javaClass) {
             UnsafeCallError::class.java -> {
-                val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isForImplicitInvoke ?: false
+                val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isForImplicitInvoke
+                    ?: callReceiver.receiver.receiverValue.type.isExtensionFunctionType
                 tracingStrategy.unsafeCall(trace, callReceiver.receiver.receiverValue.type, implicitInvokeCheck)
             }
 

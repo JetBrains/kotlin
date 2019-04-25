@@ -524,6 +524,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
         runTest("compiler/testData/diagnostics/tests/ReturnInFunctionWithoutBody.kt");
     }
 
+    @TestMetadata("safeCall.kt")
+    public void testSafeCall() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/safeCall.kt");
+    }
+
     @TestMetadata("SafeCallInvoke.kt")
     public void testSafeCallInvoke() throws Exception {
         runTest("compiler/testData/diagnostics/tests/SafeCallInvoke.kt");

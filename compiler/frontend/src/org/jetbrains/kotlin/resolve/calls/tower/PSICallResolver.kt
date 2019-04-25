@@ -540,10 +540,12 @@ class PSICallResolver(
         resolvedArgumentsInParenthesis.forEach { it.setResultDataFlowInfoIfRelevant(resultDataFlowInfo) }
         astExternalArgument?.setResultDataFlowInfoIfRelevant(resultDataFlowInfo)
 
+        val isForImplicitInvoke = oldCall is CallTransformer.CallForImplicitInvoke
+
         return PSIKotlinCallImpl(
             kotlinCallKind, oldCall, tracingStrategy, resolvedExplicitReceiver, dispatchReceiverForInvoke, name,
             resolvedTypeArguments, resolvedArgumentsInParenthesis, astExternalArgument, context.dataFlowInfo, resultDataFlowInfo,
-            context.dataFlowInfoForArguments
+            context.dataFlowInfoForArguments, isForImplicitInvoke
         )
     }
 
