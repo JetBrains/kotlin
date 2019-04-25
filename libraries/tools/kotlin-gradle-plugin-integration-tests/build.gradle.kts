@@ -42,6 +42,14 @@ dependencies {
     // Workaround for missing transitive import of the common(project `kotlin-test-common`
     // for `kotlin-test-jvm` into the IDE:
     testCompileOnly(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
+
+    // Workaround for IDE import. IDEA cannot resolve kotlin-native-shared included in the
+    // Gradle plugin's fat jar so we declare it here explicitly.
+    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        testCompileOnly(commonDep("org.jetbrains.kotlin:kotlin-native-shared")) {
+            isTransitive = false
+        }
+    }
 }
 
 val jpsIncrementalTestsClass = "**/KotlinGradlePluginJpsParametrizedIT.class"
