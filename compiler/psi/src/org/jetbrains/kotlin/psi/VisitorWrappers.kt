@@ -440,3 +440,12 @@ fun postfixExpressionVisitor(block: (KtPostfixExpression) -> Unit) =
             block(expression)
         }
     }
+
+
+fun classInitializerVisitor(block: (KtClassInitializer) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitClassInitializer(expression: KtClassInitializer) {
+            super.visitClassInitializer(expression)
+            block(expression)
+        }
+    }

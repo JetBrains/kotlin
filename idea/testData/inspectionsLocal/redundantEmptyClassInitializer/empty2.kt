@@ -1,0 +1,5 @@
+object Test {
+    <caret>init {
+        
+    }
+}

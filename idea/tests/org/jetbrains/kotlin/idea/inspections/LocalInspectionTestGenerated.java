@@ -5554,6 +5554,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/redundantEmptyClassInitializer")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantEmptyClassInitializer extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantEmptyClassInitializer() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantEmptyClassInitializer"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("empty.kt")
+        public void testEmpty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantEmptyClassInitializer/empty.kt");
+        }
+
+        @TestMetadata("empty2.kt")
+        public void testEmpty2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantEmptyClassInitializer/empty2.kt");
+        }
+
+        @TestMetadata("notEmpty.kt")
+        public void testNotEmpty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantEmptyClassInitializer/notEmpty.kt");
+        }
+
+        @TestMetadata("notEmpty2.kt")
+        public void testNotEmpty2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantEmptyClassInitializer/notEmpty2.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/redundantEnumConstructorInvocation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
