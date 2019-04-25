@@ -826,7 +826,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             }
             generateTypeParameters(property)
             generateReceiver(property)
-            symbolRef(property.symbol) {
+            symbolAnchor(property.symbol) {
                 simpleName(property.name)
             }
             +": "
@@ -1279,7 +1279,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 keyword("fun ")
                 generateTypeParameters(function)
                 generateReceiver(function)
-                symbolRef(function.symbol) {
+                symbolAnchor(function.symbol) {
                     simpleName(function.name)
                 }
                 +"("
