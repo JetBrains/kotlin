@@ -54,7 +54,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     classModel.preDeclarationBlock.statements += generateInheritanceCode()
                 }
                 is IrSimpleFunction -> {
-                    properties.addIfNotNull(declaration.correspondingProperty)
+                    properties.addIfNotNull(declaration.correspondingPropertySymbol?.owner)
                     generateMemberFunction(declaration)?.let { classBlock.statements += it }
                 }
                 is IrClass -> {

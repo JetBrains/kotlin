@@ -77,10 +77,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
     }
 
     private fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-        val descriptor = symbol.descriptor.original
-        val languageVersionSettings = context.configuration.languageVersionSettings
-        // TODO: Remove these hacks when coroutine intrinsics are fixed.
-        return when {
+//        val descriptor = symbol.descriptor.original
+//        val languageVersionSettings = context.configuration.languageVersionSettings
+//        // TODO: Remove these hacks when coroutine intrinsics are fixed.
+//        return when {
 //            descriptor.isBuiltInIntercepted(languageVersionSettings) ->
 //                error("Continuation.intercepted is not available with release coroutines")
 //
@@ -89,9 +89,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 //
 //            descriptor == context.ir.symbols.coroutineContextGetter ->
 //                context.ir.symbols.konanCoroutineContextGetter.owner
+//
+//            else -> (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
+//        }
 
-            else -> (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
-        }
+        return (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
     }
 
     private val inlineConstructor = FqName("kotlin.native.internal.InlineConstructor")

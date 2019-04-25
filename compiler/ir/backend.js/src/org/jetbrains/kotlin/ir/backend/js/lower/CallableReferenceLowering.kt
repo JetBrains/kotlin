@@ -201,7 +201,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         // }
 
         val arity = propertyReference.type.arity
-        val factoryName = createPropertyFactoryName(getterDeclaration.correspondingProperty!!)
+        val factoryName = createPropertyFactoryName(getterDeclaration.correspondingPropertySymbol!!.owner)
         val factoryFunction = buildFactoryFunction(propertyReference.getter!!.owner, propertyReference, factoryName)
 
         val getterFunction = propertyReference.getter?.let { buildClosureFunction(it.owner, factoryFunction, propertyReference, arity) }!!
@@ -243,7 +243,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
                 putValueArgument(
                     2, JsIrBuilder.buildString(
                         context.irBuiltIns.stringType,
-                        getReferenceName(getterDeclaration.correspondingProperty!!)
+                        getReferenceName(getterDeclaration.correspondingPropertySymbol!!.owner)
                     )
                 )
             }

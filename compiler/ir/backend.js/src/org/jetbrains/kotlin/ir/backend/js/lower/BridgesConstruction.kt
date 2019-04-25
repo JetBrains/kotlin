@@ -80,7 +80,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
                 continue
             }
 
-            if (from.function.correspondingProperty != null && from.function.isEffectivelyExternal()) {
+            if (from.function.correspondingPropertySymbol != null && from.function.isEffectivelyExternal()) {
                 // TODO: Revisit bridges from external properties
                 continue
             }

@@ -150,7 +150,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
             ).also {
                 descriptor.bind(it)
                 it.parent = parent
-                it.correspondingProperty = correspondingProperty
+                it.correspondingPropertySymbol = correspondingPropertySymbol
             }
         }
 
