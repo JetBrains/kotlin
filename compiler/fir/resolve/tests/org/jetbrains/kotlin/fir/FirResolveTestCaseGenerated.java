@@ -94,6 +94,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/NestedSuperType.kt");
     }
 
+    @TestMetadata("recursiveCallOnWhenWithSealedClass.kt")
+    public void testRecursiveCallOnWhenWithSealedClass() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/recursiveCallOnWhenWithSealedClass.kt");
+    }
+
     @TestMetadata("simpleClass.kt")
     public void testSimpleClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/simpleClass.kt");

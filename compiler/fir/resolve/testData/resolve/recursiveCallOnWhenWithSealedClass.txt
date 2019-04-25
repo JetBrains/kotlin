@@ -1,0 +1,42 @@
+FILE: recursiveCallOnWhenWithSealedClass.kt
+    public sealed class Maybe<T> : R|kotlin/Any| {
+        private constructor<T>(): R|Maybe<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class Nope<T> : R|Maybe<T>| {
+            public constructor<T>(reasonForLog: R|kotlin/String|, reasonForUI: R|kotlin/String|): R|Maybe.Nope<T>| {
+                super<R|Maybe<T>|>()
+            }
+
+            public final val reasonForLog: R|kotlin/String| = R|<local>/reasonForLog|
+                public get(): R|kotlin/String|
+
+            public final val reasonForUI: R|kotlin/String| = R|<local>/reasonForUI|
+                public get(): R|kotlin/String|
+
+        }
+
+        public final class Yeah<T> : R|Maybe<T>| {
+            public constructor<T>(meat: R|T|): R|Maybe.Yeah<T>| {
+                super<R|Maybe<T>|>()
+            }
+
+            public final val meat: R|T| = R|<local>/meat|
+                public get(): R|T|
+
+        }
+
+        public final fun unwrap(): R|class error: Unresolved name: meat| {
+            ^unwrap when (this#) {
+                ($subj$ is R|Maybe.Nope|) ->  {
+                    throw R|java/lang/Exception.Exception|(String())
+                }
+                ($subj$ is R|Maybe.Yeah|) ->  {
+                    <Unresolved name: meat>#
+                }
+            }
+
+        }
+
+    }
