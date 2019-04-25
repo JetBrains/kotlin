@@ -11,7 +11,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.r4a.Component
 import com.google.r4a.CompositionContext
+import com.google.r4a.R4a
 import com.google.r4a.composer
+import com.google.r4a.runWithCurrent
 import junit.framework.TestCase
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1844,22 +1846,18 @@ class CompositionTest(val composable: () -> Unit) {
     inner class ActiveTest(val activity: Activity, val cc: CompositionContext) {
 
         fun then(block: (activity: Activity) -> Unit): ActiveTest {
-            val previous = CompositionContext.current
-            CompositionContext.current = cc
-            val composer = composer.composer
-            val scheduler = RuntimeEnvironment.getMasterScheduler()
-            scheduler.pause()
-            try {
+            cc.runWithCurrent {
+                val composer = composer.composer
+                val scheduler = RuntimeEnvironment.getMasterScheduler()
+                scheduler.pause()
                 composer.startRoot()
                 composable()
                 composer.endRoot()
                 composer.applyChanges()
-            } finally {
-                CompositionContext.current = previous
+                cc.scheduleRecompose()
+                scheduler.advanceToLastPostedRunnable()
+                block(activity)
             }
-            cc.scheduleRecompose()
-            scheduler.advanceToLastPostedRunnable()
-            block(activity)
             return this
         }
     }
@@ -1869,8 +1867,7 @@ class CompositionTest(val composable: () -> Unit) {
         val activity = controller.create().get()
         val root = activity.root
         val component = Root(composable)
-        val cc = CompositionContext.create(root.context, root, component, null)
-        cc.context = activity
+        val cc = R4a.createCompositionContext(root.context, root, component, null)
         return ActiveTest(activity, cc).then(block)
     }
 }

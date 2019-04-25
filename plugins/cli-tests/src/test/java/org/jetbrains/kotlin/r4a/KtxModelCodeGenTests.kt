@@ -6,9 +6,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.r4a.Component
-import com.google.r4a.CompositionContext
+import com.google.r4a.FrameManager
+import com.google.r4a.R4a
 import com.google.r4a.composer
-import com.google.r4a.isolated
+import com.google.r4a.runWithCurrent
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,7 +45,7 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
     private var isSetup = false
     private inline fun <T> ensureSetup(crossinline block: () -> T): T {
         if (!isSetup) setUp()
-        return isolated { block() }
+        return FrameManager.isolated { block() }
     }
 
     @Test
@@ -196,7 +197,7 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
               </Observe>
             }
 
-            val president = unframed { PersonC("$PRESIDENT_NAME_1", $PRESIDENT_AGE_1) }
+            val president = FrameManager.unframed { PersonC("$PRESIDENT_NAME_1", $PRESIDENT_AGE_1) }
             """, { mapOf("name" to name, "age" to age) }, """
                president.name = name
                president.age = age
@@ -238,7 +239,7 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
               </Observe>
             }
 
-            val president = framed { PersonD("$PRESIDENT_NAME_1", $PRESIDENT_AGE_1).apply { age = $PRESIDENT_AGE_1 } }
+            val president = FrameManager.framed { PersonD("$PRESIDENT_NAME_1", $PRESIDENT_AGE_1).apply { age = $PRESIDENT_AGE_1 } }
             """, { mapOf("name" to name, "age" to age) }, """
                president.name = name
                president.age = age
@@ -361,18 +362,13 @@ class ModelCompositionTest(val composable: () -> Unit, val advance: () -> Unit) 
         val activity = controller.create().get()
         val root = activity.root
         val component = ModelRoot()
-        val cc = CompositionContext.create(root.context, root, component, null)
-        cc.context = activity
-        val previous = CompositionContext.current
-        CompositionContext.current = cc
-        val composer = composer.composer
-        try {
+        val cc = R4a.createCompositionContext(root.context, root, component, null)
+        cc.runWithCurrent {
+            val composer = composer.composer
             composer.startRoot()
             composable()
             composer.endRoot()
             composer.applyChanges()
-        } finally {
-            CompositionContext.current = previous
         }
         block(activity)
         return ActiveTest(activity).then(block)

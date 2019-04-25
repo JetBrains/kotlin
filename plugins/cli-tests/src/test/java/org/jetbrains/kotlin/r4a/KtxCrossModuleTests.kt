@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.r4a.Component
-import com.google.r4a.CompositionContext
+import com.google.r4a.R4a
 import com.google.r4a.composer
+import com.google.r4a.runWithCurrent
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -522,18 +523,13 @@ class MultiCompositionTest(val composable: () -> Unit, val advance: () -> Unit) 
         val activity = controller.create().get()
         val root = activity.root
         val component = MultiRoot()
-        val cc = CompositionContext.create(root.context, root, component, null)
-        cc.context = activity
-        val previous = CompositionContext.current
-        CompositionContext.current = cc
-        val composer = composer.composer
-        try {
+        val cc = R4a.createCompositionContext(root.context, root, component, null)
+        cc.runWithCurrent {
+            val composer = composer.composer
             composer.startRoot()
             composable()
             composer.endRoot()
             composer.applyChanges()
-        } finally {
-            CompositionContext.current = previous
         }
         block(activity)
         return ActiveTest(activity)
