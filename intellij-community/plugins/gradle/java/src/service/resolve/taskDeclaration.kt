@@ -4,8 +4,7 @@ package org.jetbrains.plugins.gradle.service.resolve
 import com.intellij.psi.CommonClassNames.JAVA_LANG_STRING
 import com.intellij.psi.PsiType
 import groovy.lang.Closure
-import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_PROJECT
-import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_TASK
+import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.*
 import org.jetbrains.plugins.groovy.lang.GroovyExpressionFilter
 import org.jetbrains.plugins.groovy.lang.psi.api.GrFunctionalExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.auxiliary.GrListOrMap
@@ -46,15 +45,24 @@ class GradleTaskDeclarationClosureDelegateProvider : GrDelegatesToProvider {
 
   companion object {
     private val projectTaskMethod = methodCall().resolvesTo(psiMethod(GRADLE_API_PROJECT, "task"))
+    private val taskContainerCreateMethod = methodCall().resolvesTo(psiMethod(GRADLE_API_TASK_CONTAINER, "create"))
   }
 
   override fun getDelegatesToInfo(expression: GrFunctionalExpression): DelegatesToInfo? {
     val methodCall = findCall(expression) ?: return null
-    if (isTaskIdCall(methodCall) || projectTaskMethod.accepts(methodCall)) {
-      val taskType = getFromNamedArgument(methodCall) ?: createType(GRADLE_API_TASK, expression)
-      return DelegatesToInfo(taskType, Closure.DELEGATE_FIRST)
+    val taskType = if (isTaskIdCall(methodCall) || projectTaskMethod.accepts(methodCall)) {
+      getFromNamedArgument(methodCall)
+      ?: createType(GRADLE_API_TASK, expression)
     }
-    return null
+    else if (taskContainerCreateMethod.accepts(methodCall)) {
+      getFromNamedArgument(methodCall)
+      ?: getFromExpressionArgument(methodCall)
+      ?: createType(GRADLE_API_TASK, expression)
+    }
+    else {
+      return null
+    }
+    return DelegatesToInfo(taskType, Closure.DELEGATE_FIRST)
   }
 
   private fun getFromNamedArgument(methodCall: GrMethodCall): PsiType? {
@@ -72,6 +80,11 @@ class GradleTaskDeclarationClosureDelegateProvider : GrDelegatesToProvider {
       return null
     }
     return mapExpression.findNamedArgument("type")
+  }
+
+  private fun getFromExpressionArgument(methodCall: GrMethodCall): PsiType? {
+    val type = methodCall.expressionArguments.getOrNull(1)?.type
+    return unwrapClassType(type)
   }
 }
 
