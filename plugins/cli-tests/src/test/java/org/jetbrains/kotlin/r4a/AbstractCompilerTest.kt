@@ -87,7 +87,7 @@ abstract class AbstractCompilerTest : TestCase() {
         )
     }
 
-    protected fun setupEnvironment(environment: KotlinCoreEnvironment) {
+    protected open fun setupEnvironment(environment: KotlinCoreEnvironment) {
         R4AComponentRegistrar().registerProjectComponents(
             environment.project as MockProject,
             environment.configuration

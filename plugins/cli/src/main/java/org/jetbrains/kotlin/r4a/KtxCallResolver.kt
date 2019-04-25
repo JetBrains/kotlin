@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtLambdaArgument
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -137,15 +138,18 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingFacade
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isNothingOrNullableNothing
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * This class is used to resolve a KTX Element to the corresponding set of calls on the composer, and the individual calls for
@@ -157,6 +161,11 @@ class KtxCallResolver(
     private val project: Project,
     private val composableAnnotationChecker: ComposableAnnotationChecker
 ) {
+    companion object {
+        val resolving: ThreadLocal<AtomicBoolean> = object : ThreadLocal<AtomicBoolean>() {
+            override fun initialValue() = AtomicBoolean()
+        }
+    }
 
     private class TempResolveInfo(
         val valid: Boolean,
@@ -200,15 +209,17 @@ class KtxCallResolver(
     // For android, this should be [View]
     private val emitSimpleUpperBoundTypes = mutableSetOf<KotlinType>()
 
-    private fun KotlinType.isEmittable() = emitSimpleUpperBoundTypes.any { isSubtypeOf(it) }
+    private fun KotlinType.isEmittable() = !isError && !isNothingOrNullableNothing() && emitSimpleUpperBoundTypes.any { isSubtypeOf(it) }
 
     // Set of valid upper bound types that were defined on the composer that can have children.
     // For android, this would be [ViewGroup]
     private val emitCompoundUpperBoundTypes = mutableSetOf<KotlinType>()
 
-    private fun KotlinType.isCompoundEmittable() = emitCompoundUpperBoundTypes.any {
-        isSubtypeOf(it)
-    }
+    private fun KotlinType.isCompoundEmittable() = !isError &&
+            !this.isNothingOrNullableNothing() &&
+            emitCompoundUpperBoundTypes.any {
+                isSubtypeOf(it)
+            }
 
     // The specification for `emit` on a composer allows for the `ctor` parameter to be a function type
     // with any number of parameters. We allow for these parameters to be used as parameters in the
@@ -241,6 +252,7 @@ class KtxCallResolver(
 
     fun initializeFromKtxElement(element: KtxElement, context: ExpressionTypingContext): Boolean {
 
+        val wasResolving = resolving.get().getAndSet(true)
         module = context.scope.ownerDescriptor.module
 
         // we want to report errors on the tag names (open and closing), and not the entire element, since
@@ -252,10 +264,13 @@ class KtxCallResolver(
             element.qualifiedClosingTagName
         )
 
-        return resolveComposer(element, context)
+        val result = resolveComposer(element, context)
+        if(wasResolving) resolving.get().set(false)
+        return result
     }
 
     fun initializeFromCall(call: Call, context: ExpressionTypingContext): Boolean {
+        val wasResolving = resolving.get().getAndSet(true)
 
         val callee = call.calleeExpression ?: error("Expected calleeExpression")
 
@@ -263,7 +278,11 @@ class KtxCallResolver(
 
         tagExpressions = listOf(callee)
 
-        return resolveComposer(callee, context)
+        val result = resolveComposer(callee, context)
+
+        if(wasResolving) resolving.get().set(false)
+
+        return result
     }
 
     /**
@@ -400,6 +419,7 @@ class KtxCallResolver(
         element: KtxElement,
         context: ExpressionTypingContext
     ): ResolvedKtxElementCall {
+        val wasResolving = resolving.get().getAndSet(true)
         mainElement = element
 
         val openTagExpr = element.simpleTagName ?: element.qualifiedTagName
@@ -491,7 +511,7 @@ class KtxCallResolver(
         var traceForOpenClose: BindingTrace = tmpTraceAndCache.trace
         closeTagExpr?.let {
             traceForOpenClose = referenceCopyingTrace(
-                openTagExpr,
+                openTagExpr, 
                 closeTagExpr,
                 tmpTraceAndCache.trace
             )
@@ -547,6 +567,7 @@ class KtxCallResolver(
         // commit, but don't include diagnostics
         tmpTraceAndCache.trace.commit({ _, _ -> true }, false)
 
+        if(wasResolving) resolving.get().set(false)
         return result
     }
 
@@ -554,7 +575,7 @@ class KtxCallResolver(
         call: Call,
         context: ExpressionTypingContext
     ): ResolvedKtxElementCall {
-
+        val wasResolving = resolving.get().getAndSet(true)
         val callee = call.calleeExpression ?: error("Expected calleeExpression")
 
         mainElement = callee
@@ -573,6 +594,7 @@ class KtxCallResolver(
         val attrInfos = mutableMapOf<String, AttributeInfo>()
 
         for (arg in call.valueArguments) {
+            if(arg is KtLambdaArgument) continue;
             val argName = arg.getArgumentName()
 
             if (argName == null) TODO("indexed arguments not yet supported!")
@@ -625,7 +647,7 @@ class KtxCallResolver(
         )
 
         tmpTraceAndCache.commit()
-
+        if(wasResolving) resolving.get().set(false)
         return result
     }
 
@@ -1444,7 +1466,8 @@ class KtxCallResolver(
                 }
             }
 
-            if (returnType.isEmittable()) {
+            var inlineChildren: KtExpression? = null
+            if (returnType.isEmittable() == true) {
 
                 val composerCall = resolveComposerEmit(
                     constructedType = returnType,
@@ -1466,6 +1489,7 @@ class KtxCallResolver(
 
                 if (attributes.contains(CHILDREN_KEY) && returnType.isCompoundEmittable()) {
                     attrsUsedInSets.add(CHILDREN_KEY)
+                    inlineChildren = attributes.get(CHILDREN_KEY)!!.value
                 }
 
                 val updateReceiverScope = composerCall
@@ -1512,7 +1536,8 @@ class KtxCallResolver(
                             ctorCall = resolvedCall,
                             ctorParams = resolvedCall.buildParamsFromAttributes(attributes),
                             validations = setterValidations
-                        )
+                        ),
+                        inlineChildren = inlineChildren
                     )
                 }
             }

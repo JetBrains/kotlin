@@ -74,6 +74,8 @@ public interface R4AErrors {
             SUSPEND_FUNCTION_USED_AS_SFC = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement>
             KTX_IN_NON_COMPOSABLE = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement>
+            COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtElement>
             INVALID_TYPE_SIGNATURE_SFC = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtElement, KtReferenceExpression>
