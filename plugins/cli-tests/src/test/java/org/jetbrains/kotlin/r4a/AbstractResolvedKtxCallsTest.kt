@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.r4a
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtxElement

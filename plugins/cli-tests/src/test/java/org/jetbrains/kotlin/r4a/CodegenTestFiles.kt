@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.r4a
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
-import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtFile
 
 class CodegenTestFiles private constructor(

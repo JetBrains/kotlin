@@ -1,30 +1,30 @@
 package org.jetbrains.kotlin.r4a
 
+import com.intellij.mock.MockProject
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
-import java.io.File
-import java.net.MalformedURLException
-import java.net.URL
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.ClassFileFactory
-import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.jetbrains.kotlin.utils.rethrow
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.com.intellij.mock.MockProject
-import org.jetbrains.kotlin.com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil
-import org.junit.After
-import java.net.URLClassLoader
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.utils.rethrow
+import org.junit.After
+import java.io.File
+import java.net.MalformedURLException
+import java.net.URL
+import java.net.URLClassLoader
 
 private const val KOTLIN_RUNTIME_VERSION = "1.3.11"
 
