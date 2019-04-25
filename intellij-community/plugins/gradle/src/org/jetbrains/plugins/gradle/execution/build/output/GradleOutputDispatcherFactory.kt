@@ -4,6 +4,7 @@ package org.jetbrains.plugins.gradle.execution.build.output
 import com.intellij.build.BuildProgressListener
 import com.intellij.build.events.BuildEvent
 import com.intellij.build.events.StartEvent
+import com.intellij.build.events.impl.OutputBuildEventImpl
 import com.intellij.build.output.BuildOutputInstantReaderImpl
 import com.intellij.build.output.BuildOutputParser
 import com.intellij.build.output.LineProcessor
@@ -27,6 +28,7 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
   private class GradleOutputMessageDispatcher(private val buildId: Any,
                                               private val myBuildProgressListener: BuildProgressListener,
                                               private val parsers: List<BuildOutputParser>) : ExternalSystemOutputMessageDispatcher {
+    override var stdOut: Boolean = true
     private val lineProcessor: LineProcessor
     private val myRootReader: BuildOutputInstantReaderImpl
     private var myCurrentReader: BuildOutputInstantReaderImpl
@@ -57,6 +59,10 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
             myCurrentReader = myRootReader
           }
           myCurrentReader.appendln(cleanLine)
+          if (myCurrentReader != myRootReader) {
+            val parentEventId = myCurrentReader.parentEventId
+            myBuildProgressListener.onEvent(OutputBuildEventImpl(parentEventId, cleanLine + '\n', stdOut))
+          }
         }
       }
     }
