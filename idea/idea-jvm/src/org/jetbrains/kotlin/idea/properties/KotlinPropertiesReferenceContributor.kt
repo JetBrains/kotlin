@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.properties
 
 import com.intellij.patterns.PlatformPatterns
+import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
-import org.jetbrains.kotlin.idea.references.AbstractKotlinReferenceContributor
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
-class KotlinPropertiesReferenceContributor : AbstractKotlinReferenceContributor() {
+class KotlinPropertiesReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         registrar.registerReferenceProvider(
                 PlatformPatterns.psiElement(KtStringTemplateExpression::class.java),
