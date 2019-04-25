@@ -159,7 +159,10 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
             val item = moduleElement.childNodes.item(index)
 
             if (item.nodeName == "classpath") {
-                classpath += File(item.attributes.getNamedItem("path").nodeValue)
+                val path = item.attributes.getNamedItem("path").nodeValue
+                if (path != outputDir) {
+                    classpath += File(path)
+                }
             }
             if (item.nodeName == "javaSourceRoots") {
                 javaSourceRoots += File(item.attributes.getNamedItem("path").nodeValue)
