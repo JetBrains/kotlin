@@ -1716,6 +1716,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/callableReference/subtypeArgumentFromRHSForReference.kt");
             }
 
+            @TestMetadata("typealiases.kt")
+            public void testTypealiases() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/typealiases.kt");
+            }
+
             @TestMetadata("unused.kt")
             public void testUnused() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/unused.kt");

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
@@ -81,7 +82,7 @@ sealed class LHSResult {
         val unboundDetailedReceiver: ReceiverValueWithSmartCastInfo
 
         init {
-            assert(qualifier.descriptor is ClassDescriptor) {
+            assert(qualifier.descriptor is ClassDescriptor || qualifier.descriptor is TypeAliasDescriptor) {
                 "Should be ClassDescriptor: ${qualifier.descriptor}"
             }
 
