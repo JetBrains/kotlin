@@ -48,7 +48,6 @@ class ServiceView extends JPanel implements Disposable {
     project.getMessageBus().connect(this).subscribe(ServiceViewEventListener.TOPIC, myTreeModel::refresh);
     myTree.addTreeSelectionListener(e -> onSelectionChanged());
 
-    myTreeModel.refreshAll();
     state.treeState.applyTo(myTree, myTreeModel.getRoot());
 
     putClientProperty(DataManager.CLIENT_PROPERTY_DATA_PROVIDER, (DataProvider)dataId -> {

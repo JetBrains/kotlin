@@ -3,8 +3,8 @@ package com.intellij.execution.services;
 
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.tree.BaseTreeModel;
-import com.intellij.ui.tree.Searchable;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
@@ -16,16 +16,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
-import org.jetbrains.concurrency.Promises;
 
 import javax.swing.tree.TreePath;
 import java.util.*;
 
-class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSupplier, Searchable {
-  final Project myProject;
-  final Object myRoot = ObjectUtils.sentinel("services root");
-  final Invoker myInvoker = new Invoker.BackgroundThread(this);
-  List<ServiceTreeNode> myRootChildren = null;
+class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSupplier {
+  private final Project myProject;
+  private final Object myRoot = ObjectUtils.sentinel("services root");
+  private final List<ServiceTreeNode> myRootChildren = new ArrayList<>();
+  private boolean myRootInitialized;
+  private final Invoker myInvoker = new Invoker.BackgroundThread(this);
 
   ServiceViewTreeModel(Project project) {
     myProject = project;
@@ -37,12 +37,6 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
     return myInvoker;
   }
 
-  @NotNull
-  @Override
-  public Promise<TreePath> getTreePath(Object object) {
-    return Promises.resolvedPromise(new TreePath(myRoot)); // TODO [konstantin.aleev]
-  }
-
   @Override
   public boolean isLeaf(Object object) {
     return object != myRoot && ((ServiceTreeNode)object).getChildren().isEmpty();
@@ -51,8 +45,10 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
   @Override
   public List<?> getChildren(Object parent) {
     if (parent == myRoot) {
-      if (myRootChildren == null) {
-        myRootChildren = getRootChildren();
+      if (!myRootInitialized) {
+        myRootInitialized = true;
+        myRootChildren.clear();
+        myRootChildren.addAll(getRootChildren());
       }
       return myRootChildren;
     }
@@ -80,8 +76,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
   private void reset(Class<?> contributorClass) {
     int startIndex = -1;
 
-    if (myRootChildren == null) {
-      myRootChildren = new ArrayList<>();
+    if (myRootChildren.isEmpty()) {
       startIndex = 0;
     }
     else {
@@ -135,32 +130,25 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
     treeStructureChanged(new TreePath(myRoot), null, null);
   }
 
-  void refreshAll() {
-    getInvoker().runOrInvokeLater(() -> myRootChildren = null);
-    treeStructureChanged(null, null, null);
-  }
-
   Promise<TreePath> findPath(@NotNull Object service, @NotNull Class<?> contributorClass) {
     AsyncPromise<TreePath> result = new AsyncPromise<>();
     getInvoker().runOrInvokeLater(() -> {
-      if (myRootChildren != null) {
-        ServiceTreeNode serviceNode = JBTreeTraverser.from((Function<ServiceTreeNode, List<ServiceTreeNode>>)node ->
-          contributorClass.isInstance(node.getContributor()) ? node.getChildren() : null)
-          .withRoots(myRootChildren)
-          .traverse(TreeTraversal.PLAIN_BFS)
-          .filter(node -> node.getValue().equals(service))
-          .first();
-        if (serviceNode != null) {
-          List<Object> path = new ArrayList<>();
-          while (serviceNode != null) {
-            path.add(serviceNode);
-            serviceNode = serviceNode.getParent();
-          }
-          path.add(myRoot);
-          Collections.reverse(path);
-          result.setResult(new TreePath(ArrayUtil.toObjectArray(path)));
-          return;
+      ServiceTreeNode serviceNode = JBTreeTraverser.from((Function<ServiceTreeNode, List<ServiceTreeNode>>)node ->
+        contributorClass.isInstance(node.getContributor()) ? node.getChildren() : null)
+        .withRoots(myRootChildren)
+        .traverse(TreeTraversal.PLAIN_BFS)
+        .filter(node -> node.getValue().equals(service))
+        .first();
+      if (serviceNode != null) {
+        List<Object> path = new ArrayList<>();
+        while (serviceNode != null) {
+          path.add(serviceNode);
+          serviceNode = serviceNode.getParent();
         }
+        path.add(myRoot);
+        Collections.reverse(path);
+        result.setResult(new TreePath(ArrayUtil.toObjectArray(path)));
+        return;
       }
 
       result.setError("Service not found");
@@ -176,7 +164,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
     for (T service : contributor.getServices(project)) {
       Object value = service instanceof ServiceViewProvidingContributor ? ((ServiceViewProvidingContributor)service).asService() : service;
       if (value instanceof NodeDescriptor) {
-        ((NodeDescriptor)value).update();
+        AppUIUtil.invokeOnEdt(() -> ((NodeDescriptor)value).update(), project.getDisposed());
       }
 
       if (contributor instanceof ServiceViewGroupingContributor) {
