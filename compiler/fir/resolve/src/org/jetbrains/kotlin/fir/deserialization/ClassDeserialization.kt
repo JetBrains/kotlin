@@ -44,10 +44,14 @@ fun deserializeClassToSymbol(
     ).apply {
 
         val context =
-            parentContext?.childContext(classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable))
-                ?: FirDeserializationContext.createForClass(
-                    classId, classProto, nameResolver, session, FirBuiltinAnnotationDeserializer(session, nameResolver)
-                )
+            parentContext?.childContext(
+                classProto.typeParameterList,
+                nameResolver,
+                TypeTable(classProto.typeTable),
+                classId.relativeClassName
+            ) ?: FirDeserializationContext.createForClass(
+                classId, classProto, nameResolver, session, FirBuiltinAnnotationDeserializer(session, nameResolver)
+            )
         typeParameters += context.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
         annotations += context.annotationDeserializer.loadClassAnnotations(classProto)
 

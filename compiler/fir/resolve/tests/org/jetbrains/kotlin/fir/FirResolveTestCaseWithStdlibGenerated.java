@@ -34,6 +34,11 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
         runTest("compiler/fir/resolve/testData/resolve/stdlib/arrayFirstOrNull.kt");
     }
 
+    @TestMetadata("companionLoad.kt")
+    public void testCompanionLoad() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/companionLoad.kt");
+    }
+
     @TestMetadata("components.kt")
     public void testComponents() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/components.kt");

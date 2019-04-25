@@ -43,7 +43,8 @@ class FirDeserializationContext(
     fun childContext(
         typeParameterProtos: List<ProtoBuf.TypeParameter>,
         nameResolver: NameResolver = this.nameResolver,
-        typeTable: TypeTable = this.typeTable
+        typeTable: TypeTable = this.typeTable,
+        relativeClassName: FqName? = this.relativeClassName
     ): FirDeserializationContext = FirDeserializationContext(
         nameResolver, typeTable, versionRequirementTable, session, packageFqName, relativeClassName,
         FirTypeDeserializer(
