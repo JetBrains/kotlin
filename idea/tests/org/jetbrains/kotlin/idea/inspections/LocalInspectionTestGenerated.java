@@ -10332,6 +10332,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/hasAnnotation.kt");
             }
 
+            @TestMetadata("hasSameNameVariable.kt")
+            public void testHasSameNameVariable() throws Exception {
+                runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/hasSameNameVariable.kt");
+            }
+
+            @TestMetadata("hasSameNameVariable2.kt")
+            public void testHasSameNameVariable2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/hasSameNameVariable2.kt");
+            }
+
+            @TestMetadata("hasSameNameVariable3.kt")
+            public void testHasSameNameVariable3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/hasSameNameVariable3.kt");
+            }
+
             @TestMetadata("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/blockElse")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

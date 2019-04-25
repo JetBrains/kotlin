@@ -11,8 +11,14 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.whenExpressionVisitor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
@@ -24,15 +30,28 @@ class WhenWithOnlyElseInspection : AbstractKotlinInspection() {
 
             val usedAsExpression = expression.isUsedAsExpression(expression.analyze())
 
-            holder.registerProblem(expression,
-                                   "'when' has only 'else' branch and should be simplified",
-                                   SimplifyFix(usedAsExpression)
+            val subjectVariable = expression.subjectVariable
+            val subjectVariableName = subjectVariable?.nameAsName
+            if (subjectVariableName != null
+                && !usedAsExpression
+                && ReferencesSearch.search(subjectVariable, LocalSearchScope(expression)).toList().size > 1
+            ) {
+                val block = expression.getStrictParentOfType<KtBlockExpression>()
+                if (block?.anyDescendantOfType<KtProperty> { it != subjectVariable && it.nameAsName == subjectVariableName } == true) {
+                    return@whenExpressionVisitor
+                }
+            }
+
+            holder.registerProblem(
+                expression,
+                "'when' has only 'else' branch and should be simplified",
+                SimplifyFix(usedAsExpression)
             )
         }
     }
 
     private class SimplifyFix(
-            private val isUsedAsExpression: Boolean
+        private val isUsedAsExpression: Boolean
     ) : LocalQuickFix {
         override fun getFamilyName() = name
 
