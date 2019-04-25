@@ -27,7 +27,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 
 }
 
-@R|test/Anno|(bytes = ERROR_EXPR(Unknown value in JavaLiteralAnnotationArgument: [B@1ab59349), shorts = ERROR_EXPR(Unknown value in JavaLiteralAnnotationArgument: [S@3a9e0124), ints = ERROR_EXPR(Unknown value in JavaLiteralAnnotationArgument: [I@472931b8), longs = ERROR_EXPR(Unknown value in JavaLiteralAnnotationArgument: [J@44b10709), chars = ERROR_EXPR(Unknown value in JavaLiteralAnnotationArgument: [C@72a8fb0d), floats = ERROR_EXPR(Unknown value in JavaLiteralAnnotationArgument: [F@3875435d), doubles = ERROR_EXPR(Unknown value in JavaLiteralAnnotationArgument: [D@365f111a), booleans = ERROR_EXPR(Unknown value in JavaLiteralAnnotationArgument: [Z@7a1ac197)) public final class Klass : R|kotlin/Any| {
+@R|test/Anno|(bytes = <implicitArrayOf>(Byte(42), Byte(-1)), shorts = <implicitArrayOf>(Short(-42), Short(0)), ints = <implicitArrayOf>(Int(42), Int(239)), longs = <implicitArrayOf>(Long(42), Long(239)), chars = <implicitArrayOf>(Char(a), Char(Z)), floats = <implicitArrayOf>(Float(2.72), Float(0.0)), doubles = <implicitArrayOf>(Double(42.0), Double(-3.14)), booleans = <implicitArrayOf>(Boolean(true), Boolean(false))) public final class Klass : R|kotlin/Any| {
     public constructor(): R|test/Klass|
 
 }

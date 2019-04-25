@@ -233,17 +233,7 @@ private fun JavaAnnotationArgument.toFirExpression(
     // TODO: this.name
     return when (this) {
         is JavaLiteralAnnotationArgument -> {
-            when (val value = value) {
-                is ByteArray -> value.toList().createArrayOfCall(session, IrConstKind.Byte)
-                is ShortArray -> value.toList().createArrayOfCall(session, IrConstKind.Short)
-                is IntArray -> value.toList().createArrayOfCall(session, IrConstKind.Int)
-                is LongArray -> value.toList().createArrayOfCall(session, IrConstKind.Long)
-                is CharArray -> value.toList().createArrayOfCall(session, IrConstKind.Char)
-                is FloatArray -> value.toList().createArrayOfCall(session, IrConstKind.Float)
-                is DoubleArray -> value.toList().createArrayOfCall(session, IrConstKind.Double)
-                is BooleanArray -> value.toList().createArrayOfCall(session, IrConstKind.Boolean)
-                else -> value.createConstant(session)
-            }
+            value.createConstant(session)
         }
         is JavaArrayAnnotationArgument -> FirArrayOfCallImpl(session, null).apply {
             for (element in getElements()) {
@@ -299,6 +289,14 @@ internal fun Any?.createConstant(session: FirSession): FirExpression {
         is Double -> FirConstExpressionImpl(session, null, IrConstKind.Double, this)
         is Boolean -> FirConstExpressionImpl(session, null, IrConstKind.Boolean, this)
         is String -> FirConstExpressionImpl(session, null, IrConstKind.String, this)
+        is ByteArray -> toList().createArrayOfCall(session, IrConstKind.Byte)
+        is ShortArray -> toList().createArrayOfCall(session, IrConstKind.Short)
+        is IntArray -> toList().createArrayOfCall(session, IrConstKind.Int)
+        is LongArray -> toList().createArrayOfCall(session, IrConstKind.Long)
+        is CharArray -> toList().createArrayOfCall(session, IrConstKind.Char)
+        is FloatArray -> toList().createArrayOfCall(session, IrConstKind.Float)
+        is DoubleArray -> toList().createArrayOfCall(session, IrConstKind.Double)
+        is BooleanArray -> toList().createArrayOfCall(session, IrConstKind.Boolean)
         null -> FirConstExpressionImpl(session, null, IrConstKind.Null, null)
 
         else -> FirErrorExpressionImpl(session, null, "Unknown value in JavaLiteralAnnotationArgument: $this")
