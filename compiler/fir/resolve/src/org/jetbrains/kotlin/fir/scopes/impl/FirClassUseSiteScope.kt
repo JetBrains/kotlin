@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
@@ -55,6 +56,10 @@ class FirClassUseSiteScope(
                 NEXT
             }
         }
+    }
+
+    override fun processClassifiersByName(name: Name, position: FirPosition, processor: (ConeClassifierSymbol) -> Boolean): Boolean {
+        return declaredMemberScope.processClassifiersByName(name, position, processor)
     }
 }
 
