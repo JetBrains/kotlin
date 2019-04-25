@@ -257,6 +257,16 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             runTest("idea/testData/editor/optimizeImports/common/ComponentFunction.kt");
         }
 
+        @TestMetadata("ConflictWithAlias.kt")
+        public void testConflictWithAlias() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/ConflictWithAlias.kt");
+        }
+
+        @TestMetadata("ConflictWithAlias2.kt")
+        public void testConflictWithAlias2() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/ConflictWithAlias2.kt");
+        }
+
         @TestMetadata("CurrentPackage.kt")
         public void testCurrentPackage() throws Exception {
             runTest("idea/testData/editor/optimizeImports/common/CurrentPackage.kt");

@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.*
-import java.util.*
 
 class KotlinImportOptimizer : ImportOptimizer {
     override fun supports(file: PsiFile?) = file is KtFile
@@ -74,6 +73,12 @@ class KotlinImportOptimizer : ImportOptimizer {
 
     private class CollectUsedDescriptorsVisitor(file: KtFile) : KtVisitorVoid() {
         private val currentPackageName = file.packageFqName
+        private val withAlias: Set<FqName> = file.importDirectives
+            .asSequence()
+            .filter { it.alias != null && it.aliasName != it.importPath?.fqName?.shortName()?.asString() }
+            .mapNotNull(KtImportDirective::importedFqName)
+            .toSet()
+
         private val descriptorsToImport = HashSet<DeclarationDescriptor>()
         private val abstractRefs = ArrayList<OptimizedImportsBuilder.AbstractReference>()
 
@@ -107,7 +112,7 @@ class KotlinImportOptimizer : ImportOptimizer {
                     val importableFqName = target.importableFqName ?: continue
                     val parentFqName = importableFqName.parent()
                     if (target is PackageViewDescriptor && parentFqName == FqName.ROOT) continue // no need to import top-level packages
-                    if (target !is PackageViewDescriptor && parentFqName == currentPackageName) continue
+                    if (target !is PackageViewDescriptor && parentFqName == currentPackageName && importableFqName !in withAlias) continue
 
                     if (!reference.canBeResolvedViaImport(target, bindingContext)) continue
 
