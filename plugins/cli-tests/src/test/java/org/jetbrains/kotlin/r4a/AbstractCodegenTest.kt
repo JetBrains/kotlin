@@ -37,19 +37,12 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
             myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
-        ).also { installPlugins(it) }
+        ).also { setupEnvironment(it) }
     }
 
     open fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.put(JVMConfigurationKeys.IR, true)
         configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_6)
-    }
-
-    open fun installPlugins(environment: KotlinCoreEnvironment) {
-        R4AComponentRegistrar.registerProjectExtensions(
-            environment.project,
-            environment.configuration
-        )
     }
 
     protected open fun helperFiles(): List<KtFile> = emptyList()

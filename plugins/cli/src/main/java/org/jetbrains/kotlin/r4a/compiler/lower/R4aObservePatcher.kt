@@ -150,11 +150,11 @@ class R4aObservePatcher(val context: JvmBackendContext) :
                 context.state.bindingContext, "tmp for composable analysis"
             )
         val composability =
-            ComposableAnnotationChecker(ComposableAnnotationChecker.Mode.CHECKED).analyze(
+            ComposableAnnotationChecker(ComposableAnnotationChecker.Mode.KTX_CHECKED).analyze(
                 tmpTrace,
                 declaration.descriptor
             )
-        return when (composability) {
+        return when(composability) {
             ComposableAnnotationChecker.Composability.NOT_COMPOSABLE -> false
             ComposableAnnotationChecker.Composability.MARKED -> true
             ComposableAnnotationChecker.Composability.INFERRED -> true

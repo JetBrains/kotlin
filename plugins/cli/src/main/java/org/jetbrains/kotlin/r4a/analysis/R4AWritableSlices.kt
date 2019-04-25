@@ -21,6 +21,10 @@ object R4AWritableSlices {
         BasicWritableSlice(REWRITES_ALLOWED)
     val FAILED_CANDIDATES: WritableSlice<KtElement, Collection<ResolvedCall<FunctionDescriptor>>> =
         BasicWritableSlice(REWRITES_ALLOWED)
+    val FCS_CALL_WITHIN_COMPOSABLE: WritableSlice<KtElement, Boolean> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val FCS_RESOLVEDCALL_COMPOSABLE: WritableSlice<KtElement, Boolean> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
 
 private val REWRITES_ALLOWED = object : RewritePolicy {

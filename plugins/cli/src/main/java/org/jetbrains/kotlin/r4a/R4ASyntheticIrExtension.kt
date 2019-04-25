@@ -33,11 +33,16 @@ import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtxElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.extensions.SyntheticIrExtension
+import org.jetbrains.kotlin.psi2ir.generators.ErrorExpressionGenerator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.StatementGenerator
 import org.jetbrains.kotlin.psi2ir.generators.generateReceiver
@@ -74,24 +79,45 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.psi2ir.generators.getResolvedCall
+import org.jetbrains.kotlin.r4a.ast.ResolvedKtxElementCall
 
 class R4ASyntheticIrExtension : SyntheticIrExtension {
-    override fun visitKtxElement(
-        statementGenerator: StatementGenerator,
-        element: KtxElement
-    ): IrStatement {
-        val resolvedKtxCall =
-            statementGenerator.context.bindingContext.get(
-                R4AWritableSlices.RESOLVED_KTX_CALL,
-                element
-            )
-            ?: error("KTX Element encountered without a resolved KTX call. " +
-                    "Something must have gone wrong in type resolution.")
+
+    override fun visitKtxElement(statementGenerator: StatementGenerator, element: KtxElement): IrStatement {
+        val resolvedKtxCall = statementGenerator.context.bindingContext.get(R4AWritableSlices.RESOLVED_KTX_CALL, element)
+            ?: error("KTX Element encountered without a resolved KTX call. Something must have gone wrong in type resolution.")
+        val openTagName = element.simpleTagName ?: element.qualifiedTagName ?: error("malformed element")
+        return visitResolvedKtx(element.startOffset, element.endOffset, element.body, statementGenerator, resolvedKtxCall, openTagName)
+    }
+
+    override fun visitCallExpression(statementGenerator: StatementGenerator, element: KtCallExpression): IrExpression? {
+        val resolvedCall = statementGenerator.getResolvedCall(element) ?: return ErrorExpressionGenerator(statementGenerator).generateErrorCall(element)
+
+        val descriptor = resolvedCall.candidateDescriptor
+        if (descriptor !is R4aCallResolutionInterceptorExtension.ComposableInvocationDescriptor) return null
+        val resolvedKtxCall = descriptor.ktxCall
+        val openTagName = (element as? KtCallExpression)?.calleeExpression ?: element
+        val body = ((resolvedKtxCall.emitOrCall as? EmitCallNode)?.inlineChildren as KtLambdaExpression?)?.bodyExpression?.statements
+        return visitResolvedKtx(element.startOffset, element.endOffset, body, statementGenerator, resolvedKtxCall, openTagName)
+    }
+
+    override fun visitSimpleNameExpression(statementGenerator: StatementGenerator, element: KtSimpleNameExpression): IrExpression? {
+        if(true) return null
+        val resolvedCall = statementGenerator.getResolvedCall(element) ?: return null
+
+        val descriptor = resolvedCall.candidateDescriptor
+        if (descriptor !is R4aCallResolutionInterceptorExtension.ComposableInvocationDescriptor) return null
+        val resolvedKtxCall = descriptor.ktxCall
+        val openTagName = (element as? KtCallExpression)?.calleeExpression ?: element
+        val body = ((resolvedKtxCall.emitOrCall as? EmitCallNode)?.inlineChildren as KtLambdaExpression?)?.bodyExpression?.statements
+        return visitResolvedKtx(element.startOffset, element.endOffset, body, statementGenerator, resolvedKtxCall, openTagName)
+    }
+
+    fun visitResolvedKtx(startOffset: Int, endOffset: Int, body: List<KtExpression>?, statementGenerator: StatementGenerator, resolvedKtxCall: ResolvedKtxElementCall, openTagName: KtExpression): IrExpression {
 
         val irBuiltIns = statementGenerator.context.irBuiltIns
 
-        val openTagName =
-            element.simpleTagName ?: element.qualifiedTagName ?: error("malformed element")
         val resolvedAttributes = resolvedKtxCall.usedAttributes.map { it.name to it }.toMap()
 
         val statements = mutableListOf<IrStatement>()
@@ -148,7 +174,7 @@ class R4ASyntheticIrExtension : SyntheticIrExtension {
 
         fun keyExpression(callInfo: ComposerCallInfo): IrExpression {
             val joinKeyCall = callInfo.joinKeyCall ?: error("Expected joinKeyCall to be non-null")
-            val sourceKey = getKeyValue(statementGenerator.scopeOwner, element.startOffset)
+            val sourceKey = getKeyValue(statementGenerator.scopeOwner, startOffset)
             val keyValueExpressions = listOf<IrExpression>(
                 IrConstImpl.int(
                     UNDEFINED_OFFSET,
@@ -205,8 +231,8 @@ class R4ASyntheticIrExtension : SyntheticIrExtension {
                         getComposerCallParameter(name).type
 
                     return statementGenerator.callMethod(
-                        element.startOffset,
-                        element.endOffset,
+                        startOffset,
+                        endOffset,
                         composerCall,
                         getComposer
                     ).apply {
@@ -291,7 +317,7 @@ class R4ASyntheticIrExtension : SyntheticIrExtension {
                             updaterLambda
                         )
 
-                        val bodyStatements = element.body
+                        val bodyStatements = body
                         if (bodyStatements != null) {
                             // Place the children parameter
                             val bodyLambdaDescriptor = memoize.emitBodyFnDescriptor
@@ -323,8 +349,8 @@ class R4ASyntheticIrExtension : SyntheticIrExtension {
                         else callNode.resolvedCall
 
                     var result: IrExpression = statementGenerator.buildCall(
-                        element.startOffset,
-                        element.endOffset,
+                        startOffset,
+                        endOffset,
                         resolvedCall = resolvedCall,
                         descriptor = resolvedCall.resultingDescriptor as FunctionDescriptor,
                         dispatchReceiver = receiver ?: attributeExpressions[TAG_KEY]
@@ -462,8 +488,8 @@ class R4ASyntheticIrExtension : SyntheticIrExtension {
                         getComposerCallParameter(name).type
 
                     return statementGenerator.callMethod(
-                        element.startOffset,
-                        element.endOffset,
+                        startOffset,
+                        endOffset,
                         composerCall,
                         getComposer
                     ).apply {
@@ -603,11 +629,9 @@ class R4ASyntheticIrExtension : SyntheticIrExtension {
             generateEmitOrCallNode(resolvedKtxCall.emitOrCall, statementGenerator.scopeOwner)
         )
 
-        if (statements.size == 1) return statements.first()
-
         return IrBlockImpl(
-            element.startOffset,
-            element.endOffset,
+            startOffset,
+            endOffset,
             irBuiltIns.unitType,
             null,
             statements

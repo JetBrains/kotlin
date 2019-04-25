@@ -455,9 +455,9 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         }
     }
 
-    override fun installPlugins(environment: KotlinCoreEnvironment) {
+    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         if (!disableIrAndKtx) {
-            super.installPlugins(environment)
+            super.setupEnvironment(environment)
         }
     }
 

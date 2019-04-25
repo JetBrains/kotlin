@@ -122,6 +122,10 @@ object R4ADefaultErrorMessages : DefaultErrorMessages.Extension {
             "Functions containing KTX Tags should be marked with the @Composable annotation"
         )
         MAP.put(
+            R4AErrors.COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,
+            "Functions which invoke @Composable functions must be marked with the @Composable annotation"
+        )
+        MAP.put(
             R4AErrors.UNRESOLVED_TAG,
             "Unresolved reference: {0}",
             Renderers.ELEMENT_TEXT

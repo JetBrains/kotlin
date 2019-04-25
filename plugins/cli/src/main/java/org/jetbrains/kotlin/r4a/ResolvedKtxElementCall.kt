@@ -314,7 +314,8 @@ class MemoizedCallNode(
 }
 
 class EmitCallNode(
-    val memoize: ComposerCallInfo
+    val memoize: ComposerCallInfo,
+    val inlineChildren: KtExpression?
 ) : EmitOrCallNode() {
     override fun allAttributes(): List<ValueNode> = memoize.allAttributes()
     override fun print() = buildString {
