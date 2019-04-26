@@ -5,8 +5,14 @@
 package example.cinterop.project
 
 import kotlin.test.*
+import example.cinterop.project.stdio.*
 
 @Test
 fun projectTest() {
     projectPrint("Project test")
+}
+
+@Test
+fun compilerOptsTest() {
+    assertEquals(2, getNumber())
 }
