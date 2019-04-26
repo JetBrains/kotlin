@@ -1,4 +1,16 @@
 FILE: simple.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class D : R|kotlin/Any| {
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
     public open class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
@@ -30,14 +42,14 @@ FILE: simple.kt
             ^bar this#
         }
 
-        public final override fun buz(p: R|B|): R|B| {
+        public final override fun buz(p: R|C|): R|B| {
             ^buz this#
         }
 
         public final fun test(): R|kotlin/Unit| {
             R|/B.foo|()
             R|/B.bar|()
-            <Inapplicable(PARAMETER_MAPPING_ERROR): [/B.buz, /A.buz]>#()
+            <Inapplicable(INAPPLICABLE): [/B.buz, /A.buz]>#(R|/D.D|())
         }
 
     }

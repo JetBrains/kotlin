@@ -1,4 +1,5 @@
-
+class C
+class D
 
 open class A {
     open fun foo(): A = this
@@ -9,12 +10,12 @@ open class A {
 class B : A() {
     override fun foo(): B = this
     fun bar(): B = this // Ambiguity, no override here (really it's just "missing override" and no ambiguity)
-    override fun buz(p: B): B = this //No override as B <!:> A
+    override fun buz(p: C): B = this //No override as C <!:> A
 
     fun test() {
         foo()
         bar()
-        buz()
+        buz(D())
     }
 }
 
