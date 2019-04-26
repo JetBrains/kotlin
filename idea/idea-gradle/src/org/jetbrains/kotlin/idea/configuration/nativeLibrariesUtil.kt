@@ -242,7 +242,7 @@ private sealed class DependencySubstitute {
     class YesSubstitute(val substitute: ExternalMultiLibraryDependency) : DependencySubstitute()
 }
 
-private const val KOTLIN_NATIVE_LIBRARY_PREFIX = "Kotlin/Native"
+internal const val KOTLIN_NATIVE_LIBRARY_PREFIX = "Kotlin/Native"
 private const val KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE = "$KOTLIN_NATIVE_LIBRARY_PREFIX "
 private const val KOTLIN_NATIVE_LEGACY_GROUP_ID = KOTLIN_NATIVE_LIBRARY_PREFIX
 private const val GRADLE_LIBRARY_PREFIX = "Gradle: "

@@ -8,23 +8,30 @@ package org.jetbrains.kotlin.ide.konan
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties
 import com.intellij.openapi.roots.libraries.LibraryType
-import com.intellij.openapi.roots.libraries.NewLibraryConfiguration
 import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.konan.library.lite.LiteKonanLibraryFacade
+import java.io.File
 import javax.swing.Icon
 import javax.swing.JComponent
 
 object NativeLibraryType : LibraryType<DummyLibraryProperties>(NativeLibraryKind) {
-    override fun createPropertiesEditor(editorComponent: LibraryEditorComponent<DummyLibraryProperties>) = null
+    override fun createPropertiesEditor(editorComponent: LibraryEditorComponent<DummyLibraryProperties>): Nothing? = null
+    override fun getCreateActionName(): Nothing? = null
+    override fun createNewLibrary(parentComponent: JComponent, contextDirectory: VirtualFile?, project: Project): Nothing? = null
 
-    override fun getCreateActionName() = null
+    // Library type is determined by `KotlinGradleLibraryDataService` for every library dependency imported from Gradle to IDE.
+    // However this does not work for libraries that are to be just created during project build, e.g. C-interop Kotlin/Native KLIBs.
+    // The code below helps to perform postponed detection of Kotlin/Native libraries.
+    override fun detect(classesRoots: List<VirtualFile>): DummyLibraryProperties? {
+        val path = classesRoots.firstOrNull()?.let { PathUtil.getLocalPath(it) } ?: return null
 
-    override fun createNewLibrary(
-        parentComponent: JComponent,
-        contextDirectory: VirtualFile?,
-        project: Project
-    ): NewLibraryConfiguration? = null
+        return if (LiteKonanLibraryFacade.getLibraryProvider().getLibrary(File(path)) != null)
+            DummyLibraryProperties.INSTANCE!!
+        else null
+    }
 
     override fun getIcon(properties: DummyLibraryProperties?): Icon = KotlinIcons.NATIVE
 }

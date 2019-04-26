@@ -8,6 +8,7 @@ dependencies {
 
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-jvm"))
+    compileOnly(project(":idea:idea-native")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling"))
 
     compile(project(":compiler:frontend"))

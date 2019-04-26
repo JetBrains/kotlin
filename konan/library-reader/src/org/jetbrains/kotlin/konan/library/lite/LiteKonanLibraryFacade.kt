@@ -24,7 +24,6 @@ object LiteKonanLibraryFacade {
      */
     fun getDistributionLibraryProvider(customKonanHomeDir: File?): LiteKonanLibraryProvider =
         FromDistributionLiteKonanLibraryProvider(customKonanHomeDir)
-
 }
 
 interface LiteKonanLibraryProvider {
