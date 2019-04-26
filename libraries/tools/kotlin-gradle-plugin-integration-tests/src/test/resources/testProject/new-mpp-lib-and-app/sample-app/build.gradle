@@ -64,11 +64,14 @@ kotlin {
         fromPreset(presets.macosX64, 'macos64')
 
         configure([wasm32, linux64, mingw64, macos64]) {
-            compilations.main.outputKinds += org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind.EXECUTABLE
-            compilations.main.entryPoint = "com.example.app.native.main"
-            // Check that linker options are correctly passed to the compiler.
-            compilations.main.linkerOpts = ['-L.']
-            compilations.test.linkerOpts = ['-L.']
+            binaries.executable("main") {
+                entryPoint = "com.example.app.native.main"
+            }
+            
+            binaries.all {
+                // Check that linker options are correctly passed to the compiler.
+                linkerOpts = ['-L.']
+            }
         }
     }
 }
@@ -78,22 +81,5 @@ task resolveRuntimeDependencies(type: DefaultTask) {
         // KT-26301
         def configName = kotlin.targets.jvm6.compilations.main.runtimeDependencyConfigurationName
         configurations[configName].resolve()
-    }
-}
-
-task checkBinaryGetters {
-    doLast {
-        println("Wasm binary file: ${kotlin.targets.wasm32.compilations.main.getBinary("EXECUTABLE", "RELEASE").name}")
-        println("Wasm link task: ${kotlin.targets.wasm32.compilations.main.getLinkTask("EXECUTABLE", "RELEASE").name}")
-        println("Wasm link task name: ${kotlin.targets.wasm32.compilations.main.linkTaskName("EXECUTABLE", "RELEASE")}")
-
-        println("Windows test file: ${kotlin.targets.mingw64.compilations.test.getBinary("EXECUTABLE", "DEBUG").name}")
-        println("Windows test link task: ${kotlin.targets.mingw64.compilations.test.getLinkTask("EXECUTABLE", "DEBUG").name}")
-
-        println("MacOS test file: ${kotlin.targets.macos64.compilations.test.getBinary("EXECUTABLE", "DEBUG").name}")
-        println("MacOS test link task: ${kotlin.targets.macos64.compilations.test.getLinkTask("EXECUTABLE", "DEBUG").name}")
-
-        println("Linux test file: ${kotlin.targets.linux64.compilations.test.getBinary("EXECUTABLE", "DEBUG").name}")
-        println("Linux test link task: ${kotlin.targets.linux64.compilations.test.getLinkTask("EXECUTABLE", "DEBUG").name}")
     }
 }

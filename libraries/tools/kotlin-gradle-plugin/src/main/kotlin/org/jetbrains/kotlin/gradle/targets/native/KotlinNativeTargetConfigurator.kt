@@ -251,9 +251,7 @@ open class KotlinNativeTargetConfigurator(
 
     override fun configureTest(target: KotlinNativeTarget) {
         target.binaries.defaultTestExecutable {
-            compilation = target.compilations.maybeCreate(KotlinCompilation.TEST_COMPILATION_NAME)
-            // Allow accessing the test binary using the old getters (e.g. compilations.test.getBinary('EXECUTABLE', 'DEBUG'))
-            compilation.binaries[NativeOutputKind.EXECUTABLE to KotlinNativeBinaryContainer.DEFAULT_TEST_BUILD_TYPE] = this
+            compilation = target.compilations.maybeCreate(TEST_COMPILATION_NAME)
         }
     }
 
@@ -301,40 +299,6 @@ open class KotlinNativeTargetConfigurator(
         project.whenEvaluated {
             target.binaries.forEach {
                 project.tasks.getByName(it.compilation.binariesTaskName).dependsOn(it.linkTaskName)
-            }
-        }
-
-        // Create binaries for output kinds declared using the old DSL.
-        project.whenEvaluated {
-            target.compilations.all { compilation ->
-                val binaries = target.binaries
-                val konanTarget = compilation.target.konanTarget
-                val name = compilation.name
-                val buildTypes = compilation.buildTypesNoWarn
-                val availableOutputKinds = compilation.outputKindsNoWarn.filter { it.availableFor(konanTarget) }
-
-                val configure: NativeBinary.() -> Unit = {
-                    this.compilation = compilation
-                    linkerOpts.addAll(compilation.linkerOptsNoWarn)
-                    if (this is Executable) {
-                        entryPoint = compilation.entryPointNoWarn
-                    }
-                    compilation.binaries[outputKind to buildType] = this
-                }
-
-                for (kind in availableOutputKinds) {
-                    when (kind) {
-                        NativeOutputKind.EXECUTABLE -> binaries.executable(name, buildTypes, configure)
-                        NativeOutputKind.DYNAMIC -> binaries.sharedLib(name, buildTypes, configure)
-                        NativeOutputKind.STATIC -> binaries.staticLib(name, buildTypes, configure)
-                        NativeOutputKind.FRAMEWORK -> binaries.framework(name, buildTypes, configure)
-                    }
-                }
-            }
-            // Allow setting linker options for the default test executable using the
-            // corresponding properties of the test compilation.
-            target.binaries.getDefaultTestExecutable().apply {
-                linkerOpts.addAll(target.compilations.getByName(TEST_COMPILATION_NAME).linkerOptsNoWarn)
             }
         }
     }
