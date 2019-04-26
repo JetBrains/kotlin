@@ -21,22 +21,17 @@ internal const val MPP_PACKAGE = "org.jetbrains.kotlin.gradle.plugin.mpp"
 internal const val KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTargetPreset"
 internal const val KOTLIN_NATIVE_TARGET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTarget"
 
-private const val KOTLIN_ONLY_TARGET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinOnlyTarget"
-
 internal val jvmPresetEntry = KotlinPresetEntry(
     "jvm",
     typeName("$MPP_PACKAGE.KotlinJvmTargetPreset"),
-    typeName(
-        KOTLIN_ONLY_TARGET_CLASS_FQNAME,
-        "$MPP_PACKAGE.KotlinJvmCompilation"
-    )
+    typeName("org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget")
 )
 
 internal val jsPresetEntry = KotlinPresetEntry(
     "js",
     typeName("$MPP_PACKAGE.KotlinJsTargetPreset"),
     typeName(
-        KOTLIN_ONLY_TARGET_CLASS_FQNAME,
+        "$MPP_PACKAGE.KotlinOnlyTarget",
         "$MPP_PACKAGE.KotlinJsCompilation"
     )
 )
