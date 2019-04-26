@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteScope
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
+import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -199,8 +199,16 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope? {
-        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        return symbol.firUnsafe<FirRegularClass>().buildDefaultUseSiteScope(useSiteSession, scopeSession)
+        return when (val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null) {
+            is FirClassSymbol -> symbol.fir.buildDefaultUseSiteScope(useSiteSession, scopeSession)
+            is FirTypeAliasSymbol -> {
+                val expandedTypeRef = symbol.fir.expandedTypeRef as FirResolvedTypeRef
+                val expandedType = expandedTypeRef.type as? ConeLookupTagBasedType ?: return null
+                val lookupTag = expandedType.lookupTag as? ConeClassLikeLookupTag ?: return null
+                getClassUseSiteMemberScope(lookupTag.classId, useSiteSession, scopeSession)
+            }
+            else -> throw IllegalArgumentException("Unexpected FIR symbol in getClassUseSiteMemberScope: $symbol")
+        }
     }
 
 }
