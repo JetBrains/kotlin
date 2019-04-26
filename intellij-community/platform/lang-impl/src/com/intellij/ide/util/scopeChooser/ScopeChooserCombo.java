@@ -90,7 +90,6 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     rebuildModel();
 
     selectItem(selection);
-    new ComboboxSpeedSearch(combo);
   }
 
   @Override
