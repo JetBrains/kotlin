@@ -1020,7 +1020,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -2344,7 +2344,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -2790,7 +2790,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -3227,7 +3227,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -3631,7 +3631,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -4044,7 +4044,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -4587,7 +4587,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -5088,7 +5088,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -5680,7 +5680,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -6783,7 +6783,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -7750,7 +7750,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -8120,7 +8120,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -8600,7 +8600,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -9446,7 +9446,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -9811,7 +9811,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -10304,7 +10304,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -10797,7 +10797,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -11285,7 +11285,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -11646,7 +11646,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -12146,7 +12146,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -12742,7 +12742,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -13552,7 +13552,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -13956,7 +13956,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -14378,7 +14378,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -15081,7 +15081,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -15569,7 +15569,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -15938,7 +15938,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -16373,11 +16373,11 @@ public final class KotlinIr {
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
 
@@ -16429,7 +16429,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -16506,13 +16506,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 1;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -16563,13 +16563,11 @@ public final class KotlinIr {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       for (int i = 0; i < getStatementCount(); i++) {
         if (!getStatement(i).isInitialized()) {
@@ -16762,13 +16760,11 @@ public final class KotlinIr {
       }
 
       public final boolean isInitialized() {
-        if (!hasOrigin()) {
-          
-          return false;
-        }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         for (int i = 0; i < getStatementCount(); i++) {
           if (!getStatement(i).isInitialized()) {
@@ -16800,19 +16796,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -16824,7 +16820,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -16834,7 +16830,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000001) == 0x00000001) &&
@@ -16849,7 +16845,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 1;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -17073,7 +17069,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -17913,11 +17909,11 @@ public final class KotlinIr {
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSuper();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
   }
@@ -17955,7 +17951,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -18197,13 +18193,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 5;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -18234,10 +18230,6 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!getSymbol().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -18252,9 +18244,11 @@ public final class KotlinIr {
           return false;
         }
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -18493,10 +18487,6 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         if (!getSymbol().isInitialized()) {
           
           return false;
@@ -18511,9 +18501,11 @@ public final class KotlinIr {
             return false;
           }
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -18754,19 +18746,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -18778,7 +18770,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -18788,7 +18780,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000010) == 0x00000010) &&
@@ -18803,7 +18795,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -18888,7 +18880,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -19457,11 +19449,11 @@ public final class KotlinIr {
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSymbol();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
 
@@ -19508,7 +19500,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -19615,13 +19607,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 2;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -19657,10 +19649,6 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!hasMemberAccess()) {
         memoizedIsInitialized = 0;
         return false;
@@ -19669,15 +19657,13 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       if (!getMemberAccess().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!getOrigin().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -19878,10 +19864,6 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         if (!hasMemberAccess()) {
           
           return false;
@@ -19890,15 +19872,13 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         if (!getMemberAccess().isInitialized()) {
-          
-          return false;
-        }
-        if (!getOrigin().isInitialized()) {
           
           return false;
         }
@@ -19986,19 +19966,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -20010,7 +19990,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -20020,7 +20000,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -20035,7 +20015,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -20156,11 +20136,11 @@ public final class KotlinIr {
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSymbol();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
   }
@@ -20198,7 +20178,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -20376,13 +20356,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 5;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -20409,10 +20389,6 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!getDelegate().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -20432,6 +20408,12 @@ public final class KotlinIr {
       if (!getSymbol().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
+      }
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -20666,10 +20648,6 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         if (!getDelegate().isInitialized()) {
           
           return false;
@@ -20689,6 +20667,12 @@ public final class KotlinIr {
         if (!getSymbol().isInitialized()) {
           
           return false;
+        }
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -20954,19 +20938,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -20978,7 +20962,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -20988,7 +20972,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000010) == 0x00000010) &&
@@ -21003,7 +20987,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -21055,11 +21039,11 @@ public final class KotlinIr {
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSetter();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
 
@@ -21123,7 +21107,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -21299,13 +21283,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 4;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -21363,10 +21347,6 @@ public final class KotlinIr {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!hasMemberAccess()) {
         memoizedIsInitialized = 0;
         return false;
@@ -21389,9 +21369,11 @@ public final class KotlinIr {
           return false;
         }
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       if (!getMemberAccess().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -21644,10 +21626,6 @@ public final class KotlinIr {
       }
 
       public final boolean isInitialized() {
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         if (!hasMemberAccess()) {
           
           return false;
@@ -21670,9 +21648,11 @@ public final class KotlinIr {
             return false;
           }
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         if (!getMemberAccess().isInitialized()) {
           
@@ -21888,19 +21868,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -21912,7 +21892,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -21922,7 +21902,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000008) == 0x00000008) &&
@@ -21937,7 +21917,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 4;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -22120,11 +22100,11 @@ public final class KotlinIr {
     int getStatementCount();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
   }
@@ -22162,7 +22142,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -22274,13 +22254,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 2;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -22296,19 +22276,17 @@ public final class KotlinIr {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       for (int i = 0; i < getStatementCount(); i++) {
         if (!getStatement(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -22495,19 +22473,17 @@ public final class KotlinIr {
       }
 
       public final boolean isInitialized() {
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         for (int i = 0; i < getStatementCount(); i++) {
           if (!getStatement(i).isInitialized()) {
             
             return false;
           }
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -22658,19 +22634,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -22682,7 +22658,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -22692,7 +22668,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -22707,7 +22683,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -22783,7 +22759,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -23389,7 +23365,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -24536,7 +24512,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -25022,7 +24998,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -25547,7 +25523,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -25960,7 +25936,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -26485,7 +26461,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -26889,7 +26865,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -27311,7 +27287,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -27916,11 +27892,11 @@ public final class KotlinIr {
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.FieldAccessCommon getFieldAccess();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
   }
@@ -27958,7 +27934,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -28052,13 +28028,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 2;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -28078,17 +28054,15 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!getFieldAccess().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -28271,17 +28245,15 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         if (!getFieldAccess().isInitialized()) {
           
           return false;
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -28367,19 +28339,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -28391,7 +28363,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -28401,7 +28373,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -28416,7 +28388,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -28450,11 +28422,11 @@ public final class KotlinIr {
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSymbol();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
   }
@@ -28492,7 +28464,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -28586,13 +28558,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 2;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -28612,17 +28584,15 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!getSymbol().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -28805,17 +28775,15 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         if (!getSymbol().isInitialized()) {
           
           return false;
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -28901,19 +28869,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -28925,7 +28893,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -28935,7 +28903,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -28950,7 +28918,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -29017,7 +28985,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -29421,7 +29389,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -29819,11 +29787,11 @@ public final class KotlinIr {
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrExpression getBody();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
   }
@@ -29861,7 +29829,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -30031,13 +29999,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 5;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -30064,10 +30032,6 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!getCondition().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -30084,9 +30048,11 @@ public final class KotlinIr {
           return false;
         }
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -30321,10 +30287,6 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         if (!getCondition().isInitialized()) {
           
           return false;
@@ -30341,9 +30303,11 @@ public final class KotlinIr {
             return false;
           }
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -30581,19 +30545,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -30605,7 +30569,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -30615,7 +30579,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000010) == 0x00000010) &&
@@ -30630,7 +30594,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 5;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -30706,7 +30670,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -31207,11 +31171,11 @@ public final class KotlinIr {
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrExpression getValue();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
   }
@@ -31249,7 +31213,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -31371,13 +31335,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 3;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -31402,10 +31366,6 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!getFieldAccess().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -31414,9 +31374,11 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -31619,10 +31581,6 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         if (!getFieldAccess().isInitialized()) {
           
           return false;
@@ -31631,9 +31589,11 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -31779,19 +31739,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -31803,7 +31763,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -31813,7 +31773,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000004) == 0x00000004) &&
@@ -31828,7 +31788,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -31871,11 +31831,11 @@ public final class KotlinIr {
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrExpression getValue();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
   }
@@ -31913,7 +31873,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -32035,13 +31995,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 3;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -32066,10 +32026,6 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!getSymbol().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -32078,9 +32034,11 @@ public final class KotlinIr {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -32283,10 +32241,6 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         if (!getSymbol().isInitialized()) {
           
           return false;
@@ -32295,9 +32249,11 @@ public final class KotlinIr {
           
           return false;
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -32443,19 +32399,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -32467,7 +32423,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -32477,7 +32433,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000004) == 0x00000004) &&
@@ -32492,7 +32448,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 3;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -32568,7 +32524,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -33098,7 +33054,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -33586,7 +33542,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -34013,7 +33969,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -34760,7 +34716,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -35386,7 +35342,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -36007,7 +35963,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -36555,11 +36511,11 @@ public final class KotlinIr {
     int getBranchCount();
 
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     boolean hasOrigin();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin();
   }
@@ -36597,7 +36553,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -36709,13 +36665,13 @@ public final class KotlinIr {
     public static final int ORIGIN_FIELD_NUMBER = 2;
     private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public boolean hasOrigin() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
       return origin_;
@@ -36731,19 +36687,17 @@ public final class KotlinIr {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasOrigin()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       for (int i = 0; i < getBranchCount(); i++) {
         if (!getBranch(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
       }
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasOrigin()) {
+        if (!getOrigin().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -36930,19 +36884,17 @@ public final class KotlinIr {
       }
 
       public final boolean isInitialized() {
-        if (!hasOrigin()) {
-          
-          return false;
-        }
         for (int i = 0; i < getBranchCount(); i++) {
           if (!getBranch(i).isInitialized()) {
             
             return false;
           }
         }
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
+        if (hasOrigin()) {
+          if (!getOrigin().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -37093,19 +37045,19 @@ public final class KotlinIr {
 
       private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public boolean hasOrigin() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin getOrigin() {
         return origin_;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (value == null) {
@@ -37117,7 +37069,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder setOrigin(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.Builder builderForValue) {
@@ -37127,7 +37079,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin value) {
         if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -37142,7 +37094,7 @@ public final class KotlinIr {
         return this;
       }
       /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrStatementOrigin origin = 2;</code>
        */
       public Builder clearOrigin() {
         origin_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatementOrigin.getDefaultInstance();
@@ -37209,7 +37161,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -37622,7 +37574,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -38170,7 +38122,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -39461,7 +39413,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -43720,7 +43672,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -44366,7 +44318,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -44760,7 +44712,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -45104,7 +45056,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -46232,7 +46184,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -47730,7 +47682,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -48395,7 +48347,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -49564,7 +49516,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -50749,7 +50701,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -52300,7 +52252,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -53357,7 +53309,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -54518,7 +54470,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -55497,7 +55449,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -56115,7 +56067,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -57938,7 +57890,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -58706,7 +58658,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -59335,7 +59287,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -61151,7 +61103,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -61927,7 +61879,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -62457,7 +62409,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -62954,7 +62906,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -63479,7 +63431,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -63907,7 +63859,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
