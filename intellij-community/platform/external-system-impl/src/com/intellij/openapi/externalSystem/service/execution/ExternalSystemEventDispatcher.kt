@@ -1,12 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.execution
 
+import com.intellij.build.BuildEventDispatcher
 import com.intellij.build.BuildProgressListener
 import com.intellij.build.events.BuildEvent
 import com.intellij.build.output.BuildOutputInstantReaderImpl
 import com.intellij.build.output.BuildOutputParser
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTask
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.util.SmartList
 import org.jetbrains.annotations.ApiStatus
 import java.io.Closeable
@@ -15,35 +16,39 @@ import java.io.Closeable
  * @author Vladislav.Soroka
  */
 @ApiStatus.Experimental
-class ExternalSystemEventDispatcher(task: ExternalSystemTask,
-                                    progressListener: BuildProgressListener?) : Closeable, Appendable, BuildProgressListener {
+class ExternalSystemEventDispatcher(taskId: ExternalSystemTaskId,
+                                    progressListener: BuildProgressListener?,
+                                    appendOutputToMainConsole: Boolean) : BuildEventDispatcher {
+  constructor(taskId: ExternalSystemTaskId, progressListener: BuildProgressListener?) : this(taskId, progressListener, true)
+
   private var outputMessageDispatcher: ExternalSystemOutputMessageDispatcher? = null
-  var stdOut: Boolean = true
-    set(value) {
-      field = value
-      outputMessageDispatcher?.stdOut = value
-    }
+  private var isStdOut: Boolean = true
+
+  override fun setStdOut(stdOut: Boolean) {
+    this.isStdOut = stdOut
+    outputMessageDispatcher?.stdOut = stdOut
+  }
 
   init {
     val buildOutputParsers = SmartList<BuildOutputParser>()
     if (progressListener != null) {
       ExternalSystemOutputParserProvider.EP_NAME.extensions.forEach {
-        if (task.id.projectSystemId == it.externalSystemId) {
-          buildOutputParsers.addAll(it.getBuildOutputParsers(task))
+        if (taskId.projectSystemId == it.externalSystemId) {
+          buildOutputParsers.addAll(it.getBuildOutputParsers(taskId))
         }
       }
 
       var foundFactory: ExternalSystemOutputDispatcherFactory? = null
       EP_NAME.extensions.forEach {
-        if (task.id.projectSystemId == it.externalSystemId) {
+        if (taskId.projectSystemId == it.externalSystemId) {
           if (foundFactory != null) {
             throw RuntimeException("'" + EP_NAME.name + "' extension should be one per external system")
           }
           foundFactory = it
         }
       }
-      outputMessageDispatcher = foundFactory?.create(task.id, progressListener, buildOutputParsers)
-                                ?: DefaultOutputMessageDispatcher(task.id, progressListener, buildOutputParsers)
+      outputMessageDispatcher = foundFactory?.create(taskId, progressListener, appendOutputToMainConsole, buildOutputParsers)
+                                ?: DefaultOutputMessageDispatcher(taskId, progressListener, buildOutputParsers)
     }
   }
 
@@ -51,17 +56,17 @@ class ExternalSystemEventDispatcher(task: ExternalSystemTask,
     outputMessageDispatcher?.onEvent(event)
   }
 
-  override fun append(csq: CharSequence): Appendable? {
+  override fun append(csq: CharSequence): BuildEventDispatcher? {
     outputMessageDispatcher?.append(csq)
     return this
   }
 
-  override fun append(csq: CharSequence, start: Int, end: Int): Appendable? {
+  override fun append(csq: CharSequence, start: Int, end: Int): BuildEventDispatcher? {
     outputMessageDispatcher?.append(csq, start, end)
     return this
   }
 
-  override fun append(c: Char): Appendable? {
+  override fun append(c: Char): BuildEventDispatcher? {
     outputMessageDispatcher?.append(c)
     return this
   }
@@ -88,6 +93,7 @@ interface ExternalSystemOutputDispatcherFactory {
   val externalSystemId: Any?
   fun create(buildId: Any,
              buildProgressListener: BuildProgressListener,
+             appendOutputToMainConsole: Boolean,
              parsers: List<BuildOutputParser>): ExternalSystemOutputMessageDispatcher
 }
 

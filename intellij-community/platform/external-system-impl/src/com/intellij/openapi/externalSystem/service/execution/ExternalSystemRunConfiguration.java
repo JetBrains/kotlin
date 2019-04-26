@@ -328,7 +328,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
         else {
           greeting = ExternalSystemBundle.message("run.text.starting.single.task", startDateTime, settingsDescription) + "\n";
         }
-        try (ExternalSystemEventDispatcher messageDispatcher = new ExternalSystemEventDispatcher(task, progressListener)) {
+        try (BuildEventDispatcher eventDispatcher = new ExternalSystemEventDispatcher(task.getId(), progressListener, false)) {
           ExternalSystemTaskNotificationListenerAdapter taskListener = new ExternalSystemTaskNotificationListenerAdapter() {
 
             private boolean myResetGreeting = true;
@@ -368,8 +368,8 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
               else {
                 processHandler.notifyTextAvailable(text, stdOut ? ProcessOutputTypes.STDOUT : ProcessOutputTypes.STDERR);
               }
-              messageDispatcher.setStdOut(stdOut);
-              messageDispatcher.append(text);
+              eventDispatcher.setStdOut(stdOut);
+              eventDispatcher.append(text);
             }
 
             @Override
@@ -393,11 +393,11 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
             @Override
             public void onStatusChange(@NotNull ExternalSystemTaskNotificationEvent event) {
               if (event instanceof ExternalSystemBuildEvent) {
-                messageDispatcher.onEvent(((ExternalSystemBuildEvent)event).getBuildEvent());
+                eventDispatcher.onEvent(((ExternalSystemBuildEvent)event).getBuildEvent());
               }
               else if (event instanceof ExternalSystemTaskExecutionEvent) {
                 BuildEvent buildEvent = convert(((ExternalSystemTaskExecutionEvent)event));
-                messageDispatcher.onEvent(buildEvent);
+                eventDispatcher.onEvent(buildEvent);
               }
             }
 
@@ -414,7 +414,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
               processHandler.notifyTextAvailable(farewell + "\n", ProcessOutputTypes.SYSTEM);
               foldGreetingOrFarewell(consoleView, farewell, false);
               processHandler.notifyProcessTerminated(0);
-              messageDispatcher.close();
+              eventDispatcher.close();
             }
           };
           task.execute(ArrayUtil.prepend(taskListener, ExternalSystemTaskNotificationListener.EP_NAME.getExtensions()));

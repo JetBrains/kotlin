@@ -21,12 +21,14 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
 
   override fun create(buildId: Any,
                       buildProgressListener: BuildProgressListener,
+                      appendOutputToMainConsole: Boolean,
                       parsers: List<BuildOutputParser>): ExternalSystemOutputMessageDispatcher {
-    return GradleOutputMessageDispatcher(buildId, buildProgressListener, parsers)
+    return GradleOutputMessageDispatcher(buildId, buildProgressListener, appendOutputToMainConsole, parsers)
   }
 
   private class GradleOutputMessageDispatcher(private val buildId: Any,
                                               private val myBuildProgressListener: BuildProgressListener,
+                                              private val appendOutputToMainConsole: Boolean,
                                               private val parsers: List<BuildOutputParser>) : ExternalSystemOutputMessageDispatcher {
     override var stdOut: Boolean = true
     private val lineProcessor: LineProcessor
@@ -86,16 +88,25 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
     }
 
     override fun append(csq: CharSequence): Appendable {
+      if (appendOutputToMainConsole) {
+        myBuildProgressListener.onEvent(OutputBuildEventImpl(buildId, csq.toString(), stdOut))
+      }
       lineProcessor.append(csq)
       return this
     }
 
     override fun append(csq: CharSequence, start: Int, end: Int): Appendable {
+      if (appendOutputToMainConsole) {
+        myBuildProgressListener.onEvent(OutputBuildEventImpl(buildId, csq.subSequence(start, end).toString(), stdOut))
+      }
       lineProcessor.append(csq, start, end)
       return this
     }
 
     override fun append(c: Char): Appendable {
+      if (appendOutputToMainConsole) {
+        myBuildProgressListener.onEvent(OutputBuildEventImpl(buildId, c.toString(), stdOut))
+      }
       lineProcessor.append(c)
       return this
     }

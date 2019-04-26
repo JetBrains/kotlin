@@ -1,10 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.util;
 
-import com.intellij.build.BuildConsoleUtils;
-import com.intellij.build.BuildContentDescriptor;
-import com.intellij.build.DefaultBuildDescriptor;
-import com.intellij.build.SyncViewManager;
+import com.intellij.build.*;
 import com.intellij.build.events.BuildEvent;
 import com.intellij.build.events.EventResult;
 import com.intellij.build.events.FinishBuildEvent;
@@ -448,8 +445,8 @@ public class ExternalSystemUtil {
         }
 
         Ref<Supplier<FinishBuildEvent>> finishSyncEventSupplier = Ref.create();
-        try (ExternalSystemEventDispatcher messageDispatcher =
-               new ExternalSystemEventDispatcher(resolveProjectTask, ServiceManager.getService(project, SyncViewManager.class))) {
+        SyncViewManager syncViewManager = ServiceManager.getService(project, SyncViewManager.class);
+        try (BuildEventDispatcher eventDispatcher = new ExternalSystemEventDispatcher(resolveProjectTask.getId(), syncViewManager, false)) {
           ExternalSystemTaskNotificationListenerAdapter taskListener = new ExternalSystemTaskNotificationListenerAdapter() {
             @Override
             public void onStart(@NotNull ExternalSystemTaskId id, String workingDir) {
@@ -476,7 +473,7 @@ public class ExternalSystemUtil {
 
               if (isPreviewMode) return;
               String message = "syncing...";
-              ServiceManager.getService(project, SyncViewManager.class).onEvent(
+              eventDispatcher.onEvent(
                 new StartBuildEventImpl(new DefaultBuildDescriptor(id, projectName, externalProjectPath, eventTime), message)
                   .withProcessHandler(processHandler, null)
                   .withRestartAction(rerunImportAction)
@@ -500,8 +497,8 @@ public class ExternalSystemUtil {
             @Override
             public void onTaskOutput(@NotNull ExternalSystemTaskId id, @NotNull String text, boolean stdOut) {
               processHandler.notifyTextAvailable(text, stdOut ? ProcessOutputTypes.STDOUT : ProcessOutputTypes.STDERR);
-              messageDispatcher.setStdOut(stdOut);
-              messageDispatcher.append(text);
+              eventDispatcher.setStdOut(stdOut);
+              eventDispatcher.append(text);
             }
 
             @Override
@@ -527,17 +524,17 @@ public class ExternalSystemUtil {
               if (isPreviewMode) return;
               if (event instanceof ExternalSystemBuildEvent) {
                 BuildEvent buildEvent = ((ExternalSystemBuildEvent)event).getBuildEvent();
-                messageDispatcher.onEvent(buildEvent);
+                eventDispatcher.onEvent(buildEvent);
               }
               else if (event instanceof ExternalSystemTaskExecutionEvent) {
                 BuildEvent buildEvent = convert(((ExternalSystemTaskExecutionEvent)event));
-                messageDispatcher.onEvent(buildEvent);
+                eventDispatcher.onEvent(buildEvent);
               }
             }
 
             @Override
             public void onEnd(@NotNull ExternalSystemTaskId id) {
-              messageDispatcher.close();
+              eventDispatcher.close();
             }
           };
           final long startTS = System.currentTimeMillis();
