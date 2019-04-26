@@ -95,7 +95,7 @@ class PresentationFactory(val editor: EditorImpl) {
   fun tooltip(e: MouseEvent, text: String) {
     val label = HintUtil.createInformationLabel(text)
     label.border = JBUI.Borders.empty(6, 6, 5, 6)
-
+    // TODO
   }
 
   fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
