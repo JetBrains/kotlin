@@ -5,6 +5,7 @@ import com.intellij.build.FilePosition
 import com.intellij.build.events.BuildEvent
 import com.intellij.build.events.MessageEvent
 import com.intellij.build.events.impl.FileMessageEventImpl
+import com.intellij.build.events.impl.MessageEventImpl
 import com.intellij.build.output.BuildOutputInstantReader
 import com.intellij.build.output.BuildOutputParser
 import org.jetbrains.plugins.gradle.execution.GradleConsoleFilter
@@ -20,17 +21,27 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     if (!line.startsWith("FAILURE: Build failed with an exception.")) return false
     if (!reader.readLine().isNullOrBlank()) return false
 
-    if (reader.readLine() != "* Where:") return false
+    val location: String?
+    val filter: GradleConsoleFilter?
+    var whereOrWhatLine = reader.readLine()
+    if (whereOrWhatLine == "* Where:") {
+      location = reader.readLine() ?: return false
+      filter = GradleConsoleFilter(null)
+      filter.applyFilter(location, 0) ?: return false
+      if (!reader.readLine().isNullOrBlank()) return false
+      whereOrWhatLine = reader.readLine()
+    }
+    else {
+      location = null
+      filter = null
+    }
 
-    val location = reader.readLine() ?: return false
-    val filter = GradleConsoleFilter(null)
-    filter.applyFilter(location, 0) ?: return false
+    if (whereOrWhatLine != "* What went wrong:") return false
 
-    if (!reader.readLine().isNullOrBlank()) return false
-
-    if (reader.readLine() != "* What went wrong:") return false
-
-    val description = StringBuilder().appendln(location).appendln()
+    val description = StringBuilder()
+    if (location != null) {
+      description.appendln(location)
+    }
     val reason = reader.readLine() ?: return false
     val parentId: Any
     if (reason.startsWith("Execution failed for task '")) {
@@ -49,8 +60,13 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
         nextLine == "* Try:" -> break@loop
       }
     }
-    val filePosition = FilePosition(File(filter.filteredFileName), filter.filteredLineNumber - 1, 0)
-    messageConsumer.accept(FileMessageEventImpl(parentId, MessageEvent.Kind.ERROR, null, reason, description.toString(), filePosition))
+    if (location != null && filter != null) {
+      val filePosition = FilePosition(File(filter.filteredFileName), filter.filteredLineNumber - 1, 0)
+      messageConsumer.accept(FileMessageEventImpl(parentId, MessageEvent.Kind.ERROR, null, reason, description.toString(), filePosition))
+    }
+    else {
+      messageConsumer.accept(MessageEventImpl(parentId, MessageEvent.Kind.ERROR, null, reason, description.toString()))
+    }
     return true
   }
 }
