@@ -26,6 +26,7 @@ fun deserializeClassToSymbol(
     symbol: FirClassSymbol,
     nameResolver: NameResolver,
     session: FirSession,
+    defaultAnnotationDeserializer: AbstractAnnotationDeserializer?,
     parentContext: FirDeserializationContext? = null,
     deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirClassSymbol?
 ) {
@@ -50,7 +51,8 @@ fun deserializeClassToSymbol(
                 TypeTable(classProto.typeTable),
                 classId.relativeClassName
             ) ?: FirDeserializationContext.createForClass(
-                classId, classProto, nameResolver, session, FirBuiltinAnnotationDeserializer(session, nameResolver)
+                classId, classProto, nameResolver, session,
+                defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session, nameResolver)
             )
         typeParameters += context.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
         annotations += context.annotationDeserializer.loadClassAnnotations(classProto)

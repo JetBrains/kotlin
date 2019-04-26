@@ -313,11 +313,8 @@ class KotlinDeserializedJvmSymbolsProvider(
             val symbol = FirClassSymbol(classId)
             deserializeClassToSymbol(
                 classId, classProto, symbol, nameResolver, session,
-                parentContext ?: FirDeserializationContext.createForClass(
-                    classId, classProto, nameResolver, session,
-                    JvmBinaryAnnotationDeserializer(session, nameResolver)
-                ),
-                this::findAndDeserializeClass
+                JvmBinaryAnnotationDeserializer(session, nameResolver),
+                parentContext, this::findAndDeserializeClass
             )
             classesCache[classId] = symbol
             val annotations = mutableListOf<FirAnnotationCall>()

@@ -100,7 +100,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
                     deserializeClassToSymbol(
                         classId, classProto, symbol, nameResolver, session,
-                        parentContext,
+                        null, parentContext,
                         this::findAndDeserializeClass
                     )
                 }
