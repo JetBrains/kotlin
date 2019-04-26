@@ -139,9 +139,9 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
         }
     }
 
-    protected fun ConeCallableSymbol.hasConsistentExtensionReceiver(explicitExtensionReceiver: ExpressionReceiverValue?): Boolean {
+    protected fun ConeCallableSymbol.hasConsistentExtensionReceiver(extensionReceiver: ReceiverValue?): Boolean {
         val hasExtensionReceiver = hasExtensionReceiver()
-        return hasExtensionReceiver == (explicitExtensionReceiver != null)
+        return hasExtensionReceiver == (extensionReceiver != null)
     }
 }
 
@@ -149,10 +149,12 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
 // Here we always have an explicit or implicit dispatch receiver, and can access members of its scope
 // (which is separated from currently accessible scope, see below)
 // So: dispatch receiver = given explicit or implicit receiver (always present)
-// So: extension receiver = either none, if dispatch receiver = explicit receiver, or given explicit receiver, otherwise
+// So: extension receiver = either none, if dispatch receiver = explicit receiver,
+//     or given implicit or explicit receiver, otherwise
 class MemberScopeTowerLevel(
     session: FirSession,
-    val dispatchReceiver: ReceiverValue
+    val dispatchReceiver: ReceiverValue,
+    val implicitExtensionReceiver: ReceiverValue? = null
 ) : SessionBasedTowerLevel(session) {
 
     private fun <T : ConeSymbol> processMembers(
@@ -160,9 +162,11 @@ class MemberScopeTowerLevel(
         explicitExtensionReceiver: ExpressionReceiverValue?,
         processScopeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
     ): ProcessorAction {
+        if (implicitExtensionReceiver != null && explicitExtensionReceiver != null) return ProcessorAction.NEXT
+        val extensionReceiver = implicitExtensionReceiver ?: explicitExtensionReceiver
         val scope = dispatchReceiver.type.scope(session, ScopeSession()) ?: return ProcessorAction.NEXT
         if (scope.processScopeMembers { candidate ->
-                if (candidate is ConeCallableSymbol && candidate.hasConsistentExtensionReceiver(explicitExtensionReceiver)) {
+                if (candidate is ConeCallableSymbol && candidate.hasConsistentExtensionReceiver(extensionReceiver)) {
                     // NB: we do not check dispatchReceiverValue != null here,
                     // because of objects & constructors (see comments in dispatchReceiverValue() implementation)
                     output.consumeCandidate(candidate, candidate.dispatchReceiverValue())
@@ -471,7 +475,18 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator, val components: Inf
         oldGroup: Int
     ): Int {
         var group = oldGroup
-        towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, MemberScopeTowerLevel(session, implicitReceiverValue), collector, group++)
+        towerDataConsumer.consume(
+            TowerDataKind.TOWER_LEVEL,
+            MemberScopeTowerLevel(session, implicitReceiverValue),
+            collector, group++
+        )
+
+        // This is an equivalent to the old "BothTowerLevelAndImplicitReceiver"
+        towerDataConsumer.consume(
+            TowerDataKind.TOWER_LEVEL,
+            MemberScopeTowerLevel(session, implicitReceiverValue, implicitReceiverValue),
+            collector, group++
+        )
 
         return group
     }
