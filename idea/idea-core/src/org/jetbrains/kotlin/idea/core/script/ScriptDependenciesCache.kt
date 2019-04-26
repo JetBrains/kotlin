@@ -27,10 +27,7 @@ import com.intellij.util.containers.SLRUMap
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.util.EDT
-import org.jetbrains.kotlin.utils.addIfNotNull
-import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -45,12 +42,18 @@ class ScriptDependenciesCache(private val project: Project) {
     }
 
     private val cacheLock = ReentrantReadWriteLock()
-    private val cache = SLRUMap<VirtualFile, ScriptDependencies>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED)
 
-    operator fun get(virtualFile: VirtualFile): ScriptDependencies? = cacheLock.write { cache[virtualFile] }
+    private val scriptDependenciesCache = SLRUCacheWithLock<ScriptDependencies>()
+    private val scriptsModificationStampsCache = SLRUCacheWithLock<Long>()
+
+    operator fun get(virtualFile: VirtualFile): ScriptDependencies? = scriptDependenciesCache.get(virtualFile)
+
+    fun shouldRunDependenciesUpdate(file: VirtualFile): Boolean {
+        return scriptsModificationStampsCache.replace(file, file.modificationStamp) != file.modificationStamp
+    }
 
     val allScriptsClasspath by ClearableLazyValue(cacheLock) {
-        val files = cache.entrySet().flatMap { it.value.classpath }.distinct()
+        val files = scriptDependenciesCache.getAll().flatMap { it.value.classpath }.distinct()
         ScriptDependenciesManager.toVfsRoots(files)
     }
 
@@ -59,7 +62,7 @@ class ScriptDependenciesCache(private val project: Project) {
     }
 
     val allLibrarySources by ClearableLazyValue(cacheLock) {
-        ScriptDependenciesManager.toVfsRoots(cache.entrySet().flatMap { it.value.sources }.distinct())
+        ScriptDependenciesManager.toVfsRoots(scriptDependenciesCache.getAll().flatMap { it.value.sources }.distinct())
     }
 
     val allLibrarySourcesScope by ClearableLazyValue(cacheLock) {
@@ -99,21 +102,15 @@ class ScriptDependenciesCache(private val project: Project) {
     }
 
     fun clear() {
-        val keys = cacheLock.read {
-            val keys = mutableListOf<VirtualFile>()
-            cache.iterateKeys { keys.addIfNotNull(it) }
-            cacheLock.write(cache::clear)
-            keys
-        }
+        val keys = scriptDependenciesCache.getAll().map { it.key }.toList()
+
+        scriptDependenciesCache.clear()
+
         onChange(keys)
     }
 
     fun save(virtualFile: VirtualFile, new: ScriptDependencies): Boolean {
-        val old = cacheLock.write {
-            val old = cache[virtualFile]
-            cache.put(virtualFile, new)
-            old
-        }
+        val old = scriptDependenciesCache.replace(virtualFile, new)
         val changed = new != old
         if (changed) {
             onChange(listOf(virtualFile))
@@ -123,36 +120,11 @@ class ScriptDependenciesCache(private val project: Project) {
     }
 
     fun delete(virtualFile: VirtualFile): Boolean {
-        val changed = cacheLock.write {
-            cache.remove(virtualFile)
-        }
+        val changed = scriptDependenciesCache.remove(virtualFile)
         if (changed) {
             onChange(listOf(virtualFile))
         }
         return changed
-    }
-
-    fun combineDependencies(filePredicate: (VirtualFile) -> Boolean): ScriptDependencies = cacheLock.read {
-        val sources = mutableListOf<File>()
-        val binaries = mutableListOf<File>()
-        val imports = mutableListOf<String>()
-        val scripts = mutableListOf<File>()
-
-        val relevantEntries = cache.entrySet().filter { filePredicate(it.key) }.map { it.value }
-        relevantEntries.forEach {
-            sources += it.sources
-            binaries += it.classpath
-            imports += it.imports
-            scripts += it.scripts
-        }
-
-        return ScriptDependencies(
-            classpath = binaries.distinct(),
-            sources = sources.distinct(),
-            imports = imports.distinct(),
-            scripts = scripts.distinct(),
-            javaHome = relevantEntries.map { it.javaHome }.firstOrNull()
-        )
     }
 }
 
@@ -181,6 +153,38 @@ private class ClearableLazyValue<in R, out T : Any>(
         lock.write {
             value = null
         }
+    }
+}
+
+
+private class SLRUCacheWithLock<T> {
+    private val lock = ReentrantReadWriteLock()
+
+    val cache = SLRUMap<VirtualFile, T>(
+        ScriptDependenciesCache.MAX_SCRIPTS_CACHED,
+        ScriptDependenciesCache.MAX_SCRIPTS_CACHED
+    )
+
+    fun get(value: VirtualFile): T? = lock.write {
+        cache[value]
+    }
+
+    fun remove(file: VirtualFile) = lock.write {
+        cache.remove(file)
+    }
+
+    fun getAll(): Collection<Map.Entry<VirtualFile, T>> = lock.write {
+        cache.entrySet()
+    }
+
+    fun clear() = lock.write {
+        cache.clear()
+    }
+
+    fun replace(file: VirtualFile, value: T): T? = lock.write {
+        val old = get(file)
+        cache.put(file, value)
+        old
     }
 }
 
