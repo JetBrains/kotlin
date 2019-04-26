@@ -8,7 +8,7 @@ import java.awt.Graphics2D
 /**
  * Adds background color.
  */
-class BackgroundInlayPresentation(
+class BackgroundPresentation(
   presentation: InlayPresentation,
   var color: Color? = null
 ) : StaticDelegatePresentation(presentation) {

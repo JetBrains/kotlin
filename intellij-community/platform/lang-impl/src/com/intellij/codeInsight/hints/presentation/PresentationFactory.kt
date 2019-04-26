@@ -47,7 +47,7 @@ class PresentationFactory(val editor: EditorImpl) {
   }
 
   fun roundWithBackground(base: InlayPresentation): InlayPresentation {
-    val rounding = rounding(8, 8, withInlayAttributes(BackgroundInlayPresentation(
+    val rounding = rounding(8, 8, withInlayAttributes(BackgroundPresentation(
       InsetPresentation(
         base,
         left = 7,

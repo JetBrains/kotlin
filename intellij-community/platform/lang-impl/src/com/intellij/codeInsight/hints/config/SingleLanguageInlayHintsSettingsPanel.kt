@@ -5,13 +5,16 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.hint.EditorFragmentComponent
 import com.intellij.codeInsight.hints.*
 import com.intellij.lang.Language
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.SyntaxTraverser
 import com.intellij.ui.CheckBoxList
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.JBSplitter
@@ -101,26 +104,35 @@ internal class SingleLanguageInlayHintsSettingsPanel(
 
   private fun collectAndDrawHints(editor: Editor, file: PsiFile) {
     val settingsWrapper = settingsWrappers.find { it.providerWithSettings.provider === selectedProvider.provider }!!
-      val collector = settingsWrapper.providerWithSettings.getCollectorWrapperFor(file, editor, settingsWrapper.language) ?: return
-      collector.collectHints(file, true, editor) // Always render hints in settings preview
+    val collector = settingsWrapper.providerWithSettings.getCollectorWrapperFor(file, editor, settingsWrapper.language) ?: return
+    traverse(file) {
+      collector.collectHints(it, true, editor) // Always render hints in settings preview
+    }
     val model = editor.inlayModel
     val existingInlays = model.getInlineElementsInRange(file.textOffset, file.textRange.endOffset)
     collector.applyToEditor(file, editor, existingInlays)
   }
 
+  private fun traverse(root: PsiElement, action: (PsiElement) -> Unit) {
+    val traverser = SyntaxTraverser.psiTraverser(root)
+    traverser.forEach { action(it) }
+  }
+
   private fun updateEditor(text: String?) {
-    if (text == null) {
-      bottomPanel.isVisible = false
-    }
-    else {
-      bottomPanel.isVisible = true
-      editorField.text = text
-      val document = editorField.document
-      PsiDocumentManager.getInstance(project).commitDocument(document)
-      val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
-      val editor = editorField.editor
-      if (editor != null && psiFile != null) {
-        collectAndDrawHints(editor, psiFile)
+    runWriteAction {
+      if (text == null) {
+        bottomPanel.isVisible = false
+      }
+      else {
+        bottomPanel.isVisible = true
+        editorField.text = text
+        val document = editorField.document
+        PsiDocumentManager.getInstance(project).commitDocument(document)
+        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
+        val editor = editorField.editor
+        if (editor != null && psiFile != null) {
+          collectAndDrawHints(editor, psiFile)
+        }
       }
     }
   }
