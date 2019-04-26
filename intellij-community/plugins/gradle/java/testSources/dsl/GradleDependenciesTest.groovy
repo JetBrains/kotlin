@@ -24,7 +24,11 @@ class GradleDependenciesTest extends GradleHighlightingBaseTest implements Resol
     new RunAll().append {
       'dependencies delegate'()
     } append {
-      'add delegate'()
+      'add external module dependency delegate'()
+    } append {
+      'add self resolving dependency delegate'()
+    } append {
+      'add project dependency delegate'()
     } append {
       'add delegate method setter'()
     } append {
@@ -54,9 +58,51 @@ class GradleDependenciesTest extends GradleHighlightingBaseTest implements Resol
     }
   }
 
-  void 'add delegate'() {
-    doTest('dependencies { add("compile", "notation") {<caret>} }') {
-      closureDelegateTest(GRADLE_API_ARTIFACTS_MODULE_DEPENDENCY, 1)
+  void 'add external module dependency delegate'() {
+    def data = [
+      'dependencies { add("compile", name: 42) { <caret> } }',
+      'dependencies { add("compile", [name:42]) { <caret> } }',
+      'dependencies { add("compile", ":42") { <caret> } }',
+      'dependencies { compile(name: 42) { <caret> } }',
+      'dependencies { compile([name:42]) { <caret> } }',
+      'dependencies { compile(":42") { <caret> } }',
+      'dependencies.add("compile", name: 42) { <caret> }',
+      'dependencies.add("compile", [name:42]) { <caret> }',
+      'dependencies.add("compile", ":42") { <caret> }',
+      'dependencies.compile(name: 42) { <caret> }',
+      'dependencies.compile([name:42]) { <caret> }',
+      'dependencies.compile(":42") { <caret> }',
+    ]
+    doTest(data) {
+      closureDelegateTest(GRADLE_API_ARTIFACTS_EXTERNAL_MODULE_DEPENDENCY, 1)
+    }
+  }
+
+  void 'add self resolving dependency delegate'() {
+    def data = [
+      'dependencies { add("compile", files()) { <caret> } }',
+      'dependencies { add("compile", fileTree("libs")) { <caret> } }',
+      'dependencies { compile(files()) { <caret> } }',
+      'dependencies { compile(fileTree("libs")) { <caret> } }',
+      'dependencies.add("compile", files()) { <caret> }',
+      'dependencies.add("compile", fileTree("libs")) { <caret> }',
+      'dependencies.compile(files()) { <caret> }',
+      'dependencies.compile(fileTree("libs")) { <caret> }',
+    ]
+    doTest(data) {
+      closureDelegateTest(GRADLE_API_ARTIFACTS_SELF_RESOLVING_DEPENDENCY, 1)
+    }
+  }
+
+  void 'add project dependency delegate'() {
+    def data = [
+      'dependencies { add("compile", project(":")) { <caret> } }',
+      'dependencies { compile(project(":")) { <caret> } }',
+      'dependencies.add("compile", project(":")) { <caret> }',
+      'dependencies.compile(project(":")) { <caret> }',
+    ]
+    doTest(data) {
+      closureDelegateTest(GRADLE_API_ARTIFACTS_PROJECT_DEPENDENCY, 1)
     }
   }
 
