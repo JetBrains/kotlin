@@ -25,11 +25,13 @@ dependencies {
     mavenCompileScope(projectRuntimeJar(":kotlin-compiler"))
 
     compile(project(":kotlin-native:kotlin-native-utils"))
+
+    testCompile(commonDep("junit:junit"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { none() }
+    "test" { projectDefault() }
 }
 
 publish()
