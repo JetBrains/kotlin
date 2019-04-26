@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 open class KotlinJsTargetPreset(
     project: Project,
     kotlinPluginVersion: String
-) : KotlinOnlyTargetPreset<KotlinJsCompilation>(
+) : KotlinOnlyTargetPreset<KotlinOnlyTarget<KotlinJsCompilation>, KotlinJsCompilation>(
     project,
     kotlinPluginVersion
 ) {
+    override fun instantiateTarget() = KotlinOnlyTarget<KotlinJsCompilation>(project, KotlinPlatformType.js)
+
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
 
     override fun getName(): String = PRESET_NAME

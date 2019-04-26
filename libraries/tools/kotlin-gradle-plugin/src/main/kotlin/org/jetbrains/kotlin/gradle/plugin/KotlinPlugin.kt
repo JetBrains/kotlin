@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
@@ -430,8 +431,9 @@ internal abstract class AbstractKotlinPlugin(
             jarTask.dependsOn(inspectTask.getTaskOrProvider())
         }
 
-        private fun setUpJavaSourceSets(
-            kotlinTarget: KotlinWithJavaTarget<*>
+        internal fun setUpJavaSourceSets(
+            kotlinTarget: KotlinTarget,
+            duplicateJavaSourceSetsAsKotlinSourceSets: Boolean = true
         ) {
             val project = kotlinTarget.project
             val javaSourceSets = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
@@ -442,22 +444,27 @@ internal abstract class AbstractKotlinPlugin(
             }
 
             // Workaround for indirect mutual recursion between the two `all { ... }` handlers:
-            val compilationsUnderConstruction = mutableMapOf<String, KotlinWithJavaCompilation<*>>()
+            val compilationsUnderConstruction = mutableMapOf<String, KotlinCompilation<*>>()
 
             javaSourceSets.all { javaSourceSet ->
                 val kotlinCompilation =
                     compilationsUnderConstruction[javaSourceSet.name] ?: kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
-                kotlinCompilation.javaSourceSet = javaSourceSet
-                val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
-                javaSourceSet.addConvention(kotlinSourceSetDslName, kotlinSourceSet)
-                kotlinSourceSet.kotlin.source(javaSourceSet.java)
-                kotlinCompilation.source(kotlinSourceSet)
+                (kotlinCompilation as? KotlinWithJavaCompilation<*>)?.javaSourceSet = javaSourceSet
+
+                if (duplicateJavaSourceSetsAsKotlinSourceSets) {
+                    val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
+                    kotlinSourceSet.kotlin.source(javaSourceSet.java)
+                    kotlinCompilation.source(kotlinSourceSet)
+                    javaSourceSet.addConvention(kotlinSourceSetDslName, kotlinSourceSet)
+                } else {
+                    javaSourceSet.addConvention(kotlinSourceSetDslName, kotlinCompilation.defaultSourceSet)
+                }
             }
 
             kotlinTarget.compilations.all { kotlinCompilation ->
                 val sourceSetName = kotlinCompilation.name
                 compilationsUnderConstruction[sourceSetName] = kotlinCompilation
-                kotlinCompilation.javaSourceSet = javaSourceSets.maybeCreate(sourceSetName)
+                (kotlinCompilation as? KotlinWithJavaCompilation<*>)?.javaSourceSet = javaSourceSets.maybeCreate(sourceSetName)
 
                 // Another Kotlin source set following the other convention, named according to the compilation, not the Java source set:
                 val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.defaultSourceSetName)

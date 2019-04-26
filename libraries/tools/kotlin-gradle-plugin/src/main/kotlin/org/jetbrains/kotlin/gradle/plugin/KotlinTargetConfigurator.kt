@@ -301,6 +301,9 @@ internal val KotlinCompilation<*>.deprecatedCompileConfigurationName: String
 internal val KotlinCompilationToRunnableFiles<*>.deprecatedRuntimeConfigurationName: String
     get() = disambiguateName("runtime")
 
+internal val KotlinTarget.testTaskName: String
+    get() = lowerCamelCaseName(targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
+
 abstract class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>>(
     createDefaultSourceSets: Boolean,
     createTestCompilation: Boolean,

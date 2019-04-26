@@ -63,10 +63,21 @@ kotlin {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-common'
             }
         }
+        commonTest {
+            dependencies {
+                implementation kotlin("test-common")
+                implementation kotlin("test-annotations-common")
+            }
+        }
         jvm6Main {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
+            }
+        }
+        jvm6Test {
+            dependencies {
+                implementation kotlin("test-junit")
             }
         }
         nodeJsMain {

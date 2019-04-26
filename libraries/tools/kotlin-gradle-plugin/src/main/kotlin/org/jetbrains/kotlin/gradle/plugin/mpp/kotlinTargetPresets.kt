@@ -6,20 +6,25 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 
-abstract class KotlinOnlyTargetPreset<T : KotlinCompilation<*>>(
+abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompilation<*>>(
     protected val project: Project,
     protected val kotlinPluginVersion: String
-) : KotlinTargetPreset<KotlinOnlyTarget<T>> {
+) : KotlinTargetPreset<R> {
 
     protected abstract fun createKotlinTargetConfigurator(): KotlinTargetConfigurator<T>
 
     protected open fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<T>): String? =
         target.targetName
 
-    override fun createTarget(name: String): KotlinOnlyTarget<T> {
-        val result = KotlinOnlyTarget<T>(project, platformType).apply {
+    abstract protected fun instantiateTarget(): R
+
+    override fun createTarget(name: String): R {
+        val result = instantiateTarget().apply {
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
             preset = this@KotlinOnlyTargetPreset
