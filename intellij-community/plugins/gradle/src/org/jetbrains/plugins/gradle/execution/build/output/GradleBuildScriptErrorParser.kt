@@ -42,7 +42,7 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     if (location != null) {
       description.appendln(location)
     }
-    val reason = reader.readLine() ?: return false
+    var reason = reader.readLine() ?: return false
     val parentId: Any
     if (reason.startsWith("Execution failed for task '")) {
       parentId = reason.substringAfter("Execution failed for task '").substringBefore("'.")
@@ -55,11 +55,18 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
       val nextLine = reader.readLine() ?: return false
       if (nextLine.isBlank()) break
       description.appendln(nextLine)
+      val trimStart = nextLine.trimStart()
+      if(trimStart.startsWith("> ")) {
+        reason = trimStart.substringAfter("> ").trimEnd('.')
+      }
       when {
         nextLine.isEmpty() -> break@loop
         nextLine == "* Try:" -> break@loop
       }
     }
+    // compilation errors should be added by the respective compiler output parser
+    if(reason == "Compilation failed; see the compiler error output for details") return false
+
     if (location != null && filter != null) {
       val filePosition = FilePosition(File(filter.filteredFileName), filter.filteredLineNumber - 1, 0)
       messageConsumer.accept(FileMessageEventImpl(parentId, MessageEvent.Kind.ERROR, null, reason, description.toString(), filePosition))
