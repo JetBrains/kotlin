@@ -71,9 +71,18 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         return super.createModule(path, moduleType)
     }
 
-    fun addRoot(module: Module, sourceDirInTestData: File, isTestRoot: Boolean) {
-        val tmpRootDir = createTempDirectory()
+    fun addRoot(module: Module, sourceDirInTestData: File, isTestRoot: Boolean, transformContainedFiles: ((File) -> Unit)? = null) {
+        val tmpDir = createTempDirectory()
+
+        // Preserve original root name. This might be useful for later matching of copied files to original ones
+        val tmpRootDir = File(tmpDir, sourceDirInTestData.name).also { it.mkdir() }
+
         FileUtil.copyDir(sourceDirInTestData, tmpRootDir)
+
+        if (transformContainedFiles != null) {
+            tmpRootDir.listFiles().forEach(transformContainedFiles)
+        }
+
         val virtualTempDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tmpRootDir)!!
         object : WriteCommandAction.Simple<Unit>(project) {
             override fun run() {
@@ -133,7 +142,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 fun Module.createFacet(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    implementedModuleName: String? = null
+    implementedModuleNames: List<String>? = null
 ) {
     WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
@@ -143,8 +152,8 @@ fun Module.createFacet(
                     modelsProvider.getModifiableRootModel(this@createFacet),
                     platformKind
             )
-            if (implementedModuleName != null) {
-                this.implementedModuleNames = listOf(implementedModuleName)
+            if (implementedModuleNames != null) {
+                this.implementedModuleNames = implementedModuleNames
             }
         }
         modelsProvider.commit()
