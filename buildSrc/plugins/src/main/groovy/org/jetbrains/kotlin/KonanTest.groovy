@@ -115,7 +115,7 @@ abstract class KonanTest extends JavaExec {
             def sourcesWriter = sources.newWriter()
             filesToCompile.each { f ->
                 sourcesWriter.write(f.chars().any { Character.isWhitespace(it) }
-                        ? "\"$f\"\n" // escape file name
+                        ? "\"${f.replace("\\", "\\\\")}\"\n" // escape file name
                         : "$f\n")
             }
             sourcesWriter.close()
