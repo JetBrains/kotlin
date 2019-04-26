@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.resolve.calls.model
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
  * Call, Callable reference, lambda & function expression, collection literal.
@@ -179,6 +183,17 @@ sealed class CallResolutionResult(
     final override fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {
         super.setAnalyzedResults(subResolvedAtoms)
     }
+
+    val completedDiagnostic: List<KotlinCallDiagnostic>
+        get() {
+            val substitutor = constraintSystem.buildResultingSubstitutor()
+            return diagnostics.map {
+                if (it !is NewConstraintError) return@map it
+                val lowerType = it.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
+                val newLowerType = substitutor.safeSubstitute(lowerType)
+                NewConstraintError(newLowerType, it.upperType, it.position)
+            }
+        }
 
     override val atom: ResolutionAtom? get() = null
 
