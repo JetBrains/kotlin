@@ -16,10 +16,6 @@ import com.intellij.openapi.project.ProjectManager;
 import org.jetbrains.annotations.NotNull;
 
 public class EditRunConfigurationsAction extends DumbAwareAction {
-  public EditRunConfigurationsAction() {
-    getTemplatePresentation().setIcon(AllIcons.Actions.EditSource);
-  }
-
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
     Project project = e.getData(CommonDataKeys.PROJECT);
