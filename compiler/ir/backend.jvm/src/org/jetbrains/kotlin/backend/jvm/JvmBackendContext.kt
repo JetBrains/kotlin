@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,16 +12,19 @@ import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 class JvmBackendContext(
@@ -47,6 +50,16 @@ class JvmBackendContext(
     override val configuration get() = state.configuration
 
     override val internalPackageFqn = FqName("kotlin.jvm")
+
+    val transformedSuspendFunctionsCache = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
+
+    private val coroutinePackage = state.module.getPackage(state.languageVersionSettings.coroutinesPackageFqName())
+
+    val continuationClass = symbolTable.referenceClass(
+        coroutinePackage.memberScope.getContributedClassifier(
+            Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND
+        ) as ClassDescriptor
+    )
 
     internal fun getTopLevelClass(fqName: FqName): IrClassSymbol {
         val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(

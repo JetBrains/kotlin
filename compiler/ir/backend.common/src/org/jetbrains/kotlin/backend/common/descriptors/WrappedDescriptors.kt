@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
@@ -452,7 +453,18 @@ open class WrappedSimpleFunctionDescriptor(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 
     override fun newCopyBuilder(): FunctionDescriptor.CopyBuilder<out SimpleFunctionDescriptor> {
-        TODO("not implemented")
+        return SimpleFunctionDescriptorImpl
+            .create(containingDeclaration, annotations, name, kind, source)
+            .initialize(
+                extensionReceiverParameter,
+                dispatchReceiverParameter,
+                typeParameters,
+                valueParameters,
+                returnType,
+                modality,
+                visibility,
+                null
+            ).newCopyBuilder()
     }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D) =
