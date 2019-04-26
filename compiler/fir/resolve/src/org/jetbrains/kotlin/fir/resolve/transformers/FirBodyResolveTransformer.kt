@@ -115,7 +115,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 resolved.resultType =
                     resolved.conversionTypeRef.withReplacedConeType(
                         session,
-                        resolved.conversionTypeRef.coneTypeUnsafe().withNullability(ConeNullability.NULLABLE)
+                        resolved.conversionTypeRef.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
                     )
             }
             else -> error("Unknown type operator")
@@ -368,7 +368,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         fun transform(): CompositeTransformResult<FirDeclaration> {
             localScopes.lastOrNull()?.storeDeclaration(namedFunction)
             return withScopeCleanup(scopes) {
-                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session))
+                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe<ConeKotlinType>()?.scope(session))
 
 
                 val result = super.transformNamedFunction(namedFunction, namedFunction.returnTypeRef).single as FirNamedFunction
@@ -440,7 +440,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     fun <D> FirElement.visitNoTransform(transformer: FirTransformer<D>, data: D) {
-        val result = this.transform(transformer, data)
+        val result = this.transform<FirElement, D>(transformer, data)
         require(result.single === this) { "become ${result.single}: `${result.single.render()}`, was ${this}: `${this.render()}`" }
     }
 
@@ -507,7 +507,7 @@ class ReturnTypeCalculatorWithJump(val session: FirSession) : ReturnTypeCalculat
             file.session
         )
 
-        file.transform(transformer, null)
+        file.transform<FirElement, Any?>(transformer, null)
 
 
         val newReturnTypeRef = declaration.returnTypeRef

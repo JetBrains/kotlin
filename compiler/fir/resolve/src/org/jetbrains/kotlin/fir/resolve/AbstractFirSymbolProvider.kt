@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
@@ -48,7 +49,7 @@ abstract class AbstractFirSymbolProvider : FirSymbolProvider {
             if (symbol !is FirClassSymbol) continue
             if (symbol.classId.relativeClassName.parent().isRoot) {
                 // Launch for top-level classes only
-                symbol.fir.transform(transformer, data)
+                symbol.fir.transform<FirElement, D>(transformer, data)
             }
         }
     }

@@ -110,14 +110,14 @@ class FirClassSubstitutionScope(
         if (member is FirConstructor) return original as FirFunctionSymbol // TODO: substitution for constructors
         member as FirNamedFunction
 
-        val receiverType = member.receiverTypeRef?.coneTypeUnsafe()
+        val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
         val newReceiverType = receiverType?.substitute()
 
         val returnType = typeCalculator.tryCalculateReturnType(member).type
         val newReturnType = returnType.substitute()
 
         val newParameterTypes = member.valueParameters.map {
-            it.returnTypeRef.coneTypeUnsafe().substitute()
+            it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().substitute()
         }
 
         return createFakeOverride(session, member, original as FirFunctionSymbol, newReceiverType, newReturnType, newParameterTypes)

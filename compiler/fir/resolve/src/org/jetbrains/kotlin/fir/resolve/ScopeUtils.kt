@@ -32,7 +32,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession): FirScope? {
             // TODO: support LibraryTypeParameterSymbol or get rid of it
             val toSymbol = this.lookupTag.toSymbol(useSiteSession)?.takeIf { it is FirBasedSymbol<*> } ?: return null
             val fir = toSymbol.firUnsafe<FirTypeParameter>()
-            FirCompositeScope(fir.bounds.mapNotNullTo(mutableListOf()) { it.coneTypeUnsafe().scope(useSiteSession) })
+            FirCompositeScope(fir.bounds.mapNotNullTo(mutableListOf()) { it.coneTypeUnsafe<ConeKotlinType>().scope(useSiteSession) })
         }
         is ConeFlexibleType -> lowerBound.scope(useSiteSession)
         else -> error("Failed type ${this}")
