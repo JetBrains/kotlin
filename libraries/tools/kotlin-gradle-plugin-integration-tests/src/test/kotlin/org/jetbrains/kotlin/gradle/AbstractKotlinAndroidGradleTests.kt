@@ -1,10 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.util.AGPVersion
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.getFilesByNames
-import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
@@ -208,6 +205,60 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
                     }
                 }
             }
+        }
+    }
+
+    @Test
+    fun testAndroidMppProductionDependenciesInTests() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("4.7"))) {
+        // Test the fix for KT-29343
+        setupWorkingDir()
+
+        gradleBuildScript("lib").appendText(
+            "\n" + """
+            kotlin.sourceSets {
+                commonMain {
+                    dependencies {
+                        implementation kotlin("stdlib-common")
+                    }
+                }
+                androidLibDebug {
+                    dependencies {
+                        implementation kotlin("reflect")
+                    }
+                }
+                androidLibRelease {
+                    dependencies {
+                        implementation kotlin("test-junit")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val kotlinVersion = defaultBuildOptions().kotlinVersion
+        testResolveAllConfigurations("lib") {
+            assertSuccessful()
+
+            // commonMain:
+            assertContains(">> :lib:debugCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+            assertContains(">> :lib:releaseCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+            assertContains(">> :lib:debugAndroidTestCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+            assertContains(">> :lib:debugUnitTestCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+            assertContains(">> :lib:releaseUnitTestCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+
+            // androidLibDebug:
+            assertContains(">> :lib:debugCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+            assertNotContains(">> :lib:releaseCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+            assertContains(">> :lib:debugAndroidTestCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+            assertContains(">> :lib:debugUnitTestCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+            assertNotContains(">> :lib:releaseUnitTestCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+
+            // androidLibRelease:
+            assertNotContains(">> :lib:debugCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
+            assertContains(">> :lib:releaseCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
+            assertNotContains(">> :lib:debugAndroidTestCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
+            assertNotContains(">> :lib:debugUnitTestCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
+            assertContains(">> :lib:releaseUnitTestCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
         }
     }
 
