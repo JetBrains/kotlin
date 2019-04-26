@@ -5,6 +5,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.jetbrains.plugins.gradle.GradleManager
@@ -53,16 +54,23 @@ open class GradleJavaTestEventsIntegrationTest: GradleImportingTestCase() {
         .generate()
     )
 
+    RunAll().append(
+      ThrowableRunnable<Throwable> { `call test task produces test events`() },
+      ThrowableRunnable<Throwable> { `call build task does not produce test events`() }
+    ).run()
+  }
+
+  private fun `call test task produces test events`() {
     val taskId = ExternalSystemTaskId.create(GradleConstants.SYSTEM_ID, ExternalSystemTaskType.EXECUTE_TASK, myProject)
     val eventLog = mutableListOf<String>()
-    val testListener = object: ExternalSystemTaskNotificationListenerAdapter() {
+    val testListener = object : ExternalSystemTaskNotificationListenerAdapter() {
       override fun onTaskOutput(id: ExternalSystemTaskId, text: String, stdOut: Boolean) {
-        eventLog.add(text.trim('\r','\n',' '))
+        eventLog.add(text.trim('\r', '\n', ' '))
       }
     };
 
     val settings = GradleManager().executionSettingsProvider.`fun`(Pair.create<Project, String>(myProject, projectPath))
-
+    settings.putUserData(GradleConstants.RUN_TASK_AS_TEST, true);
 
     assertThatThrownBy {
       GradleTaskManager().executeTasks(taskId,
@@ -79,6 +87,29 @@ open class GradleJavaTestEventsIntegrationTest: GradleImportingTestCase() {
         "<descriptor name='testFail' className='my.pack.AClassTest' /><ijLogEol/>",
         "<descriptor name='testSuccess' className='my.pack.AClassTest' /><ijLogEol/>"
       )
+  }
+
+  private fun `call build task does not produce test events`() {
+    val taskId = ExternalSystemTaskId.create(GradleConstants.SYSTEM_ID, ExternalSystemTaskType.EXECUTE_TASK, myProject)
+    val eventLog = mutableListOf<String>()
+    val testListener = object : ExternalSystemTaskNotificationListenerAdapter() {
+      override fun onTaskOutput(id: ExternalSystemTaskId, text: String, stdOut: Boolean) {
+        eventLog.add(text.trim('\r', '\n', ' '))
+      }
+    };
+
+    val settings = GradleManager().executionSettingsProvider.`fun`(Pair.create<Project, String>(myProject, projectPath))
+
+    assertThatThrownBy {
+      GradleTaskManager().executeTasks(taskId,
+                                       listOf("clean", "build"),
+                                       projectPath,
+                                       settings,
+                                       null,
+                                       testListener);
+    }
+      .hasMessageContaining("There were failing tests")
+    assertThat(eventLog).noneMatch { it.contains("<ijLogEol/>") }
   }
 
 }
