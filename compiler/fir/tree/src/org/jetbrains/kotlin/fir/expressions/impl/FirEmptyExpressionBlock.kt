@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 
 class FirEmptyExpressionBlock(
     session: FirSession
 ) : FirAbstractBlock(session, null), FirBlock {
-    override val statements = listOf()
+    override val statements: List<FirStatement> = listOf()
 }
