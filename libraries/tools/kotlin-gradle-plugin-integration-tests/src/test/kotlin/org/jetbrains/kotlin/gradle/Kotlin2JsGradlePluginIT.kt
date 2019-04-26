@@ -393,9 +393,10 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertFileExists("build/test_node_modules/kotlin-js-plugin_test.js")
             assertFileExists("build/test_node_modules/kotlin-js-plugin_test.js.map")
 
+            val slash = File.separator
             assertFileContains(
                 "build/test_node_modules/kotlin-js-plugin_test.js.map",
-                "\"sources\":[\"../../src/test/kotlin/MainTest.kt\"]"
+                "\"sources\":[\"..$slash..${slash}src${slash}test${slash}kotlin${slash}MainTest.kt\"]"
             )
 
             assertTestResults("testProject/kotlin-js-plugin-project/tests.xml", "test")
