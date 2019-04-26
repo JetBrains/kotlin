@@ -37,7 +37,9 @@ internal fun zippedKonanLibraryChecks(klibFile: File) {
     check(klibFile.isFile) { "Expected $klibFile to be a regular file." }
 
     val extension = klibFile.extension
-    check(extension.isEmpty() || extension == KLIB_FILE_EXTENSION) { "Unexpected file extension: $extension" }
+    check(extension.isEmpty() || extension == KLIB_FILE_EXTENSION) {
+        "KLIB path has unexpected extension: $klibFile"
+    }
 }
 
 private class UnzippedKonanLibraryLayout(override val libDir: File, override val target: KonanTarget?): KonanLibraryLayoutImpl {

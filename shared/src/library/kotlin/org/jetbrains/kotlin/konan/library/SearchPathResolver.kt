@@ -159,9 +159,11 @@ internal open class KonanLibrarySearchPathResolver(
 
         if (!noDefaultLibs) {
             val defaultLibs = defaultRoots.flatMap { it.listFiles }
+                    .asSequence()
+                    .filterNot { it.name.startsWith('.') }
                     .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KONAN_STDLIB_NAME }
                     .map { UnresolvedLibrary(it.absolutePath, null) }
-                    .map {resolve(it, isDefaultLink = true) }
+                    .map { resolve(it, isDefaultLink = true) }
             result.addAll(defaultLibs)
         }
 
