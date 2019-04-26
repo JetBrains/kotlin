@@ -51,9 +51,9 @@ val DECLARED = scopeSessionKey()
 
 data class SubstitutionScopeKey<T : FirClassSubstitutionScope>(val type: ConeClassLikeType) : ScopeSessionKey<T>() {}
 
-fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
+fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
     val symbolProvider = useSiteSession.service<FirSymbolProvider>()
-    return symbolProvider.getClassUseSiteMemberScope(this.classId, useSiteSession, builder)!!
+    return symbolProvider.getClassUseSiteMemberScope(this.classId, useSiteSession, builder)
 }
 
 fun FirTypeAlias.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
@@ -72,7 +72,7 @@ fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder
                 if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
                 val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
                 if (symbol is FirClassSymbol) {
-                    val useSiteScope = symbol.fir.buildUseSiteScope(useSiteSession, builder)
+                    val useSiteScope = symbol.fir.buildUseSiteScope(useSiteSession, builder)!!
                     useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteScope, symbol.fir, builder)
                 } else {
                     null

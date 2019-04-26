@@ -30,7 +30,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
             // TODO: support that case and switch back to `firUnsafe` instead of `firSafeNullable`
             val fir = this.lookupTag.toSymbol(useSiteSession)?.firSafeNullable<FirRegularClass>() ?: return null
             val companionScope = fir.companionObject?.buildUseSiteScope(useSiteSession, scopeSession)
-            val ownScope = wrapSubstitutionScopeIfNeed(useSiteSession, fir.buildUseSiteScope(useSiteSession, scopeSession), scopeSession)
+            val ownScope = wrapSubstitutionScopeIfNeed(useSiteSession, fir.buildUseSiteScope(useSiteSession, scopeSession)!!, scopeSession)
             if (companionScope != null) FirCompositeScope(mutableListOf(ownScope, companionScope)) else ownScope
 
         }
