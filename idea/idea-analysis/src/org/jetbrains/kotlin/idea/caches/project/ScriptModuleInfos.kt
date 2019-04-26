@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.idea.caches.project
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.SLRUCache
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDe
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import java.io.File
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 data class ScriptModuleInfo(
@@ -55,20 +52,6 @@ data class ScriptModuleInfo(
     }
 }
 
-fun findJdk(dependencies: ScriptDependencies?, project: Project): Sdk? {
-    val allJdks = getAllProjectSdks()
-    // workaround for mismatched gradle wrapper and plugin version
-    val javaHome = try {
-        dependencies?.javaHome?.canonicalPath
-    } catch (e: Throwable) {
-        null
-    }
-
-    return allJdks.find { javaHome != null && File(it.homePath).canonicalPath == javaHome }
-            ?: ProjectRootManager.getInstance(project).projectSdk
-            ?: allJdks.firstOrNull()
-}
-
 sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, BinaryModuleInfo {
     abstract val sdk: Sdk?
 
@@ -97,7 +80,10 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
             get() = ScriptDependenciesManager.getInstance(project).getScriptDependencies(scriptFile)
 
         override val sdk: Sdk?
-            get() = findJdk(externalDependencies, project)
+            get() {
+                val manager = ScriptDependenciesManager.getInstance(project)
+                return manager.getScriptSdk(scriptFile) ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
+            }
 
         override fun contentScope(): GlobalSearchScope {
             return ServiceManager.getService(project, ScriptBinariesScopeCache::class.java).get(externalDependencies)
@@ -106,7 +92,7 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
 
     class ForProject(project: Project) : ScriptDependenciesInfo(project) {
         override val sdk: Sdk?
-            get() = findJdk(null, project)
+            get() = ScriptDependenciesManager.getScriptDefaultSdk(project)
 
         override fun contentScope(): GlobalSearchScope {
             // we do not know which scripts these dependencies are
