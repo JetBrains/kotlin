@@ -4,6 +4,9 @@ package com.intellij.codeInsight.hints.presentation
 import java.awt.Point
 import java.awt.event.MouseEvent
 
+/**
+ * Presentation, that changes once it is first clicked
+ */
 class ChangeOnClickPresentation(
   private val notClicked: InlayPresentation,
   val onClick: () -> InlayPresentation
