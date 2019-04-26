@@ -45,9 +45,5 @@ kotlin {
         fromPreset(presets.mingwX64, 'mingw64')
         // Test building a 32-bit Windows binary.
         fromPreset(presets.mingwX86, 'mingw86')
-
-        configure([macos64, linux64, mingw64, mingw86]) {
-            compilations.main.outputKinds ['EXECUTABLE']
-        }
     }
 }

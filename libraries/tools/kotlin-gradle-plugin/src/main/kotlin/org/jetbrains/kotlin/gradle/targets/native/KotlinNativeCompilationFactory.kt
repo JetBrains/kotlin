@@ -23,7 +23,5 @@ class KotlinNativeCompilationFactory(
                 friendCompilationName = KotlinCompilation.MAIN_COMPILATION_NAME
                 isTestCompilation = true
             }
-            buildTypesNoWarn = mutableListOf(NativeBuildType.DEBUG, NativeBuildType.RELEASE)
         }
-
 }
