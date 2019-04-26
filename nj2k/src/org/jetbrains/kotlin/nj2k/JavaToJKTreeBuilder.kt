@@ -412,7 +412,7 @@ class JavaToJKTreeBuilder constructor(
                 return qualifierExpression?.toJK() ?: JKStubExpressionImpl()
             }
 
-            val symbol = symbolProvider.provideSymbol(this)
+            val symbol = symbolProvider.provideSymbol<JKSymbol>(this)
             return when (symbol) {
                 is JKClassSymbol -> JKClassAccessExpressionImpl(symbol)
                 is JKFieldSymbol -> JKFieldAccessExpressionImpl(symbol)
@@ -677,7 +677,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiAnnotation.toJK(): JKAnnotation =
             JKAnnotationImpl(
-                symbolProvider.provideSymbol(nameReferenceElement!!).safeAs<JKClassSymbol>()
+                symbolProvider.provideSymbol<JKSymbol>(nameReferenceElement!!).safeAs<JKClassSymbol>()
                     ?: JKUnresolvedClassSymbol(nameReferenceElement!!.text),
                 parameterList.attributes.map { parameter ->
                     if (parameter.nameIdentifier != null) {

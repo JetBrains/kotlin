@@ -308,7 +308,7 @@ fun JKSymbol.deepestFqName(): String? {
         when (this) {
             is PsiMethod -> (findDeepestSuperMethods().firstOrNull() ?: this).getKotlinFqName()?.asString()
             is KtNamedFunction -> findDeepestSuperMethodsNoWrapping(this).firstOrNull()?.getKotlinFqName()?.asString()
-            is JKMethod -> psi()?.deepestFqNameForTarget()
+            is JKMethod -> psi<PsiElement>()?.deepestFqNameForTarget()
             else -> null
         }
     return target.deepestFqNameForTarget() ?: fqName

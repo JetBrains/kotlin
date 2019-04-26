@@ -51,7 +51,7 @@ internal inline fun sequentialPipe(crossinline configure: PipelineConversionBuil
 
 internal inline fun batchPipe(crossinline configure: PipelineConversionBuilder<BatchBaseConversion>.() -> Unit): BatchPipelineConversion {
     return BatchPipelineConversion(
-        PipelineConversionBuilder().apply(configure).conversions
+        PipelineConversionBuilder<BatchBaseConversion>().apply(configure).conversions
     )
 }
 

@@ -111,7 +111,7 @@ internal class GenericBoundType(
 
 internal class LiteralBoundType(val isNull: Boolean) : BoundType {
     override val classReference = LiteralClassReference
-    override val typeParameters = emptyList()
+    override val typeParameters: List<BoundTypeTypeParameter> = emptyList()
     override val forcedNullabilityTo: Nullability? = null
 }
 
@@ -174,7 +174,7 @@ internal data class BoundTypeTypeParameter(
 
 internal object StarProjectionBoundType : BoundType {
     override val classReference = UnknownClassReference("*")//TODO
-    override val typeParameters = emptyList()
+    override val typeParameters: List<BoundTypeTypeParameter> = emptyList()
     override val forcedNullabilityTo = null
 }
 

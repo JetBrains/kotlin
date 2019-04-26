@@ -47,7 +47,11 @@ private fun SpecTestCase.save(
 }
 
 fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
-    val testCasesSet = SpecTestCasesSet(mutableMapOf(), mutableMapOf(), mutableMapOf())
+    val testCasesSet = SpecTestCasesSet(
+        mutableMapOf<String, TestCasesByNumbers>(),
+        mutableMapOf<String, NavigableMap<Int, TestCasesByNumbers>>(),
+        mutableMapOf<Int, SpecTestCase>()
+    )
     var rangeOffset = 0
 
     for ((filename, fileContent) in testFiles) {
@@ -55,8 +59,8 @@ fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
         var startFind = 0
 
         if (!testCasesSet.byFiles.contains(filename)) {
-            testCasesSet.byFiles[filename] = mutableMapOf()
-            testCasesSet.byRanges[filename] = TreeMap()
+            testCasesSet.byFiles[filename] = mutableMapOf<Int, SpecTestCase>()
+            testCasesSet.byRanges[filename] = TreeMap<Int, TestCasesByNumbers>()
         }
 
         val testCasesOfFile = testCasesSet.byFiles[filename]!!
