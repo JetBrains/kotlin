@@ -215,6 +215,15 @@ class DiagnosticReporterByTrackingStrategy(
                 val argument = (position as? ArgumentConstraintPosition)?.argument
                     ?: (position as? ReceiverConstraintPosition)?.argument
                 argument?.let {
+                    it.safeAs<LambdaKotlinCallArgument>()?.let lambda@{ lambda ->
+                        val parameterTypes = lambda.parametersTypes?.toList() ?: return@lambda
+                        val index = parameterTypes.indexOf(constraintError.upperType)
+                        val lambdaExpression = lambda.psiExpression as? KtLambdaExpression ?: return@lambda
+                        val parameter = lambdaExpression.valueParameters.getOrNull(index) ?: return@lambda
+                        trace.report(Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.on(parameter, constraintError.upperKotlinType.unCapture()))
+                        return
+                    }
+
                     val expression = it.psiExpression ?: return
                     val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
                     if (reportConstantTypeMismatch(constraintError, deparenthesized)) return
