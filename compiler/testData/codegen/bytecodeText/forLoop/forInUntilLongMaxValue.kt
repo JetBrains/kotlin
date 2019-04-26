@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 const val M = Long.MAX_VALUE
 
 fun f(a: Long): Int {
@@ -7,6 +8,9 @@ fun f(a: Long): Int {
     }
     return n
 }
+
+// JVM non-IR uses while.
+// JVM IR uses if + do-while.
 
 // 0 iterator
 // 0 getStart

@@ -1,7 +1,7 @@
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR
 fun test() {
     var sum = 0
-    for (i in arrayOf("", "", "", "").indices) {
+    for (i in intArrayOf(0, 0, 0, 0).indices) {
         sum += i
     }
 }
@@ -15,4 +15,5 @@ fun test() {
 // 0 getFirst
 // 0 getLast
 // 1 IF_ICMPGE
-// 1 IF
+// 1 IF_ICMPLT
+// 2 IF

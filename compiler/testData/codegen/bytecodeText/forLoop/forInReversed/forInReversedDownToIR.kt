@@ -1,24 +1,24 @@
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR
 import kotlin.test.*
 
 fun box(): String {
     var sum = 0
-    for (i in (1 .. 4).reversed()) {
+    for (i in (4 downTo 1).reversed()) {
         sum = sum * 10 + i
     }
-    assertEquals(4321, sum)
+    assertEquals(1234, sum)
 
     var sumL = 0L
-    for (i in (1L .. 4L).reversed()) {
+    for (i in (4L downTo 1L).reversed()) {
         sumL = sumL * 10 + i
     }
-    assertEquals(4321L, sumL)
+    assertEquals(1234L, sumL)
 
     var sumC = 0
-    for (i in ('1' .. '4').reversed()) {
+    for (i in ('4' downTo '1').reversed()) {
         sumC = sumC * 10 + i.toInt() - '0'.toInt()
     }
-    assertEquals(4321, sumC)
+    assertEquals(1234, sumC)
 
     return "OK"
 }
@@ -33,7 +33,8 @@ fun box(): String {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 2 IF_ICMPLT
-// 1 IFLT
-// 3 IF
-// 1 LCMP
+// 2 IF_ICMPLE
+// 1 IFGT
+// 1 IFLE
+// 4 IF
+// 2 LCMP

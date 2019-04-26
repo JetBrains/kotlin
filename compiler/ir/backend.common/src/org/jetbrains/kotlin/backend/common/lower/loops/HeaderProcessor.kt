@@ -149,6 +149,10 @@ internal class ProgressionLoopHeader(
                 //       // Loop body
                 //     } while (loopVar != last)
                 //   }
+                //
+                // This form can only be used when the loop is last-inclusive. We would need to decrement `last` in the right direction
+                // if it were last-exclusive. In any case, the induction variable cannot overflow if it were last-exclusive.
+                assert(headerInfo.isLastInclusive)
                 assert(loopVariable != null)
                 val booleanNotFun = context.irBuiltIns.booleanClass.functions.first { it.owner.name.asString() == "not" }
                 val newCondition = irCallOp(booleanNotFun, booleanNotFun.owner.returnType, irCall(context.irBuiltIns.eqeqSymbol).apply {
@@ -160,22 +164,28 @@ internal class ProgressionLoopHeader(
                     condition = newCondition
                     body = newBody
                 }
-                val notEmptyCheck = irIfThen(buildLoopCondition(builder), newLoop)
+                val notEmptyCheck = irIfThen(buildLoopCondition(this@with), newLoop)
                 LoopReplacement(newLoop, notEmptyCheck)
             } else {
-                // If the induction variable can NOT overflow, use a simple while loop. Loop is lowered into something like:
+                // If the induction variable can NOT overflow, use a do-while loop. Loop is lowered into something like:
                 //
-                //   while (inductionVar <= last) {
-                //       val loopVar = inductionVar
-                //       inductionVar += step
-                //       // Loop body
+                //   if (inductionVar <= last) {
+                //     do {
+                //         val loopVar = inductionVar
+                //         inductionVar += step
+                //         // Loop body
+                //     } while (inductionVar <= last)
                 //   }
-                val newLoop = IrWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
+                //
+                // Even though this can be simplified into a simpler while loop, using if + do-while (i.e., doing a loop inversion)
+                // performs better in benchmarks. In cases where `last` is a constant, the `if` may be optimized away.
+                val newLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
                     label = oldLoop.label
                     condition = buildLoopCondition(this@with)
                     body = newBody
                 }
-                LoopReplacement(newLoop, newLoop)
+                val notEmptyCheck = irIfThen(buildLoopCondition(this@with), newLoop)
+                LoopReplacement(newLoop, notEmptyCheck)
             }
 
             if (!headerInfo.isFirstInclusive) {

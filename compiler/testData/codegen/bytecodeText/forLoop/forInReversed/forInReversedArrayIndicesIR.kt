@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR
 import kotlin.test.*
 
 fun box(): String {
@@ -22,5 +22,6 @@ fun box(): String {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 IFLT
-// 1 IF
+// 1 IF_ICMPGT
+// 1 IF_ICMPLE
+// 2 IF

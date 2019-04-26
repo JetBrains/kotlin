@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR
 const val M = Char.MAX_VALUE
 
 fun f(a: Char): Int {
@@ -19,4 +19,5 @@ fun f(a: Char): Int {
 // 0 getLast
 // 0 getStep
 // 1 IF_ICMPGE
-// 1 IF
+// 1 IF_ICMPLT
+// 2 IF

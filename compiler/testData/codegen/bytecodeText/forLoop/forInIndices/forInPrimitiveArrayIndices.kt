@@ -1,9 +1,13 @@
+// IGNORE_BACKEND: JVM_IR
 fun test() {
     var sum = 0
     for (i in intArrayOf(0, 0, 0, 0).indices) {
         sum += i
     }
 }
+
+// JVM non-IR uses while.
+// JVM IR uses if + do-while.
 
 // 0 iterator
 // 0 getStart
