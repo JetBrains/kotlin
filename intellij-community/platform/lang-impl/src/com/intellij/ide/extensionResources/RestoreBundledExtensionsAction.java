@@ -4,8 +4,12 @@ package com.intellij.ide.extensionResources;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -29,11 +33,20 @@ public class RestoreBundledExtensionsAction extends DumbAwareAction {
 
     assert file != null && pluginId != null && path != null;
 
-    try {
-      extensionsRootType.extractBundledResources(pluginId, path);
-    }
-    catch (IOException ex) {
-      ExtensionsRootType.LOG.warn("Failed to extract bundled extensions for " + file.getPath(), ex);
-    }
+    Task.Backgroundable extractResourcesInBackground = new Task.Backgroundable(
+      e.getProject(),
+      "Extracting bundled extensions for plugin: " + pluginId.getIdString()) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        try {
+          extensionsRootType.extractBundledResources(pluginId, path);
+          VirtualFileManager.getInstance().refreshWithoutFileWatcher(true);
+        }
+        catch (IOException ex) {
+          ExtensionsRootType.LOG.warn("Failed to extract bundled extensions for " + file.getPath(), ex);
+        }
+      }
+    };
+    ProgressManager.getInstance().run(extractResourcesInBackground);
   }
 }
