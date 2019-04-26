@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.konan.library.lite
 
 import java.io.File
 
-data class LiteKonanLibrary(
-    val path: File,
-    val sourcePaths: Collection<File>,
-    val name: String,
-    val platform: String?,
-    internal val compilerVersion: String
-)
+interface LiteKonanLibrary {
+    val path: File
+    val sourcePaths: Collection<File>
+    val name: String
+    val platform: String?
+}

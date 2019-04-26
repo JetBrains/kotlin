@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.NoSubstitute
 import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.YesSubstitute
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.konan.library.lite.LiteKonanLibraryInfoProvider
+import org.jetbrains.kotlin.konan.library.lite.LiteKonanLibraryFacade
 import org.jetbrains.plugins.gradle.ExternalDependencyId
 import org.jetbrains.plugins.gradle.model.DefaultExternalMultiLibraryDependency
 import org.jetbrains.plugins.gradle.model.ExternalDependency
@@ -86,7 +86,7 @@ class KotlinNativeLibraryDataService : AbstractProjectDataService<LibraryData, L
 
 // KT-29613, KT-29783
 internal class KotlinNativeLibrariesDependencySubstitutor(
-    private val mppModel: KotlinMPPGradleModel,
+    mppModel: KotlinMPPGradleModel,
     private val gradleModule: IdeaModule,
     private val resolverCtx: ProjectResolverContext
 ) {
@@ -112,7 +112,9 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
     private val ProjectResolverContext.dependencySubstitutionCache
         get() = getUserData(KLIB_DEPENDENCY_SUBSTITUTION_CACHE) ?: putUserDataIfAbsent(KLIB_DEPENDENCY_SUBSTITUTION_CACHE, HashMap())
 
-    private val libraryInfoProvider by lazy { LiteKonanLibraryInfoProvider(mppModel.kotlinNativeHome) }
+    private val libraryProvider = LiteKonanLibraryFacade.getDistributionLibraryProvider(
+        mppModel.kotlinNativeHome.takeIf { it != KotlinMPPGradleModel.NO_KOTLIN_NATIVE_HOME }?.let { File(it) }
+    )
 
     private val kotlinVersion: String? by lazy {
         val classpathData = buildClasspathData(gradleModule, resolverCtx)
@@ -150,20 +152,20 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
         }
 
     private fun buildSubstituteIfNecessary(libraryFile: File): DependencySubstitute {
-        // need to check whether `libraryFile` points to a real KLIB,
+        // need to check whether `library` points to a real KLIB,
         // and if answer is yes then build a new dependency that will substitute original one
-        val libraryInfo = libraryInfoProvider.getDistributionLibraryInfo(libraryFile) ?: return NoSubstitute
+        val library = libraryProvider.getLibrary(libraryFile) ?: return NoSubstitute
         val nonNullKotlinVersion = kotlinVersion ?: return NoSubstitute
 
-        val platformNamePart = libraryInfo.platform?.let { " [$it]" }.orEmpty()
-        val newLibraryName = "$KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE$nonNullKotlinVersion - ${libraryInfo.name}$platformNamePart"
+        val platformNamePart = library.platform?.let { " [$it]" }.orEmpty()
+        val newLibraryName = "$KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE$nonNullKotlinVersion - ${library.name}$platformNamePart"
 
         val substitute = DefaultExternalMultiLibraryDependency().apply {
-            classpathOrder = if (libraryInfo.name == KONAN_STDLIB_NAME) -1 else 0 // keep stdlib upper
+            classpathOrder = if (library.name == KONAN_STDLIB_NAME) -1 else 0 // keep stdlib upper
             name = newLibraryName
             packaging = DEFAULT_PACKAGING
-            files += libraryInfo.path
-            sources += libraryInfo.sourcePaths
+            files += library.path
+            sources += library.sourcePaths
             scope = DependencyScope.PROVIDED.name
         }
 
