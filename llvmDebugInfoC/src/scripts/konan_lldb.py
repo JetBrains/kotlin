@@ -26,6 +26,9 @@ import struct
 
 NULL = 'null'
 
+def log(msg):
+    if False:
+        print(msg)
 
 def lldb_val_to_ptr(lldb_val):
     addr = lldb_val.GetValueAsUnsigned()
@@ -33,8 +36,9 @@ def lldb_val_to_ptr(lldb_val):
 
 
 def evaluate(expr):
-    return lldb.debugger.GetSelectedTarget().EvaluateExpression(expr, lldb.SBExpressionOptions())
-
+    result = lldb.debugger.GetSelectedTarget().EvaluateExpression(expr, lldb.SBExpressionOptions())
+    log("{} => {}".format(expr, result))
+    return result
 
 def is_instance_of(addr, typeinfo):
     return evaluate("(bool)IsInstance({}, {})".format(addr, typeinfo)).GetValue() == "true"
@@ -45,7 +49,7 @@ def is_string(value):
 
 
 def is_array(value):
-    return int(evaluate("(int)Konan_DebugIsArray({})".format(lldb_val_to_ptr(value))).GetValue()) == 1
+    return evaluate("(int)Konan_DebugIsArray({})".format(lldb_val_to_ptr(value))).unsigned == 1
 
 
 def check_type_info(value):
@@ -53,10 +57,12 @@ def check_type_info(value):
     meta-object pointed by TypeInfo. Two lower bits are reserved for memory management needs see runtime/src/main/cpp/Memory.h."""
     if str(value.type) != "struct ObjHeader *":
         return False
-    expr = "*(void **)((uintptr_t)(*(void**){0}) & ~0x3) == **(void***)((uintptr_t)(*(void**){0}) & ~0x3)".format(value.unsigned)
+    expr = "*(void **)((uintptr_t)(*(void**){0:#x}) & ~0x3) == **(void***)((uintptr_t)(*(void**){0:#x}) & ~0x3)".format(value.unsigned)
     result = evaluate(expr)
     return result.IsValid() and result.GetValue() == "true"
 
+def type_info(value):
+    return evaluate("*(void **)((uintptr_t)(*(void**){0:#x}) & ~0x3)".format(value.unsigned)).unsigned
 
 #
 # Some kind of forward declaration.
@@ -65,8 +71,12 @@ def check_type_info(value):
 __FACTORY = {}
 
 
+# Cache type info pointer to [ChildMetaInfo]
+SYNTHETIC_OBJECT_LAYOUT_CACHE = {}
+
 def kotlin_object_type_summary(lldb_val, internal_dict):
     """Hook that is run by lldb to display a Kotlin object."""
+    log("kotlin_object_type_summary({:#x})".format(lldb_val.unsigned))
     fallback = lldb_val.GetValue()
     if str(lldb_val.type) != "struct ObjHeader *":
         return fallback
@@ -94,11 +104,8 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
         self._ptr = lldb_val_to_ptr(self._valobj)
         if is_string(valobj):
             return
-        self._children_count = int(evaluate("(int)Konan_DebugGetFieldCount({})".format(self._ptr)).GetValue())
+        self._children_count = evaluate("(int)Konan_DebugGetFieldCount({})".format(self._ptr)).signed
         self._children = []
-        self._children_types = []
-        self._children_type_names = []
-        self._children_type_addresses = []
         self._type_conversion = [
             lambda address, name: self._valobj.CreateValueFromExpression(name, "(void *){:#x}".format(address)),
             lambda address, name: self._create_synthetic_child(address, name),
@@ -124,44 +131,44 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
             valobj.GetType().GetBasicType(lldb.eBasicTypeVoid).GetPointerType(),
             valobj.GetType().GetBasicType(lldb.eBasicTypeBool)
         ]
-        self._children_types = [
-            evaluate("(int)Konan_DebugGetFieldType({}, {})".format(self._ptr, child)).GetValueAsUnsigned()
-            for child in range(self._children_count)]
-        self._children_type_addresses = [
-            int(evaluate("(void *)Konan_DebugGetFieldAddress({}, {})".format(self._ptr, index)).GetValue(), 0) for
-            index in range(self._children_count)]
 
     def _read_string(self, expr, error):
-        return self._process.ReadCStringFromMemory(int(evaluate(expr).GetValue(), 0), 0x1000, error)
+        return self._process.ReadCStringFromMemory(evaluate(expr).unsigned, 0x1000, error)
 
     def _read_value(self, index):
-        value_type = self._children_types[index]
-        address = self._children_type_addresses[index]
-        return self._type_conversion[int(value_type)](address, str(self._children[index]))
+        value_type = self._children[index].type()
+        address = self._valobj.unsigned + self._children[index].offset()
+        return self._type_conversion[int(value_type)](address, str(self._children[index].name()))
 
     def _create_synthetic_child(self, address, name):
         index = self.get_child_index(name)
         value = self._valobj.CreateChildAtOffset(str(name),
-                                                 self._children_type_addresses[
-                                                     index] - self._valobj.GetValueAsUnsigned(),
+                                                 self._children[index].offset(),
                                                  self._read_type(index))
         value.SetSyntheticChildrenGenerated(True)
         value.SetPreferSyntheticValue(True)
         return value
 
     def _read_type(self, index):
-        return self._types[int(evaluate("(int)Konan_DebugGetFieldType({}, {})".format(self._ptr, index)).GetValue())]
+        type = self._types[self._children[index].type()]
+        log("type:{0} of {1:#x} of {2:#x}".format(type, self._valobj.unsigned, self._valobj.unsigned + self._children[index].offset()))
+        return type
 
     def _deref_or_obj_summary(self, index):
         value = self._values[index]
         if not value:
-            print("_deref_or_obj_summary: value none, index:{}, type:{}".format(index, self._children_types[index]))
+            log("_deref_or_obj_summary: value none, index:{}, type:{}".format(index, self._children[index].type()))
             return None
         if check_type_info(value):
             return kotlin_object_type_summary(value, None)
         else:
             return kotlin_object_type_summary(value.deref, None)
 
+    def _field_address(self, index):
+        return evaluate("(void *)Konan_DebugGetFieldAddress({}, {})".format(self._ptr, index)).unsigned
+
+    def _field_type(self, index):
+        return evaluate("(int)Konan_DebugGetFieldType({}, {})".format(self._ptr, index)).unsigned
 
 class KonanStringSyntheticProvider(KonanHelperProvider):
     def __init__(self, valobj):
@@ -207,17 +214,42 @@ class KonanStringSyntheticProvider(KonanHelperProvider):
 class DebuggerException(Exception):
     pass
 
+class MemberLayout:
+    def __init__(self, name, type, offset):
+        self._name = name
+        self._type = type
+        self._offset = offset
+
+    def name(self):
+        return self._name
+
+    def type(self):
+        return self._type
+
+    def offset(self):
+        return self._offset
 
 class KonanObjectSyntheticProvider(KonanHelperProvider):
-    def __init__(self, valobj):
+    def __init__(self, valobj, tip):
         super(KonanObjectSyntheticProvider, self).__init__(valobj)
+
+        if not tip in SYNTHETIC_OBJECT_LAYOUT_CACHE:
+            SYNTHETIC_OBJECT_LAYOUT_CACHE[tip] = [
+                MemberLayout(self._field_name(i), self._field_type(i), self._field_address(i) - self._valobj.unsigned)
+                for i in range(self._children_count)]
+            log("TIP: {:#x} MISSED".format(tip))
+        else:
+            log("TIP: {:#x} HIT".format(tip))
+        self._children = SYNTHETIC_OBJECT_LAYOUT_CACHE[tip]
+        self._values = [self._read_value(index) for index in range(self._children_count)]
+
+
+    def _field_name(self, index):
         error = lldb.SBError()
-        self._children = [
-            self._read_string("(const char *)Konan_DebugGetFieldName({}, (int){})".format(self._ptr, i), error) for i in
-            range(self._children_count) if error.Success()]
+        name =  self._read_string("(const char *)Konan_DebugGetFieldName({}, (int){})".format(self._ptr, index), error)
         if not error.Success():
             raise DebuggerException()
-        self._values = [self._read_value(index) for index in range(self._children_count)]
+        return name
 
     def num_children(self):
         return self._children_count
@@ -226,16 +258,18 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
         return self._children_count > 0
 
     def get_child_index(self, name):
-        if not name in self._children:
+        def __none(iterable, f):
+            return not any(f(x) for x in iterable)
+        if __none(self._children, lambda x: x.name() == name):
             return -1
-        return self._children.index(name)
+        return (i for i,v in enumerate(self._children) if v.name() == name).next()
 
     def get_child_at_index(self, index):
         return self._values[index]
 
     # TODO: fix cyclic structures stringification.
     def to_string(self):
-        return dict([(self._children[i], self._deref_or_obj_summary(i)) for i in range(self._children_count)])
+        return dict([(self._children[i].name(), self._deref_or_obj_summary(i)) for i in range(self._children_count)])
 
 
 class KonanArraySyntheticProvider(KonanHelperProvider):
@@ -244,7 +278,12 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         if self._ptr is None:
             return
         valobj.SetSyntheticChildrenGenerated(True)
-        self._children = [x for x in range(self.num_children())]
+        type = self._field_type(0)
+        zerro_address = self._field_address(0)
+        first_address = self._field_address(1)
+        offset = zerro_address - valobj.unsigned
+        size = first_address - zerro_address
+        self._children = [MemberLayout(str(x), type, offset + x * size) for x in range(self.num_children())]
         self._values = [self._read_value(i) for i in range(self._children_count)]
 
     def num_children(self):
@@ -258,7 +297,7 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         return index if (0 <= index < self._children_count) else -1
 
     def get_child_at_index(self, index):
-        return self._read_value(index)
+        return self._values[index]
 
     def to_string(self):
         return [self._deref_or_obj_summary(i) for i in range(self._children_count)]
@@ -266,6 +305,7 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
 
 class KonanProxyTypeProvider:
     def __init__(self, valobj, _):
+        log("proxy: {:#x}".format(valobj.unsigned))
         if not check_type_info(valobj):
             return
         self._proxy = select_provider(valobj)
@@ -278,8 +318,11 @@ def print_this_command(debugger, command, result, internal_dict):
     pthis = lldb.frame.FindVariable('<this>')
     print(pthis)
 
+def clear_cache_command(debugger, command, result, internal_dict):
+    SYNTHETIC_OBJECT_LAYOUT_CACHE.clear()
+
 def __lldb_init_module(debugger, _):
-    __FACTORY['object'] = lambda x: KonanObjectSyntheticProvider(x)
+    __FACTORY['object'] = lambda x: KonanObjectSyntheticProvider(x, type_info(x))
     __FACTORY['array'] = lambda x: KonanArraySyntheticProvider(x)
     __FACTORY['string'] = lambda x: KonanStringSyntheticProvider(x)
     debugger.HandleCommand('\
@@ -298,3 +341,4 @@ def __lldb_init_module(debugger, _):
     ')
     debugger.HandleCommand('type category enable Kotlin')
     debugger.HandleCommand('command script add -f {}.print_this_command print_this'.format(__name__))
+    debugger.HandleCommand('command script add -f {}.clear_cache_command clear_kotlin_cache'.format(__name__))
