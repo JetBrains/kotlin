@@ -350,10 +350,6 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
     }
   }
 
-  public boolean hasRunningBuilds() {
-    return !myProgressWatcher.myBuilds.isEmpty();
-  }
-
   private class ProgressWatcher implements Runnable {
 
     private final Alarm myRefreshAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
