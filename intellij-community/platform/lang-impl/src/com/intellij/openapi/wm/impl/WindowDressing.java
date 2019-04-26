@@ -3,7 +3,6 @@ package com.intellij.openapi.wm.impl;
 
 import com.intellij.ide.ApplicationInitializedListener;
 import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.project.Project;
@@ -12,14 +11,15 @@ import com.intellij.openapi.project.ProjectManagerListener;
 import org.jetbrains.annotations.NotNull;
 
 public final class WindowDressing implements ApplicationInitializedListener {
-  @Override
-  public void componentsInitialized() {
-    Application app = ApplicationManager.getApplication();
-    if (app.isHeadlessEnvironment()) {
+  public WindowDressing() {
+    if (ApplicationManager.getApplication().isHeadlessEnvironment()) {
       throw ExtensionNotApplicableException.INSTANCE;
     }
+  }
 
-    app.getMessageBus().connect().subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
+  @Override
+  public void componentsInitialized() {
+    ApplicationManager.getApplication().getMessageBus().connect().subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
       @Override
       public void projectOpened(@NotNull Project project) {
         getWindowActionGroup().addProject(project);
