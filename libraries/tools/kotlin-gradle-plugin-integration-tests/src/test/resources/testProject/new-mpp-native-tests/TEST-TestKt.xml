@@ -4,7 +4,8 @@
     <properties/>
     <testcase name="fooTest" classname="org.foo.test.TestKt" time="..."/>
     <testcase name="barTest" classname="org.foo.test.TestKt" time="..."/>
-    <system-out/>
+    <system-out><![CDATA[Foo call
+Bar call]]></system-out>
     <system-err/>
   </testsuite>
 </results>
