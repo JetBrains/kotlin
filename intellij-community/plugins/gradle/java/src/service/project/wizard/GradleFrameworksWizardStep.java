@@ -7,7 +7,9 @@ import com.intellij.ide.util.newProjectWizard.FrameworkSupportNodeBase;
 import com.intellij.ide.util.newProjectWizard.impl.FrameworkSupportModelBase;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
+import com.intellij.ide.util.projectWizard.StatisticsAwareModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -31,7 +33,7 @@ import java.util.Set;
 /**
  * @author Vladislav.Soroka
  */
-public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disposable {
+public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disposable, StatisticsAwareModuleWizardStep {
 
   private JPanel myPanel;
   private final AddSupportForFrameworksPanel myFrameworksPanel;
@@ -111,5 +113,11 @@ public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disp
   @Override
   public void disposeUIResources() {
     Disposer.dispose(this);
+  }
+
+  @Override
+  public void reportFeatureUsageData(FeatureUsageData data) {
+    data.addData("gradle-kotlin-dsl", kdslCheckBox.isSelected());
+    myFrameworksPanel.reportFeatureUsageData(data);
   }
 }
