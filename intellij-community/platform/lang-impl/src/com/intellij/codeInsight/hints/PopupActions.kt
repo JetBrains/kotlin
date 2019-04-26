@@ -314,20 +314,12 @@ private fun refreshAllOpenEditors() {
 private fun getHintInfoFromProvider(offset: Int, file: PsiFile, editor: Editor): HintInfo? {
   val element = file.findElementAt(offset) ?: return null
   val provider = InlayParameterHintsExtension.forLanguage(file.language) ?: return null
-  
-  val isHintOwnedByElement: (PsiElement) -> Boolean = { e -> provider.getHintInfo(e) != null && e.isOwnsInlayInEditor(editor) }
+
+  val isHintOwnedByElement: (PsiElement) -> Boolean = { e -> provider.getHintInfo(e)?.isOwnedByPsiElement(e, editor) ?: false }
   val method = PsiTreeUtil.findFirstParent(element, isHintOwnedByElement) ?: return null
   
   return provider.getHintInfo(method)
 }
-
-
-fun PsiElement.isOwnsInlayInEditor(editor: Editor): Boolean {
-  if (textRange == null) return false
-  val start = if (textRange.isEmpty) textRange.startOffset else textRange.startOffset + 1
-  return editor.inlayModel.hasInlineElementsInRange(start, textRange.endOffset)
-}
-
 
 fun MethodInfo.toPattern(): String = this.fullyQualifiedName + '(' + this.paramNames.joinToString(",") + ')'
 
