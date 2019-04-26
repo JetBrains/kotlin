@@ -7,9 +7,9 @@ package com.intellij.ide.actions.searcheverywhere;
 public class SearchEverywhereFoundElementInfo {
   public final int priority;
   public final Object element;
-  public final SearchEverywhereContributor<?, ?> contributor;
+  public final SearchEverywhereContributor<?> contributor;
 
-  public SearchEverywhereFoundElementInfo(Object element, int priority, SearchEverywhereContributor<?, ?> contributor) {
+  public SearchEverywhereFoundElementInfo(Object element, int priority, SearchEverywhereContributor<?> contributor) {
     this.priority = priority;
     this.element = element;
     this.contributor = contributor;
@@ -23,7 +23,7 @@ public class SearchEverywhereFoundElementInfo {
     return element;
   }
 
-  public SearchEverywhereContributor<?, ?> getContributor() {
+  public SearchEverywhereContributor<?> getContributor() {
     return contributor;
   }
 }

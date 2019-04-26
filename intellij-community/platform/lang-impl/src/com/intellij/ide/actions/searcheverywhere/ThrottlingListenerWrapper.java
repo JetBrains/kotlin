@@ -64,7 +64,7 @@ class ThrottlingListenerWrapper implements MultiThreadSearcher.Listener {
   }
 
   @Override
-  public void searchFinished(@NotNull Map<SearchEverywhereContributor<?, ?>, Boolean> hasMoreContributors) {
+  public void searchFinished(@NotNull Map<SearchEverywhereContributor<?>, Boolean> hasMoreContributors) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     myBuffer.flush(myFlushConsumer);
     myDelegateExecutor.execute(() -> myDelegateListener.searchFinished(hasMoreContributors));

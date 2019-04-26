@@ -106,7 +106,7 @@ public class BuildView extends CompositeView<ExecutionConsole>
   }
 
   private void processEvent(BuildEvent event) {
-    if (event instanceof OutputBuildEvent) {
+    if (event instanceof OutputBuildEvent && (event.getParentId() == null || event.getParentId() == myBuildDescriptor.getId())) {
       ExecutionConsole consoleView = getConsoleView();
       if (consoleView instanceof BuildProgressListener) {
         ((BuildProgressListener)consoleView).onEvent(event);

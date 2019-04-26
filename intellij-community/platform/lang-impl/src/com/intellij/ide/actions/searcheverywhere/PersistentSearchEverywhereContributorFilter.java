@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.util.List;
 import java.util.function.Function;
 
-public class PersistentSearchEverywhereContributorFilter<T> implements SearchEverywhereContributorFilter<T> {
+public class PersistentSearchEverywhereContributorFilter<T> {
 
   private final ChooseByNameFilterConfiguration<? super T> myPersistentConfiguration;
   private final List<T> myElements;
@@ -26,32 +26,26 @@ public class PersistentSearchEverywhereContributorFilter<T> implements SearchEve
     myIconExtractor = iconExtractor;
   }
 
-  @Override
   public List<T> getAllElements() {
     return myElements;
   }
 
-  @Override
   public List<T> getSelectedElements() {
     return ContainerUtil.filter(myElements, myPersistentConfiguration::isFileTypeVisible);
   }
 
-  @Override
   public boolean isSelected(T element) {
     return myPersistentConfiguration.isFileTypeVisible(element);
   }
 
-  @Override
   public void setSelected(T element, boolean selected) {
     myPersistentConfiguration.setVisible(element, selected);
   }
 
-  @Override
   public String getElementText(T element) {
     return myTextExtractor.apply(element);
   }
 
-  @Override
   public Icon getElementIcon(T element) {
     return myIconExtractor.apply(element);
   }

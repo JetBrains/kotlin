@@ -3,14 +3,10 @@ package com.intellij.configurationStore
 
 import com.intellij.application.coroutineExceptionHandler
 import com.intellij.ide.SaveAndSyncHandler
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.diagnostic.runAndLogException
-import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
@@ -19,35 +15,7 @@ import kotlin.coroutines.CoroutineContext
  * Only for configuration store usages.
  */
 internal val storeEdtCoroutineContext: CoroutineContext by lazy {
-  EdtPoolDispatcher(null) + coroutineExceptionHandler
-}
-
-internal fun createStoreEdtCoroutineContext(rule: InTransactionRule?): CoroutineContext {
-  return when (rule) {
-    null -> storeEdtCoroutineContext
-    else -> EdtPoolDispatcher(rule) + coroutineExceptionHandler
-  }
-}
-
-// opposite to write actions and so on, submitted transaction is not executed immediately, so, we need dispatcher
-internal class InTransactionRule(private val disposable: Disposable) {
-  private val transactionId = TransactionGuard.getInstance().contextTransaction
-
-  fun dispatch(context: CoroutineContext, block: Runnable) {
-    if (ApplicationManager.getApplication().isDisposeInProgress) {
-      block.run()
-      return
-    }
-
-    TransactionGuard.getInstance().submitTransaction(ApplicationManager.getApplication(), transactionId, Runnable {
-      if (Disposer.isDisposed(disposable)) {
-        context.get(Job)?.cancel()
-      }
-
-      // execute block even if cancelled - it is not user code directly, and job state will be checked
-      block.run()
-    })
-  }
+  EdtPoolDispatcher() + coroutineExceptionHandler
 }
 
 internal class EdtPoolDispatcherManager {
@@ -106,29 +74,17 @@ internal class EdtPoolDispatcherManager {
   }
 }
 
-private class EdtPoolDispatcher(private val rule: InTransactionRule?) : CoroutineDispatcher() {
+private class EdtPoolDispatcher : CoroutineDispatcher() {
   private val edtPoolDispatcherManager: EdtPoolDispatcherManager
     get() = (SaveAndSyncHandler.getInstance() as BaseSaveAndSyncHandler).edtPoolDispatcherManager
 
   override fun dispatch(context: CoroutineContext, block: Runnable) {
-    if (rule == null) {
-      edtPoolDispatcherManager.dispatch(block)
-    }
-    else {
-      if (ApplicationManager.getApplication().isDispatchThread) {
-        rule.dispatch(context, block)
-      }
-      else {
-        edtPoolDispatcherManager.dispatch(Runnable {
-          rule.dispatch(context, block)
-        })
-      }
-    }
+    edtPoolDispatcherManager.dispatch(block)
   }
 
   @ExperimentalCoroutinesApi
   override fun isDispatchNeeded(context: CoroutineContext): Boolean {
-    return rule != null || !ApplicationManager.getApplication().isDispatchThread
+    return !ApplicationManager.getApplication().isDispatchThread
   }
 
   override fun toString() = "store EDT dispatcher"

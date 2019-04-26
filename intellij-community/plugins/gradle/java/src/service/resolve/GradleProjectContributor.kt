@@ -25,7 +25,6 @@ class GradleProjectContributor : GradleMethodContextContributor {
     val copySpecClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "copy", "copySpec"))
     val fileTreeClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "fileTree"))
     val filesClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "files"))
-    val taskClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "task"))
     val execClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "exec"))
   }
 
@@ -43,20 +42,6 @@ class GradleProjectContributor : GradleMethodContextContributor {
     }
     if (filesClosure.accepts(closure)) {
       return DelegatesToInfo(createType(GRADLE_API_FILE_CONFIGURABLE_FILE_COLLECTION, closure), Closure.DELEGATE_FIRST)
-    }
-    if (taskClosure.accepts(closure)) {
-      var taskType: PsiType? = null
-      val parent = closure.parent
-      if (parent is GrMethodCallExpression) {
-        val typeTakArgument = parent.namedArguments.find { "type" == it.labelName }?.expression?.type
-        if (typeTakArgument is PsiClassType && "Class" == typeTakArgument.className) {
-          taskType = typeTakArgument.parameters.firstOrNull()
-        }
-      }
-      if (taskType == null) {
-        taskType = createType(GRADLE_API_TASK, closure)
-      }
-      return DelegatesToInfo(taskType, Closure.DELEGATE_FIRST)
     }
     if (execClosure.accepts(closure)) {
       return DelegatesToInfo(createType(GRADLE_PROCESS_EXEC_SPEC, closure), Closure.DELEGATE_FIRST)

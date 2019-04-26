@@ -2,7 +2,6 @@
 package com.intellij.formatting.commandLine;
 
 import com.intellij.application.options.CodeStyle;
-import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.lang.LanguageFormatting;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -76,7 +75,7 @@ public class FileSetFormatter extends FileSetProcessor {
 
   private void closeProject() {
     if (myProject != null) {
-      ProjectUtil.closeAndDispose(myProject);
+      ProjectManagerEx.getInstanceEx().closeAndDispose(myProject);
     }
   }
 

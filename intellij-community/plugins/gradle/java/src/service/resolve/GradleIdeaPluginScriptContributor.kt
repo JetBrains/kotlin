@@ -18,7 +18,7 @@ class GradleIdeaPluginScriptContributor : GradleMethodContextContributor {
     const val IDEA_MODULE_FQN: String = "org.gradle.plugins.ide.idea.model.IdeaModule"
     const val IDE_XML_MERGER_FQN: String = "org.gradle.plugins.ide.api.XmlFileContentMerger"
     const val IDEA_MODULE_IML_FQN: String = "org.gradle.plugins.ide.idea.model.IdeaModuleIml"
-    val ideaClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "idea"))
+    private val ideaClosure: GroovyClosurePattern = groovyClosure().inMethod(psiMethod(GRADLE_API_PROJECT, "idea"))
     private val ideaProjectClosure = groovyClosure().inMethod(psiMethod(IDEA_MODEL_FQN, "project"))
     private val ideaModuleClosure = groovyClosure().inMethod(psiMethod(IDEA_MODEL_FQN, "module"))
     private val ideaIprClosure = groovyClosure().inMethod(psiMethod(IDEA_PROJECT_FQN, "ipr"))

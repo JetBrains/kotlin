@@ -3,15 +3,15 @@ package org.jetbrains.plugins.gradle.dsl
 
 import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.RunAll
+import com.intellij.util.SmartList
+import com.intellij.util.lang.CompoundRuntimeException
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
 import org.jetbrains.plugins.gradle.service.resolve.GradleTaskProperty
-import org.jetbrains.plugins.groovy.codeInspection.assignment.GroovyAssignabilityCheckInspection
-import org.jetbrains.plugins.groovy.codeInspection.bugs.GroovyAccessibilityInspection
-import org.jetbrains.plugins.groovy.codeInspection.untypedUnresolvedAccess.GrUnresolvedAccessInspection
 import org.jetbrains.plugins.groovy.util.ExpressionTest
 import org.junit.Test
 
+import static com.intellij.psi.CommonClassNames.JAVA_LANG_STRING
 import static org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.*
 
 @CompileStatic
@@ -44,7 +44,9 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
     } append {
       'task in allProjects via explicit delegate'()
     } append {
-      'task declaration with unresolved identifier'()
+      'task declaration configuration delegate'()
+    } append {
+      'task declaration configuration delegate with explicit type'()
     } run()
   }
 
@@ -107,47 +109,68 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
     assert property.name == name
   }
 
-  void 'task declaration with unresolved identifier'() {
-    doHighlightingTest '''\
-def t1 = task(idt1)
-def t2 = task(idt2, {})
-def t2_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(groovy.lang.Closure<java.lang.Void>, ?)'">({}, <warning descr="Cannot resolve symbol 'idt2_'">idt2_</warning>)</warning>
-def t3 = task(description: 'oh', idt3)
-def t4 = task(description: 'hi', idt4, {})
-def t4_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], groovy.lang.Closure<java.lang.Void>, ?)'">(description: 'mark', {}, <warning descr="Cannot resolve symbol 'idt4_'">idt4_</warning>)</warning>
-def t5 = task idt5 << {}
-def t6 = task idt6 + {}
+  void 'task declaration configuration delegate'() {
+    def data = [
+      "task('s') { <caret> }",
+      "task(id2) { <caret> }",
+      "task(id3, { <caret> })",
+      "task(id5, description: 'oh') { <caret> }",
+      "task(id6, description: 'oh', { <caret> })",
+      "task id9() { <caret>}",
+      "task id8 { <caret> }",
+      "task id10({ <caret> })",
+      "task id12(description: 'hi') { <caret> }",
+      "task id13(description: 'hi', { <caret> })",
+      "task mid12([description: 'hi']) { <caret> }",
+      "task mid13([description: 'hi'], { <caret> })",
+      "task emid12([:]) { <caret> }",
+      "task emid13([:], { <caret> })",
+      "tasks.create(name: 'cid1') { <caret> }",
+      "tasks.create([name: 'mcid1']) { <caret> }",
+      "tasks.create('eid1') { <caret> }",
+    ]
+    List<Throwable> exceptions = new SmartList<>()
+    for (entry in data) {
+      try {
+        doTest(entry) {
+          closureDelegateTest(GRADLE_API_TASK, 1)
+        }
+      }
+      catch (Throwable e) {
+        exceptions.add(e)
+      }
+    }
+    if (!exceptions.isEmpty()) {
+      throw new CompoundRuntimeException(exceptions)
+    }
+  }
 
-def insideClosure = {
-    def ct1 = task(cidt1)
-    def ct2 = task(cidt2, {})
-    def ct2_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(groovy.lang.Closure<java.lang.Void>, ?)'">({}, <warning descr="Cannot resolve symbol 'cidt2_'">cidt2_</warning>)</warning>
-    def ct3 = task(description: 'oh', cidt3)
-    def ct4 = task(description: 'hi', cidt4, {})
-    def ct4_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], groovy.lang.Closure<java.lang.Void>, ?)'">(description: 'mark', {}, <warning descr="Cannot resolve symbol 'cidt4_'">cidt4_</warning>)</warning>
-    def ct5 = task cidt5 << {}
-    def ct6 = task cidt6 + {}
-}
-insideClosure()
-
-def insideMethod() {
-    def mt1 = task(midt1)
-    def mt2 = task(midt2, {})
-    def mt2_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(groovy.lang.Closure<java.lang.Void>, ?)'">({}, <warning descr="Cannot resolve symbol 'midt2_'">midt2_</warning>)</warning>
-    def mt3 = task(description: 'oh', midt3)
-    def mt4 = task(description: 'hi', midt4, {})
-    def mt4_ = task<warning descr="'task' in 'org.gradle.api.Project' cannot be applied to '(['description':java.lang.String], groovy.lang.Closure<java.lang.Void>, ?)'">(description: 'mark', {}, <warning descr="Cannot resolve symbol 'midt4_'">midt4_</warning>)</warning>
-    def mt5 = task midt5 << {}
-    def mt6 = task midt6 + {}
-}
-insideMethod()
-
-tasks.each {
-    println it
-}
-
-project.task <warning descr="Cannot resolve symbol 'pidt1_'"><weak_warning descr="Cannot infer argument types">pidt1_</weak_warning></warning>
-tasks.task <warning descr="Cannot resolve symbol 'tidt1_'"><weak_warning descr="Cannot infer argument types">tidt1_</weak_warning></warning>
-''', GrUnresolvedAccessInspection, GroovyAssignabilityCheckInspection, GroovyAccessibilityInspection
+  void 'task declaration configuration delegate with explicit type'() {
+    def data = [
+      "task('s', type: String) { <caret> }",
+      "task(id5, type: String) { <caret> }",
+      "task(id6, type: String, { <caret> })",
+      "task id12(type: String) { <caret> }",
+      "task id13(type: String, { <caret> })",
+      "task mid12([type: String]) { <caret> }",
+      "task mid13([type: String], { <caret> })",
+      "tasks.create(name: 'cid1', type: String) { <caret> }",
+      "tasks.create([name: 'mcid1', type: String]) { <caret> }",
+      "tasks.create('eid1', String) { <caret> }",
+    ]
+    List<Throwable> exceptions = new SmartList<>()
+    for (entry in data) {
+      try {
+        doTest(entry) {
+          closureDelegateTest(JAVA_LANG_STRING, 1)
+        }
+      }
+      catch (Throwable e) {
+        exceptions.add(e)
+      }
+    }
+    if (!exceptions.isEmpty()) {
+      throw new CompoundRuntimeException(exceptions)
+    }
   }
 }

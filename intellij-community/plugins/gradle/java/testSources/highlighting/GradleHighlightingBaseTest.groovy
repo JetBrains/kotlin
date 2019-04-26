@@ -1,13 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.highlighting
 
-import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
@@ -19,13 +18,13 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
+import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
+import org.jetbrains.plugins.groovy.util.ResolveTest
 
 import java.nio.file.Paths
 
-import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait
-
 @CompileStatic
-abstract class GradleHighlightingBaseTest extends GradleImportingTestCase {
+abstract class GradleHighlightingBaseTest extends GradleImportingTestCase implements ResolveTest {
 
   @NotNull
   JavaCodeInsightTestFixture fixture
@@ -70,21 +69,6 @@ abstract class GradleHighlightingBaseTest extends GradleImportingTestCase {
 
   void doTest(@NotNull String text, Closure test) {
     doTest(text, getParentCalls(), test)
-  }
-
-  void doHighlightingTest(@NotNull String text, Class<? extends LocalInspectionTool>... c) {
-    def disposable = Disposer.newDisposable("gradle highlighting test")
-    try {
-      fixture.enableInspections(disposable, c)
-      runInEdtAndWait {
-        doTest(text) {
-          fixture.testHighlighting()
-        }
-      }
-    }
-    finally {
-      Disposer.dispose(disposable)
-    }
   }
 
   void doTest(@NotNull String text, @NotNull List<String> calls, Closure test) {
@@ -134,6 +118,14 @@ abstract class GradleHighlightingBaseTest extends GradleImportingTestCase {
 
   protected final boolean isGradleAtLeast(@NotNull String version) {
     GradleVersion.version(gradleVersion) >= GradleVersion.version(version)
+  }
+
+  protected void setterMethodTest(String name, String originalName, String containingClass) {
+    def result = elementUnderCaret(GrMethodCall).advancedResolve()
+    def method = assertInstanceOf(result.element, PsiMethod)
+    methodTest(method, name, containingClass)
+    def original = assertInstanceOf(method.navigationElement, PsiMethod)
+    methodTest(original, originalName, containingClass)
   }
 }
 

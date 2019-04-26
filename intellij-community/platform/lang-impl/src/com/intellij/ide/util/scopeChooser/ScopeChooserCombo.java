@@ -85,22 +85,12 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     ComboBox<ScopeDescriptor> combo = getComboBox();
     combo.setMinimumAndPreferredWidth(JBUI.scale(300));
     combo.setRenderer(new MyRenderer());
-    combo.putClientProperty("ComboBox.jbPopup", true);
-    combo.updateUI();
+    combo.setSwingPopup(false);
 
     rebuildModel();
 
     selectItem(selection);
-    new ComboboxSpeedSearch(combo) {
-      @Override
-      protected String getElementText(Object element) {
-        if (element instanceof ScopeDescriptor) {
-          final ScopeDescriptor descriptor = (ScopeDescriptor)element;
-          return descriptor.getDisplayName();
-        }
-        return null;
-      }
-    };
+    new ComboboxSpeedSearch(combo);
   }
 
   @Override

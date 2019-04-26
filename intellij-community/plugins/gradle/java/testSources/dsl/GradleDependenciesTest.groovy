@@ -5,7 +5,6 @@ import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.RunAll
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.util.ResolveTest
 import org.junit.Test
 
@@ -63,11 +62,7 @@ class GradleDependenciesTest extends GradleHighlightingBaseTest implements Resol
 
   void 'add delegate method setter'() {
     doTest('dependencies { add("compile", "notation") { <caret>transitive(false) } }') {
-      def result = elementUnderCaret(GrMethodCall).advancedResolve()
-      def method = assertInstanceOf(result.element, PsiMethod)
-      methodTest(method, 'transitive', GRADLE_API_ARTIFACTS_MODULE_DEPENDENCY)
-      def original = assertInstanceOf(method.navigationElement, PsiMethod)
-      methodTest(original, 'setTransitive', GRADLE_API_ARTIFACTS_MODULE_DEPENDENCY)
+      setterMethodTest('transitive', 'setTransitive', GRADLE_API_ARTIFACTS_MODULE_DEPENDENCY)
     }
   }
 
@@ -79,11 +74,7 @@ class GradleDependenciesTest extends GradleHighlightingBaseTest implements Resol
 
   void 'module delegate method setter'() {
     doTest('dependencies { module(":") { <caret>changing(true) } }') {
-      def result = elementUnderCaret(GrMethodCall).advancedResolve()
-      def method = assertInstanceOf(result.element, PsiMethod)
-      methodTest(method, 'changing', GRADLE_API_ARTIFACTS_EXTERNAL_MODULE_DEPENDENCY)
-      def original = assertInstanceOf(method.navigationElement, PsiMethod)
-      methodTest(original, 'setChanging', GRADLE_API_ARTIFACTS_EXTERNAL_MODULE_DEPENDENCY)
+      setterMethodTest('changing', 'setChanging', GRADLE_API_ARTIFACTS_EXTERNAL_MODULE_DEPENDENCY)
     }
   }
 

@@ -4,6 +4,7 @@ package org.jetbrains.plugins.gradle.execution.build.output
 import com.intellij.build.BuildProgressListener
 import com.intellij.build.events.BuildEvent
 import com.intellij.build.events.StartEvent
+import com.intellij.build.events.impl.OutputBuildEventImpl
 import com.intellij.build.output.BuildOutputInstantReaderImpl
 import com.intellij.build.output.BuildOutputParser
 import com.intellij.build.output.LineProcessor
@@ -20,13 +21,16 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
 
   override fun create(buildId: Any,
                       buildProgressListener: BuildProgressListener,
+                      appendOutputToMainConsole: Boolean,
                       parsers: List<BuildOutputParser>): ExternalSystemOutputMessageDispatcher {
-    return GradleOutputMessageDispatcher(buildId, buildProgressListener, parsers)
+    return GradleOutputMessageDispatcher(buildId, buildProgressListener, appendOutputToMainConsole, parsers)
   }
 
   private class GradleOutputMessageDispatcher(private val buildId: Any,
                                               private val myBuildProgressListener: BuildProgressListener,
+                                              private val appendOutputToMainConsole: Boolean,
                                               private val parsers: List<BuildOutputParser>) : ExternalSystemOutputMessageDispatcher {
+    override var stdOut: Boolean = true
     private val lineProcessor: LineProcessor
     private val myRootReader: BuildOutputInstantReaderImpl
     private var myCurrentReader: BuildOutputInstantReaderImpl
@@ -57,6 +61,10 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
             myCurrentReader = myRootReader
           }
           myCurrentReader.appendln(cleanLine)
+          if (myCurrentReader != myRootReader) {
+            val parentEventId = myCurrentReader.parentEventId
+            myBuildProgressListener.onEvent(OutputBuildEventImpl(parentEventId, cleanLine + '\n', stdOut))
+          }
         }
       }
     }
@@ -80,16 +88,25 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
     }
 
     override fun append(csq: CharSequence): Appendable {
+      if (appendOutputToMainConsole) {
+        myBuildProgressListener.onEvent(OutputBuildEventImpl(buildId, csq.toString(), stdOut))
+      }
       lineProcessor.append(csq)
       return this
     }
 
     override fun append(csq: CharSequence, start: Int, end: Int): Appendable {
+      if (appendOutputToMainConsole) {
+        myBuildProgressListener.onEvent(OutputBuildEventImpl(buildId, csq.subSequence(start, end).toString(), stdOut))
+      }
       lineProcessor.append(csq, start, end)
       return this
     }
 
     override fun append(c: Char): Appendable {
+      if (appendOutputToMainConsole) {
+        myBuildProgressListener.onEvent(OutputBuildEventImpl(buildId, c.toString(), stdOut))
+      }
       lineProcessor.append(c)
       return this
     }

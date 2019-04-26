@@ -10,7 +10,6 @@ import com.intellij.openapi.project.impl.ProjectManagerImpl.UnableToSaveProjectN
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.SmartList
 import com.intellij.util.containers.mapSmart
-import kotlinx.coroutines.withContext
 
 internal class ProjectSaveSessionProducerManager(private val project: Project) : SaveSessionProducerManager() {
   suspend fun saveWithAdditionalSaveSessions(extraSessions: List<SaveSession>): SaveResult {
@@ -20,7 +19,7 @@ internal class ProjectSaveSessionProducerManager(private val project: Project) :
       return SaveResult.EMPTY
     }
 
-    val saveResult = withContext(createStoreEdtCoroutineContext(InTransactionRule(project))) {
+    val saveResult = withEdtContext(project) {
       runWriteAction {
         val r = SaveResult()
         saveSessions(extraSessions, r)
@@ -40,7 +39,7 @@ internal class ProjectSaveSessionProducerManager(private val project: Project) :
       return
     }
 
-    if (!notifications.isEmpty()) {
+    if (notifications.isNotEmpty()) {
       throw UnresolvedReadOnlyFilesException(readonlyFiles.mapSmart { it.file })
     }
 
@@ -54,7 +53,7 @@ internal class ProjectSaveSessionProducerManager(private val project: Project) :
 
     val oldList = readonlyFiles.toTypedArray()
     readonlyFiles.clear()
-    withContext(storeEdtCoroutineContext) {
+    withEdtContext(project) {
       runWriteAction {
         val r = SaveResult()
         for (entry in oldList) {
@@ -64,7 +63,7 @@ internal class ProjectSaveSessionProducerManager(private val project: Project) :
       }
     }.appendTo(saveResult)
 
-    if (!readonlyFiles.isEmpty()) {
+    if (readonlyFiles.isNotEmpty()) {
       dropUnableToSaveProjectNotification(project, getFilesList(readonlyFiles))
       saveResult.addError(UnresolvedReadOnlyFilesException(readonlyFiles.mapSmart { it.file }))
     }

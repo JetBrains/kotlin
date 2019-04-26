@@ -113,7 +113,7 @@ class BlacklistCurrentMethodIntention : IntentionAction, LowPriorityAction {
     val info = getHintInfoFromProvider(offset, file, editor) as? MethodInfo ?: return
     val language = info.language ?: file.language
 
-    ParameterNameHintsSettings.getInstance().addIgnorePattern(language, info.toPattern())
+    ParameterNameHintsSettings.getInstance().addIgnorePattern(getLanguageForSettingKey(language), info.toPattern())
     refreshAllOpenEditors()
     showHint(project, language, info)
   }

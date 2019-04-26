@@ -31,6 +31,7 @@ public class FailureImpl implements Failure {
   private final String myMessage;
   private final String myDescription;
   private final List<? extends Failure> myCauses;
+  @Nullable
   private final Throwable myError;
   @Nullable
   private final Notification myNotification;
@@ -56,7 +57,7 @@ public class FailureImpl implements Failure {
   private FailureImpl(String message,
                       String description,
                       List<? extends Failure> causes,
-                      Throwable error,
+                      @Nullable Throwable error,
                       @Nullable Notification notification,
                       @Nullable Navigatable navigatable) {
     myMessage = message;
