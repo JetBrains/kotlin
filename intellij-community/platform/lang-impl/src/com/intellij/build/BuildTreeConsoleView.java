@@ -235,6 +235,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
             if (parentNode != buildProgressRootNode) {
               myConsoleViewHandler.addOutput(parentNode, event);
+              myConsoleViewHandler.addOutput(parentNode, "\n", true);
             }
             myConsoleViewHandler.addOutput(currentNode, event);
           }
@@ -674,6 +675,10 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         myPanel.setVisible(true);
       }
       return true;
+    }
+
+    private void addOutput(ExecutionNode node, @NotNull String text, boolean stdOut) {
+      addOutput(node, view -> view.append(text, stdOut));
     }
 
     private void addOutput(ExecutionNode node, BuildEvent event) {
