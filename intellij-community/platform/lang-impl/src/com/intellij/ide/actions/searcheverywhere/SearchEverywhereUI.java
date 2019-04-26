@@ -448,7 +448,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
 
           @Override
           public void setSelected(@NotNull AnActionEvent e, boolean state) {
-            seManager.setEverywhere(true);
+            seManager.setEverywhere(state);
             rebuildList();
           }
         }, new FiltersAction(myContributorsFilter, SearchEverywhereUI.this::rebuildList));
