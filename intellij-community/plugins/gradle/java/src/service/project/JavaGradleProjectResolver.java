@@ -144,12 +144,17 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
   @Override
   public void enhanceTaskProcessing(@NotNull List<String> taskNames,
                                     @Nullable String jvmAgentSetup,
-                                    @NotNull Consumer<String> initScriptConsumer) {
-    try (InputStream stream = getClass().getResourceAsStream("/org/jetbrains/plugins/gradle/java/addTestListener.groovy")) {
-      String addTestListenerScript = StreamUtil.readText(stream, StandardCharsets.UTF_8);
-      initScriptConsumer.consume(addTestListenerScript);
-    } catch (IOException e) {
-      LOG.info(e);
+                                    @NotNull Consumer<String> initScriptConsumer,
+                                    boolean testExecutionExpected) {
+
+    if (testExecutionExpected) {
+      try (InputStream stream = getClass().getResourceAsStream("/org/jetbrains/plugins/gradle/java/addTestListener.groovy")) {
+        String addTestListenerScript = StreamUtil.readText(stream, StandardCharsets.UTF_8);
+        initScriptConsumer.consume(addTestListenerScript);
+      }
+      catch (IOException e) {
+        LOG.info(e);
+      }
     }
   }
 }
