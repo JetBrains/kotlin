@@ -58,8 +58,9 @@ class KotlinCallCompleter(
         expectedType: UnwrappedType?,
         resolutionCallbacks: KotlinResolutionCallbacks
     ): CallResolutionResult {
-        val diagnosticsHolder = KotlinDiagnosticsHolder.SimpleHolder()
-        for (candidate in candidates) {
+        val completedCandidates = candidates.map { candidate ->
+            val diagnosticsHolder = KotlinDiagnosticsHolder.SimpleHolder()
+
             candidate.addExpectedTypeConstraint(
                 candidate.returnTypeWithSmartCastInfo(resolutionCallbacks), expectedType, resolutionCallbacks
             )
@@ -72,8 +73,10 @@ class KotlinCallCompleter(
                 resolutionCallbacks,
                 collectAllCandidatesMode = true
             )
+
+            CandidateWithDiagnostics(candidate, diagnosticsHolder.getDiagnostics() + candidate.diagnosticsFromResolutionParts)
         }
-        return AllCandidatesResolutionResult(candidates)
+        return AllCandidatesResolutionResult(completedCandidates)
     }
 
     private fun KotlinResolutionCandidate.runCompletion(

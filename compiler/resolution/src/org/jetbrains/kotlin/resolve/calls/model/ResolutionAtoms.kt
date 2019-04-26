@@ -203,8 +203,10 @@ class ErrorCallResolutionResult(
 ) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
 class AllCandidatesResolutionResult(
-    val allCandidates: Collection<KotlinResolutionCandidate>
+    val allCandidates: Collection<CandidateWithDiagnostics>
 ) : CallResolutionResult(null, emptyList(), ConstraintStorage.Empty)
+
+data class CandidateWithDiagnostics(val candidate: KotlinResolutionCandidate, val diagnostics: List<KotlinCallDiagnostic>)
 
 fun CallResolutionResult.resultCallAtom(): ResolvedCallAtom? =
     if (this is SingleCallResolutionResult) resultCallAtom else null
