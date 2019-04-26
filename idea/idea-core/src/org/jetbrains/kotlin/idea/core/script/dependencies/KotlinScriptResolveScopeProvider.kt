@@ -40,7 +40,7 @@ class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
             scriptDefinition.template == Any::class -> null
             scriptDefinition is StandardIdeScriptDefinition -> null
             scriptDefinition is KotlinScriptDefinitionFromAnnotatedTemplate -> // TODO: should include the file itself
-                ScriptDependenciesManager.getInstance(project).getAllScriptsClasspathScope()
+                ScriptDependenciesManager.getInstance(project).getAllScriptsDependenciesClassFilesScope()
             else -> null
         }
     }

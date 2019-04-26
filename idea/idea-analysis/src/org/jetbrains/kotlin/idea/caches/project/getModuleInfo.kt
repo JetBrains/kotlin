@@ -225,14 +225,14 @@ private inline fun <T> collectInfosByVirtualFile(
 
     val isBinary = virtualFile.fileType.isKotlinBinary()
     val scriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
-    if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsClasspathScope()) {
+    if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsDependenciesClassFilesScope()) {
         if (treatAsLibrarySource) {
             onOccurrence(ScriptDependenciesSourceInfo.ForProject(project))
         } else {
             onOccurrence(ScriptDependenciesInfo.ForProject(project))
         }
     }
-    if (!isBinary && virtualFile in scriptConfigurationManager.getAllLibrarySourcesScope()) {
+    if (!isBinary && virtualFile in scriptConfigurationManager.getAllScriptDependenciesSourcesScope()) {
         onOccurrence(ScriptDependenciesSourceInfo.ForProject(project))
     }
 

@@ -52,12 +52,15 @@ class ScriptDependenciesManager internal constructor(
     fun getScriptDependencies(file: VirtualFile): ScriptDependencies = cacheUpdater.getCurrentDependencies(file)
     fun getScriptSdk(file: VirtualFile): Sdk? = getScriptSdk(getScriptDependencies(file))
 
-    fun getScriptDependenciesClassFilesScope(file: VirtualFile) = cache.scriptDependenciesClasspathScope(file)
+    fun getScriptDependenciesClassFilesScope(file: VirtualFile) = cache.scriptDependenciesClassFilesScope(file)
 
-    fun getAllScriptsClasspathScope() = cache.allScriptsClasspathScope
-    fun getAllLibrarySourcesScope() = cache.allLibrarySourcesScope
-    fun getAllLibrarySources() = cache.allLibrarySources
-    fun getAllScriptsClasspath() = cache.allScriptsClasspath
+    fun getAllScriptsSdks() = cache.allSdks
+
+    fun getAllScriptsDependenciesClassFilesScope() = cache.allDependenciesClassFilesScope
+    fun getAllScriptDependenciesSourcesScope() = cache.allDependenciesSourcesScope
+
+    fun getAllScriptsDependenciesClassFiles() = cache.allDependenciesClassFiles
+    fun getAllScriptDependenciesSources() = cache.allDependenciesSources
 
     companion object {
         @JvmStatic

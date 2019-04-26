@@ -73,8 +73,8 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
     ) : ScriptDependenciesInfo(project) {
         override val sdk: Sdk?
             get() {
-                val manager = ScriptDependenciesManager.getInstance(project)
-                return manager.getScriptSdk(scriptFile) ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
+                return ScriptDependenciesManager.getInstance(project).getScriptSdk(scriptFile)
+                    ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
             }
 
         override fun contentScope(): GlobalSearchScope {
@@ -85,14 +85,17 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
         }
     }
 
+    // we do not know which scripts these dependencies are
     class ForProject(project: Project) : ScriptDependenciesInfo(project) {
         override val sdk: Sdk?
-            get() = ScriptDependenciesManager.getScriptDefaultSdk(project)
+            get() {
+                return ScriptDependenciesManager.getInstance(project).getAllScriptsSdks().firstOrNull()
+                    ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
+            }
 
         override fun contentScope(): GlobalSearchScope {
-            // we do not know which scripts these dependencies are
             return KotlinSourceFilterScope.libraryClassFiles(
-                ScriptDependenciesManager.getInstance(project).getAllScriptsClasspathScope(), project
+                ScriptDependenciesManager.getInstance(project).getAllScriptsDependenciesClassFilesScope(), project
             )
         }
     }
@@ -105,7 +108,7 @@ sealed class ScriptDependenciesSourceInfo(val project: Project) : IdeaModuleInfo
         get() = ScriptDependenciesInfo.ForProject(project)
 
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
-        ScriptDependenciesManager.getInstance(project).getAllLibrarySourcesScope(), project
+        ScriptDependenciesManager.getInstance(project).getAllScriptDependenciesSourcesScope(), project
     )
 
     override fun hashCode() = project.hashCode()

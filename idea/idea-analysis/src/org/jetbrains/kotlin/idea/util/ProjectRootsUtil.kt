@@ -129,11 +129,11 @@ object ProjectRootsUtil {
 
         if (includeLibraryClasses && (isBinary || canContainClassFiles)) {
             if (fileIndex.isInLibraryClasses(file)) return true
-            if (scriptConfigurationManager?.getAllScriptsClasspathScope()?.contains(file) == true) return true
+            if (scriptConfigurationManager?.getAllScriptsDependenciesClassFilesScope()?.contains(file) == true) return true
         }
         if (includeLibrarySource && !isBinary) {
             if (fileIndex.isInLibrarySource(file)) return true
-            if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true &&
+            if (scriptConfigurationManager?.getAllScriptDependenciesSourcesScope()?.contains(file) == true &&
                 !fileIndex.isInSourceContentWithoutInjected(file)
             ) {
                 return true

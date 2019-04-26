@@ -61,6 +61,11 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
             runTest("idea/testData/script/definition/highlighting/customExtension/");
         }
 
+        @TestMetadata("customJavaHome")
+        public void testCustomJavaHome() throws Exception {
+            runTest("idea/testData/script/definition/highlighting/customJavaHome/");
+        }
+
         @TestMetadata("customLibrary")
         public void testCustomLibrary() throws Exception {
             runTest("idea/testData/script/definition/highlighting/customLibrary/");

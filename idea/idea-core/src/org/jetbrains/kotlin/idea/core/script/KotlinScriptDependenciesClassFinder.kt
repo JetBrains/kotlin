@@ -31,7 +31,7 @@ class KotlinScriptDependenciesClassFinder(
     private val scriptDependenciesManager: ScriptDependenciesManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
 
-    override fun calcClassRoots(): List<VirtualFile> = scriptDependenciesManager.getAllScriptsClasspath().toList()
+    override fun calcClassRoots(): List<VirtualFile> = scriptDependenciesManager.getAllScriptsDependenciesClassFiles().toList()
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
         tailrec fun findClassInner(parentQualifier: String, inners: List<String> = emptyList()): PsiClass? {

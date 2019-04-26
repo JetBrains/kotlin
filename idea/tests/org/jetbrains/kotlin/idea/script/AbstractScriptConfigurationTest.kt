@@ -10,7 +10,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -31,10 +33,12 @@ import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.projectLibrary
 import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
@@ -136,7 +140,7 @@ abstract class AbstractScriptDefinitionsOrderTest : AbstractScriptConfigurationT
     }
 }
 
-private val validKeys = setOf("sources", "classpath", "imports", "template-classes-names")
+private val validKeys = setOf("javaHome", "sources", "classpath", "imports", "template-classes-names")
 private const val useDefaultTemplate = "// DEPENDENCIES:"
 private const val templatesSettings = "// TEMPLATES: "
 // some bugs can only be reproduced when some module and script have intersecting library dependencies
@@ -165,6 +169,15 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             ?: error("Couldn't find $SCRIPT_NAME file in $testDir")
     }
 
+    private val sdk by lazy {
+        val jdk = PluginTestCaseBase.jdk(TestJdkKind.MOCK_JDK)
+        runWriteAction {
+            ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
+            ProjectRootManager.getInstance(project).projectSdk = jdk
+        }
+        jdk
+    }
+
     protected fun configureScriptFile(path: String) {
         val mainScriptFile = findMainScript(path)
         val environment = createScriptEnvironment(mainScriptFile)
@@ -189,6 +202,10 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
 
         if (module != null) {
+            ModuleRootModificationUtil.updateModel(module) { model ->
+                model.sdk = sdk
+            }
+
             module.addDependency(
                 projectLibrary(
                     "script-runtime",
@@ -265,6 +282,18 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
         if (env[useDefaultTemplate] != true && env["template-classes-names"] == null) {
             env["template-classes-names"] = listOf("custom.scriptDefinition.Template")
+        }
+
+        if (env["javaHome"] != null) {
+            val jdkKind = when ((env["javaHome"] as? List<String>)?.singleOrNull()) {
+                "9" -> TestJdkKind.FULL_JDK_9
+                else -> TestJdkKind.MOCK_JDK
+            }
+            runWriteAction {
+                val jdk = PluginTestCaseBase.jdk(jdkKind)
+                ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
+                env["javaHome"] = File(jdk.homePath)
+            }
         }
 
         env.putAll(defaultEnvironment)
