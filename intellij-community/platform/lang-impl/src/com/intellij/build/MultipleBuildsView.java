@@ -332,8 +332,8 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
 
       myViewMap.clear();
       listModel.clear();
-      myBuildsList.setVisible(false);
       runOnEdt.add(() -> {
+        myBuildsList.setVisible(false);
         myThreeComponentsSplitter.setFirstComponent(null);
         myThreeComponentsSplitter.setLastComponent(null);
       });
