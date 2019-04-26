@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.SLRUMap
 import kotlinx.coroutines.GlobalScope
@@ -52,6 +53,16 @@ class ScriptDependenciesCache(private val project: Project) {
         return scriptsModificationStampsCache.replace(file, file.modificationStamp) != file.modificationStamp
     }
 
+    private val scriptsDependenciesClasspathScopeCache = SLRUCacheWithLock<GlobalSearchScope>()
+
+    fun scriptDependenciesClasspathScope(file: VirtualFile): GlobalSearchScope {
+        return scriptsDependenciesClasspathScopeCache.getOrPut(file) {
+            val dependencies = scriptDependenciesCache.get(file)
+            val roots = dependencies?.classpath ?: emptyList()
+            NonClasspathDirectoriesScope.compose(ScriptDependenciesManager.toVfsRoots(roots))
+        }
+    }
+
     val allScriptsClasspath by ClearableLazyValue(cacheLock) {
         val files = scriptDependenciesCache.getAll().flatMap { it.value.classpath }.distinct()
         ScriptDependenciesManager.toVfsRoots(files)
@@ -74,6 +85,8 @@ class ScriptDependenciesCache(private val project: Project) {
         this::allScriptsClasspathScope.clearValue()
         this::allLibrarySources.clearValue()
         this::allLibrarySourcesScope.clearValue()
+
+        scriptsDependenciesClasspathScopeCache.clear()
 
         val kotlinScriptDependenciesClassFinder =
             Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
@@ -167,6 +180,17 @@ private class SLRUCacheWithLock<T> {
 
     fun get(value: VirtualFile): T? = lock.write {
         cache[value]
+    }
+
+    fun getOrPut(key: VirtualFile, defaultValue: () -> T): T = lock.write {
+        val value = cache.get(key)
+        return if (value == null) {
+            val answer = defaultValue()
+            replace(key, answer)
+            answer
+        } else {
+            value
+        }
     }
 
     fun remove(file: VirtualFile) = lock.write {
