@@ -308,7 +308,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         ApplicationManager.getApplication()
           .invokeLater(() -> navigatable.navigate(false), ModalityState.defaultModalityState(), myProject.getDisposed());
       }
-      TreeUtil.promiseSelect(myTree, visitor(node));
+      SimpleNode parentOrNode = node.getParent() == null ? node : node.getParent();
+      myTreeModel.invalidate(parentOrNode, true).onProcessed(p -> TreeUtil.promiseSelect(myTree, visitor(node)));
     }
   }
 
@@ -643,8 +644,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       ExecutionConsole view = myView.getView(nodeConsoleViewName);
       if (view != null) {
         if (view instanceof BuildTextConsoleView && deferredOutput != null && !deferredOutput.isEmpty()) {
+          deferredNodeOutput.remove(nodeConsoleViewName);
           deferredOutput.forEach(consumer -> consumer.accept((BuildTextConsoleView)view));
-          deferredOutput.clear();
         }
         myView.enableView(nodeConsoleViewName, false);
         myPanel.setVisible(true);
@@ -653,8 +654,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
       if (deferredOutput != null && !deferredOutput.isEmpty()) {
         BuildTextConsoleView textConsoleView = new BuildTextConsoleView(myProject, true);
+        deferredNodeOutput.remove(nodeConsoleViewName);
         deferredOutput.forEach(consumer -> consumer.accept(textConsoleView));
-        deferredOutput.clear();
         myView.addView(textConsoleView, nodeConsoleViewName, false);
         myView.enableView(nodeConsoleViewName, false);
       }
