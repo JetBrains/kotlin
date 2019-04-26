@@ -67,17 +67,17 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.Host'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final] ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-y>' type=<root>.Host origin=null
-    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType 
+    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Host) returnType:<root>.Outer.Inner 
       $this: VALUE_PARAMETER name:<this> type:<root>.Host 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun test (): IrErrorType declared in <root>.Host'
+        RETURN type=kotlin.Nothing from='public final fun test (): <root>.Outer.Inner declared in <root>.Host'
           BLOCK type=<root>.Host.test.<no name provided> origin=OBJECT_LITERAL
             CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host.test.<no name provided> 
-              CONSTRUCTOR visibility:private <> () returnType:IrErrorType [primary] 
+              CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.Inner [primary] 
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.Outer.Inner'
-                    x: CONST Int type=IrErrorType value=42
+                    x: CONST Int type=<root>.Outer.Inner value=42
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'
               PROPERTY name:xx visibility:public modality:FINAL [val] 
                 FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.String visibility:public [final] 
@@ -105,3 +105,4 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

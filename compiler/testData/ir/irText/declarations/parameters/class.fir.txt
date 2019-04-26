@@ -34,14 +34,14 @@ FILE fqName:<root> fileName:/class.kt
   CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test 
     TYPE_PARAMETER name:T0 index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Test<T0 of <root>.Test> [primary] 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Test<T0 of <uninitialized parent>> [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:TestNested modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.TestNested 
       TYPE_PARAMETER name:T1 index:0 variance: superTypes:[]
-      CONSTRUCTOR visibility:public <> () returnType:<root>.Test.TestNested<T1 of <root>.Test.TestNested> [primary] 
+      CONSTRUCTOR visibility:public <> () returnType:<root>.Test.TestNested<T1 of <uninitialized parent>> [primary] 
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestNested modality:FINAL visibility:public superTypes:[kotlin.Any]'
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/class.kt
     CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test.TestInner 
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[]
-      CONSTRUCTOR visibility:public <> () returnType:<root>.Test.TestInner<T2 of <root>.Test.TestInner> [primary] 
+      CONSTRUCTOR visibility:public <> () returnType:<root>.Test.TestInner<T2 of <uninitialized parent>> [primary] 
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
@@ -91,3 +91,4 @@ FILE fqName:<root> fileName:/class.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

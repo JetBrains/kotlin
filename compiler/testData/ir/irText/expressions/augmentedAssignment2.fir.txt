@@ -63,3 +63,4 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
         value: CONST String type=kotlin.String value="/="
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
         value: CONST String type=kotlin.String value="%="
+

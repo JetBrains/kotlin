@@ -5,7 +5,8 @@ FILE fqName:<root> fileName:/extensionPropertyGetterCall.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-okext> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value="OK"
-  FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.String 
+  FUN name:test5 visibility:public modality:FINAL <> () returnType:IrErrorType 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test5 (): kotlin.String declared in <root>'
-        CALL 'public final fun <get-okext> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+      RETURN type=kotlin.Nothing from='public final fun test5 (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Unresolved name: okext>#' type=IrErrorType
+

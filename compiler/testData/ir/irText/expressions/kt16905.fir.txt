@@ -79,3 +79,4 @@ FILE fqName:<root> fileName:/kt16905.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: OI>#' type=IrErrorType
+

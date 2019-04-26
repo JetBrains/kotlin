@@ -35,3 +35,4 @@ FILE fqName:<root> fileName:/augmentedAssignment1.kt
         value: CONST Int type=kotlin.Int value=4
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=null
         value: CONST Int type=kotlin.Int value=5
+

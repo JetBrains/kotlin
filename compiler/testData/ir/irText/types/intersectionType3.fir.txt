@@ -165,3 +165,4 @@ FILE fqName:<root> fileName:/intersectionType3.kt
       RETURN type=kotlin.Nothing from='public final fun testInAs3 (x: <root>.In<<root>.A1>, y: <root>.In<<root>.A2>): kotlin.Unit declared in <root>'
         CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
           <T>: <none>
+

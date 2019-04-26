@@ -79,14 +79,12 @@ FILE fqName:<root> fileName:/objectReference.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.Z) returnType:IrErrorType 
               $this: VALUE_PARAMETER name:<this> type:<root>.Z 
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.Z.aLambda'
-                  BLOCK type=kotlin.Unit origin=null
-                    SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
-                      value: CONST Int type=kotlin.Int value=1
-                    CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-                    SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
-                      value: CONST Int type=kotlin.Int value=1
-                    CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
+                SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+                  value: CONST Int type=kotlin.Int value=1
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
+                SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+                  value: CONST Int type=kotlin.Int value=1
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
             FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.Z.aLambda' type=IrErrorType origin=LAMBDA
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aLambda> visibility:public modality:FINAL <> ($this:<root>.Z) returnType:IrErrorType 
         correspondingProperty: PROPERTY name:aLambda visibility:public modality:FINAL [val] 
@@ -96,12 +94,12 @@ FILE fqName:<root> fileName:/objectReference.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aLambda type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
               receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z.<get-aLambda>' type=<root>.Z origin=null
     PROPERTY name:anObject visibility:public modality:FINAL [val] 
-      FIELD PROPERTY_BACKING_FIELD name:anObject type:IrErrorType visibility:public [final] 
+      FIELD PROPERTY_BACKING_FIELD name:anObject type:kotlin.Any visibility:public [final] 
         EXPRESSION_BODY
           BLOCK type=<root>.Z.anObject.<no name provided> origin=OBJECT_LITERAL
             CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.anObject.<no name provided> 
-              CONSTRUCTOR visibility:private <> () returnType:IrErrorType [primary] 
+              CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary] 
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -123,12 +121,12 @@ FILE fqName:<root> fileName:/objectReference.kt
                     value: CONST Int type=kotlin.Int value=1
                   CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
             CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Z.anObject.<no name provided>' type=<root>.Z.anObject.<no name provided> origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL <> ($this:<root>.Z) returnType:IrErrorType 
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL <> ($this:<root>.Z) returnType:kotlin.Any 
         correspondingProperty: PROPERTY name:anObject visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Z 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): IrErrorType declared in <root>.Z'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): kotlin.Any declared in <root>.Z'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:kotlin.Any visibility:public [final] ' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z.<get-anObject>' type=<root>.Z origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
@@ -151,3 +149,4 @@ FILE fqName:<root> fileName:/objectReference.kt
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
         value: CONST Int type=kotlin.Int value=1
       CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
+

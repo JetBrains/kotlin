@@ -65,16 +65,14 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR name:<unary> type:kotlin.Int [val] 
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=null
-            value: ERROR_CALL 'Unresolved reference: <Unresolved name: inc>#' type=IrErrorType
-              GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPrefix' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val] 
         BLOCK type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val] 
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=null
-            value: ERROR_CALL 'Unresolved reference: <Unresolved name: dec>#' type=IrErrorType
-              GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPrefix' type=kotlin.Int origin=null
+            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
   FUN name:testPropPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
@@ -83,43 +81,39 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           VAR name:<unary> type:kotlin.Int [val] 
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=null
-            value: ERROR_CALL 'Unresolved reference: <Unresolved name: inc>#' type=IrErrorType
-              GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val] 
         BLOCK type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val] 
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=null
-            value: ERROR_CALL 'Unresolved reference: <Unresolved name: dec>#' type=IrErrorType
-              GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
   FUN name:testArrayPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:a1 type:IrErrorType [val] 
-        BLOCK type=IrErrorType origin=null
+      VAR name:a1 type:kotlin.Int [val] 
+        BLOCK type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val] 
             CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=null
               index: CONST Int type=kotlin.Int value=0
-          VAR name:<unary-result> type:IrErrorType [val] 
-            ERROR_CALL 'Unresolved reference: <Unresolved name: inc>#' type=IrErrorType
-              GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+          VAR name:<unary-result> type:kotlin.Int [val] 
+            CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
             index: CONST Int type=kotlin.Int value=0
-            value: GET_VAR 'val <unary-result>: IrErrorType [val] declared in <root>.testArrayPrefix' type=IrErrorType origin=null
-          GET_VAR 'val <unary-result>: IrErrorType [val] declared in <root>.testArrayPrefix' type=IrErrorType origin=null
-      VAR name:a2 type:IrErrorType [val] 
-        BLOCK type=IrErrorType origin=null
+            value: GET_VAR 'val <unary-result>: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+          GET_VAR 'val <unary-result>: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+      VAR name:a2 type:kotlin.Int [val] 
+        BLOCK type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val] 
             CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=null
               index: CONST Int type=kotlin.Int value=0
-          VAR name:<unary-result> type:IrErrorType [val] 
-            ERROR_CALL 'Unresolved reference: <Unresolved name: dec>#' type=IrErrorType
-              GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+          VAR name:<unary-result> type:kotlin.Int [val] 
+            CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
             index: CONST Int type=kotlin.Int value=0
-            value: GET_VAR 'val <unary-result>: IrErrorType [val] declared in <root>.testArrayPrefix' type=IrErrorType origin=null
-          GET_VAR 'val <unary-result>: IrErrorType [val] declared in <root>.testArrayPrefix' type=IrErrorType origin=null
+            value: GET_VAR 'val <unary-result>: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
+          GET_VAR 'val <unary-result>: kotlin.Int [val] declared in <root>.testArrayPrefix' type=kotlin.Int origin=null
   FUN name:testArrayPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int [val] 
@@ -129,8 +123,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
               index: CONST Int type=kotlin.Int value=0
           CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
             index: CONST Int type=kotlin.Int value=0
-            value: ERROR_CALL 'Unresolved reference: <Unresolved name: inc>#' type=IrErrorType
-              GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
       VAR name:a2 type:kotlin.Int [val] 
         BLOCK type=kotlin.Int origin=null
@@ -139,6 +132,6 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
               index: CONST Int type=kotlin.Int value=0
           CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
             index: CONST Int type=kotlin.Int value=0
-            value: ERROR_CALL 'Unresolved reference: <Unresolved name: dec>#' type=IrErrorType
-              GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testArrayPostfix' type=kotlin.Int origin=null
+

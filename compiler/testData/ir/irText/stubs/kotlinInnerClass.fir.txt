@@ -4,3 +4,4 @@ FILE fqName:<root> fileName:/kotlinInnerClass.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (inner: <root>.Outer.Inner): kotlin.Unit declared in <root>'
         CALL 'public final fun foo (): kotlin.Unit declared in <root>.Outer.Inner' type=kotlin.Unit origin=null
+

@@ -78,3 +78,4 @@ FILE fqName:<root> fileName:/local.kt
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       VAR name:testMember type:IrErrorType [val] 
+

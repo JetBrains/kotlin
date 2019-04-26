@@ -236,38 +236,39 @@ FILE fqName:<root> fileName:/propertyReferences.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test_constVal> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_constVal type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:test_J_CONST visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: CONST>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_CONST> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        ERROR_CALL 'No getter found for R|/J.CONST|' type=kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Int 
       correspondingProperty: PROPERTY name:test_J_CONST visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test_J_CONST> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test_J_CONST> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: nonConst>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_nonConst> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        ERROR_CALL 'No getter found for R|/J.nonConst|' type=kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_nonConst> visibility:public modality:FINAL <> () returnType:kotlin.Int 
       correspondingProperty: PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test_J_nonConst> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test_J_nonConst> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:test_varWithPrivateSet visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test_varWithPrivateSet type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test_varWithPrivateSet type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: varWithPrivateSet>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithPrivateSet> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        CALL 'public final fun <get-varWithPrivateSet> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithPrivateSet> visibility:public modality:FINAL <> () returnType:kotlin.Int 
       correspondingProperty: PROPERTY name:test_varWithPrivateSet visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test_varWithPrivateSet> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_varWithPrivateSet type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test_varWithPrivateSet> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_varWithPrivateSet type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:test_varWithProtectedSet visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test_varWithProtectedSet type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test_varWithProtectedSet type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: varWithProtectedSet>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithProtectedSet> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        CALL 'public final fun <get-varWithProtectedSet> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithProtectedSet> visibility:public modality:FINAL <> () returnType:kotlin.Int 
       correspondingProperty: PROPERTY name:test_varWithProtectedSet visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test_varWithProtectedSet> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_varWithProtectedSet type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test_varWithProtectedSet> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_varWithProtectedSet type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
+

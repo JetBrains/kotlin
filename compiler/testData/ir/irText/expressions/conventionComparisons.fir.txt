@@ -56,3 +56,4 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         ERROR_CALL 'Comparison of arguments with unsupported type: /IA' type=kotlin.Boolean
+

@@ -2,15 +2,15 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> (x:T of <root>.Test1) returnType:<root>.Test1<T of <root>.Test1> [primary] 
-      VALUE_PARAMETER name:x index:0 type:T of <root>.Test1 
+    CONSTRUCTOR visibility:public <> (x:T of <uninitialized parent>) returnType:<root>.Test1<T of <uninitialized parent>> [primary] 
+      VALUE_PARAMETER name:x index:0 type:T of <uninitialized parent> 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'x: T of <root>.Test1 declared in <root>.Test1.<init>' type=T of <root>.Test1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'x: T of <uninitialized parent> declared in <root>.Test1.<init>' type=T of <uninitialized parent> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:T of <root>.Test1 
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
@@ -18,6 +18,11 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.Test1 declared in <root>.Test1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:public [final] ' type=T of <root>.Test1 origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-x>' type=<root>.Test1 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:T of <root>.Test1 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.Test1 declared in <root>.Test1'
+          CALL 'public final fun <get-x> (): T of <root>.Test1 declared in <root>.Test1' type=T of <root>.Test1 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -34,15 +39,15 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
   CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> (x:T of <root>.Test2) returnType:<root>.Test2<T of <root>.Test2> [primary] 
-      VALUE_PARAMETER name:x index:0 type:T of <root>.Test2 
+    CONSTRUCTOR visibility:public <> (x:T of <uninitialized parent>) returnType:<root>.Test2<T of <uninitialized parent>> [primary] 
+      VALUE_PARAMETER name:x index:0 type:T of <uninitialized parent> 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'x: T of <root>.Test2 declared in <root>.Test2.<init>' type=T of <root>.Test2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'x: T of <uninitialized parent> declared in <root>.Test2.<init>' type=T of <uninitialized parent> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:T of <root>.Test2 
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2 
@@ -50,6 +55,11 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.Test2 declared in <root>.Test2'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:public [final] ' type=T of <root>.Test2 origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:T of <root>.Test2 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.Test2 declared in <root>.Test2'
+          CALL 'public final fun <get-x> (): T of <root>.Test2 declared in <root>.Test2' type=T of <root>.Test2 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -66,15 +76,15 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
   CLASS CLASS name:Test3 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test3 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> (x:kotlin.collections.List<T of <root>.Test3>) returnType:<root>.Test3<T of <root>.Test3> [primary] 
-      VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<T of <root>.Test3> 
+    CONSTRUCTOR visibility:public <> (x:kotlin.collections.List<T of <uninitialized parent>>) returnType:<root>.Test3<T of <uninitialized parent>> [primary] 
+      VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<T of <uninitialized parent>> 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'x: kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3.<init>' type=kotlin.collections.List<T of <root>.Test3> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'x: kotlin.collections.List<T of <uninitialized parent>> declared in <root>.Test3.<init>' type=kotlin.collections.List<T of <uninitialized parent>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.collections.List<T of <root>.Test3> 
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Test3 
@@ -82,6 +92,11 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:public [final] ' type=kotlin.collections.List<T of <root>.Test3> origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-x>' type=<root>.Test3 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.collections.List<T of <root>.Test3> 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test3 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3'
+          CALL 'public final fun <get-x> (): kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3' type=kotlin.collections.List<T of <root>.Test3> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -113,6 +128,11 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.collections.List<kotlin.String> declared in <root>.Test4'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:public [final] ' type=kotlin.collections.List<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.<get-x>' type=<root>.Test4 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test4) returnType:kotlin.collections.List<kotlin.String> 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test4 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.collections.List<kotlin.String> declared in <root>.Test4'
+          CALL 'public final fun <get-x> (): kotlin.collections.List<kotlin.String> declared in <root>.Test4' type=kotlin.collections.List<kotlin.String> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -126,3 +146,4 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

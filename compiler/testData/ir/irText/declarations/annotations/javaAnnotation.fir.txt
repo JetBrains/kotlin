@@ -5,3 +5,4 @@ FILE fqName:<root> fileName:/javaAnnotation.kt
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
+

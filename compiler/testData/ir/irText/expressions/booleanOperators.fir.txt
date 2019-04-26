@@ -37,3 +37,4 @@ FILE fqName:<root> fileName:/booleanOperators.kt
       RETURN type=kotlin.Nothing from='public final fun test2x (a: kotlin.Boolean, b: kotlin.Boolean): kotlin.Boolean declared in <root>'
         CALL 'public final fun or (other: kotlin.Boolean): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
           other: GET_VAR 'b: kotlin.Boolean declared in <root>.test2x' type=kotlin.Boolean origin=null
+

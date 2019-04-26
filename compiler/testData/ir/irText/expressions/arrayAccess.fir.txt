@@ -12,10 +12,11 @@ FILE fqName:<root> fileName:/arrayAccess.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
-  FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.String 
+  FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.Int 
     VALUE_PARAMETER name:a index:0 type:kotlin.IntArray 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (a: kotlin.IntArray): kotlin.String declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin' type=kotlin.String origin=null
+      RETURN type=kotlin.Nothing from='public final fun test (a: kotlin.IntArray): kotlin.Int declared in <root>'
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           other: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=null
             index: CALL 'public final fun foo (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+

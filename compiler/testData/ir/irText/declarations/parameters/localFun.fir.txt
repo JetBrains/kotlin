@@ -15,10 +15,11 @@ FILE fqName:<root> fileName:/localFun.kt
           EXPRESSION_BODY
             CONST String type=kotlin.String value=""
         BLOCK_BODY
-      FUN name:test3 visibility:local modality:FINAL <> (args:kotlin.String) returnType:kotlin.Unit 
-        VALUE_PARAMETER name:args index:0 type:kotlin.String 
+      FUN name:test3 visibility:local modality:FINAL <> (args:kotlin.Array<kotlin.String>) returnType:kotlin.Unit 
+        VALUE_PARAMETER name:args index:0 type:kotlin.Array<kotlin.String> 
         BLOCK_BODY
       FUN name:textExt1 visibility:local modality:FINAL <> (i:kotlin.Int, j:TT of <root>.outer) returnType:kotlin.Unit 
         VALUE_PARAMETER name:i index:0 type:kotlin.Int 
         VALUE_PARAMETER name:j index:1 type:TT of <root>.outer 
         BLOCK_BODY
+

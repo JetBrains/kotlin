@@ -35,3 +35,4 @@ FILE fqName:<root> fileName:/whenReturn.kt
               CONST String type=kotlin.String value="Failure"
       RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="???"
+

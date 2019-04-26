@@ -2,15 +2,15 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
   CLASS CLASS name:Cell modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cell 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> (value:T of <root>.Cell) returnType:<root>.Cell<T of <root>.Cell> [primary] 
-      VALUE_PARAMETER name:value index:0 type:T of <root>.Cell 
+    CONSTRUCTOR visibility:public <> (value:T of <uninitialized parent>) returnType:<root>.Cell<T of <uninitialized parent>> [primary] 
+      VALUE_PARAMETER name:value index:0 type:T of <uninitialized parent> 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Cell modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'value: T of <root>.Cell declared in <root>.Cell.<init>' type=T of <root>.Cell origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value: T of <uninitialized parent> declared in <root>.Cell.<init>' type=T of <uninitialized parent> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell) returnType:T of <root>.Cell 
         correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Cell 
@@ -31,8 +31,8 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test visibility:public modality:FINAL <> () returnType:IrErrorType 
+  FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Cell<kotlin.Int>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: IntAlias>#' type=IrErrorType
-          CONST Int type=kotlin.Int value=42
+      RETURN type=kotlin.Nothing from='public final fun test (): <root>.Cell<kotlin.Int> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (value: T of <uninitialized parent>) [primary] declared in <root>.Cell' type=<root>.Cell<kotlin.Int> origin=null
+          <class: T>: <none>

@@ -40,3 +40,4 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment2.kt
     VALUE_PARAMETER name:a index:0 type:<root>.IA 
     BLOCK_BODY
       ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+

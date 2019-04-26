@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/companion.kt
     FUN name:test2 visibility:public modality:FINAL <> ($this:<root>.Z) returnType:kotlin.Unit 
       $this: VALUE_PARAMETER name:<this> type:<root>.Z 
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: test>#' type=IrErrorType
+        CALL 'public final fun test (): kotlin.Unit declared in <root>.Z.Companion' type=kotlin.Unit origin=null
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.Companion 
       CONSTRUCTOR visibility:private <> () returnType:<root>.Z.Companion [primary] 
@@ -44,3 +44,4 @@ FILE fqName:<root> fileName:/companion.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

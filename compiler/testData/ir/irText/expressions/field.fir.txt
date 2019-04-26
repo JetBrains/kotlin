@@ -27,3 +27,4 @@ FILE fqName:<root> fileName:/field.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.Int 
       BLOCK_BODY
         ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
+

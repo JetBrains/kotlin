@@ -1,14 +1,15 @@
 FILE fqName:<root> fileName:/extFunInvokeAsFun.kt
-  FUN name:with1 visibility:public modality:FINAL <> (receiver:kotlin.Any?, block:kotlin.Function1) returnType:IrErrorType 
+  FUN name:with1 visibility:public modality:FINAL <> (receiver:kotlin.Any?, block:kotlin.Function1<kotlin.Any?, kotlin.Unit>) returnType:IrErrorType 
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? 
-    VALUE_PARAMETER name:block index:1 type:kotlin.Function1 
+    VALUE_PARAMETER name:block index:1 type:kotlin.Function1<kotlin.Any?, kotlin.Unit> 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun with1 (receiver: kotlin.Any?, block: kotlin.Function1): IrErrorType declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun with1 (receiver: kotlin.Any?, block: kotlin.Function1<kotlin.Any?, kotlin.Unit>): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: block>#' type=IrErrorType
           GET_VAR 'receiver: kotlin.Any? declared in <root>.with1' type=kotlin.Any? origin=null
-  FUN name:with2 visibility:public modality:FINAL <> (receiver:kotlin.Any?, block:kotlin.Function1) returnType:IrErrorType 
+  FUN name:with2 visibility:public modality:FINAL <> (receiver:kotlin.Any?, block:kotlin.Function1<kotlin.Any?, kotlin.Unit>) returnType:IrErrorType 
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? 
-    VALUE_PARAMETER name:block index:1 type:kotlin.Function1 
+    VALUE_PARAMETER name:block index:1 type:kotlin.Function1<kotlin.Any?, kotlin.Unit> 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun with2 (receiver: kotlin.Any?, block: kotlin.Function1): IrErrorType declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun with2 (receiver: kotlin.Any?, block: kotlin.Function1<kotlin.Any?, kotlin.Unit>): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: block>#' type=IrErrorType
+

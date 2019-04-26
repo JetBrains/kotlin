@@ -44,14 +44,13 @@ FILE fqName:<root> fileName:/memberExtension.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN name:provideDelegate visibility:public modality:FINAL <> ($this:<root>.Host, host:kotlin.Any?, p:kotlin.Any) returnType:IrErrorType 
+    FUN name:provideDelegate visibility:public modality:FINAL <> ($this:<root>.Host, host:kotlin.Any?, p:kotlin.Any) returnType:<root>.Host.StringDelegate 
       $this: VALUE_PARAMETER name:<this> type:<root>.Host 
       VALUE_PARAMETER name:host index:0 type:kotlin.Any? 
       VALUE_PARAMETER name:p index:1 type:kotlin.Any 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): IrErrorType declared in <root>.Host'
-          ERROR_CALL 'Unresolved reference: <Unresolved name: StringDelegate>#' type=IrErrorType
-            ERROR_CALL 'Unresolved reference: this#' type=kotlin.String
+        RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): <root>.Host.StringDelegate declared in <root>.Host'
+          CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.Host.StringDelegate' type=<root>.Host.StringDelegate origin=null
     PROPERTY name:plusK visibility:public modality:FINAL [delegated,val] 
       FIELD PROPERTY_BACKING_FIELD name:plusK type:IrErrorType visibility:public [final] 
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType 
@@ -85,3 +84,4 @@ FILE fqName:<root> fileName:/memberExtension.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

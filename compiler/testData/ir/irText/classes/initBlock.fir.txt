@@ -81,16 +81,16 @@ FILE fqName:<root> fileName:/initBlock.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test4 
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-          CONST String type=kotlin.String value="1"
+        CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+          message: CONST String type=kotlin.String value="1"
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test4 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-          CONST String type=kotlin.String value="2"
+        CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+          message: CONST String type=kotlin.String value="2"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -112,8 +112,8 @@ FILE fqName:<root> fileName:/initBlock.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test5 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-          CONST String type=kotlin.String value="1"
+        CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+          message: CONST String type=kotlin.String value="1"
     CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test5.TestInner 
       CONSTRUCTOR visibility:public <> () returnType:<root>.Test5.TestInner [primary] 
@@ -122,8 +122,8 @@ FILE fqName:<root> fileName:/initBlock.kt
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
       ANONYMOUS_INITIALIZER isStatic=false
         BLOCK_BODY
-          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-            CONST String type=kotlin.String value="2"
+          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+            message: CONST String type=kotlin.String value="2"
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -150,3 +150,4 @@ FILE fqName:<root> fileName:/initBlock.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

@@ -68,33 +68,32 @@ FILE fqName:<root> fileName:/intersectionType2.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:run visibility:public modality:FINAL <T> (fn:kotlin.Function0) returnType:IrErrorType 
+  FUN name:run visibility:public modality:FINAL <T> (fn:kotlin.Function0<T of <root>.run>) returnType:IrErrorType 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0 
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<T of <root>.run> 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun run <T> (fn: kotlin.Function0): IrErrorType declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: fn>#' type=IrErrorType
   FUN name:foo visibility:public modality:FINAL <> () returnType:IrErrorType 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): IrErrorType declared in <root>'
-        CALL 'public final fun run <T> (fn: kotlin.Function0): IrErrorType declared in <root>' type=IrErrorType origin=null
+        CALL 'public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): IrErrorType declared in <root>' type=IrErrorType origin=null
           <T>: <none>
           fn: BLOCK type=IrErrorType origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.foo'
-                  BLOCK type=<root>.B origin=null
-                    VAR name:mm type:<root>.B [val] 
-                      CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
-                    VAR name:nn type:<root>.C [val] 
-                      CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
-                    VAR name:c type:<root>.B [val] 
-                      WHEN type=<root>.B origin=IF
-                        BRANCH
-                          if: CONST Boolean type=kotlin.Boolean value=true
-                          then: GET_VAR 'val mm: <root>.B [val] declared in <root>.foo.<anonymous>' type=<root>.B origin=null
-                        BRANCH
-                          if: CONST Boolean type=kotlin.Boolean value=true
-                          then: GET_VAR 'val nn: <root>.C [val] declared in <root>.foo.<anonymous>' type=<root>.C origin=null
-                    GET_VAR 'val c: <root>.B [val] declared in <root>.foo.<anonymous>' type=<root>.B origin=null
+                VAR name:mm type:IrErrorType [val] 
+                  ERROR_CALL 'Unresolved reference: B#' type=IrErrorType
+                VAR name:nn type:IrErrorType [val] 
+                  ERROR_CALL 'Unresolved reference: C#' type=IrErrorType
+                VAR name:c type:IrErrorType [val] 
+                  WHEN type=IrErrorType origin=IF
+                    BRANCH
+                      if: CONST Boolean type=IrErrorType value=true
+                      then: ERROR_CALL 'Unresolved reference: mm#' type=IrErrorType
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: ERROR_CALL 'Unresolved reference: nn#' type=IrErrorType
+                ERROR_CALL 'Unresolved reference: c#' type=IrErrorType
             FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.foo' type=IrErrorType origin=LAMBDA
+

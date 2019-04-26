@@ -4,3 +4,4 @@ FILE fqName:<root> fileName:/javaNestedClass.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (jj: <root>.J.JJ): kotlin.Unit declared in <root>'
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.J.JJ' type=kotlin.Unit origin=null
+

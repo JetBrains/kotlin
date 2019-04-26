@@ -175,3 +175,4 @@ FILE fqName:<root> fileName:/primitiveComparisons.kt
         CALL 'public final fun lessOrEqual (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LTEQ
           arg0: GET_VAR 'a: kotlin.Double declared in <root>.dtest4' type=kotlin.Double origin=null
           arg1: GET_VAR 'b: kotlin.Double declared in <root>.dtest4' type=kotlin.Double origin=null
+

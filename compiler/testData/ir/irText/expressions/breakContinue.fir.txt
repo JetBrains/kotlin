@@ -49,3 +49,4 @@ FILE fqName:<root> fileName:/breakContinue.kt
             condition: CONST Boolean type=kotlin.Boolean value=true
             body: CONTINUE label=L loop.label=L
           CONTINUE label=L loop.label=L
+

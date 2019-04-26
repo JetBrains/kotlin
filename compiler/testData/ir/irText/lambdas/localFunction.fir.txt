@@ -10,3 +10,4 @@ FILE fqName:<root> fileName:/localFunction.kt
           ERROR_CALL 'Unresolved reference: R|<local>/x|' type=IrErrorType
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.outer.local' type=kotlin.Int origin=null
       CALL 'local final fun local (): kotlin.Unit declared in <local>' type=kotlin.Unit origin=null
+

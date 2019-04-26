@@ -181,8 +181,8 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Test2.ZERO) returnType:kotlin.Unit 
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2.ZERO 
         BLOCK_BODY
-          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-            CONST String type=kotlin.String value="ZERO"
+          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+            message: CONST String type=kotlin.String value="ZERO"
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -206,8 +206,8 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Test2.ONE) returnType:kotlin.Unit 
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2.ONE 
         BLOCK_BODY
-          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-            CONST String type=kotlin.String value="ONE"
+          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+            message: CONST String type=kotlin.String value="ONE"
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any 
         overridden:
           protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -258,3 +258,4 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum 
+

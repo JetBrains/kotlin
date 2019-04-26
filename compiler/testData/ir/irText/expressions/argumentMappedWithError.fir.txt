@@ -13,5 +13,6 @@ FILE fqName:<root> fileName:/argumentMappedWithError.kt
       VAR name:x type:kotlin.Int [val] 
         CONST Int type=kotlin.Int value=0
       CALL 'public final fun foo (arg: kotlin.Number): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        arg: CALL 'public final fun convert <R> (): R of <root>.convert declared in <root>' type=R of <root>.convert origin=null
+        arg: CALL 'public final fun convert <R> (): R of <root>.convert declared in <root>' type=kotlin.Number origin=null
           <R>: <none>
+

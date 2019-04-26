@@ -77,29 +77,30 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   FUN name:takeULong visibility:public modality:FINAL <> (u:kotlin.ULong) returnType:kotlin.Unit 
     VALUE_PARAMETER name:u index:0 type:kotlin.ULong 
     BLOCK_BODY
-  FUN name:takeUBytes visibility:public modality:FINAL <> (u:kotlin.UByte) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:u index:0 type:kotlin.UByte 
+  FUN name:takeUBytes visibility:public modality:FINAL <> (u:kotlin.Array<kotlin.UByte>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:u index:0 type:kotlin.Array<kotlin.UByte> 
     BLOCK_BODY
   FUN name:takeLong visibility:public modality:FINAL <> (l:kotlin.Long) returnType:kotlin.Unit 
     VALUE_PARAMETER name:l index:0 type:kotlin.Long 
     BLOCK_BODY
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      CALL 'public final fun takeUByte (u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-      CALL 'public final fun takeUByte (u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-      CALL 'public final fun takeUShort (u: kotlin.UShort): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-      CALL 'public final fun takeUShort (u: kotlin.UShort): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun <get-BIGGER_THAN_UBYTE> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-      CALL 'public final fun takeUInt (u: kotlin.UInt): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-      CALL 'public final fun takeULong (u: kotlin.ULong): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-      ERROR_CALL 'Cannot bind 3 arguments to takeUBytes call with 1 parameters' type=kotlin.Unit
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUByte]>#' type=IrErrorType
+        CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUByte]>#' type=IrErrorType
+        CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUShort]>#' type=IrErrorType
+        CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUShort]>#' type=IrErrorType
+        CALL 'public final fun <get-BIGGER_THAN_UBYTE> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUInt]>#' type=IrErrorType
+        CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeULong]>#' type=IrErrorType
+        CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUBytes]>#' type=IrErrorType
         CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
         CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
         CONST Long type=kotlin.Long value=42
-      CALL 'public final fun takeLong (l: kotlin.Long): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        l: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeLong]>#' type=IrErrorType
+        CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+

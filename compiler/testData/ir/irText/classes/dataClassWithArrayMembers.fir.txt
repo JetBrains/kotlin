@@ -113,6 +113,51 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           RETURN type=kotlin.Nothing from='public final fun <get-doubleArray> (): kotlin.DoubleArray declared in <root>.Test1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:doubleArray type:kotlin.DoubleArray visibility:public [final] ' type=kotlin.DoubleArray origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-doubleArray>' type=<root>.Test1 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Array<kotlin.String> 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Array<kotlin.String> declared in <root>.Test1'
+          CALL 'public final fun <get-stringArray> (): kotlin.Array<kotlin.String> declared in <root>.Test1' type=kotlin.Array<kotlin.String> origin=null
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.CharArray 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.CharArray declared in <root>.Test1'
+          CALL 'public final fun <get-charArray> (): kotlin.CharArray declared in <root>.Test1' type=kotlin.CharArray origin=null
+    FUN name:component3 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.BooleanArray 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.BooleanArray declared in <root>.Test1'
+          CALL 'public final fun <get-booleanArray> (): kotlin.BooleanArray declared in <root>.Test1' type=kotlin.BooleanArray origin=null
+    FUN name:component4 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.ByteArray 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component4 (): kotlin.ByteArray declared in <root>.Test1'
+          CALL 'public final fun <get-byteArray> (): kotlin.ByteArray declared in <root>.Test1' type=kotlin.ByteArray origin=null
+    FUN name:component5 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.ShortArray 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component5 (): kotlin.ShortArray declared in <root>.Test1'
+          CALL 'public final fun <get-shortArray> (): kotlin.ShortArray declared in <root>.Test1' type=kotlin.ShortArray origin=null
+    FUN name:component6 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.IntArray 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component6 (): kotlin.IntArray declared in <root>.Test1'
+          CALL 'public final fun <get-intArray> (): kotlin.IntArray declared in <root>.Test1' type=kotlin.IntArray origin=null
+    FUN name:component7 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.LongArray 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component7 (): kotlin.LongArray declared in <root>.Test1'
+          CALL 'public final fun <get-longArray> (): kotlin.LongArray declared in <root>.Test1' type=kotlin.LongArray origin=null
+    FUN name:component8 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.FloatArray 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component8 (): kotlin.FloatArray declared in <root>.Test1'
+          CALL 'public final fun <get-floatArray> (): kotlin.FloatArray declared in <root>.Test1' type=kotlin.FloatArray origin=null
+    FUN name:component9 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.DoubleArray 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component9 (): kotlin.DoubleArray declared in <root>.Test1'
+          CALL 'public final fun <get-doubleArray> (): kotlin.DoubleArray declared in <root>.Test1' type=kotlin.DoubleArray origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -129,15 +174,15 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
   CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> (genericArray:kotlin.Array<T of <root>.Test2>) returnType:<root>.Test2<T of <root>.Test2> [primary] 
-      VALUE_PARAMETER name:genericArray index:0 type:kotlin.Array<T of <root>.Test2> 
+    CONSTRUCTOR visibility:public <> (genericArray:kotlin.Array<T of <uninitialized parent>>) returnType:<root>.Test2<T of <uninitialized parent>> [primary] 
+      VALUE_PARAMETER name:genericArray index:0 type:kotlin.Array<T of <uninitialized parent>> 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:genericArray visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:genericArray type:kotlin.Array<T of <root>.Test2> visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'genericArray: kotlin.Array<T of <root>.Test2> declared in <root>.Test2.<init>' type=kotlin.Array<T of <root>.Test2> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'genericArray: kotlin.Array<T of <uninitialized parent>> declared in <root>.Test2.<init>' type=kotlin.Array<T of <uninitialized parent>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-genericArray> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Array<T of <root>.Test2> 
         correspondingProperty: PROPERTY name:genericArray visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2 
@@ -145,6 +190,11 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           RETURN type=kotlin.Nothing from='public final fun <get-genericArray> (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:genericArray type:kotlin.Array<T of <root>.Test2> visibility:public [final] ' type=kotlin.Array<T of <root>.Test2> origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-genericArray>' type=<root>.Test2 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Array<T of <root>.Test2> 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2'
+          CALL 'public final fun <get-genericArray> (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2' type=kotlin.Array<T of <root>.Test2> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -176,6 +226,11 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           RETURN type=kotlin.Nothing from='public final fun <get-anyArrayN> (): kotlin.Array<kotlin.Any>? declared in <root>.Test3'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anyArrayN type:kotlin.Array<kotlin.Any>? visibility:public [final] ' type=kotlin.Array<kotlin.Any>? origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-anyArrayN>' type=<root>.Test3 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Array<kotlin.Any>? 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test3 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Array<kotlin.Any>? declared in <root>.Test3'
+          CALL 'public final fun <get-anyArrayN> (): kotlin.Array<kotlin.Any>? declared in <root>.Test3' type=kotlin.Array<kotlin.Any>? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -189,3 +244,4 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

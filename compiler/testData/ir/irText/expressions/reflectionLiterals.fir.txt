@@ -33,25 +33,25 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-qux> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:qux type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:test1 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KClass<<root>.A> visibility:public [final,static] 
       EXPRESSION_BODY
-        GET_CLASS type=IrErrorType
-          ERROR_CALL 'Unresolved reference: <Unresolved name: A>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        GET_CLASS type=kotlin.reflect.KClass<<root>.A>
+          ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<<root>.A> 
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.reflect.KClass<<root>.A> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KClass<<root>.A> visibility:public [final,static] ' type=kotlin.reflect.KClass<<root>.A> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KClass<kotlin.Int> visibility:public [final,static] 
       EXPRESSION_BODY
-        GET_CLASS type=IrErrorType
+        GET_CLASS type=kotlin.reflect.KClass<kotlin.Int>
           CALL 'public final fun <get-qux> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:IrErrorType 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<kotlin.Int> 
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.reflect.KClass<kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KClass<kotlin.Int> visibility:public [final,static] ' type=kotlin.reflect.KClass<kotlin.Int> origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
@@ -62,14 +62,14 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
   PROPERTY name:test4 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:<root>.A visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: A>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:<root>.A 
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): <root>.A declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
   PROPERTY name:test5 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test5 type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
@@ -88,3 +88,4 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test6> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+

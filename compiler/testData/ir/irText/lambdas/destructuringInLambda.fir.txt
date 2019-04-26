@@ -29,6 +29,16 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final] ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-y>' type=<root>.A origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:<root>.A 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.A'
+          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:<root>.A 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.A'
+          CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -43,29 +53,28 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   PROPERTY name:fn visibility:public modality:FINAL [var] 
-    FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1 visibility:public [static] 
+    FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1<<root>.A, kotlin.Int> visibility:public [static] 
       EXPRESSION_BODY
-        BLOCK type=kotlin.Function1 origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<destruct>:IrErrorType) returnType:kotlin.Function1 
+        BLOCK type=kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<destruct>:IrErrorType) returnType:kotlin.Function1<<root>.A, kotlin.Int> 
             VALUE_PARAMETER name:<destruct> index:0 type:IrErrorType 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (<destruct>: IrErrorType): kotlin.Function1 declared in <root>.fn'
-                BLOCK type=IrErrorType origin=null
-                  VAR name:_ type:IrErrorType [val] 
-                    ERROR_CALL 'Unresolved reference: <Unresolved name: component1>#' type=IrErrorType
-                  VAR name:y type:IrErrorType [val] 
-                    ERROR_CALL 'Unresolved reference: <Unresolved name: component2>#' type=IrErrorType
-                  ERROR_CALL 'Unresolved reference: <Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#' type=IrErrorType
-                    GET_VAR 'val y: IrErrorType [val] declared in <root>.fn.<anonymous>' type=IrErrorType origin=null
-          FUNCTION_REFERENCE 'local final fun <anonymous> (<destruct>: IrErrorType): kotlin.Function1 declared in <root>.fn' type=kotlin.Function1 origin=LAMBDA
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> visibility:public modality:FINAL <> () returnType:kotlin.Function1 
+              VAR name:_ type:IrErrorType [val] 
+                ERROR_CALL 'Unresolved reference: <Unresolved name: component1>#' type=IrErrorType
+              VAR name:y type:IrErrorType [val] 
+                ERROR_CALL 'Unresolved reference: <Unresolved name: component2>#' type=IrErrorType
+              ERROR_CALL 'Unresolved reference: <Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#' type=IrErrorType
+                GET_VAR 'val y: IrErrorType [val] declared in <root>.fn.<anonymous>' type=IrErrorType origin=null
+          FUNCTION_REFERENCE 'local final fun <anonymous> (<destruct>: IrErrorType): kotlin.Function1<<root>.A, kotlin.Int> declared in <root>.fn' type=kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> visibility:public modality:FINAL <> () returnType:kotlin.Function1<<root>.A, kotlin.Int> 
       correspondingProperty: PROPERTY name:fn visibility:public modality:FINAL [var] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-fn> (): kotlin.Function1 declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1 visibility:public [static] ' type=kotlin.Function1 origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fn> visibility:public modality:FINAL <> (<set-?>:kotlin.Function1) returnType:kotlin.Unit 
+        RETURN type=kotlin.Nothing from='public final fun <get-fn> (): kotlin.Function1<<root>.A, kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1<<root>.A, kotlin.Int> visibility:public [static] ' type=kotlin.Function1<<root>.A, kotlin.Int> origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fn> visibility:public modality:FINAL <> (<set-?>:kotlin.Function1<<root>.A, kotlin.Int>) returnType:kotlin.Unit 
       correspondingProperty: PROPERTY name:fn visibility:public modality:FINAL [var] 
-      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Function1 
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Function1<<root>.A, kotlin.Int> 
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1 visibility:public [static] ' type=kotlin.Unit origin=null
-          value: GET_VAR '<set-?>: kotlin.Function1 declared in <root>.<set-fn>' type=kotlin.Function1 origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1<<root>.A, kotlin.Int> visibility:public [static] ' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.Function1<<root>.A, kotlin.Int> declared in <root>.<set-fn>' type=kotlin.Function1<<root>.A, kotlin.Int> origin=null
+

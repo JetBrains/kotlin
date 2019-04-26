@@ -70,3 +70,4 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2a> (): IrErrorType declared in test'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2a type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+

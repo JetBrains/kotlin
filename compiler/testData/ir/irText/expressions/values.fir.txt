@@ -112,19 +112,20 @@ FILE fqName:<root> fileName:/values.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:IrErrorType 
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: A>#' type=IrErrorType
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:IrErrorType 
+      RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Any declared in <root>'
+        ERROR_CALL 'Unresolved reference: R|/Enum.A|' type=kotlin.Any
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:<root>.A 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test2 (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: A>#' type=IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun test2 (): <root>.A declared in <root>'
+        ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Int 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.Int declared in <root>'
         CALL 'public final fun <get-a> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-  FUN name:test4 visibility:public modality:FINAL <> () returnType:IrErrorType 
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:<root>.Z 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: Z>#' type=IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun test4 (): <root>.Z declared in <root>'
+        ERROR_CALL 'Unresolved reference: R|/Z|' type=<root>.Z
+

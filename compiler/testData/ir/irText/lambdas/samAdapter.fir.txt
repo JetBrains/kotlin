@@ -6,8 +6,8 @@ FILE fqName:<root> fileName:/samAdapter.kt
           BLOCK type=IrErrorType origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test1'
-                  ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-                    CONST String type=kotlin.String value="Hello, world!"
+                ERROR_CALL 'Unresolved reference: println#' type=IrErrorType
+                  CONST String type=IrErrorType value="Hello, world!"
             FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test1' type=IrErrorType origin=LAMBDA
-      ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/run]>#' type=IrErrorType
+

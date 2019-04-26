@@ -12,8 +12,8 @@ FILE fqName:<root> fileName:/fun.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=""
     BLOCK_BODY
-  FUN name:test3 visibility:public modality:FINAL <> (args:kotlin.String) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:args index:0 type:kotlin.String 
+  FUN name:test3 visibility:public modality:FINAL <> (args:kotlin.Array<kotlin.String>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:args index:0 type:kotlin.Array<kotlin.String> 
     BLOCK_BODY
   FUN name:textExt1 visibility:public modality:FINAL <> (i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit 
     VALUE_PARAMETER name:i index:0 type:kotlin.Int 
@@ -49,3 +49,4 @@ FILE fqName:<root> fileName:/fun.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

@@ -207,8 +207,8 @@ FILE fqName:<root> fileName:/enum.kt
       FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestEnum3.TEST) returnType:kotlin.Unit 
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum3.TEST 
         BLOCK_BODY
-          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-            CONST String type=kotlin.String value="Hello, world!"
+          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+            message: CONST String type=kotlin.String value="Hello, world!"
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -274,8 +274,8 @@ FILE fqName:<root> fileName:/enum.kt
       FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestEnum4.TEST1) returnType:kotlin.Unit 
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST1 
         BLOCK_BODY
-          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-            ERROR_CALL 'Unresolved reference: <Unresolved name: TEST1>#' type=IrErrorType
+          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+            message: ERROR_CALL 'Unresolved reference: R|/TestEnum4.TEST1|' type=<root>.TestEnum4
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any 
         overridden:
           protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -321,8 +321,8 @@ FILE fqName:<root> fileName:/enum.kt
       FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestEnum4.TEST2) returnType:kotlin.Unit 
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST2 
         BLOCK_BODY
-          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-            ERROR_CALL 'Unresolved reference: <Unresolved name: TEST2>#' type=IrErrorType
+          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+            message: ERROR_CALL 'Unresolved reference: R|/TestEnum4.TEST2|' type=<root>.TestEnum4
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any 
         overridden:
           protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -487,3 +487,4 @@ FILE fqName:<root> fileName:/enum.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum 
+

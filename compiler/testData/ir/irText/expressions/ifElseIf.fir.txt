@@ -20,3 +20,4 @@ FILE fqName:<root> fileName:/ifElseIf.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Int type=kotlin.Int value=0
+

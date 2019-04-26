@@ -12,12 +12,13 @@ FILE fqName:<root> fileName:/builtinMap.kt
               GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'public final fun apply (block: kotlin.Function1<T of <uninitialized parent>, kotlin.Unit>): T of <uninitialized parent> [inline] declared in kotlin' type=T of <uninitialized parent> origin=null
-              block: BLOCK type=IrErrorType origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
+            then: CALL 'public final fun apply (block: kotlin.Function1<T of <uninitialized parent>, kotlin.Unit>): T of <uninitialized parent> [inline] declared in kotlin' type=java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> origin=null
+              block: BLOCK type=kotlin.Unit origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.Unit 
+                  VALUE_PARAMETER name:it index:0 type:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> 
                   BLOCK_BODY
-                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.plus'
-                      ERROR_CALL 'Unresolved reference: <Unresolved name: put>#' type=IrErrorType
-                        ERROR_CALL 'Unresolved reference: <Unresolved name: first>#' type=IrErrorType
-                        ERROR_CALL 'Unresolved reference: <Unresolved name: second>#' type=IrErrorType
-                FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.plus' type=IrErrorType origin=LAMBDA
+                    ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [java/util/HashMap.put]>#' type=IrErrorType
+                      ERROR_CALL 'No getter found for R|kotlin/Pair.first|' type=A of <uninitialized parent>
+                      ERROR_CALL 'No getter found for R|kotlin/Pair.second|' type=B of <uninitialized parent>
+                FUNCTION_REFERENCE 'local final fun <anonymous> (it: java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>): kotlin.Unit declared in <root>.plus' type=kotlin.Unit origin=LAMBDA
+

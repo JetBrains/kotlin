@@ -56,3 +56,4 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-topLevelP> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value=""
+

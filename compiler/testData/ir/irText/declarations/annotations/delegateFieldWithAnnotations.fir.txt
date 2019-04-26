@@ -24,3 +24,4 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+

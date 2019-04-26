@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     TYPE_PARAMETER name:U index:1 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Test1<T of <root>.Test1, U of <root>.Test1> [primary] 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Test1<T of <uninitialized parent>, U of <uninitialized parent>> [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
@@ -32,3 +32,4 @@ FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var] 
       VALUE_PARAMETER name:value index:0 type:kotlin.Unit 
       BLOCK_BODY
+

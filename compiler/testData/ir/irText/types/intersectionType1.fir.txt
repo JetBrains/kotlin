@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/intersectionType1.kt
   CLASS CLASS name:In modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.In 
     TYPE_PARAMETER name:I index:0 variance:in superTypes:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.In<I of <root>.In> [primary] 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.In<I of <uninitialized parent>> [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:In modality:FINAL visibility:public superTypes:[kotlin.Any]'
@@ -43,15 +43,14 @@ FILE fqName:<root> fileName:/intersectionType1.kt
           GET_VAR 'y: kotlin.Any? declared in <root>.ofType' type=kotlin.Any? origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:a1 type:kotlin.Array<T of <uninitialized parent>> [val] 
-        CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<T of <uninitialized parent>> origin=null
-          elements: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<I of <root>.In> origin=null
+      VAR name:a1 type:kotlin.Array<kotlin.Any?> [val]
+        CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<kotlin.Any?> origin=null
+          elements: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.Int> origin=null
             <class: I>: <none>
-      VAR name:a2 type:kotlin.Array<T of <uninitialized parent>> [val] 
-        CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<T of <uninitialized parent>> origin=null
-          elements: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<I of <root>.In> origin=null
+      VAR name:a2 type:kotlin.Array<kotlin.Any?> [val]
+        CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<kotlin.Any?> origin=null
+          elements: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.String> origin=null
             <class: I>: <none>
-      CALL 'public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
-        <T>: <none>
-        a: GET_VAR 'val a1: kotlin.Array<T of <uninitialized parent>> [val] declared in <root>.test' type=kotlin.Array<T of <uninitialized parent>> origin=null
-        b: GET_VAR 'val a2: kotlin.Array<T of <uninitialized parent>> [val] declared in <root>.test' type=kotlin.Array<T of <uninitialized parent>> origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/foo]>#' type=IrErrorType
+        GET_VAR 'val a1: kotlin.Array<kotlin.Any?> [val] declared in <root>.test' type=kotlin.Array<kotlin.Any?> origin=null
+        GET_VAR 'val a2: kotlin.Array<kotlin.Any?> [val] declared in <root>.test' type=kotlin.Array<kotlin.Any?> origin=null

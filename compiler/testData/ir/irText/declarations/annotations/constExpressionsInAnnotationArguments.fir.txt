@@ -40,3 +40,4 @@ FILE fqName:<root> fileName:/constExpressionsInAnnotationArguments.kt
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
+

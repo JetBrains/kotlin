@@ -41,14 +41,14 @@ FILE fqName:<root> fileName:/superCalls.kt
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Unit 
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived 
       BLOCK_BODY
-        CALL 'public final fun foo (): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
+        CALL 'public open fun foo (): kotlin.Unit declared in <root>.Base' type=kotlin.Unit origin=null
     PROPERTY name:bar visibility:public modality:FINAL [val] 
       FUN name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.String 
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived 
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.String declared in <root>.Derived'
-            ERROR_CALL 'No getter found for R|/Derived.bar|' type=kotlin.String
+            CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.Base' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -62,3 +62,4 @@ FILE fqName:<root> fileName:/superCalls.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

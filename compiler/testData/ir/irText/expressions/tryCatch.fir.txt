@@ -22,3 +22,4 @@ FILE fqName:<root> fileName:/tryCatch.kt
           finally: BLOCK type=kotlin.Int origin=null
             CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
             CONST Int type=kotlin.Int value=555
+

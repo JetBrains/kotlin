@@ -53,3 +53,4 @@ FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
     BLOCK_BODY
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
+

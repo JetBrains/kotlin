@@ -13,3 +13,4 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
       ERROR_CALL 'Unresolved reference: R|<local>/x|' type=IrErrorType
       GET_VAR 'val <unary>: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null
       ERROR_CALL 'Unresolved reference: R|<local>/x|' type=IrErrorType
+

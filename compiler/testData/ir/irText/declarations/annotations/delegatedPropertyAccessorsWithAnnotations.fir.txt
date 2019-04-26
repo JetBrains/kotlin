@@ -107,3 +107,4 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [static] ' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: IrErrorType declared in <root>.<set-test2>' type=IrErrorType origin=null
+

@@ -72,3 +72,4 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public [static] ' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.String declared in <root>.<set-test4>' type=kotlin.String origin=null
+

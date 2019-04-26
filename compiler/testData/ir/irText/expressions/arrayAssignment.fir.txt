@@ -18,3 +18,4 @@ FILE fqName:<root> fileName:/arrayAssignment.kt
       CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
         index: CALL 'public final fun foo (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
         value: CONST Int type=kotlin.Int value=1
+

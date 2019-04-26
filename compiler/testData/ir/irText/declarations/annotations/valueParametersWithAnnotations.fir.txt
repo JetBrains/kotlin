@@ -38,15 +38,15 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestClassConstructor1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:xx visibility:public modality:FINAL [val] 
-      FIELD PROPERTY_BACKING_FIELD name:xx type:IrErrorType visibility:public [final] 
+      FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:public [final] 
         EXPRESSION_BODY
-          ERROR_CALL 'Unresolved reference: <Unresolved name: x>#' type=IrErrorType
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xx> visibility:public modality:FINAL <> ($this:<root>.TestClassConstructor1) returnType:IrErrorType 
+          GET_VAR 'x: kotlin.Int declared in <root>.TestClassConstructor1.<init>' type=kotlin.Int origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xx> visibility:public modality:FINAL <> ($this:<root>.TestClassConstructor1) returnType:kotlin.Int 
         correspondingProperty: PROPERTY name:xx visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.TestClassConstructor1 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-xx> (): IrErrorType declared in <root>.TestClassConstructor1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xx type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-xx> (): kotlin.Int declared in <root>.TestClassConstructor1'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:public [final] ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestClassConstructor1 declared in <root>.TestClassConstructor1.<get-xx>' type=<root>.TestClassConstructor1 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
@@ -61,3 +61,4 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

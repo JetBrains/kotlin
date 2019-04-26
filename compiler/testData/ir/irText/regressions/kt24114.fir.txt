@@ -55,3 +55,4 @@ FILE fqName:<root> fileName:/kt24114.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Int declared in <root>'
                 CONST Int type=kotlin.Int value=3
+

@@ -3,18 +3,18 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Any declared in <root>'
         CONST Int type=kotlin.Any value=1
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Int 
+  FUN name:test visibility:public modality:FINAL <> () returnType:IrErrorType 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>'
-        BLOCK type=kotlin.Int origin=WHEN
+      RETURN type=kotlin.Nothing from='public final fun test (): IrErrorType declared in <root>'
+        BLOCK type=IrErrorType origin=WHEN
           VAR name:y type:kotlin.Any [val] 
             CALL 'public final fun foo (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          WHEN type=kotlin.Int origin=WHEN
+          WHEN type=IrErrorType origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
-                arg1: CONST Int type=kotlin.Int value=42
-              then: CONST Int type=kotlin.Int value=1
+                arg1: CONST Int type=IrErrorType value=42
+              then: CONST Int type=IrErrorType value=1
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
                 GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
@@ -22,15 +22,16 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Int
                 GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
-              then: CONST Int type=kotlin.Int value=2
+              then: CONST Int type=IrErrorType value=2
             BRANCH
-              if: ERROR_CALL 'Unresolved reference: <Unresolved name: contains>#' type=IrErrorType
-                GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
-              then: CONST Int type=kotlin.Int value=3
+              if: CALL 'public open fun contains (value: kotlin.Int): kotlin.Boolean declared in kotlin.ranges.IntRange' type=kotlin.Boolean origin=null
+                value: GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+              then: CONST Int type=IrErrorType value=3
             BRANCH
-              if: ERROR_CALL 'Unresolved reference: <Unresolved name: contains>#' type=IrErrorType
-                GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
-              then: CONST Int type=kotlin.Int value=4
+              if: CALL 'public open fun contains (value: kotlin.Int): kotlin.Boolean declared in kotlin.ranges.IntRange' type=kotlin.Boolean origin=null
+                value: GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+              then: CONST Int type=IrErrorType value=4
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+

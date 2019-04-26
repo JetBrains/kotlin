@@ -14,3 +14,4 @@ FILE fqName:<root> fileName:/tryCatchWithImplicitCast.kt
           CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.testImplicitCast
             VAR name:e type:kotlin.Throwable [val] 
             CONST String type=kotlin.String value=""
+

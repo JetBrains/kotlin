@@ -29,3 +29,4 @@ FILE fqName:<root> fileName:/functionsWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:testSimpleFunction visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
+

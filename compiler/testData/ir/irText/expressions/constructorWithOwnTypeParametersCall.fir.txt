@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
-  FUN name:testKotlin visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:testKotlin visibility:public modality:FINAL <> () returnType:<root>.K1.K2<kotlin.String>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testKotlin (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: K2>#' type=IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun testKotlin (): <root>.K1.K2<kotlin.String> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K1.K2' type=<root>.K1.K2<kotlin.String> origin=null
   FUN name:testJava visibility:public modality:FINAL <> () returnType:IrErrorType
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testJava (): IrErrorType declared in <root>'
@@ -10,14 +10,14 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
   CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.K1<T1 of <root>.K1> [primary]
+    CONSTRUCTOR visibility:public <> () returnType:<root>.K1<T1 of <uninitialized parent>> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:K2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1.K2
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[]
-      CONSTRUCTOR visibility:public <> () returnType:<root>.K1.K2<T2 of <root>.K1.K2> [primary]
+      CONSTRUCTOR visibility:public <> () returnType:<root>.K1.K2<T2 of <uninitialized parent>> [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'

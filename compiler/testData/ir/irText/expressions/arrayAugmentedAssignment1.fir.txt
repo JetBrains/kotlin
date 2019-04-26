@@ -59,6 +59,6 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
           index: CONST Int type=kotlin.Int value=0
       CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
         index: CONST Int type=kotlin.Int value=0
-        value: ERROR_CALL 'Unresolved reference: <Unresolved name: inc>#' type=IrErrorType
-          GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
+        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
       GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
+

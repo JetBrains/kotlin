@@ -1,85 +1,79 @@
 FILE fqName:<root> fileName:/nonLocalReturn.kt
   FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
-        BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
+      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
+        block: BLOCK type=IrErrorType origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test0'
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test0'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test0' type=IrErrorType origin=LAMBDA
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test0'
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test0' type=IrErrorType origin=LAMBDA
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
-        BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
+      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
+        block: BLOCK type=IrErrorType origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test1'
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test1'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test1' type=IrErrorType origin=LAMBDA
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test1'
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test1' type=IrErrorType origin=LAMBDA
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
-        BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
+      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
+        block: BLOCK type=IrErrorType origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test2'
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test2'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test2' type=IrErrorType origin=LAMBDA
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test2' type=IrErrorType origin=LAMBDA
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
-        BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
+      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
+        block: BLOCK type=IrErrorType origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test3'
-                ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
-                  BLOCK type=IrErrorType origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test3.<anonymous>'
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test3.<anonymous>'
-                            GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-                    FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test3.<anonymous>' type=IrErrorType origin=LAMBDA
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test3' type=IrErrorType origin=LAMBDA
+              CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
+                block: BLOCK type=IrErrorType origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3.<anonymous>'
+                        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3.<anonymous>' type=IrErrorType origin=LAMBDA
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Nothing declared in <root>.test3' type=IrErrorType origin=LAMBDA
   FUN name:testLrmFoo1 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit 
     VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int> 
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Ambiguity: forEach, [kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/sequences/forEach, kotlin/text/forEach]>#' type=IrErrorType
-        BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
+      CALL 'public final fun forEach (action: kotlin.Function1<T of <uninitialized parent>, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+        action: BLOCK type=kotlin.Unit origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit 
+            VALUE_PARAMETER name:it index:0 type:kotlin.Int 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo1'
-                BLOCK type=IrErrorType origin=null
-                  WHEN type=kotlin.Unit origin=IF
-                    BRANCH
-                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
-                        arg1: CONST Int type=kotlin.Int value=0
-                      then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo1'
-                        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-                  ERROR_CALL 'Unresolved reference: <Ambiguity: print, [kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print]>#' type=IrErrorType
-                    ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo1' type=IrErrorType origin=LAMBDA
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo1.<anonymous>' type=kotlin.Int origin=null
+                    arg1: CONST Int type=kotlin.Unit value=0
+                  then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo1'
+                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+                message: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo1.<anonymous>' type=kotlin.Int origin=null
+          FUNCTION_REFERENCE 'local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo1' type=kotlin.Unit origin=LAMBDA
   FUN name:testLrmFoo2 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit 
     VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int> 
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Ambiguity: forEach, [kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/sequences/forEach, kotlin/text/forEach]>#' type=IrErrorType
-        BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
+      CALL 'public final fun forEach (action: kotlin.Function1<T of <uninitialized parent>, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+        action: BLOCK type=kotlin.Unit origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit 
+            VALUE_PARAMETER name:it index:0 type:kotlin.Int 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo2'
-                BLOCK type=IrErrorType origin=null
-                  WHEN type=kotlin.Unit origin=IF
-                    BRANCH
-                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
-                        arg1: CONST Int type=kotlin.Int value=0
-                      then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo2'
-                        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-                  ERROR_CALL 'Unresolved reference: <Ambiguity: print, [kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print]>#' type=IrErrorType
-                    ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo2' type=IrErrorType origin=LAMBDA
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo2.<anonymous>' type=kotlin.Int origin=null
+                    arg1: CONST Int type=kotlin.Unit value=0
+                  then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo2'
+                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+                message: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo2.<anonymous>' type=kotlin.Int origin=null
+          FUNCTION_REFERENCE 'local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo2' type=kotlin.Unit origin=LAMBDA
+

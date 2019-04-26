@@ -85,3 +85,4 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
+

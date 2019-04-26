@@ -49,3 +49,4 @@ FILE fqName:<root> fileName:/assignments.kt
     BLOCK_BODY
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
         value: CONST Int type=kotlin.Int value=0
+

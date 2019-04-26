@@ -18,3 +18,4 @@ FILE fqName:<root> fileName:/typeParametersWithAnnotations.kt
   FUN name:foo visibility:public modality:FINAL <T> () returnType:kotlin.Unit 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     BLOCK_BODY
+

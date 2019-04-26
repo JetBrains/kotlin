@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.A<T of <root>.A> [primary] 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A<T of <uninitialized parent>> [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
@@ -51,3 +51,4 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
+

@@ -29,3 +29,4 @@ FILE fqName:test fileName:/funImportedFromObject.kt
       RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String declared in test'
         CALL 'public final fun foo <T> (): kotlin.String [inline] declared in test.Host' type=kotlin.String origin=null
           <T>: <none>
+

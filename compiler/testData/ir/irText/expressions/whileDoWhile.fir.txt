@@ -52,3 +52,4 @@ FILE fqName:<root> fileName:/whileDoWhile.kt
             DO_WHILE label=null origin=DO_WHILE_LOOP
               body: BLOCK type=kotlin.Unit origin=null
               condition: GET_VAR 'val a: kotlin.Any? [val] declared in <root>.testSmartcastInCondition' type=kotlin.Any? origin=null
+

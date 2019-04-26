@@ -39,3 +39,4 @@ FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
+

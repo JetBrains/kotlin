@@ -29,8 +29,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.X.B) returnType:IrErrorType 
                 $this: VALUE_PARAMETER name:<this> type:<root>.X.B 
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.X.B.value'
-                    CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=null
+                  CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=null
               FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.X.B.value' type=IrErrorType origin=LAMBDA
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:IrErrorType 
           correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val] 
@@ -53,7 +52,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     PROPERTY name:value visibility:public modality:ABSTRACT [val] 
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:kotlin.Function0 
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:kotlin.Function0<kotlin.String> 
         correspondingProperty: PROPERTY name:value visibility:public modality:ABSTRACT [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.X 
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any 
@@ -82,3 +81,4 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: value>#' type=IrErrorType
+

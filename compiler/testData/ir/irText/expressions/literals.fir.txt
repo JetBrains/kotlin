@@ -9,10 +9,10 @@ FILE fqName:<root> fileName:/literals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int 
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>'
@@ -63,10 +63,10 @@ FILE fqName:<root> fileName:/literals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Long declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test7 type:kotlin.Long visibility:public [final,static] ' type=kotlin.Long origin=null
   PROPERTY name:test8 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test8 type:kotlin.Long visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test8 type:kotlin.Long visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun unaryMinus (): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> () returnType:kotlin.Long
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> () returnType:kotlin.Long 
       correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test8> (): kotlin.Long declared in <root>'
@@ -81,10 +81,10 @@ FILE fqName:<root> fileName:/literals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test9> (): kotlin.Double declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.Double visibility:public [final,static] ' type=kotlin.Double origin=null
   PROPERTY name:test10 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test10 type:kotlin.Double visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test10 type:kotlin.Double visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun unaryMinus (): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test10> visibility:public modality:FINAL <> () returnType:kotlin.Double
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test10> visibility:public modality:FINAL <> () returnType:kotlin.Double 
       correspondingProperty: PROPERTY name:test10 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test10> (): kotlin.Double declared in <root>'
@@ -99,10 +99,10 @@ FILE fqName:<root> fileName:/literals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test11> (): kotlin.Float declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test11 type:kotlin.Float visibility:public [final,static] ' type=kotlin.Float origin=null
   PROPERTY name:test12 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test12 type:kotlin.Float visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test12 type:kotlin.Float visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun unaryMinus (): kotlin.Float declared in kotlin.Float' type=kotlin.Float origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test12> visibility:public modality:FINAL <> () returnType:kotlin.Float
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test12> visibility:public modality:FINAL <> () returnType:kotlin.Float 
       correspondingProperty: PROPERTY name:test12 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test12> (): kotlin.Float declared in <root>'
@@ -152,3 +152,4 @@ FILE fqName:<root> fileName:/literals.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testL> (): kotlin.Long declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testL type:kotlin.Long visibility:public [final,static] ' type=kotlin.Long origin=null
+

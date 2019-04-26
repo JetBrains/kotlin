@@ -1,12 +1,12 @@
 FILE fqName:<root> fileName:/bangbang.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Nothing
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Any? 
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Any?): kotlin.Nothing declared in <root>'
-        BLOCK type=kotlin.Nothing origin=EXCLEXCL
+      RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Any?): kotlin.Any? declared in <root>'
+        BLOCK type=kotlin.Any? origin=EXCLEXCL
           VAR name:<bangbang> type:kotlin.Any? [val] 
             GET_VAR 'a: kotlin.Any? declared in <root>.test1' type=kotlin.Any? origin=null
-          WHEN type=kotlin.Nothing origin=EXCLEXCL
+          WHEN type=kotlin.Any? origin=EXCLEXCL
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <bangbang>: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
@@ -16,20 +16,21 @@ FILE fqName:<root> fileName:/bangbang.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <bangbang>: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Nothing
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:IrErrorType 
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Any?): kotlin.Nothing declared in <root>'
-        BLOCK type=kotlin.Nothing origin=EXCLEXCL
-          VAR name:<bangbang> type:kotlin.Int [val] 
-            CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-          WHEN type=kotlin.Nothing origin=EXCLEXCL
+      RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Any?): IrErrorType declared in <root>'
+        BLOCK type=IrErrorType origin=EXCLEXCL
+          VAR name:<bangbang> type:IrErrorType [val] 
+            ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/Any.hashCode]>#' type=IrErrorType
+          WHEN type=IrErrorType origin=EXCLEXCL
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val <bangbang>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+                arg0: GET_VAR 'val <bangbang>: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: THROW type=kotlin.Nothing
                 ERROR_CALL 'Unresolved reference: <Unresolved name: KotlinNullPointerException>#' type=IrErrorType
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'val <bangbang>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+              then: GET_VAR 'val <bangbang>: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null
+

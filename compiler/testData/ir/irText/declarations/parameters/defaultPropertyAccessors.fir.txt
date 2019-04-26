@@ -75,8 +75,8 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
   CLASS CLASS name:InPrimaryCtor modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InPrimaryCtor 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> (testInPrimaryCtor1:T of <root>.InPrimaryCtor, testInPrimaryCtor2:kotlin.Int) returnType:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor> [primary] 
-      VALUE_PARAMETER name:testInPrimaryCtor1 index:0 type:T of <root>.InPrimaryCtor 
+    CONSTRUCTOR visibility:public <> (testInPrimaryCtor1:T of <uninitialized parent>, testInPrimaryCtor2:kotlin.Int) returnType:<root>.InPrimaryCtor<T of <uninitialized parent>> [primary] 
+      VALUE_PARAMETER name:testInPrimaryCtor1 index:0 type:T of <uninitialized parent> 
       VALUE_PARAMETER name:testInPrimaryCtor2 index:1 type:kotlin.Int 
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
     PROPERTY name:testInPrimaryCtor1 visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor1 type:T of <root>.InPrimaryCtor visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'testInPrimaryCtor1: T of <root>.InPrimaryCtor declared in <root>.InPrimaryCtor.<init>' type=T of <root>.InPrimaryCtor origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'testInPrimaryCtor1: T of <uninitialized parent> declared in <root>.InPrimaryCtor.<init>' type=T of <uninitialized parent> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testInPrimaryCtor1> visibility:public modality:FINAL <> ($this:<root>.InPrimaryCtor) returnType:T of <root>.InPrimaryCtor 
         correspondingProperty: PROPERTY name:testInPrimaryCtor1 visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.InPrimaryCtor 
@@ -126,3 +126,4 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

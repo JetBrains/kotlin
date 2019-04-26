@@ -12,3 +12,4 @@ FILE fqName:<root> fileName:/anonymousFunction.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-anonymous> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anonymous type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+

@@ -21,3 +21,4 @@ FILE fqName:<root> fileName:/samOperators.kt
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
       ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
+

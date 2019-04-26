@@ -87,12 +87,12 @@ FILE fqName:<root> fileName:/annotationClasses.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   CLASS ANNOTATION_CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test4 
-    CONSTRUCTOR visibility:public <> (xs:kotlin.Int) returnType:<root>.Test4 [primary] 
-      VALUE_PARAMETER name:xs index:0 type:kotlin.Int 
+    CONSTRUCTOR visibility:public <> (xs:kotlin.IntArray) returnType:<root>.Test4 [primary] 
+      VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray 
     PROPERTY name:xs visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Int visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'xs: kotlin.Int declared in <root>.Test4.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'xs: kotlin.IntArray declared in <root>.Test4.<init>' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:<root>.Test4) returnType:kotlin.Int 
         correspondingProperty: PROPERTY name:xs visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Test4 
@@ -113,3 +113,4 @@ FILE fqName:<root> fileName:/annotationClasses.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

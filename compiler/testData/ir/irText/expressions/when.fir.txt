@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/when.kt
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp0_subject: kotlin.Any? [val] declared in <root>.testWithSubject' type=kotlin.Any? origin=null
-                arg1: ERROR_CALL 'Unresolved reference: <Unresolved name: A>#' type=IrErrorType
+                arg1: ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
               then: CONST String type=kotlin.String value="A"
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/when.kt
                 GET_VAR 'val tmp0_subject: kotlin.Any? [val] declared in <root>.testWithSubject' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="!Number"
             BRANCH
-              if: CALL 'public abstract fun contains (element: E of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections.Set' type=kotlin.Boolean origin=null
+              if: CALL 'public final fun contains (element: T of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections' type=kotlin.Boolean origin=null
                 element: GET_VAR 'val tmp0_subject: kotlin.Any? [val] declared in <root>.testWithSubject' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="nothingness?"
             BRANCH
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/when.kt
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
-              arg1: ERROR_CALL 'Unresolved reference: <Unresolved name: A>#' type=IrErrorType
+              arg1: ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
             then: CONST String type=kotlin.String value="A"
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/when.kt
               GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="!Number"
           BRANCH
-            if: CALL 'public abstract fun contains (element: E of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections.Set' type=kotlin.Boolean origin=null
+            if: CALL 'public final fun contains (element: T of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections' type=kotlin.Boolean origin=null
               element: GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="nothingness?"
           BRANCH
@@ -153,3 +153,4 @@ FILE fqName:<root> fileName:/when.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST String type=kotlin.String value="?"
+

@@ -2,15 +2,15 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
   CLASS CLASS name:Cell modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cell 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> (value:T of <root>.Cell) returnType:<root>.Cell<T of <root>.Cell> [primary] 
-      VALUE_PARAMETER name:value index:0 type:T of <root>.Cell 
+    CONSTRUCTOR visibility:public <> (value:T of <uninitialized parent>) returnType:<root>.Cell<T of <uninitialized parent>> [primary] 
+      VALUE_PARAMETER name:value index:0 type:T of <uninitialized parent> 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Cell modality:OPEN visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'value: T of <root>.Cell declared in <root>.Cell.<init>' type=T of <root>.Cell origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'value: T of <uninitialized parent> declared in <root>.Cell.<init>' type=T of <uninitialized parent> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell) returnType:T of <root>.Cell 
         correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Cell 
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C1 
     CONSTRUCTOR visibility:public <> () returnType:<root>.C1 [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) [primary] declared in <root>.Cell'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <uninitialized parent>) [primary] declared in <root>.Cell'
           value: CONST String type=kotlin.String value="O"
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C2 
     CONSTRUCTOR visibility:public <> () returnType:<root>.C2 [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) [primary] declared in <root>.Cell'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <uninitialized parent>) [primary] declared in <root>.Cell'
           value: CONST String type=kotlin.String value="K"
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
@@ -71,3 +71,4 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

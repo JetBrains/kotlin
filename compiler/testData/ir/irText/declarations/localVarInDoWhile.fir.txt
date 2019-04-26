@@ -9,3 +9,4 @@ FILE fqName:<root> fileName:/localVarInDoWhile.kt
           $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
             arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: x>#' type=IrErrorType
             arg1: CONST Int type=kotlin.Unit value=42
+

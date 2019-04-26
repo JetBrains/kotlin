@@ -131,23 +131,25 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
           ERROR_CALL 'Unresolved reference: R|<local>/i|' type=IrErrorType
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
-        value: ERROR_CALL 'Unresolved reference: <Unresolved name: inc>#' type=IrErrorType
-          GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
       GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:<unary> type:IrErrorType [val] 
-        ERROR_CALL 'Unresolved reference: <Unresolved name: x1>#' type=IrErrorType
-      ERROR_CALL 'Unresolved reference: <Unresolved name: x1>#' type=IrErrorType
-      GET_VAR 'val <unary>: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null
-      VAR name:<unary> type:IrErrorType [val] 
-        ERROR_CALL 'Unresolved reference: <Unresolved name: x2>#' type=IrErrorType
-      ERROR_CALL 'Unresolved reference: <Unresolved name: x2>#' type=IrErrorType
-      GET_VAR 'val <unary>: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null
-      VAR name:<unary> type:IrErrorType [val] 
-        ERROR_CALL 'Unresolved reference: <Unresolved name: x3>#' type=IrErrorType
-      ERROR_CALL 'Unresolved reference: <Unresolved name: x3>#' type=IrErrorType
-      GET_VAR 'val <unary>: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null
+      VAR name:<unary> type:kotlin.Int [val] 
+        CALL 'public final fun <get-x1> (): kotlin.Int declared in <root>.X1' type=kotlin.Int origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+      GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      VAR name:<unary> type:kotlin.Int [val] 
+        CALL 'public final fun <get-x2> (): kotlin.Int declared in <root>.X1.X2' type=kotlin.Int origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+      GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      VAR name:<unary> type:kotlin.Int [val] 
+        CALL 'public final fun <get-x3> (): kotlin.Int declared in <root>.X1.X2.X3' type=kotlin.Int origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+      GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B 
     CONSTRUCTOR visibility:public <> (s:kotlin.Int) returnType:<root>.B [primary] 
@@ -218,3 +220,4 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
     VALUE_PARAMETER name:v index:0 type:<root>.B 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: R|<local>/v|' type=IrErrorType
+

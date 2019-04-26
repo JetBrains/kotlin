@@ -10,3 +10,4 @@ FILE fqName:<root> fileName:/whenCoercedToUnit.kt
               arg0: GET_VAR 'val tmp0_subject: kotlin.Int [val] declared in <root>.foo' type=kotlin.Int origin=null
               arg1: CONST Int type=kotlin.Unit value=0
             then: CONST Int type=kotlin.Unit value=0
+

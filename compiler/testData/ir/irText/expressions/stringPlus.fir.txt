@@ -20,3 +20,4 @@ FILE fqName:<root> fileName:/stringPlus.kt
       RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.String, b: kotlin.Int): kotlin.String declared in <root>'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
           other: GET_VAR 'a: kotlin.String declared in <root>.test3' type=kotlin.String origin=null
+

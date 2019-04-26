@@ -1,29 +1,33 @@
 FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
   CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A 
-    CONSTRUCTOR visibility:public <> (runA:kotlin.Function2) returnType:<root>.A [primary] 
-      VALUE_PARAMETER name:runA index:0 type:kotlin.Function2 
+    CONSTRUCTOR visibility:public <> (runA:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>) returnType:<root>.A [primary] 
+      VALUE_PARAMETER name:runA index:0 type:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> 
         EXPRESSION_BODY
-          BLOCK type=kotlin.Function2 origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function2 
+          BLOCK type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> 
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Function2 declared in <root>.A.<init>'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function2 declared in <root>.A.<init>' type=kotlin.Function2 origin=LAMBDA
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A.<init>' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=LAMBDA
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:runA visibility:public modality:FINAL [val] 
-      FIELD PROPERTY_BACKING_FIELD name:runA type:kotlin.Function2 visibility:public [final] 
+      FIELD PROPERTY_BACKING_FIELD name:runA type:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'runA: kotlin.Function2 declared in <root>.A.<init>' type=kotlin.Function2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-runA> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Function2 
+          GET_VAR 'runA: kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A.<init>' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-runA> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> 
         correspondingProperty: PROPERTY name:runA visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.A 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-runA> (): kotlin.Function2 declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runA type:kotlin.Function2 visibility:public [final] ' type=kotlin.Function2 origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-runA> (): kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runA type:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:public [final] ' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-runA>' type=<root>.A origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> 
+      $this: VALUE_PARAMETER name:<this> type:<root>.A 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A'
+          CALL 'public final fun <get-runA> (): kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -45,7 +49,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           BLOCK type=<root>.B.<init>.<no name provided> origin=OBJECT_LITERAL
             CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B.<init>.<no name provided> 
-              CONSTRUCTOR visibility:private <> () returnType:IrErrorType [primary] 
+              CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary] 
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -64,6 +68,11 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any declared in <root>.B'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:public [final] ' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-x>' type=<root>.B origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.B) returnType:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:<root>.B 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Any declared in <root>.B'
+          CALL 'public final fun <get-x> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -77,3 +86,4 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

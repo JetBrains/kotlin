@@ -24,3 +24,4 @@ FILE fqName:<root> fileName:/suppressedNonPublicCall.kt
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit [inline] 
     BLOCK_BODY
       CALL 'internal final fun bar (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+

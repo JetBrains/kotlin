@@ -144,8 +144,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: f, [/C.f, /C.f]>#' type=IrErrorType
-                CONST Int type=kotlin.Int value=1
+              arg0: CALL 'public final fun f (s: kotlin.Int): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+                s: CONST Int type=kotlin.Int value=1
               arg1: CONST Int type=kotlin.String value=1
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="1"
@@ -153,8 +153,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: f, [/C.f, /C.f]>#' type=IrErrorType
-                CONST String type=kotlin.String value="s"
+              arg0: CALL 'public final fun f (s: kotlin.String): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+                s: CONST String type=kotlin.String value="s"
               arg1: CONST Int type=kotlin.String value=2
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="2"
@@ -196,7 +196,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun g1 <T> (t: T of <root>.C.g1): T of <root>.C.g1 declared in <root>.C' type=T of <root>.C.g1 origin=null
+              arg0: CALL 'public final fun g1 <T> (t: T of <root>.C.g1): T of <root>.C.g1 declared in <root>.C' type=kotlin.String origin=null
                 <T>: <none>
                 t: CONST String type=kotlin.String value="7"
               arg1: CONST String type=kotlin.String value="7"
@@ -222,7 +222,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: fromClass>#' type=IrErrorType
+              arg0: CALL 'public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass' type=T of <uninitialized parent> origin=null
               arg1: CONST String type=kotlin.String value="10"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="10"
@@ -237,3 +237,4 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="11"
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
+

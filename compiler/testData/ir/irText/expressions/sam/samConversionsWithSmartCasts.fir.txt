@@ -1,43 +1,43 @@
 FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
-            GET_VAR 'a: kotlin.Function0 declared in <root>.test1' type=kotlin.Function0 origin=null
-          then: ERROR_CALL 'Unresolved reference: <Unresolved name: runStatic>#' type=IrErrorType
-            GET_VAR 'a: kotlin.Function0 declared in <root>.test1' type=kotlin.Function0 origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
+            GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=null
+          then: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/J.runStatic]>#' type=IrErrorType
+            GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
-            GET_VAR 'a: kotlin.Function0 declared in <root>.test2' type=kotlin.Function0 origin=null
+            GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
           then: ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
-            GET_VAR 'a: kotlin.Function0 declared in <root>.test2' type=kotlin.Function0 origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
+            GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
-            GET_VAR 'a: kotlin.Function0 declared in <root>.test3' type=kotlin.Function0 origin=null
+            GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
           then: ERROR_CALL 'Unresolved reference: <Unresolved name: run2>#' type=IrErrorType
-            GET_VAR 'a: kotlin.Function0 declared in <root>.test3' type=kotlin.Function0 origin=null
-            GET_VAR 'a: kotlin.Function0 declared in <root>.test3' type=kotlin.Function0 origin=null
-  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0, b:kotlin.Function0) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
-    VALUE_PARAMETER name:b index:1 type:kotlin.Function0 
+            GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
+            GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>, b:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> 
+    VALUE_PARAMETER name:b index:1 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
-            GET_VAR 'a: kotlin.Function0 declared in <root>.test4' type=kotlin.Function0 origin=null
+            GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
           then: ERROR_CALL 'Unresolved reference: <Unresolved name: run2>#' type=IrErrorType
-            GET_VAR 'a: kotlin.Function0 declared in <root>.test4' type=kotlin.Function0 origin=null
-            GET_VAR 'b: kotlin.Function0 declared in <root>.test4' type=kotlin.Function0 origin=null
+            GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
+            GET_VAR 'b: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
     VALUE_PARAMETER name:a index:0 type:kotlin.Any 
     BLOCK_BODY
@@ -55,31 +55,32 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=kotlin.Any origin=null
           then: BLOCK type=IrErrorType origin=null
-            TYPE_OP type=kotlin.Function0 origin=CAST typeOperand=kotlin.Function0
+            TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
               GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=kotlin.Any origin=null
             ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
               GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=kotlin.Any origin=null
   FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
     VALUE_PARAMETER name:a index:0 type:kotlin.Any 
     BLOCK_BODY
-      TYPE_OP type=kotlin.Function0 origin=CAST typeOperand=kotlin.Function0
+      TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
         GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
       ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
         GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
-  FUN name:test7 visibility:public modality:FINAL <> (a:kotlin.Function1) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function1 
+  FUN name:test7 visibility:public modality:FINAL <> (a:kotlin.Function1<kotlin.Int, kotlin.Int>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function1<kotlin.Int, kotlin.Int> 
     BLOCK_BODY
-      TYPE_OP type=kotlin.Function0 origin=CAST typeOperand=kotlin.Function0
-        GET_VAR 'a: kotlin.Function1 declared in <root>.test7' type=kotlin.Function1 origin=null
+      TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
+        GET_VAR 'a: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.test7' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
       ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
-        GET_VAR 'a: kotlin.Function1 declared in <root>.test7' type=kotlin.Function1 origin=null
-  FUN name:test8 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
+        GET_VAR 'a: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.test7' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
+  FUN name:test8 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
-        ERROR_CALL 'Unresolved reference: <Unresolved name: id>#' type=IrErrorType
-          GET_VAR 'a: kotlin.Function0 declared in <root>.test8' type=kotlin.Function0 origin=null
+        CALL 'public open fun id (x: T of <uninitialized parent>?): T of <uninitialized parent>? declared in <root>.J' type=IrErrorType origin=null
+          x: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test8' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test9 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
         ERROR_CALL 'Unresolved reference: <Unresolved name: test9>#' type=IrErrorType
+

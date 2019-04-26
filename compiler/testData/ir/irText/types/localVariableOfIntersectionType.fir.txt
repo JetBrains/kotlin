@@ -100,3 +100,4 @@ FILE fqName:<root> fileName:/localVariableOfIntersectionType.kt
         CALL 'public abstract fun <get-t> (): T of <root>.Inv declared in <root>.Inv' type=T of <root>.Inv origin=null
       ERROR_CALL 'Unresolved reference: <Unresolved name: foo>#' type=IrErrorType
       ERROR_CALL 'Unresolved reference: <Unresolved name: bar>#' type=IrErrorType
+

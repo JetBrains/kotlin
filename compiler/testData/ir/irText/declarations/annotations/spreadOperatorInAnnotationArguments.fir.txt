@@ -1,12 +1,12 @@
 FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
   CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A 
-    CONSTRUCTOR visibility:public <> (xs:kotlin.String) returnType:<root>.A [primary] 
-      VALUE_PARAMETER name:xs index:0 type:kotlin.String 
+    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<kotlin.String>) returnType:<root>.A [primary] 
+      VALUE_PARAMETER name:xs index:0 type:kotlin.Array<kotlin.String> 
     PROPERTY name:xs visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.String visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'xs: kotlin.String declared in <root>.A.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'xs: kotlin.Array<kotlin.String> declared in <root>.A.<init>' type=kotlin.Array<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.String 
         correspondingProperty: PROPERTY name:xs visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.A 
@@ -29,3 +29,4 @@ FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
+

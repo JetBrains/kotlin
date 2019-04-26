@@ -32,29 +32,30 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<T of <root>.topLevel2> 
     BLOCK_BODY
   PROPERTY name:test1 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1 visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
         ERROR_CALL 'Unresolved reference: <Unresolved name: topLevel1>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function1 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, kotlin.Unit> 
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function1 declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1 visibility:public [final,static] ' type=kotlin.Function1 origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:public [final,static] ' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1 visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
         ERROR_CALL 'Unresolved reference: <Unresolved name: topLevel2>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function1 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit> 
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Function1 declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1 visibility:public [final,static] ' type=kotlin.Function1 origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit> visibility:public [final,static] ' type=kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit> origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function1 visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
         ERROR_CALL 'Unresolved reference: <Unresolved name: objectMember>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Function1 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, kotlin.Unit> 
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Function1 declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function1 visibility:public [final,static] ' type=kotlin.Function1 origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:public [final,static] ' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+

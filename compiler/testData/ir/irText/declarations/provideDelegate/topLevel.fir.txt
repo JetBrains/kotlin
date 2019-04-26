@@ -82,3 +82,4 @@ FILE fqName:<root> fileName:/topLevel.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testTopLevel> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testTopLevel type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+

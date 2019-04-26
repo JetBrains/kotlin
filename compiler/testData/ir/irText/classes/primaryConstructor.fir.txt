@@ -62,15 +62,15 @@ FILE fqName:<root> fileName:/primaryConstructor.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final] ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-y>' type=<root>.Test2 origin=null
     PROPERTY name:x visibility:public modality:FINAL [val] 
-      FIELD PROPERTY_BACKING_FIELD name:x type:IrErrorType visibility:public [final] 
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final] 
         EXPRESSION_BODY
-          ERROR_CALL 'No getter found for R|/Test2.x|' type=IrErrorType
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:IrErrorType 
+          GET_VAR 'x: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Int 
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): IrErrorType declared in <root>.Test2'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test2'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final] ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
@@ -116,7 +116,7 @@ FILE fqName:<root> fileName:/primaryConstructor.kt
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final] ' type=kotlin.Int origin=null
-          value: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test3' type=kotlin.Int origin=null
+          value: GET_VAR 'x: kotlin.Int declared in <root>.Test3.<init>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -130,3 +130,4 @@ FILE fqName:<root> fileName:/primaryConstructor.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

@@ -33,3 +33,4 @@ FILE fqName:<root> fileName:/variablesWithAnnotations.kt
         CONST String type=kotlin.String value="testVal"
       VAR name:testVar type:kotlin.String [var] 
         CONST String type=kotlin.String value="testVar"
+

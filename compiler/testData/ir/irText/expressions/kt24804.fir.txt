@@ -34,3 +34,4 @@ FILE fqName:<root> fileName:/kt24804.kt
         CALL 'public final fun run (x: kotlin.Boolean, y: kotlin.Boolean): kotlin.String declared in <root>' type=kotlin.String origin=null
           x: CONST Boolean type=kotlin.Boolean value=true
           y: CONST Boolean type=kotlin.Boolean value=true
+

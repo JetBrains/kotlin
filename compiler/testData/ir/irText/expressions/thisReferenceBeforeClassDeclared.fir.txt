@@ -1,24 +1,24 @@
 FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:test1 type:IrErrorType [val] 
+      VAR name:test1 type:<root>.WithCompanion [val] 
         BLOCK type=<root>.test.<no name provided> origin=OBJECT_LITERAL
           CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.WithCompanion]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test.<no name provided> 
-            CONSTRUCTOR visibility:private <> () returnType:IrErrorType [primary] 
+            CONSTRUCTOR visibility:private <> () returnType:<root>.WithCompanion [primary] 
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (a: <root>.WithCompanion.Companion) [primary] declared in <root>.WithCompanion'
                   a: ERROR_CALL 'Unresolved reference: this#' type=<root>.WithCompanion
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.WithCompanion]'
           CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=null
-      VAR name:test2 type:IrErrorType [val] 
+      VAR name:test2 type:<root>.WithCompanion [val] 
         BLOCK type=<root>.test.<no name provided> origin=OBJECT_LITERAL
           CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.WithCompanion]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test.<no name provided> 
-            CONSTRUCTOR visibility:private <> () returnType:IrErrorType [primary] 
+            CONSTRUCTOR visibility:private <> () returnType:<root>.WithCompanion [primary] 
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (a: <root>.WithCompanion.Companion) [primary] declared in <root>.WithCompanion'
-                  a: ERROR_CALL 'Unresolved reference: <Unresolved name: foo>#' type=IrErrorType
+                  a: CALL 'public final fun foo (): <root>.WithCompanion.Companion declared in <root>.WithCompanion.Companion' type=<root>.WithCompanion.Companion origin=null
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.WithCompanion]'
           CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=null
   CLASS CLASS name:WithCompanion modality:OPEN visibility:public superTypes:[kotlin.Any]
@@ -65,3 +65,4 @@ FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

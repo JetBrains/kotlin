@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/implicitCastInReturnFromConstructor.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Any?) returnType:<root>.C 
       VALUE_PARAMETER name:x index:0 type:kotlin.Any? 
       BLOCK_BODY
-        WHEN type=kotlin.Any? origin=IF
+        WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Unit
               GET_VAR 'x: kotlin.Any? declared in <root>.C.<init>' type=kotlin.Any? origin=null
@@ -28,3 +28,4 @@ FILE fqName:<root> fileName:/implicitCastInReturnFromConstructor.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

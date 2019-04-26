@@ -54,38 +54,39 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-testULongWithExpectedType> (): kotlin.ULong declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testULongWithExpectedType type:kotlin.ULong visibility:public [final,static] ' type=kotlin.ULong origin=null
   PROPERTY name:testToUByte visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:testToUByte type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:testToUByte type:kotlin.UByte visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Ambiguity: toUByte, [kotlin/toUByte, kotlin/toUByte, kotlin/toUByte, kotlin/toUByte, kotlin/text/toUByte]>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToUByte> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin' type=kotlin.UByte origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToUByte> visibility:public modality:FINAL <> () returnType:kotlin.UByte 
       correspondingProperty: PROPERTY name:testToUByte visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-testToUByte> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUByte type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-testToUByte> (): kotlin.UByte declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUByte type:kotlin.UByte visibility:public [final,static] ' type=kotlin.UByte origin=null
   PROPERTY name:testToUShort visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:testToUShort type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:testToUShort type:kotlin.UShort visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Ambiguity: toUShort, [kotlin/toUShort, kotlin/toUShort, kotlin/toUShort, kotlin/toUShort, kotlin/text/toUShort]>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToUShort> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        CALL 'public final fun toUShort (): kotlin.UShort [inline] declared in kotlin' type=kotlin.UShort origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToUShort> visibility:public modality:FINAL <> () returnType:kotlin.UShort 
       correspondingProperty: PROPERTY name:testToUShort visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-testToUShort> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUShort type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-testToUShort> (): kotlin.UShort declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUShort type:kotlin.UShort visibility:public [final,static] ' type=kotlin.UShort origin=null
   PROPERTY name:testToUInt visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:testToUInt type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:testToUInt type:kotlin.UInt visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Ambiguity: toUInt, [kotlin/toUInt, kotlin/toUInt, kotlin/toUInt, kotlin/toUInt, kotlin/toUInt, kotlin/toUInt, kotlin/text/toUInt]>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToUInt> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin' type=kotlin.UInt origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToUInt> visibility:public modality:FINAL <> () returnType:kotlin.UInt 
       correspondingProperty: PROPERTY name:testToUInt visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-testToUInt> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUInt type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-testToUInt> (): kotlin.UInt declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUInt type:kotlin.UInt visibility:public [final,static] ' type=kotlin.UInt origin=null
   PROPERTY name:testToULong visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:testToULong type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:testToULong type:kotlin.ULong visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Ambiguity: toULong, [kotlin/toULong, kotlin/toULong, kotlin/toULong, kotlin/toULong, kotlin/toULong, kotlin/toULong, kotlin/text/toULong]>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToULong> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin' type=kotlin.ULong origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToULong> visibility:public modality:FINAL <> () returnType:kotlin.ULong 
       correspondingProperty: PROPERTY name:testToULong visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-testToULong> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToULong type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-testToULong> (): kotlin.ULong declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToULong type:kotlin.ULong visibility:public [final,static] ' type=kotlin.ULong origin=null
+

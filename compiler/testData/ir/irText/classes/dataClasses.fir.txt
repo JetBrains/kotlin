@@ -41,6 +41,21 @@ FILE fqName:<root> fileName:/dataClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-z> (): kotlin.Any declared in <root>.Test1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:public [final] ' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-z>' type=<root>.Test1 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.Test1'
+          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test1' type=kotlin.Int origin=null
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>.Test1'
+          CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test1' type=kotlin.String origin=null
+    FUN name:component3 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Any declared in <root>.Test1'
+          CALL 'public final fun <get-z> (): kotlin.Any declared in <root>.Test1' type=kotlin.Any origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -72,6 +87,11 @@ FILE fqName:<root> fileName:/dataClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any? declared in <root>.Test2'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:public [final] ' type=kotlin.Any? origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Any? 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Any? declared in <root>.Test2'
+          CALL 'public final fun <get-x> (): kotlin.Any? declared in <root>.Test2' type=kotlin.Any? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -139,6 +159,26 @@ FILE fqName:<root> fileName:/dataClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-df> (): kotlin.Float? declared in <root>.Test3'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:public [final] ' type=kotlin.Float? origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-df>' type=<root>.Test3 origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test3 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Double declared in <root>.Test3'
+          CALL 'public final fun <get-d> (): kotlin.Double declared in <root>.Test3' type=kotlin.Double origin=null
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double? 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test3 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Double? declared in <root>.Test3'
+          CALL 'public final fun <get-dn> (): kotlin.Double? declared in <root>.Test3' type=kotlin.Double? origin=null
+    FUN name:component3 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test3 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Float declared in <root>.Test3'
+          CALL 'public final fun <get-f> (): kotlin.Float declared in <root>.Test3' type=kotlin.Float origin=null
+    FUN name:component4 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float? 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test3 
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component4 (): kotlin.Float? declared in <root>.Test3'
+          CALL 'public final fun <get-df> (): kotlin.Float? declared in <root>.Test3' type=kotlin.Float? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -152,3 +192,4 @@ FILE fqName:<root> fileName:/dataClasses.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+            then: ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
   FUN name:test2 visibility:public modality:FINAL <T> (x:T of <root>.test2) returnType:kotlin.Int 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:T of <root>.test2 
@@ -25,38 +25,38 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
-  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Int [inline] 
+            then: ERROR_CALL 'No getter found for R|kotlin/CharSequence.length|' type=kotlin.Int
+  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:IrErrorType [inline] 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any): kotlin.Int [inline] declared in <root>'
-        WHEN type=kotlin.Int origin=IF
+      RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any): IrErrorType [inline] declared in <root>'
+        WHEN type=IrErrorType origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test3
               GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
-            then: CONST Int type=kotlin.Int value=0
+            then: CONST Int type=IrErrorType value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
-  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:kotlin.Int [inline] 
+  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:IrErrorType [inline] 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any?): kotlin.Int [inline] declared in <root>'
-        WHEN type=kotlin.Int origin=IF
+      RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any?): IrErrorType [inline] declared in <root>'
+        WHEN type=IrErrorType origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test4
               GET_VAR 'x: kotlin.Any? declared in <root>.test4' type=kotlin.Any? origin=null
-            then: CONST Int type=kotlin.Int value=0
+            then: CONST Int type=IrErrorType value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
-  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T of <root>.test5, fn:kotlin.Function1) returnType:kotlin.Unit 
+  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T of <root>.test5, fn:kotlin.Function1<S of <root>.test5, kotlin.Unit>) returnType:kotlin.Unit 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    TYPE_PARAMETER name:S index:1 variance: superTypes:[]
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:T of <root>.test5 
-    VALUE_PARAMETER name:fn index:1 type:kotlin.Function1 
+    VALUE_PARAMETER name:fn index:1 type:kotlin.Function1<S of <root>.test5, kotlin.Unit> 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -66,3 +66,4 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
               arg1: CONST Null type=kotlin.Nothing? value=null
           then: ERROR_CALL 'Unresolved reference: <Unresolved name: fn>#' type=IrErrorType
             GET_VAR 'x: T of <root>.test5 declared in <root>.test5' type=T of <root>.test5 origin=null
+

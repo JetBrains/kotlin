@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/outerClassAccess.kt
         FUN name:test3 visibility:public modality:FINAL <> ($this:<root>.Outer.Inner.Inner2) returnType:kotlin.Unit 
           $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner.Inner2 
           BLOCK_BODY
-            CALL 'public final fun foo (): kotlin.Unit declared in <root>.Outer' type=kotlin.Unit origin=null
+            ERROR_CALL 'Unresolved reference: <Ambiguity: foo, [/Outer.foo, /Outer.foo]>#' type=IrErrorType
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
           overridden:
             public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -72,3 +72,4 @@ FILE fqName:<root> fileName:/outerClassAccess.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

@@ -1,26 +1,26 @@
 FILE fqName:<root> fileName:/coercionToUnit.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0 visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
-        BLOCK type=kotlin.Function0 origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function0 
+        BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit> 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Function0 declared in <root>.test1'
-                CONST Int type=kotlin.Function0 value=42
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0 declared in <root>.test1' type=kotlin.Function0 origin=LAMBDA
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function0 
+              CONST Int type=kotlin.Function0<kotlin.Unit> value=42
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit> 
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function0 declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0 visibility:public [final,static] ' type=kotlin.Function0 origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function0<kotlin.Unit> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Unit> visibility:public [final,static] ' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test2 visibility:public modality:FINAL <> (mc:kotlin.collections.MutableCollection<kotlin.String>) returnType:kotlin.Unit 
     VALUE_PARAMETER name:mc index:0 type:kotlin.collections.MutableCollection<kotlin.String> 
     BLOCK_BODY
-      CALL 'public abstract fun add (element: E of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections.MutableCollection' type=kotlin.Boolean origin=null
+      CALL 'public abstract fun add (element: kotlin.String): kotlin.Boolean declared in kotlin.collections.MutableCollection' type=kotlin.Boolean origin=null
         element: CONST String type=kotlin.String value=""
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Unresolved name: println>#' type=IrErrorType
-        CONST String type=kotlin.String value="Hello,"
-      ERROR_CALL 'Unresolved reference: <Unresolved name: println>#' type=IrErrorType
-        CONST String type=kotlin.String value="world!"
+      CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
+        x: CONST String type=kotlin.String value="Hello,"
+      CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
+        x: CONST String type=kotlin.String value="world!"
+

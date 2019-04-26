@@ -23,3 +23,4 @@ FILE fqName:<root> fileName:/kt27933.kt
             ERROR_CALL 'Unresolved reference: R|<local>/r|' type=IrErrorType
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         GET_VAR 'var r: kotlin.String [var] declared in <root>.box' type=kotlin.String origin=null
+

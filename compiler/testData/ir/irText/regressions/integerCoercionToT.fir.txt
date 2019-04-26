@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
   CLASS CLASS name:CInt32VarX modality:FINAL visibility:public superTypes:[<root>.CPointed]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CInt32VarX 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.CInt32VarX<T of <root>.CInt32VarX> [primary] 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.CInt32VarX<T of <uninitialized parent>> [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CInt32VarX modality:FINAL visibility:public superTypes:[<root>.CPointed]'
@@ -84,4 +84,5 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
     VALUE_PARAMETER name:value index:0 type:<root>.IdType 
     VALUE_PARAMETER name:cv index:1 type:<root>.CInt32VarX 
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: R|<local>/value|' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: R|/value|' type=IrErrorType
+

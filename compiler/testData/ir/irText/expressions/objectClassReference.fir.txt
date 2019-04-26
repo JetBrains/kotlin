@@ -20,6 +20,7 @@ FILE fqName:<root> fileName:/objectClassReference.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      GET_CLASS type=IrErrorType
-        ERROR_CALL 'Unresolved reference: <Unresolved name: A>#' type=IrErrorType
-      ERROR_CALL 'Unresolved reference: <Unresolved name: java>#' type=IrErrorType
+      GET_CLASS type=kotlin.reflect.KClass<<root>.A>
+        ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
+      ERROR_CALL 'No getter found for R|kotlin/jvm/java|' type=java.lang.Class<T of <uninitialized parent>>
+
