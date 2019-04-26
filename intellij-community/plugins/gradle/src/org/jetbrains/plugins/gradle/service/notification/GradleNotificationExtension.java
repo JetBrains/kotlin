@@ -51,6 +51,12 @@ public class GradleNotificationExtension implements ExternalSystemNotificationEx
       // gradle tooling internal serialization issues
       return true;
     }
+    if (unwrapped instanceof ExternalSystemException) {
+      Throwable cause = unwrapped.getCause();
+      if (cause != null && cause.getClass().getName().startsWith("org.gradle.")) {
+        return ((ExternalSystemException)unwrapped).getQuickFixes().length == 0;
+      }
+    }
     return false;
   }
 
