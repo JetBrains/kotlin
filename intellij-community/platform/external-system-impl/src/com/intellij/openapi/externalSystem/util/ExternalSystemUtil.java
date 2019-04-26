@@ -1,7 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.util;
 
-import com.intellij.build.*;
+import com.intellij.build.BuildContentDescriptor;
+import com.intellij.build.BuildEventDispatcher;
+import com.intellij.build.DefaultBuildDescriptor;
+import com.intellij.build.SyncViewManager;
 import com.intellij.build.events.BuildEvent;
 import com.intellij.build.events.EventResult;
 import com.intellij.build.events.FinishBuildEvent;
@@ -21,7 +24,6 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.rmi.RemoteUtil;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.Notification;
@@ -87,7 +89,10 @@ import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.openapi.wm.impl.ToolWindowImpl;
 import com.intellij.pom.Navigatable;
 import com.intellij.pom.NonNavigatable;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.SmartList;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtilRt;
 import gnu.trove.TObjectHashingStrategy;
@@ -664,22 +669,6 @@ public class ExternalSystemUtil {
   public static boolean isNewProject(Project project) {
     return project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == Boolean.TRUE ||
            project.getUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT) == Boolean.TRUE;
-  }
-
-  public static void printFailure(@NotNull Exception e,
-                                  com.intellij.build.events.FailureResult failureResult,
-                                  ExecutionConsole consoleView,
-                                  ExternalSystemProcessHandler processHandler) {
-    if (consoleView instanceof ConsoleView) {
-      for (com.intellij.build.events.Failure failure : failureResult.getFailures()) {
-        BuildConsoleUtils.printDetails((ConsoleView)consoleView, failure);
-      }
-    }
-    else {
-      String exceptionMessage = ExceptionUtil.getMessage(e);
-      String text = exceptionMessage == null ? e.toString() : exceptionMessage;
-      processHandler.notifyTextAvailable(text + '\n', ProcessOutputTypes.STDERR);
-    }
   }
 
   @NotNull
