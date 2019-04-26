@@ -5243,6 +5243,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/main"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("differentMains.kt")
+        public void testDifferentMains() throws Exception {
+            runTest("js/js.translator/testData/box/main/differentMains.kt");
+        }
+
         @TestMetadata("incremental.kt")
         public void testIncremental() throws Exception {
             runTest("js/js.translator/testData/box/main/incremental.kt");
@@ -5271,6 +5276,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("suspendMainThrows.kt")
         public void testSuspendMainThrows() throws Exception {
             runTest("js/js.translator/testData/box/main/suspendMainThrows.kt");
+        }
+
+        @TestMetadata("twoMains.kt")
+        public void testTwoMains() throws Exception {
+            runTest("js/js.translator/testData/box/main/twoMains.kt");
         }
     }
 
