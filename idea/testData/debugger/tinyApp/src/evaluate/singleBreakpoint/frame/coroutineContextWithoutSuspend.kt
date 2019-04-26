@@ -11,5 +11,8 @@ private suspend fun foo() {
     val a = 5
 }
 
+// SHOW_KOTLIN_VARIABLES
+// PRINT_FRAME
+
 // EXPRESSION: coroutineContext
 // RESULT: instance of kotlin.coroutines.EmptyCoroutineContext(id=ID): Lkotlin/coroutines/EmptyCoroutineContext;

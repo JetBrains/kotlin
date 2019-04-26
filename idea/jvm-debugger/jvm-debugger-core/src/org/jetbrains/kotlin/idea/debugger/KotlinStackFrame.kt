@@ -45,13 +45,13 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.THIS
 import org.jetbrains.kotlin.codegen.DESTRUCTURED_LAMBDA_ARGUMENT_VARIABLE_PREFIX
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.isFakeLocalVariableForInline
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 import org.jetbrains.kotlin.utils.getSafe
 import java.lang.reflect.Modifier
 import java.util.*
-import kotlin.coroutines.Continuation
 
 class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDescriptorImpl(frame, MethodsTracker()), true) {
     private companion object {
@@ -305,6 +305,7 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
                 || name.startsWith(AsmUtil.LOCAL_FUNCTION_VARIABLE_PREFIX)
                 || getInlineDepth(variable.name()) != inlineDepth
                 || name == CONTINUATION_VARIABLE_NAME
+                || name == SUSPEND_FUNCTION_CONTINUATION_PARAMETER
     }
 
     private fun LocalVariableProxyImpl.remapVariableNameIfNeeded(): LocalVariableProxyImpl {
