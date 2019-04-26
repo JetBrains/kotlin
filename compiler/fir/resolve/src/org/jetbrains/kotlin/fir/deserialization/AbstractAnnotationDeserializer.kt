@@ -121,8 +121,7 @@ abstract class AbstractAnnotationDeserializer(
             CLASS -> FirGetClassCallImpl(session, null).apply {
                 val classId = nameResolver.getClassId(value.classId)
                 val lookupTag = ConeClassLikeLookupTagImpl(classId)
-                val symbol = lookupTag.toSymbol(this@AbstractAnnotationDeserializer.session) ?: return null
-                val referencedType = symbol.constructType(emptyArray(), isNullable = false)
+                val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
                 arguments += FirClassReferenceExpressionImpl(
                     this@AbstractAnnotationDeserializer.session, null,
                     FirResolvedTypeRefImpl(
