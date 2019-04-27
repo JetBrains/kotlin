@@ -153,7 +153,7 @@ class StoredPropertyStateTest {
 
 internal class AState(languageLevel: String? = null, nestedComplex: NestedState? = null) : BaseState() {
   @get:Attribute("customName")
-  var languageLevel by property(languageLevel)
+  var languageLevel by string(languageLevel)
 
   var bar by string()
 
