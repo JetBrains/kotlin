@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
 
 class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
@@ -47,10 +45,12 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
 
         irBuiltIns.booleanType.let {
-            add(it, OperatorNames.AND, intrinsics.jsBitAnd)
-            add(it, OperatorNames.OR, intrinsics.jsBitOr)
+            // These operators are not short-circuit -- using bitwise operators '&', '|', '^' followed by coercion to boolean
+            add(it, OperatorNames.AND) { call -> toBoolean(irCall(call, intrinsics.jsBitAnd, dispatchReceiverAsFirstArgument = true)) }
+            add(it, OperatorNames.OR) { call -> toBoolean(irCall(call, intrinsics.jsBitOr, dispatchReceiverAsFirstArgument = true)) }
+            add(it, OperatorNames.XOR) { call -> toBoolean(irCall(call, intrinsics.jsBitXor, dispatchReceiverAsFirstArgument = true)) }
+
             add(it, OperatorNames.NOT, intrinsics.jsNot)
-            add(it, OperatorNames.XOR, intrinsics.jsBitXor)
         }
 
         for (type in primitiveNumbers) {
@@ -230,6 +230,14 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                 putValueArgument(idx, arg)
             }
         }
+
+    private fun booleanNegate(e: IrExpression) =
+        JsIrBuilder.buildCall(intrinsics.jsNot, irBuiltIns.booleanType).apply {
+            putValueArgument(0, e)
+        }
+
+    private fun toBoolean(e: IrExpression) =
+        booleanNegate(booleanNegate(e))
 
     private fun toInt32(e: IrExpression) =
         JsIrBuilder.buildCall(intrinsics.jsBitOr, irBuiltIns.intType).apply {

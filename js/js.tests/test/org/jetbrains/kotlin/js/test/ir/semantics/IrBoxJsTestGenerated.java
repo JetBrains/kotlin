@@ -6791,6 +6791,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/regression/typeChecks"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
             }
 
+            @TestMetadata("booleanOperatorsTypes.kt")
+            public void testBooleanOperatorsTypes() throws Exception {
+                runTest("js/js.translator/testData/box/regression/typeChecks/booleanOperatorsTypes.kt");
+            }
+
             @TestMetadata("emptyVarargInConstructorCall.kt")
             public void testEmptyVarargInConstructorCall() throws Exception {
                 runTest("js/js.translator/testData/box/regression/typeChecks/emptyVarargInConstructorCall.kt");
