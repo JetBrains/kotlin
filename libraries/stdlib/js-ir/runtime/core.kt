@@ -79,10 +79,10 @@ fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
 
 @JsName("captureStack")
 internal fun captureStack(instance: Throwable) {
-    if (js("Error").captureStackTrace) {
-        js("Error").captureStackTrace(instance, instance::class.js);
+    if (js("Error").captureStackTrace != null) {
+        js("Error").captureStackTrace(instance, instance::class.js)
     } else {
-        instance.asDynamic().stack = js("new Error()").stack;
+        instance.asDynamic().stack = js("new Error()").stack
     }
 }
 
