@@ -47,6 +47,7 @@ class IrModuleToJsTransformer(
         statements += preDeclarationBlock
 
         module.files.forEach {
+            statements.add(JsDocComment(mapOf("file" to it.path)).makeStmt())
             statements.add(it.accept(IrFileToJsTransformer(), context))
         }
 
