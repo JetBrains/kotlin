@@ -135,7 +135,15 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
             if (parser == null) {
                 errors.unknownExtraFlags += arg
             } else {
-                internalArguments.add(parser.parseInternalArgument(arg, errors) ?: continue)
+                val newInternalArgument = parser.parseInternalArgument(arg, errors) ?: continue
+                val argumentWillBeOverridden = when (newInternalArgument) {
+                    is ManualLanguageFeatureSetting -> internalArguments.firstOrNull { (it is ManualLanguageFeatureSetting) && (it.languageFeature == newInternalArgument.languageFeature) }
+                    else -> null
+                }
+                if (argumentWillBeOverridden != null) {
+                    internalArguments.remove(argumentWillBeOverridden)
+                }
+                internalArguments.add(newInternalArgument)
             }
 
             continue

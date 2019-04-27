@@ -296,6 +296,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/internalArgNoWarningForEnablingBugfix.args");
         }
 
+        @TestMetadata("internalArgOverrideLanguageFeature.args")
+        public void testInternalArgOverrideLanguageFeature() throws Exception {
+            runTest("compiler/testData/cli/jvm/internalArgOverrideLanguageFeature.args");
+        }
+
+        @TestMetadata("internalArgOverrideOffLanguageFeature.args")
+        public void testInternalArgOverrideOffLanguageFeature() throws Exception {
+            runTest("compiler/testData/cli/jvm/internalArgOverrideOffLanguageFeature.args");
+        }
+
         @TestMetadata("internalArgUnrecognizedFeature.args")
         public void testInternalArgUnrecognizedFeature() throws Exception {
             runTest("compiler/testData/cli/jvm/internalArgUnrecognizedFeature.args");
