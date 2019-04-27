@@ -17,13 +17,15 @@ import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopeManager;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
 import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.ComboboxSpeedSearch;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.TitledSeparator;
+import com.intellij.util.BitUtil;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBEmptyBorder;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,13 +36,16 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Disposable {
+
+  public static final int OPT_LIBRARIES = 0x1;
+  public static final int OPT_SEARCH_RESULTS = 0x2;
+  public static final int OPT_FROM_SELECTION = 0x4;
+  public static final int OPT_USAGE_VIEW = 0x8;
+  public static final int OPT_EMPTY_SCOPES = 0x10;
+
   private Project myProject;
-  private boolean mySuggestSearchInLibs;
-  private boolean myPrevSearchFiles;
-  private boolean myCurrentSelection = true;
-  private boolean myUsageView = true;
+  private int myOptions = OPT_FROM_SELECTION | OPT_USAGE_VIEW;
   private Condition<? super ScopeDescriptor> myScopeFilter;
-  private boolean myShowEmptyScopes;
   private BrowseListener myBrowseListener = null;
 
   public ScopeChooserCombo() {
@@ -68,8 +73,8 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     if (myProject != null) {
       throw new IllegalStateException("scope chooser combo already initialized");
     }
-    mySuggestSearchInLibs = suggestSearchInLibs;
-    myPrevSearchFiles = prevSearchWholeFiles;
+    myOptions = BitUtil.set(myOptions, OPT_LIBRARIES, suggestSearchInLibs);
+    myOptions = BitUtil.set(myOptions, OPT_SEARCH_RESULTS, prevSearchWholeFiles);
     myProject = project;
 
     NamedScopesHolder.ScopeListener scopeListener = () -> {
@@ -84,12 +89,17 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
 
     ComboBox<ScopeDescriptor> combo = getComboBox();
     combo.setMinimumAndPreferredWidth(JBUI.scale(300));
-    combo.setRenderer(new MyRenderer());
+    combo.setRenderer(createDefaultRenderer());
     combo.setSwingPopup(false);
 
     rebuildModel();
 
     selectItem(selection);
+  }
+
+  @NotNull
+  public static ListCellRenderer<ScopeDescriptor> createDefaultRenderer() {
+    return new MyRenderer();
   }
 
   @Override
@@ -103,11 +113,11 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
   }
 
   public void setCurrentSelection(boolean currentSelection) {
-    myCurrentSelection = currentSelection;
+    myOptions = BitUtil.set(myOptions, OPT_FROM_SELECTION, currentSelection);
   }
 
   public void setUsageView(boolean usageView) {
-    myUsageView = usageView;
+    myOptions = BitUtil.set(myOptions, OPT_USAGE_VIEW, usageView);
   }
 
   public void selectItem(@Nullable Object selection) {
@@ -143,11 +153,25 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     getComboBox().setModel(createModel());
   }
 
-  @NotNull
-  private DefaultComboBoxModel<ScopeDescriptor> createModel() {
-    DefaultComboBoxModel<ScopeDescriptor> model = new DefaultComboBoxModel<>();
-    createPredefinedScopeDescriptors(model);
-
+  public static boolean processScopes(@NotNull Project project,
+                                      @NotNull DataContext dataContext,
+                                      @MagicConstant(flagsFromClass = ScopeChooserCombo.class) int options,
+                                      @NotNull Processor<? super ScopeDescriptor> processor) {
+    List<SearchScope> predefinedScopes = PredefinedSearchScopeProvider.getInstance().getPredefinedScopes(
+      project, dataContext,
+      BitUtil.isSet(options, OPT_LIBRARIES),
+      BitUtil.isSet(options, OPT_SEARCH_RESULTS),
+      BitUtil.isSet(options, OPT_FROM_SELECTION),
+      BitUtil.isSet(options, OPT_USAGE_VIEW),
+      BitUtil.isSet(options, OPT_EMPTY_SCOPES));
+    for (SearchScope searchScope : predefinedScopes) {
+      if (!processor.process(new ScopeDescriptor(searchScope))) return false;
+    }
+    for (ScopeDescriptorProvider provider : ScopeDescriptorProvider.EP_NAME.getExtensionList()) {
+      for (ScopeDescriptor descriptor : provider.getScopeDescriptors(project)) {
+        if (!processor.process(descriptor)) return false;
+      }
+    }
     Comparator<SearchScope> comparator = (o1, o2) -> {
       int w1 = o1 instanceof WeighedItem ? ((WeighedItem)o1).getWeight() : Integer.MAX_VALUE;
       int w2 = o2 instanceof WeighedItem ? ((WeighedItem)o2).getWeight() : Integer.MAX_VALUE;
@@ -156,13 +180,26 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     };
     for (SearchScopeProvider each : SearchScopeProvider.EP_NAME.getExtensions()) {
       if (StringUtil.isEmpty(each.getDisplayName())) continue;
-      List<SearchScope> scopes = each.getSearchScopes(myProject);
+      List<SearchScope> scopes = each.getSearchScopes(project);
       if (scopes.isEmpty()) continue;
-      model.addElement(new ScopeSeparator(each.getDisplayName()));
+      if (!processor.process(new ScopeSeparator(each.getDisplayName()))) return false;
       for (SearchScope scope : ContainerUtil.sorted(scopes, comparator)) {
-        model.addElement(new ScopeDescriptor(scope));
+        if (!processor.process(new ScopeDescriptor(scope))) return false;
       }
     }
+    return true;
+  }
+
+  @NotNull
+  private DefaultComboBoxModel<ScopeDescriptor> createModel() {
+    DefaultComboBoxModel<ScopeDescriptor> model = new DefaultComboBoxModel<>();
+    DataContext dataContext = DataManager.getInstance().getDataContext(this);
+    processScopes(myProject, dataContext, myOptions, descriptor -> {
+      if (myScopeFilter == null || myScopeFilter.value(descriptor)) {
+        model.addElement(descriptor);
+      }
+      return true;
+    });
     return model;
   }
 
@@ -184,30 +221,8 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     return new Dimension(Math.min(200, minimumSize.width), minimumSize.height);
   }
 
-  private void createPredefinedScopeDescriptors(@NotNull DefaultComboBoxModel<ScopeDescriptor> model) {
-    @SuppressWarnings("deprecation") final DataContext context = DataManager.getInstance().getDataContext();
-    for (SearchScope scope : PredefinedSearchScopeProvider.getInstance().getPredefinedScopes(myProject, context, mySuggestSearchInLibs,
-                                                                                             myPrevSearchFiles, myCurrentSelection,
-                                                                                             myUsageView, myShowEmptyScopes)) {
-      addScopeDescriptor(model, new ScopeDescriptor(scope));
-    }
-    for (ScopeDescriptorProvider provider : ScopeDescriptorProvider.EP_NAME.getExtensionList()) {
-      for (ScopeDescriptor scopeDescriptor : provider.getScopeDescriptors(myProject)) {
-        if(myScopeFilter == null || myScopeFilter.value(scopeDescriptor)) {
-          model.addElement(scopeDescriptor);
-        }
-      }
-    }
-  }
-
-  private void addScopeDescriptor(DefaultComboBoxModel<ScopeDescriptor> model, ScopeDescriptor scopeDescriptor) {
-    if (myScopeFilter == null || myScopeFilter.value(scopeDescriptor)) {
-      model.addElement(scopeDescriptor);
-    }
-  }
-
   public void setShowEmptyScopes(boolean showEmptyScopes) {
-    myShowEmptyScopes = showEmptyScopes;
+    myOptions = BitUtil.set(myOptions, OPT_EMPTY_SCOPES, showEmptyScopes);
   }
 
   @Nullable
@@ -223,16 +238,16 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
   }
 
   private static class ScopeSeparator extends ScopeDescriptor {
-    private final String myText;
+    final String text;
 
     ScopeSeparator(@NotNull String text) {
       super(null);
-      myText = text;
+      this.text = text;
     }
 
     @Override
     public String getDisplayName() {
-      return myText;
+      return text;
     }
   }
 
