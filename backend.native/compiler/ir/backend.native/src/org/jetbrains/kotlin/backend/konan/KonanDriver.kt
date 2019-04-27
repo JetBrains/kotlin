@@ -22,10 +22,6 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
     context.environment = environment
     context.phaseConfig.konanPhasesConfig(konanConfig) // TODO: Wrong place to call it
 
-    if (config.get(KonanConfigKeys.LIST_PHASES) ?: false) {
-        context.phaseConfig.list()
-    }
-
     if (konanConfig.infoArgsOnly) return
 
     (toplevelPhase as CompilerPhase<Context, Unit, Unit>).invokeToplevel(context.phaseConfig, context, Unit)
