@@ -46,7 +46,6 @@ import com.intellij.ui.SideBorder;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.Processor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -86,17 +85,15 @@ public class DirectoryChooser extends DialogWrapper {
     String gotoClassText = GotoClassPresentationUpdater.getTabTitle(false);
     boolean useClass = gotoClassText.startsWith("Class");
     myChooseByNameTabTitle = useClass ? gotoClassText : "File";
-    ChooseByNameModel model = useClass ? new GotoClassModel2(project) {
-      @Override
-      public void processNames(Processor<? super String> nameProcessor, boolean checkBoxState) {
-        super.processNames(nameProcessor, false);
-      }
-    } : new GotoFileModel(project) {
-      @Override
-      public void processNames(Processor<? super String> nameProcessor, boolean checkBoxState) {
-        super.processNames(nameProcessor, false);
-      }
-    };
+    //@formatter:off
+    ChooseByNameModel model =
+      useClass ? new GotoClassModel2(project) {
+        @Override public boolean loadInitialCheckBoxState() { return true; }
+        @Override public void saveInitialCheckBoxState(boolean state) {}} :
+      new GotoFileModel(project) {
+        @Override public boolean loadInitialCheckBoxState() { return true; }
+        @Override public void saveInitialCheckBoxState(boolean state) {}};
+    //@formatter:on
     myChooseByNamePanel = new ChooseByNamePanel(project, model, "", false, null) {
       @Override
       protected void showTextFieldPanel() {

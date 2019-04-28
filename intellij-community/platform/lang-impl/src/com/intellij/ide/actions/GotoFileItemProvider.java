@@ -30,7 +30,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FList;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.indexing.FindSymbolParameters;
-import com.intellij.util.indexing.IdFilter;
 import one.util.streamex.IntStreamEx;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
@@ -54,44 +53,42 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
 
   @Override
   public boolean filterElements(@NotNull ChooseByNameBase base,
-                                @NotNull String pattern,
-                                boolean everywhere,
+                                @NotNull FindSymbolParameters parameters,
                                 @NotNull ProgressIndicator indicator,
                                 @NotNull Processor<Object> consumer) {
     long start = System.currentTimeMillis();
     try {
+      String pattern = parameters.getCompletePattern();
       PsiFileSystemItem absolute = getFileByAbsolutePath(pattern);
       if (absolute != null && !consumer.process(absolute)) {
         return true;
       }
 
-
       if (pattern.startsWith("./") || pattern.startsWith(".\\")) {
-        pattern = pattern.substring(1);
+        parameters = parameters.withCompletePattern(pattern.substring(1));
       }
 
-      if (!processItemsForPattern(base, pattern, everywhere, consumer, indicator)) {
+      if (!processItemsForPattern(base, parameters, consumer, indicator)) {
         return false;
       }
-      String fixed = FixingLayoutMatcher.fixLayout(pattern);
-      return fixed == null || processItemsForPattern(base, fixed, everywhere, consumer, indicator);
+      String fixedPattern = FixingLayoutMatcher.fixLayout(pattern);
+      return fixedPattern == null || processItemsForPattern(base, parameters.withCompletePattern(fixedPattern), consumer, indicator);
     }
     finally {
       if (LOG.isDebugEnabled()) {
-        LOG.debug("Goto File \"" + pattern + "\" took " + (System.currentTimeMillis() - start) + " ms");
+        LOG.debug("Goto File \"" + parameters.getCompletePattern() + "\" took " + (System.currentTimeMillis() - start) + " ms");
       }
     }
   }
 
   private boolean processItemsForPattern(@NotNull ChooseByNameBase base,
-                                         @NotNull String pattern,
-                                         boolean everywhere,
+                                         @NotNull FindSymbolParameters parameters,
                                          @NotNull Processor<Object> consumer,
                                          @NotNull ProgressIndicator indicator) {
-    String sanitized = getSanitizedPattern(pattern, myModel);
+    String sanitized = getSanitizedPattern(parameters.getCompletePattern(), myModel);
     int qualifierEnd = sanitized.lastIndexOf('/') + 1;
     NameGrouper grouper = new NameGrouper(sanitized.substring(qualifierEnd), indicator);
-    processNames(grouper::processName);
+    processNames(FindSymbolParameters.simple(myProject, true), grouper::processName);
 
     Ref<Boolean> hasSuggestions = Ref.create(false);
     DirectoryPathMatcher dirMatcher = DirectoryPathMatcher.root(myModel, sanitized.substring(0, qualifierEnd));
@@ -99,7 +96,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
       int index = grouper.index;
       SuffixMatches group = grouper.nextGroup(base);
       if (group == null) break;
-      if (!group.processFiles(pattern, dirMatcher.dirPattern, everywhere, consumer, hasSuggestions, dirMatcher)) {
+      if (!group.processFiles(parameters.withLocalPattern(dirMatcher.dirPattern), consumer, hasSuggestions, dirMatcher)) {
         return false;
       }
       dirMatcher = dirMatcher.appendChar(grouper.namePattern.charAt(index));
@@ -114,15 +111,17 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
    * Invoke contributors directly, as multi-threading isn't of much value in Goto File,
    * and filling {@link ContributorsBasedGotoByModel#myContributorToItsSymbolsMap} is expensive for the default contributor.
    */
-  private void processNames(Processor<? super String> nameProcessor) {
+  private void processNames(@NotNull FindSymbolParameters parameters,
+                            @NotNull Processor<? super String> nameProcessor) {
     List<ChooseByNameContributor> contributors = DumbService.getDumbAwareExtensions(myProject, ChooseByNameContributor.FILE_EP_NAME);
     for (ChooseByNameContributor contributor : contributors) {
       if (contributor instanceof DefaultFileNavigationContributor) {
         FilenameIndex.processAllFileNames(nameProcessor,
-                                          FindSymbolParameters.searchScopeFor(myProject, true),
-                                          IdFilter.getProjectIdFilter(myProject, true));
-      } else {
-        myModel.processContributorNames(contributor, true, nameProcessor);
+                                          parameters.getSearchScope(), // todo why it was true?
+                                          parameters.getIdFilter());
+      }
+      else {
+        myModel.processContributorNames(contributor, parameters, nameProcessor);
       }
     }
   }
@@ -196,17 +195,16 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
 
   // returns a lazy iterable, where the next element is calculated only when it's needed
   @NotNull
-  private JBIterable<PsiFileSystemItem> getFilesMatchingPath(@NotNull String pattern,
-                                                             boolean everywhere,
-                                                             List<String> fileNames,
-                                                             DirectoryPathMatcher dirMatcher,
+  private JBIterable<PsiFileSystemItem> getFilesMatchingPath(@NotNull FindSymbolParameters parameters,
+                                                             @NotNull List<String> fileNames,
+                                                             @NotNull DirectoryPathMatcher dirMatcher,
                                                              @NotNull ProgressIndicator indicator) {
-    GlobalSearchScope scope = dirMatcher.narrowDown(FindSymbolParameters.searchScopeFor(myProject, everywhere));
-    FindSymbolParameters parameters = new FindSymbolParameters(pattern, pattern, scope, null);
+    GlobalSearchScope scope = dirMatcher.narrowDown(parameters.getSearchScope());
+    FindSymbolParameters adjusted = parameters.withScope(scope);
 
     //noinspection StringToUpperCaseOrToLowerCaseWithoutLocale
     List<List<String>> sortedNames = sortAndGroup(fileNames, Comparator.comparing(n -> FileUtilRt.getNameWithoutExtension(n).toLowerCase()));
-    return JBIterable.from(sortedNames).flatMap(nameGroup -> getItemsForNames(indicator, parameters, nameGroup));
+    return JBIterable.from(sortedNames).flatMap(nameGroup -> getItemsForNames(indicator, adjusted, nameGroup));
   }
 
   private Iterable<PsiFileSystemItem> getItemsForNames(@NotNull ProgressIndicator indicator,
@@ -324,13 +322,11 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
       return false;
     }
 
-    boolean processFiles(@NotNull String pattern,
-                         String qualifierPattern,
-                         boolean everywhere,
-                         Processor<? super PsiFileSystemItem> processor,
-                         Ref<Boolean> hasSuggestions,
-                         DirectoryPathMatcher dirMatcher) {
-      MinusculeMatcher qualifierMatcher = getQualifiedNameMatcher(qualifierPattern);
+    boolean processFiles(@NotNull FindSymbolParameters parameters,
+                         @NotNull Processor<? super PsiFileSystemItem> processor,
+                         @NotNull Ref<Boolean> hasSuggestions,
+                         @NotNull DirectoryPathMatcher dirMatcher) {
+      MinusculeMatcher qualifierMatcher = getQualifiedNameMatcher(parameters.getLocalPatternName());
 
       List<MatchResult> matchingNames = this.matchingNames;
       if (patternSuffix.length() <= 3 && !dirMatcher.dirPattern.isEmpty()) {
@@ -342,10 +338,10 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
         }
       }
 
-      List<List<String>> groups = groupByMatchingDegree(!pattern.startsWith("*"), matchingNames);
+      List<List<String>> groups = groupByMatchingDegree(!parameters.getCompletePattern().startsWith("*"), matchingNames);
       for (List<String> group : groups) {
-        Iterable<PsiFileSystemItem> files = getFilesMatchingPath(pattern, everywhere, group, dirMatcher, indicator);
-        if (!qualifierPattern.isEmpty()) {
+        Iterable<PsiFileSystemItem> files = getFilesMatchingPath(parameters, group, dirMatcher, indicator);
+        if (!parameters.getLocalPatternName().isEmpty()) {
           files = matchQualifiers(qualifierMatcher, files);
         }
         files = moveDirectoriesToEnd(files);
@@ -360,12 +356,17 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
 
       // let the framework switch to searching outside project to display these well-matching suggestions
       // instead of worse-matching ones in project (that are very expensive to calculate)
-      return hasSuggestions.get() || everywhere || !hasSuggestionsOutsideProject(pattern, groups, dirMatcher);
+      return hasSuggestions.get() ||
+             parameters.isSearchInLibraries() ||
+             !hasSuggestionsOutsideProject(parameters.getCompletePattern(), groups, dirMatcher);
     }
 
     private boolean hasSuggestionsOutsideProject(@NotNull String pattern,
-                                                 List<? extends List<String>> groups, DirectoryPathMatcher dirMatcher) {
-      return ContainerUtil.exists(groups, group -> !getFilesMatchingPath(pattern, true, group, dirMatcher, indicator).isEmpty());
+                                                 @NotNull List<? extends List<String>> groups,
+                                                 @NotNull DirectoryPathMatcher dirMatcher) {
+      return ContainerUtil.exists(groups, group ->
+        !getFilesMatchingPath(FindSymbolParameters.wrap(pattern, myProject, true),
+                              group, dirMatcher, indicator).isEmpty());
     }
 
     private List<List<String>> groupByMatchingDegree(boolean preferStartMatches, List<? extends MatchResult> matchingNames) {
@@ -383,7 +384,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
 
   }
 
-  private static <T> List<List<T>> sortAndGroup(List<T> items, Comparator<? super T> comparator) {
+  private static <T> List<List<T>> sortAndGroup(@NotNull List<T> items, @NotNull Comparator<? super T> comparator) {
     return StreamEx.of(items).sorted(comparator).groupRuns((n1, n2) -> comparator.compare(n1, n2) == 0).toList();
   }
 }

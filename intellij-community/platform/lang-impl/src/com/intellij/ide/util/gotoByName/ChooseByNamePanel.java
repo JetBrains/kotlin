@@ -20,6 +20,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +29,11 @@ public class ChooseByNamePanel extends ChooseByNameBase implements Disposable {
   private JPanel myPanel;
   private final boolean myCheckBoxVisible;
 
-  public ChooseByNamePanel(Project project, ChooseByNameModel model, String initialText, boolean isCheckboxVisible, final PsiElement context){
+  public ChooseByNamePanel(Project project,
+                           ChooseByNameModel model,
+                           String initialText,
+                           boolean isCheckboxVisible,
+                           final PsiElement context) {
     super(project, model, initialText, context);
     myCheckBoxVisible = isCheckboxVisible;
   }
@@ -42,8 +47,10 @@ public class ChooseByNamePanel extends ChooseByNameBase implements Disposable {
 
     myPanel = new JPanel(new GridBagLayout());
 
-    myPanel.add(myTextFieldPanel, new GridBagConstraints(0,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0));
-    myPanel.add(myListScrollPane, new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.WEST,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+    myPanel.add(myTextFieldPanel, new GridBagConstraints(
+      0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0));
+    myPanel.add(myListScrollPane, new GridBagConstraints(
+      0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, JBUI.emptyInsets(), 0, 0));
   }
 
   public JComponent getPreferredFocusedComponent() {
@@ -51,11 +58,11 @@ public class ChooseByNamePanel extends ChooseByNameBase implements Disposable {
   }
 
   @Override
-  protected void showList(){
+  protected void showList() {
   }
 
   @Override
-  protected void hideList(){
+  protected void hideList() {
   }
 
   @Override
@@ -73,11 +80,11 @@ public class ChooseByNamePanel extends ChooseByNameBase implements Disposable {
   }
 
   @Override
-  protected boolean isCheckboxVisible(){
+  protected boolean isCheckboxVisible() {
     return myCheckBoxVisible;
   }
 
-  public JPanel getPanel(){
+  public JPanel getPanel() {
     return myPanel;
   }
 
