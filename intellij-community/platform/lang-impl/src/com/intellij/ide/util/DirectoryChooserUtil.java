@@ -49,10 +49,10 @@ public class DirectoryChooserUtil {
   }
 
   @Nullable
-  public static PsiDirectory selectDirectory(Project project,
-                                             PsiDirectory[] packageDirectories,
-                                             PsiDirectory defaultDirectory,
-                                             String postfixToShow) {
+  public static PsiDirectory selectDirectory(@NotNull Project project,
+                                             @NotNull PsiDirectory[] packageDirectories,
+                                             @Nullable PsiDirectory defaultDirectory,
+                                             @Nullable String postfixToShow) {
     ProjectFileIndex projectFileIndex = getInstance(project).getFileIndex();
 
     ArrayList<PsiDirectory> possibleDirs = new ArrayList<>();
@@ -76,11 +76,10 @@ public class DirectoryChooserUtil {
   }
 
   @Nullable
-  public static
-  PsiDirectory chooseDirectory(PsiDirectory[] targetDirectories,
-                               @Nullable PsiDirectory initialDirectory,
-                               @NotNull Project project,
-                               Map<PsiDirectory, String> relativePathsToCreate) {
+  public static PsiDirectory chooseDirectory(@NotNull PsiDirectory[] targetDirectories,
+                                             @Nullable PsiDirectory initialDirectory,
+                                             @NotNull Project project,
+                                             @Nullable Map<PsiDirectory, String> relativePathsToCreate) {
     final DirectoryChooser chooser = new DirectoryChooser(project, new DirectoryChooserModuleTreeView(project));
     chooser.setTitle(RefactoringBundle.message("choose.destination.directory"));
     chooser.fillList(

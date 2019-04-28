@@ -21,12 +21,13 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ChooseByNamePanel extends ChooseByNameBase implements Disposable {
-  private JPanel myPanel;
+  private final JPanel myPanel = new JPanel();
   private final boolean myCheckBoxVisible;
 
   public ChooseByNamePanel(Project project,
@@ -45,12 +46,17 @@ public class ChooseByNamePanel extends ChooseByNameBase implements Disposable {
     //myTextFieldPanel.setBorder(new EmptyBorder(0,0,0,0));
     myTextFieldPanel.setBorder(null);
 
-    myPanel = new JPanel(new GridBagLayout());
+    myPanel.setLayout(new GridBagLayout());
 
     myPanel.add(myTextFieldPanel, new GridBagConstraints(
       0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0));
     myPanel.add(myListScrollPane, new GridBagConstraints(
       0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, JBUI.emptyInsets(), 0, 0));
+  }
+
+  @NotNull
+  public JPanel getPanel() {
+    return myPanel;
   }
 
   public JComponent getPreferredFocusedComponent() {
@@ -82,10 +88,6 @@ public class ChooseByNamePanel extends ChooseByNameBase implements Disposable {
   @Override
   protected boolean isCheckboxVisible() {
     return myCheckBoxVisible;
-  }
-
-  public JPanel getPanel() {
-    return myPanel;
   }
 
   @Override
