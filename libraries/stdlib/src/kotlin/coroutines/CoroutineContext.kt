@@ -8,14 +8,12 @@ package kotlin.coroutines
 /**
  * Persistent context for the coroutine. It is an indexed set of [Element] instances.
  * An indexed set is a mix between a set and a map.
- * Every element in this set has a unique [Key]. Keys are compared _by reference_.
+ * Every element in this set has a unique [Key].
  */
 @SinceKotlin("1.3")
 public interface CoroutineContext {
     /**
      * Returns the element with the given [key] from this context or `null`.
-     * Keys are compared _by reference_, that is to get an element from the context the reference to its actual key
-     * object must be presented to this function.
      */
     public operator fun <E : Element> get(key: Key<E>): E?
 
@@ -46,14 +44,12 @@ public interface CoroutineContext {
 
     /**
      * Returns a context containing elements from this context, but without an element with
-     * the specified [key]. Keys are compared _by reference_, that is to remove an element from the context
-     * the reference to its actual key object must be presented to this function.
+     * the specified [key].
      */
     public fun minusKey(key: Key<*>): CoroutineContext
 
     /**
      * Key for the elements of [CoroutineContext]. [E] is a type of element with this key.
-     * Keys in the context are compared _by reference_.
      */
     public interface Key<E : Element>
 
