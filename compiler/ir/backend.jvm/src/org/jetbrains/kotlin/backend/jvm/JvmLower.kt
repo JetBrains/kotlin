@@ -76,6 +76,7 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
 
             interfacePhase then
             interfaceDelegationPhase then
+            interfaceSuperCallsPhase then
             sharedVariablesPhase then
 
             makePatchParentsPhase(1) then

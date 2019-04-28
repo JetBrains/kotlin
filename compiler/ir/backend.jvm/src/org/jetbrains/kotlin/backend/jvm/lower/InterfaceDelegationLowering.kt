@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.function.UnaryOperator
 
 internal val interfaceDelegationPhase = makeIrFilePhase(
@@ -171,9 +174,39 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
 
     private fun IrSimpleFunction.hasInterfaceParent() =
         (parent as? IrClass)?.isInterface == true
-
-    private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
-        resolveFakeOverride()?.let { origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB } == true ||
-                origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-                hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
 }
+
+internal val interfaceSuperCallsPhase = makeIrFilePhase(
+    lowering = ::InterfaceSuperCallsLowering,
+    name = "InterfaceSuperCalls",
+    description = "Redirect super interface calls to DefaultImpls"
+)
+
+private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(this)
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.superQualifierSymbol?.owner?.isInterface != true) {
+            return super.visitCall(expression)
+        }
+        val superCallee = (expression.symbol.owner as IrSimpleFunction).resolveFakeOverride()!!
+        if (superCallee.isDefinitelyNotDefaultImplsMethod()) return super.visitCall(expression)
+
+        val redirectTarget = context.declarationFactory.getDefaultImplsFunction(superCallee)
+        val newCall = irCall(expression, redirectTarget, dispatchReceiverAsFirstArgument = true)
+
+        return super.visitCall(newCall)
+    }
+}
+
+
+private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
+    resolveFakeOverride()?.let { origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB } == true ||
+            origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+            hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME) ||
+            (name.asString() == "clone" &&
+                    parent.safeAs<IrClass>()?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
+                    valueParameters.isEmpty())
