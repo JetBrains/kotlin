@@ -161,3 +161,11 @@ fun <R> ResultWithDiagnostics<R>.resultOrNull(): R? = when (this) {
     is ResultWithDiagnostics.Success<R> -> value
     else -> null
 }
+
+/**
+ * Extracts the result value from the receiver wrapper or run non-returning lambda if receiver represents a Failure
+ */
+inline fun <R> ResultWithDiagnostics<R>.resultOr(body: (ResultWithDiagnostics.Failure) -> Nothing): R = when (this) {
+    is ResultWithDiagnostics.Success<R> -> value
+    else -> body(this as ResultWithDiagnostics.Failure)
+}
