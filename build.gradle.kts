@@ -20,6 +20,8 @@ if (isStandaloneBuild) { // only for standalone build:
     val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
     allprojects {
+        configurations.maybeCreate("embedded")
+
         repositories {
             if (cacheRedirectorEnabled) { maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com") }
             jcenter()
