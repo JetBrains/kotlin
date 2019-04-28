@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeHighlighting.*;
@@ -18,10 +18,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ExternalToolPassFactory implements TextEditorHighlightingPassFactory, MainHighlightingPassFactory {
+final class ExternalToolPassFactory implements TextEditorHighlightingPassFactory, MainHighlightingPassFactory {
   private final MergingUpdateQueue myExternalActivitiesQueue;
 
-  public ExternalToolPassFactory(Project project, TextEditorHighlightingPassRegistrar highlightingPassRegistrar) {
+  static final class MyRegistrar implements TextEditorHighlightingPassFactoryRegistrar {
+    @Override
+    public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
+      new ExternalToolPassFactory(project, registrar);
+    }
+  }
+
+  private ExternalToolPassFactory(@NotNull Project project, @NotNull TextEditorHighlightingPassRegistrar highlightingPassRegistrar) {
     // start after PostHighlightingPass completion since it could report errors that can prevent us to run
     highlightingPassRegistrar.registerTextEditorHighlightingPass(this, new int[]{Pass.UPDATE_ALL}, null, true, Pass.EXTERNAL_TOOLS);
 
