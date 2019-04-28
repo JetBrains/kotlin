@@ -208,11 +208,11 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         return TypeInfo.ByExplicitCandidateTypes(candidateTypes.toList())
     }
 
-    override fun createChangeModifierActions(target: JvmModifiersOwner, request: MemberRequest.Modifier): List<IntentionAction> {
+    override fun createChangeModifierActions(target: JvmModifiersOwner, request: ChangeModifierRequest): List<IntentionAction> {
         val kModifierOwner = target.toKtElement<KtModifierListOwner>() ?: return emptyList()
 
         val modifier = request.modifier
-        val shouldPresent = request.shouldPresent
+        val shouldPresent = request.shouldBePresent()
         //TODO: make similar to `createAddMethodActions`
         val (kToken, shouldPresentMapped) = when {
             modifier == JvmModifier.FINAL -> KtTokens.OPEN_KEYWORD to !shouldPresent
@@ -230,6 +230,9 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
             RemoveModifierFix(kModifierOwner, kToken, false)
         return listOfNotNull(action)
     }
+
+    override fun createChangeModifierActions(target: JvmModifiersOwner, request: MemberRequest.Modifier): List<IntentionAction> =
+        createChangeModifierActions(target, modifierRequest(request.modifier, request.shouldPresent))
 
     override fun createAddConstructorActions(targetClass: JvmClass, request: CreateConstructorRequest): List<IntentionAction> {
         val targetKtClass = targetClass.toKtClassOrFile() as? KtClass ?: return emptyList()
