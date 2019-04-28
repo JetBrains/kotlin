@@ -24,7 +24,6 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -40,7 +39,6 @@ import com.intellij.ui.treeStructure.SimpleTreeStructure;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.EditSourceOnEnterKeyHandler;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.UIUtil;
@@ -68,8 +66,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static com.intellij.build.BuildView.CONSOLE_VIEW_NAME;
+import static com.intellij.openapi.util.text.StringUtil.*;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 import static com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES;
+import static com.intellij.util.ObjectUtils.chooseNotNull;
 import static com.intellij.util.ui.UIUtil.getTreeSelectionForeground;
 
 /**
@@ -327,14 +327,18 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     parentNode.add(failureNode);
     failureNode.setNavigatable(failure.getNavigatable());
     failureNode.setResult(new FailureResultImpl(Collections.singletonList(failure)));
-    String text = ObjectUtils.chooseNotNull(failure.getDescription(), failure.getMessage());
+    String text = chooseNotNull(failure.getDescription(), failure.getMessage());
     if (text == null && failure.getError() != null) {
       text = failure.getError().getMessage();
     }
     if (text == null) {
       text = defaultFailureMessage;
     }
-    text = StringUtil.trimEnd(ObjectUtils.notNull(StringUtil.substringBefore(text, "\n"), text), '.');
+    text = stripHtml(text, true);
+    int sepIndex = indexOfAny(text, "\n.");
+    if (sepIndex > 0) {
+      text = text.substring(0, sepIndex);
+    }
     failureNode.setName(text);
     myConsoleViewHandler.addOutput(failureNode, failure);
     showErrorIfFirst(failureNode, failure.getNavigatable());
@@ -478,7 +482,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       }
 
       String fileNodeId = groupNodeId + filePath;
-      relativePath = StringUtil.isEmpty(parentsPath) ? filePath : FileUtil.getRelativePath(parentsPath, filePath, '/');
+      relativePath = isEmpty(parentsPath) ? filePath : FileUtil.getRelativePath(parentsPath, filePath, '/');
       parentNode = getOrCreateMessagesNode(messageEvent, fileNodeId, parentNode, relativePath,
                                            () -> {
                                              VirtualFile file = VfsUtil.findFileByIoFile(filePosition.getFile(), false);
