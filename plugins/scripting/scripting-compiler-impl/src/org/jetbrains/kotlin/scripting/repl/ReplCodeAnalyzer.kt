@@ -90,14 +90,23 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
 
         psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
 
-        return doAnalyze(psiFile, codeLine)
+        return doAnalyze(psiFile, emptyList(), codeLine)
     }
 
-    private fun doAnalyze(linePsi: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
+    fun analyzeReplLineWithImportedScripts(psiFile: KtFile, importedScripts: List<KtFile>, codeLine: ReplCodeLine): ReplLineAnalysisResult {
+        topDownAnalysisContext.scripts.clear()
+        trace.clearDiagnostics()
+
+        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
+
+        return doAnalyze(psiFile, importedScripts, codeLine)
+    }
+
+    private fun doAnalyze(linePsi: KtFile, importedScripts: List<KtFile>, codeLine: ReplCodeLine): ReplLineAnalysisResult {
         scriptDeclarationFactory.setDelegateFactory(FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(linePsi)))
         replState.submitLine(linePsi, codeLine)
 
-        val context = topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi))
+        val context = topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi) + importedScripts)
 
         val diagnostics = trace.bindingContext.diagnostics
         val hasErrors = diagnostics.any { it.severity == Severity.ERROR }
