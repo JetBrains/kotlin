@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.scratch;
 
 import com.intellij.icons.AllIcons;
@@ -180,10 +180,6 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
   }
 
   public static class TypeFactory extends FileTypeFactory {
-    /** @noinspection unused*/
-    public TypeFactory(ScratchFileService service) {
-    }
-
     @Override
     public void createFileTypes(@NotNull FileTypeConsumer consumer) {
       consumer.consume(ScratchFileType.INSTANCE);
