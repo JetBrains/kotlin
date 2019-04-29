@@ -71,10 +71,11 @@ class LookupStateManager {
 
     private fun List<LookupElement>.toLookupInfos(lookup: LookupImpl): List<LookupEntryInfo> {
         val relevanceObjects = lookup.getRelevanceObjects(this, false)
-        return this.map {
-            val id = getElementId(it)!!
-            val relevanceMap = relevanceObjects[it]?.associate { p -> FeatureUtils.normalizeFeatureName(p.first) to p.second?.toString() }
-            LookupEntryInfo(id, it.lookupString.length, relevanceMap)
+        return this.map { lookupElement ->
+            val relevanceMap = relevanceObjects[lookupElement]?.let { objects ->
+                RelevanceUtil.asRelevanceMap(objects).mapValues { entry -> entry.value.toString() }
+            }
+            LookupEntryInfo(getElementId(lookupElement)!!, lookupElement.lookupString.length, relevanceMap)
         }
     }
 }
