@@ -59,7 +59,6 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
     name = "IrLowering",
     description = "IR lowering",
     lower = expectDeclarationsRemovingPhase then
-            jvmCoercionToUnitPhase then
             fileClassPhase then
             kCallableNamePropertyPhase then
 
