@@ -832,7 +832,7 @@ public class TemplateState implements Disposable {
     int start = mySegments.getSegmentStart(segmentNumber);
     int end = mySegments.getSegmentEnd(segmentNumber);
 
-    if(!isQuick) {
+    if(expressionNode.requiresCommittedPSI()) {
       PsiDocumentManager.getInstance(myProject).commitDocument(myDocument);
     }
     PsiFile psiFile = getPsiFile();

@@ -39,6 +39,11 @@ public class EmptyExpression extends Expression {
   }
 
   @Override
+  public boolean requiresCommittedPSI() {
+    return false;
+  }
+
+  @Override
   public LookupElement[] calculateLookupItems(ExpressionContext context) {
     return null;
   }
