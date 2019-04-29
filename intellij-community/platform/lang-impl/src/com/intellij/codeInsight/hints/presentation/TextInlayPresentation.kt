@@ -18,7 +18,7 @@ class TextInlayPresentation(
   override var height: Int,
   var text: String,
   private var yBaseline: Int,
-  val fontProvider: (EditorFontType) -> Font // TODO this will always be different, but font should be considered in update!
+  val fontProvider: (EditorFontType) -> Font
 ) : BasePresentation() {
 
   override fun paint(g: Graphics2D, attributes: TextAttributes) {

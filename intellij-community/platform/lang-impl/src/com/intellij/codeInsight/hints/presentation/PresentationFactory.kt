@@ -30,7 +30,7 @@ import javax.swing.UIManager
 
 class PresentationFactory(val editor: EditorImpl) {
   // TODO document, that this is not the same font (type, size) as in editor!
-  fun text(text: String): InlayPresentation {
+  fun smallText(text: String): InlayPresentation {
     val fontData = getFontData(editor)
     val metrics = fontData.metrics
     val plainFont = metrics.font
@@ -68,13 +68,13 @@ class PresentationFactory(val editor: EditorImpl) {
   }
 
   fun singleText(text: String): InlayPresentation {
-    return roundWithBackground(text(text))
+    return roundWithBackground(smallText(text))
   }
 
   fun icon(icon: Icon): IconPresentation = IconPresentation(icon, editor.component)
 
   fun roundedText(text: String): InlayPresentation {
-    return rounding(8, 8, text(text))
+    return rounding(8, 8, smallText(text))
   }
 
   fun hyperlink(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {

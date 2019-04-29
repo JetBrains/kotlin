@@ -124,13 +124,13 @@ class HeavyPresentationTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.configureByText("__Dummy__.java", "class A {}")
     val factory = PresentationFactory(myFixture.editor as EditorImpl)
 
-    val old = unwrapFolding(factory.folding(factory.text("outerPlaceholder")) {
-      unwrapFolding(factory.folding(factory.text("innerPlaceholder")) {factory.text("text")})
+    val old = unwrapFolding(factory.folding(factory.smallText("outerPlaceholder")) {
+      unwrapFolding(factory.folding(factory.smallText("innerPlaceholder")) {factory.smallText("text")})
     })
 
-    val new = factory.folding(factory.text("outerPlaceholderNew")) {
-      factory.folding(factory.text("innerPlaceholderNew")) {
-        factory.text("newText")
+    val new = factory.folding(factory.smallText("outerPlaceholderNew")) {
+      factory.folding(factory.smallText("innerPlaceholderNew")) {
+        factory.smallText("newText")
       }
     }
     new.updateState(old)
