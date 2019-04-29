@@ -337,9 +337,9 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       text = defaultFailureMessage;
     }
     text = stripHtml(text, true);
-    int sepIndex = text.indexOf("\n");
+    int sepIndex = text.indexOf(". ");
     if (sepIndex < 0) {
-      sepIndex = text.indexOf(". ");
+      sepIndex = text.indexOf("\n");
     }
     if (sepIndex > 0) {
       text = text.substring(0, sepIndex);
