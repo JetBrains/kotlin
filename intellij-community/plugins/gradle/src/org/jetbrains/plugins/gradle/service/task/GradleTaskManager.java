@@ -26,7 +26,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.SystemProperties;
 import org.gradle.tooling.BuildLauncher;
@@ -174,7 +173,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
          resolverExtension != null;
          resolverExtension = resolverExtension.getNext()) {
       final String resolverClassName = resolverExtension.getClass().getName();
-      Consumer<String> initScriptConsumer = script -> {
+      resolverExtension.enhanceTaskProcessing(taskNames, jvmAgentSetup, script -> {
         if (StringUtil.isNotEmpty(script)) {
           addAllNotNull(
             initScripts,
@@ -182,9 +181,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
             script,
             "//");
         }
-      };
-      boolean isTestExecution = Boolean.TRUE == effectiveSettings.getUserData(GradleConstants.RUN_TASK_AS_TEST);
-      resolverExtension.enhanceTaskProcessing(taskNames, jvmAgentSetup, initScriptConsumer, isTestExecution);
+      });
     }
 
     if (!initScripts.isEmpty()) {

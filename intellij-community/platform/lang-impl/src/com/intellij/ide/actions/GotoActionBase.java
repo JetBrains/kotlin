@@ -323,30 +323,25 @@ public abstract class GotoActionBase extends AnAction {
     }.registerCustomShortcutSet(SearchTextField.SHOW_HISTORY_SHORTCUT, editor);
   }
 
-  protected void showInSearchEverywherePopup(String searchProviderID, AnActionEvent event, boolean useEditorSelection) {
-    showInSearchEverywherePopup(searchProviderID, event, useEditorSelection, false);
+  protected void showInSearchEverywherePopup(String searchProviderID, AnActionEvent evnt, boolean useEditorSelection) {
+    showInSearchEverywherePopup(searchProviderID, evnt, useEditorSelection, false);
   }
 
-  protected void showInSearchEverywherePopup(@NotNull String searchProviderID,
-                                             @NotNull AnActionEvent event,
-                                             boolean useEditorSelection,
-                                             boolean sendStatistics) {
-    Project project = event.getProject();
-    if (project == null) return;
-    SearchEverywhereManager seManager = SearchEverywhereManager.getInstance(project);
+  protected void showInSearchEverywherePopup(String searchProviderID, AnActionEvent evnt, boolean useEditorSelection, boolean sendStatistics) {
+    SearchEverywhereManager seManager = SearchEverywhereManager.getInstance(evnt.getProject());
     FeatureUsageTracker.getInstance().triggerFeatureUsed(IdeActions.ACTION_SEARCH_EVERYWHERE);
 
     if (seManager.isShown()) {
-      if (searchProviderID.equals(seManager.getSelectedContributorID())) {
-        seManager.toggleEverywhereFilter();
+      if (searchProviderID.equals(seManager.getShownContributorID())) {
+        seManager.setShowNonProjectItems(!seManager.isShowNonProjectItems());
       }
       else {
-        seManager.setSelectedContributor(searchProviderID);
+        seManager.setShownContributor(searchProviderID);
         if (sendStatistics) {
           FeatureUsageData data = SearchEverywhereUsageTriggerCollector
             .createData(searchProviderID)
-            .addInputEvent(event);
-          SearchEverywhereUsageTriggerCollector.trigger(project, SearchEverywhereUsageTriggerCollector.TAB_SWITCHED, data);
+            .addInputEvent(evnt);
+          SearchEverywhereUsageTriggerCollector.trigger(evnt.getProject(), SearchEverywhereUsageTriggerCollector.TAB_SWITCHED, data);
         }
       }
       return;
@@ -354,11 +349,11 @@ public abstract class GotoActionBase extends AnAction {
 
     if (sendStatistics) {
       FeatureUsageData data = SearchEverywhereUsageTriggerCollector.createData(searchProviderID);
-      SearchEverywhereUsageTriggerCollector.trigger(project, SearchEverywhereUsageTriggerCollector.DIALOG_OPEN, data);
+      SearchEverywhereUsageTriggerCollector.trigger(evnt.getProject(), SearchEverywhereUsageTriggerCollector.DIALOG_OPEN, data);
     }
     IdeEventQueue.getInstance().getPopupManager().closeAllPopups(false);
-    String searchText = StringUtil.nullize(getInitialText(useEditorSelection, event).first);
-    seManager.show(searchProviderID, searchText, event);
+    String searchText = StringUtil.nullize(getInitialText(useEditorSelection, evnt).first);
+    seManager.show(searchProviderID, searchText, evnt);
   }
 
   private static boolean historyEnabled() {

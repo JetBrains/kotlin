@@ -77,6 +77,7 @@ public class GradleRunTaskDialog extends DialogWrapper {
       commandLineComboBox.setLightWeightPopupEnabled(false);
 
       EditorComboBoxEditor editor = new StringComboboxEditor(myProject, PlainTextFileType.INSTANCE, commandLineComboBox);
+      //noinspection GtkPreferredJComboBoxRenderer
       commandLineComboBox.setRenderer(new EditorComboBoxRenderer(editor));
 
       commandLineComboBox.setEditable(true);

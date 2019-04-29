@@ -5,7 +5,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
-import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
 import com.intellij.util.io.DataExternalizer;
@@ -20,7 +19,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-class StubUpdatingForwardIndexAccessor extends AbstractForwardIndexAccessor<Integer, SerializedStubTree, IndexedStubs> {
+class StubUpdatingForwardIndexAccessor extends AbstractForwardIndexAccessor<Integer, SerializedStubTree, IndexedStubs , FileContent> {
   StubUpdatingForwardIndexAccessor() {super(new DataExternalizer<IndexedStubs>() {
     private volatile boolean myEnsuredStubElementTypesLoaded;
 
@@ -69,10 +68,10 @@ class StubUpdatingForwardIndexAccessor extends AbstractForwardIndexAccessor<Inte
     }
   });}
 
-  @Nullable
   @Override
-  public IndexedStubs convertToDataType(@NotNull InputData<Integer, SerializedStubTree> data) {
-    return getIndexedStubs(data.getKeyValues());
+  public IndexedStubs convertToDataType(@Nullable Map<Integer, SerializedStubTree> map,
+                                                                      @Nullable FileContent content) {
+    return getIndexedStubs(map);
   }
 
   @Override

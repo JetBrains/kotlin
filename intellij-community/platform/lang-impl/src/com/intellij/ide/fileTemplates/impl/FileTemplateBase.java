@@ -98,7 +98,7 @@ public abstract class FileTemplateBase implements FileTemplate {
 
   @Override
   @NotNull
-  public final String[] getUnsetAttributes(@NotNull Properties properties, @NotNull Project project) throws ParseException {
+  public final String[] getUnsetAttributes(@NotNull Properties properties, Project project) throws ParseException {
     return FileTemplateUtil.calculateAttributes(getText(), properties, false, project);
   }
 

@@ -26,10 +26,10 @@ public class SharedMapForwardIndex implements ForwardIndex {
 
   // only verification purpose
   @Nullable
-  private final AbstractForwardIndexAccessor<?, ?, ?> myAccessor;
+  private final AbstractForwardIndexAccessor<?, ?, ?, ?> myAccessor;
 
   public SharedMapForwardIndex(@NotNull IndexExtension<?, ?, ?> extension,
-                               @Nullable AbstractForwardIndexAccessor<?, ?, ?> accessor,
+                               @Nullable AbstractForwardIndexAccessor<?, ?, ?, ?> accessor,
                                @Nullable File verificationIndexStorageFile,
                                boolean verificationIndexHasChunks) throws IOException {
     myIndexId = (ID<?, ?>)extension.getName();

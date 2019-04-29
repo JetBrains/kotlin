@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.execution.ui.layout.impl;
 
@@ -24,7 +24,7 @@ public class RunnerLayoutSettings implements PersistentStateComponent<Element> {
   public RunnerLayout getLayout(@NotNull String id) {
     RunnerLayout layout = myRunnerId2Settings.get(id);
     if (layout == null) {
-      layout = new RunnerLayout();
+      layout = new RunnerLayout(id);
       myRunnerId2Settings.put(id, layout);
     }
 
@@ -50,7 +50,7 @@ public class RunnerLayoutSettings implements PersistentStateComponent<Element> {
     for (Object each : runners) {
       Element eachRunnerElement = (Element)each;
       final String eachID = eachRunnerElement.getAttributeValue("id");
-      final RunnerLayout eachLayout = new RunnerLayout();
+      final RunnerLayout eachLayout = new RunnerLayout(eachID);
       eachLayout.read(eachRunnerElement);
       myRunnerId2Settings.put(eachID, eachLayout);
     }

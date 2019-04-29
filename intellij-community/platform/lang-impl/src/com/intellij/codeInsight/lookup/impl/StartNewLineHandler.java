@@ -41,9 +41,7 @@ public class StartNewLineHandler extends EditorActionHandler {
       }
     };
     LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(editor);
-    if (lookup != null &&
-        lookup.getLookupStart() == lookup.getLookupOriginalStart() &&
-        lookup.getLookupStart() == lookup.getTopLevelEditor().getCaretModel().getOffset()) {
+    if (lookup != null && lookup.getLookupStart() == lookup.getLookupOriginalStart()) {
       lookup.performGuardedChange(callOriginal);
       lookup.moveToCaretPosition();
     } else {

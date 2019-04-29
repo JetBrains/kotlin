@@ -5,7 +5,6 @@ import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.RunAll
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
-import org.jetbrains.plugins.groovy.codeInspection.assignment.GroovyAssignabilityCheckInspection
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.util.ResolveTest
 import org.junit.Test
@@ -31,8 +30,6 @@ class GradleWithGroovyTest extends GradleHighlightingBaseTest implements Resolve
       'DomainObjectCollection#all call'()
     } append {
       'DomainObjectCollection#withType call'()
-    } append {
-      'DGM#collect'()
     } run()
   }
 
@@ -58,10 +55,5 @@ class GradleWithGroovyTest extends GradleHighlightingBaseTest implements Resolve
       assert method.containingClass.qualifiedName == GRADLE_API_DOMAIN_OBJECT_COLLECTION
       assert method.parameterList.parameters.last().type.equalsToText(GROOVY_LANG_CLOSURE)
     }
-  }
-
-  void 'DGM#collect'() {
-    fixture.enableInspections(GroovyAssignabilityCheckInspection)
-    testHighlighting '''["a", "b"].collect { it.toUpperCase() }'''
   }
 }

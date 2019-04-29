@@ -1,0 +1,19 @@
+{
+  "explicitProximity": 0.0,
+  "grouping": 0.0,
+  "mostUsed": -2.0,
+  "position": 0.0,
+  "prefix": -1052.0,
+  "prox_explicitlyImported": 0.0,
+  "prox_knownElement": 0.0,
+  "prox_phpNamespace": 0.0,
+  "prox_phpScope": 0.0,
+  "prox_sameModule": 0.0,
+  "prox_samePsiMember": 0.0,
+  "prox_scalaClassObjectWeigher": 0.0,
+  "prox_scalaExplicitlyImportedWeigher": 0.0,
+  "random": 0.5,
+  "sameWords": 0.0,
+  "scalaSbtDefinitionWeigher": 0.0,
+  "stats": 0.0
+}

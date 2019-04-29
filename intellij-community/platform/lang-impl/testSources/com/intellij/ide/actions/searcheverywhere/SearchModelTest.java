@@ -17,9 +17,9 @@ import static com.intellij.ide.actions.searcheverywhere.SearchEverywhereUI.Searc
 
 public class SearchModelTest extends LightPlatformCodeInsightFixtureTestCase {
 
-  private final static SearchEverywhereContributor<Object> STUB_CONTRIBUTOR_1 = createStubContributor(100);
-  private final static SearchEverywhereContributor<Object> STUB_CONTRIBUTOR_2 = createStubContributor(200);
-  private final static SearchEverywhereContributor<Object> STUB_CONTRIBUTOR_3 = createStubContributor(300);
+  private final static SearchEverywhereContributor<Object, ?> STUB_CONTRIBUTOR_1 = createStubContributor(100);
+  private final static SearchEverywhereContributor<Object, ?> STUB_CONTRIBUTOR_2 = createStubContributor(200);
+  private final static SearchEverywhereContributor<Object, ?> STUB_CONTRIBUTOR_3 = createStubContributor(300);
 
   public void testElementsAdding() {
     SearchListModel model = new SearchListModel();
@@ -108,9 +108,9 @@ public class SearchModelTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   @NotNull
-  private static SearchEverywhereContributor<Object> createStubContributor(int weight) {
+  private static SearchEverywhereContributor<Object, Object> createStubContributor(int weight) {
     String id = UUID.randomUUID().toString();
-    return new SearchEverywhereContributor<Object>() {
+    return new SearchEverywhereContributor<Object, Object>() {
       @NotNull
       @Override
       public String getSearchProviderId() {
@@ -121,6 +121,12 @@ public class SearchModelTest extends LightPlatformCodeInsightFixtureTestCase {
       @Override
       public String getGroupName() {
         return id;
+      }
+
+      @Nullable
+      @Override
+      public String includeNonProjectItemsText() {
+        return null;
       }
 
       @Override
@@ -135,6 +141,8 @@ public class SearchModelTest extends LightPlatformCodeInsightFixtureTestCase {
 
       @Override
       public void fetchElements(@NotNull String pattern,
+                                boolean everywhere,
+                                @Nullable SearchEverywhereContributorFilter<Object> filter,
                                 @NotNull ProgressIndicator progressIndicator,
                                 @NotNull Processor<? super Object> consumer) {
 

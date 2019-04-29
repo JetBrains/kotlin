@@ -25,10 +25,10 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
   private static final Key<Integer> CARET_SHIFT = Key.create("tab.out.caret.shift");
 
   @Override
-  public void registerEmptyScope(@NotNull Editor editor, int offset, int tabOutOffset) {
+  public void registerEmptyScope(@NotNull Editor editor, int offset, int caretShift) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    if (editor.isDisposed()) throw new IllegalArgumentException("Editor is already disposed");
-    if (tabOutOffset <= offset) throw new IllegalArgumentException("tabOutOffset should be larger than offset");
+    assert !editor.isDisposed() : "Disposed editor";
+    assert caretShift > 0 : "Caret shift must be positive";
 
     if (!CodeInsightSettings.getInstance().TAB_EXITS_BRACKETS_AND_QUOTES) return;
 
@@ -40,7 +40,7 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
     if (!(editor instanceof EditorImpl)) return;
 
     Tracker tracker = Tracker.forEditor((EditorImpl)editor, true);
-    tracker.registerScope(offset, tabOutOffset - offset);
+    tracker.registerScope(offset, caretShift);
   }
 
   @Override
@@ -50,8 +50,7 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
 
   @Override
   public int removeScopeEndingAt(@NotNull Editor editor, int offset) {
-    int caretShift = checkOrRemoveScopeEndingAt(editor, offset, true);
-    return caretShift > 0 ? offset + caretShift : -1;
+    return checkOrRemoveScopeEndingAt(editor, offset, true);
   }
 
   private static int checkOrRemoveScopeEndingAt(@NotNull Editor editor, int offset, boolean removeScope) {

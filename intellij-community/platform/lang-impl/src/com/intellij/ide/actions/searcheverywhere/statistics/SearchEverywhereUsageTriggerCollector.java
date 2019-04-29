@@ -45,7 +45,7 @@ public class SearchEverywhereUsageTriggerCollector {
   }
 
   @NotNull
-  public static String getReportableContributorID(@NotNull SearchEverywhereContributor<?> contributor) {
+  public static String getReportableContributorID(@NotNull SearchEverywhereContributor<?, ?> contributor) {
     Class<? extends SearchEverywhereContributor> clazz = contributor.getClass();
     PluginInfo pluginInfo = PluginInfoDetectorKt.getPluginInfo(clazz);
     return pluginInfo.isDevelopedByJetBrains() ? contributor.getSearchProviderId() : NOT_REPORTABLE_CONTRIBUTOR_ID;

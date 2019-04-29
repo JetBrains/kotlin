@@ -4,6 +4,7 @@ package org.jetbrains.plugins.gradle.statistics
 import com.intellij.internal.statistic.beans.UsageDescriptor
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
 import com.intellij.internal.statistic.utils.getBooleanUsage
+import com.intellij.internal.statistic.utils.getCountingUsage
 import com.intellij.internal.statistic.utils.getEnumUsage
 import com.intellij.openapi.externalSystem.statistics.ExternalSystemUsagesCollector
 import com.intellij.openapi.project.Project
@@ -25,6 +26,7 @@ class GradleSettingsCollector : ProjectUsagesCollector() {
 
     // to have a total users base line to calculate pertentages of settings
     usages.add(getBooleanUsage("hasGradleProject", true))
+    usages.add(getCountingUsage("numberOfGradleProject", projectsSettings.size, listOf(1, 2, 3, 4, 5, 10, 20, 30, 100, 1000)))
 
     // global settings
     usages.add(getBooleanUsage("offlineWork", gradleSettings.isOfflineWork))

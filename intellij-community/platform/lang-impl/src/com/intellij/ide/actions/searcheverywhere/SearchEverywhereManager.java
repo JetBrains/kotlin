@@ -18,16 +18,14 @@ public interface SearchEverywhereManager {
 
   boolean isShown();
 
-  void show(@NotNull String contributorID, @Nullable String searchText, @NotNull AnActionEvent initEvent); //todo change to contributor??? UX-1
+  void show(@NotNull String selectedContributorID, @Nullable String searchText, @NotNull AnActionEvent initEvent); //todo change to contributor??? UX-1
 
-  @NotNull
-  String getSelectedContributorID();
+  String getShownContributorID();
 
-  void setSelectedContributor(@NotNull String contributorID); //todo change to contributor??? UX-1
+  void setShownContributor(@NotNull String newSelectedContributorID); //todo change to contributor??? UX-1
 
-  void toggleEverywhereFilter();
+  boolean isShowNonProjectItems();
 
-  // todo remove
-  boolean isEverywhere();
+  void setShowNonProjectItems(boolean show);
 
 }

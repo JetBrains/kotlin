@@ -328,7 +328,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
         else {
           greeting = ExternalSystemBundle.message("run.text.starting.single.task", startDateTime, settingsDescription) + "\n";
         }
-        try (BuildEventDispatcher eventDispatcher = new ExternalSystemEventDispatcher(task.getId(), progressListener, false)) {
+        try (ExternalSystemEventDispatcher messageDispatcher = new ExternalSystemEventDispatcher(task, progressListener)) {
           ExternalSystemTaskNotificationListenerAdapter taskListener = new ExternalSystemTaskNotificationListenerAdapter() {
 
             private boolean myResetGreeting = true;
@@ -368,8 +368,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
               else {
                 processHandler.notifyTextAvailable(text, stdOut ? ProcessOutputTypes.STDOUT : ProcessOutputTypes.STDERR);
               }
-              eventDispatcher.setStdOut(stdOut);
-              eventDispatcher.append(text);
+              messageDispatcher.append(text);
             }
 
             @Override
@@ -377,8 +376,10 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
               FailureResult failureResult =
                 ExternalSystemUtil.createFailureResult(executionName + " failed", e, id.getProjectSystemId(), myProject);
               if (progressListener != null) {
-                progressListener.onEvent(new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "failed", failureResult));
+                progressListener.onEvent(new FinishBuildEventImpl(
+                  id, null, System.currentTimeMillis(), "failed", failureResult));
               }
+              ExternalSystemUtil.printFailure(e, failureResult, consoleView, processHandler);
               processHandler.notifyProcessTerminated(1);
             }
 
@@ -386,18 +387,18 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
             public void onSuccess(@NotNull ExternalSystemTaskId id) {
               if (progressListener != null) {
                 progressListener.onEvent(new FinishBuildEventImpl(
-                  id, null, System.currentTimeMillis(), "successful", new SuccessResultImpl()));
+                  id, null, System.currentTimeMillis(), "completed successfully", new SuccessResultImpl()));
               }
             }
 
             @Override
             public void onStatusChange(@NotNull ExternalSystemTaskNotificationEvent event) {
               if (event instanceof ExternalSystemBuildEvent) {
-                eventDispatcher.onEvent(((ExternalSystemBuildEvent)event).getBuildEvent());
+                messageDispatcher.onEvent(((ExternalSystemBuildEvent)event).getBuildEvent());
               }
               else if (event instanceof ExternalSystemTaskExecutionEvent) {
                 BuildEvent buildEvent = convert(((ExternalSystemTaskExecutionEvent)event));
-                eventDispatcher.onEvent(buildEvent);
+                messageDispatcher.onEvent(buildEvent);
               }
             }
 
@@ -414,7 +415,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
               processHandler.notifyTextAvailable(farewell + "\n", ProcessOutputTypes.SYSTEM);
               foldGreetingOrFarewell(consoleView, farewell, false);
               processHandler.notifyProcessTerminated(0);
-              eventDispatcher.close();
+              messageDispatcher.close();
             }
           };
           task.execute(ArrayUtil.prepend(taskListener, ExternalSystemTaskNotificationListener.EP_NAME.getExtensions()));

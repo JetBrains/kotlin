@@ -332,8 +332,8 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
 
       myViewMap.clear();
       listModel.clear();
+      myBuildsList.setVisible(false);
       runOnEdt.add(() -> {
-        myBuildsList.setVisible(false);
         myThreeComponentsSplitter.setFirstComponent(null);
         myThreeComponentsSplitter.setLastComponent(null);
       });
@@ -348,6 +348,10 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
         listModel.removeElement(info);
       });
     }
+  }
+
+  public boolean hasRunningBuilds() {
+    return !myProgressWatcher.myBuilds.isEmpty();
   }
 
   private class ProgressWatcher implements Runnable {

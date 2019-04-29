@@ -24,6 +24,7 @@ import com.intellij.util.io.exists
 import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.text.nullize
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.nio.file.Paths
 
 internal const val PROJECT_FILE = "\$PROJECT_FILE$"
@@ -114,7 +115,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       storageManager.addMacro(StoragePathMacros.WORKSPACE_FILE, workspacePath)
 
       if (isRefreshVfs) {
-        withEdtContext {
+        withContext(storeEdtCoroutineContext) {
           VfsUtil.markDirtyAndRefresh(false, true, false, fs.refreshAndFindFileByPath(filePath), fs.refreshAndFindFileByPath(workspacePath))
         }
       }
@@ -138,7 +139,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       }
 
       if (isRefreshVfs) {
-        withEdtContext {
+        withContext(storeEdtCoroutineContext) {
           VfsUtil.markDirtyAndRefresh(false, true, true, fs.refreshAndFindFileByPath(configDir))
         }
       }

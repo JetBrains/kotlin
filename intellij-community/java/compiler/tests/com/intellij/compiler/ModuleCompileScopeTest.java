@@ -46,7 +46,7 @@ public class ModuleCompileScopeTest extends BaseCompilerTestCase {
 
   public void testForceCompileUpToDateFileAndDoNotCompileResources() {
     VirtualFile a = createFile("src/A.java", "class A{}");
-    createFile("src/res.properties", "aaa=bbb");
+    VirtualFile res = createFile("src/res.properties", "aaa=bbb");
     Module module = addModule("a", a.getParent());
     make(module);
     assertOutput(module, fs().file("A.class").file("res.properties"));

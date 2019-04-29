@@ -110,7 +110,11 @@ class GradleArtifactsTest extends GradleHighlightingBaseTest implements ResolveT
 
   void 'configuration delegate method setter'() {
     doTest('artifacts { compile("artifactNotation") { <caret>name("hi") } }') {
-      setterMethodTest('name', 'setName', GRADLE_API_CONFIGURABLE_PUBLISH_ARTIFACT)
+      def result = assertOneElement(elementUnderCaret(GrMethodCall).multiResolve(false))
+      def method = assertInstanceOf(result.element, PsiMethod)
+      methodTest(method, 'name', GRADLE_API_CONFIGURABLE_PUBLISH_ARTIFACT)
+      def original = assertInstanceOf(method.navigationElement, PsiMethod)
+      methodTest(original, 'setName', GRADLE_API_CONFIGURABLE_PUBLISH_ARTIFACT)
     }
   }
 }

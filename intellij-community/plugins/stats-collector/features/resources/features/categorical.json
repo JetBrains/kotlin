@@ -1,0 +1,24 @@
+{
+  "expectedType": [
+    "normal",
+    "OTHER",
+    "UNDEFINED"
+  ],
+  "kind": [
+    "classNameOrGlobalStatic",
+    "normal",
+    "suitableClass",
+    "OTHER",
+    "UNDEFINED"
+  ],
+  "ml_rank": [
+    "NONE",
+    "OTHER",
+    "UNDEFINED"
+  ],
+  "recursion": [
+    "normal",
+    "OTHER",
+    "UNDEFINED"
+  ]
+}

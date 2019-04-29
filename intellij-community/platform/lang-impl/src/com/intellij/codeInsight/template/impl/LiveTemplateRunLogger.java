@@ -2,15 +2,11 @@
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
-import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
-import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomUtilsWhiteListRule;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 class LiveTemplateRunLogger {
   private static final String GROUP = "live.templates";
@@ -40,28 +36,4 @@ class LiveTemplateRunLogger {
   private static boolean isCreatedProgrammatically(String key, String groupName) {
     return StringUtil.isEmpty(key) || StringUtil.isEmpty(groupName);
   }
-
-  public static class LiveTemplateValidator extends CustomUtilsWhiteListRule {
-    @Override
-    public boolean acceptRuleId(@Nullable String ruleId) {
-      return "live_template".equals(ruleId) || "live_template_group".equals(ruleId) ;
-    }
-
-    @Override
-    protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
-      Object group = context.eventData.get("group");
-      if (group == null) return ValidationResultType.REJECTED;
-      if ("user.defined.template".equals(context.eventId) && "user.defined.group".equals(group)) return ValidationResultType.ACCEPTED;
-      if ("custom.plugin.template".equals(context.eventId) && "custom.plugin.group".equals(group)) return ValidationResultType.ACCEPTED;
-      try {
-        TemplateImpl template = TemplateSettings.getInstance().getTemplate(context.eventId, group.toString());
-        if (template != null) {
-          PluginInfo info = TemplateSettings.getInstance().findPluginForPredefinedTemplate(template);
-          if (info != null && info.isSafeToReport()) return ValidationResultType.ACCEPTED;
-        }
-      } catch (Exception ignored) { }
-      return ValidationResultType.REJECTED;
-    }
-  }
-
 }

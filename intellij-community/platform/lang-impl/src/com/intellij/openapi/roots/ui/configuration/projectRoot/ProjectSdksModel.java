@@ -237,7 +237,6 @@ public class ProjectSdksModel implements SdkModel {
                                @Nullable Condition<? super SdkTypeId> filter) {
     final SdkType[] types = SdkType.getAllTypes();
     for (final SdkType type : types) {
-      if (!type.allowCreationByUser()) continue;
       if (filter != null && !filter.value(type)) continue;
       final AnAction addAction = new DumbAwareAction(type.getPresentableName(), null, type.getIconForAddAction()) {
         @Override

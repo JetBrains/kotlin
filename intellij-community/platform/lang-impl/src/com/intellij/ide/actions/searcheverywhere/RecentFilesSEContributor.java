@@ -4,6 +4,7 @@ package com.intellij.ide.actions.searcheverywhere;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
@@ -42,6 +43,11 @@ public class RecentFilesSEContributor extends FileSearchEverywhereContributor {
   }
 
   @Override
+  public String includeNonProjectItemsText() {
+    return null;
+  }
+
+  @Override
   public int getSortWeight() {
     return 70;
   }
@@ -53,6 +59,8 @@ public class RecentFilesSEContributor extends FileSearchEverywhereContributor {
 
   @Override
   public void fetchElements(@NotNull String pattern,
+                            boolean everywhere,
+                            @Nullable SearchEverywhereContributorFilter<FileType> filter,
                             @NotNull ProgressIndicator progressIndicator,
                             @NotNull Processor<? super Object> consumer) {
     if (myProject == null) {

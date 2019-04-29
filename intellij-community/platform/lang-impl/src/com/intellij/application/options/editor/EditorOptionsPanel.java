@@ -15,9 +15,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.actions.CaretStopBoundary;
-import com.intellij.openapi.editor.actions.CaretStopOptions;
-import com.intellij.openapi.editor.actions.CaretStopOptionsTransposed;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
@@ -105,9 +102,6 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   private JBTextField  mySoftWrapFileMasks;
   private JLabel       mySoftWrapFileMasksHint;
 
-  private JComboBox<EditorCaretStopPolicyItem.WordBoundary> myWordBoundaryCaretStopComboBox;
-  private JComboBox<EditorCaretStopPolicyItem.LineBoundary> myLineBoundaryCaretStopComboBox;
-
   private static final String ACTIVE_COLOR_SCHEME = ApplicationBundle.message("combobox.richcopy.color.scheme.active");
   private static final UINumericRange RECENT_FILES_RANGE = new UINumericRange(50, 1, 500);
   private static final UINumericRange RECENT_LOCATIONS_RANGE = new UINumericRange(10, 1, 100);
@@ -142,29 +136,9 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myRichCopyColorSchemeComboBox.setRenderer(SimpleListCellRenderer.create("", value ->
       RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? ACTIVE_COLOR_SCHEME : value));
 
-    initCaretStopComboBox(myWordBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.WordBoundary.values());
-    initCaretStopComboBox(myLineBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.LineBoundary.values());
-
     initQuickDocProcessing();
     initSoftWrapsSettingsProcessing();
     initVcsSettingsProcessing();
-  }
-
-  private static <E extends EditorCaretStopPolicyItem> void initCaretStopComboBox(@NotNull JComboBox<E> comboBox, @NotNull E[] values) {
-    final DefaultComboBoxModel<E> model = new EditorCaretStopPolicyItem.SeparatorAwareComboBoxModel<>();
-
-    boolean lastWasOsDefault = false;
-    for (E item : values) {
-      final boolean isOsDefault = item.getOsDefault() != EditorCaretStopPolicyItem.OsDefault.NONE;
-      if (lastWasOsDefault && !isOsDefault) model.addElement(null);
-      lastWasOsDefault = isOsDefault;
-
-      final int insertionIndex = item.getOsDefault().isCurrentOsDefault() ? 0 : model.getSize();
-      model.insertElementAt(item, insertionIndex);
-    }
-
-    comboBox.setModel(model);
-    comboBox.setRenderer(new EditorCaretStopPolicyItem.SeparatorAwareListItemRenderer());
   }
 
   @Override
@@ -176,12 +150,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
     // Display
 
-    myCbSmoothScrolling.setSelected(editorSettings.isSmoothScrolling());
 
-    // Caret Movement
-    final CaretStopOptions caretStopOptions = editorSettings.getCaretStopOptions();
-    myWordBoundaryCaretStopComboBox.setSelectedItem(EditorCaretStopPolicyItem.WordBoundary.itemForPolicy(caretStopOptions));
-    myLineBoundaryCaretStopComboBox.setSelectedItem(EditorCaretStopPolicyItem.LineBoundary.itemForPolicy(caretStopOptions));
+    myCbSmoothScrolling.setSelected(editorSettings.isSmoothScrolling());
 
     // Brace highlighting
 
@@ -273,8 +243,6 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
     editorSettings.setSmoothScrolling(myCbSmoothScrolling.isSelected());
 
-    // Caret Movement
-    editorSettings.setCaretStopOptions(getCaretStopOptions());
 
     // Brace Highlighting
 
@@ -448,9 +416,6 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     // Display
     boolean isModified = isModified(myCbSmoothScrolling, editorSettings.isSmoothScrolling());
 
-    // Caret Movement
-    isModified |= !getCaretStopOptions().equals(editorSettings.getCaretStopOptions());
-
     // Brace highlighting
     isModified |= isModified(myCbHighlightBraces, codeInsightSettings.HIGHLIGHT_BRACES);
     isModified |= isModified(myCbHighlightScope, codeInsightSettings.HIGHLIGHT_SCOPE);
@@ -505,21 +470,6 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     isModified |= !Comparing.equal(settings.getSchemeName(), myRichCopyColorSchemeComboBox.getSelectedItem());
 
     return isModified;
-  }
-
-  @NotNull
-  protected CaretStopOptions getCaretStopOptions() {
-    return new CaretStopOptionsTransposed(
-      getCaretStopBoundary(myWordBoundaryCaretStopComboBox, CaretStopOptionsTransposed.DEFAULT.getWordBoundary()),
-      getCaretStopBoundary(myLineBoundaryCaretStopComboBox, CaretStopOptionsTransposed.DEFAULT.getLineBoundary())).toCaretStopOptions();
-  }
-
-  @NotNull
-  protected static CaretStopBoundary getCaretStopBoundary(@NotNull JComboBox<? extends EditorCaretStopPolicyItem> comboBox,
-                                                          @NotNull CaretStopBoundary defaultValue) {
-    final Object selectedItem = comboBox.getSelectedItem();
-    if (!(selectedItem instanceof EditorCaretStopPolicyItem)) return defaultValue;
-    return ((EditorCaretStopPolicyItem)selectedItem).getCaretStopBoundary();
   }
 
   @NotNull

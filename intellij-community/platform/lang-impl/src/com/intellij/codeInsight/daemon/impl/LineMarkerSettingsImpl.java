@@ -25,8 +25,7 @@ public class LineMarkerSettingsImpl extends LineMarkerSettings implements Persis
   @Override
   public boolean isEnabled(@NotNull GutterIconDescriptor descriptor) {
     Boolean aBoolean = providers.get(descriptor.getId());
-    if (aBoolean == null) return descriptor.isEnabledByDefault();
-    return aBoolean;
+    return aBoolean == null || aBoolean;
   }
 
   @Override

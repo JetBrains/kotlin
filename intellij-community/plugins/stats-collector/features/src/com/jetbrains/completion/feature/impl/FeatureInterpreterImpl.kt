@@ -39,7 +39,7 @@ class FeatureInterpreterImpl : FeatureInterpreter {
         return DoubleFeatureImpl(name, index, undefinedIndex, defaultValue)
     }
 
-    override fun categorical(name: String, categories: List<String>, order: Map<String, Int>): CategoricalFeature {
+    override fun categorical(name: String, categories: Set<String>, order: Map<String, Int>): CategoricalFeature {
         val undefinedIndex = extractUndefinedIndex(name, order)
         val otherCategoryIndex = extractIndex(FeatureUtils.getOtherCategoryFeatureName(name), order)
         val categoryToIndex = categories.associate { it to extractIndex(combine(name, it), order) }

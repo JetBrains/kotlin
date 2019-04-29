@@ -17,7 +17,6 @@ package com.intellij.ide.util.gotoByName;
 
 import com.intellij.navigation.ChooseByNameContributorEx;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
@@ -37,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultFileNavigationContributor implements ChooseByNameContributorEx, DumbAware {
-  private static final Logger LOG = Logger.getInstance(DefaultFileNavigationContributor.class);
+
   @Override
   @NotNull
   public String[] getNames(Project project, boolean includeNonProjectItems) {
@@ -47,8 +46,8 @@ public class DefaultFileNavigationContributor implements ChooseByNameContributor
       names.add(s);
       return true;
     }, FindSymbolParameters.searchScopeFor(project, includeNonProjectItems), filter);
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("All names retrieved2:" + names.size());
+    if (IdFilter.LOG.isDebugEnabled()) {
+      IdFilter.LOG.debug("All names retrieved2:" + names.size());
     }
     return ArrayUtil.toStringArray(names);
   }
@@ -67,8 +66,8 @@ public class DefaultFileNavigationContributor implements ChooseByNameContributor
   public void processNames(@NotNull final Processor<String> processor, @NotNull GlobalSearchScope scope, IdFilter filter) {
     long started = System.currentTimeMillis();
     FilenameIndex.processAllFileNames(processor, scope, filter);
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("All names retrieved:" + (System.currentTimeMillis() - started));
+    if (IdFilter.LOG.isDebugEnabled()) {
+      IdFilter.LOG.debug("All names retrieved:" + (System.currentTimeMillis() - started));
     }
   }
 

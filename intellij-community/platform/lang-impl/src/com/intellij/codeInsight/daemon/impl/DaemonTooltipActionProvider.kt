@@ -15,8 +15,6 @@ import com.intellij.openapi.editor.ex.TooltipAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.xml.util.XmlStringUtil
-import org.jetbrains.annotations.NotNull
-import java.awt.event.InputEvent
 import java.util.*
 
 class DaemonTooltipActionProvider : TooltipActionProvider {
@@ -33,8 +31,8 @@ class DaemonTooltipAction(private val myFixText: String, private val myActualOff
     return myFixText
   }
 
-  override fun execute(editor: Editor, inputEvent: InputEvent?) {
-    ActionsCollector.getInstance().record("tooltip.actions.execute", inputEvent, this::class.java)
+  override fun execute(editor: Editor) {
+    ActionsCollector.getInstance().record("tooltip.actions.execute", this::class.java)
 
     val project = editor.project ?: return
     val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return

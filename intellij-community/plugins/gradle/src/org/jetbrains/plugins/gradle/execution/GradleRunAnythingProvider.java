@@ -22,7 +22,6 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.indexing.FindSymbolParameters;
 import groovyjarjarcommonscli.Option;
 import icons.GradleIcons;
 import org.jetbrains.annotations.NotNull;
@@ -180,7 +179,7 @@ public class GradleRunAnythingProvider extends RunAnythingProviderBase<String> {
     String callChain = toComplete.isEmpty() || !toComplete.contains(".") ? "*" : substringBeforeLast(toComplete, ".");
     Project project = fetchProject(dataContext);
     ChooseByNameModelEx model = new GotoClassModel2(project);
-    model.processNames(it -> processor.process(callChain + "." + it), FindSymbolParameters.simple(project, false));
+    model.processNames(it -> processor.process(callChain + "." + it), false);
   }
 
   private static List<TaskOption> getTaskOptions(@NotNull DataContext dataContext,

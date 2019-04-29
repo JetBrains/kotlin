@@ -53,14 +53,12 @@ private class DefaultProjectStorage(file: Path, fileSpec: String, pathMacroManag
 }
 
 // cannot be `internal`, used in Upsource
-class DefaultProjectStoreImpl(override val project: Project) : ChildlessComponentStore() {
+class DefaultProjectStoreImpl(override val project: Project, private val pathMacroManager: PathMacroManager) : ChildlessComponentStore() {
   // see note about default state in project store
   override val loadPolicy: StateLoadPolicy
     get() = if (ApplicationManager.getApplication().isUnitTestMode) StateLoadPolicy.NOT_LOAD else StateLoadPolicy.LOAD
 
-  private val storage by lazy {
-    DefaultProjectStorage(Paths.get(ApplicationManager.getApplication().stateStore.storageManager.expandMacros(FILE_SPEC)), FILE_SPEC, PathMacroManager.getInstance(project))
-  }
+  private val storage by lazy { DefaultProjectStorage(Paths.get(ApplicationManager.getApplication().stateStore.storageManager.expandMacros(FILE_SPEC)), FILE_SPEC, pathMacroManager) }
 
   override val storageManager = object : StateStorageManager {
     override val componentManager: ComponentManager?
@@ -87,7 +85,7 @@ class DefaultProjectStoreImpl(override val project: Project) : ChildlessComponen
   // don't want to optimize and use already loaded data - it will add unnecessary complexity and implementation-lock (currently we store loaded archived state in memory, but later implementation can be changed)
   fun getStateCopy() = storage.loadLocalData()
 
-  override fun getPathMacroManagerForDefaults() = PathMacroManager.getInstance(project)
+  override fun getPathMacroManagerForDefaults() = pathMacroManager
 
   override fun <T> getStorageSpecs(component: PersistentStateComponent<T>, stateSpec: State, operation: StateStorageOperation) = listOf(PROJECT_FILE_STORAGE_ANNOTATION)
 

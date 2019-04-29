@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 public class OutputWrapper extends OutputStream {
 
@@ -43,7 +42,7 @@ public class OutputWrapper extends OutputStream {
         if (myBuffer == null) {
           myBuffer = new StringBuilder();
         }
-        myBuffer.append(new String(b, start, i - start + 1, StandardCharsets.UTF_8));
+        myBuffer.append(new String(b, start, i - start + 1));
         doFlush();
         start = i + 1;
       }
@@ -53,7 +52,7 @@ public class OutputWrapper extends OutputStream {
       if (myBuffer == null) {
         myBuffer = new StringBuilder();
       }
-      myBuffer.append(new String(b, start, maxOffset - start, StandardCharsets.UTF_8));
+      myBuffer.append(new String(b, start, maxOffset - start));
     }
   }
 

@@ -7,7 +7,7 @@ import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_PROJECT
 import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.GRADLE_API_TASK_CONTAINER
-import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.TypesUtil.createType
+import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.TypesUtil
 import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor
 import org.jetbrains.plugins.groovy.lang.resolve.processReceiverType
 
@@ -18,19 +18,8 @@ class GradleProjectMembersContributor : NonCodeMembersContributor() {
   override fun getParentClassName(): String? = GRADLE_API_PROJECT
 
   override fun processDynamicElements(qualifierType: PsiType, processor: PsiScopeProcessor, place: PsiElement, state: ResolveState) {
-    val taskContainer = createType(GRADLE_API_TASK_CONTAINER, place)
+    val taskContainer = TypesUtil.createType(GRADLE_API_TASK_CONTAINER, place)
     val delegate = if (qualifierType is GradleProjectAwareType) qualifierType.setType(taskContainer) else taskContainer
-    if (!delegate.processReceiverType(processor, state.put(DELEGATED_TYPE, true), place)) {
-      return
-    }
-
-    if (qualifierType !is GradleProjectAwareType) return
-    val file = place.containingFile ?: return
-    val extensionsData = GradleExtensionsContributor.getExtensionsFor(file) ?: return
-    for (convention in extensionsData.conventions) {
-      if (!createType(convention.typeFqn, file).processReceiverType(processor, state, place)) {
-        return
-      }
-    }
+    delegate.processReceiverType(processor, state.put(DELEGATED_TYPE, true), place)
   }
 }

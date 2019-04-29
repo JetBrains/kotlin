@@ -4,18 +4,15 @@ package org.jetbrains.plugins.gradle.dsl
 import com.intellij.testFramework.RunAll
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
-import org.jetbrains.plugins.gradle.service.resolve.GradleGroovyProperty
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.typedef.members.GrMethod
 import org.jetbrains.plugins.groovy.lang.resolve.api.GroovyProperty
-import org.jetbrains.plugins.groovy.util.ExpressionTest
+import org.jetbrains.plugins.groovy.util.ResolveTest
 import org.junit.Test
 
-import static com.intellij.psi.CommonClassNames.JAVA_LANG_INTEGER
-
 @CompileStatic
-class GradleExtensionsTest extends GradleHighlightingBaseTest implements ExpressionTest {
+class GradleExtensionsTest extends GradleHighlightingBaseTest implements ResolveTest {
 
   protected List<String> getParentCalls() {
     // todo resolve extensions also for non-root places
@@ -24,21 +21,13 @@ class GradleExtensionsTest extends GradleHighlightingBaseTest implements Express
 
   @Test
   void extensionsTest() {
-    importProject('''\
-ext {
-    prop = 1
-}
-''')
+    importProject("")
     new RunAll().append {
       "project level extension property"()
     } append {
       "project level extension call type"()
     } append {
       "project level extension closure delegate type"()
-    } append {
-      'property reference'()
-    } append {
-      'property reference via project'()
     } run()
   }
 
@@ -61,18 +50,6 @@ ext {
   void "project level extension closure delegate type"() {
     doTest("ext {<caret>}") {
       closureDelegateTest(getExtraPropertiesExtensionFqn(), 1)
-    }
-  }
-
-  void 'property reference'() {
-    doTest("<caret>prop") {
-      referenceExpressionTest(GradleGroovyProperty, JAVA_LANG_INTEGER)
-    }
-  }
-
-  void 'property reference via project'() {
-    doTest("project.<caret>prop") {
-      referenceExpressionTest(GradleGroovyProperty, JAVA_LANG_INTEGER)
     }
   }
 }

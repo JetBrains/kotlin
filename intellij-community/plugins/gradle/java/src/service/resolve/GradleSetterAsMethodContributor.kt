@@ -8,6 +8,7 @@ import com.intellij.psi.scope.NameHint
 import com.intellij.psi.scope.ProcessorWithHints
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.util.text.nullize
+import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames.*
 import org.jetbrains.plugins.groovy.lang.psi.impl.synthetic.GrMethodWrapper
 import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor
 import org.jetbrains.plugins.groovy.lang.resolve.getName
@@ -15,15 +16,24 @@ import org.jetbrains.plugins.groovy.lang.resolve.shouldProcessMethods
 
 class GradleSetterAsMethodContributor : NonCodeMembersContributor() {
 
+  companion object {
+    val knownDecoratedClasses = setOf(
+      GRADLE_API_PROJECT,
+      GRADLE_API_CONFIGURABLE_PUBLISH_ARTIFACT,
+      GRADLE_API_ARTIFACTS_MODULE_DEPENDENCY
+    )
+  }
+
+  override fun getClassNames(): Collection<String> = knownDecoratedClasses
+
   override fun processDynamicElements(qualifierType: PsiType,
                                       aClass: PsiClass?,
                                       processor: PsiScopeProcessor,
                                       place: PsiElement,
                                       state: ResolveState) {
-    if (aClass == null) return
-    if (!processor.shouldProcessMethods()) return
-    if (!place.containingFile.isGradleScript()) return
-
+    if (aClass == null || !processor.shouldProcessMethods()) {
+      return
+    }
     val setterName = processor.getName(state)?.let { "set${it.capitalize()}" }
     aClass.processDeclarations(SetterAsMethodProcessor(setterName, processor), state, null, place)
   }

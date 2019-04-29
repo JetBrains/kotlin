@@ -23,11 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ChooseByNameContributorEx extends ChooseByNameContributor {
-
-  void processNames(@NotNull Processor<String> processor,
-                    @NotNull GlobalSearchScope scope,
-                    @Nullable IdFilter filter);
-
+  void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter);
   void processElementsWithName(@NotNull String name,
                                @NotNull Processor<NavigationItem> processor,
                                @NotNull FindSymbolParameters parameters);

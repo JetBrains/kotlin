@@ -1,7 +1,21 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.intellij.execution.ui.layout.impl;
 
-import com.intellij.configurationStore.XmlSerializer;
 import com.intellij.execution.ui.layout.LayoutAttractionPolicy;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.execution.ui.layout.Tab;
@@ -11,6 +25,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.content.Content;
 import com.intellij.util.containers.hash.LinkedHashMap;
+import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
+import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +38,7 @@ import java.util.*;
 public class RunnerLayout  {
   public static final Key<Integer> DEFAULT_INDEX = Key.create("RunnerLayoutDefaultIndex");
   public static final Key<Integer> DROP_INDEX = Key.create("RunnerLayoutDropIndex");
+  private final String myID;
 
   protected Map<String, ViewImpl> myViews = new LinkedHashMap<>();
   private final Map<String, ViewImpl.Default> myDefaultViews = new HashMap<>();
@@ -32,6 +49,11 @@ public class RunnerLayout  {
   protected General myGeneral = new General();
   private final Map<String, Pair<String, LayoutAttractionPolicy>> myDefaultFocus = new HashMap<>();
   private Set<String> myLightWeightIds = null;
+
+
+  public RunnerLayout(@NotNull String ID) {
+    myID = ID;
+  }
 
   @Nullable
   public String getDefaultDisplayName(final int defaultIndex) {
@@ -110,19 +132,17 @@ public class RunnerLayout  {
     List<Element> tabs = parentNode.getChildren(StringUtil.getShortName(TabImpl.class.getName()));
     for (Element eachTabElement : tabs) {
       TabImpl eachTab = XmlSerializer.deserialize(eachTabElement, TabImpl.class);
-      XmlSerializer.deserializeInto(eachTabElement, getOrCreateTab(eachTab.getIndex()));
+      XmlSerializer.deserializeInto(getOrCreateTab(eachTab.getIndex()), eachTabElement);
     }
 
-    final List<Element> views = parentNode.getChildren(StringUtil.getShortName(ViewImpl.class.getName()));
-    for (Element content : views) {
-      final ViewImpl view = new ViewImpl();
-      XmlSerializer.deserializeInto(content, view);
-      view.assignTab(getOrCreateTab(view.getTabIndex()));
-      myViews.put(view.getID(), view);
+    final List views = parentNode.getChildren(StringUtil.getShortName(ViewImpl.class.getName()));
+    for (Object content : views) {
+      final ViewImpl state = new ViewImpl(this, (Element)content);
+      myViews.put(state.getID(), state);
     }
 
-    Element general = parentNode.getChild(StringUtil.getShortName(myGeneral.getClass().getName(), '$'));
-    XmlSerializer.deserializeInto(general == null ? new Element("state") : general, myGeneral);
+    XmlSerializer.deserializeInto(myGeneral, parentNode.getChild(StringUtil.getShortName(myGeneral.getClass().getName(), '$')));
+
     return parentNode;
   }
 
@@ -132,24 +152,21 @@ public class RunnerLayout  {
       if (myLightWeightIds != null && myLightWeightIds.contains(eachState.getID())) {
         continue;
       }
-
-      Element element = XmlSerializer.serialize(eachState);
-      parentNode.addContent(element == null ? new Element("ViewImpl") : element);
+      parentNode.addContent(XmlSerializer.serialize(eachState));
     }
 
+    SkipDefaultValuesSerializationFilters filter = new SkipDefaultValuesSerializationFilters();
     for (TabImpl eachTab : myTabs) {
       if (isUsed(eachTab)) {
-        Element element = XmlSerializer.serialize(eachTab);
-        parentNode.addContent(element == null ? new Element("TabImpl") : element);
+        parentNode.addContent(XmlSerializer.serialize(eachTab, filter));
       }
     }
 
-    Element generalContent = XmlSerializer.serialize(myGeneral);
-    if (generalContent != null) {
-      parentNode.addContent(generalContent);
-    }
+    parentNode.addContent(XmlSerializer.serialize(myGeneral, filter));
+
     return parentNode;
   }
+
 
   public void resetToDefault() {
     myViews.clear();

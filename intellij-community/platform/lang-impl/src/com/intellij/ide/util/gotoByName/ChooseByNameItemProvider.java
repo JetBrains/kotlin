@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * Consider implementing {@link ChooseByNameInScopeItemProvider}
- */
 public interface ChooseByNameItemProvider {
   @NotNull
   List<String> filterNames(@NotNull ChooseByNameBase base, @NotNull String[] names, @NotNull String pattern);

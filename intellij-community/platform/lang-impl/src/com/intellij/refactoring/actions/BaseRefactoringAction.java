@@ -47,14 +47,6 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
   protected boolean isAvailableOnElementInEditorAndFile(@NotNull PsiElement element,
                                                         @NotNull Editor editor,
                                                         @NotNull PsiFile file,
-                                                        @NotNull DataContext context,
-                                                        @NotNull String place) {
-    return isAvailableOnElementInEditorAndFile(element, editor, file, context);
-  }
-
-  protected boolean isAvailableOnElementInEditorAndFile(@NotNull PsiElement element,
-                                                        @NotNull Editor editor,
-                                                        @NotNull PsiFile file,
                                                         @NotNull DataContext context) {
     return true;
   }
@@ -181,7 +173,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
 
       boolean isVisible = ContainerUtil.find(languages, myLanguageCondition) != null;
       if (isVisible) {
-        boolean isEnabled = file != null && isAvailableOnElementInEditorAndFile(element, editor, file, dataContext, e.getPlace());
+        boolean isEnabled = file != null && isAvailableOnElementInEditorAndFile(element, editor, file, dataContext);
         if (!isEnabled) {
           disableAction(e);
         }

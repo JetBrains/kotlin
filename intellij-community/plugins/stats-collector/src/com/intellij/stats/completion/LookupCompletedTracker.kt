@@ -6,8 +6,10 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupEvent
 import com.intellij.codeInsight.lookup.LookupListener
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.FeatureManagerImpl
 import com.intellij.stats.personalization.UserFactorDescriptions
 import com.intellij.stats.personalization.UserFactorStorage
+import com.jetbrains.completion.feature.impl.FeatureUtils
 
 /**
  * @author Vitaliy.Bibaev
@@ -17,7 +19,7 @@ class LookupCompletedTracker : LookupListener {
         val lookup = event.lookup as? LookupImpl ?: return
         val element = lookup.currentItem
         if (element != null && isSelectedByTyping(lookup, element)) {
-            processTypedSelect(lookup)
+            processTypedSelect(lookup, element)
         } else {
             UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_FINISH_TYPE) { updater ->
                 updater.fireLookupCancelled()
@@ -34,8 +36,39 @@ class LookupCompletedTracker : LookupListener {
     private fun isSelectedByTyping(lookup: LookupImpl, element: LookupElement): Boolean =
             element.lookupString == lookup.itemPattern(element)
 
+    private fun processElementSelected(lookup: LookupImpl, element: LookupElement) {
+        val relevanceObjects =
+                lookup.getRelevanceObjects(listOf(element), false)
+        val relevanceMap = relevanceObjects[element]?.map { it.first to it.second } ?: return
+        val featuresValues = FeatureUtils.prepareRevelanceMap(relevanceMap, lookup.selectedIndex,
+                lookup.prefixLength(), element.lookupString.length)
+        val project = lookup.project
+        val featureManager = FeatureManagerImpl.getInstance()
+        featureManager.binaryFactors.filter { !featureManager.isUserFeature(it.name) }.forEach { feature ->
+            UserFactorStorage.applyOnBoth(project, UserFactorDescriptions.binaryFeatureDescriptor(feature))
+            { updater ->
+                updater.update(featuresValues[feature.name])
+            }
+        }
+
+        featureManager.doubleFactors.filter { !featureManager.isUserFeature(it.name) }.forEach { feature ->
+            UserFactorStorage.applyOnBoth(project, UserFactorDescriptions.doubleFeatureDescriptor(feature))
+            { updater ->
+                updater.update(featuresValues[feature.name])
+            }
+        }
+
+        featureManager.categoricalFactors.filter { !featureManager.isUserFeature(it.name) }.forEach { feature ->
+            UserFactorStorage.applyOnBoth(project, UserFactorDescriptions.categoricalFeatureDescriptor(feature))
+            { updater ->
+                updater.update(featuresValues[feature.name])
+            }
+        }
+    }
 
     private fun processExplicitSelect(lookup: LookupImpl, element: LookupElement) {
+        processElementSelected(lookup, element)
+
         UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_FINISH_TYPE) { updater ->
             updater.fireExplicitCompletionPerformed()
         }
@@ -61,7 +94,9 @@ class LookupCompletedTracker : LookupListener {
         }
     }
 
-    private fun processTypedSelect(lookup: LookupImpl) {
+    private fun processTypedSelect(lookup: LookupImpl, element: LookupElement) {
+        processElementSelected(lookup, element)
+
         UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_FINISH_TYPE) { updater ->
             updater.fireTypedSelectPerformed()
         }

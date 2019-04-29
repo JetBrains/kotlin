@@ -32,7 +32,6 @@ import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.xmlb.XmlSerializerUtil
 import gnu.trove.THashMap
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jdom.Element
@@ -136,12 +135,8 @@ abstract class ComponentStoreImpl : IComponentStore {
 
   internal abstract suspend fun doSave(result: SaveResult, forceSavingAllSettings: Boolean)
 
-  internal suspend inline fun <T> withEdtContext(crossinline task: suspend () -> T): T {
-    return withEdtContext(storageManager.componentManager, task)
-  }
-
   internal suspend fun createSaveSessionManagerAndSaveComponents(saveResult: SaveResult, forceSavingAllSettings: Boolean): SaveSessionProducerManager {
-    return withEdtContext {
+    return withContext(createStoreEdtCoroutineContext(storageManager.componentManager?.let { InTransactionRule(it) })) {
       val errors = SmartList<Throwable>()
       val manager = doCreateSaveSessionManagerAndCommitComponents(forceSavingAllSettings, errors)
       saveResult.addErrors(errors)
@@ -604,15 +599,4 @@ internal suspend fun ComponentStoreImpl.childlessSaveImplementation(result: Save
   createSaveSessionManagerAndSaveComponents(result, forceSavingAllSettings)
     .save()
     .appendTo(result)
-}
-
-internal suspend inline fun <T> withEdtContext(disposable: ComponentManager?, crossinline task: suspend () -> T): T {
-  return withContext(storeEdtCoroutineContext) {
-    @Suppress("NullableBooleanElvis")
-    if (disposable?.isDisposed ?: false) {
-      throw CancellationException()
-    }
-
-    task()
-  }
 }

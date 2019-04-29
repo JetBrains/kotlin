@@ -86,16 +86,17 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   @NotNull
   @Override
-  public Promise<Void> select(@NotNull Object service, @NotNull Class<?> contributorClass, boolean activate, boolean focus) {
+  public Promise<Void> selectNode(Object node, boolean activate, boolean focus) {
     AsyncPromise<Void> result = new AsyncPromise<>();
     AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
       Runnable runnable = () -> {
         ServiceView view = myServiceView;
         if (view == null) {
-          result.setError("Content not initialized");
+          result.setError("");
         }
         else {
-          view.select(service, contributorClass).processed(result);
+          view.selectItem(node);
+          result.setResult(null);
         }
       };
       ToolWindow window = activate ? ToolWindowManager.getInstance(myProject).getToolWindow(ToolWindowId.SERVICES) : null;
@@ -243,19 +244,18 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     private boolean select(@NotNull FileEditor editor) {
       for (ServiceViewContributor extension : EP_NAME.getExtensions()) {
         if (!(extension instanceof ServiceViewFileEditorContributor)) continue;
-        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)extension, extension.getClass())) return true;
+        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)extension)) return true;
       }
       return false;
     }
 
-    private boolean selectContributorNode(@NotNull FileEditor editor, @NotNull ServiceViewFileEditorContributor extension,
-                                          @NotNull Class<?> contributorClass) {
+    private boolean selectContributorNode(@NotNull FileEditor editor, @NotNull ServiceViewFileEditorContributor extension) {
       Object service = extension.findService(myProject, editor);
       if (service == null) return false;
       if (service instanceof ServiceViewFileEditorContributor) {
-        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)service, contributorClass)) return true;
+        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)service)) return true;
       }
-      ServiceViewManager.getInstance(myProject).select(service, contributorClass, true, true);
+      ServiceViewManager.getInstance(myProject).selectNode(service, true, true);
       return true;
     }
 

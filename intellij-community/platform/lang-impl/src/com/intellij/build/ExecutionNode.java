@@ -322,8 +322,7 @@ public class ExecutionNode extends CachingSimpleNode {
       if (hint == null) {
         hint = "";
       }
-      SimpleNode parent = getParent();
-      hint += parent == null || parent.getParent() == null ? (isRunning() ? "  " : " with ") : " ";
+      hint += (getParent() == null ? isRunning() ? "  " : "  with " : " (");
       if (errors > 0) {
         hint += (errors + " " + StringUtil.pluralize("error", errors));
         if (warnings > 0) {
@@ -332,6 +331,9 @@ public class ExecutionNode extends CachingSimpleNode {
       }
       if (warnings > 0) {
         hint += (warnings + " " + StringUtil.pluralize("warning", warnings));
+      }
+      if (getParent() != null) {
+        hint += ")";
       }
     }
     return hint;

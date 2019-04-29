@@ -1,7 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl.focusMode;
 
-import com.intellij.codeHighlighting.*;
+import com.intellij.codeHighlighting.EditorBoundHighlightingPass;
+import com.intellij.codeHighlighting.TextEditorHighlightingPass;
+import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory;
+import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar;
 import com.intellij.lang.LanguageExtension;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -11,7 +14,6 @@ import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.editor.impl.FocusModeModel;
 import com.intellij.openapi.editor.impl.FocusRegion;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Segment;
@@ -28,15 +30,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public final class FocusModePassFactory implements TextEditorHighlightingPassFactory, TextEditorHighlightingPassFactoryRegistrar {
+public class FocusModePassFactory implements TextEditorHighlightingPassFactory {
   private static final Key<Set<FocusRegion>> FOCUS_REGIONS_FROM_PASS = Key.create("editor.focus.mode.segmentsFromPass");
   private static final LanguageExtension<FocusModeProvider> EP_NAME = new LanguageExtension<>("com.intellij.focusModeProvider");
   private static final long MAX_ALLOWED_TIME = 100;
   private static final Logger LOG = Logger.getInstance(FocusModePassFactory.class);
 
-  @Override
-  public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
-    registrar.registerTextEditorHighlightingPass(this, null, null, false, -1);
+  public FocusModePassFactory(@NotNull TextEditorHighlightingPassRegistrar highlightingPassRegistrar) {
+    highlightingPassRegistrar.registerTextEditorHighlightingPass(this, null, null, false, -1);
   }
 
   @Override

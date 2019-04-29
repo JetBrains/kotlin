@@ -575,12 +575,14 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       SearchEverywhereManager seManager = SearchEverywhereManager.getInstance(e.getProject());
       String searchProviderID = SearchEverywhereManagerImpl.ALL_CONTRIBUTORS_GROUP_ID;
       if (seManager.isShown()) {
-        if (searchProviderID.equals(seManager.getSelectedContributorID())) {
-          seManager.toggleEverywhereFilter();
+        if (searchProviderID.equals(seManager.getShownContributorID())) {
+          seManager.setShowNonProjectItems(!seManager.isShowNonProjectItems());
         }
         else {
-          seManager.setSelectedContributor(searchProviderID);
-          FeatureUsageData data = SearchEverywhereUsageTriggerCollector.createData(searchProviderID).addInputEvent(e);
+          seManager.setShownContributor(searchProviderID);
+          FeatureUsageData data = SearchEverywhereUsageTriggerCollector
+            .createData(searchProviderID)
+            .addInputEvent(e);
           SearchEverywhereUsageTriggerCollector.trigger(e.getProject(), SearchEverywhereUsageTriggerCollector.TAB_SWITCHED, data);
         }
         return;

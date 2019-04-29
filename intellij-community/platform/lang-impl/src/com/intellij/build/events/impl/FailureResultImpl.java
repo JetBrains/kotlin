@@ -20,6 +20,7 @@ import com.intellij.build.events.FailureResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,19 +30,13 @@ public class FailureResultImpl implements FailureResult {
 
   private final List<Failure> myFailures;
 
-  public FailureResultImpl() {
-    this(null, null);
-  }
-
   public FailureResultImpl(@Nullable Throwable error) {
     this(null, error);
   }
 
   public FailureResultImpl(@Nullable String message, @Nullable Throwable error) {
     myFailures = new ArrayList<>();
-    if (message != null || error != null) {
-      myFailures.add(new FailureImpl(message, error));
-    }
+    myFailures.add(new FailureImpl(message, error));
   }
 
   public FailureResultImpl(List<Failure> failures) {

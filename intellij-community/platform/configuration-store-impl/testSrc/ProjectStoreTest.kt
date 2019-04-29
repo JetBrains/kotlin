@@ -18,7 +18,6 @@ import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.PathUtil
 import com.intellij.util.io.readText
 import com.intellij.util.io.write
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -229,8 +228,6 @@ internal class ProjectStoreTest {
         launch {
           project.stateStore.save()
         }
-
-        delay(50)
       }
     }
   }

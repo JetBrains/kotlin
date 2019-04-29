@@ -1,13 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.testFramework.assertions
 
 import com.intellij.openapi.util.text.StringUtilRt
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.SystemProperties
-import com.intellij.util.io.exists
 import com.intellij.util.io.readText
 import com.intellij.util.io.size
-import com.intellij.util.io.write
 import junit.framework.ComparisonFailure
 import org.assertj.core.api.AbstractStringAssert
 import org.assertj.core.api.PathAssert
@@ -79,12 +75,6 @@ class StringAssertEx(actual: String?) : AbstractStringAssert<StringAssertEx>(act
   fun toMatchSnapshot(snapshotFile: Path) {
     isNotNull
 
-    if (!snapshotFile.exists()) {
-      System.out.println("Write a new snapshot ${snapshotFile.fileName}")
-      snapshotFile.write(actual)
-      return
-    }
-
-    compareFileContent(actual, snapshotFile, !UsefulTestCase.IS_UNDER_TEAMCITY && SystemProperties.getBooleanProperty("test.update.snapshots", false))
+    compareFileContent(actual, snapshotFile)
   }
 }

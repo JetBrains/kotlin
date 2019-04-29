@@ -7,6 +7,7 @@ import com.intellij.build.events.MessageEvent;
 import com.intellij.build.events.impl.FileMessageEventImpl;
 import com.intellij.build.events.impl.MessageEventImpl;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -25,7 +26,6 @@ public class JavacOutputParser implements BuildOutputParser {
 
   private static final char COLON = ':';
   private static final String WARNING_PREFIX = "warning:"; // default value
-  private static final String ERROR_PREFIX = "error:";
 
   @Override
   public boolean parse(@NotNull String line, @NotNull BuildOutputInstantReader reader, @NotNull Consumer<? super BuildEvent> messageConsumer) {
@@ -83,9 +83,6 @@ public class JavacOutputParser implements BuildOutputParser {
           if (text.startsWith(WARNING_PREFIX)) {
             text = text.substring(WARNING_PREFIX.length()).trim();
             kind = MessageEvent.Kind.WARNING;
-          } else if (text.startsWith(ERROR_PREFIX)) {
-            text = text.substring(ERROR_PREFIX.length()).trim();
-            kind = MessageEvent.Kind.ERROR;
           }
 
           // Only slurp up line pointer (^) information if this is really javac
@@ -94,27 +91,26 @@ public class JavacOutputParser implements BuildOutputParser {
             return false;
           }
 
-          BuildOutputCollector outputCollector = new BuildOutputCollector(reader);
           List<String> messageList = ContainerUtil.newArrayList();
           messageList.add(text);
           int column; // 0-based.
           String prevLine = null;
           do {
-            String nextLine = outputCollector.readLine();
+            String nextLine = reader.readLine();
             if (nextLine == null) {
               return false;
             }
             if (nextLine.trim().equals("^")) {
               column = nextLine.indexOf('^');
-              String messageEnd = outputCollector.readLine();
+              String messageEnd = reader.readLine();
 
               while (isMessageEnd(messageEnd)) {
                 messageList.add(messageEnd.trim());
-                messageEnd = outputCollector.readLine();
+                messageEnd = reader.readLine();
               }
 
               if (messageEnd != null) {
-                outputCollector.pushBack();
+                reader.pushBack();
               }
               break;
             }
@@ -126,10 +122,10 @@ public class JavacOutputParser implements BuildOutputParser {
           while (true);
 
           if (column >= 0) {
-            String message = StringUtil.join(convertMessages(messageList), "\n");
-            String detailedMessage = line + "\n" + outputCollector.getOutput();
-            messageConsumer.accept(new FileMessageEventImpl(reader.getParentEventId(), kind, COMPILER_MESSAGES_GROUP,
-                                                            message, detailedMessage, new FilePosition(file, lineNumber - 1, column)));
+            messageList = convertMessages(messageList);
+            String msgText = StringUtil.join(messageList, SystemProperties.getLineSeparator());
+            messageConsumer.accept(new FileMessageEventImpl(reader.getParentEventId(), kind, COMPILER_MESSAGES_GROUP, msgText, msgText,
+                                                            new FilePosition(file, lineNumber - 1, column)));
             return true;
           }
         }

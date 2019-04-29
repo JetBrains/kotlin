@@ -2,17 +2,14 @@
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.externalSystem.JavaProjectData;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.Order;
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.java.LanguageLevel;
-import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.gradle.tooling.model.idea.IdeaModule;
@@ -28,9 +25,6 @@ import org.jetbrains.plugins.gradle.service.notification.GotoSourceNotificationC
 import org.jetbrains.plugins.gradle.service.notification.OpenGradleSettingsCallback;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -38,7 +32,6 @@ import java.util.List;
  */
 @Order(ExternalSystemConstants.UNORDERED)
 public class JavaGradleProjectResolver extends AbstractProjectResolverExtension {
-  private final static Logger LOG = Logger.getInstance(JavaGradleProjectResolver.class);
   @Override
   public void populateProjectExtraModels(@NotNull IdeaProject gradleProject, @NotNull DataNode<ProjectData> ideProject) {
     // import java project data
@@ -138,23 +131,6 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
       }
 
       return null;
-    }
-  }
-
-  @Override
-  public void enhanceTaskProcessing(@NotNull List<String> taskNames,
-                                    @Nullable String jvmAgentSetup,
-                                    @NotNull Consumer<String> initScriptConsumer,
-                                    boolean testExecutionExpected) {
-
-    if (testExecutionExpected) {
-      try (InputStream stream = getClass().getResourceAsStream("/org/jetbrains/plugins/gradle/java/addTestListener.groovy")) {
-        String addTestListenerScript = StreamUtil.readText(stream, StandardCharsets.UTF_8);
-        initScriptConsumer.consume(addTestListenerScript);
-      }
-      catch (IOException e) {
-        LOG.info(e);
-      }
     }
   }
 }
