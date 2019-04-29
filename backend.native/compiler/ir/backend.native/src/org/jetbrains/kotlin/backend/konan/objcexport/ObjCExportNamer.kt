@@ -389,7 +389,7 @@ internal class ObjCExportNamerImpl(
         methodSwiftNames.forceAssign(toString, "description()")
 
         methodSelectors.forceAssign(equals, "isEqual:")
-        methodSwiftNames.forceAssign(equals, "isEqual(:)")
+        methodSwiftNames.forceAssign(equals, "isEqual(_:)")
     }
 
     private fun FunctionDescriptor.getMangledName(forSwift: Boolean): String {
