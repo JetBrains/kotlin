@@ -51,6 +51,7 @@ class JvmSymbols(
 
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
+    private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
 
     private fun createClass(fqName: FqName, classKind: ClassKind = ClassKind.CLASS, block: (IrClass) -> Unit): IrClass =
         buildClass {
@@ -60,6 +61,7 @@ class JvmSymbols(
             parent = when (fqName.parent().asString()) {
                 "kotlin.jvm.internal" -> kotlinJvmInternalPackage
                 "kotlin.jvm.functions" -> kotlinJvmFunctionsPackage
+                "java.lang" -> javaLangPackage
                 else -> error("Other packages are not supported yet: $fqName")
             }
             createImplicitParameterDeclarationWithWrappedDescriptor()
@@ -93,8 +95,7 @@ class JvmSymbols(
     override val getContinuation: IrSimpleFunctionSymbol
         get() = TODO("not implemented")
 
-    val javaLangClass: IrClassSymbol =
-        context.getTopLevelClass(FqName("java.lang.Class"))
+    val javaLangClass: IrClassSymbol = createClass(FqName("java.lang.Class")) {}.symbol
 
     val lambdaClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Lambda")) { klass ->
         klass.addConstructor().apply {
