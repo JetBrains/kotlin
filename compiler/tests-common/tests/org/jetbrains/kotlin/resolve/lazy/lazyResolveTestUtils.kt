@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 fun createResolveSessionForFiles(
         project: Project,
@@ -69,6 +69,6 @@ private class TestModule(val dependsOnBuiltIns: Boolean) : ModuleInfo {
     override val platform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = JvmPlatformCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = JvmPlatformAnalyzerServices
 }

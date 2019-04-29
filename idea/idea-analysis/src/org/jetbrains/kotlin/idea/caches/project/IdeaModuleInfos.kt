@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.findCompilerServices
+import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.getStableName
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.compat.toOldPlatform
@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -163,8 +163,8 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     )
     fun getPlatform(): org.jetbrains.kotlin.resolve.TargetPlatform = platform.toOldPlatform()
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = platform.findCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = platform.findAnalyzerServices
 
     override fun createModificationTracker(): ModificationTracker =
         KotlinModuleModificationTracker(module)
@@ -308,8 +308,8 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
     override val platform: TargetPlatform
         get() = getLibraryPlatform(project, library)
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = platform.findCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = platform.findAnalyzerServices
 
     override val sourcesModuleInfo: SourceForBinaryModuleInfo
         get() = LibrarySourceInfo(project, library, this)
@@ -344,8 +344,8 @@ data class LibrarySourceInfo(val project: Project, val library: Library, overrid
     override val platform: TargetPlatform
         get() = binariesModuleInfo.platform
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = binariesModuleInfo.compilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = binariesModuleInfo.analyzerServices
 
     override fun toString() = "LibrarySourceInfo(libraryName=${library.name})"
 }
@@ -364,8 +364,8 @@ data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
     override val platform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform // TODO(dsavvinov): provide proper target version
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = JvmPlatformCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = JvmPlatformAnalyzerServices
 }
 
 object NotUnderContentRootModuleInfo : IdeaModuleInfo {
@@ -382,8 +382,8 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
     override val platform: TargetPlatform
         get() = DefaultIdeTargetPlatformKindProvider.defaultPlatform
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = platform.findCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = platform.findAnalyzerServices
 }
 
 private class LibraryWithoutSourceScope(project: Project, private val library: Library) :
@@ -473,8 +473,8 @@ data class PlatformModuleInfo(
     override val moduleOrigin: ModuleOrigin
         get() = platformModule.moduleOrigin
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = platform.findCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = platform.findAnalyzerServices
 
     override fun dependencies() = platformModule.dependencies()
 

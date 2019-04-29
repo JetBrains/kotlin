@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.findCompilerServices
+import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -197,7 +197,7 @@ private object KotlinResolveDataProvider {
                 trace,
                 targetPlatform,
                 bodyResolveCache,
-                targetPlatform.findCompilerServices,
+                targetPlatform.findAnalyzerServices,
                 analyzableElement.languageVersionSettings
             ).get<LazyTopDownAnalyzer>()
 

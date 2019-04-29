@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.ArrayList
 
-abstract class PlatformDependentCompilerServices {
+abstract class PlatformDependentAnalyzerServices {
     private data class DefaultImportsKey(val includeKotlinComparisons: Boolean, val includeLowPriorityImports: Boolean)
 
     private val defaultImports = LockBasedStorageManager("TargetPlatform").let { storageManager ->

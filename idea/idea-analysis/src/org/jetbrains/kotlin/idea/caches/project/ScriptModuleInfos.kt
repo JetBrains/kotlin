@@ -14,11 +14,10 @@ import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDe
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
-
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 data class ScriptModuleInfo(
     val project: Project,
@@ -54,8 +53,8 @@ data class ScriptModuleInfo(
     override val platform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform // TODO(dsavvinov): choose proper target version
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = JvmPlatformCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = JvmPlatformAnalyzerServices
 }
 
 sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, BinaryModuleInfo {
@@ -80,8 +79,8 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
     override val platform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform // TODO(dsavvinov): choose proper TargetVersion
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = JvmPlatformCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = JvmPlatformAnalyzerServices
 
     class ForFile(
         project: Project,
@@ -135,8 +134,8 @@ sealed class ScriptDependenciesSourceInfo(val project: Project) : IdeaModuleInfo
     override val platform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform // TODO(dsavvinov): choose proper TargetVersion
 
-    override val compilerServices: PlatformDependentCompilerServices
-        get() = JvmPlatformCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = JvmPlatformAnalyzerServices
 
     class ForProject(project: Project) : ScriptDependenciesSourceInfo(project)
 }

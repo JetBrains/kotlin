@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -64,8 +64,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         override val platform: TargetPlatform
             get() = JvmPlatforms.defaultJvmPlatform
 
-        override val compilerServices: PlatformDependentCompilerServices
-            get() = JvmPlatformCompilerServices
+        override val analyzerServices: PlatformDependentAnalyzerServices
+            get() = JvmPlatformAnalyzerServices
     }
 
     fun testJavaEntitiesBelongToCorrectModule() {

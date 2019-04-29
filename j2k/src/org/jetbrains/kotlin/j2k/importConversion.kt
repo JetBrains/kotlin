@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 fun Converter.convertImportList(importList: PsiImportList): ImportList {
     val imports = importList.allImportStatements
@@ -160,7 +160,7 @@ private fun convertNonStaticImport(fqName: FqName, isOnDemand: Boolean, target: 
 private fun renderImportName(fqName: FqName, isOnDemand: Boolean)
         = if (isOnDemand) fqName.render() + ".*" else fqName.render()
 
-private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatformCompilerServices.getDefaultImports(
+private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatformAnalyzerServices.getDefaultImports(
     // TODO: use the correct LanguageVersionSettings instance here
     LanguageVersionSettingsImpl.DEFAULT,
     includeLowPriorityImports = true

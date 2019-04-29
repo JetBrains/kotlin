@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.js.JsPlatform
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -48,7 +46,7 @@ object JsResolverForModuleFactory : ResolverForModuleFactory() {
             declarationProviderFactory,
             BindingTraceContext(/* allowSliceRewrite = */ true),
             moduleDescriptor.platform!!,
-            JsPlatformCompilerServices,
+            JsPlatformAnalyzerServices,
             targetEnvironment,
             languageVersionSettings
         )
