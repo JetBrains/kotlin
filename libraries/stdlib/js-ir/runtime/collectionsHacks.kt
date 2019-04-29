@@ -38,7 +38,7 @@ internal fun <T> T.contentEqualsInternal(other: T): Boolean {
     if (!isArrayish(b) || a.length != b.length) return false
 
     for (i in 0 until a.length) {
-        if (a[i] != b[i]) {
+        if (!equals(a[i], b[i])) {
             return false
         }
     }
