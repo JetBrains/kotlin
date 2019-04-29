@@ -3817,7 +3817,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type rightType = expressionType(right);
         TypeAndNullability left754Type = calcTypeForIeee754ArithmeticIfNeeded(left, getLeftOperandType(primitiveNumericComparisonInfo));
         TypeAndNullability right754Type = calcTypeForIeee754ArithmeticIfNeeded(right, getRightOperandType(primitiveNumericComparisonInfo));
-        Callable callable = resolveToCallable((FunctionDescriptor) resolvedCall.getResultingDescriptor(), false, resolvedCall);
         boolean isSame754ArithmeticTypes = left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type);
         boolean properIeee754Comparisons = shouldUseProperIeee754Comparisons();
 
@@ -3827,7 +3826,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             rightValue = gen(right);
         }
         else if (!properIeee754Comparisons &&
-                 callable instanceof IntrinsicCallable && ((isPrimitive(leftType) && isPrimitive(rightType)) || isSame754ArithmeticTypes)) {
+                 state.getIntrinsics().getIntrinsic((FunctionDescriptor) resolvedCall.getResultingDescriptor()) instanceof CompareTo &&
+                 ((isPrimitive(leftType) && isPrimitive(rightType)) || isSame754ArithmeticTypes)) {
             type = isSame754ArithmeticTypes ? left754Type.type : comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
