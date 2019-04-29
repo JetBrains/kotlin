@@ -410,7 +410,7 @@ public actual fun CharArray.contentHashCode(): Int {
  */
 @SinceKotlin("1.1")
 public actual fun <T> Array<out T>.contentToString(): String {
-    return arrayToString(this as Array<*>)
+    return joinToString(", ", "[", "]")
 }
 
 /**
@@ -420,7 +420,7 @@ public actual fun <T> Array<out T>.contentToString(): String {
  */
 @SinceKotlin("1.1")
 public actual fun ByteArray.contentToString(): String {
-    return arrayToString(this as Array<*>)
+    return joinToString(", ", "[", "]")
 }
 
 /**
@@ -430,7 +430,7 @@ public actual fun ByteArray.contentToString(): String {
  */
 @SinceKotlin("1.1")
 public actual fun ShortArray.contentToString(): String {
-    return arrayToString(this as Array<*>)
+    return joinToString(", ", "[", "]")
 }
 
 /**
@@ -440,7 +440,7 @@ public actual fun ShortArray.contentToString(): String {
  */
 @SinceKotlin("1.1")
 public actual fun IntArray.contentToString(): String {
-    return arrayToString(this as Array<*>)
+    return joinToString(", ", "[", "]")
 }
 
 /**
@@ -450,7 +450,7 @@ public actual fun IntArray.contentToString(): String {
  */
 @SinceKotlin("1.1")
 public actual fun LongArray.contentToString(): String {
-    return arrayToString(this as Array<*>)
+    return joinToString(", ", "[", "]")
 }
 
 /**
@@ -460,7 +460,7 @@ public actual fun LongArray.contentToString(): String {
  */
 @SinceKotlin("1.1")
 public actual fun FloatArray.contentToString(): String {
-    return arrayToString(this as Array<*>)
+    return joinToString(", ", "[", "]")
 }
 
 /**
@@ -470,7 +470,7 @@ public actual fun FloatArray.contentToString(): String {
  */
 @SinceKotlin("1.1")
 public actual fun DoubleArray.contentToString(): String {
-    return arrayToString(this as Array<*>)
+    return joinToString(", ", "[", "]")
 }
 
 /**
@@ -480,7 +480,7 @@ public actual fun DoubleArray.contentToString(): String {
  */
 @SinceKotlin("1.1")
 public actual fun BooleanArray.contentToString(): String {
-    return arrayToString(this as Array<*>)
+    return joinToString(", ", "[", "]")
 }
 
 /**
@@ -490,7 +490,7 @@ public actual fun BooleanArray.contentToString(): String {
  */
 @SinceKotlin("1.1")
 public actual fun CharArray.contentToString(): String {
-    return arrayToString(this as Array<*>)
+    return joinToString(", ", "[", "]")
 }
 
 /**

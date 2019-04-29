@@ -206,7 +206,7 @@ object ArrayOps : TemplateGroupBase() {
                 body { "definedExternally" }
             }
             on(Backend.IR) {
-                body { "return arrayToString(this as Array<*>)" }
+                body { """return joinToString(", ", "[", "]")""" }
             }
         }
         on(Platform.Native) {
