@@ -46,7 +46,11 @@ public class BuildTextConsoleView extends ConsoleViewImpl implements BuildConsol
 
   @Override
   public void onEvent(@NotNull BuildEvent event) {
-    if (event instanceof FileMessageEvent) {
+    String description = event.getDescription();
+    if (description != null) {
+      append(description, true);
+    }
+    else if (event instanceof FileMessageEvent) {
       FilePosition position = ((FileMessageEvent)event).getFilePosition();
       StringBuilder fileLink = new StringBuilder();
       fileLink.append(position.getFile().getName());

@@ -182,3 +182,32 @@ open class BuildOutputInstantReaderImpl(private val parentEventId: Any,
     fun getMaxLinesBufferSize() = 50
   }
 }
+
+@ApiStatus.Experimental
+class BuildOutputCollector(private val reader: BuildOutputInstantReader) : BuildOutputInstantReader {
+  private val readLines = LinkedList<String>()
+  override fun getParentEventId(): Any = reader.parentEventId
+
+  override fun readLine(): String? {
+    val line = reader.readLine()
+    if (line != null) {
+      readLines.add(line)
+    }
+    return line
+  }
+
+  override fun pushBack() {
+    reader.pushBack()
+    readLines.pollLast()
+  }
+
+  override fun pushBack(numberOfLines: Int) {
+    reader.pushBack(numberOfLines)
+    repeat(numberOfLines) { readLines.pollLast() ?: return@repeat }
+
+  }
+
+  override fun getCurrentLine(): String = reader.currentLine
+
+  fun getOutput(): String = readLines.joinToString(separator = "\n")
+}

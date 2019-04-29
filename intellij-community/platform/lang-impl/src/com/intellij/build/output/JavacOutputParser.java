@@ -7,7 +7,6 @@ import com.intellij.build.events.MessageEvent;
 import com.intellij.build.events.impl.FileMessageEventImpl;
 import com.intellij.build.events.impl.MessageEventImpl;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -91,26 +90,27 @@ public class JavacOutputParser implements BuildOutputParser {
             return false;
           }
 
+          BuildOutputCollector outputCollector = new BuildOutputCollector(reader);
           List<String> messageList = ContainerUtil.newArrayList();
           messageList.add(text);
           int column; // 0-based.
           String prevLine = null;
           do {
-            String nextLine = reader.readLine();
+            String nextLine = outputCollector.readLine();
             if (nextLine == null) {
               return false;
             }
             if (nextLine.trim().equals("^")) {
               column = nextLine.indexOf('^');
-              String messageEnd = reader.readLine();
+              String messageEnd = outputCollector.readLine();
 
               while (isMessageEnd(messageEnd)) {
                 messageList.add(messageEnd.trim());
-                messageEnd = reader.readLine();
+                messageEnd = outputCollector.readLine();
               }
 
               if (messageEnd != null) {
-                reader.pushBack();
+                outputCollector.pushBack();
               }
               break;
             }
@@ -122,10 +122,10 @@ public class JavacOutputParser implements BuildOutputParser {
           while (true);
 
           if (column >= 0) {
-            messageList = convertMessages(messageList);
-            String msgText = StringUtil.join(messageList, SystemProperties.getLineSeparator());
-            messageConsumer.accept(new FileMessageEventImpl(reader.getParentEventId(), kind, COMPILER_MESSAGES_GROUP, msgText, msgText,
-                                                            new FilePosition(file, lineNumber - 1, column)));
+            String message = StringUtil.join(convertMessages(messageList), "\n");
+            String detailedMessage = line + "\n" + outputCollector.getOutput();
+            messageConsumer.accept(new FileMessageEventImpl(reader.getParentEventId(), kind, COMPILER_MESSAGES_GROUP,
+                                                            message, detailedMessage, new FilePosition(file, lineNumber - 1, column)));
             return true;
           }
         }
