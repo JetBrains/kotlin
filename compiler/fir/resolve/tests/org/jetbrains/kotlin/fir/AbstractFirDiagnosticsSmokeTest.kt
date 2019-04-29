@@ -58,8 +58,8 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
         //For BuiltIns, registered in sessionProvider automatically
         val allProjectScope = GlobalSearchScope.allScope(project)
         FirLibrarySession.create(
-            builtInsModuleInfo, sessionProvider, allProjectScope,
-            environment
+            builtInsModuleInfo, sessionProvider, allProjectScope, project,
+            environment.createPackagePartProvider(allProjectScope)
         )
 
         val configToSession = modules.mapValues { (config, info) ->

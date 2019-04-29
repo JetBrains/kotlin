@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.java
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
@@ -71,16 +70,6 @@ class FirLibrarySession private constructor(
     }
 
     companion object {
-        fun create(
-            moduleInfo: ModuleInfo,
-            sessionProvider: FirProjectSessionProvider,
-            scope: GlobalSearchScope,
-            environment: KotlinCoreEnvironment
-        ): FirLibrarySession = create(
-            moduleInfo, sessionProvider, scope, environment.project,
-            environment.createPackagePartProvider(scope)
-        )
-
         fun create(
             moduleInfo: ModuleInfo,
             sessionProvider: FirProjectSessionProvider,
