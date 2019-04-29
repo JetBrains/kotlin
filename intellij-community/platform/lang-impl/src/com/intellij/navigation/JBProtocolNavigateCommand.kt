@@ -25,7 +25,7 @@ import com.intellij.openapi.wm.IdeFocusManager
 import java.io.File
 import java.util.regex.Pattern
 
-class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
+internal class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
   override fun perform(target: String, parameters: Map<String, String>) {
     // handles URLs of the following types:
 
