@@ -568,7 +568,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     final AtomicInteger counter = new AtomicInteger();
     Messages.setTestDialog(new TestDialog() {
       @Override
-      public int show(String message) {
+      public int show(@NotNull String message) {
         counter.set(counter.get() + 1);
         return 0;
       }
@@ -580,7 +580,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     final AtomicInteger counter = new AtomicInteger();
     Messages.setTestDialog(new TestDialog() {
       @Override
-      public int show(String message) {
+      public int show(@NotNull String message) {
         counter.set(counter.get() + 1);
         return 1;
       }
