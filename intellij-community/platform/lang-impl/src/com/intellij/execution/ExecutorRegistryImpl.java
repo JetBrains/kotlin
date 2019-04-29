@@ -332,7 +332,8 @@ public class ExecutorRegistryImpl extends ExecutorRegistry implements Disposable
       if (configuration instanceof CompoundRunConfiguration) {
         RunManager runManager = RunManager.getInstance(project);
         for (SettingsAndEffectiveTarget settingsAndEffectiveTarget : ((CompoundRunConfiguration)configuration).getConfigurationsWithEffectiveRunTargets()) {
-          run(project, settingsAndEffectiveTarget.getConfiguration(), runManager.findSettings(configuration), dataContext);
+          RunConfiguration subConfiguration = settingsAndEffectiveTarget.getConfiguration();
+          run(project, subConfiguration, runManager.findSettings(subConfiguration), dataContext);
         }
       }
       else {
