@@ -24,6 +24,7 @@ import com.intellij.util.ui.UIUtil
 import java.awt.*
 import java.awt.event.MouseEvent
 import java.awt.font.FontRenderContext
+import java.util.*
 import javax.swing.Icon
 import javax.swing.UIManager
 
@@ -37,7 +38,7 @@ class PresentationFactory(val editor: EditorImpl) {
     val ascent = editor.ascent
     val descent = editor.descent
     val height = editor.lineHeight
-//    val yBaseline = Math.max(ascent, (height + metrics.ascent - metrics.descent) / 2) - 1
+    //    val yBaseline = Math.max(ascent, (height + metrics.ascent - metrics.descent) / 2) - 1
     val textWithoutBox = EffectInlayPresentation(
       TextInlayPresentation(width, fontData.lineHeight, text, fontData.baseline) {
         plainFont
@@ -67,22 +68,27 @@ class PresentationFactory(val editor: EditorImpl) {
     }
   }
 
-  fun singleText(text: String) : InlayPresentation {
+  fun singleText(text: String): InlayPresentation {
     return roundWithBackground(text(text))
   }
 
-  fun icon(icon: Icon) : IconPresentation = IconPresentation(icon, editor.component)
+  fun icon(icon: Icon): IconPresentation = IconPresentation(icon, editor.component)
 
   fun roundedText(text: String): InlayPresentation {
     return rounding(8, 8, text(text))
   }
 
-  fun hyperlink(base: InlayPresentation): InlayPresentation {
-    return changeOnHover(base, { AttributesTransformerPresentation(base) {
-      val attributes = attributesOf(EditorColors.REFERENCE_HYPERLINK_COLOR)
-      attributes.effectType = null // With underlined looks weird
-      it.with(attributes)
-    }}) { isControlDown(it) }
+  fun hyperlink(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {
+    return changeOnHover(base, {
+      val attributesTransformerPresentation = AttributesTransformerPresentation(base) {
+        val attributes = attributesOf(EditorColors.REFERENCE_HYPERLINK_COLOR)
+        attributes.effectType = null // With underlined looks weird
+        it.with(attributes)
+      }
+      onClick(attributesTransformerPresentation, EnumSet.of(MouseButton.Left, MouseButton.Middle)) { _, _ ->
+        navigateInternal(resolve)
+      }
+    }) { isControlDown(it) }
   }
 
   fun tooltip(e: MouseEvent, text: String) {
@@ -91,7 +97,7 @@ class PresentationFactory(val editor: EditorImpl) {
     // TODO
   }
 
-  private fun isControlDown(e: MouseEvent): Boolean = SystemInfo.isMac && e.isMetaDown || e.isControlDown
+  private fun isControlDown(e: MouseEvent): Boolean = (SystemInfo.isMac && e.isMetaDown) || e.isControlDown
 
   fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
     tooltip.isEmpty() -> base
@@ -126,7 +132,7 @@ class PresentationFactory(val editor: EditorImpl) {
     return hint
   }
 
-  private fun tooltipHandler(tooltip: String) : (MouseEvent?) -> Unit {
+  private fun tooltipHandler(tooltip: String): (MouseEvent?) -> Unit {
     var hint: LightweightHint? = null
     return { event ->
       when (event) {
@@ -143,7 +149,7 @@ class PresentationFactory(val editor: EditorImpl) {
     }
   }
 
-  private fun locationAt(e: MouseEvent, component: Component): Point  {
+  private fun locationAt(e: MouseEvent, component: Component): Point {
     val pointOnScreen = component.locationOnScreen
     return Point(e.xOnScreen - pointOnScreen.x, e.yOnScreen - pointOnScreen.y)
   }
@@ -153,7 +159,7 @@ class PresentationFactory(val editor: EditorImpl) {
     return ChangeOnClickPresentation(placeholder, unwrapAction)
   }
 
-  fun asWrongReference(presentation: InlayPresentation) : InlayPresentation {
+  fun asWrongReference(presentation: InlayPresentation): InlayPresentation {
     return AttributesTransformerPresentation(presentation) {
       it.with(attributesOf(CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES))
     }
@@ -161,12 +167,24 @@ class PresentationFactory(val editor: EditorImpl) {
 
   private fun attributesOf(key: TextAttributesKey?) = editor.colorsScheme.getAttributes(key) ?: TextAttributes()
 
-  fun onHover(base: InlayPresentation, onHover: (MouseEvent?) -> Unit) : InlayPresentation {
+  fun onHover(base: InlayPresentation, onHover: (MouseEvent?) -> Unit): InlayPresentation {
     return OnHoverPresentation(base, onHover)
   }
 
-  fun onClick(base: InlayPresentation, onClick: (MouseEvent, Point) -> Unit) : InlayPresentation {
-    return OnClickPresentation(base, onClick)
+  fun onClick(base: InlayPresentation, button: MouseButton, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
+    return OnClickPresentation(base) { e, p ->
+      if (button == e.mouseButton) {
+        onClick(e, p)
+      }
+    }
+  }
+
+  fun onClick(base: InlayPresentation, buttons: EnumSet<MouseButton>, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
+    return OnClickPresentation(base) { e, p ->
+      if (e.mouseButton in buttons) {
+        onClick(e, p)
+      }
+    }
   }
 
   fun changeOnHover(
@@ -178,20 +196,23 @@ class PresentationFactory(val editor: EditorImpl) {
   }
 
 
-  // TODO ctrl + cmd handling (+ middle click)
-  // TODO resolve should not include PsiElement! Otherwise here may be memory leak?
   fun navigateSingle(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {
-    return onClick(hyperlink(base)) { _, _ ->
-      val target = resolve()
-      if(target != null) {
-        if (target is Navigatable) {
-            CommandProcessor.getInstance().executeCommand(target.project, { target.navigate(true) }, null, null)
-        }
+    val noHighlightReference = onClick(base, MouseButton.Middle) { _, _ ->
+      navigateInternal(resolve)
+    }
+    return hyperlink(noHighlightReference, resolve)
+  }
+
+  private fun navigateInternal(resolve: () -> PsiElement?) {
+    val target = resolve()
+    if (target != null) {
+      if (target is Navigatable) {
+        CommandProcessor.getInstance().executeCommand(target.project, { target.navigate(true) }, null, null)
       }
     }
   }
 
-  fun seq(vararg presentations: InlayPresentation) : InlayPresentation {
+  fun seq(vararg presentations: InlayPresentation): InlayPresentation {
     return when (presentations.size) {
       0 -> SpacePresentation(0, 0)
       1 -> presentations.first()
@@ -239,7 +260,7 @@ class PresentationFactory(val editor: EditorImpl) {
     /**
      * Offset from the top edge of drawing rectangle to rectangle with text.
      */
-    fun offsetFromTop(editor: Editor) : Int = (editor.lineHeight - lineHeight) / 2
+    fun offsetFromTop(editor: Editor): Int = (editor.lineHeight - lineHeight) / 2
   }
 
   private fun getFontData(editor: Editor): FontData {
