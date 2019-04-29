@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
-import java.util.*
 
 class OptimizedImportsBuilder(
     private val file: KtFile,
@@ -88,16 +87,6 @@ class OptimizedImportsBuilder(
     private val importRules = HashSet<ImportRule>()
 
     fun buildOptimizedImports(): List<ImportPath>? {
-        // TODO: should we drop unused aliases?
-        // keep all non-trivial aliases
-        file.importDirectives
-            .mapNotNull { it.importPath }
-            .filter {
-                val aliasName = it.alias
-                aliasName != null && aliasName != it.fqName.shortName()
-            }
-            .mapTo(importRules) { ImportRule.Add(it) }
-
         while (true) {
             val importRulesBefore = importRules.size
             val result = tryBuildOptimizedImports()
@@ -124,18 +113,20 @@ class OptimizedImportsBuilder(
             .mapTo(importsToGenerate) { it.importPath }
 
         val descriptorsByParentFqName = HashMap<FqName, MutableSet<DeclarationDescriptor>>()
-        for (descriptor in data.descriptorsToImport.keys) {
-            val fqName = descriptor.importableFqName!!
+        for ((descriptor, names) in data.descriptorsToImport) {
+            for (name in names) {
+                val fqName = descriptor.importableFqName!!
+                val alias = if (name != fqName.shortName()) name else null
 
-            val explicitImportPath = ImportPath(fqName, false)
-            if (explicitImportPath in importsToGenerate) continue
+                val explicitImportPath = ImportPath(fqName, false, alias)
+                if (explicitImportPath in importsToGenerate) continue
 
-            val parentFqName = fqName.parent()
-            val starImportPath = ImportPath(parentFqName, true)
-            if (canUseStarImport(descriptor, fqName) && starImportPath.isAllowedByRules()) {
-                descriptorsByParentFqName.getOrPut(parentFqName) { HashSet() }.add(descriptor)
-            } else {
-                importsToGenerate.add(explicitImportPath)
+                val parentFqName = fqName.parent()
+                if (alias == null && canUseStarImport(descriptor, fqName) && ImportPath(parentFqName, true).isAllowedByRules()) {
+                    descriptorsByParentFqName.getOrPut(parentFqName) { LinkedHashSet() }.add(descriptor)
+                } else {
+                    importsToGenerate.add(explicitImportPath)
+                }
             }
         }
 
@@ -205,7 +196,12 @@ class OptimizedImportsBuilder(
                     val newTargets = ref.resolve(newBindingContext)
                     if (!areTargetsEqual(oldTargets, newTargets)) {
                         testLog?.append("Changed resolve of $ref\n")
-                        (oldTargets + newTargets).forEach { lockImportForDescriptor(it) }
+                        (oldTargets + newTargets).forEach {
+                            lockImportForDescriptor(
+                                it,
+                                data.descriptorsToImport.getOrElse(it) { listOf(it.name) }.intersect(names)
+                            )
+                        }
                     }
                 }
             }
@@ -214,18 +210,22 @@ class OptimizedImportsBuilder(
         return sortedImportsToGenerate
     }
 
-    private fun lockImportForDescriptor(descriptor: DeclarationDescriptor) {
+    private fun lockImportForDescriptor(descriptor: DeclarationDescriptor, names: Collection<Name>) {
         val fqName = descriptor.importableFqName ?: return
-        val explicitImportPath = ImportPath(fqName, false)
         val starImportPath = ImportPath(fqName.parent(), true)
         val importPaths = file.importDirectives.map { it.importPath }
-        when {
-            explicitImportPath in importPaths ->
-                importRules.add(ImportRule.Add(explicitImportPath))
-            starImportPath in importPaths ->
-                importRules.add(ImportRule.Add(starImportPath))
-            else -> // there is no import for this descriptor in the original import list, so do not allow to import it by star-import
-                importRules.add(ImportRule.DoNotAdd(starImportPath))
+
+        for (name in names) {
+            val alias = if (name != fqName.shortName()) name else null
+            val explicitImportPath = ImportPath(fqName, false, alias)
+            when {
+                explicitImportPath in importPaths ->
+                    importRules.add(ImportRule.Add(explicitImportPath))
+                alias == null && starImportPath in importPaths ->
+                    importRules.add(ImportRule.Add(starImportPath))
+                else -> // there is no import for this descriptor in the original import list, so do not allow to import it by star-import
+                    importRules.add(ImportRule.DoNotAdd(starImportPath))
+            }
         }
     }
 

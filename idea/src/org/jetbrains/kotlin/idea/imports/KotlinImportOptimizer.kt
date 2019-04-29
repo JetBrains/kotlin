@@ -73,13 +73,13 @@ class KotlinImportOptimizer : ImportOptimizer {
 
     private class CollectUsedDescriptorsVisitor(file: KtFile) : KtVisitorVoid() {
         private val currentPackageName = file.packageFqName
-        private val withAlias: Set<FqName> = file.importDirectives
+        private val aliases: Map<FqName, List<Name>> = file.importDirectives
             .asSequence()
-            .filter { it.alias != null && it.aliasName != it.importPath?.fqName?.shortName()?.asString() }
-            .mapNotNull(KtImportDirective::importedFqName)
-            .toSet()
+            .filter { !it.isAllUnder && it.alias != null }
+            .mapNotNull { it.importPath }
+            .groupBy(keySelector = { it.fqName }, valueTransform = { it.importedName as Name })
 
-        private val descriptorsToImport = LinkedHashMap<DeclarationDescriptor, Set<Name>>()
+        private val descriptorsToImport = LinkedHashMap<DeclarationDescriptor, HashSet<Name>>()
         private val abstractRefs = ArrayList<OptimizedImportsBuilder.AbstractReference>()
 
         val data: OptimizedImportsBuilder.InputData
@@ -111,13 +111,15 @@ class KotlinImportOptimizer : ImportOptimizer {
                     val importableFqName = target.importableFqName ?: continue
                     val parentFqName = importableFqName.parent()
                     if (target is PackageViewDescriptor && parentFqName == FqName.ROOT) continue // no need to import top-level packages
-                    if (target !is PackageViewDescriptor && parentFqName == currentPackageName && importableFqName !in withAlias) continue
+
+                    if (target !is PackageViewDescriptor && parentFqName == currentPackageName && (importableFqName !in aliases)) continue
 
                     if (!reference.canBeResolvedViaImport(target, bindingContext)) continue
 
                     if (isAccessibleAsMember(importableDescriptor, element, bindingContext)) continue
 
-                    descriptorsToImport.compute(importableDescriptor) { _, u -> u?.plus(names) ?: names.toHashSet() }
+                    val descriptorNames = (aliases[importableFqName].orEmpty() + importableFqName.shortName()).intersect(names)
+                    descriptorsToImport.getOrPut(importableDescriptor) { LinkedHashSet() } += descriptorNames
                 }
             }
 
