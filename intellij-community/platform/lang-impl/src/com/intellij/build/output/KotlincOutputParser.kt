@@ -49,7 +49,7 @@ class KotlincOutputParser : BuildOutputParser {
         val matcher = KOTLIN_POSITION_PATTERN.matcher(position).takeIf { it.matches() } ?: JAVAC_POSITION_PATTERN.matcher(position)
         val relatedNextLines = "".amendNextLinesIfNeeded(reader)
         val message = lineWoPath.substringAfterAndTrim(colonIndex3) + relatedNextLines
-        val details = lineWoSeverity + relatedNextLines
+        val details = line + relatedNextLines
 
         if (matcher.matches()) {
           val lineNumber = matcher.group(1)
