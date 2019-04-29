@@ -25,6 +25,7 @@ public class JavacOutputParser implements BuildOutputParser {
 
   private static final char COLON = ':';
   private static final String WARNING_PREFIX = "warning:"; // default value
+  private static final String ERROR_PREFIX = "error:";
 
   @Override
   public boolean parse(@NotNull String line, @NotNull BuildOutputInstantReader reader, @NotNull Consumer<? super BuildEvent> messageConsumer) {
@@ -82,6 +83,9 @@ public class JavacOutputParser implements BuildOutputParser {
           if (text.startsWith(WARNING_PREFIX)) {
             text = text.substring(WARNING_PREFIX.length()).trim();
             kind = MessageEvent.Kind.WARNING;
+          } else if (text.startsWith(ERROR_PREFIX)) {
+            text = text.substring(ERROR_PREFIX.length()).trim();
+            kind = MessageEvent.Kind.ERROR;
           }
 
           // Only slurp up line pointer (^) information if this is really javac
