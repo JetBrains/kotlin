@@ -77,21 +77,20 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
       if (buildPhase == null) {
         String operationName = event.getDescriptor().getName();
         buildPhase = BuildPhase.find(operationName);
-        if (buildPhase == null) {
-          return;
+        if (buildPhase != null) {
+          myListener.onStatusChange(GradleProgressEventConverter.createProgressBuildEvent(myTaskId, myTaskId, event));
         }
+      }
+      if (event instanceof TaskProgressEvent) {
+        ExternalSystemTaskNotificationEvent notificationEvent = GradleProgressEventConverter.convert(
+          myTaskId, event, new GradleProgressEventConverter.EventId(eventId.id, myTaskId));
+        myListener.onStatusChange(notificationEvent);
+        buildPhase = BuildPhase.RUN_TASKS;
+      }
 
-        myListener.onStatusChange(GradleProgressEventConverter.createProgressBuildEvent(myTaskId, myTaskId, event));
+      if (buildPhase != null) {
+        myEventIds.put(eventId.id, buildPhase);
       }
-      else {
-        if (event instanceof TaskProgressEvent) {
-          ExternalSystemTaskNotificationEvent notificationEvent = GradleProgressEventConverter.convert(
-            myTaskId, event,
-            new GradleProgressEventConverter.EventId(eventId.id, myTaskId));
-          myListener.onStatusChange(notificationEvent);
-        }
-      }
-      myEventIds.put(eventId.id, buildPhase);
     }
   }
 
