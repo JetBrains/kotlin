@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -66,7 +67,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static com.intellij.build.BuildView.CONSOLE_VIEW_NAME;
-import static com.intellij.openapi.util.text.StringUtil.*;
+import static com.intellij.openapi.util.text.StringUtil.isEmpty;
+import static com.intellij.openapi.util.text.StringUtil.stripHtml;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 import static com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES;
 import static com.intellij.util.ObjectUtils.chooseNotNull;
@@ -335,10 +337,14 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       text = defaultFailureMessage;
     }
     text = stripHtml(text, true);
-    int sepIndex = indexOfAny(text, "\n.");
+    int sepIndex = text.indexOf("\n");
+    if (sepIndex < 0) {
+      sepIndex = text.indexOf(". ");
+    }
     if (sepIndex > 0) {
       text = text.substring(0, sepIndex);
     }
+    text = StringUtil.trimEnd(text, '.');
     failureNode.setName(text);
     myConsoleViewHandler.addOutput(failureNode, failure);
     showErrorIfFirst(failureNode, failure.getNavigatable());
