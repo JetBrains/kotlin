@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.elements.PackagingElementFactory;
 import com.intellij.util.PathUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,7 +80,7 @@ public abstract class ArtifactEditorTestCase extends PackagingElementsTestCase {
     final Ref<Boolean> dialogShown = Ref.create(false);
     final TestDialog oldDialog = Messages.setTestDialog(new TestDialog() {
       @Override
-      public int show(String message) {
+      public int show(@NotNull String message) {
         dialogShown.set(true);
         return 0;
       }
