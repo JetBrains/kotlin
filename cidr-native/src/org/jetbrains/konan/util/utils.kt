@@ -12,8 +12,9 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.konan.gradle.KonanProjectDataService
 import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.library.lite.LiteKonanDistributionInfoProvider
+import org.jetbrains.kotlin.konan.library.lite.LiteKonanDistributionProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.io.File
 
 // Returns Kotlin/Native home.
 fun getKotlinNativeHome(project: Project): String? {
@@ -27,10 +28,7 @@ fun getKotlinNativeHome(project: Project): String? {
 
 // Returns Kotlin/Native internal version (not the same as Big Kotlin version).
 fun getKotlinNativeVersion(kotlinNativeHome: String): KonanVersion? {
-    val kotlinNativeVersionString = LiteKonanDistributionInfoProvider(kotlinNativeHome)
-            .getDistributionInfo()?.kotlinNativeVersionString ?: return null
-
-    return KonanVersion.fromString(kotlinNativeVersionString)
+    return LiteKonanDistributionProvider.getDistribution(File(kotlinNativeHome))?.konanVersion
 }
 
 // A descriptor of Kotlin/Native for CLion or Kotlin/Native for AppCode plugin.
