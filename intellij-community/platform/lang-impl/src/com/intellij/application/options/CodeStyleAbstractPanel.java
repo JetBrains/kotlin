@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,7 +82,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
   private final CodeStyleSettings myCurrentSettings;
   private final Language myDefaultLanguage;
   private Document myDocumentBeforeChanges;
-  
+
   protected CodeStyleAbstractPanel(@NotNull CodeStyleSettings settings) {
     this(null, null, settings);
   }
@@ -280,7 +281,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
 
   protected void prepareForReformat(PsiFile psiFile) {
   }
-  
+
   protected String getFileExt() {
     return getFileTypeExtension(getFileType());
   }
@@ -413,7 +414,8 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
 
   public static String readFromFile(final Class resourceContainerClass, @NonNls final String fileName) {
     try (InputStream stream = resourceContainerClass.getClassLoader().getResourceAsStream("codeStyle/preview/" + fileName);
-         LineNumberReader lineNumberReader = stream == null ? null : new LineNumberReader(new InputStreamReader(stream))) {
+         LineNumberReader lineNumberReader = stream == null ? null : new LineNumberReader(new InputStreamReader(stream,
+                                                                                                                StandardCharsets.UTF_8))) {
       if (stream == null) throw new IOException("Resource not found: " + "codeStyle/preview/" + fileName);
       final StringBuilder result = new StringBuilder();
       String line;
@@ -578,7 +580,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
   public Set<String> processListOptions() {
     return Collections.emptySet();
   }
-  
+
   public final void applyPredefinedSettings(@NotNull PredefinedCodeStyle codeStyle) {
     codeStyle.apply(mySettings);
     ((CodeStyleSchemesModel.ModelSettings) mySettings).doWithLockedSettings(()->resetImpl(mySettings));
@@ -588,7 +590,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
   }
 
   /**
-   * Override this method if the panel is linked to a specific language. 
+   * Override this method if the panel is linked to a specific language.
    * @return The language this panel is associated with.
    */
   @Nullable
@@ -599,7 +601,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
   protected String getTabTitle() {
     return "Other";
   }
-  
+
   protected CodeStyleSettings getCurrentSettings() {
     return myCurrentSettings;
   }
