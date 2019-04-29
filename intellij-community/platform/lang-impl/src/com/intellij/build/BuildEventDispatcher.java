@@ -11,16 +11,16 @@ import java.io.Closeable;
 @ApiStatus.Experimental
 public interface BuildEventDispatcher extends Appendable, Closeable, BuildProgressListener {
   @Override
-  BuildEventDispatcher append(CharSequence csq);
+  default BuildEventDispatcher append(CharSequence csq) {return this;}
 
   @Override
-  BuildEventDispatcher append(CharSequence csq, int start, int end);
+  default BuildEventDispatcher append(CharSequence csq, int start, int end) {return this;}
 
   @Override
-  BuildEventDispatcher append(char c);
+  default BuildEventDispatcher append(char c) {return this;}
 
   @Override
-  void close();
+  default void close() {}
 
-  void setStdOut(boolean stdOut);
+  default void setStdOut(boolean stdOut) {}
 }

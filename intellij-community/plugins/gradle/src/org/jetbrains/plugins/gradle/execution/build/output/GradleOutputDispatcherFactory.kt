@@ -57,13 +57,16 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
             val taskName = cleanLine.removePrefix("> Task ").substringBefore(' ')
             myCurrentReader = tasksOutputReaders[taskName] ?: myRootReader
           }
-          else if (cleanLine.startsWith("> Configure") || cleanLine == "FAILURE: Build failed with an exception.") {
+          else if (cleanLine.startsWith("> Configure") ||
+                   cleanLine.startsWith("FAILURE: Build failed") ||
+                   cleanLine.startsWith("CONFIGURE SUCCESSFUL") ||
+                   cleanLine.startsWith("BUILD SUCCESSFUL")) {
             myCurrentReader = myRootReader
           }
           myCurrentReader.appendln(cleanLine)
           if (myCurrentReader != myRootReader) {
             val parentEventId = myCurrentReader.parentEventId
-            myBuildProgressListener.onEvent(OutputBuildEventImpl(parentEventId, cleanLine + '\n', stdOut))
+            myBuildProgressListener.onEvent(OutputBuildEventImpl(parentEventId, line + '\n', stdOut))
           }
         }
       }

@@ -16,6 +16,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.stats.completion.CompletionUtil
+import com.intellij.stats.completion.RelevanceUtil
 import com.intellij.stats.completion.prefixLength
 import com.intellij.stats.experiment.EmulatedExperiment
 import com.intellij.stats.experiment.WebServiceStatus
@@ -109,7 +110,7 @@ class MLSorter : CompletionFinalSorter() {
     return items
       .mapIndexed { position, lookupElement ->
         positionsBefore[lookupElement] = position
-        val relevance = buildRelevanceMap(lookupElement, relevanceObjects[lookupElement]?.map { it.first to it.second },
+        val relevance = buildRelevanceMap(lookupElement, relevanceObjects[lookupElement],
                                           lookup.prefixLength(), position, parameters) ?: return null
         val rank: Double = calculateElementRank(ranker, lookupElement, position, relevance, userFactors, prefixLength) ?: return null
 
@@ -121,13 +122,13 @@ class MLSorter : CompletionFinalSorter() {
   }
 
   private fun buildRelevanceMap(lookupElement: LookupElement,
-                                relevanceObjects: List<kotlin.Pair<String, Any?>>?,
+                                relevanceObjects: List<Pair<String, Any?>>?,
                                 prefixLength: Int,
                                 position: Int,
                                 parameters: CompletionParameters): Map<String, Any>? {
     if (relevanceObjects == null) return null
 
-    val relevanceMap = FeatureUtils.asRelevanceMap(relevanceObjects)
+    val relevanceMap = RelevanceUtil.asRelevanceMap(relevanceObjects)
 
     relevanceMap["position"] = position
     relevanceMap["query_length"] = prefixLength

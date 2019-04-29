@@ -18,13 +18,13 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.jetbrains.completion.feature.impl.FeatureUtils
 
 class LookupStateManager {
     private val elementToId = mutableMapOf<String, Int>()
     private val idToEntryInfo = mutableMapOf<Int, LookupEntryInfo>()
 
-    fun update(lookup: LookupImpl): LookupState {
-
+    fun update(lookup: LookupImpl, factorsUpdated: Boolean): LookupState {
         val ids = mutableListOf<Int>()
         val newIds = mutableSetOf<Int>()
 
@@ -41,13 +41,19 @@ class LookupStateManager {
             ids.add(id)
         }
 
-        val infos = items.toLookupInfos(lookup)
-        val newInfos = infos.filter { it.id in newIds }
+        if (factorsUpdated) {
+            val infos = items.toLookupInfos(lookup)
+            val newInfos = infos.filter { it.id in newIds }
 
-        val itemsDiff = infos.mapNotNull { idToEntryInfo[it.id]?.calculateDiff(it) }
-        infos.forEach { idToEntryInfo[it.id] = it }
-
-        return LookupState(ids, newInfos, itemsDiff, currentPosition)
+            val itemsDiff = infos.mapNotNull { idToEntryInfo[it.id]?.calculateDiff(it) }
+            infos.forEach { idToEntryInfo[it.id] = it }
+            return LookupState(ids, newInfos, itemsDiff, currentPosition)
+        }
+        else {
+            val newItems = items.filter { getElementId(it) in newIds }.toLookupInfos(lookup)
+            newItems.forEach { idToEntryInfo[it.id] = it }
+            return LookupState(ids, newItems, emptyList(), currentPosition)
+        }
     }
 
 
@@ -65,10 +71,11 @@ class LookupStateManager {
 
     private fun List<LookupElement>.toLookupInfos(lookup: LookupImpl): List<LookupEntryInfo> {
         val relevanceObjects = lookup.getRelevanceObjects(this, false)
-        return this.map {
-            val id = getElementId(it)!!
-            val relevanceMap = relevanceObjects[it]?.map { Pair(it.first, it.second?.toString()) }?.toMap()
-            LookupEntryInfo(id, it.lookupString.length, relevanceMap)
+        return this.map { lookupElement ->
+            val relevanceMap = relevanceObjects[lookupElement]?.let { objects ->
+                RelevanceUtil.asRelevanceMap(objects).mapValues { entry -> entry.value.toString() }
+            }
+            LookupEntryInfo(getElementId(lookupElement)!!, lookupElement.lookupString.length, relevanceMap)
         }
     }
 }

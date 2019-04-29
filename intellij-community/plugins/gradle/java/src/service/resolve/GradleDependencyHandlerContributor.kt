@@ -38,7 +38,7 @@ class GradleDependencyHandlerContributor : NonCodeMembersContributor() {
     for (configuration in configurations) {
       val configurationName = configuration.name ?: continue
       val method = GrLightMethodBuilder(manager, configurationName).apply {
-        methodKind = GradleArtifactHandlerContributor.ourMethodKind
+        methodKind = dependencyMethodKind
         containingClass = clazz
         returnType = null
         addParameter("dependencyNotation", objectVarargType)
@@ -56,5 +56,9 @@ class GradleDependencyHandlerContributor : NonCodeMembersContributor() {
     else {
       return description
     }
+  }
+
+  companion object {
+    const val dependencyMethodKind: String = "gradle:dependencyMethod"
   }
 }

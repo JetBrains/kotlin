@@ -65,7 +65,9 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
       }
     }
     // compilation errors should be added by the respective compiler output parser
-    if(reason == "Compilation failed; see the compiler error output for details") return false
+    if(reason == "Compilation failed; see the compiler error output for details" ||
+       reason == "Compilation error. See log for more details" ||
+       reason.contains("compiler failed")) return false
 
     if (location != null && filter != null) {
       val filePosition = FilePosition(File(filter.filteredFileName), filter.filteredLineNumber - 1, 0)

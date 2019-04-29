@@ -3,8 +3,6 @@ package org.jetbrains.plugins.gradle.dsl
 
 import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.RunAll
-import com.intellij.util.SmartList
-import com.intellij.util.lang.CompoundRuntimeException
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
 import org.jetbrains.plugins.gradle.service.resolve.GradleTaskProperty
@@ -129,19 +127,8 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
       "tasks.create([name: 'mcid1']) { <caret> }",
       "tasks.create('eid1') { <caret> }",
     ]
-    List<Throwable> exceptions = new SmartList<>()
-    for (entry in data) {
-      try {
-        doTest(entry) {
-          closureDelegateTest(GRADLE_API_TASK, 1)
-        }
-      }
-      catch (Throwable e) {
-        exceptions.add(e)
-      }
-    }
-    if (!exceptions.isEmpty()) {
-      throw new CompoundRuntimeException(exceptions)
+    doTest(data) {
+      closureDelegateTest(GRADLE_API_TASK, 1)
     }
   }
 
@@ -158,19 +145,8 @@ class GradleTasksTest extends GradleHighlightingBaseTest implements ExpressionTe
       "tasks.create([name: 'mcid1', type: String]) { <caret> }",
       "tasks.create('eid1', String) { <caret> }",
     ]
-    List<Throwable> exceptions = new SmartList<>()
-    for (entry in data) {
-      try {
-        doTest(entry) {
-          closureDelegateTest(JAVA_LANG_STRING, 1)
-        }
-      }
-      catch (Throwable e) {
-        exceptions.add(e)
-      }
-    }
-    if (!exceptions.isEmpty()) {
-      throw new CompoundRuntimeException(exceptions)
+    doTest(data) {
+      closureDelegateTest(JAVA_LANG_STRING, 1)
     }
   }
 }

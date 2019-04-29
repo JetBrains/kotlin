@@ -4,7 +4,6 @@ package com.intellij.ide.actions.searcheverywhere;
 import com.google.common.collect.Lists;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.DataManager;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.SearchTopHitProvider;
 import com.intellij.ide.actions.BigPopupUI;
@@ -38,7 +37,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.TextWithMnemonic;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
 import com.intellij.psi.codeStyle.NameUtil;
@@ -163,24 +161,26 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
 
   public void toggleEverywhereFilter() {
     if (mySelectedTab.everywhereAction == null) return;
-    mySelectedTab.everywhereAction.actionPerformed(AnActionEvent.createFromAnAction(
-      mySelectedTab.everywhereAction, null, ActionPlaces.UNKNOWN, DataManager.getInstance().getDataContext(mySelectedTab)));
+    if (!mySelectedTab.everywhereAction.canToggleEverywhere()) return;
+    mySelectedTab.everywhereAction.setEverywhere(
+      !mySelectedTab.everywhereAction.isEverywhere());
+    myToolbar.updateActionsImmediately();
   }
 
   private void setEverywhereAuto(boolean everywhere) {
     myEverywhereAutoSet = true;
     if (mySelectedTab.everywhereAction == null) return;
-    mySelectedTab.everywhereAction.setSelected(AnActionEvent.createFromAnAction(
-      mySelectedTab.everywhereAction, null, ActionPlaces.UNKNOWN, DataManager.getInstance().getDataContext(mySelectedTab)), everywhere);
+    if (!mySelectedTab.everywhereAction.canToggleEverywhere()) return;
+    mySelectedTab.everywhereAction.setEverywhere(everywhere);
+    myToolbar.updateActionsImmediately();
   }
 
   private boolean isEverywhere() {
     if (mySelectedTab.everywhereAction == null) return true;
-    return mySelectedTab.everywhereAction.isSelected(AnActionEvent.createFromAnAction(
-      mySelectedTab.everywhereAction, null, ActionPlaces.UNKNOWN, DataManager.getInstance().getDataContext(mySelectedTab)));
+    return mySelectedTab.everywhereAction.isEverywhere();
   }
 
-  public void switchToContributor(String contributorID) {
+  public void switchToContributor(@NotNull String contributorID) {
     SETab selectedTab = myTabs.stream()
       .filter(tab -> tab.getID().equals(contributorID))
       .findAny()
@@ -432,7 +432,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
   private class SETab extends JLabel {
     final SearchEverywhereContributor<?> contributor;
     final List<AnAction> actions;
-    final CheckboxAction everywhereAction;
+    final EverywhereToggleAction everywhereAction;
 
     SETab(@Nullable SearchEverywhereContributor<?> contributor) {
       super(contributor == null ? IdeBundle.message("searcheverywhere.allelements.tab.name") : contributor.getGroupName());
@@ -442,13 +442,13 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
           IdeBundle.message("checkbox.include.non.project.items", IdeUICustomization.getInstance().getProjectConceptName())) {
           final SearchEverywhereManagerImpl seManager = (SearchEverywhereManagerImpl)SearchEverywhereManager.getInstance(myProject);
           @Override
-          public boolean isSelected(@NotNull AnActionEvent e) {
+          public boolean isEverywhere() {
             return seManager.isEverywhere();
           }
 
           @Override
-          public void setSelected(@NotNull AnActionEvent e, boolean state) {
-            seManager.setEverywhere(true);
+          public void setEverywhere(boolean state) {
+            seManager.setEverywhere(state);
             rebuildList();
           }
         }, new FiltersAction(myContributorsFilter, SearchEverywhereUI.this::rebuildList));
@@ -456,15 +456,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       else {
         actions = new ArrayList<>(contributor.getActions(SearchEverywhereUI.this::rebuildList));
       }
-      everywhereAction = (CheckboxAction)ContainerUtil.find(actions, o -> o instanceof CheckboxAction);
-      if (everywhereAction != null) {
-        TextWithMnemonic tm = everywhereAction.getTemplatePresentation().getTextWithPossibleMnemonic();
-        if (tm != null && tm.hasMnemonic()) {
-          //todo?
-          //everywhereAction.registerCustomShortcutSet(new CustomShortcutSet(
-          //  KeyStroke.getKeyStroke("alt " + ((char)tm.getMnemonic()))), SearchEverywhereUI.this);
-        }
-      }
+      everywhereAction = (EverywhereToggleAction)ContainerUtil.find(actions, o -> o instanceof EverywhereToggleAction);
       Insets insets = JBUI.CurrentTheme.BigPopup.tabInsets();
       setBorder(JBUI.Borders.empty(insets.top, insets.left, insets.bottom, insets.right));
       addMouseListener(new MouseAdapter() {
@@ -1440,9 +1432,30 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     }
   }
 
-  static abstract class CheckBoxAction extends CheckboxAction implements DumbAware {
+  interface EverywhereToggleAction {
+    boolean isEverywhere();
+    void setEverywhere(boolean everywhere);
+    boolean canToggleEverywhere();
+  }
+
+  static abstract class CheckBoxAction extends CheckboxAction implements DumbAware, EverywhereToggleAction {
     CheckBoxAction(@NotNull String text) {
       super(text);
+    }
+
+    @Override
+    public boolean isSelected(@NotNull AnActionEvent e) {
+      return isEverywhere();
+    }
+
+    @Override
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+      setEverywhere(state);
+    }
+
+    @Override
+    public boolean canToggleEverywhere() {
+      return true;
     }
   }
 

@@ -13,6 +13,8 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory
 import com.intellij.testFramework.fixtures.impl.JavaCodeInsightTestFixtureImpl
+import com.intellij.util.SmartList
+import com.intellij.util.lang.CompoundRuntimeException
 import groovy.transform.CompileStatic
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.NotNull
@@ -67,6 +69,21 @@ abstract class GradleHighlightingBaseTest extends GradleImportingTestCase implem
     ReadAction.run(test)
   }
 
+  void doTest(@NotNull List<String> data, Closure test) {
+    List<Throwable> throwables = new SmartList<>()
+    for (entry in data) {
+      try {
+        doTest(entry, test)
+      }
+      catch (Throwable e) {
+        throwables.add(e)
+      }
+    }
+    if (!throwables.isEmpty()) {
+      throw new CompoundRuntimeException(throwables)
+    }
+  }
+
   void doTest(@NotNull String text, Closure test) {
     doTest(text, getParentCalls(), test)
   }
@@ -83,10 +100,6 @@ abstract class GradleHighlightingBaseTest extends GradleImportingTestCase implem
         throw new AssertionError(it, e)
       }
     }
-  }
-
-  void doTest(@NotNull List<String> testPatterns, Closure test) {
-    testPatterns.each { doTest(it, test) }
   }
 
   void updateProjectFile(@NotNull String text) {

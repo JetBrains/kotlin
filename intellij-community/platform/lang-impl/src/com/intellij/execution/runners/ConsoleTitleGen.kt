@@ -16,38 +16,41 @@
 package com.intellij.execution.runners
 
 import com.intellij.execution.ExecutionHelper
-import com.intellij.execution.process.ProcessHandler
-import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.project.Project
-import java.util.stream.Collectors
 
 /**
  * @author traff
  */
-open class ConsoleTitleGen @JvmOverloads constructor(private val myProject: Project, private val consoleTitle: String, private val shouldAddNumberToTitle: Boolean = true) {
+open class ConsoleTitleGen @JvmOverloads constructor(private val myProject: Project,
+                                                     private val consoleTitle: String,
+                                                     private val shouldAddNumberToTitle: Boolean = true) {
 
   fun makeTitle(): String {
 
     if (shouldAddNumberToTitle) {
       val activeConsoleNames = getActiveConsoles(consoleTitle)
-      var max = 0
+      var max = -1
       for (name in activeConsoleNames) {
-        if (max == 0) {
-          max = 1
-        }
         try {
-          val num = Integer.parseInt(name.substring(consoleTitle.length + 1, name.length - 1))
-          if (num > max) {
-            max = num
+          val numBegin = name.lastIndexOf("(")
+          if (numBegin != -1) {
+            val numString = name.substring(numBegin + 1, name.length - 1)
+            val num = Integer.parseInt(numString)
+            if (num > max) {
+              max = num
+            }
+          }
+          else {
+            max = 0
           }
         }
         catch (ignored: Exception) {
           //skip
         }
-
       }
-      if (max >= 1) {
-        return consoleTitle + "(" + (max + 1) + ")"
+      return when (max) {
+        -1 -> consoleTitle
+        else -> "$consoleTitle (${max + 1})"
       }
     }
 
@@ -55,12 +58,8 @@ open class ConsoleTitleGen @JvmOverloads constructor(private val myProject: Proj
   }
 
 
-  protected open fun getActiveConsoles(consoleTitle: String): List<String> {
-    val consoles = ExecutionHelper.collectConsolesByDisplayName(myProject) { dom -> dom.contains(consoleTitle) }
-
-    return consoles.filter({ input ->
-      val handler = input.processHandler
-      handler != null && !handler.isProcessTerminated
-    }).map({ it.displayName });
-  }
+  protected open fun getActiveConsoles(consoleTitle: String) =
+    ExecutionHelper.collectConsolesByDisplayName(myProject) { dom -> dom.startsWith(consoleTitle) }
+      .filter { it.processHandler?.isProcessTerminated == false }
+      .map { it.displayName }
 }

@@ -1,8 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.changeSignature.inplace;
 
 import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory;
+import com.intellij.codeHighlighting.TextEditorHighlightingPassFactoryRegistrar;
 import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
@@ -24,9 +25,10 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.Collections;
 
-public class ChangeSignaturePassFactory implements TextEditorHighlightingPassFactory {
-  public ChangeSignaturePassFactory(TextEditorHighlightingPassRegistrar highlightingPassRegistrar) {
-    highlightingPassRegistrar.registerTextEditorHighlightingPass(this, null, null, true, -1);
+final class ChangeSignaturePassFactory implements TextEditorHighlightingPassFactory, TextEditorHighlightingPassFactoryRegistrar {
+  @Override
+  public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
+    registrar.registerTextEditorHighlightingPass(this, null, null, true, -1);
   }
 
   @Override

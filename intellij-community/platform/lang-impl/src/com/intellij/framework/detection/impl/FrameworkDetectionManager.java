@@ -1,8 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.framework.detection.impl;
 
 import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory;
+import com.intellij.codeHighlighting.TextEditorHighlightingPassFactoryRegistrar;
 import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar;
 import com.intellij.framework.detection.DetectedFrameworkDescription;
 import com.intellij.framework.detection.DetectionExcludesConfiguration;
@@ -16,7 +17,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 
-public class FrameworkDetectionManager implements FrameworkDetectionIndexListener, TextEditorHighlightingPassFactory, Disposable, ProjectComponent {
+public final class FrameworkDetectionManager implements FrameworkDetectionIndexListener, Disposable {
   private static final Logger LOG = Logger.getInstance(FrameworkDetectionManager.class);
   private static final NotificationGroup FRAMEWORK_DETECTION_NOTIFICATION = NotificationGroup.balloonGroup("Framework Detection");
   private final Update myDetectionUpdate = new Update("detection") {
@@ -59,15 +59,36 @@ public class FrameworkDetectionManager implements FrameworkDetectionIndexListene
     return project.getComponent(FrameworkDetectionManager.class);
   }
 
-  public FrameworkDetectionManager(Project project, TextEditorHighlightingPassRegistrar highlightingPassRegistrar) {
+  public FrameworkDetectionManager(@NotNull Project project) {
     myProject = project;
-    highlightingPassRegistrar.registerTextEditorHighlightingPass(this, TextEditorHighlightingPassRegistrar.Anchor.LAST, -1, false, false);
-  }
 
-  @Override
-  public void initComponent() {
     if (!myProject.isDefault() && !ApplicationManager.getApplication().isUnitTestMode()) {
       doInitialize();
+    }
+
+    StartupManager.getInstance(myProject).registerPostStartupActivity(() -> {
+      final Collection<Integer> ids = FrameworkDetectorRegistry.getInstance().getAllDetectorIds();
+      synchronized (myLock) {
+        myDetectorsToProcess.clear();
+        myDetectorsToProcess.addAll(ids);
+      }
+      queueDetection();
+    });
+  }
+
+  static final class FrameworkDetectionHighlightingPassFactory implements TextEditorHighlightingPassFactory, TextEditorHighlightingPassFactoryRegistrar {
+    @Override
+    public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
+      registrar.registerTextEditorHighlightingPass(this, TextEditorHighlightingPassRegistrar.Anchor.LAST, -1, false, false);
+    }
+
+    @Override
+    public TextEditorHighlightingPass createHighlightingPass(@NotNull PsiFile file, @NotNull Editor editor) {
+      final Collection<Integer> detectors = FrameworkDetectorRegistry.getInstance().getDetectorIds(file.getFileType());
+      if (!detectors.isEmpty()) {
+        return new FrameworkDetectionHighlightingPass(file.getProject(), editor, detectors);
+      }
+      return null;
     }
   }
 
@@ -89,18 +110,6 @@ public class FrameworkDetectionManager implements FrameworkDetectionIndexListene
       public void exitDumbMode() {
         myDetectionQueue.resume();
       }
-    });
-  }
-
-  @Override
-  public void projectOpened() {
-    StartupManager.getInstance(myProject).registerPostStartupActivity(() -> {
-      final Collection<Integer> ids = FrameworkDetectorRegistry.getInstance().getAllDetectorIds();
-      synchronized (myLock) {
-        myDetectorsToProcess.clear();
-        myDetectorsToProcess.addAll(ids);
-      }
-      queueDetection();
     });
   }
 
@@ -128,15 +137,6 @@ public class FrameworkDetectionManager implements FrameworkDetectionIndexListene
     if (myDetectionQueue != null) {
       myDetectionQueue.queue(myDetectionUpdate);
     }
-  }
-
-  @Override
-  public TextEditorHighlightingPass createHighlightingPass(@NotNull PsiFile file, @NotNull Editor editor) {
-    final Collection<Integer> detectors = FrameworkDetectorRegistry.getInstance().getDetectorIds(file.getFileType());
-    if (!detectors.isEmpty()) {
-      return new FrameworkDetectionHighlightingPass(editor, detectors);
-    }
-    return null;
   }
 
   private void doRunDetection() {
@@ -258,7 +258,7 @@ public class FrameworkDetectionManager implements FrameworkDetectionIndexListene
 
   @TestOnly
   public void runDetection() {
-    ensureIndexIsUpToDate(FrameworkDetectorRegistry.getInstance().getAllDetectorIds());
+    ensureIndexIsUpToDate(myProject, FrameworkDetectorRegistry.getInstance().getAllDetectorIds());
     doRunDetection();
   }
 
@@ -267,23 +267,24 @@ public class FrameworkDetectionManager implements FrameworkDetectionIndexListene
     return getValidDetectedFrameworks();
   }
 
-  private void ensureIndexIsUpToDate(final Collection<Integer> detectors) {
+  private static void ensureIndexIsUpToDate(@NotNull Project project, final Collection<Integer> detectors) {
     for (Integer detectorId : detectors) {
-      FileBasedIndex.getInstance().getValues(FrameworkDetectionIndex.NAME, detectorId, GlobalSearchScope.projectScope(myProject));
+      FileBasedIndex.getInstance().getValues(FrameworkDetectionIndex.NAME, detectorId, GlobalSearchScope.projectScope(project));
     }
   }
 
-  private class FrameworkDetectionHighlightingPass extends TextEditorHighlightingPass {
+  private static final class FrameworkDetectionHighlightingPass extends TextEditorHighlightingPass {
     private final Collection<Integer> myDetectors;
 
-    FrameworkDetectionHighlightingPass(Editor editor, Collection<Integer> detectors) {
-      super(FrameworkDetectionManager.this.myProject, editor.getDocument(), false);
+    FrameworkDetectionHighlightingPass(@NotNull Project project, Editor editor, Collection<Integer> detectors) {
+      super(project, editor.getDocument(), false);
+
       myDetectors = detectors;
     }
 
     @Override
     public void doCollectInformation(@NotNull ProgressIndicator progress) {
-      ensureIndexIsUpToDate(myDetectors);
+      ensureIndexIsUpToDate(myProject, myDetectors);
     }
 
     @Override

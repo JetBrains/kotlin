@@ -53,8 +53,12 @@ public class GradleNotificationExtension implements ExternalSystemNotificationEx
     }
     if (unwrapped instanceof ExternalSystemException) {
       Throwable cause = unwrapped.getCause();
-      if (cause != null && cause.getClass().getName().startsWith("org.gradle.")) {
-        return ((ExternalSystemException)unwrapped).getQuickFixes().length == 0;
+      if (cause != null) {
+        String name = cause.getClass().getName();
+        if (name.startsWith("groovy.lang.") || // Gradle Groovy DSL errors should be handled by GradleBuildScriptErrorParser
+            name.startsWith("org.gradle.")) {
+          return ((ExternalSystemException)unwrapped).getQuickFixes().length == 0;
+        }
       }
     }
     return false;
