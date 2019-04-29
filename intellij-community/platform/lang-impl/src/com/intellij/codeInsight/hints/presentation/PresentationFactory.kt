@@ -38,7 +38,6 @@ class PresentationFactory(val editor: EditorImpl) {
     val ascent = editor.ascent
     val descent = editor.descent
     val height = editor.lineHeight
-    //    val yBaseline = Math.max(ascent, (height + metrics.ascent - metrics.descent) / 2) - 1
     val textWithoutBox = EffectInlayPresentation(
       TextInlayPresentation(width, fontData.lineHeight, text, fontData.baseline) {
         plainFont
@@ -155,8 +154,9 @@ class PresentationFactory(val editor: EditorImpl) {
   }
 
   fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
-    // TODO add folding style
-    return ChangeOnClickPresentation(placeholder, unwrapAction)
+    return AttributesTransformerPresentation(ChangeOnClickPresentation(placeholder, unwrapAction)) {
+      it.with(attributesOf(EditorColors.FOLDED_TEXT_ATTRIBUTES))
+    }
   }
 
   fun asWrongReference(presentation: InlayPresentation): InlayPresentation {
