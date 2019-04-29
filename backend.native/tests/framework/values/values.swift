@@ -381,6 +381,7 @@ func testClassInstances() throws {
 }
 
 func testEnum() throws {
+    try assertEquals(actual: ValuesKt.passEnum(), expected: Enumeration.answer)
     try assertEquals(actual: ValuesKt.passEnum().enumValue, expected: 42)
     try assertEquals(actual: ValuesKt.passEnum().name, expected: "ANSWER")
     ValuesKt.receiveEnum(e: 1)

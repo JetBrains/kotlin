@@ -63,7 +63,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 }
             }
 
-            if (descriptor.kind == ClassKind.ENUM_ENTRY) {
+            if (descriptor.kind == ClassKind.ENUM_CLASS) {
                 descriptor.enumEntries.mapTo(methods) {
                     ObjCGetterForKotlinEnumEntry(symbolTable.referenceEnumEntry(it))
                 }
