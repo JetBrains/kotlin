@@ -61,7 +61,7 @@ class OptimizedImportsBuilder(
     }
 
     data class InputData(
-        val descriptorsToImport: Set<DeclarationDescriptor>,
+        val descriptorsToImport: Map<DeclarationDescriptor, Set<Name>>,
         val references: Collection<AbstractReference>
     )
 
@@ -124,7 +124,7 @@ class OptimizedImportsBuilder(
             .mapTo(importsToGenerate) { it.importPath }
 
         val descriptorsByParentFqName = HashMap<FqName, MutableSet<DeclarationDescriptor>>()
-        for (descriptor in data.descriptorsToImport) {
+        for (descriptor in data.descriptorsToImport.keys) {
             val fqName = descriptor.importableFqName!!
 
             val explicitImportPath = ImportPath(fqName, false)

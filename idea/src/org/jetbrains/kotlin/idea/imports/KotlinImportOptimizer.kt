@@ -79,7 +79,7 @@ class KotlinImportOptimizer : ImportOptimizer {
             .mapNotNull(KtImportDirective::importedFqName)
             .toSet()
 
-        private val descriptorsToImport = HashSet<DeclarationDescriptor>()
+        private val descriptorsToImport = LinkedHashMap<DeclarationDescriptor, Set<Name>>()
         private val abstractRefs = ArrayList<OptimizedImportsBuilder.AbstractReference>()
 
         val data: OptimizedImportsBuilder.InputData
@@ -107,7 +107,6 @@ class KotlinImportOptimizer : ImportOptimizer {
                 val targets = reference.targets(bindingContext)
                 for (target in targets) {
                     val importableDescriptor = target.getImportableDescriptor()
-                    if (importableDescriptor.name !in names) continue // resolved via alias
 
                     val importableFqName = target.importableFqName ?: continue
                     val parentFqName = importableFqName.parent()
@@ -118,7 +117,7 @@ class KotlinImportOptimizer : ImportOptimizer {
 
                     if (isAccessibleAsMember(importableDescriptor, element, bindingContext)) continue
 
-                    descriptorsToImport.add(importableDescriptor)
+                    descriptorsToImport.compute(importableDescriptor) { _, u -> u?.plus(names) ?: names.toHashSet() }
                 }
             }
 
