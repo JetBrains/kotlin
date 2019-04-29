@@ -522,7 +522,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             import android.widget.LinearLayout;
 
             fun foo(ll: LinearLayout) {
-                ll.composeInto({ <TextView text="Hello World!" /> })
+                ll.compose({ <TextView text="Hello World!" /> })
             }
         """)
     }
