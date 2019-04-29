@@ -82,7 +82,9 @@ abstract class StatefulPresentation<S: Any?>(
   }
 
   /**
-   * Uses only state to get presentation
+   * Method returns actual presentation, depending on state only.
+   * Called once state is changed, presentation cached.
+   * If you want to get actual presentation, use [currentPresentation]
    */
   abstract fun getPresentation() : InlayPresentation
 

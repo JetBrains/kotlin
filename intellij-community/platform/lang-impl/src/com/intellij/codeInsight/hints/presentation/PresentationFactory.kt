@@ -15,6 +15,7 @@ import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.editor.impl.FontInfo
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import com.intellij.ui.LightweightHint
@@ -77,19 +78,11 @@ class PresentationFactory(val editor: EditorImpl) {
   }
 
   fun hyperlink(base: InlayPresentation): InlayPresentation {
-    val dynamic = DynamicDelegatePresentation(base)
-    // TODO only with ctrl
-    return onHover(dynamic) { event ->
-      if (event != null) {
-        dynamic.delegate = AttributesTransformerPresentation(base) {
-          val attributes = attributesOf(EditorColors.REFERENCE_HYPERLINK_COLOR)
-          attributes.effectType = null // With underlined looks weird
-          it.with(attributes)
-        }
-      } else {
-        dynamic.delegate = base
-      }
-    }
+    return changeOnHover(base, { AttributesTransformerPresentation(base) {
+      val attributes = attributesOf(EditorColors.REFERENCE_HYPERLINK_COLOR)
+      attributes.effectType = null // With underlined looks weird
+      it.with(attributes)
+    }}) { isControlDown(it) }
   }
 
   fun tooltip(e: MouseEvent, text: String) {
@@ -97,6 +90,8 @@ class PresentationFactory(val editor: EditorImpl) {
     label.border = JBUI.Borders.empty(6, 6, 5, 6)
     // TODO
   }
+
+  private fun isControlDown(e: MouseEvent): Boolean = SystemInfo.isMac && e.isMetaDown || e.isControlDown
 
   fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
     tooltip.isEmpty() -> base
@@ -172,6 +167,14 @@ class PresentationFactory(val editor: EditorImpl) {
 
   fun onClick(base: InlayPresentation, onClick: (MouseEvent, Point) -> Unit) : InlayPresentation {
     return OnClickPresentation(base, onClick)
+  }
+
+  fun changeOnHover(
+    default: InlayPresentation,
+    onHover: () -> InlayPresentation,
+    onHoverPredicate: (MouseEvent) -> Boolean = { true }
+  ): InlayPresentation {
+    return ChangeOnHoverPresentation(default, onHover, onHoverPredicate)
   }
 
 
