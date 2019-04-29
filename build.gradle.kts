@@ -157,7 +157,7 @@ extra["versions.org.springframework"] = "4.2.0.RELEASE"
 extra["versions.jflex"] = "1.7.0"
 extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
-extra["versions.kotlin-native-shared"] = "1.0-dev-40"
+extra["versions.kotlin-native-shared"] = "1.0-dev-50"
 
 if (!project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = "1.3-dev-9780"
