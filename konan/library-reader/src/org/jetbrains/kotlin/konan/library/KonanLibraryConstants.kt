@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.konan.library
 
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.io.File
 
 const val KLIB_FILE_EXTENSION = "klib"
 const val KLIB_FILE_EXTENSION_WITH_DOT = ".$KLIB_FILE_EXTENSION"
@@ -28,14 +27,14 @@ const val KONAN_PLATFORM_LIBS_DIR_NAME = "platform"
 
 const val KONAN_SOURCES_DIR_NAME = "sources"
 
-val KONAN_COMMON_LIBS_PATH: Path
-    get() = Paths.get(KLIB_DIR_NAME, KONAN_COMMON_LIBS_DIR_NAME)
+val KONAN_COMMON_LIBS_PATH: File
+    get() = File(KLIB_DIR_NAME, KONAN_COMMON_LIBS_DIR_NAME)
 
-val KONAN_ALL_PLATFORM_LIBS_PATH: Path
-    get() = Paths.get(KLIB_DIR_NAME, KONAN_PLATFORM_LIBS_DIR_NAME)
+val KONAN_ALL_PLATFORM_LIBS_PATH: File
+    get() = File(KLIB_DIR_NAME, KONAN_PLATFORM_LIBS_DIR_NAME)
 
-fun konanCommonLibraryPath(libraryName: String): Path = KONAN_COMMON_LIBS_PATH.resolve(libraryName)
+fun konanCommonLibraryPath(libraryName: String): File = KONAN_COMMON_LIBS_PATH.resolve(libraryName)
 
-fun konanSpecificPlatformLibrariesPath(platform: String): Path = KONAN_ALL_PLATFORM_LIBS_PATH.resolve(platform)
+fun konanSpecificPlatformLibrariesPath(platform: String): File = KONAN_ALL_PLATFORM_LIBS_PATH.resolve(platform)
 
-fun konanPlatformLibraryPath(libraryName: String, platform: String): Path = konanSpecificPlatformLibrariesPath(platform).resolve(libraryName)
+fun konanPlatformLibraryPath(libraryName: String, platform: String): File = konanSpecificPlatformLibrariesPath(platform).resolve(libraryName)

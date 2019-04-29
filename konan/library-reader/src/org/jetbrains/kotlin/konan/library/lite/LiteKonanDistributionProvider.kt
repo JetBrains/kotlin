@@ -13,7 +13,7 @@ import java.io.File
 object LiteKonanDistributionProvider {
     fun getDistribution(konanHomeDir: File): LiteKonanDistribution? {
         val stdlib = LiteKonanLibraryFacade.getDistributionLibraryProvider(konanHomeDir)
-            .getLibrary(konanHomeDir.resolve(konanCommonLibraryPath(KONAN_STDLIB_NAME).toFile())) as? LiteKonanLibraryImpl ?: return null
+            .getLibrary(konanHomeDir.resolve(konanCommonLibraryPath(KONAN_STDLIB_NAME))) as? LiteKonanLibraryImpl ?: return null
 
         return LiteKonanDistribution(
             konanHomeDir,

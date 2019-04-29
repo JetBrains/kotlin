@@ -11,7 +11,6 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.VfsUtilCore.urlToPath
-import com.intellij.util.io.readText
 import org.jetbrains.kotlin.ide.konan.NativeLibraryKind
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
@@ -25,9 +24,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runners.Parameterized
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.io.File
 
 class GradleNativeLibrariesInIDENamingTest : GradleImportingTestCase() {
 
@@ -37,8 +34,7 @@ class GradleNativeLibrariesInIDENamingTest : GradleImportingTestCase() {
         configureProject()
         importProject()
 
-        val projectRoot = Paths.get(projectPath)
-        myProject.allModules().forEach { assertValidModule(it, projectRoot) }
+        myProject.allModules().forEach { assertValidModule(it, projectPath) }
     }
 
     // Test naming of Kotlin/Native libraries in projects with Gradle plugin 1.3.20 or earlier
@@ -47,8 +43,7 @@ class GradleNativeLibrariesInIDENamingTest : GradleImportingTestCase() {
         configureProject()
         importProject()
 
-        val projectRoot = Paths.get(projectPath)
-        myProject.allModules().forEach { assertValidModule(it, projectRoot) }
+        myProject.allModules().forEach { assertValidModule(it, projectPath) }
     }
 
     override fun getExternalSystemConfigFileName() = GradleConstants.KOTLIN_DSL_SCRIPT_NAME
@@ -59,15 +54,15 @@ class GradleNativeLibrariesInIDENamingTest : GradleImportingTestCase() {
         configureByFiles()
 
         // include data dir with fake Kotlin/Native libraries
-        val testSuiteDataDir = testDataDirectory().toPath().parent
+        val testSuiteDataDir = testDataDirectory().parentFile
         val kotlinNativeHome = testSuiteDataDir.resolve(FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH)
 
-        Files.walk(kotlinNativeHome)
-            .filter { Files.isRegularFile(it) }
+        kotlinNativeHome.walkTopDown()
+            .filter { it.isFile }
             .forEach { pathInTestSuite ->
                 // need to put copied file one directory upper than the project root, so adding ".." to the beginning of relative path
                 // reason: distribution KLIBs should not be appear in IDEA indexes, so they should be located outside of the project root
-                val relativePathInProject = DOUBLE_DOT_PATH.resolve(pathInTestSuite.toRelativePath(testSuiteDataDir))
+                val relativePathInProject = DOUBLE_DOT_PATH.resolve(pathInTestSuite.relativeTo(testSuiteDataDir))
                 createProjectSubFile(relativePathInProject.toString(), pathInTestSuite.readText())
             }
     }
@@ -80,7 +75,7 @@ class GradleNativeLibrariesInIDENamingTest : GradleImportingTestCase() {
     }
 }
 
-private val FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH = Paths.get("kotlin-native-data-dir", "kotlin-native-PLATFORM-VERSION")
+private val FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH = File("kotlin-native-data-dir", "kotlin-native-PLATFORM-VERSION")
 private val NATIVE_LIBRARY_NAME_REGEX = Regex("^Kotlin/Native ([\\d\\w\\.-]+) - ([\\w\\d]+)( \\[([\\w\\d_]+)\\])?$")
 
 private val NATIVE_LINUX_LIBRARIES = listOf(
@@ -103,9 +98,7 @@ private val NATIVE_MINGW_LIBRARIES = listOf(
     "Kotlin/Native {version} - opengl32 [mingw_x64]",
     "Kotlin/Native {version} - windows [mingw_x64]"
 )
-private val DOUBLE_DOT_PATH = Paths.get("..")
-
-private fun Path.toRelativePath(basePath: Path) = basePath.relativize(this)
+private val DOUBLE_DOT_PATH = File("..")
 
 private val Module.libraries
     get() = ModuleRootManager.getInstance(this).orderEntries
@@ -113,7 +106,7 @@ private val Module.libraries
         .filterIsInstance<LibraryOrderEntry>()
         .mapNotNull { it.library }
 
-private fun assertValidModule(module: Module, projectRoot: Path) {
+private fun assertValidModule(module: Module, projectRoot: String) {
     val (nativeLibraries, otherLibraries) = module.libraries.partition { library ->
         detectLibraryKind(library.getFiles(OrderRootType.CLASSES)) == NativeLibraryKind
     }
@@ -144,7 +137,7 @@ private fun assertValidModule(module: Module, projectRoot: Path) {
     otherLibraries.forEach(::assertValidNonNativeLibrary)
 }
 
-private fun assertValidNativeLibrary(library: Library, projectRoot: Path) {
+private fun assertValidNativeLibrary(library: Library, projectRoot: String) {
     val fullName = library.name.orEmpty()
 
     val result = NATIVE_LIBRARY_NAME_REGEX.matchEntire(fullName)
@@ -155,9 +148,9 @@ private fun assertValidNativeLibrary(library: Library, projectRoot: Path) {
     val libraryUrls = library.getUrls(OrderRootType.CLASSES).toList()
     assertTrue("Kotlin/Native library $fullName has multiple roots (${libraryUrls.size}): $libraryUrls", libraryUrls.size == 1)
 
-    val actualShortPath = Paths.get(urlToPath(libraryUrls.single()))
-        .toRelativePath(projectRoot.resolve(DOUBLE_DOT_PATH).normalize())
-        .toRelativePath(FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH)
+    val actualShortPath = File(urlToPath(libraryUrls.single()))
+        .relativeTo(File(projectRoot).resolve(DOUBLE_DOT_PATH).normalize())
+        .relativeTo(FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH)
 
     val expectedShortPath = if (platform.isEmpty()) konanCommonLibraryPath(name) else konanPlatformLibraryPath(name, platform)
     assertEquals("The short path of $fullName does not match its location", expectedShortPath, actualShortPath)
