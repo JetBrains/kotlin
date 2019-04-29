@@ -234,6 +234,7 @@ clauses. For example:
 <div class="sample" markdown="1" theme="idea" mode="c">
 
 ```c
+headers = foo.h
 staticLibraries = libfoo.a 
 libraryPaths = /opt/local/lib /usr/local/opt/curl/lib
 ```
