@@ -255,7 +255,7 @@ public class DisposerDebugger implements UiDebuggerExtension, Disposable  {
     }
 
     private void queueUpdate() {
-      UIUtil.invokeLaterIfNeeded(() -> myTreeBuilder.refilter());
+      UIUtil.invokeLaterIfNeeded(() -> myTreeBuilder.refilterAsync());
     }
 
     @Override
@@ -275,7 +275,7 @@ public class DisposerDebugger implements UiDebuggerExtension, Disposable  {
 
     public void clear() {
       myModificationToFilter = Disposer.getTree().getModification();
-      myTreeBuilder.refilter();
+      myTreeBuilder.refilterAsync();
     }
   }
 
