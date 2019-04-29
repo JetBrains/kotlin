@@ -124,7 +124,6 @@ include ":kotlin-build-common",
         ":kotlin-test:kotlin-test-junit5",
         ":kotlin-test:kotlin-test-testng",
         ":kotlin-test:kotlin-test-js",
-        ":kotlin-test:kotlin-test-js-ir",
         ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
         ":kotlin-test-nodejs-runner",
         ":kotlinx-metadata",
@@ -237,6 +236,7 @@ if (flags.inJpsBuildIdeaSync) {
             ":kotlin-stdlib-common",
             ":kotlin-stdlib",
             ":kotlin-stdlib-js",
+            ":kotlin-test:kotlin-test-js-ir",
             ":kotlin-stdlib-js-ir",
             ":kotlin-stdlib-jdk7",
             ":kotlin-stdlib-jdk8",
@@ -251,6 +251,7 @@ if (flags.inJpsBuildIdeaSync) {
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
     project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js-v1" as File
     project(':kotlin-stdlib-js-ir').projectDir = "$rootDir/libraries/stdlib/js-ir" as File
+    project(':kotlin-test:kotlin-test-js-ir').projectDir = "$rootDir/libraries/kotlin.test/js-ir" as File
     project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
     project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
     project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
@@ -271,7 +272,6 @@ project(':kotlin-test:kotlin-test-junit').projectDir = "$rootDir/libraries/kotli
 project(':kotlin-test:kotlin-test-junit5').projectDir = "$rootDir/libraries/kotlin.test/junit5" as File
 project(':kotlin-test:kotlin-test-testng').projectDir = "$rootDir/libraries/kotlin.test/testng" as File
 project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
-project(':kotlin-test:kotlin-test-js-ir').projectDir = "$rootDir/libraries/kotlin.test/js-ir" as File
 project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
 project(':kotlin-test-nodejs-runner').projectDir = "$rootDir/libraries/tools/kotlin-test-nodejs-runner" as File
 project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
