@@ -158,7 +158,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
   protected void updatePreview(boolean useDefaultSample) {
     if (myEditor == null) return;
     updateEditor(useDefaultSample);
-    updatePreviewHighlighter((EditorEx)myEditor);
+    updatePreviewHighlighter(myEditor);
   }
 
   private void updateEditor(boolean useDefaultSample) {
