@@ -511,16 +511,14 @@ public class ExternalSystemUtil {
               String title = ExternalSystemBundle.message("notification.project.refresh.fail.title",
                                                           externalSystemId.getReadableName(), projectName);
               com.intellij.build.events.FailureResult failureResult = createFailureResult(title, e, externalSystemId, project);
-              String message = isPreviewMode ? "project preview creation failed" : "sync failed";
-              finishSyncEventSupplier.set(() -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), message, failureResult));
+              finishSyncEventSupplier.set(() -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "failed", failureResult));
               processHandler.notifyProcessTerminated(1);
             }
 
             @Override
             public void onSuccess(@NotNull ExternalSystemTaskId id) {
-              String message = isPreviewMode ? "project preview created" : "sync finished";
               finishSyncEventSupplier.set(
-                () -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), message, new SuccessResultImpl()));
+                () -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "successful", new SuccessResultImpl()));
               processHandler.notifyProcessTerminated(0);
             }
 
@@ -619,7 +617,7 @@ public class ExternalSystemUtil {
           String message = "Sync finish event has not been received";
           LOG.warn(message, exception);
           ServiceManager.getService(project, SyncViewManager.class).onEvent(
-            new FinishBuildEventImpl(resolveProjectTask.getId(), null, System.currentTimeMillis(), "sync failed",
+            new FinishBuildEventImpl(resolveProjectTask.getId(), null, System.currentTimeMillis(), "failed",
                                      new FailureResultImpl(new Exception(message, exception))));
         }
       }

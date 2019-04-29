@@ -386,7 +386,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
             public void onSuccess(@NotNull ExternalSystemTaskId id) {
               if (progressListener != null) {
                 progressListener.onEvent(new FinishBuildEventImpl(
-                  id, null, System.currentTimeMillis(), "completed successfully", new SuccessResultImpl()));
+                  id, null, System.currentTimeMillis(), "successful", new SuccessResultImpl()));
               }
             }
 
