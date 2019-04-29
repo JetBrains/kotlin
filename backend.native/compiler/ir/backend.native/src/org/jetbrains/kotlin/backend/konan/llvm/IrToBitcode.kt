@@ -760,6 +760,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrCall                -> return evaluateCall                   (value)
             is IrDelegatingConstructorCall ->
                                         return evaluateCall                   (value)
+            is IrConstructorCall     -> return evaluateCall                   (value)
             is IrInstanceInitializerCall ->
                                         return evaluateInstanceInitializerCall(value)
             is IrGetValue            -> return evaluateGetValue               (value)
@@ -1751,6 +1752,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         updateBuilderDebugLocation(value)
         return when (value) {
             is IrDelegatingConstructorCall -> delegatingConstructorCall(value.symbol.owner, args)
+            is IrConstructorCall -> evaluateConstructorCall(value, args)
             else -> evaluateFunctionCall(value as IrCall, args, resultLifetime(value))
         }
     }
@@ -2016,7 +2018,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return when {
             function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args)
             function.symbol in context.irBuiltIns.irBuiltInsSymbols -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
-            function is IrConstructor -> evaluateConstructorCall(callee, argsWithContinuationIfNeeded)
             else -> evaluateSimpleFunctionCall(function, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifierSymbol?.owner)
         }
     }
@@ -2045,34 +2046,40 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return lifetimes.getOrElse(callee) { /* TODO: make IRRELEVANT */ Lifetime.GLOBAL }
     }
 
-    private fun evaluateConstructorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
+    private fun evaluateConstructorCall(callee: IrConstructorCall, args: List<LLVMValueRef>): LLVMValueRef {
         context.log{"evaluateConstructorCall        : ${ir2string(callee)}"}
         return memScoped {
-            val constructedClass = (callee.symbol as IrConstructorSymbol).owner.constructedClass
-            val thisValue = if (constructedClass.isArray) {
-                assert(args.isNotEmpty() && args[0].type == int32Type)
-                functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), args[0],
-                        resultLifetime(callee), currentCodeContext.exceptionHandler)
-            } else if (constructedClass == context.ir.symbols.string.owner) {
-                // TODO: consider returning the empty string literal instead.
-                assert(args.isEmpty())
-                functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), count = kImmZero,
-                        lifetime = resultLifetime(callee), exceptionHandler = currentCodeContext.exceptionHandler)
-            } else if (constructedClass.isObjCClass()) {
-                assert(constructedClass.isKotlinObjCClass()) // Calls to other ObjC class constructors must be lowered.
-                val symbols = context.ir.symbols
-                val rawPtr = callDirect(
-                        symbols.interopAllocObjCObject.owner,
-                        listOf(genGetObjCClass(constructedClass)),
-                        Lifetime.IRRELEVANT
-                )
-
-                callDirect(symbols.interopInterpretObjCPointer.owner, listOf(rawPtr), resultLifetime(callee)).also {
-                    // Balance pointer retained by alloc:
-                    callDirect(symbols.interopObjCRelease.owner, listOf(rawPtr), Lifetime.IRRELEVANT)
+            val constructedClass = callee.symbol.owner.constructedClass
+            val thisValue = when {
+                constructedClass.isArray -> {
+                    assert(args.isNotEmpty() && args[0].type == int32Type)
+                    functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), args[0],
+                            resultLifetime(callee), currentCodeContext.exceptionHandler)
                 }
-            } else {
-                functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee))
+
+                constructedClass == context.ir.symbols.string.owner -> {
+                    // TODO: consider returning the empty string literal instead.
+                    assert(args.isEmpty())
+                    functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), count = kImmZero,
+                            lifetime = resultLifetime(callee), exceptionHandler = currentCodeContext.exceptionHandler)
+                }
+
+                constructedClass.isObjCClass() -> {
+                    assert(constructedClass.isKotlinObjCClass()) // Calls to other ObjC class constructors must be lowered.
+                    val symbols = context.ir.symbols
+                    val rawPtr = callDirect(
+                            symbols.interopAllocObjCObject.owner,
+                            listOf(genGetObjCClass(constructedClass)),
+                            Lifetime.IRRELEVANT
+                    )
+
+                    callDirect(symbols.interopInterpretObjCPointer.owner, listOf(rawPtr), resultLifetime(callee)).also {
+                        // Balance pointer retained by alloc:
+                        callDirect(symbols.interopObjCRelease.owner, listOf(rawPtr), Lifetime.IRRELEVANT)
+                    }
+                }
+
+                else -> functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee))
             }
             evaluateSimpleFunctionCall(callee.symbol.owner,
                     listOf(thisValue) + args, Lifetime.IRRELEVANT /* constructor doesn't return anything */)
@@ -2223,8 +2230,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun delegatingConstructorCall(
-            constructor: IrConstructor, args: List<LLVMValueRef>): LLVMValueRef {
+    private fun delegatingConstructorCall(constructor: IrConstructor, args: List<LLVMValueRef>): LLVMValueRef {
 
         val constructedClass = functionGenerationContext.constructedClass!!
         val thisPtr = currentCodeContext.genGetValue(constructedClass.thisReceiver!!)

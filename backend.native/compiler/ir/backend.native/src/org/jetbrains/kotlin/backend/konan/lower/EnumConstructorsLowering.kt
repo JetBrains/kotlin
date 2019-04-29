@@ -270,21 +270,13 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
         }
 
         private inner class InEnumEntryClassConstructor(enumEntry: IrEnumEntry) : InEnumEntry(enumEntry) {
-            override fun createConstructorCall(
-                    startOffset: Int,
-                    endOffset: Int,
-                    loweredConstructor: IrConstructorSymbol
-            ) = IrDelegatingConstructorCallImpl(
-                    startOffset,
-                    endOffset,
-                    context.irBuiltIns.unitType,
-                    loweredConstructor
-            )
+            override fun createConstructorCall(startOffset: Int, endOffset: Int, loweredConstructor: IrConstructorSymbol) =
+                    IrDelegatingConstructorCallImpl(startOffset, endOffset, context.irBuiltIns.unitType, loweredConstructor)
         }
 
         private inner class InEnumEntryInitializer(enumEntry: IrEnumEntry) : InEnumEntry(enumEntry) {
             override fun createConstructorCall(startOffset: Int, endOffset: Int, loweredConstructor: IrConstructorSymbol) =
-                    IrCallImpl(startOffset, endOffset, loweredConstructor.owner.returnType, loweredConstructor)
+                    IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, loweredConstructor.owner.returnType, loweredConstructor)
         }
 
         private inner class EnumClassBodyTransformer : IrElementTransformerVoid() {

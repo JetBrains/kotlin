@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -21,9 +20,9 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.types.*
@@ -35,14 +34,6 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
     private val refClassConstructor = refClass.constructors.single()
 
     private val elementProperty = refClass.owner.declarations.filterIsInstance<IrProperty>().single()
-
-    private fun refConstructor(elementType: KotlinType): ClassConstructorDescriptor {
-        val typeParameter = refClassConstructor.descriptor.typeParameters[0]
-
-        return refClassConstructor.descriptor.substitute(TypeSubstitutor.create(
-                mapOf(typeParameter.typeConstructor to TypeProjectionImpl(Variance.INVARIANT, elementType))
-        ))!!
-    }
 
     private fun refType(elementType: KotlinType): KotlinType {
         return refClass.descriptor.defaultType.replace(listOf(TypeProjectionImpl(elementType)))
@@ -66,10 +57,10 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
 
         val valueType = originalDeclaration.type
 
-        val refConstructorCall = IrCallImpl(
+        val refConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
                 originalDeclaration.startOffset, originalDeclaration.endOffset,
                 refClass.typeWith(valueType),
-                refClassConstructor, refConstructor(valueType.toKotlinType()), 1
+                refClassConstructor
         ).apply {
             putTypeArgument(0, valueType)
         }

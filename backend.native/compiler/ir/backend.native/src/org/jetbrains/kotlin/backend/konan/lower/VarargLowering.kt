@@ -87,12 +87,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 expression.transformChildrenVoid(this)
             }
 
-            override fun visitCall(expression: IrCall): IrExpression {
-                replaceEmptyParameterWithEmptyArray(expression)
-                return expression
-            }
-
-            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+            override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
                 replaceEmptyParameterWithEmptyArray(expression)
                 return expression
             }

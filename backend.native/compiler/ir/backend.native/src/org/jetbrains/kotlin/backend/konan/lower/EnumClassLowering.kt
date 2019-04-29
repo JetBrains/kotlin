@@ -220,14 +220,14 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                             .map {
                                 val initializer = it.initializerExpression
                                 val entryConstructorCall = when {
-                                    initializer is IrCall -> initializer
+                                    initializer is IrConstructorCall -> initializer
 
                                     initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL ->
-                                        initializer.statements.last() as IrCall
+                                        initializer.statements.last() as IrConstructorCall
 
                                     else -> error("Unexpected initializer: $initializer")
                                 }
-                                val entryClass = (entryConstructorCall.symbol.owner as IrConstructor).constructedClass
+                                val entryClass = entryConstructorCall.symbol.owner.constructedClass
 
                                 irCall(startOffset, endOffset,
                                         createUninitializedInstance,
@@ -265,7 +265,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
 
-            fun IrBlockBuilder.initInstanceCall(instance: IrCall, constructor: IrCall): IrCall =
+            fun IrBlockBuilder.initInstanceCall(instance: IrCall, constructor: IrConstructorCall): IrCall =
                     irCall(initInstanceSymbol).apply {
                         putValueArgument(0, instance)
                         putValueArgument(1, constructor)
@@ -288,11 +288,11 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                             val initializer = it.value.initializerExpression!!
                             initializer.patchDeclarationParents(constructor)
                             when {
-                                initializer is IrCall -> +initInstanceCall(instance, initializer)
+                                initializer is IrConstructorCall -> +initInstanceCall(instance, initializer)
 
                                 initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL -> {
                                     val statements = initializer.statements
-                                    val constructorCall = statements.last() as IrCall
+                                    val constructorCall = statements.last() as IrConstructorCall
                                     statements[statements.lastIndex] = initInstanceCall(instance, constructorCall)
                                     +initializer
                                 }

@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
@@ -147,8 +146,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             }
             IntrinsicType.OBJC_INIT_BY -> {
                 val receiver = environment.evaluateExpression(callSite.extensionReceiver!!)
-                val irConstructorCall = callSite.getValueArgument(0) as IrCall
-                val constructorDescriptor = irConstructorCall.symbol.owner as IrConstructor
+                val irConstructorCall = callSite.getValueArgument(0) as IrConstructorCall
+                val constructorDescriptor = irConstructorCall.symbol.owner
                 val constructorArgs = environment.evaluateExplicitArgs(irConstructorCall)
                 val args = listOf(receiver) + constructorArgs
                 environment.evaluateCall(constructorDescriptor, args, Lifetime.IRRELEVANT)
@@ -159,7 +158,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 environment.functionGenerationContext.genObjCSelector(selector)
             }
             IntrinsicType.INIT_INSTANCE -> {
-                val initializer = callSite.getValueArgument(1) as IrCall
+                val initializer = callSite.getValueArgument(1) as IrConstructorCall
                 val thiz = environment.evaluateExpression(callSite.getValueArgument(0)!!)
                 environment.evaluateCall(
                         initializer.symbol.owner,

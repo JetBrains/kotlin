@@ -1068,7 +1068,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
         }
     }
 
-    fun IrBlockBodyBuilder.irSuccess(value: IrExpression): IrCall {
+    fun IrBlockBodyBuilder.irSuccess(value: IrExpression): IrMemberAccessExpression {
         val createResult = symbols.kotlinResult.owner.constructors.single { it.isPrimary }
         return irCall(createResult).apply {
             putValueArgument(0, value)

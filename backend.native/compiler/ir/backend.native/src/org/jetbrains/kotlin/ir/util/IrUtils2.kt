@@ -491,12 +491,10 @@ private fun IrFunction.substitutedReturnType(typeArguments: List<IrType>): IrTyp
 
 // TODO: this function must be avoided since it takes symbol's owner implicitly.
 fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol, typeArguments: List<IrType> = emptyList()) =
-        irCall(symbol.owner, typeArguments)
+        this.irCall(symbol, symbol.owner.substitutedReturnType(typeArguments), typeArguments)
 
-fun IrBuilderWithScope.irCall(
-        irFunction: IrFunction,
-        typeArguments: List<IrType> = emptyList()
-): IrCall = irCall(this.startOffset, this.endOffset, irFunction, typeArguments)
+fun IrBuilderWithScope.irCall(irFunction: IrFunction, typeArguments: List<IrType> = emptyList()) =
+        irCall(irFunction.symbol, typeArguments)
 
 internal fun irCall(startOffset: Int, endOffset: Int, irFunction: IrFunction, typeArguments: List<IrType>): IrCall =
         IrCallImpl(
@@ -512,7 +510,7 @@ fun IrBuilderWithScope.irCallOp(
         callee: IrFunction,
         dispatchReceiver: IrExpression,
         argument: IrExpression
-): IrCall =
+) =
         irCall(callee).apply {
             this.dispatchReceiver = dispatchReceiver
             putValueArgument(0, argument)

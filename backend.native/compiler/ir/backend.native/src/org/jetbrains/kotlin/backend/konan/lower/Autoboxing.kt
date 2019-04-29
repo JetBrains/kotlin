@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -32,8 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -131,6 +131,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     private val IrFunctionAccessExpression.target: IrFunction get() = when (this) {
         is IrCall -> this.callTarget
         is IrDelegatingConstructorCall -> this.symbol.owner
+        is IrConstructorCall -> this.symbol.owner
         else -> TODO(this.render())
     }
 
@@ -266,12 +267,12 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         }
     }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        super.visitCall(expression)
+    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+        super.visitConstructorCall(expression)
 
-        val function = expression.symbol.owner
-        return if (function is IrConstructor && function.constructedClass.isInlined()) {
-            builder.lowerConstructorCallToValue(expression, function)
+        val constructor = expression.symbol.owner
+        return if (constructor.constructedClass.isInlined()) {
+            builder.lowerConstructorCallToValue(expression, constructor)
         } else {
             expression
         }

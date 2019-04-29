@@ -649,28 +649,31 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
         )
     }
 
+    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+        expression.transformChildrenVoid()
+
+        val descriptor = expression.descriptor.original
+        val callee = expression.symbol.owner
+        val initMethod = callee.getObjCInitMethod() ?: return expression
+
+        val arguments = descriptor.valueParameters.map { expression.getValueArgument(it) }
+        assert(expression.extensionReceiver == null)
+        assert(expression.dispatchReceiver == null)
+
+        val constructedClass = callee.constructedClass
+        val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
+        return builder.at(expression).run {
+            val classPtr = getObjCClass(constructedClass.symbol)
+            irForceNotNull(callAllocAndInit(classPtr, initMethodInfo, arguments, expression, initMethod))
+        }
+    }
+
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
 
         val descriptor = expression.descriptor.original
 
         val callee = expression.symbol.owner
-        if (callee is IrConstructor) {
-            val initMethod = callee.getObjCInitMethod()
-
-            if (initMethod != null) {
-                val arguments = descriptor.valueParameters.map { expression.getValueArgument(it) }
-                assert(expression.extensionReceiver == null)
-                assert(expression.dispatchReceiver == null)
-
-                val constructedClass = callee.constructedClass
-                val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
-                return builder.at(expression).run {
-                    val classPtr = getObjCClass(constructedClass.symbol)
-                    irForceNotNull(callAllocAndInit(classPtr, initMethodInfo, arguments, expression, initMethod))
-                }
-            }
-        }
 
         descriptor.getObjCFactoryInitMethodInfo()?.let { initMethodInfo ->
             val arguments = (0 until expression.valueArgumentsCount)
@@ -858,19 +861,23 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     private fun generateCFunctionPointer(function: IrSimpleFunction, expression: IrExpression): IrExpression =
             generateWithStubs { generateCFunctionPointer(function, function, expression) }
 
+    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+        expression.transformChildrenVoid(this)
+
+        val function = expression.symbol.owner
+        val inlinedClass = function.returnType.getInlinedClassNative()
+        if (inlinedClass?.descriptor == interop.cPointer || inlinedClass?.descriptor == interop.nativePointed) {
+            throw Error("Native interop types constructors must not be called directly")
+        }
+        return expression
+    }
+
     override fun visitCall(expression: IrCall): IrExpression {
 
         expression.transformChildrenVoid(this)
         builder.at(expression)
         val descriptor = expression.descriptor.original
         val function = expression.symbol.owner
-
-        if (function is IrConstructor) {
-            val inlinedClass = function.returnType.getInlinedClassNative()
-            if (inlinedClass?.descriptor == interop.cPointer || inlinedClass?.descriptor == interop.nativePointed) {
-                throw Error("Native interop types constructors must not be called directly")
-            }
-        }
 
         if (descriptor == interop.nativePointedRawPtrGetter ||
                 OverridingUtil.overrides(descriptor, interop.nativePointedRawPtrGetter)) {
@@ -1029,8 +1036,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                     val intrinsic = interop.objCObjectInitBy.name
 
                     val argument = expression.getValueArgument(0)!!
-                    val constructedClass =
-                            ((argument as? IrCall)?.descriptor as? ClassConstructorDescriptor)?.constructedClass
+                    val constructedClass = (argument as? IrConstructorCall)?.symbol?.owner?.constructedClass?.descriptor
 
                     if (constructedClass == null) {
                         context.reportCompilationError("Argument of '$intrinsic' must be a constructor call",

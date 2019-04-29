@@ -36,19 +36,24 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
 
     fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        val callSite = super.visitCall(expression) as IrCall
-        if (!callSite.symbol.owner.needsInlining)
-            return callSite
-        if (Symbols.isLateinitIsInitializedPropertyGetter(callSite.symbol))
-            return callSite
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+        expression.transformChildrenVoid(this)
+        val callee = when (expression) {
+            is IrCall -> expression.symbol.owner
+            is IrConstructorCall -> expression.symbol.owner
+            else -> return expression
+        }
+        if (!callee.needsInlining)
+            return expression
+        if (Symbols.isLateinitIsInitializedPropertyGetter(callee.symbol))
+            return expression
 
-        val callee = getFunctionDeclaration(callSite.symbol)
+        val actualCallee = getFunctionDeclaration(callee.symbol)
 
-        callee.transformChildrenVoid(this)                            // Process recursive inline.
+        actualCallee.transformChildrenVoid(this)                            // Process recursive inline.
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
-        val inliner = Inliner(callSite, callee, currentScope!!, parent, context)
+        val inliner = Inliner(expression, actualCallee, currentScope!!, parent, context)
         return inliner.inline()
     }
 
@@ -76,7 +81,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
 
     private val IrFunction.needsInlining get() = isInlineConstructor || (this.isInline && !this.isExternal)
 
-    private inner class Inliner(val callSite: IrCall,
+    private inner class Inliner(val callSite: IrFunctionAccessExpression,
                                 val callee: IrFunction,
                                 val currentScope: ScopeWithIr,
                                 val parent: IrDeclarationParent?,
@@ -109,7 +114,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             }
         }
 
-        private fun inlineFunction(callSite: IrCall, callee: IrFunction): IrReturnableBlock {
+        private fun inlineFunction(callSite: IrFunctionAccessExpression, callee: IrFunction): IrReturnableBlock {
             val copiedCallee = copyIrElement.copy(callee) as IrFunction
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
@@ -126,12 +131,13 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                 val constructedClass = callee.parentAsClass
                 copiedCallee.parent = constructedClass
                 val delegatingConstructorCall = statements[0] as IrDelegatingConstructorCall
+                // TODO: Try use type parameters from callee.
                 irBuilder.run {
-                    val constructorCall = IrCallImpl(
+                    val constructorCall = IrConstructorCallImpl(
                             startOffset, endOffset,
                             callSite.type,
                             delegatingConstructorCall.symbol, delegatingConstructorCall.descriptor,
-                            constructedClass.typeParameters.size,
+                            constructedClass.typeParameters.size, 0,
                             delegatingConstructorCall.symbol.owner.valueParameters.size
                     ).apply {
                         delegatingConstructorCall.symbol.owner.valueParameters.forEach {
@@ -216,11 +222,12 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                     val unboundArgsSet = unboundFunctionParameters.toSet()
                     val valueParameters = expression.getArguments().drop(1) // Skip dispatch receiver.
 
-                    val immediateCall = IrCallImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.type,
-                            functionArgument.symbol, functionArgument.descriptor
-                    ).apply {
+                    val immediateCall = with(expression) {
+                        if (function is IrConstructor)
+                            IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, function.symbol)
+                        else
+                            IrCallImpl(startOffset, endOffset, type, functionArgument.symbol)
+                    }.apply {
                         functionParameters.forEach {
                             val argument =
                                     if (!unboundArgsSet.contains(it))
@@ -237,7 +244,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                         for (index in 0 until functionArgument.typeArgumentsCount)
                             putTypeArgument(index, functionArgument.getTypeArgument(index))
                     }
-                    return this@FunctionInlining.visitCall(super.visitCall(immediateCall) as IrCall)
+                    return this@FunctionInlining.visitExpression(super.visitExpression(immediateCall))
                 }
                 if (functionArgument !is IrBlock)
                     return super.visitCall(expression)
@@ -292,7 +299,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
 
         //-------------------------------------------------------------------------//
 
-        private fun buildParameterToArgument(callSite: IrCall, callee: IrFunction): List<ParameterToArgument> {
+        private fun buildParameterToArgument(callSite: IrFunctionAccessExpression, callee: IrFunction): List<ParameterToArgument> {
 
             val parameterToArgument = mutableListOf<ParameterToArgument>()
 
@@ -367,7 +374,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
 
         //-------------------------------------------------------------------------//
 
-        private fun evaluateArguments(callSite: IrCall, callee: IrFunction): List<IrStatement> {
+        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
 
             val parameterToArgumentOld = buildParameterToArgument(callSite, callee)
             val evaluationStatements = mutableListOf<IrStatement>()

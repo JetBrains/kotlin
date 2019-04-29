@@ -92,13 +92,6 @@ val IrClass.isFinalClass: Boolean
 
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
 
-private val IrCall.annotationClass
-    get() = (this.symbol.owner as IrConstructor).constructedClass
-
-fun List<IrCall>.findAnnotation(fqName: FqName): IrCall? = this.firstOrNull {
-    it.annotationClass.fqNameSafe == fqName
-}
-
 fun <T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
     val annotation = this.annotations.findAnnotation(fqName)
     if (annotation == null) {

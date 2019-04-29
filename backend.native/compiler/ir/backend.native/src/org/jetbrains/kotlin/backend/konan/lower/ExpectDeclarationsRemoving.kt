@@ -32,13 +32,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
-        irFile.declarations.removeAll {
-            if (it.descriptor.isExpectMember) {
-                true
-            } else {
-                false
-            }
-        }
+        irFile.declarations.removeAll { it.descriptor.isExpectMember }
     }
 }
 

@@ -557,6 +557,17 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                     else symbolTable.mapFunction(value.symbol.owner.constructors.single())
                             )
 
+                            is IrConstructorCall -> {
+                                val callee = value.symbol.owner
+                                val arguments = value.getArguments().map { expressionToEdge(it.second) }
+                                DataFlowIR.Node.NewObject(
+                                        symbolTable.mapFunction(callee),
+                                        arguments,
+                                        symbolTable.mapClassReferenceType(callee.constructedClass, false),
+                                        value
+                                )
+                            }
+
                             is IrCall -> when (value.symbol) {
                                 getContinuationSymbol -> getContinuation()
 
@@ -573,9 +584,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                                 initInstanceSymbol -> {
                                     val thiz = expressionToEdge(value.getValueArgument(0)!!)
-                                    val initializer = value.getValueArgument(1) as IrCall
+                                    val initializer = value.getValueArgument(1) as IrConstructorCall
                                     val arguments = listOf(thiz) + initializer.getArguments().map { expressionToEdge(it.second) }
-                                    val callee = initializer.symbol.owner as IrConstructor
+                                    val callee = initializer.symbol.owner
                                     DataFlowIR.Node.StaticCall(
                                             symbolTable.mapFunction(callee),
                                             arguments,
@@ -595,12 +606,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                     it
                                             }
                                     if (callee is IrConstructor) {
-                                        DataFlowIR.Node.NewObject(
-                                                symbolTable.mapFunction(callee),
-                                                arguments,
-                                                symbolTable.mapClassReferenceType(callee.constructedClass, false),
-                                                value
-                                        )
+                                        error("Constructor call should be done with IrConstructorCall")
                                     } else {
                                         callee as IrSimpleFunction
                                         if (callee.isOverridable && value.superQualifier == null) {

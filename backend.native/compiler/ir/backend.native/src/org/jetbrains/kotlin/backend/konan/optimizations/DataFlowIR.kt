@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.types.IrType
@@ -233,7 +234,8 @@ internal object DataFlowIR {
             : Call(callee, arguments, irCallSite)
 
         // TODO: It can be replaced with a pair(AllocInstance, constructor Call), remove.
-        class NewObject(constructor: FunctionSymbol, arguments: List<Edge>, val constructedType: Type, override val irCallSite: IrCall?)
+        class NewObject(constructor: FunctionSymbol, arguments: List<Edge>, val constructedType: Type,
+                        override val irCallSite: IrConstructorCall?)
             : Call(constructor, arguments, irCallSite)
 
         open class VirtualCall(callee: FunctionSymbol, arguments: List<Edge>,
