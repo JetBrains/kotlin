@@ -9,7 +9,6 @@ import com.intellij.lang.LanguageUtil;
 import com.intellij.lang.PerFileMappings;
 import com.intellij.lang.PerFileMappingsBase;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
@@ -49,7 +48,6 @@ import com.intellij.util.containers.ConcurrentFactoryMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.IndexableSetContributor;
 import com.intellij.util.indexing.LightDirectoryIndex;
-import com.intellij.util.messages.MessageBus;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,21 +63,20 @@ import java.util.concurrent.ConcurrentMap;
 
 @State(name = "ScratchFileService", storages = @Storage(value = "scratches.xml", roamingType = RoamingType.DISABLED))
 public class ScratchFileServiceImpl extends ScratchFileService implements PersistentStateComponent<Element>, Disposable {
-
   private static final RootType NO_ROOT_TYPE = new RootType("", "NO_ROOT_TYPE") {};
 
   private final LightDirectoryIndex<RootType> myIndex;
   private final MyLanguages myScratchMapping = new MyLanguages();
 
-  protected ScratchFileServiceImpl(Application application) {
+  protected ScratchFileServiceImpl() {
     Disposer.register(this, myScratchMapping);
-    myIndex = new LightDirectoryIndex<>(application, NO_ROOT_TYPE, index -> {
+    myIndex = new LightDirectoryIndex<>(ApplicationManager.getApplication(), NO_ROOT_TYPE, index -> {
       LocalFileSystem fileSystem = LocalFileSystem.getInstance();
       for (RootType r : RootType.getAllRootTypes()) {
         index.putInfo(fileSystem.findFileByPath(getRootPath(r)), r);
       }
     });
-    initFileOpenedListener(application.getMessageBus());
+    initFileOpenedListener();
   }
 
   @NotNull
@@ -97,7 +94,7 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
     return result == NO_ROOT_TYPE ? null : result;
   }
 
-  private void initFileOpenedListener(MessageBus messageBus) {
+  private void initFileOpenedListener() {
     final FileEditorManagerListener editorListener = new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
@@ -129,7 +126,7 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
         editorListener.fileOpened(editorManager, virtualFile);
       }
     }
-    messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, editorListener);
+    ApplicationManager.getApplication().getMessageBus().connect(this).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, editorListener);
   }
 
   @NotNull
