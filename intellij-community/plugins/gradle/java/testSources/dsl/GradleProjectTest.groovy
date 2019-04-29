@@ -90,27 +90,13 @@ class GradleProjectTest extends GradleHighlightingBaseTest implements ResolveTes
 
   void 'resolve implicit setter'() {
     doTest('<caret>group(42)') {
-      def results = elementUnderCaret(GrMethodCall).multiResolve(false)
-      assert results.size() == 1
-      def method = assertInstanceOf(results[0].element, PsiMethod)
-      assert method.name == 'group'
-      assert method.containingClass.qualifiedName == GRADLE_API_PROJECT
-      def original = assertInstanceOf(method.navigationElement, PsiMethod)
-      assert original.name == 'setGroup'
-      assert original.containingClass.qualifiedName == GRADLE_API_PROJECT
+      setterMethodTest('group', 'setGroup', GRADLE_API_PROJECT)
     }
   }
 
   void 'resolve implicit setter without argument'() {
     doTest('<caret>group()') {
-      def results = elementUnderCaret(GrMethodCall).multiResolve(false)
-      assert results.size() == 1
-      def method = assertInstanceOf(results[0].element, PsiMethod)
-      assert method.name == 'group'
-      assert method.containingClass.qualifiedName == GRADLE_API_PROJECT
-      def original = assertInstanceOf(method.navigationElement, PsiMethod)
-      assert original.name == 'setGroup'
-      assert original.containingClass.qualifiedName == GRADLE_API_PROJECT
+      setterMethodTest('group', 'setGroup', GRADLE_API_PROJECT)
     }
   }
 

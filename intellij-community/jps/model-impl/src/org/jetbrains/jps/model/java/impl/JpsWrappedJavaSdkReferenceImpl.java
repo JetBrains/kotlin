@@ -53,6 +53,7 @@ public class JpsWrappedJavaSdkReferenceImpl extends JpsCompositeElementBase<JpsW
     return new JpsWrappedJavaSdkReferenceImpl(this);
   }
 
+  @NotNull
   @Override
   public String getSdkName() {
     JpsTypedLibrary<JpsSdk<JpsDummyElement>> sdk = resolve();

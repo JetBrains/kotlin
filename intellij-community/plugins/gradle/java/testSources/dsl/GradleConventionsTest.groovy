@@ -5,7 +5,6 @@ import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.RunAll
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.util.ResolveTest
 import org.junit.Test
 
@@ -14,12 +13,9 @@ import static org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassName
 @CompileStatic
 class GradleConventionsTest extends GradleHighlightingBaseTest implements ResolveTest {
 
-  // The test should fail when conventions would be taken from Gradle import
-  // instead of being processed in org.jetbrains.plugins.gradle.service.resolve.GradleConventionsContributor unconditionally.
-  // In such case `apply plugin: 'java'` is required to fix the test.
   @Test
   void test() {
-    importProject("")
+    importProject("apply plugin: 'java'")
     new RunAll().append {
       'property read'()
     } append {
@@ -49,13 +45,16 @@ class GradleConventionsTest extends GradleHighlightingBaseTest implements Resolv
     }
   }
 
+  // this test is wrong and exists only to preserve current behaviour and to fail when behaviour changes
   void 'setter method'() {
     doTest('<caret>targetCompatibility("1.8")') {
-      def call = elementUnderCaret(GrMethodCall)
-      def result = call.advancedResolve()
-      assert result.invokedOnProperty
-      // getTargetCompatibility() is resolved, just because it exists, but later it's highlighted with warning
-      methodTest(assertInstanceOf(result.element, PsiMethod), 'getTargetCompatibility', GRADLE_API_JAVA_PLUGIN_CONVENTION)
+      setterMethodTest('targetCompatibility', 'setTargetCompatibility', GRADLE_API_JAVA_PLUGIN_CONVENTION)
+//      // the correct test is below:
+//      def call = elementUnderCaret(GrMethodCall)
+//      def result = call.advancedResolve()
+//      assert result.invokedOnProperty
+//      // getTargetCompatibility() should be resolved, just because it exists, but later it's highlighted with warning
+//      methodTest(assertInstanceOf(result.element, PsiMethod), 'getTargetCompatibility', GRADLE_API_JAVA_PLUGIN_CONVENTION)
     }
   }
 }

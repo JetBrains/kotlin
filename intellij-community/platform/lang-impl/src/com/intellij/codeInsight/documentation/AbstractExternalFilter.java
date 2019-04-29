@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.documentation;
 
 import com.intellij.ide.BrowserUtil;
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -357,7 +358,7 @@ public abstract class AbstractExternalFilter {
               ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 
               if (contentEncoding == null) {
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
                   for (String htmlLine = reader.readLine(); htmlLine != null; htmlLine = reader.readLine()) {
                     contentEncoding = parseContentEncoding(htmlLine);
                     if (contentEncoding != null) {

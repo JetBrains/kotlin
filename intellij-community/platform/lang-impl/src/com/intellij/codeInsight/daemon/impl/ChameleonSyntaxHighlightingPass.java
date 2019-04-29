@@ -1,11 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.daemon.impl;
 
-import com.intellij.codeHighlighting.MainHighlightingPassFactory;
-import com.intellij.codeHighlighting.Pass;
-import com.intellij.codeHighlighting.TextEditorHighlightingPass;
-import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar;
+import com.intellij.codeHighlighting.*;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -36,31 +33,30 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 class ChameleonSyntaxHighlightingPass extends GeneralHighlightingPass {
-  public static class Factory implements MainHighlightingPassFactory {
-    private final Project myProject;
-
-    protected Factory(Project project, TextEditorHighlightingPassRegistrar registrar) {
-      myProject = project;
+  final static class Factory implements MainHighlightingPassFactory, TextEditorHighlightingPassFactoryRegistrar {
+    @Override
+    public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
       registrar.registerTextEditorHighlightingPass(this, null, new int[]{Pass.UPDATE_ALL}, false, -1);
     }
 
-    @Nullable
+    @NotNull
     @Override
     public TextEditorHighlightingPass createHighlightingPass(@NotNull PsiFile file, @NotNull Editor editor) {
+      Project project = file.getProject();
       TextRange restrict = FileStatusMap.getDirtyTextRange(editor, Pass.UPDATE_ALL);
-      if (restrict == null) return new ProgressableTextEditorHighlightingPass.EmptyPass(myProject, editor.getDocument());
+      if (restrict == null) return new ProgressableTextEditorHighlightingPass.EmptyPass(project, editor.getDocument());
       ProperTextRange priority = VisibleHighlightingPassFactory.calculateVisibleRange(editor);
-      return new ChameleonSyntaxHighlightingPass(myProject, file, editor.getDocument(), ProperTextRange.create(restrict),
+      return new ChameleonSyntaxHighlightingPass(project, file, editor.getDocument(), ProperTextRange.create(restrict),
                                                  priority, editor, new DefaultHighlightInfoProcessor());
     }
 
-    @Nullable
+    @NotNull
     @Override
     public TextEditorHighlightingPass createMainHighlightingPass(@NotNull PsiFile file,
                                                                  @NotNull Document document,
                                                                  @NotNull HighlightInfoProcessor highlightInfoProcessor) {
       ProperTextRange range = ProperTextRange.from(0, document.getTextLength());
-      return new ChameleonSyntaxHighlightingPass(myProject, file, document, range, range, null, highlightInfoProcessor);
+      return new ChameleonSyntaxHighlightingPass(file.getProject(), file, document, range, range, null, highlightInfoProcessor);
     }
   }
 

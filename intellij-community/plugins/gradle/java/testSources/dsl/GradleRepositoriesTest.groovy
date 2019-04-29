@@ -1,11 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.dsl
 
-import com.intellij.psi.PsiMethod
 import com.intellij.testFramework.RunAll
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression
 import org.jetbrains.plugins.groovy.util.ResolveTest
 import org.junit.Test
 
@@ -65,28 +63,19 @@ class GradleRepositoriesTest extends GradleHighlightingBaseTest implements Resol
 
   void 'maven repository method setter'() {
     doTest('repositories { maven { <caret>url(42) } }') {
-      def expression = elementUnderCaret(GrReferenceExpression)
-      def method = assertInstanceOf(expression.resolve(), PsiMethod)
-      assert method.name == 'setUrl'
-      assert method.containingClass.qualifiedName == GRADLE_API_ARTIFACTS_REPOSITORIES_MAVEN_ARTIFACT_REPOSITORY
+      setterMethodTest('url', 'setUrl', GRADLE_API_ARTIFACTS_REPOSITORIES_MAVEN_ARTIFACT_REPOSITORY)
     }
   }
 
   void 'ivy repository method setter'() {
     doTest('repositories { ivy { <caret>url("") } }') {
-      def expression = elementUnderCaret(GrReferenceExpression)
-      def method = assertInstanceOf(expression.resolve(), PsiMethod)
-      assert method.name == 'setUrl'
-      assert method.containingClass.qualifiedName == GRADLE_API_ARTIFACTS_REPOSITORIES_IVY_ARTIFACT_REPOSITORY
+      setterMethodTest('url', 'setUrl', GRADLE_API_ARTIFACTS_REPOSITORIES_IVY_ARTIFACT_REPOSITORY)
     }
   }
 
   void 'flat repository method setter'() {
-    doTest('repositories { ivy { <caret>name("") } }') {
-      def expression = elementUnderCaret(GrReferenceExpression)
-      def method = assertInstanceOf(expression.resolve(), PsiMethod)
-      assert method.name == 'setName'
-      assert method.containingClass.qualifiedName == GRADLE_API_ARTIFACTS_REPOSITORIES_ARTIFACT_REPOSITORY
+    doTest('repositories { flatDir { <caret>name("") } }') {
+      setterMethodTest('name', 'setName', GRADLE_API_ARTIFACTS_REPOSITORIES_ARTIFACT_REPOSITORY)
     }
   }
 }

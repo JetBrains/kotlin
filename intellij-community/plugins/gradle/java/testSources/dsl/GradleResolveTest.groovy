@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.dsl
 
 import com.intellij.psi.PsiMethod
+import com.intellij.testFramework.RunAll
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.gradle.highlighting.GradleHighlightingBaseTest
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrNewExpression
@@ -22,11 +23,26 @@ class GradleResolveTest extends GradleHighlightingBaseTest implements ResolveTes
   @Test
   void resolveTest() {
     importProject('')
-    'resolve date constructor'()
+    new RunAll().append {
+      'resolve date constructor'()
+    } append {
+      'resolve date constructor 2'()
+    } run()
   }
 
   void 'resolve date constructor'() {
     doTest('<caret>new Date()') {
+      def expression = elementUnderCaret(GrNewExpression)
+      def results = expression.multiResolve(false)
+      assert results.size() == 1
+      def method = (PsiMethod)results[0].element
+      assert method.constructor
+      assert method.containingClass.qualifiedName == JAVA_UTIL_DATE
+    }
+  }
+
+  void 'resolve date constructor 2'() {
+    doTest('<caret>new Date(1l)') {
       def expression = elementUnderCaret(GrNewExpression)
       def results = expression.multiResolve(false)
       assert results.size() == 1

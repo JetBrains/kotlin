@@ -106,7 +106,7 @@ LIne read: #[wrote C:\temp\rmiTest\classes\mycompany\TTT.class]#
 
     @Override
     protected void doExecute(final String line, final String dta, final OutputParser.Callback callback) {
-      assertTrue("Expected: #" + myExpected + "#, but was: #" + dta + "#", myExpected.equals(dta));
+      assertEquals("Expected: #" + myExpected + "#, but was: #" + dta + "#", myExpected, dta);
     }
   }
 }

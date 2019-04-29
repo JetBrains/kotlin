@@ -18,7 +18,6 @@ import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.ide.actions.runAnything.ui.RunAnythingScrollingUtil;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.ElementsChooser;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
@@ -917,7 +916,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
     res.setOpaque(false);
 
     DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.addAction(new RunAnythingShowFilterAction(this));
+    actionGroup.addAction(new RunAnythingShowFilterAction());
 
     ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("search.everywhere.toolbar", actionGroup, true);
     toolbar.setLayoutPolicy(ActionToolbar.NOWRAP_LAYOUT_POLICY);
@@ -954,8 +953,11 @@ public class RunAnythingPopupUI extends BigPopupUI {
   }
 
   private class RunAnythingShowFilterAction extends ShowFilterAction {
-    private RunAnythingShowFilterAction(@NotNull Disposable parentDisposable) {
-      super(parentDisposable, myProject);
+
+    @NotNull
+    @Override
+    public String getDimensionServiceKey() {
+      return "RunAnythingAction_Filter_Popup";
     }
 
     @Override

@@ -1,17 +1,14 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.facet.impl;
 
 import com.intellij.configurationStore.ComponentSerializationUtil;
+import com.intellij.configurationStore.XmlSerializer;
 import com.intellij.facet.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
-import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,11 +63,17 @@ public class FacetUtil {
     }
   }
 
-  public static Element saveFacetConfiguration(final FacetConfiguration configuration) throws WriteExternalException {
+  @NotNull
+  public static Element saveFacetConfiguration(@NotNull FacetConfiguration configuration) {
     if (configuration instanceof PersistentStateComponent) {
       Object state = ((PersistentStateComponent)configuration).getState();
-      if (state instanceof Element) return ((Element)state);
-      return XmlSerializer.serialize(state, new SkipDefaultValuesSerializationFilters());
+      if (state instanceof Element) {
+        return ((Element)state);
+      }
+      else {
+        Element result = XmlSerializer.serialize(state);
+        return result == null ? new Element(JpsFacetSerializer.CONFIGURATION_TAG) : result;
+      }
     }
     else {
       final Element config = new Element(JpsFacetSerializer.CONFIGURATION_TAG);

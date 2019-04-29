@@ -67,37 +67,4 @@ public abstract class DeploymentUtil {
 
   @Nullable
   public abstract String getConfigFileErrorMessage(ConfigFile configFile);
-
-  /**
-   * @deprecated use {@link com.intellij.openapi.util.io.FileUtil#getRelativePath}
-   */
-  @Deprecated
-  @Nullable
-  public static String getRelativePath(@NotNull String basePath, @NotNull final String filePath) {
-    if (basePath.equals(filePath)) return "";
-    if (!basePath.endsWith(File.separator)) basePath += File.separatorChar;
-
-    int len = 0;
-    int lastSeparatorIndex = 0; // need this for cases like this: base="/temp/abcde/baseDir" and file="/temp/ab"
-    while (len < filePath.length() && len < basePath.length() && filePath.charAt(len) == basePath.charAt(len)) {
-      if (basePath.charAt(len) == File.separatorChar) {
-        lastSeparatorIndex = len;
-      }
-      len++;
-    }
-
-    if (len == 0) {
-      return null;
-    }
-    final StringBuilder relativePath = new StringBuilder();
-    for (int i=len; i < basePath.length(); i++) {
-      if (basePath.charAt(i) == File.separatorChar) {
-        relativePath.append("..");
-        relativePath.append(File.separatorChar);
-      }
-    }
-    relativePath.append(filePath.substring(lastSeparatorIndex + 1));
-
-    return relativePath.toString();
-  }
 }

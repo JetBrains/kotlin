@@ -188,7 +188,8 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
     if (openProjects.length > 0) {
       int exitCode = ProjectUtil.confirmOpenNewProject(true);
       if (exitCode == GeneralSettings.OPEN_PROJECT_SAME_WINDOW) {
-        ProjectUtil.closeAndDispose(projectToClose != null ? projectToClose : openProjects[openProjects.length - 1]);
+        Project project = projectToClose != null ? projectToClose : openProjects[openProjects.length - 1];
+        ProjectManagerEx.getInstanceEx().closeAndDispose(project);
       }
     }
   }

@@ -1,6 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.statistic.eventLog
 
+import com.intellij.configurationStore.getDefaultSerializationFilter
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
 import com.intellij.internal.statistic.utils.getProjectId
@@ -8,7 +9,6 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.BeanBinding
-import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import org.jdom.Element
 import java.util.*
 
@@ -32,12 +32,10 @@ object FeatureUsageSettingsEvents {
 }
 
 open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) {
-  private val defaultFilter = SkipDefaultsSerializationFilter()
-
   fun logDefaultConfigurationState(componentName: String, clazz: Class<*>, project: Project?) {
     try {
       if (recordDefault) {
-        val default = defaultFilter.getDefaultValue(clazz)
+        val default = getDefaultSerializationFilter().getDefaultValue(clazz)
         logConfigurationState(componentName, default, project)
       }
       else {
@@ -68,7 +66,7 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
       val type = accessor.genericType
       if (type === Boolean::class.javaPrimitiveType) {
         val value = accessor.read(state)
-        val isNotDefault = defaultFilter.accepts(accessor, state)
+        val isNotDefault = getDefaultSerializationFilter().accepts(accessor, state)
         if (recordDefault || isNotDefault) {
           val content = HashMap<String, Any>()
           content["name"] = accessor.name

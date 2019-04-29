@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.project.ex.ProjectNameProvider
 import com.intellij.openapi.project.impl.ProjectImpl
-import com.intellij.openapi.project.impl.ProjectStoreClassProvider
+import com.intellij.openapi.project.impl.ProjectStoreFactory
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.ReadonlyStatusHandler
 import com.intellij.openapi.vfs.VirtualFile
@@ -24,7 +24,6 @@ import com.intellij.util.io.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.CalledInAny
 import java.nio.file.AccessDeniedException
 import java.nio.file.Path
@@ -33,16 +32,16 @@ import java.nio.file.Paths
 internal val IProjectStore.nameFile: Path
   get() = Paths.get(directoryStorePath, ProjectImpl.NAME_FILE)
 
-private open class ProjectStoreImpl(project: Project, private val pathMacroManager: PathMacroManager) : ProjectStoreBase(project) {
+private open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
   private var lastSavedProjectName: String? = null
 
   init {
     assert(!project.isDefault)
   }
 
-  final override fun getPathMacroManagerForDefaults() = pathMacroManager
+  final override fun getPathMacroManagerForDefaults() = PathMacroManager.getInstance(project)
 
-  override val storageManager = ProjectStateStorageManager(TrackingPathMacroSubstitutorImpl(pathMacroManager), project)
+  override val storageManager = ProjectStateStorageManager(TrackingPathMacroSubstitutorImpl(PathMacroManager.getInstance(project)), project)
 
   override fun setPath(path: String) {
     runBlocking {
@@ -146,14 +145,14 @@ private open class ProjectStoreImpl(project: Project, private val pathMacroManag
   }
 }
 
-private class ProjectWithModulesStoreImpl(project: Project, pathMacroManager: PathMacroManager) : ProjectStoreImpl(project, pathMacroManager) {
+private class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(project) {
   override suspend fun saveModules(errors: MutableList<Throwable>, isForceSavingAllSettings: Boolean): List<SaveSession> {
     val modules = ModuleManager.getInstance(project)?.modules ?: Module.EMPTY_ARRAY
     if (modules.isEmpty()) {
       return emptyList()
     }
 
-    return withContext(createStoreEdtCoroutineContext(InTransactionRule(project))) {
+    return withEdtContext {
       // do no create with capacity because very rarely a lot of modules will be modified
       val saveSessions: MutableList<SaveSession> = SmartList<SaveSession>()
       // commit components
@@ -167,23 +166,21 @@ private class ProjectWithModulesStoreImpl(project: Project, pathMacroManager: Pa
   }
 }
 
-// used in upsource
-class PlatformLangProjectStoreClassProvider : ProjectStoreClassProvider {
-  override fun getProjectStoreClass(isDefaultProject: Boolean): Class<out IComponentStore> {
-    return if (isDefaultProject) DefaultProjectStoreImpl::class.java else ProjectWithModulesStoreImpl::class.java
+internal class PlatformLangProjectStoreFactory : ProjectStoreFactory {
+  override fun createStore(project: Project): IComponentStore {
+    return if (project.isDefault) DefaultProjectStoreImpl(project) else ProjectWithModulesStoreImpl(project)
   }
 }
 
-@Suppress("unused")
-private class PlatformProjectStoreClassProvider : ProjectStoreClassProvider {
-  override fun getProjectStoreClass(isDefaultProject: Boolean): Class<out IComponentStore> {
-    return if (isDefaultProject) DefaultProjectStoreImpl::class.java else ProjectStoreImpl::class.java
+internal class PlatformProjectStoreFactory : ProjectStoreFactory {
+  override fun createStore(project: Project): IComponentStore {
+    return if (project.isDefault) DefaultProjectStoreImpl(project) else ProjectStoreImpl(project)
   }
 }
 
 @CalledInAny
 internal suspend fun ensureFilesWritable(project: Project, files: Collection<VirtualFile>): ReadonlyStatusHandler.OperationStatus {
-  return withContext(storeEdtCoroutineContext) {
+  return withEdtContext(project) {
     ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(files)
   }
 }

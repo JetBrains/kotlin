@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.test;
 
 import com.intellij.find.FindManager;
@@ -20,7 +6,7 @@ import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesManager;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.find.impl.FindManagerImpl;
-import com.intellij.openapi.compiler.ex.CompilerPathsEx;
+import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.externalSystem.importing.ImportSpec;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
@@ -240,7 +226,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
   }
 
   protected void assertModuleOutputs(String moduleName, String... outputs) {
-    String[] outputPaths = ContainerUtil.map2Array(CompilerPathsEx.getOutputPaths(new Module[]{getModule(moduleName)}), String.class,
+    String[] outputPaths = ContainerUtil.map2Array(CompilerPaths.getOutputPaths(new Module[]{getModule(moduleName)}), String.class,
                                                    s -> getAbsolutePath(s));
     assertUnorderedElementsAreEqual(outputPaths, outputs);
   }
@@ -568,7 +554,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     final AtomicInteger counter = new AtomicInteger();
     Messages.setTestDialog(new TestDialog() {
       @Override
-      public int show(String message) {
+      public int show(@NotNull String message) {
         counter.set(counter.get() + 1);
         return 0;
       }
@@ -580,7 +566,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     final AtomicInteger counter = new AtomicInteger();
     Messages.setTestDialog(new TestDialog() {
       @Override
-      public int show(String message) {
+      public int show(@NotNull String message) {
         counter.set(counter.get() + 1);
         return 1;
       }

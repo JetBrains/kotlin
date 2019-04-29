@@ -10,8 +10,10 @@ import com.intellij.codeInsight.intention.impl.config.IntentionManagerSettings;
 import com.intellij.codeInsight.unwrap.ScopeHighlighter;
 import com.intellij.codeInspection.SuppressIntentionActionFromFix;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.actions.ActionsCollector;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -336,6 +338,10 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
       @Override
       public void mousePressed(@NotNull MouseEvent e) {
         if (!e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON1) {
+          AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
+          AnActionEvent event = AnActionEvent.createFromInputEvent(e, ActionPlaces.MOUSE_SHORTCUT, null, SimpleDataContext.getProjectContext(project));
+          ActionsCollector.getInstance().record(project, action, event, null);
+
           showPopup(true);
         }
       }

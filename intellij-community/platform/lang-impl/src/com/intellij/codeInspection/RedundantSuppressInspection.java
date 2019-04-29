@@ -173,7 +173,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
       for (PsiElement suppressedScope : suppressedScopes.keySet()) {
         Collection<String> suppressedIds = suppressedScopes.get(suppressedScope);
         for (String toolId : suppressedIds) {
-          PsiNamedElement documentedElement = globalContext.getRefManager().getContainerElement(suppressedScope);
+          PsiElement documentedElement = globalContext.getRefManager().getContainerElement(suppressedScope);
           if (documentedElement != null && documentedElement.isValid()) {
             if (myQuickFixes == null) myQuickFixes = new BidirectionalMap<>();
             String key = toolId + ";" + suppressedScope.getLanguage().getID();

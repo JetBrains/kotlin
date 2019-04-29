@@ -44,14 +44,15 @@ class MarginOptionsUtil {
   }
 
   static void customizeWrapOnTypingCombo(@NotNull JComboBox<String> wrapOnTypingCombo, @NotNull CodeStyleSettings settings) {
-    wrapOnTypingCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+    wrapOnTypingCombo.setRenderer(SimpleListCellRenderer.create("", value -> {
       for (int i = 0; i < CodeStyleSettingsCustomizable.WRAP_ON_TYPING_VALUES.length; i++) {
         if (CodeStyleSettingsCustomizable.WRAP_ON_TYPING_VALUES[i] == CommonCodeStyleSettings.WrapOnTyping.DEFAULT.intValue) {
           if (CodeStyleSettingsCustomizable.WRAP_ON_TYPING_OPTIONS[i].equals(value)) {
-            label.setText(getDefaultWrapOnTypingText(settings));
+            return getDefaultWrapOnTypingText(settings);
           }
         }
       }
+      return value;
     }));
   }
 

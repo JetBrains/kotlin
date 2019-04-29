@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.fileTypes.impl;
 
 import com.intellij.openapi.fileTypes.ExactFileNameMatcher;
@@ -34,9 +20,9 @@ import java.util.*;
  * @author max
  */
 public class FileTypeAssocTable<T> {
-  private final Map<CharSequence, T> myExtensionMappings;
-  private final Map<CharSequence, T> myExactFileNameMappings;
-  private final Map<CharSequence, T> myExactFileNameAnyCaseMappings;
+  private final THashMap<CharSequence, T> myExtensionMappings;
+  private final THashMap<CharSequence, T> myExactFileNameMappings;
+  private final THashMap<CharSequence, T> myExactFileNameAnyCaseMappings;
   private final List<Pair<FileNameMatcher, T>> myMatchingMappings;
 
   private FileTypeAssocTable(@NotNull Map<CharSequence, T> extensionMappings,
@@ -216,31 +202,34 @@ public class FileTypeAssocTable<T> {
       }
     }
 
-    for (Map.Entry<CharSequence, T> entries : myExactFileNameMappings.entrySet()) {
-      if (entries.getValue() == type) {
-        result.add(new ExactFileNameMatcher(entries.getKey().toString()));
+    myExactFileNameMappings.forEachEntry((key, value) -> {
+      if (value == type) {
+        result.add(new ExactFileNameMatcher(key.toString()));
       }
-    }
+      return true;
+    });
 
-    for (Map.Entry<CharSequence, T> entries : myExactFileNameAnyCaseMappings.entrySet()) {
-      if (entries.getValue() == type) {
-        result.add(new ExactFileNameMatcher(entries.getKey().toString(), true));
+    myExactFileNameAnyCaseMappings.forEachEntry((key, value) -> {
+      if (value == type) {
+        result.add(new ExactFileNameMatcher(key.toString(), true));
       }
-    }
+      return true;
+    });
 
-    for (Map.Entry<CharSequence, T> entries : myExtensionMappings.entrySet()) {
-      if (entries.getValue() == type) {
-        result.add(new ExtensionFileNameMatcher(entries.getKey().toString()));
+    myExtensionMappings.forEachEntry((key, value) -> {
+      if (value == type) {
+        result.add(new ExtensionFileNameMatcher(key.toString()));
       }
-    }
+      return true;
+    });
 
     return result;
   }
 
   boolean hasAssociationsFor(@NotNull T fileType) {
-    if (myExtensionMappings.values().contains(fileType) ||
-        myExactFileNameMappings.values().contains(fileType) ||
-        myExactFileNameAnyCaseMappings.values().contains(fileType)) {
+    if (myExtensionMappings.containsValue(fileType) ||
+        myExactFileNameMappings.containsValue(fileType) ||
+        myExactFileNameAnyCaseMappings.containsValue(fileType)) {
       return true;
     }
     for (Pair<FileNameMatcher, T> mapping : myMatchingMappings) {

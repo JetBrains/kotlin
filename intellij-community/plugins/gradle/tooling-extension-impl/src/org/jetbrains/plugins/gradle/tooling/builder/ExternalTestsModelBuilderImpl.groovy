@@ -12,6 +12,7 @@ import org.jetbrains.plugins.gradle.model.tests.ExternalTestSourceMapping
 import org.jetbrains.plugins.gradle.model.tests.ExternalTestsModel
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
+import org.jetbrains.plugins.gradle.tooling.util.JavaPluginUtil
 
 class ExternalTestsModelBuilderImpl implements ModelBuilderService {
   @Override
@@ -29,7 +30,7 @@ class ExternalTestsModelBuilderImpl implements ModelBuilderService {
   }
 
   private static boolean javaPluginIsApplied(Project project) {
-    return project.pluginManager.findPlugin('java-base') != null
+    return JavaPluginUtil.getJavaPluginConvention(project) != null
   }
 
   private static List<ExternalTestSourceMapping> getMapping(Project project) {

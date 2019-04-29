@@ -40,6 +40,7 @@ import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
@@ -73,10 +74,13 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -851,6 +855,18 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
         initScriptConsumer.consume(script);
       }
     }
+
+    final String testEventListenerDefinition = loadTestEventListenerDefinition();
+    initScriptConsumer.consume(testEventListenerDefinition);
+  }
+
+  private String loadTestEventListenerDefinition() {
+    try(InputStream stream = getClass().getResourceAsStream("/org/jetbrains/plugins/gradle/IJTestLogger.groovy")) {
+      return StreamUtil.readText(stream, StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      LOG.info(e);
+    }
+    return "";
   }
 
   public void setupDebugForAllJvmForkedTasks(@NotNull Consumer<String> initScriptConsumer, int debugPort) {

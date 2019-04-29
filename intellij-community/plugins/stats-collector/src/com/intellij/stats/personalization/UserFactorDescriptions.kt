@@ -34,20 +34,6 @@ object UserFactorDescriptions {
     val TIME_BETWEEN_TYPING: Descriptor<TimeBetweenTypingUpdater, TimeBetweenTypingReader> = Descriptor("timeBetweenTyping", ::TimeBetweenTypingUpdater, ::TimeBetweenTypingReader)
     val MNEMONICS_USAGE: Descriptor<MnemonicsUsageUpdater, MnemonicsUsageReader> = Descriptor("mnemonicsUsage", ::MnemonicsUsageUpdater, ::MnemonicsUsageReader)
 
-    fun binaryFeatureDescriptor(feature: BinaryFeature): Descriptor<BinaryFeatureUpdater, BinaryFeatureReader> {
-        return Descriptor("binaryFeature:${feature.name}", ::BinaryFeatureUpdater, ::BinaryFeatureReader)
-    }
-
-    fun doubleFeatureDescriptor(feature: DoubleFeature): Descriptor<DoubleFeatureUpdater, DoubleFeatureReader> {
-        return Descriptor("doubleFeature:${feature.name}", ::DoubleFeatureUpdater, ::DoubleFeatureReader)
-    }
-
-    fun categoricalFeatureDescriptor(feature: CategoricalFeature): Descriptor<CategoryFeatureUpdater, CategoryFeatureReader> {
-        return Descriptor("categoricalFeature:${feature.name}",
-                { CategoryFeatureUpdater(feature.categories, it) },
-                ::CategoryFeatureReader)
-    }
-
     class Descriptor<out U : FactorUpdater, out R : FactorReader>(
             override val factorId: String,
             override val updaterFactory: (MutableDoubleFactor) -> U,

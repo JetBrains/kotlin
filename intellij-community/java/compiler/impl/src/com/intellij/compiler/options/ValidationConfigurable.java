@@ -20,7 +20,6 @@ import com.intellij.openapi.compiler.Compiler;
 import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.Validator;
-import com.intellij.openapi.compiler.generic.GenericCompiler;
 import com.intellij.openapi.compiler.options.ExcludedEntriesConfigurable;
 import com.intellij.openapi.compiler.options.ExcludesConfiguration;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -159,13 +158,7 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
 
   private List<Compiler> getValidators() {
     final CompilerManager compilerManager = CompilerManager.getInstance(myProject);
-    final List<Compiler> validators = new SmartList<>(compilerManager.getCompilers(Validator.class));
-    for (GenericCompiler compiler : compilerManager.getCompilers(GenericCompiler.class)) {
-      if (compiler.getOrderPlace() == GenericCompiler.CompileOrderPlace.VALIDATING) {
-        validators.add(compiler);
-      }
-    }
-    return validators;
+    return new SmartList<>(compilerManager.getCompilers(Validator.class));
   }
 
   @Override

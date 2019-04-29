@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,9 @@ import org.jetbrains.annotations.NotNull;
  * An extension controlling aspects of Live Template insertion, like reformatting, adding imports, etc. {@link #getOptionName()} allows
  * to show a checkbox to enable/disable specific such aspect in Live Template settings, {@link #processText} does the actual
  * modifications during live template expansion.<p/>
- *
+ * <p>
  * During indexing, {@link #processText} is executed only for instances implementing {@link com.intellij.openapi.project.DumbAware}.
+ *
  * @author yole
  */
 public interface TemplateOptionalProcessor {
@@ -41,10 +42,14 @@ public interface TemplateOptionalProcessor {
    * Note that this happens even if the corresponding option is disabled, so the implementations
    * should check themselves whether they have to perform any actions.
    */
-  void processText(final Project project, final Template template, final Document document, final RangeMarker templateRange, final Editor editor);
+  void processText(final Project project,
+                   final Template template,
+                   final Document document,
+                   final RangeMarker templateRange,
+                   final Editor editor);
 
   /**
-   * @return the text of a checkbox in Live Template settings controlling whether this option is enaled.
+   * @return the text of a checkbox in Live Template settings controlling whether this option is enabled.
    */
   @Nls
   String getOptionName();

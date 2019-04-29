@@ -32,6 +32,7 @@ import com.intellij.util.ui.Html
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import java.awt.*
+import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
 import java.awt.geom.RoundRectangle2D
@@ -127,9 +128,9 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     buttons.border = JBUI.Borders.empty()
     buttons.isOpaque = false
 
-    val runFixAction = Runnable {
+    val runFixAction = { event: InputEvent? ->
       hint.hide()
-      tooltipAction.execute(editor)
+      tooltipAction.execute(editor, event)
     }
 
     val shortcutRunActionText = KeymapUtil.getShortcutsText(runActionCustomShortcutSet.shortcuts)
@@ -142,7 +143,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     buttons.add(createActionLabel(tooltipAction.text, runFixAction, hintHint.textBackground), gridBag.next().insets(5, 8, 5, 4))
     buttons.add(createKeymapHint(shortcutRunActionText), gridBag.next().insets(0, 4, 0, 12))
 
-    val showAllFixes = Runnable {
+    val showAllFixes = { _: InputEvent? ->
       hint.hide()
       tooltipAction.showAllActions(editor)
     }
@@ -152,7 +153,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
 
     actions.add(object : AnAction() {
       override fun actionPerformed(e: AnActionEvent) {
-        runFixAction.run()
+        runFixAction(e.inputEvent)
       }
 
       init {
@@ -162,7 +163,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
 
     actions.add(object : AnAction() {
       override fun actionPerformed(e: AnActionEvent) {
-        showAllFixes.run()
+        showAllFixes(e.inputEvent)
       }
 
       init {
@@ -313,7 +314,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
-      ActionsCollector.getInstance().record("tooltip.actions.show.description.gear", this::class.java)
+      ActionsCollector.getInstance().record("tooltip.actions.show.description.gear", e.inputEvent, this::class.java)
       reloader.reload(state)
     }
 
@@ -327,7 +328,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
 }
 
 
-fun createActionLabel(text: String, action: Runnable, background: Color): HyperlinkLabel {
+fun createActionLabel(text: String, action: (InputEvent?) -> Unit, background: Color): HyperlinkLabel {
   val label = object : HyperlinkLabel(text, background) {
     override fun getTextOffset(): Int {
       return 0
@@ -336,7 +337,7 @@ fun createActionLabel(text: String, action: Runnable, background: Color): Hyperl
   label.border = JBUI.Borders.empty()
   label.addHyperlinkListener(object : HyperlinkAdapter() {
     override fun hyperlinkActivated(e: HyperlinkEvent) {
-      action.run()
+      action(e.inputEvent)
     }
   })
   val toolTipFont = getActionFont()

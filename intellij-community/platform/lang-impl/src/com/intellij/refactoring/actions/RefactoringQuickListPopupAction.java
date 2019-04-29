@@ -67,7 +67,7 @@ public class RefactoringQuickListPopupAction extends QuickSwitchSchemeAction {
           if (child instanceof BaseRefactoringAction && ((BaseRefactoringAction)child).hasAvailableHandler(dataContext) ||
               child instanceof CopyElementAction) {
             final Presentation presentation = new Presentation();
-            final AnActionEvent event = new AnActionEvent(null, dataContext, ActionPlaces.UNKNOWN, presentation, actionManager, 0);
+            final AnActionEvent event = new AnActionEvent(null, dataContext, ActionPlaces.REFACTORING_QUICKLIST, presentation, actionManager, 0);
             event.setInjectedContext(child.isInInjectedContext());
             child.update(event);
             if (presentation.isEnabled() && presentation.isVisible()) {

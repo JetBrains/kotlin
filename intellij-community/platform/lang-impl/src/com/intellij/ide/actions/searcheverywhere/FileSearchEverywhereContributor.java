@@ -7,6 +7,7 @@ import com.intellij.ide.actions.GotoFileAction;
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
 import com.intellij.ide.util.gotoByName.GotoFileConfiguration;
 import com.intellij.ide.util.gotoByName.GotoFileModel;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -32,12 +33,14 @@ import java.util.stream.Stream;
  * @author Konstantin Bulenkov
  * @author Mikhail Sokolov
  */
-public class FileSearchEverywhereContributor extends AbstractGotoSEContributor<FileType> {
+public class FileSearchEverywhereContributor extends AbstractGotoSEContributor {
   private final GotoFileModel myModelForRenderer;
+  private final PersistentSearchEverywhereContributorFilter<FileType> myFilter;
 
   public FileSearchEverywhereContributor(@Nullable Project project, @Nullable PsiElement context) {
     super(project, context);
     myModelForRenderer = project == null ? null : new GotoFileModel(project);
+    myFilter = project == null ? null : createFileTypeFilter(project);
   }
 
   @NotNull
@@ -46,7 +49,6 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor<F
     return "Files";
   }
 
-  @Override
   public String includeNonProjectItemsText() {
     return IdeBundle.message("checkbox.include.non.project.files", IdeUICustomization.getInstance().getProjectConceptName());
   }
@@ -64,12 +66,23 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor<F
   @NotNull
   @Override
   protected FilteringGotoByModel<FileType> createModel(@NotNull Project project) {
-    return new GotoFileModel(project);
+    GotoFileModel model = new GotoFileModel(project);
+    if (myFilter != null) {
+      model.setFilterItems(myFilter.getSelectedElements());
+    }
+    return model;
+  }
+
+  @NotNull
+  @Override
+  public List<AnAction> getActions(@NotNull Runnable onChanged) {
+    return doGetActions(includeNonProjectItemsText(), myFilter, onChanged);
   }
 
   @NotNull
   @Override
   public ListCellRenderer<Object> getElementsRenderer() {
+    //noinspection unchecked
     return new SERenderer() {
       @NotNull
       @Override
@@ -123,25 +136,20 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor<F
     return super.getDataForItem(element, dataId);
   }
 
-  public static class Factory implements SearchEverywhereContributorFactory<Object, FileType> {
+  public static class Factory implements SearchEverywhereContributorFactory<Object> {
     @NotNull
     @Override
-    public SearchEverywhereContributor<Object, FileType> createContributor(@NotNull AnActionEvent initEvent) {
+    public SearchEverywhereContributor<Object> createContributor(@NotNull AnActionEvent initEvent) {
       return new FileSearchEverywhereContributor(initEvent.getProject(), GotoActionBase.getPsiContext(initEvent));
     }
+  }
 
-    @Nullable
-    @Override
-    public SearchEverywhereContributorFilter<FileType> createFilter(@NotNull AnActionEvent initEvent) {
-      Project project = initEvent.getProject();
-      if (project == null) {
-        return null;
-      }
-
-      List<FileType> items = Stream.of(FileTypeManager.getInstance().getRegisteredFileTypes())
-                                   .sorted(GotoFileAction.FileTypeComparator.INSTANCE)
-                                   .collect(Collectors.toList());
-      return new PersistentSearchEverywhereContributorFilter<>(items, GotoFileConfiguration.getInstance(project), FileType::getName, FileType::getIcon);
-    }
+  @NotNull
+  public static PersistentSearchEverywhereContributorFilter<FileType> createFileTypeFilter(@NotNull Project project) {
+    List<FileType> items = Stream.of(FileTypeManager.getInstance().getRegisteredFileTypes())
+                                 .sorted(GotoFileAction.FileTypeComparator.INSTANCE)
+                                 .collect(Collectors.toList());
+    return new PersistentSearchEverywhereContributorFilter<>(items, GotoFileConfiguration.getInstance(project), FileType::getName,
+                                                             FileType::getIcon);
   }
 }
