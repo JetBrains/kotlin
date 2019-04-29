@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.search.FileTypeIndex
 import org.jetbrains.kotlin.idea.KotlinFileType
 
