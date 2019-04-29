@@ -196,7 +196,6 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
   public boolean checkValid() {
     if (myLocationField == null) return true;
     final String projectName = myLocationField.getText();
-    setErrorText(null);
 
     if (projectName.trim().isEmpty()) {
       setErrorText("Project name can't be empty");
@@ -234,6 +233,7 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
       }
     }
 
+    setErrorText(null);
     return true;
   }
 
