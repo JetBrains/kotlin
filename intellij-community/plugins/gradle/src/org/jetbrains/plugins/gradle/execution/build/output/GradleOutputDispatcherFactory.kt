@@ -66,7 +66,7 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
           myCurrentReader.appendln(cleanLine)
           if (myCurrentReader != myRootReader) {
             val parentEventId = myCurrentReader.parentEventId
-            myBuildProgressListener.onEvent(OutputBuildEventImpl(parentEventId, cleanLine + '\n', stdOut))
+            myBuildProgressListener.onEvent(OutputBuildEventImpl(parentEventId, line + '\n', stdOut))
           }
         }
       }
