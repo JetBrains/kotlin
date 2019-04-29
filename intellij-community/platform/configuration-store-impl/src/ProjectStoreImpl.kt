@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.project.ex.ProjectNameProvider
 import com.intellij.openapi.project.impl.ProjectImpl
-import com.intellij.openapi.project.impl.ProjectStoreClassProvider
+import com.intellij.openapi.project.impl.ProjectStoreFactory
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.ReadonlyStatusHandler
 import com.intellij.openapi.vfs.VirtualFile
@@ -166,13 +166,13 @@ private class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(p
   }
 }
 
-internal class PlatformLangProjectStoreClassProvider : ProjectStoreClassProvider {
+internal class PlatformLangProjectStoreFactory : ProjectStoreFactory {
   override fun createStore(project: Project): IComponentStore {
     return if (project.isDefault) DefaultProjectStoreImpl(project) else ProjectWithModulesStoreImpl(project)
   }
 }
 
-internal class PlatformProjectStoreClassProvider : ProjectStoreClassProvider {
+internal class PlatformProjectStoreFactory : ProjectStoreFactory {
   override fun createStore(project: Project): IComponentStore {
     return if (project.isDefault) DefaultProjectStoreImpl(project) else ProjectStoreImpl(project)
   }
