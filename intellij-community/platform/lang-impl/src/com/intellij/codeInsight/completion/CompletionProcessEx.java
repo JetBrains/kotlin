@@ -11,7 +11,7 @@ import com.intellij.patterns.ElementPattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import javax.swing.*;
 import java.util.function.Supplier;
 
 /**
@@ -42,7 +42,7 @@ interface CompletionProcessEx extends CompletionProcess {
 
   void addWatchedPrefix(int startOffset, ElementPattern<String> restartCondition);
 
-  void addAdvertisement(String message, @Nullable final Color bgColor);
+  void addAdvertisement(@NotNull String message, @Nullable Icon icon);
 
   CompletionParameters getParameters();
 

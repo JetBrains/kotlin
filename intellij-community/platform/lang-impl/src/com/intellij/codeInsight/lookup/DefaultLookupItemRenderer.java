@@ -17,6 +17,7 @@ package com.intellij.codeInsight.lookup;
 
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.ScalableIcon;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.util.PsiUtilCore;
@@ -67,7 +68,8 @@ public class DefaultLookupItemRenderer extends LookupElementRenderer<LookupItem>
         return EmptyIcon.ICON_0;
       }
 
-      return EmptyIcon.create(PlatformIcons.CLASS_ICON.getIconWidth() * 2, PlatformIcons.CLASS_ICON.getIconHeight());
+      int count = Registry.is("ide.completion.show.visibility.icon") ? 2 : 1;
+      return EmptyIcon.create(PlatformIcons.CLASS_ICON.getIconWidth() * count, PlatformIcons.CLASS_ICON.getIconHeight());
     }
 
     if (o instanceof Iconable && !(o instanceof PsiElement)) {

@@ -149,9 +149,10 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     myList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     myList.setBackground(LookupCellRenderer.BACKGROUND_COLOR);
 
-    myList.getExpandableItemsHandler();
+    //myList.getExpandableItemsHandler();
 
     myAdComponent = new Advertiser();
+    myAdComponent.setBackground(LookupCellRenderer.BACKGROUND_COLOR);
 
     myOffsets = new LookupOffsets(myEditor);
 
@@ -196,7 +197,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     return myCalculating;
   }
 
-  public void setCalculating(final boolean calculating) {
+  public void setCalculating(boolean calculating) {
     myCalculating = calculating;
     if (myUi != null) {
       myUi.setCalculating(calculating);
@@ -488,8 +489,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   }
 
   private void updateListHeight(ListModel model) {
-    myList.setFixedCellHeight(myCellRenderer.getListCellRendererComponent(myList, model.getElementAt(0), 0, false, false).getPreferredSize().height);
-
     myList.setVisibleRowCount(Math.min(model.getSize(), UISettings.getInstance().getMaxLookupListHeight()));
   }
 
@@ -1211,12 +1210,12 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     requestResize();
   }
 
-  public void addAdvertisement(@NotNull final String text, final @Nullable Color bgColor) {
+  public void addAdvertisement(@NotNull String text, @Nullable Icon icon) {
     if (containsDummyIdentifier(text)) {
       return;
     }
 
-    myAdComponent.addAdvertisement(text, bgColor);
+    myAdComponent.addAdvertisement(text, icon);
     requestResize();
   }
 
