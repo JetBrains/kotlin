@@ -1,12 +1,14 @@
 package com.intellij.stats.completion
 
 object RelevanceUtil {
+  private val IGNORED_FACTORS = setOf("kotlin.byNameAlphabetical", "scalaMethodCompletionWeigher", "unresolvedOnTop")
+
   fun asRelevanceMap(relevanceObjects: List<com.intellij.openapi.util.Pair<String, Any?>>): MutableMap<String, Any> {
     val relevanceMap = mutableMapOf<String, Any>()
     for (pair in relevanceObjects) {
       val name = pair.first.normalized()
       val value = pair.second
-      if (value == null) continue
+      if (name in IGNORED_FACTORS || value == null) continue
       if (name == "proximity") {
         val proximityMap = value.toString().asProximityMap("prox")
         relevanceMap.putAll(proximityMap)
