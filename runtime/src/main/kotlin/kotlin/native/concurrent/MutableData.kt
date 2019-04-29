@@ -18,6 +18,7 @@ external private fun CopyMemory(to: COpaquePointer?, from: COpaquePointer?, coun
  * Mutable concurrently accessible data buffer. Could be accessed from several workers simulteniously.
  */
 @Frozen
+@NoReorderFields
 public class MutableData constructor(capacity: Int = 16) {
     init {
         if (capacity <= 0) throw IllegalArgumentException()
@@ -25,7 +26,10 @@ public class MutableData constructor(capacity: Int = 16) {
         share()
     }
 
-    private var buffer = ByteArray(capacity).apply { share() }
+    private var buffer_ = ByteArray(capacity).apply { share() }
+    private var buffer: ByteArray
+        get() = readHeapRefNoLock(this, 0) as ByteArray
+        set(value) { buffer_ = value}
     private var size_ = 0
     private val lock = Lock()
 

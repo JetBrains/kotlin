@@ -6,8 +6,9 @@
 package kotlin.native.ref
 
 import kotlinx.cinterop.COpaquePointer
-import kotlin.native.internal.NoReorderFields
 import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.Frozen
+import kotlin.native.internal.NoReorderFields
 
 /**
  *   Theory of operations:
@@ -33,6 +34,7 @@ import kotlin.native.internal.ExportForCppRuntime
 
 // Clear holding the counter object, which refers to the actual object.
 @NoReorderFields
+@Frozen
 internal class WeakReferenceCounter(var referred: COpaquePointer?) : WeakReferenceImpl() {
     // Spinlock, potentially taken when materializing or removing 'referred' object.
     var lock: Int = 0

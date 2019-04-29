@@ -11,6 +11,9 @@ import kotlin.native.internal.NoReorderFields
 @SymbolName("Konan_ensureAcyclicAndSet")
 private external fun ensureAcyclicAndSet(where: Any, index: Int, what: Any?): Boolean
 
+@SymbolName("ReadHeapRefNoLock")
+internal external fun readHeapRefNoLock(where: Any, index: Int): Any?
+
 @NoReorderFields
 internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     // IMPORTANT: due to simplified ensureAcyclicAndSet() semantics fields here must be ordered like this,
@@ -23,7 +26,8 @@ internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
         get() {
             if (isFrozen) {
                 locked(lock_) {
-                    var result: Any? = value_
+                    // Lock is already taken above.
+                    var result = readHeapRefNoLock(this, 0)
                     if (result !== UNINITIALIZED) {
                         assert(result !== INITIALIZING)
                         @Suppress("UNCHECKED_CAST")

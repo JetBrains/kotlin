@@ -278,8 +278,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     fun store(value: LLVMValueRef, ptr: LLVMValueRef) {
-        // Use updateRef() or storeAny() API for that.
-        assert(!isObjectRef(value))
         LLVMBuildStore(builder, value, ptr)
     }
 
@@ -309,11 +307,15 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
-        call(context.llvm.updateReturnRefFunction, listOf(address, value))
+        store(value, address)
     }
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean) {
-        call(if (onStack) context.llvm.updateStackRefFunction else context.llvm.updateHeapRefFunction, listOf(address, value))
+        if (onStack) {
+            store(value, address)
+        } else {
+            call(context.llvm.updateHeapRefFunction, listOf(address, value))
+        }
     }
 
     //-------------------------------------------------------------------------//

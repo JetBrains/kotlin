@@ -581,10 +581,7 @@ class KRefSharedHolder {
     SetHeapRef(slotToInit(), obj);
   }
 
-  inline ObjHeader* ref() const {
-    verifyRefOwner();
-    return obj_;
-  }
+  ObjHeader* ref() const;
 
   inline void dispose() {
     verifyRefOwner();

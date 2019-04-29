@@ -77,11 +77,7 @@ OBJ_GETTER(Konan_WeakReferenceCounter_get, ObjHeader* counter) {
   RETURN_OBJ(*referredAddress);
 #else
   int32_t* lockAddress = &asWeakReferenceCounter(counter)->lock;
-  // Spinlock.
-  lock(lockAddress);
-  ObjHolder holder(*referredAddress);
-  unlock(lockAddress);
-  RETURN_OBJ(holder.obj());
+  RETURN_RESULT_OF(ReadHeapRefLocked, referredAddress, lockAddress);
 #endif
 }
 

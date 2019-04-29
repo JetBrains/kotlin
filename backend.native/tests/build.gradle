@@ -768,7 +768,7 @@ task worker9(type: RunKonanTest) {
 
 task worker10(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
-    goldValue = "OK\n"
+    goldValue = "OK\ntrue\ntrue\n"
     source = "runtime/workers/worker10.kt"
 }
 
