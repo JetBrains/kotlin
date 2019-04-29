@@ -433,8 +433,8 @@ class ModelClass() {
 
         compose(
             """
-            val A1 = Ambient("one") { 0 }
-            val A2 = Ambient("two") { 0 }
+            val A1 = Ambient.of("one") { 0 }
+            val A2 = Ambient.of("two") { 0 }
             var changing = 0
 
             @Composable
