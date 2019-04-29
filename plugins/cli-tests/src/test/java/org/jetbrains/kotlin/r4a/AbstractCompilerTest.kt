@@ -207,7 +207,7 @@ abstract class AbstractCompilerTest : TestCase() {
 
         fun outputClassesJar(module: String): File {
             fun name(variant: String): File =
-                File(projectRoot, "out/support/$module/build/" +
+                File(projectRoot, "out/ui/$module/build/" +
                         "intermediates//runtime_library_classes/$variant/classes.jar")
             return name("release").let {
                 if (it.exists()) it else name("debug")
