@@ -60,7 +60,7 @@ class LocalClassifierAnalyzer(
     private val typeResolver: TypeResolver,
     private val annotationResolver: AnnotationResolver,
     private val platform: TargetPlatform,
-    private val compilerServices: PlatformDependentCompilerServices,
+    private val analyzerServices: PlatformDependentAnalyzerServices,
     private val lookupTracker: LookupTracker,
     private val supertypeLoopChecker: SupertypeLoopChecker,
     private val languageVersionSettings: LanguageVersionSettings,
@@ -100,7 +100,7 @@ class LocalClassifierAnalyzer(
                 delegationFilter,
                 wrappedTypeFactory
             ),
-            compilerServices
+            analyzerServices
         )
 
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(

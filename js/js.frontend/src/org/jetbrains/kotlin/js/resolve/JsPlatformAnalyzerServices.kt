@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
 
-object JsPlatformCompilerServices : PlatformDependentCompilerServices() {
+object JsPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
         result.add(ImportPath.fromString("kotlin.js.*"))
     }

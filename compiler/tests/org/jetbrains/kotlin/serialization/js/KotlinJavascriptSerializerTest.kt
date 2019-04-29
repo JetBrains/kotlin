@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil.readModuleAsProto
@@ -94,7 +94,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     }
 
     private fun deserialize(metaFile: File): ModuleDescriptorImpl {
-        val module = KotlinTestUtils.createEmptyModule("<${KotlinTestUtils.TEST_MODULE_NAME}>", JsPlatformCompilerServices.builtIns)
+        val module = KotlinTestUtils.createEmptyModule("<${KotlinTestUtils.TEST_MODULE_NAME}>", JsPlatformAnalyzerServices.builtIns)
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile).single()
 
         val (header, packageFragmentProtos) = readModuleAsProto(metadata.body, metadata.version)

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.frontend.js.di
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -29,11 +28,10 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 fun createTopDownAnalyzerForJs(
@@ -45,11 +43,11 @@ fun createTopDownAnalyzerForJs(
         expectActualTracker: ExpectActualTracker,
         additionalPackages: List<PackageFragmentProvider>
 ): LazyTopDownAnalyzer {
-    val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatformCompilerServices) {
+    val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatformAnalyzerServices) {
         configureModule(
             moduleContext,
             JsPlatforms.defaultJsPlatform,
-            JsPlatformCompilerServices,
+            JsPlatformAnalyzerServices,
             bindingTrace,
             languageVersionSettings
         )

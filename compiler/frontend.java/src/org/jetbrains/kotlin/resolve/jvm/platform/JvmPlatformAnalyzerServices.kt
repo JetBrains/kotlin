@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 
-object JvmPlatformCompilerServices : PlatformDependentCompilerServices() {
+object JvmPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
         result.add(ImportPath.fromString("kotlin.jvm.*"))
 

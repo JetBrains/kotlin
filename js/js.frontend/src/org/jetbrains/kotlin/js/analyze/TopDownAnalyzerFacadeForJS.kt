@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -59,7 +59,7 @@ object TopDownAnalyzerFacadeForJS {
         val builtIns = when {
             thisIsBuiltInsModule -> DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
             customBuiltInsModule != null -> customBuiltInsModule.builtIns
-            else -> JsPlatformCompilerServices.builtIns
+            else -> JsPlatformAnalyzerServices.builtIns
         }
 
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!

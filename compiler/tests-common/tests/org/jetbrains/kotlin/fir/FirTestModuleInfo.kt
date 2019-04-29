@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 class FirTestModuleInfo(
     override val name: Name = Name.identifier("TestModule"),
     val dependencies: MutableList<ModuleInfo> = mutableListOf(),
     override val platform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
-    override val compilerServices: PlatformDependentCompilerServices = JvmPlatformCompilerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices = JvmPlatformAnalyzerServices
 ) : ModuleInfo {
     override fun dependencies(): List<ModuleInfo> = dependencies
 }

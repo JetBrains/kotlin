@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
-import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.io.File
 import java.lang.IllegalStateException
 import java.util.*
@@ -152,8 +152,8 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
         override val platform: TargetPlatform
             get() = JvmPlatforms.defaultJvmPlatform
 
-        override val compilerServices: PlatformDependentCompilerServices
-            get() = JvmPlatformCompilerServices
+        override val analyzerServices: PlatformDependentAnalyzerServices
+            get() = JvmPlatformAnalyzerServices
 
         override fun dependencies(): List<ModuleInfo> {
             return listOf(this)
@@ -164,8 +164,8 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
         override val platform: TargetPlatform
             get() = JvmPlatforms.defaultJvmPlatform
 
-        override val compilerServices: PlatformDependentCompilerServices
-            get() = JvmPlatformCompilerServices
+        override val analyzerServices: PlatformDependentAnalyzerServices
+            get() = JvmPlatformAnalyzerServices
 
         val dependencies = mutableListOf<ModuleInfo>(this)
         override fun dependencies(): List<ModuleInfo> {

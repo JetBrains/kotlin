@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
@@ -62,8 +62,8 @@ fun createContainerForLazyResolveWithJava(
     useBuiltInsProvider: Boolean,
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
     javaClassTracker: JavaClassesTracker? = null
-): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformCompilerServices) {
-    configureModule(moduleContext, jvmPlatform, JvmPlatformCompilerServices, bindingTrace, languageVersionSettings)
+): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformAnalyzerServices) {
+    configureModule(moduleContext, jvmPlatform, JvmPlatformAnalyzerServices, bindingTrace, languageVersionSettings)
 
     configureIncrementalCompilation(lookupTracker, expectActualTracker)
     configureStandardResolveComponents()

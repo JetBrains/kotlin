@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.idea.project
 
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices
-import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformCompilerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import java.lang.IllegalStateException
 
-val TargetPlatform.findCompilerServices: PlatformDependentCompilerServices
+val TargetPlatform.findAnalyzerServices: PlatformDependentAnalyzerServices
     get() =
         when {
-            isJvm() -> JvmPlatformCompilerServices
-            isJs() -> JsPlatformCompilerServices
-            isNative() -> NativePlatformCompilerServices
-            isCommon() -> CommonPlatformCompilerServices
+            isJvm() -> JvmPlatformAnalyzerServices
+            isJs() -> JsPlatformAnalyzerServices
+            isNative() -> NativePlatformAnalyzerServices
+            isCommon() -> CommonPlatformAnalyzerServices
             else -> throw IllegalStateException("Unknown platform $this")
         }
