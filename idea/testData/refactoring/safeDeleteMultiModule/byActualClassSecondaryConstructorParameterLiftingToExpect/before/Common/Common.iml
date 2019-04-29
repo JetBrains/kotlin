@@ -3,7 +3,9 @@
   <component name="FacetManager">
       <facet type="kotlin-language" name="Kotlin">
         <configuration version="2" platform="Common (experimental) " useProjectSettings="false">
-            <compilerSettings/>
+            <compilerSettings>
+              <option name="additionalArguments" value="-XXLanguage:-NewInference" />
+            </compilerSettings>
             <compilerArguments/>
         </configuration>
       </facet>
