@@ -6,6 +6,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.navigation.ChooseByNameContributor;
+import com.intellij.navigation.ChooseByNameContributorEx;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileNameMatcher;
@@ -33,9 +34,10 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.indexing.FindSymbolParameters;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -116,13 +118,15 @@ public class FilePathCompletionContributor extends CompletionContributor {
 
           
           if (contextFile != null) {
-            final String[] fileNames = getAllNames(project);
-            final Set<String> resultNames = new TreeSet<>();
-            for (String fileName : fileNames) {
-              if (filenameMatchesPrefixOrType(fileName, prefix, set.getSuitableFileTypes(), parameters.getInvocationCount())) {
+            Set<String> resultNames = new TreeSet<>();
+            String finalPrefix = prefix;
+            processAllNames(project, fileName -> {
+              if (filenameMatchesPrefixOrType(fileName, finalPrefix, set.getSuitableFileTypes(),
+                                              parameters.getInvocationCount())) {
                 resultNames.add(fileName);
               }
-            }
+              return true;
+            });
 
             final ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
 
@@ -180,16 +184,19 @@ public class FilePathCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC, psiElement(), provider);
   }
 
-  private static boolean filenameMatchesPrefixOrType(final String fileName, final String prefix, final FileType[] suitableFileTypes, final int invocationCount) {
-    final boolean prefixMatched = prefix.length() == 0 || StringUtil.startsWithIgnoreCase(fileName, prefix);
+  private static boolean filenameMatchesPrefixOrType(String fileName,
+                                                     String prefix,
+                                                     FileType[] suitableFileTypes,
+                                                     int invocationCount) {
+    boolean prefixMatched = prefix.length() == 0 || StringUtil.startsWithIgnoreCase(fileName, prefix);
     if (prefixMatched && (suitableFileTypes.length == 0 || invocationCount > 2)) return true;
 
     if (prefixMatched) {
-      final String extension = FileUtilRt.getExtension(fileName);
+      String extension = FileUtilRt.getExtension(fileName);
       if (extension.length() == 0) return false;
 
-      for (final FileType fileType : suitableFileTypes) {
-        for (final FileNameMatcher matcher : FileTypeManager.getInstance().getAssociations(fileType)) {
+      for (FileType fileType : suitableFileTypes) {
+        for (FileNameMatcher matcher : FileTypeManager.getInstance().getAssociations(fileType)) {
           if (FileNameMatcherEx.acceptsCharSequence(matcher, fileName)) return true;
         }
       }
@@ -237,12 +244,15 @@ public class FilePathCompletionContributor extends CompletionContributor {
     return true;
   }
 
-  private static String[] getAllNames(@NotNull final Project project) {
-    Set<String> names = new HashSet<>();
-    final ChooseByNameContributor[] nameContributors = ChooseByNameContributor.FILE_EP_NAME.getExtensions();
-    for (final ChooseByNameContributor contributor : nameContributors) {
+  private static void processAllNames(@NotNull Project project, @NotNull Processor<String> processor) {
+    for (ChooseByNameContributor contributor : ChooseByNameContributor.FILE_EP_NAME.getExtensionList()) {
       try {
-        ContainerUtil.addAll(names, contributor.getNames(project, false));
+        if (contributor instanceof ChooseByNameContributorEx) {
+          ((ChooseByNameContributorEx)contributor).processNames(processor, FindSymbolParameters.searchScopeFor(project, false), null);
+        }
+        else {
+          ContainerUtil.process(contributor.getNames(project, false), processor);
+        }
       }
       catch (ProcessCanceledException ex) {
         // index corruption detected, ignore
@@ -251,8 +261,6 @@ public class FilePathCompletionContributor extends CompletionContributor {
         LOG.error(ex);
       }
     }
-
-    return ArrayUtil.toStringArray(names);
   }
 
   @Nullable

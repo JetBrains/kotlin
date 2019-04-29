@@ -19,49 +19,18 @@ import com.intellij.navigation.ChooseByNameContributorEx;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
-import com.intellij.util.Processors;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.IdFilter;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DefaultFileNavigationContributor implements ChooseByNameContributorEx, DumbAware {
   private static final Logger LOG = Logger.getInstance(DefaultFileNavigationContributor.class);
-  @Override
-  @NotNull
-  public String[] getNames(Project project, boolean includeNonProjectItems) {
-    THashSet<String> names = new THashSet<>(1000);
-    IdFilter filter = IdFilter.getProjectIdFilter(project, includeNonProjectItems);
-    processNames(s -> {
-      names.add(s);
-      return true;
-    }, FindSymbolParameters.searchScopeFor(project, includeNonProjectItems), filter);
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("All names retrieved2:" + names.size());
-    }
-    return ArrayUtil.toStringArray(names);
-  }
-
-  @Override
-  @NotNull
-  public NavigationItem[] getItemsByName(String name, final String pattern, Project project, boolean includeNonProjectItems) {
-    List<NavigationItem> result = new ArrayList<>();
-    Processor<NavigationItem> processor = Processors.cancelableCollectProcessor(result);
-    processElementsWithName(name, processor, FindSymbolParameters.wrap(pattern, project, includeNonProjectItems));
-
-    return result.isEmpty() ? NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY : result.toArray(NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY);
-  }
 
   @Override
   public void processNames(@NotNull final Processor<String> processor, @NotNull GlobalSearchScope scope, IdFilter filter) {
