@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.idea.caches
 
 import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
+import com.intellij.psi.util.PsiUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.sun.tools.javac.util.Convert.shortName
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -84,16 +86,18 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
         assertContainsElements(allClassNameList, "O1")
     }
 
+    fun PsiMember.fqName() = PsiUtil.getMemberQualifiedName(this)
+
     fun methodArrayDebugToString(a: Array<PsiMethod>)
-            = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+            = a.map { "${(it as KtLightMethod).getKotlinFqName()} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
     fun accessorArrayDebugToString(a: Array<PsiMethod>)
-            = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} property=${(it.lightMemberOrigin?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+            = a.map { "${(it as KtLightMethod).fqName()} property=${(it.lightMemberOrigin?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
     fun checkMethodFound(methods: Array<PsiMethod>, stringFqName: String, static: Boolean) {
         assertNotNull("Method $stringFqName with static=$static not found\n" + methodArrayDebugToString(methods),
                       methods.find {
-                          stringFqName == (it as KtLightMethod).clsDelegate.getKotlinFqName().toString()
+                          stringFqName == (it as KtLightMethod).fqName().toString()
                           &&
                           it.hasModifierProperty(PsiModifier.STATIC) == static
                       })
@@ -172,7 +176,7 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     fun checkAccessorFound(methods: Array<PsiMethod>, stringFqName: String, propertyFqName: String, static: Boolean) {
         assertNotNull("Accessor $stringFqName property=$propertyFqName static=$static not found\n" + accessorArrayDebugToString(methods),
                       methods.find {
-                          stringFqName == (it as KtLightMethod).clsDelegate.getKotlinFqName().toString()
+                          stringFqName == (it as KtLightMethod).fqName().toString()
                           &&
                           (it.lightMemberOrigin?.originalElement as KtProperty).fqName?.asString() == propertyFqName
                           &&
@@ -215,14 +219,14 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     fun checkFieldFound(methods: Array<PsiField>, stringFqName: String, static: Boolean) {
         assertNotNull("Field $stringFqName with static=$static not found\n" + fieldArrayDebugToString(methods),
                       methods.find {
-                          stringFqName == (it as KtLightField).clsDelegate.getKotlinFqName().toString()
+                          stringFqName == (it as KtLightField).fqName().toString()
                           &&
                           it.hasModifierProperty(PsiModifier.STATIC) == static
                       })
     }
 
     fun fieldArrayDebugToString(a: Array<PsiField>)
-            = a.map { "${(it as KtLightField).clsDelegate.getKotlinFqName()} property=${(it.kotlinOrigin as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+            = a.map { "${(it as KtLightField).fqName()} property=${(it.kotlinOrigin as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
 
     fun checkIsSingleFieldFound(scope: GlobalSearchScope, stringFqName: String, static: Boolean, query: String = shortName(stringFqName)) {
