@@ -311,12 +311,13 @@
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
+                      <labelFor value="3b679"/>
                       <text resource-bundle="messages/ApplicationBundle" key="combobox.richcopy.color.scheme"/>
                     </properties>
                   </component>
                   <component id="3b679" class="javax.swing.JComboBox" binding="myRichCopyColorSchemeComboBox">
                     <constraints>
-                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties/>
                   </component>
@@ -420,7 +421,7 @@
                       </component>
                       <component id="87620" class="javax.swing.JComboBox" binding="myStripTrailingSpacesCombo">
                         <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
                       </component>
