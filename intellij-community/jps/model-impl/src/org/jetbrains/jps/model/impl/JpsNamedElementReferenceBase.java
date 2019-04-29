@@ -30,6 +30,7 @@ public abstract class JpsNamedElementReferenceBase<S extends JpsNamedElement, T 
   extends JpsCompositeElementBase<Self> implements JpsElementReference<T> {
   private static final JpsElementChildRole<JpsElementReference<? extends JpsCompositeElement>> PARENT_REFERENCE_ROLE = JpsElementChildRoleBase
     .create("parent");
+  @NotNull
   protected final String myElementName;
 
   protected JpsNamedElementReferenceBase(@NotNull String elementName, @NotNull JpsElementReference<? extends JpsCompositeElement> parentReference) {
