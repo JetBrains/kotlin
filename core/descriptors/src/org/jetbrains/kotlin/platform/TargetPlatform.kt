@@ -45,6 +45,7 @@ data class TargetPlatform(val componentPlatforms: Set<SimplePlatform>) : Collect
 abstract class SimplePlatform(val platformName: String) {
     override fun toString(): String = platformName
 
+    /** See KDoc for [TargetPlatform.oldFashionedDescription] */
     abstract val oldFashionedDescription: String
 
     // FIXME(dsavvinov): hack to allow injection inject JvmTarget into container.

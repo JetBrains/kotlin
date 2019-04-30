@@ -14,9 +14,12 @@ fun <T> TargetPlatform?.has(klass: Class<T>): Boolean = this != null && subplatf
 
 /**
  * Returns human-readable description, mapping multiplatform to 'Common (experimental)',
- * as well as maintaining some quirks of the previous representation (like trailing whitespaces).
+ * as well as maintaining some quirks of the previous representation, like trailing whitespaces
+ *
  * It is needed mainly for backwards compatibility, because some subsystem actually
- * managed to rely on the format of that string (yes, facets, I'm looking at you).
+ * managed to rely on the format of that string. In particular, 'facetSerialization.kt' uses
+ * those string as keys in serialized `.iml`-file, and changing format of that string (including
+ * trimming pointless whitespaces) leads to incorrectly deserialized facets.
  *
  * New clients are encouraged to use [presentableDescription] description instead, as it
  * also provides better description for multiplatforms.
