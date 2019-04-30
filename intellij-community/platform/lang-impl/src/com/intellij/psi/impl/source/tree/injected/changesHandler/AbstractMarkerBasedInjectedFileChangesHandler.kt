@@ -10,10 +10,8 @@ import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.util.Segment
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Trinity
-import com.intellij.psi.ElementManipulators
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.*
+import org.jetbrains.annotations.ApiStatus
 import kotlin.math.max
 import kotlin.math.min
 
@@ -111,3 +109,13 @@ inline val PsiLanguageInjectionHost.Shred.innerRange: TextRange
 
 val PsiLanguageInjectionHost.contentRange
   get() = ElementManipulators.getManipulator(this).getRangeInElement(this).shiftRight(textRange.startOffset)
+
+private val PsiElement.withNextSiblings: Sequence<PsiElement>
+  get() = generateSequence(this) { it.nextSibling }
+
+@ApiStatus.Internal
+fun getInjectionHostAtRange(origPsiFile: PsiFile, contextRange: Segment): PsiLanguageInjectionHost? =
+  origPsiFile.findElementAt(contextRange.startOffset)?.withNextSiblings.orEmpty()
+    .takeWhile { it.textRange.startOffset < contextRange.endOffset }
+    .flatMap { sequenceOf(it, it.parent) }
+    .filterIsInstance<PsiLanguageInjectionHost>().firstOrNull()
