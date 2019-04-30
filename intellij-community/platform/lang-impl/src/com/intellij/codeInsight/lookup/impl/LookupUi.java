@@ -14,6 +14,7 @@ import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -119,11 +120,7 @@ class LookupUi {
         if (myLookup.isLookupDisposed()) return;
 
         myHintAlarm.cancelAllRequests();
-
-        LookupElement item = myLookup.getCurrentItem();
-        if (item != null) {
-          updateHint(item);
-        }
+        updateHint();
       }
     });
   }
@@ -134,19 +131,21 @@ class LookupUi {
   //  myScrollPane.setVerticalScrollBarPolicy(showSorting ? ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
   //}
 
-  private void updateHint(@NotNull LookupElement item) {
+  private void updateHint() {
     myLookup.checkValid();
     if (myHintButton.isVisible()) {
       myHintButton.setVisible(false);
       revalidateRootPane();
     }
 
-    if (item.isValid()) {
+    LookupElement item = myLookup.getCurrentItem();
+    if (item != null && item.isValid()) {
       Collection<LookupElementAction> actions = myLookup.getActionsFor(item);
       if (!actions.isEmpty()) {
         myHintAlarm.addRequest(() -> {
           if (ShowHideIntentionIconLookupAction.shouldShowLookupHint() &&
-              !((CompletionExtender)myList.getExpandableItemsHandler()).isShowing()) {
+              !((CompletionExtender)myList.getExpandableItemsHandler()).isShowing() &&
+              !myProcessIcon.isVisible()) {
             myHintButton.setVisible(true);
             revalidateRootPane();
           }
@@ -181,17 +180,27 @@ class LookupUi {
   }
 
   void setCalculating(boolean calculating) {
-    Runnable setVisible = () -> myProcessIcon.setVisible(myLookup.isCalculating());
-    if (myLookup.isCalculating()) {
-      new Alarm(myLookup).addRequest(setVisible, 100, myModalityState);
-    } else {
-      setVisible.run();
-    }
+    Runnable iconUpdater = () -> {
+      if (calculating && myHintButton.isVisible()) {
+        myHintButton.setVisible(false);
+        revalidateRootPane();
+      }
+
+      ApplicationManager.getApplication().invokeLater(() -> {
+        myProcessIcon.setVisible(calculating);
+
+        if (!calculating) {
+          updateHint();
+        }
+      }, myModalityState);
+    };
 
     if (calculating) {
       myProcessIcon.resume();
+      new Alarm(myLookup).addRequest(iconUpdater, 100, myModalityState);
     } else {
       myProcessIcon.suspend();
+      iconUpdater.run();
     }
   }
 
@@ -445,6 +454,9 @@ class LookupUi {
       JPopupMenu menu = popupMenu.getComponent();
 
       menu.show(e.getInputEvent().getComponent(), 0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2));
+      //JBPopupFactory.getInstance().createActionGroupPopup(null, group, ((EditorImpl)myLookup.getEditor()).getDataContext(),
+      //                                                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false, ActionPlaces.EDITOR_POPUP).
+      //  show(new RelativePoint(e.getInputEvent().getComponent(), new Point(0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2))));
     }
   }
 

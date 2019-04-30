@@ -254,7 +254,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
       .getInstance().isToBeAdvertisedInLookup(CodeCompletionFeatures.EDITING_COMPLETION_FINISH_BY_CONTROL_DOT, getProject())) {
       String dotShortcut = CompletionContributor.getActionShortcut(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_DOT);
       if (StringUtil.isNotEmpty(dotShortcut)) {
-        addAdvertisement("Press " + dotShortcut + " to choose the selected (or first) suggestion and insert a dot afterwards", AllIcons.General.Warning); // todo: remove icon
+        addAdvertisement("Press " + dotShortcut + " to choose the selected (or first) suggestion and insert a dot afterwards", null);
       }
     }
   }
