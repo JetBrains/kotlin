@@ -97,11 +97,14 @@ fun resolvePlainArgumentType(
     val position = SimpleConstraintSystemConstraintPosition //TODO
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
+        val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE)
         if (!isReceiver) {
-            csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
+            if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
+                csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
+            }
+
             return
         }
-        val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE)
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
             sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER) // TODO
         } else {
