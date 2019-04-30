@@ -20,10 +20,10 @@ object JvmPlatforms {
     private val jvmTargetToJdkPlatform: Map<JvmTarget, TargetPlatform> =
         JvmTarget.values().map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
 
-    val defaultJvmPlatform: TargetPlatform = JdkPlatform(JvmTarget.DEFAULT).toTargetPlatform()
+    val defaultJvmPlatform: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.DEFAULT]!!
 
     val jvm16: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_6]!!
-    val jvm18: TargetPlatform = JdkPlatform(JvmTarget.JVM_1_8).toTargetPlatform()
+    val jvm18: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_8]!!
 
     fun jvmPlatformByTargetVersion(targetVersion: JvmTarget) = jvmTargetToJdkPlatform[targetVersion]!!
 
