@@ -127,7 +127,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     }
 
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {
-        return when (this) {
+        val typeConstructor = when (this) {
             is ConeCapturedType -> constructor
             is ConeTypeVariableType -> this.lookupTag as ConeTypeVariableTypeConstructor // TODO: WTF
             is ConeAbbreviatedType -> this.directExpansionType(session)?.typeConstructor()
@@ -136,6 +136,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
             else -> error("?: ${this}")
         }
 
+        // TODO: get rid of class types with type-alias symbols
+        if (typeConstructor is FirTypeAliasSymbol) {
+            return typeConstructor.fir.expandedTypeRef.coneTypeSafe()?.typeConstructor()
+                ?: ErrorTypeConstructor("Failed to expand alias: ${this}")
+        }
+        return typeConstructor
     }
 
     override fun SimpleTypeMarker.argumentsCount(): Int {
