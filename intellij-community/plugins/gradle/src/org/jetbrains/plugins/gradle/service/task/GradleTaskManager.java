@@ -133,7 +133,11 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
       catch (RuntimeException e) {
         LOG.debug("Gradle build launcher error", e);
         final GradleProjectResolverExtension projectResolverChain = GradleProjectResolver.createProjectResolverChain(effectiveSettings);
-        throw projectResolverChain.getUserFriendlyError(e, projectPath, null);
+        ExternalSystemException exception = projectResolverChain.getUserFriendlyError(e, projectPath, null);
+        if(exception.getCause() == null) {
+          exception.initCause(e);
+        }
+        throw exception;
       }
     };
     if (effectiveSettings.getDistributionType() == DistributionType.WRAPPED) {

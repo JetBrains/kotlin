@@ -737,7 +737,11 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       }
       catch (RuntimeException e) {
         LOG.info("Gradle project resolve error", e);
-        throw myProjectResolverChain.getUserFriendlyError(e, myResolverContext.getProjectPath(), null);
+        ExternalSystemException exception = myProjectResolverChain.getUserFriendlyError(e, myResolverContext.getProjectPath(), null);
+        if (exception.getCause() == null) {
+          exception.initCause(e);
+        }
+        throw exception;
       }
       finally {
         myCancellationMap.remove(myResolverContext.getExternalSystemTaskId(), myResolverContext.getCancellationTokenSource());

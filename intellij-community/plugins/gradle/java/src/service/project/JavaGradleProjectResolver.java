@@ -96,6 +96,9 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
                                                       @Nullable String buildFilePath) {
     ExternalSystemException friendlyError = new JavaProjectImportErrorHandler().getUserFriendlyError(error, projectPath, buildFilePath);
     if (friendlyError != null) {
+      if (friendlyError.getCause() == null) {
+        friendlyError.initCause(error);
+      }
       return friendlyError;
     }
     return super.getUserFriendlyError(error, projectPath, buildFilePath);

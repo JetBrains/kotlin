@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ObjectUtils;
 import org.gradle.cli.CommandLineArgumentException;
 import org.gradle.tooling.UnsupportedVersionException;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,17 @@ public class BaseProjectImportErrorHandler extends AbstractProjectImportErrorHan
                                                       @NotNull String projectPath,
                                                       @Nullable String buildFilePath) {
     GradleExecutionErrorHandler executionErrorHandler = new GradleExecutionErrorHandler(error, projectPath, buildFilePath);
+    ExternalSystemException exception = doGetUserFriendlyError(error, projectPath, buildFilePath, executionErrorHandler);
+    if (exception.getCause() == null) {
+      exception.initCause(ObjectUtils.notNull(executionErrorHandler.getRootCause(), error));
+    }
+    return exception;
+  }
+
+  private ExternalSystemException doGetUserFriendlyError(@NotNull Throwable error,
+                                                         @NotNull String projectPath,
+                                                         @Nullable String buildFilePath,
+                                                         @NotNull GradleExecutionErrorHandler executionErrorHandler) {
     ExternalSystemException friendlyError = executionErrorHandler.getUserFriendlyError();
     if (friendlyError != null) {
       return friendlyError;
@@ -54,7 +66,7 @@ public class BaseProjectImportErrorHandler extends AbstractProjectImportErrorHan
 
     LOG.info(String.format("Failed to import Gradle project at '%1$s'", projectPath), error);
 
-    if(error instanceof ProcessCanceledException) {
+    if (error instanceof ProcessCanceledException) {
       return new ExternalSystemException("Project build was cancelled");
     }
 
