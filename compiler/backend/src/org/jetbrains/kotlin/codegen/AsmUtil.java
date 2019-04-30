@@ -99,15 +99,19 @@ public class AsmUtil {
             .put(JavaVisibilities.PACKAGE_VISIBILITY, NO_FLAG_PACKAGE_PRIVATE)
             .build();
 
+    public static final String CAPTURED_PREFIX = "$";
+
     public static final String THIS = "this";
 
     public static final String THIS_IN_DEFAULT_IMPLS = "$this";
 
     public static final String LABELED_THIS_FIELD = THIS + "_";
 
+    public static final String CAPTURED_LABELED_THIS_FIELD = CAPTURED_PREFIX + LABELED_THIS_FIELD;
+
     public static final String INLINE_DECLARATION_SITE_THIS = "this_";
 
-    public static final String LABELED_THIS_PARAMETER = "$" + THIS + "$";
+    public static final String LABELED_THIS_PARAMETER = CAPTURED_PREFIX + THIS + "$";
 
     public static final String CAPTURED_THIS_FIELD = "this$0";
 
@@ -145,7 +149,7 @@ public class AsmUtil {
 
     @NotNull
     public static String getCapturedFieldName(@NotNull String originalName) {
-        return "$" + originalName;
+        return CAPTURED_PREFIX + originalName;
     }
 
     @NotNull

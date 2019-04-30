@@ -1,0 +1,13 @@
+LineBreakpoint created at capturedValues2.kt:13
+Run Java
+Connected to the target VM
+capturedValues2.kt:13
+ frame    = invoke:13, CapturedValues2Kt$foo$1$1 {capturedValues2}
+   unknown  = b = 1
+   local    = this: java.lang.String = x (sp = null)
+     field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
+       element  = 0 = 'x' 120
+     field    = hash: int = 0 (sp = String.!EXT!)
+Disconnected from the target VM
+
+Process finished with exit code 0

@@ -33,6 +33,14 @@ fun ReferenceType.safeSourceName(): String? {
     return wrapAbsentInformationException { sourceName() }
 }
 
+fun ReferenceType.safeFields(): List<Field> {
+    return try {
+        fields()
+    } catch (e: ClassNotPreparedException) {
+        emptyList()
+    }
+}
+
 fun Method.safeLocationsOfLine(line: Int): List<Location> {
     return wrapAbsentInformationException { locationsOfLine(line) } ?: emptyList()
 }
