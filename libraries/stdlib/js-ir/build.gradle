@@ -57,7 +57,12 @@ task prepareBuiltinsSources(type: Sync) {
     into builtinsSrcDir
 }
 
-def jsCommonDir = "${projectDir}/../js"
+def jsCommonDir = "${buildDir}/common-js-sources"
+
+task prepareCommonJsSources(type: Sync) {
+    from("${projectDir}/../js/")
+    into jsCommonDir
+}
 
 sourceSets {
     main {
@@ -79,7 +84,6 @@ sourceSets {
     }
     test {
         kotlin {
-            srcDir "${rootDir}/libraries/stdlib/js/test"
             srcDir "${jsCommonDir}/test/"
         }
     }
@@ -99,6 +103,7 @@ dependencies {
 compileKotlin2Js {
     dependsOn prepareNativeBuiltinsSources
     dependsOn prepareBuiltinsSources
+    dependsOn prepareCommonJsSources
 
     kotlinOptions {
         outputFile = "${buildDir}/classes/main/kotlin.js"

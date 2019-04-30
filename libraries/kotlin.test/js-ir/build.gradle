@@ -9,7 +9,16 @@ dependencies {
     compile project(':kotlin-stdlib-js-ir')
 }
 
+def jsCommonDir = "${buildDir}/common-js-sources"
+
+task prepareCommonJsSources(type: Sync) {
+    from "${projectDir}/../js/src/"
+    into jsCommonDir
+}
+
 compileKotlin2Js {
+    dependsOn prepareCommonJsSources
+
     kotlinOptions {
         moduleKind = "umd"
         freeCompilerArgs = [
@@ -24,7 +33,7 @@ compileKotlin2Js {
 sourceSets {
     main {
         kotlin {
-            srcDir "${projectDir}/../js/src"
+            srcDir jsCommonDir
         }
     }
 }
