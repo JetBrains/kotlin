@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 
 class CommonPlatformKindResolution : IdePlatformKindResolution {
@@ -35,11 +35,11 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
         return DefaultBuiltIns.Instance
     }
 
-    override fun createResolverForModuleFactory(
-        settings: PlatformAnalysisParameters,
-        environment: TargetEnvironment,
-        platform: TargetPlatform
-    ): ResolverForModuleFactory {
-        return CommonResolverForModuleFactory(settings as CommonAnalysisParameters, environment, platform)
-    }
+//    override fun createResolverForModuleFactory(
+//        settings: PlatformAnalysisParameters,
+//        environment: TargetEnvironment,
+//        platform: TargetPlatform
+//    ): ResolverForModuleFactory {
+//        return CommonResolverForModuleFactory(settings as CommonAnalysisParameters, environment, platform)
+//    }
 }

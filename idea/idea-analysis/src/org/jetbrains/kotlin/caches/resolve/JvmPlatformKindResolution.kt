@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 
@@ -25,13 +24,13 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
         return false // TODO: No library kind for JVM
     }
 
-    override fun createResolverForModuleFactory(
-        settings: PlatformAnalysisParameters,
-        environment: TargetEnvironment,
-        platform: TargetPlatform
-    ): ResolverForModuleFactory {
-        return JvmResolverForModuleFactory(settings as JvmPlatformParameters, environment, platform)
-    }
+//    override fun createResolverForModuleFactory(
+//        settings: PlatformAnalysisParameters,
+//        environment: TargetEnvironment,
+//        platform: TargetPlatform
+//    ): ResolverForModuleFactory {
+//        return JvmResolverForModuleFactory(settings as JvmPlatformParameters, environment, platform)
+//    }
 
     override val libraryKind: PersistentLibraryKind<*>?
         get() = null

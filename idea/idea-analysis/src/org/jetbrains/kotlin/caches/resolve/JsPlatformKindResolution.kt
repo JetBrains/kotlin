@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.js.resolve.JsResolverForModuleFactory
 import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.TargetPlatform
 
 class JsPlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
@@ -33,9 +32,9 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
         return JsPlatformCompilerServices.builtIns
     }
 
-    override fun createResolverForModuleFactory(
-        settings: PlatformAnalysisParameters,
-        environment: TargetEnvironment,
-        platform: TargetPlatform
-    ): ResolverForModuleFactory = JsResolverForModuleFactory(environment)
+//    override fun createResolverForModuleFactory(
+//        settings: PlatformAnalysisParameters,
+//        environment: TargetEnvironment,
+//        platform: TargetPlatform
+//    ): ResolverForModuleFactory = JsResolverForModuleFactory(environment)
 }

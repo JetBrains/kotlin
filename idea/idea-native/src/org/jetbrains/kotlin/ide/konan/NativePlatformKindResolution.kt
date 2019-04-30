@@ -83,13 +83,13 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         }
     }
 
-    override fun createResolverForModuleFactory(
-        settings: PlatformAnalysisParameters,
-        environment: TargetEnvironment,
-        platform: TargetPlatform
-    ): ResolverForModuleFactory {
-        return NativeResolverForModuleFactory(settings, environment, platform)
-    }
+//    override fun createResolverForModuleFactory(
+//        settings: PlatformAnalysisParameters,
+//        environment: TargetEnvironment,
+//        platform: TargetPlatform
+//    ): ResolverForModuleFactory {
+//        return NativeResolverForModuleFactory(settings, environment, platform)
+//    }
 
     override val libraryKind: PersistentLibraryKind<*>?
         get() = NativeLibraryKind
