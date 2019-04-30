@@ -54,7 +54,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="org.jetbrains.plugins.gradle.service.project.GradleStartupActivity"/>
-    <projectOpenProcessor id="gradle" implementation="org.jetbrains.plugins.gradle.service.project.GradleProjectOpenProcessor"/>
+    <projectOpenProcessor id="gradle" implementation="org.jetbrains.plugins.gradle.service.project.open.GradleProjectOpenProcessor"/>
     <orderEnumerationHandlerFactory implementation="org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler$FactoryImpl"/>
     <consoleFilterProvider implementation="org.jetbrains.plugins.gradle.execution.GradleConsoleFilterProvider"/>
     <stacktrace.fold substring="at org.gradle."/>

@@ -24,8 +24,11 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 import static org.jetbrains.plugins.gradle.util.GradleEnvironment.Headless.*;
 
 /**
+ * @deprecated Use {@link org.jetbrains.plugins.gradle.service.project.open.GradleProjectOpenProcessor} instead
+ *
  * @author Denis Zhdanov
  */
+@Deprecated
 public class GradleJavaProjectOpenProcessor extends ProjectOpenProcessorBase<GradleProjectImportBuilder> {
   @NotNull
   @Override

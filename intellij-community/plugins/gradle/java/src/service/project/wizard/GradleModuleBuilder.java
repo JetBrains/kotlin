@@ -25,7 +25,6 @@ import com.intellij.openapi.externalSystem.model.project.ProjectId;
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl;
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalModuleBuilder;
-import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
@@ -35,6 +34,7 @@ import com.intellij.openapi.module.*;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdkType;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
@@ -50,21 +50,24 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.util.ThreeState;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder;
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinBuildScriptDataBuilder;
-import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
+import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.intellij.ide.util.newProjectWizard.AbstractProjectWizard.getNewProjectJdk;
+import static com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject;
+import static org.jetbrains.plugins.gradle.service.project.open.GradleProjectImportUtil.setupGradleSettings;
 
 /**
  * @author Denis Zhdanov
@@ -226,26 +229,27 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
     moduleState.setLinkedProjectPath(rootProjectPath);
 
     final Project project = module.getProject();
+    final Sdk projectSdk = getNewProjectJdk(myWizardContext);
+    final GradleProjectSettings gradleProjectSettings = getExternalProjectSettings();
     if (myWizardContext.isCreatingNewProject()) {
-      getExternalProjectSettings().setExternalProjectPath(rootProjectPath);
+      setupGradleSettings(gradleProjectSettings, rootProjectPath, project, projectSdk);
       AbstractExternalSystemSettings settings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
       project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, Boolean.TRUE);
       //noinspection unchecked
-      settings.linkProject(getExternalProjectSettings());
+      settings.linkProject(gradleProjectSettings);
       // update external projects data to be able to add child modules before the initial import finish
       ProjectData projectData = new ProjectData(GradleConstants.SYSTEM_ID, project.getName(), myWizardContext.getProjectFileDirectory(),
-                                                getExternalProjectSettings().getExternalProjectPath());
+                                                gradleProjectSettings.getExternalProjectPath());
       DataNode<ProjectData> projectDataNode = new DataNode<>(ProjectKeys.PROJECT, projectData, null);
       ExternalProjectsManagerImpl.getInstance(project).updateExternalProjectData(
-        new InternalExternalProjectInfo(GradleConstants.SYSTEM_ID, getExternalProjectSettings().getExternalProjectPath(), projectDataNode));
+        new InternalExternalProjectInfo(GradleConstants.SYSTEM_ID, gradleProjectSettings.getExternalProjectPath(), projectDataNode));
     }
     else {
       FileDocumentManager.getInstance().saveAllDocuments();
-      final GradleProjectSettings gradleProjectSettings = getExternalProjectSettings();
       final VirtualFile finalBuildScriptFile = buildScriptFile;
       Runnable runnable = () -> {
         if (myParentProject == null) {
-          gradleProjectSettings.setExternalProjectPath(rootProjectPath);
+          setupGradleSettings(gradleProjectSettings, rootProjectPath, project, projectSdk);
           AbstractExternalSystemSettings settings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
           //noinspection unchecked
           settings.linkProject(gradleProjectSettings);
@@ -275,13 +279,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   @Override
   public ModuleWizardStep[] createWizardSteps(@NotNull WizardContext wizardContext, @NotNull ModulesProvider modulesProvider) {
     myWizardContext = wizardContext;
-    GradleProjectSettings settings = getExternalProjectSettings().clone();
-    settings.setStoreProjectFilesExternally(ThreeState.UNSURE);
-    return new ModuleWizardStep[]{
-      new GradleModuleWizardStep(this, wizardContext),
-      new ExternalModuleSettingsStep<>(
-        wizardContext, this, new GradleProjectSettingsControl(settings))
-    };
+    return new ModuleWizardStep[]{new GradleModuleWizardStep(this, wizardContext)};
   }
 
   @Nullable
@@ -494,7 +492,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   @Nullable
   @Override
   public Project createProject(String name, String path) {
-    return ExternalProjectsManagerImpl.setupCreatedProject(super.createProject(name, path));
+    return setupCreatedProject(super.createProject(name, path));
   }
 
   public void setUseKotlinDsl(boolean useKotlinDSL) {

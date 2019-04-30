@@ -44,6 +44,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated Use {@link JavaGradleProjectImportBuilder} instead
+ */
+@Deprecated
 public final class GradleProjectImportBuilder extends AbstractExternalProjectImportBuilder<ImportFromGradleControl> {
   public GradleProjectImportBuilder() {
     this(ProjectDataManager.getInstance());

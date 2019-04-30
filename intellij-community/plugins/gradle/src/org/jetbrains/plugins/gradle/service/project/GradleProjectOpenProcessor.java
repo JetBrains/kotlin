@@ -64,8 +64,11 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
+ * @deprecated Use {@link org.jetbrains.plugins.gradle.service.project.open.GradleProjectOpenProcessor} instead
+ *
  * @author Vladislav.Soroka
  */
+@Deprecated
 public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
 
   @NotNull public static final String[] BUILD_FILE_EXTENSIONS = {GradleConstants.EXTENSION, GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION};

@@ -7,6 +7,10 @@ import com.intellij.projectImport.ProjectImportBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
+/**
+ * @deprecated Use {@link JavaGradleProjectImportProvider} instead
+ */
+@Deprecated
 public final class GradleProjectImportProvider extends AbstractExternalProjectImportProvider {
   public GradleProjectImportProvider() {
     super(GradleConstants.SYSTEM_ID);

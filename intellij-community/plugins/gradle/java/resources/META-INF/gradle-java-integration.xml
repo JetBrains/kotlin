@@ -45,10 +45,8 @@
         implementation="org.jetbrains.plugins.gradle.execution.build.GradleUpdateResourcesBuildContributor"/>
 
     <attachSourcesProvider implementation="org.jetbrains.plugins.gradle.util.GradleAttachSourcesProvider"/>
-    <projectImportBuilder implementation="org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportBuilder"/>
     <moduleBuilder builderClass="org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder"/>
-    <projectImportProvider implementation="org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportProvider"/>
-    <projectOpenProcessor id="java" order="before gradle" implementation="org.jetbrains.plugins.gradle.service.project.wizard.GradleJavaProjectOpenProcessor"/>
+    <projectImportProvider implementation="org.jetbrains.plugins.gradle.service.project.wizard.JavaGradleProjectImportProvider"/>
 
     <!--Gradle Test Runner-->
     <testActionProvider implementation="org.jetbrains.plugins.gradle.execution.test.runner.OpenGradleTestResultActionProvider"/>
