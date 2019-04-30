@@ -35,6 +35,12 @@ fun org.jetbrains.gradle.ext.JUnit.configureForKotlin() {
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     allprojects {
         apply(mapOf("plugin" to "idea"))
+        afterEvaluate {
+            // Make Idea import embedded configuration as transitive dependency
+            configurations.findByName("embedded")?.let { embedded ->
+                configurations.findByName("runtime")?.extendsFrom(embedded)
+            }
+        }
     }
 
     gradle.projectsEvaluated {

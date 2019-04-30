@@ -208,11 +208,7 @@ tasks.getByName("check").dependsOn(dexMethodCount)
 
 artifacts {
     listOf(mainJar.name, "runtime", "archives").forEach { configurationName ->
-        add(
-            configurationName,
-            // idea can correctly import configurations of shadowJar as transitive dependencies which are required by tests
-            if (kotlinBuildProperties.isInJpsBuildIdeaSync) reflectShadowJar else result
-        )
+        add(configurationName, result)
     }
 
     add("archives", modularJar)
