@@ -98,6 +98,11 @@ public class MyLookupExpression extends Expression {
   }
 
   @Override
+  public boolean requiresCommittedPSI() {
+    return false;
+  }
+
+  @Override
   public String getAdvertisingText() {
     return myAdvertisementText;
   }

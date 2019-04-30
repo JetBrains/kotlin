@@ -48,6 +48,11 @@ public class VariableNode extends Expression {
   }
 
   @Override
+  public boolean requiresCommittedPSI() {
+    return myInitialValue != null && myInitialValue.requiresCommittedPSI();
+  }
+
+  @Override
   public LookupElement[] calculateLookupItems(ExpressionContext context) {
     if (myInitialValue == null){
       return null;

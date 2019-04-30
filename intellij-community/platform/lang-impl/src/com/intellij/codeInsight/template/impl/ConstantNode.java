@@ -40,6 +40,11 @@ public class ConstantNode extends Expression {
   }
 
   @Override
+  public boolean requiresCommittedPSI() {
+    return false;
+  }
+
+  @Override
   public LookupElement[] calculateLookupItems(ExpressionContext context) {
     return LookupElement.EMPTY_ARRAY;
   }
