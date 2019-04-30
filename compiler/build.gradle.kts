@@ -65,10 +65,6 @@ dependencies {
 
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(files(toolsJar()))
-
-    if (project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
-    }
 }
 
 sourceSets {

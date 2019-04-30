@@ -124,11 +124,8 @@ dependencies {
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
-
-    if (project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
-    }
 }
+
 sourceSets {
     "main" {
         projectDefault()
