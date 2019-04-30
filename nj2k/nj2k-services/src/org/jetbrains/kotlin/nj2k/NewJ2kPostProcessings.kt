@@ -12,8 +12,6 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.psi.util.parentOfType
-import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -291,6 +289,11 @@ object NewJ2KPostProcessingRegistrar {
                 RemoveModifierFix.createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD),
                 Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, Errors.NON_FINAL_MEMBER_IN_OBJECT
             ),
+            registerDiagnosticBasedProcessingWithFixFactory(
+                MakeVisibleFactory,
+                Errors.INVISIBLE_MEMBER
+            ),
+
             registerDiagnosticBasedProcessingFactory(
                 Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
             ) { element: KtSimpleNameExpression, _: Diagnostic ->
