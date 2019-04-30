@@ -1,13 +1,11 @@
-import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
-import org.gradle.kotlin.dsl.extra
-import org.jetbrains.kotlin.pill.PillExtension
+import kotlinx.metadata.jvm.KmModuleVisitor
+import kotlinx.metadata.jvm.KotlinModuleMetadata
 import proguard.gradle.ProGuardTask
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
-import kotlinx.metadata.jvm.KotlinModuleMetadata
-import kotlinx.metadata.jvm.KmModuleVisitor
 
 description = "Kotlin Full Reflection Library"
 
@@ -188,10 +186,7 @@ val sourcesJar = sourcesJar(sourceSet = null) {
 val result by task<Jar> {
     dependsOn(proguard)
     from(zipTree(file(proguardOutput)))
-//    from(zipTree(reflectShadowJar.archivePath)) {
-//        include("META-INF/versions/**")
-//    }
-    callGroovy("manifestAttributes", manifest, project, "Main" /*true*/)
+    callGroovy("manifestAttributes", manifest, project, "Main")
 }
 
 val modularJar by task<Jar> {
@@ -212,15 +207,10 @@ val dexMethodCount by task<DexMethodCount> {
 tasks.getByName("check").dependsOn(dexMethodCount)
 
 artifacts {
-    val artifactJar = mapOf(
-        "file" to result.outputs.files.single(),
-        "builtBy" to result,
-        "name" to base.archivesBaseName
-    )
+    listOf(mainJar.name, "runtime", "archives").forEach { configurationName ->
+        add(configurationName, result)
+    }
 
-    add(mainJar.name, artifactJar)
-    add("runtime", artifactJar)
-    add("archives", artifactJar)
     add("archives", modularJar)
 }
 
