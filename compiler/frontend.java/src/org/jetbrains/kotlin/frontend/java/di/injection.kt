@@ -85,7 +85,6 @@ fun createContainerForLazyResolveWithJava(
     initializeJavaSpecificComponents(bindingTrace)
 }
 
-// FIXME(dsavvinov): get rid of that
 fun StorageComponentContainer.initializeJavaSpecificComponents(bindingTrace: BindingTrace) {
     get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
 }
