@@ -28,7 +28,7 @@ class IdeNoArgComponentContainerContributor(val project: Project) : StorageCompo
     override fun registerModuleComponents(
         container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform.isJvm()) return
+        if (!platform.isJvm()) return
 
         container.useInstance(IdeNoArgDeclarationChecker(project))
     }
