@@ -236,7 +236,7 @@ fun IrFunction.copyValueParametersToStatic(
             originalDispatchReceiver.copyTo(
                 target,
                 origin = originalDispatchReceiver.origin,
-                index = originalDispatchReceiver.index + shift++,
+                index = shift++,
                 type = type,
                 name = Name.identifier("\$this")
             )
@@ -247,7 +247,7 @@ fun IrFunction.copyValueParametersToStatic(
             originalExtensionReceiver.copyTo(
                 target,
                 origin = originalExtensionReceiver.origin,
-                index = originalExtensionReceiver.index + shift++,
+                index = shift++,
                 name = Name.identifier("\$receiver")
             )
         )
