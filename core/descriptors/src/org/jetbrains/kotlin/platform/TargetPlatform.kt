@@ -33,12 +33,12 @@ data class TargetPlatform(val componentPlatforms: Set<SimplePlatform>) : Collect
  *
  * - direct inheritors are well-known and represent three major platforms supported at the moment (JVM, JS, Native)
  *
- * - exact enumeration of all inheritors isn't available at the compile time, see [DefaultBuiltInPlatforms]
+ * - exact enumeration of all inheritors isn't available at the compile time, see [CommonPlatforms]
  *
  * - each implementation should support equality in a broad sense of "absolutely the same platform"
  *
- * - it is _prohibited_ to create instances of [SimplePlatform] in the client's code, use [DefaultBuiltInPlatfroms] to get instances
- *   of platforms
+ * - it is _prohibited_ to create instances of [SimplePlatform] in the client's code, use respective factory instance (e.g., [JvmPlatforms])
+ *  to get instances of platforms
  *
  * Ideally, each specific subtype should be either a data class or singleton.
  */
