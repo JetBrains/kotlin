@@ -115,7 +115,8 @@ open class GenericReplCompiler(
                 classpathAddendum ?: emptyList(),
                 generationState.replSpecific.resultType?.let {
                     DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it)
-                }
+                },
+                null
             )
         }
     }

@@ -16,6 +16,7 @@ internal class KJvmCompiledScriptData(
     var sourceLocationId: String?,
     var compilationConfiguration: ScriptCompilationConfiguration,
     var scriptClassFQName: String,
+    var resultField: Pair<String, KotlinType>?,
     var otherScripts: List<CompiledScript<*>> = emptyList()
 ) : Serializable {
 
@@ -24,6 +25,7 @@ internal class KJvmCompiledScriptData(
         outputStream.writeObject(sourceLocationId)
         outputStream.writeObject(otherScripts)
         outputStream.writeObject(scriptClassFQName)
+        outputStream.writeObject(resultField)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -32,11 +34,12 @@ internal class KJvmCompiledScriptData(
         sourceLocationId = inputStream.readObject() as String?
         otherScripts = inputStream.readObject() as List<CompiledScript<*>>
         scriptClassFQName = inputStream.readObject() as String
+        resultField = inputStream.readObject() as Pair<String, KotlinType>?
     }
 
     companion object {
         @JvmStatic
-        private val serialVersionUID = 3L
+        private val serialVersionUID = 4L
     }
 }
 
@@ -49,9 +52,13 @@ class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
         sourceLocationId: String?,
         compilationConfiguration: ScriptCompilationConfiguration,
         scriptClassFQName: String,
+        resultField: Pair<String, KotlinType>?,
         otherScripts: List<CompiledScript<*>> = emptyList(),
         compiledModule: KJvmCompiledModule? // module should be null for imported (other) scripts, so only one reference to the module is kept
-    ): this(KJvmCompiledScriptData(sourceLocationId, compilationConfiguration, scriptClassFQName, otherScripts), compiledModule)
+    ) : this(
+        KJvmCompiledScriptData(sourceLocationId, compilationConfiguration, scriptClassFQName, resultField, otherScripts),
+        compiledModule
+    )
 
     override val sourceLocationId: String?
         get() = data.sourceLocationId
@@ -64,6 +71,9 @@ class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
 
     val scriptClassFQName: String
         get() = data.scriptClassFQName
+
+    override val resultField: Pair<String, KotlinType>?
+        get() = data.resultField
 
     override suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>> = try {
         // ensuring proper defaults are used
@@ -168,7 +178,8 @@ fun KJvmCompiledScript<*>.toBytes(): ByteArray {
     } finally {
         try {
             oos?.close()
-        } catch (e: IOException) {}
+        } catch (e: IOException) {
+        }
     }
 }
 
