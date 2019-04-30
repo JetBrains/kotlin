@@ -283,23 +283,13 @@ public class ExtensionsRootType extends RootType {
     FileUtil.rename(file, newName);
   }
 
-  private void extractBundledExtensionsIfNeeded(@NotNull PluginId pluginId) {
+  private void extractBundledExtensionsIfNeeded(@NotNull PluginId pluginId) throws IOException {
+    if (!ApplicationManager.getApplication().isDispatchThread()) return;
+
     IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
     if (plugin == null || !ResourceVersions.getInstance().shouldUpdateResourcesOf(plugin)) return;
 
-    Task.Backgroundable extractResourcesInBackground =
-      new Task.Backgroundable(null, "Extracting bundled extensions for plugin: " + pluginId.getIdString()) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          try {
-            extractBundledResources(pluginId, "");
-            ApplicationManager.getApplication().invokeLater(() -> ResourceVersions.getInstance().resourcesUpdated(plugin));
-          }
-          catch (IOException ex) {
-            LOG.warn("Failed to extract bundled extensions for plugin: " + plugin.getName(), ex);
-          }
-        }
-      };
-    ProgressManager.getInstance().run(extractResourcesInBackground);
+    extractBundledResources(pluginId, "");
+    ResourceVersions.getInstance().resourcesUpdated(plugin);
   }
 }
