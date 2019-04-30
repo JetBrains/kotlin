@@ -94,9 +94,9 @@ public abstract class ExecutorAction extends AnAction {
     return false;
   }
 
-  private boolean isValid(RunDashboardRunConfigurationNode node) {
+  private static boolean isValid(RunDashboardRunConfigurationNode node) {
     try {
-      node.getConfigurationSettings().checkSettings(getExecutor());
+      node.getConfigurationSettings().checkSettings(null);
       return true;
     }
     catch (IndexNotReadyException ex) {
