@@ -1,5 +1,5 @@
 import Outer.Nested
-import Outer.ClassObjectNested
+import Outer.Companion.ClassObjectNested
 import Outer.C.Inner
 import Outer.C.Inner2
 
