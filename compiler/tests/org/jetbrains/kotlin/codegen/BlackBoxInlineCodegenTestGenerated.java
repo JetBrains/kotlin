@@ -3430,6 +3430,16 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("enclodingMethod.kt")
+        public void testEnclodingMethod_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/enclodingMethod.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("enclodingMethod.kt")
+        public void testEnclodingMethod_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/enclodingMethod.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("fileNameInMetadata.kt")
         public void testFileNameInMetadata() throws Exception {
             runTest("compiler/testData/codegen/boxInline/suspend/fileNameInMetadata.kt");
