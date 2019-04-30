@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.nj2k
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -73,21 +74,22 @@ class NewJ2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             collectAvailableActions(this, file, converterContext, rangeMarker)
         }
         withContext(EDT) {
-            for ((element, action, _, writeActionNeeded) in elementToActions) {
-                if (element.isValid) {
-                    if (writeActionNeeded) {
-                        runWriteAction {
+            CommandProcessor.getInstance().runUndoTransparentAction {
+                for ((element, action, _, writeActionNeeded) in elementToActions) {
+                    if (element.isValid) {
+                        if (writeActionNeeded) {
+                            runWriteAction {
+                                runAction(action, element)
+                            }
+                        } else {
                             runAction(action, element)
                         }
                     } else {
-                        runAction(action, element)
+                        modificationStamp = null
                     }
-                } else {
-                    modificationStamp = null
                 }
             }
         }
-
         return modificationStamp != file.modificationStamp && elementToActions.isNotEmpty()
     }
 
@@ -125,31 +127,38 @@ class NewJ2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                 ).fixNullability(AnalysisScope(file, rangeMarker))
             }
             withContext(EDT) {
-                runWriteAction {
-                    if (rangeMarker != null) {
-                        ShortenReferences.DEFAULT.process(file, rangeMarker.startOffset, rangeMarker.endOffset)
-                    } else {
-                        ShortenReferences.DEFAULT.process(file)
+                CommandProcessor.getInstance().runUndoTransparentAction {
+                    runWriteAction {
+                        if (rangeMarker != null) {
+                            ShortenReferences.DEFAULT.process(file, rangeMarker.startOffset, rangeMarker.endOffset)
+                        } else {
+                            ShortenReferences.DEFAULT.process(file)
+                        }
+
                     }
                 }
             }
             NewJ2KPostProcessingRegistrar.mainProcessings.runProcessings(file, converterContext as NewJ2kConverterContext, rangeMarker)
             withContext(EDT) {
-                runWriteAction {
-                    file.commitAndUnblockDocument()
+                CommandProcessor.getInstance().runUndoTransparentAction {
+                    runWriteAction {
+                        file.commitAndUnblockDocument()
+                    }
                 }
             }
             withContext(EDT) {
                 runWriteAction {
-                    val codeStyleManager = CodeStyleManager.getInstance(file.project)
-                    if (rangeMarker != null) {
-                        if (rangeMarker.isValid) {
-                            codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
+                    CommandProcessor.getInstance().runUndoTransparentAction {
+                        val codeStyleManager = CodeStyleManager.getInstance(file.project)
+                        if (rangeMarker != null) {
+                            if (rangeMarker.isValid) {
+                                codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
+                            }
+                        } else {
+                            codeStyleManager.reformat(file)
                         }
-                    } else {
-                        codeStyleManager.reformat(file)
+                        Unit
                     }
-                    Unit
                 }
             }
         }

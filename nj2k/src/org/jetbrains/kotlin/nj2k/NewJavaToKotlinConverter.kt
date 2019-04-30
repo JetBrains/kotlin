@@ -72,9 +72,7 @@ class NewJavaToKotlinConverter(
                     }
                 }
 
-                CommandProcessor.getInstance().runUndoTransparentAction {
-                    AfterConversionPass(project, postProcessor).run(kotlinFile, context, range = null)
-                }
+                AfterConversionPass(project, postProcessor).run(kotlinFile, context, range = null)
 
                 kotlinFile.text
             } catch (e: ProcessCanceledException) {
