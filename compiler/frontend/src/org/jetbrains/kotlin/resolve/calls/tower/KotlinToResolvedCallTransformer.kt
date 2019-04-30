@@ -132,8 +132,10 @@ class KotlinToResolvedCallTransformer(
                     }
                 }
 
-                @Suppress("UNCHECKED_CAST") val resolvedCall =
-                    ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.completedDiagnostic) as ResolvedCall<D>
+                val resolvedCall = ktPrimitiveCompleter.completeResolvedCall(
+                    candidate, baseResolvedCall.completedDiagnostic(resultSubstitutor)
+                ) as ResolvedCall<D>
+
                 forwardCallToInferenceSession(baseResolvedCall, context, resolvedCall, tracingStrategy)
 
                 resolvedCall

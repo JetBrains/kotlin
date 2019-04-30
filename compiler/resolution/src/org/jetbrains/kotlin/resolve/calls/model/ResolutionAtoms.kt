@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.*
-import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
+import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
+import org.jetbrains.kotlin.resolve.calls.components.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
@@ -184,16 +186,14 @@ sealed class CallResolutionResult(
         super.setAnalyzedResults(subResolvedAtoms)
     }
 
-    val completedDiagnostic: List<KotlinCallDiagnostic>
-        get() {
-            val substitutor = constraintSystem.buildResultingSubstitutor()
-            return diagnostics.map {
-                if (it !is NewConstraintError) return@map it
-                val lowerType = it.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
-                val newLowerType = substitutor.safeSubstitute(lowerType)
-                NewConstraintError(newLowerType, it.upperType, it.position)
-            }
+    fun completedDiagnostic(substitutor: NewTypeSubstitutor): List<KotlinCallDiagnostic> {
+        return diagnostics.map {
+            if (it !is NewConstraintError) return@map it
+            val lowerType = it.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
+            val newLowerType = substitutor.safeSubstitute(lowerType)
+            NewConstraintError(newLowerType, it.upperType, it.position)
         }
+    }
 
     override val atom: ResolutionAtom? get() = null
 
