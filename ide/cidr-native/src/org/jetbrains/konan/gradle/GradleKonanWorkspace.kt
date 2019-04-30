@@ -9,13 +9,13 @@ import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.RunManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
+import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
 import com.intellij.openapi.progress.BackgroundTaskQueue
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.AtomicClearableLazyValue
-import com.intellij.util.containers.MultiMap
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl
 import org.jetbrains.konan.gradle.CachedBuildableElements.KonanBuildableElements
@@ -24,6 +24,7 @@ import org.jetbrains.konan.gradle.KonanProjectDataService.Companion.forEachKonan
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanBuildTarget
 import org.jetbrains.konan.gradle.execution.GradleKonanConfiguration
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 
@@ -95,62 +96,101 @@ private sealed class CachedBuildableElements {
 
 private fun loadBuildableElements(project: Project): CachedBuildableElements {
 
-    val buildTargets = mutableListOf<GradleKonanBuildTarget>()
+    data class KonanModelDataKey(val moduleId: String, val rootProjectPath: String)
+    data class KonanModelDataValue(val moduleData: ModuleData, val konanModel: KonanModel)
 
+    val konanModelData = mutableMapOf<KonanModelDataKey, KonanModelDataValue>()
+    val artifactNamesUsedInModules = mutableMapOf<String, MutableSet<String>>()
+
+    // collect KonanModel objects
+    // also collect the mapping between artifact names and modules where artifact with such names are used
     forEachKonanProject(project) { konanModel, moduleNode, rootProjectPath ->
         val moduleData = moduleNode.data
+        val moduleId = moduleData.id
 
-        val configurationsMap = MultiMap.createSmart<Triple<String, String, String>, GradleKonanConfiguration>()
-        for (konanArtifact in konanModel.artifacts) {
-            val artifactBuildTaskPath = konanArtifact.buildTaskPath
-            val id = getConfigurationId(moduleData.id, konanArtifact)
-            // TODO: We should do something about debug/release for gradle
+        konanModelData[KonanModelDataKey(moduleId, rootProjectPath)] = KonanModelDataValue(moduleData, konanModel)
+
+        konanModel.artifacts.forEach { artifact ->
+            artifactNamesUsedInModules.computeIfAbsent(artifact.name) { mutableSetOf() } += moduleId
+        }
+    }
+
+    // if there are at least two modules which have artifacts with the same name -> need to use disambiguation suffix
+    val useDisambiguationSuffix = artifactNamesUsedInModules.values.any { it.size > 1 }
+
+    data class ConfigurationKey(val moduleId: String, val artifactName: String)
+    data class ConfigurationValue(
+            val moduleName: String,
+            val disambiguationSuffix: String,
+            val configurations: MutableList<GradleKonanConfiguration> = mutableListOf()
+    )
+
+    val configurationsMap = mutableMapOf<ConfigurationKey, ConfigurationValue>()
+    konanModelData.forEach { entry ->
+        val (moduleId, rootProjectPath) = entry.key
+        val (moduleData, konanModel) = entry.value
+
+        // if there are artifacts with same name, then append module name for disambiguation
+        val disambiguationSuffix = if (useDisambiguationSuffix) " ($moduleId)" else ""
+
+        konanModel.artifacts.forEach { artifact ->
+            val configurationName = artifact.name + disambiguationSuffix
+            val configurationId = getConfigurationId(moduleId, artifact)
+            val profileName = if (artifact.buildTaskPath.contains("Debug", ignoreCase = true)) "Debug" else "Release"
+
             val configuration = GradleKonanConfiguration(
-                id,
-                konanArtifact.name,
-                if (artifactBuildTaskPath.contains("ebug")) "Debug" else "Release",
-                konanArtifact.file,
-                konanArtifact.type,
-                artifactBuildTaskPath,
-                konanModel.cleanTaskPath,
-                rootProjectPath,
-                konanArtifact.isTests
+                    configurationId,
+                    configurationName,
+                    profileName,
+                    artifact.file,
+                    artifact.type,
+                    artifact.buildTaskPath,
+                    konanModel.cleanTaskPath,
+                    rootProjectPath,
+                    artifact.isTests
             )
-            configurationsMap.putValue(Triple(moduleData.id, moduleData.externalName, konanArtifact.name), configuration)
+
+            configurationsMap.computeIfAbsent(ConfigurationKey(moduleId, artifact.name)) {
+                ConfigurationValue(moduleData.externalName, disambiguationSuffix)
+            }.configurations += configuration
+        }
+    }
+
+    val buildTargets = mutableListOf<GradleKonanBuildTarget>()
+    configurationsMap.forEach { entry ->
+        val (moduleId, artifactName) = entry.key
+        val (moduleName, disambiguationSuffix, configurations) = entry.value
+
+        val baseBuildTarget = configurations.filter { !it.isTests }.ifNotEmpty {
+            this.createBuildTarget(moduleId, artifactName, disambiguationSuffix, moduleName)
         }
 
-        configurationsMap.entrySet().forEach { entry ->
-
-            val (moduleId, moduleName, originalTargetName) = entry.key
-            val value: Any = entry.value
-
-            @Suppress("UNCHECKED_CAST")
-            val configurations: List<GradleKonanConfiguration> =
-                (value as? List<GradleKonanConfiguration>) ?: listOf(value as GradleKonanConfiguration)
-
-            configurations.filter { !it.isTests }.ifNotEmpty {
-                buildTargets += this.createBuildTarget(moduleId, originalTargetName, moduleName)
-            }
-
-            configurations.firstOrNull { it.isTests }?.apply {
-                buildTargets += listOf(this).createBuildTarget(moduleId, originalTargetName + "Tests", moduleName)
-            }
+        val testBuildTarget = configurations.firstOrNull { it.isTests }?.let {
+            listOf(it).createBuildTarget(moduleId, artifactName + "Tests", disambiguationSuffix, moduleName)
         }
+
+        if (testBuildTarget != null && baseBuildTarget != null) {
+            testBuildTarget.setBaseBuildTarget(baseBuildTarget)
+        }
+
+        buildTargets.addIfNotNull(baseBuildTarget)
+        buildTargets.addIfNotNull(testBuildTarget)
     }
 
     return if (buildTargets.isNotEmpty()) KonanBuildableElements(buildTargets) else NoKonanBuildableElements
 }
 
-private fun getConfigurationId(moduleId: String, konanArtifact: KonanModelArtifact) =
-    getBuildTargetId(moduleId, konanArtifact.name) + ":" + konanArtifact.buildTaskPath
+private fun getConfigurationId(moduleId: String, artifact: KonanModelArtifact) =
+    getBuildTargetId(moduleId, artifact.name) + ":" + artifact.buildTaskPath
 
 private fun getBuildTargetId(moduleId: String, targetName: String) = "$moduleId:$targetName"
 
 private fun List<GradleKonanConfiguration>.createBuildTarget(
     moduleId: String,
     targetName: String,
+    disambiguationSuffix: String,
     moduleName: String
-) = GradleKonanBuildTarget(getBuildTargetId(moduleId, targetName), targetName, moduleName, this)
+) = GradleKonanBuildTarget(getBuildTargetId(moduleId, targetName), targetName + disambiguationSuffix, moduleName, this)
 
 private val Project.mayBeKotlinNativeProject
     get() = GradleSettings.getInstance(this).linkedProjectsSettings.isNotEmpty()

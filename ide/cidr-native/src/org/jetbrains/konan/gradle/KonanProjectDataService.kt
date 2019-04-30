@@ -23,9 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType
-import org.jetbrains.konan.gradle.execution.GradleKonanBuildTarget
 import org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 /**
@@ -56,54 +54,42 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
         }
     }
 
-    private fun getArtifacts(project: Project): Collection<Pair<String, KonanModelArtifact>> {
-        val artifacts = mutableListOf<Pair<String, KonanModelArtifact>>()
-        ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID)
-            .mapNotNull { it.externalProjectStructure }
-            .forEach { projectStructure ->
-                ExternalSystemApiUtil.findAll(projectStructure, ProjectKeys.MODULE)
-                    .map { Pair(it.data.externalName, ExternalSystemApiUtil.find<KonanModel>(it, KonanProjectResolver.KONAN_MODEL_KEY)) }
-                    .filter { it.second != null }
-                    .forEach { (moduleName, konanProjectNode) ->
-                        artifacts.addAll(konanProjectNode!!.data.artifacts.map { Pair(moduleName, it) })
-                    }
-            }
-        return artifacts
-    }
-
     private fun createRunConfigurations(project: Project) {
+        val workspace = GradleKonanWorkspace.getInstance(project)
+        if (!workspace.isInitialized) return
+
         val runManager = RunManager.getInstance(project)
         var runConfigurationToSelect: RunnerAndConfigurationSettings? = null
 
         val configurationProducer = GradleKonanTargetRunConfigurationProducer.getGradleKonanInstance(project)!!
         val gradleAppRunConfigurationType = GradleKonanAppRunConfigurationType.instance
 
-        getArtifacts(project)
-            .filter { it.second.type == CompilerOutputKind.PROGRAM }
-            .forEach { (moduleName, artifact) ->
-                val target = GradleKonanBuildTarget(moduleName + ":" + artifact.name, artifact.name, moduleName, emptyList())
-
-                var configuration =
+        workspace.buildTargets.map {
+            // avoid adding run configurations for test executables unless there is no matching non-test (base) target
+            // this is necessary to avoid polluting run configurations drop-down with too many choices
+            it.baseBuildTarget ?: it
+        }.forEach { buildTarget ->
+            var configuration =
                     gradleAppRunConfigurationType.factory.createTemplateConfiguration(project) as GradleKonanAppRunConfiguration
-                configurationProducer.setupTarget(configuration, listOf(target))
-                val suggestedName = configuration.suggestedName()
-                if (suggestedName == null || runManager.findConfigurationByTypeAndName(
-                        gradleAppRunConfigurationType,
-                        suggestedName
+            configurationProducer.setupTarget(configuration, listOf(buildTarget))
+            val suggestedName = configuration.suggestedName()
+            if (suggestedName == null || runManager.findConfigurationByTypeAndName(
+                            gradleAppRunConfigurationType,
+                            suggestedName
                     ) != null
-                ) {
-                    return@forEach
-                }
-
-                val runConfiguration = runManager.createConfiguration(suggestedName, gradleAppRunConfigurationType.factory)
-                configuration = runConfiguration.configuration as GradleKonanAppRunConfiguration
-                configuration.name = suggestedName
-                configurationProducer.setupTarget(configuration, listOf(target))
-                runManager.addConfiguration(runConfiguration)
-                if (runConfigurationToSelect == null) {
-                    runConfigurationToSelect = runConfiguration
-                }
+            ) {
+                return@forEach
             }
+
+            val runConfiguration = runManager.createConfiguration(suggestedName, gradleAppRunConfigurationType.factory)
+            configuration = runConfiguration.configuration as GradleKonanAppRunConfiguration
+            configuration.name = suggestedName
+            configurationProducer.setupTarget(configuration, listOf(buildTarget))
+            runManager.addConfiguration(runConfiguration)
+            if (runConfigurationToSelect == null) {
+                runConfigurationToSelect = runConfiguration
+            }
+        }
 
         if (runConfigurationToSelect != null && runManager.selectedConfiguration == null) {
             val finalRunConfigurationToSelect = runConfigurationToSelect

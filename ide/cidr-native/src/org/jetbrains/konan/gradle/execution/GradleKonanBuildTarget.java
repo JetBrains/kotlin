@@ -23,12 +23,12 @@ import java.util.List;
 public class GradleKonanBuildTarget implements Serializable, CidrBuildTarget<GradleKonanConfiguration> {
     public static final Icon EXECUTABLE_ICON = CidrNativeIconProvider.Companion.getInstance().getExecutableIcon();
     public static final Icon LIBRARY_ICON = AllIcons.Nodes.PpLib;
-    public static final Icon TEST_ICON = AllIcons.Nodes.PpLib;
 
     @NotNull private final String myId;
     @NotNull private final String myName;
     @NotNull private final String myProjectName;
     @NotNull private final List<GradleKonanConfiguration> myConfigurations;
+    @Nullable private GradleKonanBuildTarget myBaseBuildTarget;
 
     public GradleKonanBuildTarget(@NotNull String id,
             @NotNull String name,
@@ -83,6 +83,15 @@ public class GradleKonanBuildTarget implements Serializable, CidrBuildTarget<Gra
     @NotNull
     public List<GradleKonanConfiguration> getBuildConfigurations() {
         return myConfigurations;
+    }
+
+    @Nullable
+    public GradleKonanBuildTarget getBaseBuildTarget() {
+        return myBaseBuildTarget;
+    }
+
+    public void setBaseBuildTarget(@NotNull GradleKonanBuildTarget baseBuildTarget) {
+        this.myBaseBuildTarget = baseBuildTarget;
     }
 
     @Override
