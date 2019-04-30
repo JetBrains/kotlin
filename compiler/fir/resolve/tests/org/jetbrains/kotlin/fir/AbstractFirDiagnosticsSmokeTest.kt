@@ -134,8 +134,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
 
     protected open fun createModule(moduleName: String): TestModuleInfo {
         val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
-        // TODO: use platform
-        @Suppress("UNUSED_VARIBALE")
+        @Suppress("UNUSED_VARIABLE")
         val platform =
             when {
                 nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
