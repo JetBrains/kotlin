@@ -295,9 +295,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
             specialModuleInfo is LibrarySourceInfo || specialModuleInfo === NotUnderContentRootModuleInfo -> {
                 val librariesFacade = librariesFacade(settings)
-                val globalContext = librariesFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker("facadeForSpecialModuleInfo (LibrarySourceInfo or NotUnderContentRootModuleInfo)")
+                val debugName = "facadeForSpecialModuleInfo (LibrarySourceInfo or NotUnderContentRootModuleInfo)"
+                val globalContext = librariesFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker(debugName)
+                
                 makeProjectResolutionFacade(
-                    "facadeForSpecialModuleInfo (LibrarySourceInfo or NotUnderContentRootModuleInfo)",
+                    debugName,
                     globalContext,
                     reuseDataFrom = librariesFacade,
                     moduleFilter = { it == specialModuleInfo }
