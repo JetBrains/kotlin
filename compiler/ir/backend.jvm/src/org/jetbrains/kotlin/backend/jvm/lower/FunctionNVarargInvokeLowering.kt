@@ -111,7 +111,7 @@ private class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : Cl
                                 target.returnType,
                                 target.returnType.classifierOrFail,
                                 irCall(target).apply {
-                                    dispatchReceiver = irGet(irClass.thisReceiver!!)
+                                    dispatchReceiver = irGet(dispatchReceiverParameter!!)
                                     target.valueParameters.forEachIndexed { i, irValueParameter ->
                                         val type = irValueParameter.type
                                         putValueArgument(

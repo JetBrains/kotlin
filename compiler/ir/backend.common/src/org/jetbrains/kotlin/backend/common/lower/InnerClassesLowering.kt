@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+// This pass has to run after LocalDeclarationsLowering, since we don't handle nested functions.
 val innerClassesPhase = makeIrFilePhase(
     ::InnerClassesLowering,
     name = "InnerClasses",
@@ -76,20 +79,9 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         irClass.transformDeclarationsFlat { irMember -> (irMember as? IrConstructor)?.let { listOf(lowerConstructor(it)) } }
         irClass.transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
 
-        irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
-            private var enclosingConstructor: IrConstructor? = null
-
-            // TODO: maybe add another transformer that skips specified elements
-            override fun visitClass(declaration: IrClass): IrStatement =
+        irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+            override fun visitClassNew(declaration: IrClass): IrStatement =
                 declaration
-
-            override fun visitConstructor(declaration: IrConstructor): IrStatement =
-                try {
-                    enclosingConstructor = declaration
-                    super.visitConstructor(declaration)
-                } finally {
-                    enclosingConstructor = null
-                }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 expression.transformChildrenVoid(this)
@@ -100,8 +92,10 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val origin = expression.origin
+                val function = currentFunction?.irElement as? IrFunction
+                val enclosingThisReceiver = function?.dispatchReceiverParameter ?: irClass.thisReceiver!!
 
-                var irThis: IrExpression = IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol, origin)
+                var irThis: IrExpression = IrGetValueImpl(startOffset, endOffset, enclosingThisReceiver.symbol, origin)
                 var innerClass = irClass
                 while (innerClass != implicitThisClass) {
                     if (!innerClass.isInner) {
@@ -110,10 +104,10 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
                         return expression
                     }
 
-                    irThis = if (enclosingConstructor != null && irClass == innerClass) {
+                    irThis = if (function is IrConstructor && irClass == innerClass) {
                         // Might be before a super() call (e.g. an argument to one), in which case the JVM bytecode verifier will reject
                         // an attempt to access the field. Good thing we have a local variable as well.
-                        IrGetValueImpl(startOffset, endOffset, enclosingConstructor!!.valueParameters[0].symbol, origin)
+                        IrGetValueImpl(startOffset, endOffset, function.valueParameters[0].symbol, origin)
                     } else {
                         val outerThisField = context.declarationFactory.getOuterThisField(innerClass)
                         IrGetFieldImpl(startOffset, endOffset, outerThisField.symbol, outerThisField.type, irThis, origin)

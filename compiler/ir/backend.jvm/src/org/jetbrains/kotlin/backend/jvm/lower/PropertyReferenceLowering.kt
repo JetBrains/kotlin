@@ -292,70 +292,79 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     }
                 }
 
-                fun buildOverride(method: IrSimpleFunction, build: IrBlockBodyBuilder.(List<IrValueParameter>) -> IrExpression) =
-                    buildFun {
-                        setSourceRange(expression)
-                        name = method.name
-                        returnType = method.returnType
-                        visibility = method.visibility
-                        origin = referenceClass.origin
-                    }.apply {
-                        parent = referenceClass
-                        referenceClass.declarations.add(this)
-
-                        overriddenSymbols.add(method.symbol)
-                        dispatchReceiverParameter = referenceThis.copyTo(this)
-                        for (parameter in method.valueParameters)
-                            valueParameters.add(parameter.copyTo(this))
-                        body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
-                            +irReturn(build(valueParameters))
-                        }
+                fun buildOverride(
+                    method: IrSimpleFunction,
+                    build: IrBlockBodyBuilder.(IrValueParameter, List<IrValueParameter>) -> IrExpression
+                ) = referenceClass.addFunction {
+                    setSourceRange(expression)
+                    name = method.name
+                    returnType = method.returnType
+                    visibility = method.visibility
+                    origin = referenceClass.origin
+                }.apply {
+                    overriddenSymbols.add(method.symbol)
+                    val thisParameter = referenceThis.copyTo(this)
+                    dispatchReceiverParameter = thisParameter
+                    for (parameter in method.valueParameters)
+                        valueParameters.add(parameter.copyTo(this))
+                    body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
+                        +irReturn(build(thisParameter, valueParameters))
                     }
+                }
 
                 val receiverField = superClass.properties.single { it.name.asString() == "receiver" }.backingField!!
-                fun IrBuilderWithScope.setReceiversOn(call: IrCall, valueParameters: List<IrValueParameter>) {
+                fun IrBuilderWithScope.setReceiversOn(
+                    call: IrCall,
+                    dispatchReceiverParameter: IrValueParameter,
+                    valueParameters: List<IrValueParameter>
+                ) {
                     var index = 0
                     call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
                         if (expression.dispatchReceiver != null)
-                            irGetField(irGet(referenceThis), receiverField)
+                            irGetField(irGet(dispatchReceiverParameter), receiverField)
                         else
                             irImplicitCast(irGet(valueParameters[index++]), it.type)
                     }
                     call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
                         if (expression.extensionReceiver != null)
-                            irGetField(irGet(referenceThis), receiverField)
+                            irGetField(irGet(dispatchReceiverParameter), receiverField)
                         else
                             irImplicitCast(irGet(valueParameters[index++]), it.type)
                     }
                 }
 
-                buildOverride(superClass.functions.single { it.name.asString() == "getName" }) {
+                buildOverride(superClass.functions.single { it.name.asString() == "getName" }) { _, _ ->
                     irString(expression.descriptor.name.asString())
                 }
 
-                buildOverride(superClass.functions.single { it.name.asString() == "getOwner" }) {
+                buildOverride(superClass.functions.single { it.name.asString() == "getOwner" }) { _, _ ->
                     buildReflectedContainerReference(expression)
                 }
 
-                buildOverride(superClass.functions.single { it.name.asString() == "getSignature" }) {
+                buildOverride(superClass.functions.single { it.name.asString() == "getSignature" }) { _, _ ->
                     irString(expression.signature)
                 }
 
                 expression.getter?.owner?.let { getter ->
-                    buildOverride(superClass.functions.single { it.name.asString() == "get" }) { valueParameters ->
+                    buildOverride(superClass.functions.single { it.name.asString() == "get" }) { dispatchReceiverParameter, valueParameters ->
                         irGet(getter.returnType, null, getter.symbol).apply {
                             copyTypeArgumentsFrom(expression)
-                            setReceiversOn(this, valueParameters)
+                            setReceiversOn(
+                                this,
+                                dispatchReceiverParameter,
+                                valueParameters
+                            )
                         }
                     }
                 }
 
                 expression.setter?.owner?.let { setter ->
-                    buildOverride(superClass.functions.single { it.name.asString() == "set" }) { valueParameters ->
-                        val value = irGet(valueParameters.last())
+                    buildOverride(superClass.functions.single { it.name.asString() == "set" }) { dispatchReceiverParameter, valueParameters ->
+                        val type = setter.valueParameters.last().type
+                        val value = irImplicitCast(irGet(valueParameters.last()), type)
                         irSet(setter.returnType, null, setter.symbol, value).apply {
                             copyTypeArgumentsFrom(expression)
-                            setReceiversOn(this, valueParameters)
+                            setReceiversOn(this, dispatchReceiverParameter, valueParameters)
                         }
                     }
                 }
