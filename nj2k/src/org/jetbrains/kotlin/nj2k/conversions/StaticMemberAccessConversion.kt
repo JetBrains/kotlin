@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.nj2k.conversions
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierListOwner
-import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.j2k.getContainingClass
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asQualifierWithThisAsSelector
 import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
+import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
