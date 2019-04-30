@@ -340,7 +340,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
         if (!e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON1) {
           AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
           AnActionEvent event = AnActionEvent.createFromInputEvent(e, ActionPlaces.MOUSE_SHORTCUT, null, SimpleDataContext.getProjectContext(project));
-          ActionsCollector.getInstance().record(project, action, event, null);
+          ActionsCollector.getInstance().record(project, action, event, file.getLanguage());
 
           showPopup(true);
         }
