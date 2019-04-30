@@ -1125,15 +1125,23 @@ inline size_t containerSize(const ContainerHeader* container) {
 }  // namespace
 
 MetaObjHeader* ObjHeader::createMetaObject(TypeInfo** location) {
-  MetaObjHeader* meta = konanConstructInstance<MetaObjHeader>();
   TypeInfo* typeInfo = *location;
   RuntimeCheck(!hasPointerBits(typeInfo, OBJECT_TAG_MASK), "Object must not be tagged");
+
+#if !KONAN_NO_THREADS
+  if (typeInfo->typeInfo_ != typeInfo) {
+    // Someone installed a new meta-object since the check.
+    return reinterpret_cast<MetaObjHeader*>(typeInfo);
+  }
+#endif
+
+  MetaObjHeader* meta = konanConstructInstance<MetaObjHeader>();
   meta->typeInfo_ = typeInfo;
 #if KONAN_NO_THREADS
   *location = reinterpret_cast<TypeInfo*>(meta);
 #else
   TypeInfo* old = __sync_val_compare_and_swap(location, typeInfo, reinterpret_cast<TypeInfo*>(meta));
-  if (old->typeInfo_ != old) {
+  if (old != typeInfo) {
     // Someone installed a new meta-object since the check.
     konanFreeMemory(meta);
     meta = reinterpret_cast<MetaObjHeader*>(old);
