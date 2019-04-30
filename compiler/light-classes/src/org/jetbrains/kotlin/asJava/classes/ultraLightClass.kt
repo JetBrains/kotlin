@@ -546,7 +546,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                     return when (name) {
                         PsiModifier.FINAL -> !isInterface && outer !is KtConstructor<*> && isFinal(outer)
                         PsiModifier.ABSTRACT -> isInterface || outer.hasModifier(ABSTRACT_KEYWORD)
-                        PsiModifier.STATIC -> forceStatic || isNamedObject() && isJvmStatic(outer)
+                        PsiModifier.STATIC -> forceStatic || isNamedObject() && (isJvmStatic(outer) || isJvmStatic(declaration))
                         PsiModifier.STRICTFP -> declaration is KtFunction && declaration.hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
                         PsiModifier.SYNCHRONIZED -> declaration is KtFunction && declaration.hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
                         else -> false

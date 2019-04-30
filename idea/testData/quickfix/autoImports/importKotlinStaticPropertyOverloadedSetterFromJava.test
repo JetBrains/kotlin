@@ -17,7 +17,7 @@ public class Foo {
 package foo
 
 object Bar {
-    var variable: String
+    var variable: String = ""
         @JvmStatic set(value) {
             field = value
         }
