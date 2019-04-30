@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,12 +68,12 @@ public class FindSymbolParameters {
   }
 
   public static FindSymbolParameters wrap(@NotNull String pattern, @NotNull Project project, boolean searchInLibraries) {
-    return new FindSymbolParameters(pattern, pattern, searchScopeFor(project, searchInLibraries), null);
+    return new FindSymbolParameters(pattern, pattern, searchScopeFor(project, searchInLibraries),
+                                    IdFilter.getProjectIdFilter(project, searchInLibraries));
   }
 
   public static FindSymbolParameters wrap(@NotNull String pattern, @NotNull GlobalSearchScope scope) {
-    IdFilter idFilter = IdFilter.getProjectIdFilter(ObjectUtils.notNull(scope.getProject()), scope.isSearchInLibraries());
-    return new FindSymbolParameters(pattern, pattern, scope, idFilter);
+    return new FindSymbolParameters(pattern, pattern, scope, null);
   }
 
   public static FindSymbolParameters simple(@NotNull Project project, boolean searchInLibraries) {
