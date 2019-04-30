@@ -116,7 +116,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
 
         KtFile ktFile = (KtFile) leaf.getContainingFile();
 
-        if (JvmPlatformKt.isJvm(TargetPlatformDetector.getPlatform(ktFile))) {
+        if (!JvmPlatformKt.isJvm(TargetPlatformDetector.getPlatform(ktFile))) {
             return false;
         }
 
