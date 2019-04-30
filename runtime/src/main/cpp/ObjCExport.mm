@@ -169,9 +169,9 @@ static void initializeObjCExport();
           format:@"%s must be allocated and initialized with a factory method",
           class_getName(object_getClass(self))];
   }
-
-  AllocInstanceWithAssociatedObject(typeInfo, result, result->refHolder.slotToInit());
-
+  ObjHolder holder;
+  AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
+  UpdateHeapRef(result->refHolder.slotToInit(), holder.obj());
   return result;
 }
 
