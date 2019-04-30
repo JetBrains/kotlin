@@ -2604,6 +2604,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("arrayConstructor.kt")
+        public void testArrayConstructor() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/arrayConstructor.kt");
+        }
+
         @TestMetadata("capturedLambda.kt")
         public void testCapturedLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/capturedLambda.kt");

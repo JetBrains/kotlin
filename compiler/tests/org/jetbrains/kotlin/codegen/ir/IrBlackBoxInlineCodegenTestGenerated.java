@@ -2604,6 +2604,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("arrayConstructor.kt")
+        public void testArrayConstructor() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/arrayConstructor.kt");
+        }
+
         @TestMetadata("capturedLambda.kt")
         public void testCapturedLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/capturedLambda.kt");
