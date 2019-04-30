@@ -48,9 +48,9 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         recordFile(file, state)
     }
 
-    private fun recordFile(file: FirFile, state: State) = with(state) {
+    private fun recordFile(file: FirFile, state: State) {
         val packageName = file.packageFqName
-        fileMap.merge(packageName, listOf(file)) { a, b -> a + b }
+        state.fileMap.merge(packageName, listOf(file)) { a, b -> a + b }
 
         file.acceptChildren(object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {}
@@ -59,23 +59,23 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
             override fun visitRegularClass(regularClass: FirRegularClass) {
                 val classId = regularClass.symbol.classId
 
-                classifierMap[classId] = regularClass
-                classifierContainerFileMap[classId] = file
+                state.classifierMap[classId] = regularClass
+                state.classifierContainerFileMap[classId] = file
 
                 regularClass.acceptChildren(this)
             }
 
             override fun visitTypeAlias(typeAlias: FirTypeAlias) {
                 val classId = typeAlias.symbol.classId
-                classifierMap[classId] = typeAlias
-                classifierContainerFileMap[classId] = file
+                state.classifierMap[classId] = typeAlias
+                state.classifierContainerFileMap[classId] = file
             }
 
             override fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration) {
                 val symbol = callableMemberDeclaration.symbol as ConeCallableSymbol
                 val callableId = symbol.callableId
-                callableMap.merge(callableId, listOf(symbol)) { a, b -> a + b }
-                callableContainerMap[symbol] = file
+                state.callableMap.merge(callableId, listOf(symbol)) { a, b -> a + b }
+                state.callableContainerMap[symbol] = file
             }
 
             override fun visitConstructor(constructor: FirConstructor) {
