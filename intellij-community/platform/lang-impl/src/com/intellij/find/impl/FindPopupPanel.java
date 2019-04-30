@@ -211,6 +211,12 @@ public class FindPopupPanel extends JBPanel implements FindUI {
       };
       myDialog.setUndecorated(!Registry.is("ide.find.as.popup.decorated"));
 
+      Disposer.register(myProject, new Disposable() {
+        @Override
+        public void dispose() {
+          closeImmediately();
+        }
+      });
       Disposer.register(myDialog.getDisposable(), myDisposable);
 
       final Window window = WindowManager.getInstance().suggestParentWindow(myProject);
@@ -341,6 +347,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
   }
 
   protected boolean canBeClosed() {
+    if (myProject.isDisposed()) return true;
     if (!myCanClose.get()) return false;
     if (myIsPinned.get()) return false;
     if (!ApplicationManager.getApplication().isActive()) return false;
