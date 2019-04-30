@@ -62,7 +62,12 @@ fun StorageComponentContainer.configureModule(
 
     useInstance(platform)
     useInstance(compilerServices)
-    useInstance(platform.componentPlatforms.singleOrNull()?.targetPlatformVersion ?: TargetPlatformVersion.NoVersion)
+
+    val nonTrivialPlatformVersion = platform
+        .mapNotNull { it.targetPlatformVersion.takeIf { it != TargetPlatformVersion.NoVersion } }
+        .singleOrNull()
+
+    useInstance(nonTrivialPlatformVersion ?: TargetPlatformVersion.NoVersion)
 
     compilerServices.platformConfigurator.configureModuleComponents(this)
     compilerServices.platformConfigurator.configureModuleDependentCheckers(this)
