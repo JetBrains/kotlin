@@ -10,8 +10,8 @@ import kotlin.coroutines.experimental.Continuation
 /**
  * Starts unintercepted coroutine without receiver and with result type [T] and executes it until its first suspension.
  * Returns the result of the coroutine or throws its exception if it does not suspend or [COROUTINE_SUSPENDED] if it suspends.
- * In the later case, the [completion] continuation is invoked when coroutine completes with result or exception.
- * This function is designed to be used from inside of [suspendCoroutineOrReturn] to resume the execution of suspended
+ * In the latter case, the [completion] continuation is invoked when coroutine completes with result or exception.
+ * This function is designed to be used from inside of [suspendCoroutineOrReturn] to resume the execution of a suspended
  * coroutine using a reference to the suspending function.
  */
 @SinceKotlin("1.1")
@@ -22,8 +22,8 @@ public expect inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 /**
  * Starts unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
  * Returns the result of the coroutine or throws its exception if it does not suspend or [COROUTINE_SUSPENDED] if it suspends.
- * In the later case, the [completion] continuation is invoked when coroutine completes with result or exception.
- * This function is designed to be used from inside of [suspendCoroutineOrReturn] to resume the execution of suspended
+ * In the latter case, the [completion] continuation is invoked when coroutine completes with result or exception.
+ * This function is designed to be used from inside of [suspendCoroutineOrReturn] to resume the execution of a suspended
  * coroutine using a reference to the suspending function.
  */
 @SinceKotlin("1.1")
