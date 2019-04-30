@@ -28,7 +28,7 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     }
 
     override val platform: TargetPlatform?
-        get() = JvmPlatforms.jvm18 // TODO(dsavvinov): provide proper platform
+        get() = JvmPlatforms.defaultJvmPlatform
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         val symbolProvider = FirSymbolProvider.getInstance(session)
