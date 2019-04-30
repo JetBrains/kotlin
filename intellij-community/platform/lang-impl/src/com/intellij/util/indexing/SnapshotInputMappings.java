@@ -13,7 +13,6 @@ import com.intellij.util.CompressionUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.indexing.impl.DebugAssertions;
-import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
 import com.intellij.util.io.*;
@@ -71,13 +70,12 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
 
   @Nullable
   @Override
-  public InputData<Key, Value> readData(@NotNull Input content) throws IOException {
+  public Map<Key, Value> readData(@NotNull Input content) throws IOException {
     Map<Key, Value> data = null;
-    int hashId = 0;
 
     if (doReadSavedPersistentData) {
       if (myContents == null || !myContents.isBusyReading() || DebugAssertions.EXTRA_SANITY_CHECKS) { // avoid blocking read, we can calculate index value
-        hashId = getHashId(content);
+        int hashId = getHashId(content);
         ByteArraySequence bytes = readContents(hashId);
 
         if (bytes != null) {
@@ -98,32 +96,25 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
         }
       }
     }
-    return data == null ? null : new HashedInputData<>(data, hashId);
+    return data;
   }
 
   @Override
-  public InputData<Key, Value> putData(@Nullable Input content, @NotNull InputData<Key, Value> data) throws IOException {
-    int hashId;
-    InputData<Key, Value> result;
-    if (data instanceof HashedInputData) {
-      hashId = ((HashedInputData<Key, Value>)data).getHashId();
-      result = data;
-    } else {
-      hashId = getHashId(content);
-      result = hashId == 0 ? InputData.empty() : new HashedInputData<>(data.getKeyValues(), hashId);
-    }
-    boolean saved = savePersistentData(data.getKeyValues(), hashId);
+  public void putData(@Nullable Input content, @NotNull Map<Key, Value> data) throws IOException {
+    int hashId = getHashId(content);
+    boolean saved = savePersistentData(data, hashId);
     if (DebugAssertions.EXTRA_SANITY_CHECKS) {
       if (saved) {
         try {
-          myIndexingTrace.put(hashId, getContentDebugData(content) + "," + ExceptionUtil.getThrowableText(new Throwable()));
+          myIndexingTrace.put(hashId, getContentDebugData(content) +
+                                      "," +
+                                      ExceptionUtil.getThrowableText(new Throwable()));
         }
         catch (IOException ex) {
           LOG.error(ex);
         }
       }
     }
-    return result;
   }
 
   @NotNull
@@ -132,7 +123,8 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
     return "[" + content.getFile().getPath() + ";" + content.getFileType().getName() + ";" + content.getCharset() + "]";
   }
 
-  private int getHashId(@Nullable Input content) throws IOException {
+  @Override
+  public int getHashId(@Nullable Input content) throws IOException {
     return content == null ? 0 : getHashOfContent((FileContent) content);
   }
 

@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
-import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
 import com.intellij.util.indexing.impl.MapInputDataDiffBuilder;
 import com.intellij.util.indexing.impl.forward.AbstractMapForwardIndexAccessor;
@@ -14,8 +13,8 @@ import java.io.IOException;
 import java.util.Map;
 
 class HashIdForwardIndexAccessor<Key, Value, Input>
-  extends AbstractMapForwardIndexAccessor<Key, Value, Integer>
-  implements IntForwardIndexAccessor<Key, Value> {
+  extends AbstractMapForwardIndexAccessor<Key, Value, Integer, Input>
+  implements IntForwardIndexAccessor<Key, Value, Input> {
   private final UpdatableSnapshotInputMappingIndex<Key, Value, Input> mySnapshotInputMappingIndex;
 
   HashIdForwardIndexAccessor(@NotNull UpdatableSnapshotInputMappingIndex<Key, Value, Input> snapshotInputMappingIndex) {
@@ -36,13 +35,12 @@ class HashIdForwardIndexAccessor<Key, Value, Input>
   }
 
   @Override
-  public int serializeIndexedDataToInt(@NotNull InputData<Key, Value> data) {
-    return data == InputData.empty() ? 0 : ((HashedInputData)data).getHashId();
-  }
-
-  @Nullable
-  @Override
-  public Integer convertToDataType(@NotNull InputData<Key, Value> data) {
-    return serializeIndexedDataToInt(data);
+  public int convertToInt(@Nullable Map<Key, Value> map, @Nullable Input content) {
+    try {
+      return mySnapshotInputMappingIndex.getHashId(content);
+    }
+    catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
