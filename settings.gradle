@@ -205,9 +205,9 @@ include ":kotlin-build-common",
 def includeCidr = hasProperty("cidrPluginsEnabled") && cidrPluginsEnabled != 'false'
 if (includeCidr) {
     includeBuild "kotlin-ultimate/buildSrc"
-    include ":kotlin-ultimate:cidr-native",
-            ":kotlin-ultimate:appcode-native",
-            ":kotlin-ultimate:clion-native",
+    include ":kotlin-ultimate:ide:cidr-native",
+            ":kotlin-ultimate:ide:appcode-native",
+            ":kotlin-ultimate:ide:clion-native",
             ":kotlin-ultimate:prepare:cidr-plugin",
             ":kotlin-ultimate:prepare:appcode-plugin",
             ":kotlin-ultimate:prepare:clion-plugin"
