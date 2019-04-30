@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.platform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms.defaultJsPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms.defaultJvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms.jvm18
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms.defaultKonanPlatform
@@ -16,7 +17,7 @@ object CommonPlatforms {
 
     val defaultCommonPlatform: TargetPlatform = TargetPlatform(
         setOf(
-            jvm18.single(),
+            defaultJvmPlatform.single(),
             defaultJsPlatform.single(),
             defaultKonanPlatform.single()
         )
