@@ -13,13 +13,13 @@ import kotlin.internal.InlineOnly
 /**
  * Starts unintercepted coroutine without receiver and with result type [T] and executes it until its first suspension.
  * Returns the result of the coroutine or throws its exception if it does not suspend or [COROUTINE_SUSPENDED] if it suspends.
- * In the later case, the [completion] continuation is invoked when coroutine completes with result or exception.
+ * In the latter case, the [completion] continuation is invoked when coroutine completes with result or exception.
  *
  * The coroutine is started directly in the invoker's thread without going through the [ContinuationInterceptor] that might
- * be present in the completion's [CoroutineContext]. It is invoker's responsibility to ensure that the proper invocation
+ * be present in the completion's [CoroutineContext]. It is the invoker's responsibility to ensure that a proper invocation
  * context is established.
  *
- * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of suspended
+ * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of a suspended
  * coroutine using a reference to the suspending function.
  */
 @SinceKotlin("1.3")
@@ -35,13 +35,13 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 /**
  * Starts unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
  * Returns the result of the coroutine or throws its exception if it does not suspend or [COROUTINE_SUSPENDED] if it suspends.
- * In the later case, the [completion] continuation is invoked when coroutine completes with result or exception.
+ * In the latter case, the [completion] continuation is invoked when coroutine completes with result or exception.
  *
  * The coroutine is started directly in the invoker's thread without going through the [ContinuationInterceptor] that might
- * be present in the completion's [CoroutineContext]. It is invoker's responsibility to ensure that the proper invocation
+ * be present in the completion's [CoroutineContext]. It is the invoker's responsibility to ensure that a proper invocation
  * context is established.
  *
- * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of suspended
+ * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of a suspended
  * coroutine using a reference to the suspending function.
  */
 @SinceKotlin("1.3")
@@ -66,7 +66,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
  * This function returns unintercepted continuation.
  * Invocation of `resume(Unit)` starts coroutine directly in the invoker's thread without going through the
  * [ContinuationInterceptor] that might be present in the completion's [CoroutineContext].
- * It is invoker's responsibility to ensure that the proper invocation context is established.
+ * It is the invoker's responsibility to ensure that a proper invocation context is established.
  * [Continuation.intercepted] can be used to acquire the intercepted continuation.
  *
  * Repeated invocation of any resume function on the resulting continuation corrupts the
@@ -101,7 +101,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
  * This function returns unintercepted continuation.
  * Invocation of `resume(Unit)` starts coroutine directly in the invoker's thread without going through the
  * [ContinuationInterceptor] that might be present in the completion's [CoroutineContext].
- * It is invoker's responsibility to ensure that the proper invocation context is established.
+ * It is the invoker's responsibility to ensure that a proper invocation context is established.
  * [Continuation.intercepted] can be used to acquire the intercepted continuation.
  *
  * Repeated invocation of any resume function on the resulting continuation corrupts the

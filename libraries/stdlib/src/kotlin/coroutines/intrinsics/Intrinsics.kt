@@ -27,7 +27,7 @@ import kotlin.internal.InlineOnly
  *
  * Invocation of [Continuation.resumeWith] resumes coroutine directly in the invoker's thread without going through the
  * [ContinuationInterceptor] that might be present in the coroutine's [CoroutineContext].
- * It is invoker's responsibility to ensure that the proper invocation context is established.
+ * It is the invoker's responsibility to ensure that a proper invocation context is established.
  * [Continuation.intercepted] can be used to acquire the intercepted continuation.
  *
  * Note that it is not recommended to call either [Continuation.resume] nor [Continuation.resumeWithException] functions synchronously
