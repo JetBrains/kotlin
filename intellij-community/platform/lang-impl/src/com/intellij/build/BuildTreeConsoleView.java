@@ -56,10 +56,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -94,13 +92,13 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private final Tree myTree;
   private final ExecutionNode myRootNode;
   private final ExecutionNode myBuildProgressRootNode;
-  @Nullable
-  private volatile Predicate<ExecutionNode> myExecutionTreeFilter;
+  private final Set<Predicate<ExecutionNode>> myNodeFilters;
 
   public BuildTreeConsoleView(Project project,
                               BuildDescriptor buildDescriptor,
                               @Nullable ExecutionConsole executionConsole,
                               @NotNull BuildViewSettingsProvider buildViewSettingsProvider) {
+    myNodeFilters = ContainerUtil.newConcurrentSet();
     myProject = project;
     myWorkingDir = FileUtil.toSystemIndependentName(buildDescriptor.getWorkingDir());
 
@@ -125,6 +123,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       new ConsoleViewHandler(myProject, myTree, myBuildProgressRootNode, this, executionConsole, buildViewSettingsProvider);
     myThreeComponentsSplitter.setSecondComponent(myConsoleViewHandler.getComponent());
     myPanel.add(myThreeComponentsSplitter, BorderLayout.CENTER);
+    BuildTreeFilters.install(this);
+    myRootNode.setFilter(getFilter());
   }
 
   private void installContextMenu(@NotNull StartBuildEvent startBuildEvent) {
@@ -143,8 +143,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       ActionUtil.copyFrom(edit, "EditSource");
       group.add(edit);
       group.addSeparator();
-      group.add(new ShowExecutionErrorsOnlyAction(this));
-
+      group.addAll(BuildTreeFilters.createFilteringActionsGroup(this));
       PopupHandler.installPopupHandler(myTree, group, "BuildView");
     });
   }
@@ -162,20 +161,35 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     return true;
   }
 
+  @NotNull
   @Override
-  @Nullable
   public Predicate<ExecutionNode> getFilter() {
-    return myExecutionTreeFilter;
+    return executionNode -> executionNode == getBuildProgressRootNode() ||
+                            executionNode.isRunning() ||
+                            executionNode.isFailed() ||
+                            myNodeFilters.stream().anyMatch(predicate -> predicate.test(executionNode));
   }
 
   @Override
-  public void setFilter(@Nullable Predicate<ExecutionNode> executionTreeFilter) {
-    myExecutionTreeFilter = executionTreeFilter;
-    ExecutionNode buildProgressRootNode = getBuildProgressRootNode();
+  public void addFilter(@NotNull Predicate<ExecutionNode> executionTreeFilter) {
+    myNodeFilters.add(executionTreeFilter);
+    updateFilter();
+  }
+
+  @Override
+  public void removeFilter(@NotNull Predicate<ExecutionNode> filter) {
+    myNodeFilters.remove(filter);
+    updateFilter();
+  }
+
+  @Override
+  public boolean contains(@NotNull Predicate<ExecutionNode> filter) {
+    return myNodeFilters.contains(filter);
+  }
+
+  private void updateFilter() {
     ExecutionNode rootElement = getRootElement();
-    Predicate<ExecutionNode> predicate = executionTreeFilter == null ? null :
-                                         node -> node == buildProgressRootNode || executionTreeFilter.test(node);
-    rootElement.setFilter(predicate);
+    rootElement.setFilter(getFilter());
     scheduleUpdate(rootElement);
   }
 
@@ -502,7 +516,13 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     if (eventKind == MessageEvent.Kind.ERROR || eventKind == MessageEvent.Kind.WARNING) {
       SimpleNode p = parentNode;
       do {
-        ((ExecutionNode)p).reportChildMessageKind(eventKind);
+        ExecutionNode executionNode = (ExecutionNode)p;
+        boolean warningUpdate = eventKind == MessageEvent.Kind.WARNING && !executionNode.hasWarnings();
+        executionNode.reportChildMessageKind(eventKind);
+        if (warningUpdate) {
+          executionNode.cleanUpCache();
+          scheduleUpdate(executionNode);
+        }
       }
       while ((p = p.getParent()) instanceof ExecutionNode);
       scheduleUpdate(getRootElement());

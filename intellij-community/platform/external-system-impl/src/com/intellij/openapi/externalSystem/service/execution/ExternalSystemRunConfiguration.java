@@ -424,10 +424,9 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
       DefaultActionGroup actionGroup = new DefaultActionGroup();
       if (executionConsole instanceof BuildView) {
         actionGroup.addAll(((BuildView)executionConsole).getSwitchActions());
-        actionGroup.add(new ShowExecutionErrorsOnlyAction((BuildView)executionConsole));
+        actionGroup.add(BuildTreeFilters.createFilteringActionsGroup((BuildView)executionConsole));
       }
-      DefaultExecutionResult executionResult =
-        new DefaultExecutionResult(executionConsole, processHandler, actionGroup.getChildren(null));
+      DefaultExecutionResult executionResult = new DefaultExecutionResult(executionConsole, processHandler, actionGroup.getChildren(null));
       executionResult.setRestartActions(restartActions);
       return executionResult;
     }

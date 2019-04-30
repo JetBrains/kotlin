@@ -365,17 +365,32 @@ public class BuildView extends CompositeView<ExecutionConsole>
     return getEventView() != null;
   }
 
+  @NotNull
   @Override
   public Predicate<ExecutionNode> getFilter() {
     BuildTreeConsoleView eventView = getEventView();
-    return eventView == null ? null : eventView.getFilter();
+    return eventView == null ? executionNode -> true : eventView.getFilter();
   }
 
   @Override
-  public void setFilter(Predicate<ExecutionNode> filter) {
+  public void addFilter(@NotNull Predicate<ExecutionNode> filter) {
     BuildTreeConsoleView eventView = getEventView();
     if (eventView != null) {
-      eventView.setFilter(filter);
+      eventView.addFilter(filter);
     }
+  }
+
+  @Override
+  public void removeFilter(@NotNull Predicate<ExecutionNode> filter) {
+    BuildTreeConsoleView eventView = getEventView();
+    if (eventView != null) {
+      eventView.removeFilter(filter);
+    }
+  }
+
+  @Override
+  public boolean contains(@NotNull Predicate<ExecutionNode> filter) {
+    BuildTreeConsoleView eventView = getEventView();
+    return eventView != null && eventView.contains(filter);
   }
 }
