@@ -33,8 +33,7 @@ private fun isInterfaceImpl(ctor: Ctor, iface: dynamic): Boolean {
 }
 
 public fun isInterface(obj: dynamic, iface: dynamic): Boolean {
-    //TODO: val ctor = obj.constructor
-    val ctor = js("obj.constructor")
+    val ctor = obj.constructor
 
     if (ctor == null) return false
 
@@ -76,52 +75,46 @@ public fun isInterface(ctor: dynamic, IType: dynamic): Boolean {
 }
 */
 
-fun typeOf(obj: dynamic): String = js("typeof obj").unsafeCast<String>()
-
-fun jsTypeOf(obj: Any?): String = js("typeof obj").unsafeCast<String>()
-
-fun instanceOf(obj: dynamic, jsClass_local: dynamic) = js("obj instanceof jsClass_local").unsafeCast<Boolean>()
 
 fun isObject(obj: dynamic): Boolean {
-    val objTypeOf = typeOf(obj)
+    val objTypeOf = jsTypeOf(obj)
 
     return when (objTypeOf) {
         "string" -> true
         "number" -> true
         "boolean" -> true
         "function" -> true
-        else -> js("obj instanceof Object").unsafeCast<Boolean>()
+        else -> jsInstanceOf(obj, js("Object"))
     }
 }
 
 private fun isJsArray(obj: Any): Boolean {
-    return js("Array.isArray(obj)").unsafeCast<Boolean>()
+    return js("Array").isArray(obj).unsafeCast<Boolean>()
 }
 
 public fun isArray(obj: Any): Boolean {
-    return isJsArray(obj) && js("!obj.\$type\$").unsafeCast<Boolean>()
+    return isJsArray(obj) && !(obj.asDynamic().`$type$`)
 }
 
 public fun isArrayish(o: dynamic) =
-    isJsArray(o) || js("ArrayBuffer.isView(o)").unsafeCast<Boolean>()
+    isJsArray(o) || js("ArrayBuffer").isView(o).unsafeCast<Boolean>()
 
 
 public fun isChar(c: Any): Boolean {
-    return js("throw Error(\"isChar is not implemented\")").unsafeCast<Boolean>()
+    error("isChar is not implemented")
 }
 
 // TODO: Distinguish Boolean/Byte and Short/Char
 public fun isBooleanArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "BooleanArray"
-public fun isByteArray(a: dynamic): Boolean = js("a instanceof Int8Array").unsafeCast<Boolean>()
-public fun isShortArray(a: dynamic): Boolean = js("a instanceof Int16Array").unsafeCast<Boolean>()
+public fun isByteArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int8Array"))
+public fun isShortArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int16Array"))
 public fun isCharArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "CharArray"
-public fun isIntArray(a: dynamic): Boolean = js("a instanceof Int32Array").unsafeCast<Boolean>()
-public fun isFloatArray(a: dynamic): Boolean = js("a instanceof Float32Array").unsafeCast<Boolean>()
-public fun isDoubleArray(a: dynamic): Boolean = js("a instanceof Float64Array").unsafeCast<Boolean>()
+public fun isIntArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int32Array"))
+public fun isFloatArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float32Array"))
+public fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Array"))
 public fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "LongArray"
 
 
-internal fun jsIn(x: String, y: dynamic): Boolean = js("x in y")
 internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object").getPrototypeOf(jsClass)
 
 public fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
@@ -129,11 +122,11 @@ public fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
         return isObject(obj)
     }
 
-    if (obj == null || jsClass == null || (typeOf(obj) != "object" && typeOf(obj) != "function")) {
+    if (obj == null || jsClass == null || (jsTypeOf(obj) != "object" && jsTypeOf(obj) != "function")) {
         return false
     }
 
-    if (typeOf(jsClass) == "function" && instanceOf(obj, jsClass)) {
+    if (jsTypeOf(jsClass) == "function" && jsInstanceOf(obj, jsClass)) {
         return true
     }
 
@@ -150,7 +143,7 @@ public fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
 
     // In WebKit (JavaScriptCore) for some interfaces from DOM typeof returns "object", nevertheless they can be used in RHS of instanceof
     if (klassMetadata == null) {
-        return instanceOf(obj, jsClass)
+        return jsInstanceOf(obj, jsClass)
     }
 
     if (klassMetadata.kind === "interface" && obj.constructor != null) {

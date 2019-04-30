@@ -13,36 +13,35 @@ fun equals(obj1: dynamic, obj2: dynamic): Boolean {
         return false
     }
 
-    return js("""
-    if (typeof obj1 === "object" && typeof obj1.equals === "function") {
-        return obj1.equals(obj2);
+    if (jsTypeOf(obj1) == "object" && jsTypeOf(obj1.equals) == "function") {
+        return (obj1.equals)(obj2)
     }
 
     if (obj1 !== obj1) {
-        return obj2 !== obj2;
+        return obj2 !== obj2
     }
 
-    if (typeof obj1 === "number" && typeof obj2 === "number") {
-        return obj1 === obj2 && (obj1 !== 0 || 1 / obj1 === 1 / obj2)
+    if (jsTypeOf(obj1) == "number" && jsTypeOf(obj2) == "number") {
+        return obj1 === obj2 && (obj1 !== 0 || 1.asDynamic() / obj1 === 1.asDynamic() / obj2)
     }
-    return obj1 === obj2;
-    """).unsafeCast<Boolean>()
+    return obj1 === obj2
 }
 
 fun toString(o: dynamic): String = when {
-    js("o == null").unsafeCast<Boolean>() -> "null"
+    o == null -> "null"
     isArrayish(o) -> "[...]"
-    else -> js("o.toString()").unsafeCast<String>()
+
+    else -> (o.toString)().unsafeCast<String>()
 }
 
-fun anyToString(o: dynamic): String = js("Object.prototype.toString.call(o)")
+fun anyToString(o: dynamic): String = js("Object").prototype.toString.call(o)
 
 fun hashCode(obj: dynamic): Int {
     if (obj == null)
         return 0
 
-    return when (typeOf(obj)) {
-        "object" ->  if ("function" === js("typeof obj.hashCode")) js("obj.hashCode()") else getObjectHashCode(obj)
+    return when (jsTypeOf(obj)) {
+        "object" -> if ("function" === jsTypeOf(obj.hashCode)) (obj.hashCode)() else getObjectHashCode(obj)
         "function" -> getObjectHashCode(obj)
         "number" -> getNumberHashCode(obj)
         "boolean" -> if(obj.unsafeCast<Boolean>()) 1 else 0
@@ -50,42 +49,47 @@ fun hashCode(obj: dynamic): Int {
     }
 }
 
-fun getObjectHashCode(obj: dynamic) = js("""
-    var POW_2_32 = 4294967296;
-    var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue${"$"}";
+private var POW_2_32 = 4294967296
+private var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$"
 
-    if (!(OBJECT_HASH_CODE_PROPERTY_NAME in obj)) {
-        var hash = (Math.random() * POW_2_32) | 0; // Make 32-bit singed integer.
-        Object.defineProperty(obj, OBJECT_HASH_CODE_PROPERTY_NAME, { value: hash, enumerable: false });
+fun getObjectHashCode(obj: dynamic): Int {
+    if (!jsIn(OBJECT_HASH_CODE_PROPERTY_NAME, obj)) {
+        var hash = jsBitwiseOr(js("Math").random() * POW_2_32, 0) // Make 32-bit singed integer.
+        var descriptor = js("new Object()")
+        descriptor.value = hash
+        descriptor.enumerable = false
+        js("Object").defineProperty(obj, OBJECT_HASH_CODE_PROPERTY_NAME, descriptor)
     }
-    return obj[OBJECT_HASH_CODE_PROPERTY_NAME];
-""").unsafeCast<Int>();
+    return obj[OBJECT_HASH_CODE_PROPERTY_NAME].unsafeCast<Int>();
+}
 
 fun getStringHashCode(str: String): Int {
     var hash = 0
-    val length: Int = js("str.length")  // TODO: Implement WString.length
+    val length: Int = str.length  // TODO: Implement WString.length
     for (i in 0..length-1) {
-        val code: Int = js("str.charCodeAt(i)")
+        val code: Int = str.asDynamic().charCodeAt(i)
         hash = hash * 31 + code
     }
     return hash
 }
 
-fun getNumberHashCode(obj: dynamic) = js("""
-    if ((obj | 0) === obj) {
-        return obj | 0;
-    }
-    else {
-        var byteBuffer = new ArrayBuffer (8);
-        var bufFloat64 = new Float64Array (byteBuffer);
-        var bufInt32 = new Int32Array (byteBuffer);
+private external class ArrayBuffer(size: Int)
+private external class Float64Array(buffer: ArrayBuffer)
+private external class Int32Array(buffer: ArrayBuffer)
 
-        bufFloat64[0] = obj;
-        return (bufInt32[1] * 31 | 0)+bufInt32[0] | 0;
+fun getNumberHashCode(obj: Any?): Int {
+    if (jsBitwiseOr(obj, 0)  === obj) {
+        return obj
     }
-""").unsafeCast<Int>()
 
-fun identityHashCode(obj: dynamic): Int = getObjectHashCode(obj)
+    var byteBuffer = ArrayBuffer(8)
+    var bufFloat64 = Float64Array(byteBuffer).asDynamic()
+    var bufInt32 = Int32Array(byteBuffer).asDynamic()
+    bufFloat64[0] = obj
+    return jsBitwiseOr(bufInt32[1] * 31, 0) + bufInt32[0].unsafeCast<Int>()
+}
+
+fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
 
 
 @JsName("captureStack")
@@ -101,7 +105,7 @@ internal fun captureStack(instance: Throwable) {
 internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
     throwable.message = if (message == null) {
-        if (cause != null) js("cause.toString()") else null
+        if (cause != null) (cause.asDynamic().toString)() else null
     } else {
         message
     }

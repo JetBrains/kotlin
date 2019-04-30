@@ -62,7 +62,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
         if (key !is String) return null
         val value = backingMap[key]
         if (value !== undefined) {
-            deleteProperty(backingMap, key)
+            jsDeleteProperty(backingMap, key)
             size--
 //            structureChanged(host)
             return value.unsafeCast<V>()

@@ -15,7 +15,7 @@ internal fun <T : Any> getKClass(jClass: JsClass<T>): KClass<T> = getOrCreateKCl
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
     when (jsTypeOf(e)) {
         "string" -> PrimitiveClasses.stringClass
-        "number" -> if (js("e | 0") === e) PrimitiveClasses.intClass else PrimitiveClasses.doubleClass
+        "number" -> if (jsBitwiseOr(e, 0).asDynamic() === e) PrimitiveClasses.intClass else PrimitiveClasses.doubleClass
         "boolean" -> PrimitiveClasses.booleanClass
         "function" -> PrimitiveClasses.functionClass(e.asDynamic().length)
         else -> {

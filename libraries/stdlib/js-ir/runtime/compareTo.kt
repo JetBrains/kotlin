@@ -8,9 +8,9 @@ package kotlin.js
 
 // Adopted from misc.js
 
-fun compareTo(a: dynamic, b: dynamic): Int = when (typeOf(a)) {
+fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
     "number" -> when {
-        typeOf(b) == "number" ->
+        jsTypeOf(b) == "number" ->
             doubleCompareTo(a, b)
         b is Long ->
             doubleCompareTo(a, b.toDouble())
@@ -28,19 +28,34 @@ private fun <T : Comparable<T>> compareToDoNotIntrinsicify(a: Comparable<T>, b: 
     a.compareTo(b)
 
 fun primitiveCompareTo(a: dynamic, b: dynamic): Int =
-    js("a < b ? -1 : a > b ? 1 : 0").unsafeCast<Int>()
-
-fun doubleCompareTo(a: dynamic, b: dynamic): Int =
-    js("""
-    if (a < b) return -1;
-    if (a > b) return 1;
-
-    if (a === b) {
-        if (a !== 0) return 0;
-
-        var ia = 1 / a;
-        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+    when {
+        a < b -> -1
+        a > b -> 1
+        else -> 0
     }
 
-    return a !== a ? (b !== b ? 0 : 1) : -1
-    """).unsafeCast<Int>()
+fun doubleCompareTo(a: dynamic, b: dynamic): Int =
+    when {
+        a < b -> -1
+        a > b -> 1
+
+        a === b -> {
+            if (a !== 0)
+                0
+            else {
+                val ia = 1.asDynamic() / a
+                if (ia === 1.asDynamic() / b) {
+                    0
+                } else if (ia < 0) {
+                    -1
+                } else {
+                    1
+                }
+            }
+        }
+
+        a !== a ->
+            if (b !== b) 0 else 1
+
+        else -> -1
+    }

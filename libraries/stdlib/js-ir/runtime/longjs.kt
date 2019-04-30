@@ -48,20 +48,20 @@ internal fun Long.toString(radix: Int): String {
 
     // Do several (6) digits each time through the loop, so as to
     // minimize the calls to the very expensive emulated div.
-    val radixToPower = fromNumber(js("Math.pow(radix, 6)").unsafeCast<Double>())
+    val radixToPower = fromNumber(JsMath.pow(radix.toDouble(), 6.0))
 
     var rem = this
     var result = ""
     while (true) {
         val remDiv = rem.div(radixToPower)
         val intval = rem.subtract(remDiv.multiply(radixToPower)).toInt()
-        var digits = js("intval.toString(radix)").unsafeCast<String>()
+        var digits = intval.asDynamic().toString(radix).unsafeCast<String>()
 
         rem = remDiv
         if (rem.isZero()) {
             return digits + result
         } else {
-            while (js("digits.length").unsafeCast<Int>() < 6) {
+            while (digits.length < 6) {
                 digits = "0" + digits
             }
             result = digits + result
@@ -253,15 +253,12 @@ internal fun Long.divide(other: Long): Long {
         // Approximate the result of division. This may be a little greater or
         // smaller than the actual value.
         val approxDouble = rem.toNumber() / other.toNumber()
-        var approx2 = js("Math.max(1, Math.floor(approxDouble))").unsafeCast<Double>()
+        var approx2 = JsMath.max(1.0, JsMath.floor(approxDouble))
 
         // We will tweak the approximate result by changing it in the 48-th digit or
         // the smallest non-fractional digit, whichever is larger.
-        val log2 = js("Math.ceil(Math.log(approx2) / Math.LN2)").unsafeCast<Int>()
-
-        // TODO: log2 is renamed but usage in js() functions is not
-        val log2_minus48 = log2 - 48
-        val delta = if (log2 <= 48) 1.0 else js("Math.pow(2, log2_minus48)").unsafeCast<Double>()
+        val log2 = JsMath.ceil(JsMath.log(approx2) / JsMath.LN2)
+        val delta = if (log2 <= 48) 1.0 else JsMath.pow(2, log2 - 48)
 
         // Decrease the approximation until it is smaller than the remainder.  Note
         // that if it is too large, the product overflows and is negative.
@@ -343,7 +340,7 @@ internal fun fromInt(value: Int) = Long(value, if (value < 0) -1 else 0)
  * @return {!Kotlin.Long} The corresponding Long value.
  */
 internal fun fromNumber(value: Double): Long {
-    if (js("isNaN(value)").unsafeCast<Boolean>() || !js("isFinite(value)").unsafeCast<Boolean>()) {
+    if (value.isNaN() || !value.isFinite()) {
         return ZERO;
     } else if (value <= -TWO_PWR_63_DBL_) {
         return MIN_VALUE;
@@ -354,8 +351,8 @@ internal fun fromNumber(value: Double): Long {
     } else {
         val twoPwr32 = TWO_PWR_32_DBL_
         return Long(
-            js("(value % twoPwr32) | 0").unsafeCast<Int>(),
-            js("(value / twoPwr32) | 0").unsafeCast<Int>()
+            jsBitwiseOr(value.rem(twoPwr32), 0),
+            jsBitwiseOr(value / twoPwr32, 0)
         )
     }
 }
@@ -384,3 +381,14 @@ private val MAX_VALUE = Long(-1, -1 ushr 1)
 private val MIN_VALUE = Long(0, 1 shl 31)
 
 private val TWO_PWR_24_ = fromInt(1 shl 24)
+
+@JsName("Math")
+external object JsMath {
+    fun max(lhs: Number, rhs: Number): Double
+    fun floor(x: Number): Double
+    fun ceil(x: Number): Double
+    fun log(x: Number): Double
+    fun pow(base: Number, exponent: Number): Double
+    val LN2: Double
+}
+

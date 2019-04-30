@@ -51,8 +51,7 @@ public inline class Char internal constructor (val value: Int) : Comparable<Char
     public fun toDouble(): Double = value.toDouble()
 
     override fun toString(): String {
-        val value = value
-        return js("String.fromCharCode(value)").unsafeCast<String>()
+        return js("String").fromCharCode(value).unsafeCast<String>()
     }
 
     companion object {

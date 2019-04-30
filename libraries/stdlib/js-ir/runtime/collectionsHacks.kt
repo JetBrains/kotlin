@@ -7,13 +7,6 @@ package kotlin.collections
 
 import kotlin.js.*
 
-// Copied from libraries/stdlib/js/src/kotlin/collections/utils.kt
-// Current inliner doesn't rename symbols inside `js` fun
-@Suppress("UNUSED_PARAMETER")
-internal fun deleteProperty(obj: Any, property: Any) {
-    js("delete obj[property]")
-}
-
 internal fun arrayToString(array: Array<*>) = array.joinToString(", ", "[", "]") { toString(it) }
 
 internal fun <T> Array<out T>.contentDeepHashCodeInternal(): Int {

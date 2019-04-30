@@ -68,7 +68,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
         if (chainOrEntry !is Array<*>) {
             val entry: MutableEntry<K, V> = chainOrEntry
             if (equality.equals(entry.key, key)) {
-                deleteProperty(backingMap, hashCode)
+                jsDeleteProperty(backingMap, hashCode)
                 size--
                 return entry.value
             } else {
@@ -82,7 +82,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
                     if (chain.size == 1) {
                         chain.asDynamic().length = 0
                         // remove the whole array
-                        deleteProperty(backingMap, hashCode)
+                        jsDeleteProperty(backingMap, hashCode)
                     } else {
                         // splice out the entry we're removing
                         chain.asDynamic().splice(index, 1)

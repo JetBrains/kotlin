@@ -21,10 +21,10 @@ fun numberToLong(a: dynamic): Long = if (a is Long) a else fromNumber(a)
 
 fun toLong(a: dynamic): Long = fromInt(a)
 
-fun doubleToInt(a: dynamic) = js("""
-    if (a > 2147483647) return 2147483647;
-    if (a < -2147483648) return -2147483648;
-    return a | 0;
-""").unsafeCast<Int>()
+fun doubleToInt(a: Double): Int = when {
+    a > 2147483647 -> 2147483647
+    a < -2147483648 -> -2147483648
+    else -> jsBitwiseOr(a, 0)
+}
 
 fun numberToChar(a: dynamic) = Char(numberToInt(a) and 0xFFFF)
