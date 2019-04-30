@@ -127,11 +127,11 @@ public class ConstructorCodegen {
     ) {
         if (!canHaveDeclaredConstructors(descriptor)) return;
 
-        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
-
         KtSecondaryConstructor constructor = (KtSecondaryConstructor) descriptorToDeclaration(constructorDescriptor);
         // Synthetic constructors don't have corresponding declarations
         if (constructor == null) return;
+
+        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
         functionCodegen.generateMethod(
                 JvmDeclarationOriginKt.OtherOrigin(constructor, constructorDescriptor),

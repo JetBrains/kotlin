@@ -323,7 +323,7 @@ object KSerializerDescriptorResolver {
 
         functionDescriptor.initialize(
             consParams,
-            Visibilities.INTERNAL
+            Visibilities.PUBLIC
         )
 
         functionDescriptor.returnType = classDescriptor.defaultType
