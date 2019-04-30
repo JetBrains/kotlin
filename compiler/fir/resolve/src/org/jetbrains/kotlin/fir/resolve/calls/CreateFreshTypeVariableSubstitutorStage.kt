@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.renderWithType
+import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
@@ -58,17 +63,21 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             val typeArgument =
                 callInfo.typeArguments.getOrElse(index) { FirTypePlaceholderProjection }//resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(typeParameter)
 //
-            if (typeArgument is FirTypeProjectionWithVariance) {
-                csBuilder.addEqualityConstraint(
+            when (typeArgument) {
+                is FirTypeProjectionWithVariance -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     typeArgument.typeRef.coneTypeUnsafe(),
                     SimpleConstraintSystemConstraintPosition // TODO
                 )
-            } else {
-                assert(typeArgument == FirTypePlaceholderProjection) // TODO
-//                assert(typeArgument == TypeArgumentPlaceholder) {
-//                    "Unexpected typeArgument: $typeArgument, ${typeArgument.javaClass.canonicalName}"
-//                }
+                is FirStarProjection -> csBuilder.addEqualityConstraint(
+                    freshVariable.defaultType,
+                    typeParameter.bounds.firstOrNull()?.coneTypeUnsafe()
+                        ?: StandardClassIds.Any(sink.components.session.service()).constructType(emptyArray(), true),
+                    SimpleConstraintSystemConstraintPosition
+                )
+                else -> assert(typeArgument == FirTypePlaceholderProjection) {
+                    "Unexpected typeArgument: ${typeArgument.renderWithType()}"
+                }
             }
         }
     }
