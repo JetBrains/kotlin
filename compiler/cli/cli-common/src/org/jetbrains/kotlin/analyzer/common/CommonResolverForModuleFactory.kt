@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.analyzer.common
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
@@ -28,13 +29,19 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.frontend.di.createContainerToResolveCommonCode
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useImpl
+import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.frontend.di.configureModule
+import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
+import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
@@ -140,4 +147,40 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
 
         return ResolverForModule(CompositePackageFragmentProvider(packageFragmentProviders), container)
     }
+}
+
+private fun createContainerToResolveCommonCode(
+    moduleContext: ModuleContext,
+    bindingTrace: BindingTrace,
+    declarationProviderFactory: DeclarationProviderFactory,
+    moduleContentScope: GlobalSearchScope,
+    targetEnvironment: TargetEnvironment,
+    metadataPartProvider: MetadataPartProvider,
+    languageVersionSettings: LanguageVersionSettings,
+    platform: TargetPlatform,
+    analyzerServices: PlatformDependentAnalyzerServices
+): StorageComponentContainer =
+    createContainer("ResolveCommonCode", analyzerServices) {
+        configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings)
+
+        useInstance(moduleContentScope)
+        useInstance(declarationProviderFactory)
+
+        configureStandardResolveComponents()
+
+        configureCommonSpecificComponents()
+        useInstance(metadataPartProvider)
+
+        val metadataFinderFactory = ServiceManager.getService(
+            moduleContext.project,
+            MetadataFinderFactory::class.java
+        )
+            ?: error("No MetadataFinderFactory in project")
+        useInstance(metadataFinderFactory.create(moduleContentScope))
+
+        targetEnvironment.configure(this)
+    }
+
+fun StorageComponentContainer.configureCommonSpecificComponents() {
+    useImpl<MetadataPackageFragmentProvider>()
 }
