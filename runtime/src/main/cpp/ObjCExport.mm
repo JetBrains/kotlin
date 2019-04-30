@@ -112,20 +112,13 @@ static Class getOrCreateClass(const TypeInfo* typeInfo);
 static void initializeClass(Class clazz);
 extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 
-static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) {
-  if (!PermanentOrFrozen(obj)) {
-    SetAssociatedObject(obj, associatedObject);
-    return associatedObject;
-  } else {
-    void* old = __sync_val_compare_and_swap(&obj->meta_object()->associatedObject_, nullptr, (void*)associatedObject);
-    if (old == nullptr) {
-      return associatedObject;
-    } else {
-      Kotlin_ObjCExport_releaseAssociatedObject((void*)associatedObject);
-      return (id)old;
-    }
-  }
+static inline id AtomicCompareAndSwapAssociatedObject(ObjHeader* obj, id expectedValue, id newValue) {
+  id* location = reinterpret_cast<id*>(&obj->meta_object()->associatedObject_);
+  return __sync_val_compare_and_swap(location, expectedValue, newValue);
 }
+
+extern "C" id objc_retainAutoreleaseReturnValue(id self);
+extern "C" id objc_autoreleaseReturnValue(id self);
 
 @interface NSObject (NSObjectPrivateMethods)
 // Implemented for NSObject in libobjc/NSObject.mm
@@ -176,17 +169,24 @@ static void initializeObjCExport();
 }
 
 +(instancetype)createWrapper:(ObjHeader*)obj {
-  KotlinBase* result = [super allocWithZone:nil];
+  KotlinBase* candidate = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
-  result->refHolder.init(obj);
-  [result autorelease];
+  candidate->refHolder.init(obj);
 
-  if (!obj->permanent()) {
-    return AtomicSetAssociatedObject(obj, result);
-  } else {
-    // TODO: permanent objects should probably be supported as custom types.
-    return result;
+  if (!obj->permanent()) { // TODO: permanent objects should probably be supported as custom types.
+    if (!obj->container()->shareable()) {
+      SetAssociatedObject(obj, candidate);
+    } else {
+      id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate);
+      if (old != nullptr) {
+        candidate->refHolder.dispose();
+        [candidate releaseAsAssociatedObject];
+        return objc_retainAutoreleaseReturnValue(old);
+      }
+    }
   }
+
+  return objc_autoreleaseReturnValue(candidate);
 }
 
 -(instancetype)retain {
@@ -223,7 +223,6 @@ static void initializeObjCExport();
 }
 
 -(void)releaseAsAssociatedObject {
-  RuntimeAssert(!refHolder.ref()->permanent(), "");
   [super release];
 }
 
@@ -251,7 +250,6 @@ extern "C" id Kotlin_ObjCExport_convertUnit(ObjHeader* unitInstance) {
 }
 
 extern "C" id objc_retainBlock(id self);
-extern "C" id objc_retainAutoreleaseReturnValue(id self);
 
 extern "C" id Kotlin_ObjCExport_CreateNSStringFromKString(ObjHeader* str) {
   KChar* utf16Chars = CharArrayAddressOfElementAt(str->array(), 0);
@@ -264,11 +262,21 @@ extern "C" id Kotlin_ObjCExport_CreateNSStringFromKString(ObjHeader* str) {
         freeWhenDone:NO] autorelease];
   } else {
     // TODO: consider making NSString subclass to avoid copying here.
-    NSString* result = [[NSString alloc] initWithBytes:utf16Chars
+    NSString* candidate = [[NSString alloc] initWithBytes:utf16Chars
       length:numBytes
       encoding:NSUTF16LittleEndianStringEncoding];
 
-    return objc_retainAutoreleaseReturnValue(AtomicSetAssociatedObject(str, result));
+    if (!str->container()->shareable()) {
+      SetAssociatedObject(str, candidate);
+    } else {
+      id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate);
+      if (old != nullptr) {
+        objc_release(candidate);
+        return objc_retainAutoreleaseReturnValue(old);
+      }
+    }
+
+    return objc_retainAutoreleaseReturnValue(candidate);
   }
 }
 static const ObjCTypeAdapter* findAdapterByName(
