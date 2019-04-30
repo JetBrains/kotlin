@@ -12,18 +12,15 @@ import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.ui.ClickListener;
 import com.intellij.ui.ScreenUtil;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.components.JBLayeredPane;
@@ -39,7 +36,9 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 
 /**
@@ -53,34 +52,41 @@ class LookupUi {
   private final LookupImpl myLookup;
   private final Advertiser myAdvertiser;
   private final JBList myList;
-  private final Project myProject;
   private final ModalityState myModalityState;
   private final Alarm myHintAlarm = new Alarm();
-
-  private final JLabel mySortingLabel = new JLabel();
-
+  private final ActionButton myMenuButton;
   private final JScrollPane myScrollPane;
   private final AsyncProcessIcon myProcessIcon = new AsyncProcessIcon("Completion progress");
 
-  //private LookupHint myElementHint = null;
+  private final ActionButton myHintButton;
   private int myMaximumHeight = Integer.MAX_VALUE;
   private Boolean myPositionedAbove = null;
 
-  LookupUi(@NotNull LookupImpl lookup, Advertiser advertiser, JBList list, Project project) {
+  LookupUi(@NotNull LookupImpl lookup, Advertiser advertiser, JBList list/*, Project project*/) {
     myLookup = lookup;
     myAdvertiser = advertiser;
     myList = list;
-    myProject = project;
 
     myProcessIcon.setVisible(false);
+    myLookup.resort(false);
+
+    AnAction menuAction = new MenuAction();
+    myMenuButton = new ActionButton(menuAction, menuAction.getTemplatePresentation(),
+                                    ActionPlaces.EDITOR_POPUP, ActionToolbar.NAVBAR_MINIMUM_BUTTON_SIZE);
+
+    AnAction hintAction = new HintAction();
+    myHintButton = new ActionButton(hintAction, hintAction.getTemplatePresentation(),
+                                    ActionPlaces.EDITOR_POPUP, ActionToolbar.NAVBAR_MINIMUM_BUTTON_SIZE);
+    myHintButton.setVisible(false);
 
     JPanel bottomPanel = new NonOpaquePanel(new GridBagLayout());
     GridBag gb = new GridBag();
 
     JComponent adComponent = advertiser.getAdComponent();
-    bottomPanel.add(adComponent, gb.next().weightx(1.0).fillCell());
+    bottomPanel.add(adComponent, gb.next().weightx(1.0).fillCell().anchor(GridBagConstraints.CENTER));
     bottomPanel.add(myProcessIcon, gb.next());
-    bottomPanel.add(mySortingLabel, gb.next());
+    bottomPanel.add(myHintButton, gb.next());
+    bottomPanel.add(myMenuButton, gb.next());
 
     LookupLayeredPane layeredPane = new LookupLayeredPane();
     layeredPane.mainPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -90,13 +96,11 @@ class LookupUi {
     lookup.getComponent().add(layeredPane, BorderLayout.CENTER);
 
     //IDEA-82111
-    fixMouseCheaters();
+    //fixMouseCheaters();
 
     layeredPane.mainPanel.add(myScrollPane, BorderLayout.CENTER);
 
-    mySortingLabel.setIcon(AllIcons.Actions.More);
-    new ChangeLookupSorting().installOn(mySortingLabel);
-    myLookup.resort(false);
+    //new ChangeLookupSorting().installOn(mySortingLabel);
 
     myModalityState = ModalityState.stateForComponent(lookup.getTopLevelEditor().getComponent());
 
@@ -116,7 +120,7 @@ class LookupUi {
 
         myHintAlarm.cancelAllRequests();
 
-        final LookupElement item = myLookup.getCurrentItem();
+        LookupElement item = myLookup.getCurrentItem();
         if (item != null) {
           updateHint(item);
         }
@@ -130,50 +134,50 @@ class LookupUi {
   //  myScrollPane.setVerticalScrollBarPolicy(showSorting ? ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
   //}
 
-  private void updateHint(@NotNull final LookupElement item) {
+  private void updateHint(@NotNull LookupElement item) {
     myLookup.checkValid();
-    //if (myElementHint != null) {
-    //  myLayeredPane.remove(myElementHint);
-    //  myElementHint = null;
-    //  final JRootPane rootPane = myLookup.getComponent().getRootPane();
-    //  if (rootPane != null) {
-    //    rootPane.revalidate();
-    //    rootPane.repaint();
-    //  }
-    //}
-    if (!item.isValid()) {
-      return;
+    if (myHintButton.isVisible()) {
+      myHintButton.setVisible(false);
+      revalidateRootPane();
     }
 
-    final Collection<LookupElementAction> actions = myLookup.getActionsFor(item);
-    if (!actions.isEmpty()) {
-      myHintAlarm.addRequest(() -> {
-        if (!ShowHideIntentionIconLookupAction.shouldShowLookupHint() ||
-            ((CompletionExtender)myList.getExpandableItemsHandler()).isShowing()) {
-          return;
-        }
-        //myElementHint = new LookupHint();
-        //myLayeredPane.add(myElementHint, 20, 0);
-        //myLayeredPane.layoutHint();
-      }, 500, myModalityState);
+    if (item.isValid()) {
+      Collection<LookupElementAction> actions = myLookup.getActionsFor(item);
+      if (!actions.isEmpty()) {
+        myHintAlarm.addRequest(() -> {
+          if (ShowHideIntentionIconLookupAction.shouldShowLookupHint() &&
+              !((CompletionExtender)myList.getExpandableItemsHandler()).isShowing()) {
+            myHintButton.setVisible(true);
+            revalidateRootPane();
+          }
+        }, 500, myModalityState);
+      }
     }
   }
 
   //Yes, it's possible to move focus to the hint. It's inconvenient, it doesn't make sense, but it's possible.
   // This fix is for those jerks
-  private void fixMouseCheaters() {
-    myLookup.getComponent().addFocusListener(new FocusAdapter() {
-      @Override
-      public void focusGained(FocusEvent e) {
-        final ActionCallback done = IdeFocusManager.getInstance(myProject).requestFocus(myLookup.getTopLevelEditor().getContentComponent(), true);
-        IdeFocusManager.getInstance(myProject).typeAheadUntil(done);
-        new Alarm(myLookup).addRequest(() -> {
-          if (!done.isDone()) {
-            done.setDone();
-          }
-        }, 300, myModalityState);
-      }
-    });
+  //private void fixMouseCheaters() {
+  //  myLookup.getComponent().addFocusListener(new FocusAdapter() {
+  //    @Override
+  //    public void focusGained(FocusEvent e) {
+  //      final ActionCallback done = IdeFocusManager.getInstance(myProject).requestFocus(myLookup.getTopLevelEditor().getContentComponent(), true);
+  //      IdeFocusManager.getInstance(myProject).typeAheadUntil(done);
+  //      new Alarm(myLookup).addRequest(() -> {
+  //        if (!done.isDone()) {
+  //          done.setDone();
+  //        }
+  //      }, 300, myModalityState);
+  //    }
+  //  });
+  //}
+
+  private void revalidateRootPane() {
+    JRootPane rootPane = myLookup.getComponent().getRootPane();
+    if (rootPane != null) {
+      rootPane.revalidate();
+      rootPane.repaint();
+    }
   }
 
   void setCalculating(boolean calculating) {
@@ -299,11 +303,12 @@ class LookupUi {
           int listWidth = Math.min(scrollBarWidth + maxCellWidth, UISettings.getInstance().getMaxLookupWidth());
 
           Dimension adSize = myAdvertiser.getAdComponent().getPreferredSize();
-          Dimension moreIconSize = mySortingLabel.getPreferredSize();
+          Dimension menuButtonSize = myMenuButton.getPreferredSize();
+          Dimension hintButtonSize = myHintButton.isVisible() ? myHintButton.getPreferredSize() : JBUI.size(0);
           Dimension processIconSize = myProcessIcon.isVisible() ? myProcessIcon.getPreferredSize() : JBUI.size(0);
 
           int panelHeight = myScrollPane.getPreferredSize().height + adSize.height;
-          int width = Math.max(listWidth, adSize.width + moreIconSize.width + processIconSize.width);
+          int width = Math.max(listWidth, adSize.width + menuButtonSize.width + processIconSize.width + hintButtonSize.width);
           width = Math.min(width, Registry.intValue("ide.completion.max.width"));
           int height = Math.min(panelHeight, myMaximumHeight);
 
@@ -397,21 +402,41 @@ class LookupUi {
   //  }
   //}
 
-  private class ChangeLookupSorting extends ClickListener {
-    @Override
-    public boolean onClick(@NotNull MouseEvent e, int clickCount) {
-      DefaultActionGroup group = new DefaultActionGroup();
+  private class HintAction extends DumbAwareAction {
+    private HintAction() {
+      super(null, null, AllIcons.Actions.IntentionBulb);
 
+      AnAction showIntentionAction = ActionManager.getInstance().getAction(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
+      if (showIntentionAction != null) {
+        copyShortcutFrom(showIntentionAction);
+        getTemplatePresentation().setText("Click or press");
+      }
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      myLookup.showElementActions();
+    }
+  }
+
+  private class MenuAction extends DumbAwareAction {
+    private MenuAction() {
+      super(null, null, AllIcons.Actions.More);
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        //AnActionEvent actionEvent = AnActionEvent.createFromDataContext(ActionPlaces.EDITOR_POPUP, null, ((EditorImpl)myLookup.getEditor()).getDataContext());
+        //AnAction quickDocAction = ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC);
+        //AnAction delegateAction = DumbAwareAction.create(evt -> ActionUtil.performActionDumbAware(quickDocAction, actionEvent));
+        //delegateAction.getTemplatePresentation().copyFrom(quickDocAction.getTemplatePresentation());
+        //delegateAction.copyShortcutFrom(quickDocAction);
+        //
+        //group.add(delegateAction);
+
+      DefaultActionGroup group = new DefaultActionGroup();
       group.add(new ChangeSortingAction());
       group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC));
-
-      //AnActionEvent actionEvent = AnActionEvent.createFromDataContext(ActionPlaces.EDITOR_POPUP, null, ((EditorImpl)myLookup.getEditor()).getDataContext());
-      //AnAction quickDocAction = ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC);
-      //AnAction delegateAction = DumbAwareAction.create(evt -> ActionUtil.performActionDumbAware(quickDocAction, actionEvent));
-      //delegateAction.getTemplatePresentation().copyFrom(quickDocAction.getTemplatePresentation());
-      //delegateAction.copyShortcutFrom(quickDocAction);
-      //
-      //group.add(delegateAction);
 
       ActionManagerImpl am = (ActionManagerImpl) ActionManager.getInstance();
       ActionPopupMenu popupMenu = am.createActionPopupMenu(SORTING_MENU, group);
@@ -419,27 +444,27 @@ class LookupUi {
       popupMenu.setTargetComponent(myLookup.getEditor().getContentComponent());
       JPopupMenu menu = popupMenu.getComponent();
 
-      menu.show(e.getComponent(), 0, e.getComponent().getHeight() + JBUI.scale(2));
-      return true;
+      menu.show(e.getInputEvent().getComponent(), 0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2));
+    }
+  }
+
+  private class ChangeSortingAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
+    private final boolean sortByName = UISettings.getInstance().getSortLookupElementsLexicographically();
+    private ChangeSortingAction() {
+      Presentation presentation = getTemplatePresentation();
+      presentation.setText("Sort by Name");
+      presentation.setIcon(sortByName ? PlatformIcons.CHECK_ICON : null);
     }
 
-    private class ChangeSortingAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
-      private final boolean sortByName = UISettings.getInstance().getSortLookupElementsLexicographically();
-      private ChangeSortingAction() {
-        Presentation presentation = getTemplatePresentation();
-        presentation.setText("Sort by Name");
-        presentation.setIcon(sortByName ? PlatformIcons.CHECK_ICON : null);
-      }
-
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        if (e.getPlace() == SORTING_MENU) {
-          FeatureUsageTracker.getInstance().triggerFeatureUsed(CodeCompletionFeatures.EDITING_COMPLETION_CHANGE_SORTING);
-          UISettings.getInstance().setSortLookupElementsLexicographically(!sortByName);
-          myLookup.resort(false);
-        }
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      if (e.getPlace() == SORTING_MENU) {
+        FeatureUsageTracker.getInstance().triggerFeatureUsed(CodeCompletionFeatures.EDITING_COMPLETION_CHANGE_SORTING);
+        UISettings.getInstance().setSortLookupElementsLexicographically(!sortByName);
+        myLookup.resort(false);
       }
     }
+  }
 
   //private static class ScrollBottomBorder extends AbstractBorder {
   //  private final int myBottomOffset;
@@ -468,5 +493,4 @@ class LookupUi {
   //      }
   //    }
   //  }
-  }
 }

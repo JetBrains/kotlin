@@ -180,8 +180,8 @@ public class Advertiser {
       int textWidth = (i.left + i.right + textPrefSize.width + nextPrefSize.width <= size.width) ?
                       textPrefSize.width : size.width - nextPrefSize.width - i.left - i.right;
 
-      myTextPanel.setBounds(i.left, i.top, textWidth, textPrefSize.height);
-      myNextLabel.setBounds(i.left + textWidth, i.top, nextPrefSize.width, nextPrefSize.height);
+      myTextPanel.setBounds(i.left, (size.height-textPrefSize.height) / 2, textWidth, textPrefSize.height);
+      myNextLabel.setBounds(i.left + textWidth, (size.height-nextPrefSize.height) / 2, nextPrefSize.width, nextPrefSize.height);
     }
   }
 }
