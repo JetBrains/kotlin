@@ -356,6 +356,8 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
   abstract static class ScopeChooserAction extends ActionGroup
     implements CustomComponentAction, DumbAware, SearchEverywhereUI.EverywhereToggleAction {
 
+    static char MNEMONIC = 'P';
+
     abstract void onScopeSelected(@NotNull ScopeDescriptor o);
 
     @NotNull
@@ -368,7 +370,7 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
     @NotNull @Override
     public JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
       JComponent c = IconWithTextAction.createCustomComponentImpl(this, presentation, place);
-      MnemonicHelper.registerMnemonicAction(c, 'P');
+      MnemonicHelper.registerMnemonicAction(c, MNEMONIC);
       return c;
     }
 
@@ -376,12 +378,14 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
     public void update(@NotNull AnActionEvent e) {
       ScopeDescriptor selection = getSelectedScope();
       String name = StringUtil.trimMiddle(selection.getDisplayName(), 30);
-      String text = StringUtil.escapeMnemonics(name).replace("p", "_p").replace("P", "_P");
+      String text = StringUtil.escapeMnemonics(name)
+        .replace(String.valueOf(Character.toLowerCase(MNEMONIC)), "_" + Character.toLowerCase(MNEMONIC))
+        .replace(String.valueOf(Character.toUpperCase(MNEMONIC)), "_" + Character.toUpperCase(MNEMONIC));
       e.getPresentation().setText(text);
       e.getPresentation().setIcon(OffsetIcon.getOriginalIcon(selection.getIcon()));
       String shortcutText = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(
-        'S', MnemonicHelper.getFocusAcceleratorKeyMask(), true));
-      e.getPresentation().setDescription("Target scope (" + shortcutText +")");
+        MNEMONIC, MnemonicHelper.getFocusAcceleratorKeyMask(), true));
+      e.getPresentation().setDescription("Choose scope (" + shortcutText +")");
     }
 
     @Override
