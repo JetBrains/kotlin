@@ -9,10 +9,12 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.tabs.JBTabsFactory;
 import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.UiDecorator;
 import com.intellij.ui.tabs.newImpl.JBEditorTabs;
 import com.intellij.ui.tabs.JBTabsBackgroundAndBorder;
 import com.intellij.ui.tabs.newImpl.JBTabsImpl;
 import com.intellij.ui.tabs.newImpl.TabLabel;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,7 +116,7 @@ public class JBRunnerTabs extends JBEditorTabs implements JBRunnerTabsBase {
     @Override
     public void setTabActionsAutoHide(boolean autoHide) {
       super.setTabActionsAutoHide(autoHide);
-      apply(null);
+      apply(new UiDecorator.UiDecoration(null, JBUI.insets(0, 8, 0, 8)));
     }
 
     @Override
