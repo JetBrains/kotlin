@@ -98,14 +98,14 @@ open class CInteropTask @Inject constructor(val settings: CInteropSettingsImpl):
             addFileArgs("-header", headers)
 
             compilerOpts.forEach {
-                addArg("-compilerOpt", it)
+                addArg("-compiler-option", it)
             }
 
             linkerOpts.forEach {
-                addArg("-linkerOpt", it)
+                addArg("-linker-option", it)
             }
 
-            addArgs("-compilerOpt", allHeadersDirs.map { "-I${it.absolutePath}" })
+            addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
 
             libraries.files.filter {

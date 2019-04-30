@@ -41,7 +41,7 @@ fun interop(flavor: String, args: Array<String>, additionalArgs: Map<String, Any
         }
 
 // Options, whose values are space-separated and can be escaped.
-val escapedOptions = setOf("-compilerOpts", "-linkerOpts")
+val escapedOptions = setOf("-compilerOpts", "-linkerOpts", "-compiler-options", "-linker-options")
 
 private fun String.asArgList(key: String) =
         if (escapedOptions.contains(key))
@@ -177,14 +177,15 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
 
     val def = DefFile(defFile, tool.substitutions)
     val isLinkerOptsSetByUser = (argParser.getOrigin("linkerOpts") == ArgParser.ValueOrigin.SET_BY_USER) ||
-            (argParser.getOrigin("linkerOpt") == ArgParser.ValueOrigin.SET_BY_USER) ||
+            (argParser.getOrigin("linker-option") == ArgParser.ValueOrigin.SET_BY_USER) ||
+            (argParser.getOrigin("linker-options") == ArgParser.ValueOrigin.SET_BY_USER) ||
             (argParser.getOrigin("lopt") == ArgParser.ValueOrigin.SET_BY_USER)
     if (flavorName == "native" && isLinkerOptsSetByUser) {
-        warn("-linkerOpt(s)/-lopt option is not supported by cinterop. Please add linker options to .def file or binary compilation instead.")
+        warn("-linker-option(s)/-linkerOpts/-lopt option is not supported by cinterop. Please add linker options to .def file or binary compilation instead.")
     }
 
-    val additionalLinkerOpts = argParser.getValuesAsArray("linkerOpts") + argParser.getValuesAsArray("linkerOpt") +
-            argParser.getValuesAsArray("lopt")
+    val additionalLinkerOpts = argParser.getValuesAsArray("linkerOpts") + argParser.getValuesAsArray("linker-option") +
+            argParser.getValuesAsArray("linker-options") + argParser.getValuesAsArray("lopt")
     val verbose = argParser.get<Boolean>("verbose")!!
 
     val language = selectNativeLanguage(def.config)
@@ -305,7 +306,8 @@ internal fun buildNativeLibrary(
         imports: ImportsImpl
 ): NativeLibrary {
     val additionalHeaders = arguments.getValuesAsArray("header") + arguments.getValuesAsArray("h")
-    val additionalCompilerOpts = arguments.getValuesAsArray("compilerOpts") + arguments.getValuesAsArray("compilerOpt") +
+    val additionalCompilerOpts = arguments.getValuesAsArray("compilerOpts") +
+            arguments.getValuesAsArray("compiler-options") + arguments.getValuesAsArray("compiler-option") +
             arguments.getValuesAsArray("copt")
 
     val headerFiles = def.config.headers + additionalHeaders

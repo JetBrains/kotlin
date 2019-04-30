@@ -37,7 +37,7 @@ Install libgit2 and prepare stubs for the git library:
 
 cd samples/gitchurn
 ../../dist/bin/cinterop -def src/main/c_interop/libgit2.def \
- -compilerOpts -I/usr/local/include -o libgit2
+ -compiler-option -I/usr/local/include -o libgit2
 ```
 
 </div>
@@ -86,7 +86,7 @@ in the sysroot search paths, headers may be needed):
 <div class="sample" markdown="1" theme="idea" mode="shell">
 
 ```bash
-cinterop -def png.def -compilerOpts -I/usr/local/include -o png
+cinterop -def png.def -compiler-option -I/usr/local/include -o png
 ```
 
 </div>
