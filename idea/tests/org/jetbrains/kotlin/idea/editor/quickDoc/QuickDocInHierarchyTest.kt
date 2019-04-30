@@ -18,9 +18,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.MapDataContext
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
-import org.jetbrains.kotlin.idea.hierarchy.KotlinTypeHierarchyProvider
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith

@@ -12,8 +12,8 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.test.AstAccessControl;
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 public abstract class AbstractReferenceResolveWithLibTest extends AbstractReferenceResolveTest {

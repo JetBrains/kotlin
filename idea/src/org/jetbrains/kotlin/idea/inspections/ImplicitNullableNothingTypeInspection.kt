@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.idea.inspections
 import org.jetbrains.kotlin.idea.core.getModalityFromDescriptor
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 
 class ImplicitNullableNothingTypeInspection : IntentionBasedInspection<KtCallableDeclaration>(

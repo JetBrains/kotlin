@@ -22,7 +22,10 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset

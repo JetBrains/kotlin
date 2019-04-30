@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.findUsages
 
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 
 abstract class AbstractKotlinFindUsagesWithLibraryTest : AbstractFindUsagesTest() {
     override fun getProjectDescriptor() =

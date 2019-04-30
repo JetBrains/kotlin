@@ -5,21 +5,16 @@
 
 package org.jetbrains.kotlin.psi.patternMatching
 
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.psi.KtElement
+import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
-import java.io.File
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.psi.KtWhenCondition
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 abstract class AbstractPsiUnifierTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(filePath: String) {

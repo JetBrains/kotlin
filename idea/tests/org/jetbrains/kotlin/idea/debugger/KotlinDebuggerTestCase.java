@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.debugger;
 
 import com.google.common.collect.Lists;
 import com.intellij.compiler.impl.CompilerUtil;
-import com.intellij.debugger.DebuggerManagerEx;
 import com.intellij.debugger.impl.DescriptorTestCase;
 import com.intellij.debugger.impl.OutputChecker;
 import com.intellij.execution.ExecutionTestCase;

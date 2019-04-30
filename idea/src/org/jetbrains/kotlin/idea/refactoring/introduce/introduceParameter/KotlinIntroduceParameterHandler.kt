@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -28,7 +27,6 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
-import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor

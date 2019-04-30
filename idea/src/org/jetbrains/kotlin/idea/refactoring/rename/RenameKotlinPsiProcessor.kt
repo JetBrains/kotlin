@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.or
 import org.jetbrains.kotlin.idea.search.projectScope
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.name.Name
@@ -46,8 +48,6 @@ import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import java.util.ArrayList
 import kotlin.collections.*
 

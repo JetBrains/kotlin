@@ -21,9 +21,6 @@ import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter

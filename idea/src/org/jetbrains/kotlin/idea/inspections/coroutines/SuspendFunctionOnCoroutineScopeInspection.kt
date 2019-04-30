@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.idea.inspections.coroutines
 
 import com.intellij.codeInsight.FileModificationService
-import com.intellij.codeInspection.*
-import com.intellij.codeInspection.ProblemHighlightType.*
+import com.intellij.codeInspection.IntentionWrapper
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager

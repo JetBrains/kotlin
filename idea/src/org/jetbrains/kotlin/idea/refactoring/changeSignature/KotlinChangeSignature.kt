@@ -21,7 +21,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementFactory
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiType
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.changeSignature.*
 import com.intellij.refactoring.util.CanonicalTypes

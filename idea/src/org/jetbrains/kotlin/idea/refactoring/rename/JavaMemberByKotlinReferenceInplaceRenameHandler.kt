@@ -29,11 +29,11 @@ import com.intellij.refactoring.rename.inplace.MemberInplaceRenamer
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 
 class JavaMemberByKotlinReferenceInplaceRenameHandler : MemberInplaceRenameHandler() {
     class Renamer(

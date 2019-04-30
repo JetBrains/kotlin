@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.psi.ClassFileViewProvider
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 

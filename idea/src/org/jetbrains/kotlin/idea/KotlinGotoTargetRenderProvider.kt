@@ -21,8 +21,8 @@ import com.intellij.codeInsight.navigation.GotoTargetRendererProvider
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.idea.presentation.KtLightClassListCellRenderer
 import org.jetbrains.kotlin.idea.presentation.DeclarationByModuleRenderer
+import org.jetbrains.kotlin.idea.presentation.KtLightClassListCellRenderer
 import org.jetbrains.kotlin.idea.util.isEffectivelyActual
 import org.jetbrains.kotlin.psi.KtDeclaration
 

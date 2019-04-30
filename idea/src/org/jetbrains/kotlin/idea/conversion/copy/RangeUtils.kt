@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.conversion.copy
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement

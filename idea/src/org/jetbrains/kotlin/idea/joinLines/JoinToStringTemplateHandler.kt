@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class JoinToStringTemplateHandler : JoinRawLinesHandlerDelegate {

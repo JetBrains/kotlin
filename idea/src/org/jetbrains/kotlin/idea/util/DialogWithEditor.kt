@@ -16,19 +16,18 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-
-import javax.swing.*
-import com.intellij.openapi.project.*
-import com.intellij.openapi.editor.*
-import java.awt.*
-import com.intellij.testFramework.*
-import org.jetbrains.kotlin.idea.*
-import com.intellij.openapi.fileEditor.*
-import com.intellij.openapi.editor.ex.*
-import com.intellij.openapi.editor.colors.*
-import java.awt.event.*
-import com.intellij.psi.*
+import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.idea.KotlinFileType
+import java.awt.BorderLayout
+import javax.swing.JComponent
+import javax.swing.JPanel
 
 open class DialogWithEditor(
         val project: Project,

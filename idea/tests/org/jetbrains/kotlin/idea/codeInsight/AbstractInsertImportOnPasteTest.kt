@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors

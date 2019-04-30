@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.de
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.getModuleNameSuffix
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.mangleInternalName
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
@@ -53,7 +52,6 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.lang.IllegalStateException
 import java.util.*
 
 class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {

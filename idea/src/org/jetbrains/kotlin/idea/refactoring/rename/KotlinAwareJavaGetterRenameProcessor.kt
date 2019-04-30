@@ -12,10 +12,10 @@ import com.intellij.psi.PsiType
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.ifEmpty
 

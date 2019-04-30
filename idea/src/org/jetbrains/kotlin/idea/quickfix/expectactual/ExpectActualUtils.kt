@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.findOrCreateDirectoryForPackage
 import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.overrideImplement.*
+import org.jetbrains.kotlin.idea.core.overrideImplement.MemberGenerateMode
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.NO_BODY
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.Companion.create
+import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
+import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile

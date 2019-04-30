@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
 import org.junit.runner.RunWith

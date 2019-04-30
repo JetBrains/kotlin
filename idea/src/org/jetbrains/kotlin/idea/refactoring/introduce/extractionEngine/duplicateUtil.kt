@@ -16,26 +16,26 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.editor.Editor
-import java.util.ArrayList
-import com.intellij.openapi.editor.markup.RangeHighlighter
-import com.intellij.openapi.editor.ScrollType
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
-import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.editor.colors.EditorColors
-import com.intellij.codeInsight.highlighting.HighlightManager
 import com.intellij.codeInsight.folding.CodeFoldingManager
-import com.intellij.ui.ReplacePromptDialog
+import com.intellij.codeInsight.highlighting.HighlightManager
 import com.intellij.find.FindManager
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import com.intellij.refactoring.util.duplicates.MethodDuplicatesHandler
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.editor.markup.RangeHighlighter
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.util.duplicates.MethodDuplicatesHandler
+import com.intellij.ui.ReplacePromptDialog
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.getPhysicalTextRange
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
+import java.util.*
 
 fun KotlinPsiRange.highlight(project: Project, editor: Editor): RangeHighlighter? {
     val textRange = getPhysicalTextRange()

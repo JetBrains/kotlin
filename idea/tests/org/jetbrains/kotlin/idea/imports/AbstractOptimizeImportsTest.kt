@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.idea.imports
 
 import org.jetbrains.kotlin.AbstractImportsTest
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
+import org.jetbrains.kotlin.psi.KtFile
 
 abstract class AbstractOptimizeImportsTest : AbstractImportsTest() {
     override fun doTest(file: KtFile): String {

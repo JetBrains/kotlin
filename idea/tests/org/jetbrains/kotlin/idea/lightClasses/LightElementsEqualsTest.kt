@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
-import java.lang.System.identityHashCode as idh
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LightElementsEqualsTest : KotlinLightCodeInsightFixtureTestCase() {

@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.idea.roots.ui
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.ModuleConfigurationEditor
 import com.intellij.openapi.module.ModuleType
-import com.intellij.openapi.roots.ui.configuration.*
+import com.intellij.openapi.roots.ui.configuration.ClasspathEditor
+import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationEditorProviderEx
+import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState
+import com.intellij.openapi.roots.ui.configuration.OutputEditor
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 

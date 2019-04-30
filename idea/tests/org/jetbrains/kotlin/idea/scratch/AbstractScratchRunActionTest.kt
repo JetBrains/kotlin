@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
-import java.util.*
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 

@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.platform.IdePlatform;
 import org.jetbrains.kotlin.platform.IdePlatformKind;
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformUtil;
-import org.jetbrains.kotlin.platform.impl.JvmIdePlatformUtil;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind;
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformUtil;
 
 import javax.swing.*;
 import java.util.*;

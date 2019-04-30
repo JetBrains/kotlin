@@ -9,8 +9,8 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.testFramework.LightProjectDescriptor
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 import java.io.File

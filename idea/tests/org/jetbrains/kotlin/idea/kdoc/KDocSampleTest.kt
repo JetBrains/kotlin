@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.runner.RunWith
 import java.io.File
 

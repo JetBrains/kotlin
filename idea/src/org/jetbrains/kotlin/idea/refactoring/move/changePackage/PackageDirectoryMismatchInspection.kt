@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 import com.intellij.CommonBundle
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.move.moveClassesOrPackages.AutocreatingSingleSourceRootMoveDestination

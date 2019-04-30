@@ -10,7 +10,6 @@ import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import kotlin.test.assertEquals
 
 abstract class AbstractHighlightExitPointsTest : LightCodeInsightFixtureTestCase() {
     fun doTest(testDataPath: String) {

@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimp
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall

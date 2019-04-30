@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcod
 import org.jetbrains.kotlin.idea.actions.generate.findDeclaredEquals
 import org.jetbrains.kotlin.idea.actions.generate.findDeclaredHashCode
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.classOrObjectVisitor
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
 
