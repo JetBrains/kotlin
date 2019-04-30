@@ -234,7 +234,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             functionReferenceClass = buildClass {
                 setSourceRange(irFunctionReference)
                 origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-                name = "${callee.name}\$${functionReferenceCount++}".synthesizedName
+                name = "${callee.name.safeName()}\$${functionReferenceCount++}".synthesizedName
                 kind = ClassKind.CLASS
                 visibility = Visibilities.PUBLIC
                 modality = Modality.FINAL
@@ -403,7 +403,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                                 val argument = when {
                                     !unboundArgsSet.contains(parameter) ->
                                         // Bound parameter - read from field.
-                                        irGetField(irGet(functionReferenceThis.owner), argumentToFieldMap[parameter]!!)
+                                        irGetField(irGet(dispatchReceiverParameter!!), argumentToFieldMap[parameter]!!)
                                     function.isSuspend && unboundIndex == valueParameters.size ->
                                         // For suspend functions the last argument is continuation and it is implicit.
                                         TODO()
