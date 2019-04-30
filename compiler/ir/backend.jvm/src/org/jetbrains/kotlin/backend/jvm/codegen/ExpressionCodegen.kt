@@ -463,12 +463,8 @@ class ExpressionCodegen(
 
     private fun findLocalIndex(irSymbol: IrSymbol): Int {
         val index = frameMap.getIndex(irSymbol)
-        if (index >= 0) {
+        if (index >= 0)
             return index
-        }
-        if (irFunction.dispatchReceiverParameter != null && (irFunction.parent as? IrClass)?.thisReceiver?.symbol == irSymbol) {
-            return 0
-        }
         val dump = if (irSymbol.isBound) irSymbol.owner.dump() else irSymbol.descriptor.toString()
         throw AssertionError("Non-mapped local declaration: $dump\n in ${irFunction.dump()}")
     }
