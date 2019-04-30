@@ -62,10 +62,7 @@ internal fun createSharedCompilationContext(
             scriptCompilationConfiguration, hostConfiguration, scriptCompilationState, messageCollector, ignoredOptionsReportingState
         )
     val environment =
-        if (System.getProperty("idea.is.unit.test") == "true") KotlinCoreEnvironment.createForTests(
-            disposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
-        else KotlinCoreEnvironment.createForProduction(
+        KotlinCoreEnvironment.createForProduction(
             disposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 

@@ -75,6 +75,10 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
             data[this] = v
         }
 
+        fun <T> PropertiesCollection.Key<T>.put(v: T) {
+            data[this] = v
+        }
+
         // generic for lists
 
         operator fun <T> PropertiesCollection.Key<in List<T>>.invoke(vararg vals: T) {

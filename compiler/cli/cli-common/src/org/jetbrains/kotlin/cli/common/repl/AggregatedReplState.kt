@@ -96,5 +96,11 @@ open class AggregatedReplStageState<T1, T2>(val state1: IReplStageState<T1>, val
     override fun getNextLineNo() = state1.getNextLineNo()
 
     override val currentGeneration: Int get() = state1.currentGeneration
+
+    override fun dispose() {
+        state2.dispose()
+        state1.dispose()
+        super.dispose()
+    }
 }
 

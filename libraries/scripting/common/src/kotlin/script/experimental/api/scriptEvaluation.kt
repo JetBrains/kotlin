@@ -50,6 +50,13 @@ val ScriptEvaluationConfigurationKeys.providedProperties by PropertiesCollection
  */
 val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.key<List<Any?>>()
 
+/**
+ * If the script is a snippet in a REPL, this property expected to contain previous REPL snippets in historical order
+ * For the first snippet in a REPL an empty list should be passed explicitly
+ * An array of the previous snippets will be passed to the current snippet constructor
+ */
+val ScriptEvaluationConfigurationKeys.previousSnippets by PropertiesCollection.key<List<Any>>()
+
 @Deprecated("use scriptsInstancesSharing flag instead", level = DeprecationLevel.ERROR)
 val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>()
 
@@ -101,6 +108,11 @@ sealed class ResultValue {
         override fun toString(): String = "$name: $type = $value"
     }
 
+    class UnitValue(val scriptInstance: Any) : ResultValue() {
+        override fun toString(): String = "Unit"
+    }
+
+    // TODO: obsolete it, use differently named value in the saving evaluators
     object Unit : ResultValue()
 }
 

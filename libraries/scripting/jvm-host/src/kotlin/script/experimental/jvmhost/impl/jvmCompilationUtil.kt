@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.scripting.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
@@ -71,7 +72,7 @@ internal inline fun <T> withMessageCollectorAndDisposable(
         failure(messageCollector, ex.asDiagnostics(path = locationId))
     } finally {
         if (disposeOnSuccess || failed) {
-            disposable.dispose()
+            Disposer.dispose(disposable)
         }
     }
 }
@@ -134,6 +135,7 @@ internal fun makeCompiledScript(
                         containingKtFile.virtualFile?.path,
                         getScriptConfiguration(sourceFile),
                         it.fqName.asString(),
+                        null,
                         makeOtherScripts(it),
                         null
                     )
@@ -145,10 +147,18 @@ internal fun makeCompiledScript(
     }
 
     val module = makeCompiledModule(generationState)
+
+    val resultField = with(generationState.replSpecific) {
+        // TODO: pass it in the configuration instead
+        if (!hasResult || resultType == null || scriptResultFieldName == null) null
+        else scriptResultFieldName!! to KotlinType(DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(resultType!!))
+    }
+
     return KJvmCompiledScript(
         script.locationId,
         getScriptConfiguration(ktScript.containingKtFile),
         ktScript.fqName.asString(),
+        resultField,
         makeOtherScripts(ktScript),
         module
     )

@@ -526,9 +526,9 @@ private class FileBasedScriptCache(val baseDir: File) : ScriptingCacheWithCounte
         get() = _retrievedScripts
 }
 
-private fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
+internal fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
 
-private fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
+internal fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
     val outStream = ByteArrayOutputStream()
     val errStream = ByteArrayOutputStream()
     val prevOut = System.out

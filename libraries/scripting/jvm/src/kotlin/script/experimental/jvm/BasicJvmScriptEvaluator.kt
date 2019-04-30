@@ -43,7 +43,15 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                             ?.resultOrNull()
                             ?: configuration
 
-                    scriptClass.evalWithConfigAndOtherScriptsResults(refinedEvalConfiguration, importedScriptsEvalResults).let {
+                    val instance =
+                        scriptClass.evalWithConfigAndOtherScriptsResults(refinedEvalConfiguration, importedScriptsEvalResults)
+
+                    val resultValue = compiledScript.resultField?.let { (resultFieldName, resultType) ->
+                        val resultField = scriptClass.java.getDeclaredField(resultFieldName).apply { isAccessible = true }
+                        ResultValue.Value(resultFieldName, resultField.get(instance), resultType.typeName, instance)
+                    } ?: ResultValue.Value("", instance, "", instance)
+
+                    EvaluationResult(resultValue, refinedEvalConfiguration).let {
                         sharedScripts?.put(scriptClass, it)
                         ResultWithDiagnostics.Success(it)
                     }
@@ -61,8 +69,14 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
     private fun KClass<*>.evalWithConfigAndOtherScriptsResults(
         refinedEvalConfiguration: ScriptEvaluationConfiguration,
         importedScriptsEvalResults: List<EvaluationResult>
-    ): EvaluationResult {
+    ): Any {
         val args = ArrayList<Any?>()
+
+        refinedEvalConfiguration[ScriptEvaluationConfiguration.previousSnippets]?.let {
+            if (it.isNotEmpty()) {
+                args.add(it.toTypedArray())
+            }
+        }
 
         refinedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
             args.addAll(it)
@@ -81,10 +95,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         val ctor = java.constructors.single()
         val instance = ctor.newInstance(*args.toArray())
 
-        return EvaluationResult(
-            ResultValue.Value("", instance, "", instance),
-            refinedEvalConfiguration
-        )
+        return instance
     }
 }
 

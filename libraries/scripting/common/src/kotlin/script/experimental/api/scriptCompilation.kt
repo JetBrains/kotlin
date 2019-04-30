@@ -249,4 +249,10 @@ interface CompiledScript<out ScriptBase : Any> {
      */
     val otherScripts: List<CompiledScript<*>>
         get() = emptyList()
+
+    /**
+     * The name and the type of the script's result field, if any
+     */
+    val resultField: Pair<String, KotlinType>?
+        get() = null
 }
