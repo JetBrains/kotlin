@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -230,11 +231,14 @@ open class ClassCodegen protected constructor(
 
         AnnotationCodegen(this, state, fv::visitAnnotation).genAnnotations(field, fieldType)
 
-        val descriptor = field.metadata?.descriptor
+        var descriptor = field.metadata?.descriptor
         if (descriptor != null) {
             val codegen = if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
                 companionObjectCodegen ?: error("Class with a property moved from the companion must have a companion:\n${irClass.dump()}")
             } else this
+            if (descriptor is IrPropertyDelegateDescriptor) {
+                descriptor = descriptor.correspondingProperty
+            }
             codegen.visitor.serializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, fieldType to fieldName)
         }
     }
