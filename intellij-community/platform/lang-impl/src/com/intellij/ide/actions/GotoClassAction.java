@@ -35,6 +35,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,8 +69,10 @@ public class GotoClassAction extends GotoActionBase implements DumbAware {
     }
   }
 
-  private static void invokeGoToFile(@NotNull Project project, @NotNull AnActionEvent e) {
-    String message = IdeBundle.message("go.to.class.dumb.mode.message", GotoClassPresentationUpdater.getActionTitle());
+  static void invokeGoToFile(@NotNull Project project, @NotNull AnActionEvent e) {
+    String actionTitle = StringUtil.trimEnd(ObjectUtils.notNull(
+      e.getPresentation().getText(), GotoClassPresentationUpdater.getActionTitle()), "...");
+    String message = IdeBundle.message("go.to.class.dumb.mode.message", actionTitle);
     DumbService.getInstance(project).showDumbModeNotification(message);
     AnAction action = ActionManager.getInstance().getAction(GotoFileAction.ID);
     InputEvent event = ActionCommand.getInputEvent(GotoFileAction.ID);
