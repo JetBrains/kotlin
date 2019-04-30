@@ -17,9 +17,8 @@ public class Foo {
 package foo
 
 object Bar {
-    val testValue = "foobar"
-        @JvmStatic get() {
-        }
+        @JvmStatic
+        val testValue get() = "foobar"
 }
 
 // FILE: bar/Foo.after.java
