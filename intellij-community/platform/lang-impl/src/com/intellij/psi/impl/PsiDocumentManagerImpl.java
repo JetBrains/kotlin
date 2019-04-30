@@ -104,7 +104,7 @@ public class PsiDocumentManagerImpl extends PsiDocumentManagerBase {
         try {
           LOG.error("Too many uncommitted documents for " + myProject + "(" +myUncommittedDocuments.size()+")"+
                     ":\n" + StringUtil.join(myUncommittedDocuments, "\n") +
-                    "\n\n Project creation trace: " + myProject.getUserData(ProjectImpl.CREATION_TRACE));
+                    (myProject instanceof ProjectImpl ? "\n\n Project creation trace: " + ((ProjectImpl)myProject).getCreationTrace() : ""));
         }
         finally {
           //noinspection TestOnlyProblems
