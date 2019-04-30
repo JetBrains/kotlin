@@ -13,7 +13,7 @@ import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.kotlin.dsl.*
 
 // absolute path to "cidr-native" sub-project in standalone Kotlin Ultimate build
-private const val CIDR_NATIVE_SUBPROJECT_PATH_IN_KOTLIN_ULTIMATE = ":cidr-native"
+private const val CIDR_NATIVE_SUBPROJECT_PATH_IN_KOTLIN_ULTIMATE = ":ide:cidr-native"
 
 val Project.isStandaloneBuild
     get() = rootProject.findProject(CIDR_NATIVE_SUBPROJECT_PATH_IN_KOTLIN_ULTIMATE) != null

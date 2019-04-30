@@ -18,11 +18,11 @@ val cidrPlugin: Configuration by configurations.creating
 
 dependencies {
     cidrPlugin(ultimateProjectDep(":prepare:cidr-plugin"))
-    embedded(ultimateProjectDep(":clion-native")) { isTransitive = false }
+    embedded(ultimateProjectDep(":ide:clion-native")) { isTransitive = false }
 }
 
 val preparePluginXml: Task by preparePluginXml(
-        ultimatePath(":clion-native"),
+        ultimatePath(":ide:clion-native"),
         clionVersion,
         clionVersionStrict,
         clionPluginVersionFull
@@ -33,7 +33,7 @@ val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml))
 val platformDepsJar: Task by platformDepsJar("CLion", clionPlatformDepsDir)
 
 val clionPlugin: Task by packageCidrPlugin(
-        ultimatePath(":clion-native"),
+        ultimatePath(":ide:clion-native"),
         clionPluginDir,
         pluginJar,
         platformDepsJar,

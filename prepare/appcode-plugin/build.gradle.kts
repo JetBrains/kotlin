@@ -18,11 +18,11 @@ val cidrPlugin: Configuration by configurations.creating
 
 dependencies {
     cidrPlugin(ultimateProjectDep(":prepare:cidr-plugin"))
-    embedded(ultimateProjectDep(":appcode-native")) { isTransitive = false }
+    embedded(ultimateProjectDep(":ide:appcode-native")) { isTransitive = false }
 }
 
 val preparePluginXml: Task by preparePluginXml(
-        ultimatePath(":appcode-native"),
+        ultimatePath(":ide:appcode-native"),
         appcodeVersion,
         appcodeVersionStrict,
         appcodePluginVersionFull
@@ -33,7 +33,7 @@ val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml))
 val platformDepsJar: Task by platformDepsJar("AppCode", appcodePlatformDepsDir)
 
 val appcodePlugin: Task by packageCidrPlugin(
-        ultimatePath(":appcode-native"),
+        ultimatePath(":ide:appcode-native"),
         appcodePluginDir,
         pluginJar,
         platformDepsJar,

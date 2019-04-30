@@ -8,6 +8,6 @@ pluginManagement {
 include ":prepare:cidr-plugin",
         ":prepare:appcode-plugin",
         ":prepare:clion-plugin",
-        ":cidr-native",
-        ":appcode-native",
-        ":clion-native"
+        ":ide:cidr-native",
+        ":ide:appcode-native",
+        ":ide:clion-native"

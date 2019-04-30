@@ -16,7 +16,7 @@ if (!isStandaloneBuild) {
 }
 
 dependencies {
-    compile(ultimateProjectDep(":cidr-native"))
+    compile(ultimateProjectDep(":ide:cidr-native"))
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
 
     if (!isStandaloneBuild) {

@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.ultimate.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    if (rootProject.findProject(":cidr-native") != null) { // only for standalone build:
+    if (rootProject.findProject(":ide:cidr-native") != null) { // only for standalone build:
         val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
         repositories {

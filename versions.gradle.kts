@@ -10,7 +10,7 @@ fun locatePropertiesFile(): Pair<File, Boolean> {
         return kotlinUltimateProject.file("versions.properties") to false
     }
 
-    if (rootProject.findProject(":cidr-native") != null) {
+    if (rootProject.findProject(":ide:cidr-native") != null) {
         // if in standalone build, then take the file from the root project
         return rootProject.file("versions.properties") to true
     }
