@@ -2,7 +2,7 @@
 package org.jetbrains.plugins.gradle.service.resolve
 
 import com.intellij.patterns.StandardPatterns.or
-import com.intellij.psi.CommonClassNames.JAVA_LANG_CHARSEQUENCE
+import com.intellij.psi.CommonClassNames.JAVA_LANG_CHAR_SEQUENCE
 import com.intellij.psi.CommonClassNames.JAVA_UTIL_MAP
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.util.InheritanceUtil.isInheritor
@@ -76,7 +76,7 @@ class GradleDependenciesContributor : GradleMethodContextContributor {
   private fun fromDependencyNotation(notation: Argument): String? {
     val type = notation.type as? PsiClassType ?: return null
     return when {
-      isInheritor(type, JAVA_LANG_CHARSEQUENCE)
+      isInheritor(type, JAVA_LANG_CHAR_SEQUENCE)
       || isInheritor(type, JAVA_UTIL_MAP) -> GRADLE_API_ARTIFACTS_EXTERNAL_MODULE_DEPENDENCY
       isInheritor(type, GRADLE_API_PROJECT) -> GRADLE_API_ARTIFACTS_PROJECT_DEPENDENCY
       isInheritor(type, GRADLE_API_FILE_FILE_COLLECTION) -> GRADLE_API_ARTIFACTS_SELF_RESOLVING_DEPENDENCY
