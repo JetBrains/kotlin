@@ -136,7 +136,8 @@ private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverVal
     val expressionReceiver = receiver as? ExpressionReceiver
         ?: throw AssertionError("'this' or 'super' receiver should be an expression receiver")
     val ktReceiver = expressionReceiver.expression
-    return generateThisReceiver(ktReceiver.startOffsetSkippingComments, ktReceiver.endOffset, expressionReceiver.type, classDescriptor)
+    val type = if (receiver is SuperCallReceiverValue) receiver.thisType else expressionReceiver.type
+    return generateThisReceiver(ktReceiver.startOffsetSkippingComments, ktReceiver.endOffset, type, classDescriptor)
 }
 
 fun StatementGenerator.generateBackingFieldReceiver(
