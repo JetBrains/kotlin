@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 
 class FirBuiltinAnnotationDeserializer(
-    session: FirSession, nameResolver: NameResolver
-) : AbstractAnnotationDeserializer(session, nameResolver) {
+    session: FirSession
+) : AbstractAnnotationDeserializer(session) {
 
-    override fun loadTypeAnnotations(typeProto: ProtoBuf.Type): List<FirAnnotationCall> {
+    override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(typeProto.flags)) return emptyList()
         val annotations = typeProto.getExtension(protocol.typeAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it) }
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 }

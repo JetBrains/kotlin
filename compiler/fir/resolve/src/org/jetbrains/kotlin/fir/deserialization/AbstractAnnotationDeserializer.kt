@@ -30,44 +30,43 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 abstract class AbstractAnnotationDeserializer(
-    private val session: FirSession,
-    private val nameResolver: NameResolver
+    private val session: FirSession
 ) {
     protected val protocol = BuiltInSerializerProtocol
 
-    fun loadClassAnnotations(classProto: ProtoBuf.Class): List<FirAnnotationCall> {
+    fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) return emptyList()
         val annotations = classProto.getExtension(protocol.classAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it) }
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    fun loadFunctionAnnotations(functionProto: ProtoBuf.Function): List<FirAnnotationCall> {
+    fun loadFunctionAnnotations(functionProto: ProtoBuf.Function, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(functionProto.flags)) return emptyList()
         val annotations = functionProto.getExtension(protocol.functionAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it) }
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    fun loadPropertyAnnotations(propertyProto: ProtoBuf.Property): List<FirAnnotationCall> {
+    fun loadPropertyAnnotations(propertyProto: ProtoBuf.Property, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(propertyProto.flags)) return emptyList()
         val annotations = propertyProto.getExtension(protocol.propertyAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it) }
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    fun loadConstructorAnnotations(constructorProto: ProtoBuf.Constructor): List<FirAnnotationCall> {
+    fun loadConstructorAnnotations(constructorProto: ProtoBuf.Constructor, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(constructorProto.flags)) return emptyList()
         val annotations = constructorProto.getExtension(protocol.constructorAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it) }
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    fun loadValueParameterAnnotations(valueParameterProto: ProtoBuf.ValueParameter): List<FirAnnotationCall> {
+    fun loadValueParameterAnnotations(valueParameterProto: ProtoBuf.ValueParameter, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) return emptyList()
         val annotations = valueParameterProto.getExtension(protocol.parameterAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it) }
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type): List<FirAnnotationCall>
+    abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall>
 
-    fun deserializeAnnotation(proto: ProtoBuf.Annotation): FirAnnotationCall {
+    fun deserializeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): FirAnnotationCall {
         val classId = nameResolver.getClassId(proto.id)
         val lookupTag = ConeClassLikeLookupTagImpl(classId)
         val symbol = lookupTag.toSymbol(session)
@@ -117,7 +116,7 @@ abstract class AbstractAnnotationDeserializer(
             DOUBLE -> const(IrConstKind.Double, value.doubleValue)
             BOOLEAN -> const(IrConstKind.Boolean, (value.intValue != 0L))
             STRING -> const(IrConstKind.String, nameResolver.getString(value.stringValue))
-            ANNOTATION -> deserializeAnnotation(value.annotation)
+            ANNOTATION -> deserializeAnnotation(value.annotation, nameResolver)
             CLASS -> FirGetClassCallImpl(session, null).apply {
                 val classId = nameResolver.getClassId(value.classId)
                 val lookupTag = ConeClassLikeLookupTagImpl(classId)

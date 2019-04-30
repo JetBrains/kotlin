@@ -68,7 +68,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
         private val memberDeserializer by lazy {
             FirDeserializationContext.createForPackage(
                 fqName, packageProto.`package`, nameResolver, session,
-                FirBuiltinAnnotationDeserializer(session, nameResolver)
+                FirBuiltinAnnotationDeserializer(session)
             ).memberDeserializer
         }
 

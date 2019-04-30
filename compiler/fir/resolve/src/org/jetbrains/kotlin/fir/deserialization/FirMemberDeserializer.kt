@@ -181,7 +181,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             null
         ).apply {
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
-            annotations += c.annotationDeserializer.loadPropertyAnnotations(proto)
+            annotations += c.annotationDeserializer.loadPropertyAnnotations(proto, local.nameResolver)
         }
     }
 
@@ -217,12 +217,12 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             Flags.IS_TAILREC.get(flags),
             Flags.IS_EXTERNAL_FUNCTION.get(flags),
             Flags.IS_SUSPEND.get(flags),
-            proto.receiverType(c.typeTable)?.toTypeRef(local),
-            proto.returnType(c.typeTable).toTypeRef(local)
+            proto.receiverType(local.typeTable)?.toTypeRef(local),
+            proto.returnType(local.typeTable).toTypeRef(local)
         ).apply {
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
-            annotations += local.annotationDeserializer.loadFunctionAnnotations(proto)
+            annotations += local.annotationDeserializer.loadFunctionAnnotations(proto, local.nameResolver)
         }
     }
 
@@ -274,7 +274,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }.apply {
             this.typeParameters += typeParameters
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
-            annotations += local.annotationDeserializer.loadConstructorAnnotations(proto)
+            annotations += local.annotationDeserializer.loadConstructorAnnotations(proto, local.nameResolver)
         }
 
     }
@@ -299,7 +299,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 Flags.IS_NOINLINE.get(flags),
                 proto.varargElementType(c.typeTable) != null
             ).apply {
-                annotations += c.annotationDeserializer.loadValueParameterAnnotations(proto)
+                annotations += c.annotationDeserializer.loadValueParameterAnnotations(proto, c.nameResolver)
             }
         }.toList()
     }
@@ -307,8 +307,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     private fun ProtoBuf.Type.toTypeRef(context: FirDeserializationContext): FirTypeRef {
         val coneType = context.typeDeserializer.type(this)
         return FirResolvedTypeRefImpl(
-            c.session, null, coneType,
-            c.annotationDeserializer.loadTypeAnnotations(this)
+            context.session, null, coneType,
+            context.annotationDeserializer.loadTypeAnnotations(this, context.nameResolver)
         )
     }
 

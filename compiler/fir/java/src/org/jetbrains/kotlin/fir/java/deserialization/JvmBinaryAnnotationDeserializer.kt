@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.AbstractAnnotationDeserializer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 
 class JvmBinaryAnnotationDeserializer(
-    session: FirSession, nameResolver: JvmNameResolver
-) : AbstractAnnotationDeserializer(session, nameResolver) {
-    override fun loadTypeAnnotations(typeProto: ProtoBuf.Type): List<FirAnnotationCall> {
+    session: FirSession
+) : AbstractAnnotationDeserializer(session) {
+    override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall> {
         val annotations = typeProto.getExtension(JvmProtoBuf.typeAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it) }
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 }
