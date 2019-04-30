@@ -63,7 +63,9 @@ public class DistributionFactoryExt extends DistributionFactory {
           setDistributionField(connector, distribution);
         }
         catch (Exception e) {
-          throw new ExternalSystemException(e);
+          ExternalSystemException externalSystemException = new ExternalSystemException(e);
+          externalSystemException.initCause(e);
+          throw externalSystemException;
         }
       }
     }

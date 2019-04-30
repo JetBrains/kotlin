@@ -244,7 +244,9 @@ public class GradleExecutionHelper {
     catch (Throwable e) {
       LOG.debug("Gradle execution error", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);
-      throw new ExternalSystemException(ExceptionUtil.getMessage(rootCause), e);
+      ExternalSystemException externalSystemException = new ExternalSystemException(ExceptionUtil.getMessage(rootCause), e);
+      externalSystemException.initCause(e);
+      throw externalSystemException;
     }
     finally {
       try {
@@ -316,7 +318,9 @@ public class GradleExecutionHelper {
     catch (Throwable e) {
       LOG.warn("Can't update wrapper", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);
-      throw new ExternalSystemException(ExceptionUtil.getMessage(rootCause));
+      ExternalSystemException externalSystemException = new ExternalSystemException(ExceptionUtil.getMessage(rootCause));
+      externalSystemException.initCause(e);
+      throw externalSystemException;
     }
     finally {
       settings.setRemoteProcessIdleTtlInMs(ttlInMs);

@@ -194,7 +194,9 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
         effectiveSettings.withArguments(GradleConstants.INIT_SCRIPT_CMD_OPTION, tempFile.getAbsolutePath());
       }
       catch (IOException e) {
-        throw new ExternalSystemException(e);
+        ExternalSystemException systemException = new ExternalSystemException(e);
+        systemException.initCause(e);
+        throw systemException;
       }
     }
 
@@ -212,7 +214,9 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
         effectiveSettings.withArguments(GradleConstants.INIT_SCRIPT_CMD_OPTION, tempFile.getAbsolutePath());
       }
       catch (IOException e) {
-        throw new ExternalSystemException(e);
+        ExternalSystemException externalSystemException = new ExternalSystemException(e);
+        externalSystemException.initCause(e);
+        throw externalSystemException;
       }
     }
   }
