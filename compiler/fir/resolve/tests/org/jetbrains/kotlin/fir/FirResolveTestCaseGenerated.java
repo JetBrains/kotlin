@@ -222,11 +222,6 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/dispatchReceiver.kt");
         }
 
-        @TestMetadata("factoryFunctionOverloads.kt")
-        public void testFactoryFunctionOverloads() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/expresssions/factoryFunctionOverloads.kt");
-        }
-
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/lambda.kt");
