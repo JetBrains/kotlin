@@ -535,14 +535,19 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       contributorsMap.putAll(getAllTabContributors().stream().collect(Collectors.toMap(c -> c, c -> MULTIPLE_CONTRIBUTORS_ELEMENTS_LIMIT)));
     }
 
-    Set<SearchEverywhereContributor<?>> contributors = contributorsMap.keySet();
-    boolean dumbModeSupported = contributors.stream().anyMatch(c -> c.isDumbModeSupported());
-    if (!dumbModeSupported && DumbService.getInstance(myProject).isDumb()) {
-      String tabName = mySelectedTab.getText();
-      String productName = ApplicationNamesInfo.getInstance().getFullProductName();
-      myResultsList.setEmptyText(IdeBundle.message("searcheverywhere.indexing.mode.not.supported", tabName, productName));
+    Set<SearchEverywhereContributor<?>> allContributors = contributorsMap.keySet();
+    List<SearchEverywhereContributor<?>> contributors = DumbService.getInstance(myProject).filterByDumbAwareness(allContributors);
+    if (contributors.isEmpty() && DumbService.isDumb(myProject)) {
+      myResultsList.setEmptyText(IdeBundle.message("searcheverywhere.indexing.mode.not.supported",
+                                                   mySelectedTab.getText(),
+                                                   ApplicationNamesInfo.getInstance().getFullProductName()));
       myListModel.clear();
       return;
+    }
+    if (contributors.size() != allContributors.size()) {
+      myResultsList.setEmptyText(IdeBundle.message("searcheverywhere.indexing.incomplete.results",
+                                                   mySelectedTab.getText(),
+                                                   ApplicationNamesInfo.getInstance().getFullProductName()));
     }
 
     myListModel.expireResults();

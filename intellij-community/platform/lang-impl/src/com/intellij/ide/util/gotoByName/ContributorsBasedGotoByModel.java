@@ -15,6 +15,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
+import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.PomTargetPsiElement;
@@ -37,7 +38,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Contributor-based goto model
  */
-public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelEx {
+public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelEx, PossiblyDumbAware {
   public static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.gotoByName.ContributorsBasedGotoByModel");
 
   protected final Project myProject;
@@ -51,6 +52,11 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
     myProject = project;
     myContributors = contributors;
     assert !contributors.contains(null);
+  }
+
+  @Override
+  public boolean isDumbAware() {
+    return ContainerUtil.find(myContributors, o -> DumbService.isDumbAware(o)) != null;
   }
 
   @NotNull

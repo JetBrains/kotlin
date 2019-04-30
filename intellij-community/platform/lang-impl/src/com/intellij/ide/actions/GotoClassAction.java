@@ -49,21 +49,32 @@ public class GotoClassAction extends GotoActionBase implements DumbAware {
     Project project = e.getProject();
     if (project == null) return;
 
-    if (!DumbService.getInstance(project).isDumb()) {
-      if (Registry.is("new.search.everywhere")) {
+    boolean dumb = DumbService.isDumb(project);
+    if (Registry.is("new.search.everywhere")) {
+      if (!dumb || new ClassSearchEverywhereContributor(project, null).isDumbAware()) {
         showInSearchEverywherePopup(ClassSearchEverywhereContributor.class.getSimpleName(), e, true, true);
-      } else {
-        super.actionPerformed(e);
+      }
+      else {
+        invokeGoToFile(project, e);
       }
     }
     else {
-      String message = IdeBundle.message("go.to.class.dumb.mode.message", GotoClassPresentationUpdater.getActionTitle());
-      DumbService.getInstance(project).showDumbModeNotification(message);
-      AnAction action = ActionManager.getInstance().getAction(GotoFileAction.ID);
-      InputEvent event = ActionCommand.getInputEvent(GotoFileAction.ID);
-      Component component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT);
-      ActionManager.getInstance().tryToExecute(action, event, component, e.getPlace(), true);
+      if (!dumb) {
+        super.actionPerformed(e);
+      }
+      else {
+        invokeGoToFile(project, e);
+      }
     }
+  }
+
+  private static void invokeGoToFile(@NotNull Project project, @NotNull AnActionEvent e) {
+    String message = IdeBundle.message("go.to.class.dumb.mode.message", GotoClassPresentationUpdater.getActionTitle());
+    DumbService.getInstance(project).showDumbModeNotification(message);
+    AnAction action = ActionManager.getInstance().getAction(GotoFileAction.ID);
+    InputEvent event = ActionCommand.getInputEvent(GotoFileAction.ID);
+    Component component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT);
+    ActionManager.getInstance().tryToExecute(action, event, component, e.getPlace(), true);
   }
 
   @Override

@@ -44,11 +44,6 @@ public class SymbolSearchEverywhereContributor extends AbstractGotoSEContributor
     return 300;
   }
 
-  @Override
-  public boolean isDumbModeSupported() {
-    return false;
-  }
-
   @NotNull
   @Override
   protected FilteringGotoByModel<Language> createModel(@NotNull Project project) {
