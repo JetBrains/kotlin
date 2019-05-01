@@ -94,6 +94,12 @@ open class CommonInjectedFileChangesHandler(
     ElementManipulators.getManipulator(host).handleContentChange(host, insideHost, content)
   }
 
+  override fun dispose() {
+    markers.forEach(MarkersMapping::dispose)
+    markers.clear()
+    super.dispose()
+  }
+
   override fun handlesRange(range: TextRange): Boolean {
     if (markers.isEmpty()) return false
 
@@ -175,6 +181,10 @@ data class MarkersMapping(val hostMarker: RangeMarker,
   val hostElementRange: TextRange? get() = hostPointer.range?.range
   val fragmentRange: TextRange get() = fragmentMarker.range
   fun isValid(): Boolean = hostMarker.isValid && fragmentMarker.isValid && hostPointer.element?.isValid == true
+  fun dispose() {
+    fragmentMarker.dispose()
+    hostMarker.dispose()
+  }
 }
 
 inline val Segment.range: TextRange get() = TextRange.create(this)
