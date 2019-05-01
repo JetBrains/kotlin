@@ -15459,6 +15459,345 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/ranges/nullableLoopParameter/rangeLiteral.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/ranges/unsigned")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Unsigned extends AbstractIrJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInUnsigned() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/expression")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Expression extends AbstractIrJsCodegenBoxTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInExpression() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/expression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+                }
+
+                @TestMetadata("emptyDownto.kt")
+                public void testEmptyDownto() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/emptyDownto.kt");
+                }
+
+                @TestMetadata("emptyRange.kt")
+                public void testEmptyRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/emptyRange.kt");
+                }
+
+                @TestMetadata("inexactDownToMinValue.kt")
+                public void testInexactDownToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/inexactDownToMinValue.kt");
+                }
+
+                @TestMetadata("inexactSteppedDownTo.kt")
+                public void testInexactSteppedDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/inexactSteppedDownTo.kt");
+                }
+
+                @TestMetadata("inexactSteppedRange.kt")
+                public void testInexactSteppedRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/inexactSteppedRange.kt");
+                }
+
+                @TestMetadata("inexactToMaxValue.kt")
+                public void testInexactToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/inexactToMaxValue.kt");
+                }
+
+                @TestMetadata("maxValueMinusTwoToMaxValue.kt")
+                public void testMaxValueMinusTwoToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/maxValueMinusTwoToMaxValue.kt");
+                }
+
+                @TestMetadata("maxValueToMaxValue.kt")
+                public void testMaxValueToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/maxValueToMaxValue.kt");
+                }
+
+                @TestMetadata("maxValueToMinValue.kt")
+                public void testMaxValueToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/maxValueToMinValue.kt");
+                }
+
+                @TestMetadata("oneElementDownTo.kt")
+                public void testOneElementDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/oneElementDownTo.kt");
+                }
+
+                @TestMetadata("oneElementRange.kt")
+                public void testOneElementRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/oneElementRange.kt");
+                }
+
+                @TestMetadata("openRange.kt")
+                public void testOpenRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/openRange.kt");
+                }
+
+                @TestMetadata("overflowZeroDownToMaxValue.kt")
+                public void testOverflowZeroDownToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/overflowZeroDownToMaxValue.kt");
+                }
+
+                @TestMetadata("overflowZeroToMinValue.kt")
+                public void testOverflowZeroToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/overflowZeroToMinValue.kt");
+                }
+
+                @TestMetadata("progressionDownToMinValue.kt")
+                public void testProgressionDownToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/progressionDownToMinValue.kt");
+                }
+
+                @TestMetadata("progressionMaxValueMinusTwoToMaxValue.kt")
+                public void testProgressionMaxValueMinusTwoToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/progressionMaxValueMinusTwoToMaxValue.kt");
+                }
+
+                @TestMetadata("progressionMaxValueToMaxValue.kt")
+                public void testProgressionMaxValueToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/progressionMaxValueToMaxValue.kt");
+                }
+
+                @TestMetadata("progressionMaxValueToMinValue.kt")
+                public void testProgressionMaxValueToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/progressionMaxValueToMinValue.kt");
+                }
+
+                @TestMetadata("progressionMinValueToMinValue.kt")
+                public void testProgressionMinValueToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/progressionMinValueToMinValue.kt");
+                }
+
+                @TestMetadata("reversedBackSequence.kt")
+                public void testReversedBackSequence() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/reversedBackSequence.kt");
+                }
+
+                @TestMetadata("reversedEmptyBackSequence.kt")
+                public void testReversedEmptyBackSequence() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/reversedEmptyBackSequence.kt");
+                }
+
+                @TestMetadata("reversedEmptyRange.kt")
+                public void testReversedEmptyRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/reversedEmptyRange.kt");
+                }
+
+                @TestMetadata("reversedInexactSteppedDownTo.kt")
+                public void testReversedInexactSteppedDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/reversedInexactSteppedDownTo.kt");
+                }
+
+                @TestMetadata("reversedRange.kt")
+                public void testReversedRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/reversedRange.kt");
+                }
+
+                @TestMetadata("reversedSimpleSteppedRange.kt")
+                public void testReversedSimpleSteppedRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/reversedSimpleSteppedRange.kt");
+                }
+
+                @TestMetadata("simpleDownTo.kt")
+                public void testSimpleDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/simpleDownTo.kt");
+                }
+
+                @TestMetadata("simpleRange.kt")
+                public void testSimpleRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/simpleRange.kt");
+                }
+
+                @TestMetadata("simpleRangeWithNonConstantEnds.kt")
+                public void testSimpleRangeWithNonConstantEnds() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/simpleRangeWithNonConstantEnds.kt");
+                }
+
+                @TestMetadata("simpleSteppedDownTo.kt")
+                public void testSimpleSteppedDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/simpleSteppedDownTo.kt");
+                }
+
+                @TestMetadata("simpleSteppedRange.kt")
+                public void testSimpleSteppedRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/simpleSteppedRange.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/literal")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Literal extends AbstractIrJsCodegenBoxTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInLiteral() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/literal"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+                }
+
+                @TestMetadata("emptyDownto.kt")
+                public void testEmptyDownto() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/emptyDownto.kt");
+                }
+
+                @TestMetadata("emptyRange.kt")
+                public void testEmptyRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/emptyRange.kt");
+                }
+
+                @TestMetadata("inexactDownToMinValue.kt")
+                public void testInexactDownToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/inexactDownToMinValue.kt");
+                }
+
+                @TestMetadata("inexactSteppedDownTo.kt")
+                public void testInexactSteppedDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/inexactSteppedDownTo.kt");
+                }
+
+                @TestMetadata("inexactSteppedRange.kt")
+                public void testInexactSteppedRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/inexactSteppedRange.kt");
+                }
+
+                @TestMetadata("inexactToMaxValue.kt")
+                public void testInexactToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/inexactToMaxValue.kt");
+                }
+
+                @TestMetadata("maxValueMinusTwoToMaxValue.kt")
+                public void testMaxValueMinusTwoToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/maxValueMinusTwoToMaxValue.kt");
+                }
+
+                @TestMetadata("maxValueToMaxValue.kt")
+                public void testMaxValueToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/maxValueToMaxValue.kt");
+                }
+
+                @TestMetadata("maxValueToMinValue.kt")
+                public void testMaxValueToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/maxValueToMinValue.kt");
+                }
+
+                @TestMetadata("oneElementDownTo.kt")
+                public void testOneElementDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/oneElementDownTo.kt");
+                }
+
+                @TestMetadata("oneElementRange.kt")
+                public void testOneElementRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/oneElementRange.kt");
+                }
+
+                @TestMetadata("openRange.kt")
+                public void testOpenRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/openRange.kt");
+                }
+
+                @TestMetadata("overflowZeroDownToMaxValue.kt")
+                public void testOverflowZeroDownToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/overflowZeroDownToMaxValue.kt");
+                }
+
+                @TestMetadata("overflowZeroToMinValue.kt")
+                public void testOverflowZeroToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/overflowZeroToMinValue.kt");
+                }
+
+                @TestMetadata("progressionDownToMinValue.kt")
+                public void testProgressionDownToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/progressionDownToMinValue.kt");
+                }
+
+                @TestMetadata("progressionMaxValueMinusTwoToMaxValue.kt")
+                public void testProgressionMaxValueMinusTwoToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/progressionMaxValueMinusTwoToMaxValue.kt");
+                }
+
+                @TestMetadata("progressionMaxValueToMaxValue.kt")
+                public void testProgressionMaxValueToMaxValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/progressionMaxValueToMaxValue.kt");
+                }
+
+                @TestMetadata("progressionMaxValueToMinValue.kt")
+                public void testProgressionMaxValueToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/progressionMaxValueToMinValue.kt");
+                }
+
+                @TestMetadata("progressionMinValueToMinValue.kt")
+                public void testProgressionMinValueToMinValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/progressionMinValueToMinValue.kt");
+                }
+
+                @TestMetadata("reversedBackSequence.kt")
+                public void testReversedBackSequence() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/reversedBackSequence.kt");
+                }
+
+                @TestMetadata("reversedEmptyBackSequence.kt")
+                public void testReversedEmptyBackSequence() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/reversedEmptyBackSequence.kt");
+                }
+
+                @TestMetadata("reversedEmptyRange.kt")
+                public void testReversedEmptyRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/reversedEmptyRange.kt");
+                }
+
+                @TestMetadata("reversedInexactSteppedDownTo.kt")
+                public void testReversedInexactSteppedDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/reversedInexactSteppedDownTo.kt");
+                }
+
+                @TestMetadata("reversedRange.kt")
+                public void testReversedRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/reversedRange.kt");
+                }
+
+                @TestMetadata("reversedSimpleSteppedRange.kt")
+                public void testReversedSimpleSteppedRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/reversedSimpleSteppedRange.kt");
+                }
+
+                @TestMetadata("simpleDownTo.kt")
+                public void testSimpleDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/simpleDownTo.kt");
+                }
+
+                @TestMetadata("simpleRange.kt")
+                public void testSimpleRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/simpleRange.kt");
+                }
+
+                @TestMetadata("simpleRangeWithNonConstantEnds.kt")
+                public void testSimpleRangeWithNonConstantEnds() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/simpleRangeWithNonConstantEnds.kt");
+                }
+
+                @TestMetadata("simpleSteppedDownTo.kt")
+                public void testSimpleSteppedDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/simpleSteppedDownTo.kt");
+                }
+
+                @TestMetadata("simpleSteppedRange.kt")
+                public void testSimpleSteppedRange() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/simpleSteppedRange.kt");
+                }
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/reflection")
