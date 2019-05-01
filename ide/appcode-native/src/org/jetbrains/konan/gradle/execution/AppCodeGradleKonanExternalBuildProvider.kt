@@ -24,7 +24,7 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
         private const val SDK_NAME = "SDK_NAME"
 
         private const val GRADLE_CLEAN_TASK_NAME = "clean"
-        private const val GRADLE_BUILD_TASK_NAME = "buildForXcode"
+        const val GRADLE_BUILD_TASK_NAME = "buildForXcode"
     }
 
     private data class GradleBuildContext(
@@ -41,7 +41,8 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
 
     private fun getTasksToInvoke(taskName: String, configuration: BuildConfiguration): List<String> {
         val configurations = mutableListOf(configuration)
-        configurations.addAll(configuration.target.resolvedDependencies
+        val target = configuration.target
+        configurations.addAll(target.resolvedDependencies.asSequence()
                                   .filter { it.isFramework }
                                   .mapNotNull { configuration.getWithTarget(it) })
 
@@ -50,10 +51,9 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
             tasks.addAll(ExternalSystemApiUtil.findAll(moduleNode, ProjectKeys.TASK).map { it.data.name })
         }
 
-        return configurations
+        return configurations.asSequence()
             .mapNotNull { it.getBuildSetting(BuildSettingNames.TARGET_NAME).string }
-            .map { ":$it:$taskName" }
-            .filter { it in tasks }
+            .filterGradleTasks(taskName, configuration.project).toList()
     }
 
     override fun beforeBuild(project: Project, configuration: BuildConfiguration, action: XcodeBuildAction) {
@@ -98,4 +98,17 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
             }
         }
     }
+}
+
+fun Sequence<String>.filterGradleTasks(taskName: String, project: Project): Sequence<String> {
+    val tasks = collectsGradleTasks(project)
+    return this.map { targetName -> ":$targetName:$taskName" }.filter { task -> task in tasks }
+}
+
+private fun collectsGradleTasks(project: Project): HashSet<String> {
+    val tasks = HashSet<String>()
+    forEachKonanProject(project) { _, moduleNode, _ ->
+        tasks.addAll(ExternalSystemApiUtil.findAll(moduleNode, ProjectKeys.TASK).asSequence().map { it.data.name })
+    }
+    return tasks
 }

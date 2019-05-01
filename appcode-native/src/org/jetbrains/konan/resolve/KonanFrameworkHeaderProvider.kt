@@ -6,22 +6,25 @@
 package org.jetbrains.konan.resolve
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.jetbrains.cidr.lang.CustomHeaderProvider
 import com.jetbrains.cidr.lang.CustomTargetHeaderSerializationHelper
 import com.jetbrains.cidr.lang.OCIncludeHelpers.adjustHeaderName
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.preprocessor.OCResolveRootAndConfiguration
-import com.jetbrains.cidr.xcode.frameworks.LocalFramework
+import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
+import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames
 import com.jetbrains.cidr.xcode.model.PBXTarget
 import com.jetbrains.cidr.xcode.model.XCBuildConfiguration
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
-import org.jetbrains.kotlin.idea.debugger.readAction
-
+import org.jetbrains.konan.gradle.KonanProjectDataService
+import org.jetbrains.konan.gradle.execution.AppCodeGradleKonanExternalBuildProvider
+import org.jetbrains.konan.gradle.execution.AppCodeGradleKonanExternalBuildProvider.Companion.GRADLE_BUILD_TASK_NAME
+import org.jetbrains.konan.gradle.execution.filterGradleTasks
 
 class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
     init {
@@ -32,8 +35,18 @@ class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
         }
     }
 
-    override fun accepts(configuration: OCResolveRootAndConfiguration?): Boolean {
-        return configuration?.configuration?.project?.isKonanProject() == true
+    override fun accepts(resolveRootAndConfiguration: OCResolveRootAndConfiguration?): Boolean {
+        resolveRootAndConfiguration ?: return false
+        val config = resolveRootAndConfiguration.configuration ?: return false
+
+        val target = XcodeMetaData.getTargetFor(config) ?: return false
+        val targets = mutableListOf(target)
+
+        targets.addAll(target.resolvedDependencies.asSequence().filter { it.isFramework })
+        return targets.asSequence()
+            .mapNotNull { it.name }
+            .filterGradleTasks(GRADLE_BUILD_TASK_NAME, config.project)
+            .any()
     }
 
     override fun provideSerializationPath(virtualFile: VirtualFile): String? {
@@ -82,19 +95,5 @@ class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
             }
     }
 
-    private fun Project.isKonanProject(): Boolean {
-        return CachedValuesManager.getManager(this).getCachedValue(this) {
-            val metaData = XcodeMetaData.getInstance(this)
-            val value = readAction { metaData.workspaceFrameworks.any { framework -> framework.isKonanFramework() } }
-            val tracker = metaData.xcodeProjectTrackers.buildSettingsTracker
-            CachedValueProvider.Result(value, tracker)
-        }
-    }
-
-    private fun LocalFramework.isKonanFramework(): Boolean {
-        //todo[medvedev] implement correct check
-        return name.contains("Kotlin")
-//        return XcodeMetaData.asXCResolveConfiguration(configuration)?.buildConfiguration?.declaredBuildSettingValues?.getString("KOTLIN_NATIVE_PRESET") != null
-    }
 }
 
