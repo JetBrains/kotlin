@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -107,7 +107,9 @@ fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
  * @return An exception that was expected to be thrown and was successfully caught.
  * The returned exception can be inspected further, for example by asserting its property values.
  */
-fun assertFails(block: () -> Unit): Throwable = assertFails(null, block)
+@InlineOnly
+inline fun assertFails(block: () -> Unit): Throwable =
+    checkResultIsFailure(null, runCatching(block))
 
 /**
  * Asserts that given function [block] fails by throwing an exception.
@@ -118,14 +120,20 @@ fun assertFails(block: () -> Unit): Throwable = assertFails(null, block)
  * The returned exception can be inspected further, for example by asserting its property values.
  */
 @SinceKotlin("1.1")
-fun assertFails(message: String?, block: () -> Unit): Throwable {
-    try {
-        block()
-    } catch (e: Throwable) {
-        assertEquals(e.message, e.message) // success path assertion for qunit
-        return e
-    }
-    asserter.fail(messagePrefix(message) + "Expected an exception to be thrown, but was completed successfully.")
+@InlineOnly
+inline fun assertFails(message: String?, block: () -> Unit): Throwable =
+    checkResultIsFailure(message, runCatching(block))
+
+@PublishedApi
+internal fun checkResultIsFailure(message: String?, blockResult: Result<Unit>): Throwable {
+    blockResult.fold(
+        onSuccess = {
+            asserter.fail(messagePrefix(message) + "Expected an exception to be thrown, but was completed successfully.")
+        },
+        onFailure = { e ->
+            return e
+        }
+    )
 }
 
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
@@ -136,7 +144,7 @@ fun assertFails(message: String?, block: () -> Unit): Throwable {
  * The returned exception can be inspected further, for example by asserting its property values.
  */
 @InlineOnly
-inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T =
+inline fun <reified T : Throwable> assertFailsWith(message: String? = null, block: () -> Unit): T =
     assertFailsWith(T::class, message, block)
 
 /**
@@ -145,7 +153,21 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
  * @return An exception of the expected exception type [T] that successfully caught.
  * The returned exception can be inspected further, for example by asserting its property values.
  */
-fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
+@InlineOnly
+inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
+
+
+/**
+ * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception of the expected exception type [T] that successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
+@InlineOnly
+inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
+    checkResultIsFailure(exceptionClass, message, runCatching(block))
 
 
 /**

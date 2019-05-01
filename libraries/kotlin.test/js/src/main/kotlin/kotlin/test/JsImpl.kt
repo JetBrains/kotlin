@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,20 +18,20 @@ actual fun todo(block: () -> Unit) {
 }
 
 
-/**
- * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
- *
- * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
- *
- * @return An exception of the expected exception type [T] that successfully caught.
- * The returned exception can be inspected further, for example by asserting its property values.
- */
-actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
-    val exception = assertFails(message, block)
-    assertTrue(exceptionClass.isInstance(exception), messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was $exception")
-
-    @Suppress("UNCHECKED_CAST")
-    return exception as T
+@PublishedApi
+internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<T>, message: String?, blockResult: Result<Unit>): T {
+    blockResult.fold(
+        onSuccess = {
+            asserter.fail(messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was completed successfully.")
+        },
+        onFailure = { e ->
+            if (exceptionClass.isInstance(e)) {
+                @Suppress("UNCHECKED_CAST")
+                return e as T
+            }
+            asserter.fail(messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was $e")
+        }
+    )
 }
 
 

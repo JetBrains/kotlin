@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,12 +14,6 @@ import kotlin.reflect.KClass
  */
 expect fun todo(block: () -> Unit)
 
-/**
- * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
- *
- * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
- *
- * @return An exception of the expected exception type [T] that successfully caught.
- * The returned exception can be inspected further, for example by asserting its property values.
- */
-expect fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T
+/** Asserts that a [blockResult] is a failure with the specific exception type being thrown. */
+@PublishedApi
+internal expect fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<T>, message: String?, blockResult: Result<Unit>): T
