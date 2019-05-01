@@ -35,7 +35,7 @@ public expect inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
  * be present in the completion's [CoroutineContext]. It is the invoker's responsibility to ensure that a proper invocation
  * context is established.
  *
- * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of a suspended
+ * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of the suspended
  * coroutine using a reference to the suspending function.
  */
 @SinceKotlin("1.3")
