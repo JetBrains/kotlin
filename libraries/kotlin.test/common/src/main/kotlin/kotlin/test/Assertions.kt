@@ -14,6 +14,7 @@ package kotlin.test
 
 import kotlin.contracts.*
 import kotlin.internal.*
+import kotlin.jvm.JvmName
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
 
@@ -108,6 +109,7 @@ fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
  * The returned exception can be inspected further, for example by asserting its property values.
  */
 @InlineOnly
+@JvmName("assertFailsInline")
 inline fun assertFails(block: () -> Unit): Throwable =
     checkResultIsFailure(null, runCatching(block))
 
@@ -121,6 +123,7 @@ inline fun assertFails(block: () -> Unit): Throwable =
  */
 @SinceKotlin("1.1")
 @InlineOnly
+@JvmName("assertFailsInline")
 inline fun assertFails(message: String?, block: () -> Unit): Throwable =
     checkResultIsFailure(message, runCatching(block))
 
@@ -154,8 +157,8 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, bloc
  * The returned exception can be inspected further, for example by asserting its property values.
  */
 @InlineOnly
+@JvmName("assertFailsWithInline")
 inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
-
 
 /**
  * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
@@ -166,6 +169,7 @@ inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () 
  * The returned exception can be inspected further, for example by asserting its property values.
  */
 @InlineOnly
+@JvmName("assertFailsWithInline")
 inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
     checkResultIsFailure(exceptionClass, message, runCatching(block))
 
