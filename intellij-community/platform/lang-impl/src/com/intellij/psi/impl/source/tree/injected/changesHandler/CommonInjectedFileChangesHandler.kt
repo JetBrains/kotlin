@@ -19,10 +19,10 @@ import kotlin.math.min
 
 open class CommonInjectedFileChangesHandler(
   shreds: List<PsiLanguageInjectionHost.Shred>,
-  editor: Editor,
-  newDocument: Document,
+  hostEditor: Editor,
+  fragmentDocument: Document,
   injectedFile: PsiFile
-) : BaseInjectedFileChangesHandler(editor, newDocument, injectedFile) {
+) : BaseInjectedFileChangesHandler(hostEditor, fragmentDocument, injectedFile) {
 
   protected val markers: MutableList<MarkersMapping> =
     ContainerUtil.newLinkedList<MarkersMapping>().apply {
@@ -36,10 +36,10 @@ open class CommonInjectedFileChangesHandler(
     val smartPointerManager = SmartPointerManager.getInstance(myProject)
     var curOffset = -1
     for (shred in shreds) {
-      val rangeMarker = localRangeMarkerFromShred(shred)
+      val rangeMarker = fragmentMarkerFromShred(shred)
       val rangeInsideHost = shred.rangeInsideHost
       val host = shred.host ?: failAndReport("host should not be null", null, null)
-      val origMarker = myOrigDocument.createRangeMarker(rangeInsideHost.shiftRight(host.textRange.startOffset))
+      val origMarker = myHostDocument.createRangeMarker(rangeInsideHost.shiftRight(host.textRange.startOffset))
       val elementPointer = smartPointerManager.createSmartPsiElementPointer(host)
       result.add(MarkersMapping(origMarker, rangeMarker, elementPointer))
 
@@ -58,23 +58,21 @@ open class CommonInjectedFileChangesHandler(
   override fun isValid(): Boolean = myInjectedFile.isValid && markers.all { it.isValid() }
 
   override fun commitToOriginal(e: DocumentEvent) {
-    val text = myNewDocument.text
+    val text = myFragmentDocument.text
     val map = markers.groupByTo(LinkedHashMap()) { it.host }
 
     val documentManager = PsiDocumentManager.getInstance(myProject)
-    documentManager.commitDocument(myOrigDocument) // commit here and after each manipulator update
+    documentManager.commitDocument(myHostDocument) // commit here and after each manipulator update
     var localInsideFileCursor = 0
     for (host in map.keys) {
       if (host == null) continue
       val hostText = host.text
       var insideHost: ProperTextRange? = null
       val sb = StringBuilder()
-      for (entry in map[host].orEmpty()) {
-        val origMarker = entry.origin // check for validity?
+      for ((hostMarker, fragmentMarker, _) in map[host].orEmpty()) {
         val hostOffset = host.textRange.startOffset
-        val localInsideHost = ProperTextRange(origMarker.startOffset - hostOffset, origMarker.endOffset - hostOffset)
-        val rangeMarker = entry.local
-        val localInsideFile = ProperTextRange(max(localInsideFileCursor, rangeMarker.startOffset), rangeMarker.endOffset)
+        val localInsideHost = ProperTextRange(hostMarker.startOffset - hostOffset, hostMarker.endOffset - hostOffset)
+        val localInsideFile = ProperTextRange(max(localInsideFileCursor, fragmentMarker.startOffset), fragmentMarker.endOffset)
         if (insideHost != null) {
           //append unchanged inter-markers fragment
           sb.append(hostText, insideHost.endOffset, localInsideHost.startOffset)
@@ -88,7 +86,7 @@ open class CommonInjectedFileChangesHandler(
       }
       if (insideHost == null) failAndReport("insideHost is null", e)
       updateInjectionHostElement(host, insideHost, sb.toString())
-      documentManager.commitDocument(myOrigDocument)
+      documentManager.commitDocument(myHostDocument)
     }
   }
 
@@ -99,13 +97,13 @@ open class CommonInjectedFileChangesHandler(
   override fun handlesRange(range: TextRange): Boolean {
     if (markers.isEmpty()) return false
 
-    val hostRange = TextRange.create(markers[0].origin.startOffset,
-                                     markers[markers.size - 1].origin.endOffset)
+    val hostRange = TextRange.create(markers[0].hostMarker.startOffset,
+                                     markers[markers.size - 1].hostMarker.endOffset)
     return range.intersects(hostRange)
   }
 
-  protected fun localRangeMarkerFromShred(shred: PsiLanguageInjectionHost.Shred): RangeMarker =
-    myNewDocument.createRangeMarker(shred.innerRange)
+  protected fun fragmentMarkerFromShred(shred: PsiLanguageInjectionHost.Shred): RangeMarker =
+    myFragmentDocument.createRangeMarker(shred.innerRange)
 
   protected fun failAndReport(message: String, e: DocumentEvent? = null, exception: Exception? = null): Nothing =
     throw getReportException(message, e, exception)
@@ -118,16 +116,16 @@ open class CommonInjectedFileChangesHandler(
                                     *listOfNotNull(
                                       Attachment("hosts", markers.joinToString("\n\n") { it.host?.text ?: "<null>" }),
                                       Attachment("markers", markers.logMarkersRanges()),
-                                      Attachment("injected document", this.myNewDocument.text),
+                                      Attachment("injected document", this.myFragmentDocument.text),
                                       exception?.let { Attachment("exception", it) }
                                     ).toTypedArray()
     )
 
   protected fun MutableList<MarkersMapping>.logMarkersRanges(): String = joinToString("\n") { mm ->
-    "local:${myNewDocument.logMarker(mm.localRange)} orig:${logHostMarker(mm.origin.range)}"
+    "fragment:${myFragmentDocument.logMarker(mm.fragmentRange)} host:${logHostMarker(mm.hostMarker.range)}"
   }
 
-  protected fun logHostMarker(rangeInHost: TextRange?) = myOrigDocument.logMarker(rangeInHost)
+  protected fun logHostMarker(rangeInHost: TextRange?) = myHostDocument.logMarker(rangeInHost)
 
   protected fun Document.logMarker(rangeInHost: TextRange?): String = "$rangeInHost -> '${rangeInHost?.let {
     try {
@@ -151,15 +149,15 @@ open class CommonInjectedFileChangesHandler(
     var cursor = 0
     return affectedMarkers.indices.map { i ->
       val marker = affectedMarkers[i]
-      val localMarker = marker.local
+      val fragmentMarker = marker.fragmentMarker
 
-      marker to if (localMarker.isValid) {
-        val start = max(cursor, localMarker.startOffset)
-        val text = localMarker.document.text
+      marker to if (fragmentMarker.isValid) {
+        val start = max(cursor, fragmentMarker.startOffset)
+        val text = fragmentMarker.document.text
         cursor = if (affectedLength(marker, affectedRange) == 0 && affectedLength(affectedMarkers.getOrNull(i + 1), affectedRange) > 1)
-          affectedMarkers.getOrNull(i + 1)!!.local.startOffset
+          affectedMarkers.getOrNull(i + 1)!!.fragmentMarker.startOffset
         else
-          min(text.length, max(localMarker.endOffset, limit))
+          min(text.length, max(fragmentMarker.endOffset, limit))
 
         text.substringVerbose(start, cursor)
       }
@@ -170,13 +168,13 @@ open class CommonInjectedFileChangesHandler(
 }
 
 
-data class MarkersMapping(val origin: RangeMarker,
-                          val local: RangeMarker,
+data class MarkersMapping(val hostMarker: RangeMarker,
+                          val fragmentMarker: RangeMarker,
                           val hostPointer: SmartPsiElementPointer<PsiLanguageInjectionHost>) {
   val host: PsiLanguageInjectionHost? get() = hostPointer.element
-  val hostRange: TextRange? get() = hostPointer.range?.range
-  val localRange: TextRange get() = local.range
-  fun isValid(): Boolean = origin.isValid && local.isValid && hostPointer.element?.isValid == true
+  val hostElementRange: TextRange? get() = hostPointer.range?.range
+  val fragmentRange: TextRange get() = fragmentMarker.range
+  fun isValid(): Boolean = hostMarker.isValid && fragmentMarker.isValid && hostPointer.element?.isValid == true
 }
 
 inline val Segment.range: TextRange get() = TextRange.create(this)
@@ -192,11 +190,11 @@ private val PsiElement.withNextSiblings: Sequence<PsiElement>
   get() = generateSequence(this) { it.nextSibling }
 
 @ApiStatus.Internal
-fun getInjectionHostAtRange(origPsiFile: PsiFile, contextRange: Segment): PsiLanguageInjectionHost? =
-  origPsiFile.findElementAt(contextRange.startOffset)?.withNextSiblings.orEmpty()
+fun getInjectionHostAtRange(hostPsiFile: PsiFile, contextRange: Segment): PsiLanguageInjectionHost? =
+  hostPsiFile.findElementAt(contextRange.startOffset)?.withNextSiblings.orEmpty()
     .takeWhile { it.textRange.startOffset < contextRange.endOffset }
     .flatMap { sequenceOf(it, it.parent) }
     .filterIsInstance<PsiLanguageInjectionHost>().firstOrNull()
 
 private fun affectedLength(markersMapping: MarkersMapping?, affectedRange: TextRange): Int =
-  markersMapping?.localRange?.let { affectedRange.intersection(it)?.length } ?: -1
+  markersMapping?.fragmentRange?.let { affectedRange.intersection(it)?.length } ?: -1
