@@ -2956,6 +2956,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classLiteral"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("bareArray.kt")
+        public void testBareArray() throws Exception {
+            runTest("compiler/testData/codegen/box/classLiteral/bareArray.kt");
+        }
+
         @TestMetadata("primitiveKClassEquality.kt")
         public void testPrimitiveKClassEquality() throws Exception {
             runTest("compiler/testData/codegen/box/classLiteral/primitiveKClassEquality.kt");
@@ -20610,6 +20615,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("arrays.kt")
             public void testArrays() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/classLiterals/arrays.kt");
+            }
+
+            @TestMetadata("bareArray.kt")
+            public void testBareArray() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/classLiterals/bareArray.kt");
             }
 
             @TestMetadata("builtinClassLiterals.kt")

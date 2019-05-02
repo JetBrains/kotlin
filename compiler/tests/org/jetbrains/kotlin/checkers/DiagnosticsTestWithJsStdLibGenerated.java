@@ -59,6 +59,29 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/wrongMultipleInheritance.kt");
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ClassLiteral extends AbstractDiagnosticsTestWithJsStdLib {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInClassLiteral() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("arrays_after.kt")
+        public void testArrays_after() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral/arrays_after.kt");
+        }
+
+        @TestMetadata("arrays_before.kt")
+        public void testArrays_before() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral/arrays_before.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
