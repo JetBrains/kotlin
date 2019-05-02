@@ -266,7 +266,11 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                     import androidx.compose.*
 
-                    class MyComponent(var a: Int, var b: String, @Children var children: (a: Int, b: String)->Unit) : Component() {
+                    class MyComponent(
+                        var a: Int,
+                        var b: String,
+                        @Children var children: (a: Int, b: String)->Unit
+                    ) : Component() {
 
                       override fun compose() {
                         <children a b />
@@ -318,10 +322,8 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         }
     }
 
-    // TODO(b/126234895): Re-enable when the underlying code gen issue is resolved
-    // @Test
-    @Suppress("unused")
-    fun xtestCrossModule_ConstructorParameters(): Unit = ensureSetup {
+    @Test
+    fun testCrossModule_ConstructorParameters(): Unit = ensureSetup {
         val tvId = 29
 
         compose(
@@ -332,7 +334,11 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                     import androidx.compose.*
 
-                    class MyComponent(a: Int, b: String, @Children var children: (a: Int, b: String)->Unit) : Component() {
+                    class MyComponent(
+                      a: Int,
+                      b: String,
+                      @Children var children: (a: Int, b: String)->Unit
+                    ) : Component() {
                       val aValue = a
                       val bValue = b
 
@@ -353,7 +359,11 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                    var bar = 0
                    var doRecompose: () -> Unit = {}
 
-                    class MyComponent(a: Int, b: String, @Children var children: (a: Int, b: String)->Unit) : Component() {
+                    class MyComponent(
+                      a: Int,
+                      b: String,
+                      @Children var children: (a: Int, b: String)->Unit
+                    ) : Component() {
                       val aValue = a
                       val bValue = b
 
@@ -385,7 +395,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                    }
                 """
                 )
-            ), dumpClasses = true
+            )
         ).then { activity ->
             val tv = activity.findViewById(tvId) as TextView
             assertEquals("SomeValue: 0", tv.text)
