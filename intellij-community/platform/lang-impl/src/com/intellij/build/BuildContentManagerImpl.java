@@ -52,7 +52,7 @@ public class BuildContentManagerImpl implements BuildContentManager {
   public static final String Sync = "Sync";
   public static final String Run = "Run";
   public static final String Debug = "Debug";
-  private static final String[] ourPresetOrder = {Build, Sync, Run, Debug};
+  private static final String[] ourPresetOrder = {Sync, Build, Run, Debug};
   private static final Key<Map<Object, CloseListener>> CONTENT_CLOSE_LISTENERS = Key.create("CONTENT_CLOSE_LISTENERS");
 
   private Project myProject;
@@ -142,12 +142,10 @@ public class BuildContentManagerImpl implements BuildContentManager {
         }
 
         int place = 0;
-        for (int i = 0; i < idx; i++) {
+        for (int i = 0; i <= idx; i++) {
           String key = ourPresetOrder[i];
           Collection<String> tabNames = existingCategoriesNames.get(key);
-          if (!key.equals(category)) {
-            place += tabNames.size();
-          }
+          place += tabNames.size();
         }
         contentManager.addContent(content, place);
       }
