@@ -529,7 +529,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
         final Object at = myPatternsList.getModel().getElementAt(i);
         if (at instanceof String) {
           final FileNameMatcher matcher = FileTypeManager.parseFromString((String)at);
-          if (FileNameMatcherEx.acceptsCharSequence(matcher, pattern)) {
+          if (matcher.acceptsCharSequence(pattern)) {
             ScrollingUtil.selectItem(myPatternsList, i);
             return;
           }
