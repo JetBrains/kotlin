@@ -84,7 +84,9 @@ public class CompilerManagerImpl extends CompilerManager {
     }
 
     for (InspectionValidator validator : InspectionValidator.EP_NAME.getExtensionList(project)) {
-      addCompiler(new InspectionValidatorWrapper(this, InspectionManager.getInstance(project), InspectionProjectProfileManager.getInstance(project), PsiDocumentManager.getInstance(project), PsiManager.getInstance(project), validator));
+      addCompiler(
+        new InspectionValidatorWrapper(this, InspectionManager.getInstance(project), InspectionProjectProfileManager.getInstance(project),
+                                       PsiDocumentManager.getInstance(project), PsiManager.getInstance(project), validator));
     }
     addCompilableFileType(StdFileTypes.JAVA);
 
@@ -156,15 +158,10 @@ public class CompilerManagerImpl extends CompilerManager {
   @Override
   @NotNull
   public <T  extends Compiler> T[] getCompilers(@NotNull Class<T> compilerClass) {
-    return getCompilers(compilerClass, CompilerFilter.ALL);
-  }
-
-  @NotNull
-  private <T extends Compiler> T[] getCompilers(@NotNull Class<T> compilerClass, CompilerFilter filter) {
     final List<T> compilers = new ArrayList<>(myCompilers.size());
     for (final Compiler item : myCompilers) {
       T concreteCompiler = ObjectUtils.tryCast(item, compilerClass);
-      if (concreteCompiler != null && filter.acceptCompiler(concreteCompiler)) {
+      if (concreteCompiler != null) {
         compilers.add(concreteCompiler);
       }
     }
