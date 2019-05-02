@@ -13,7 +13,7 @@ import org.jetbrains.annotations.ApiStatus
 import java.util.function.Predicate
 
 private val SUCCESSFUL_STEPS_FILTER = Predicate { node: ExecutionNode -> !node.isFailed && !node.hasWarnings() }
-private val WARNINGS_FILTER = Predicate { node: ExecutionNode -> node.hasWarnings() }
+private val WARNINGS_FILTER = Predicate { node: ExecutionNode -> node.hasWarnings() || node.hasInfos() }
 
 @ApiStatus.Experimental
 fun createFilteringActionsGroup(filterable: Filterable<ExecutionNode>): DefaultActionGroup {
