@@ -24,7 +24,7 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
     """)
 
     fun testModel_Simple() = testFile("""
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         class MyModel { }
@@ -37,7 +37,7 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
     """)
 
     fun testModel_OneField() = testFile("""
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         class MyModel {
@@ -60,7 +60,7 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
     """)
 
     fun testModel_OneField_Isolation() = testFile("""
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         class MyModel {
@@ -87,7 +87,7 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
     """)
 
     fun testModel_ThreeFields() = testFile("""
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         class MyModel {
@@ -125,7 +125,7 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
     """)
 
     fun testModel_ThreeFields_Isolation() = testFile("""
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         class MyModel {
@@ -163,7 +163,7 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
     """)
 
     fun testModel_CustomSetter_Isolation() = testFile("""
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         class MyModel {
@@ -215,7 +215,7 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
     """)
 
     fun testModel_PrivateFields_Isolation() = testFile("""
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         class MyModel {
@@ -260,11 +260,11 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
 }
 
 const val HELPERS = """
-    import com.google.r4a.frames.open
-    import com.google.r4a.frames.commit
-    import com.google.r4a.frames.suspend
-    import com.google.r4a.frames.restore
-    import com.google.r4a.frames.Frame
+    import androidx.compose.frames.open
+    import androidx.compose.frames.commit
+    import androidx.compose.frames.suspend
+    import androidx.compose.frames.restore
+    import androidx.compose.frames.Frame
 
     inline fun <T> frame(crossinline block: ()->T): T {
         open(false)

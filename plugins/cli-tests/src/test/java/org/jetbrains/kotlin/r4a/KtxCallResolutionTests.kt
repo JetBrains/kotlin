@@ -4,7 +4,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testReceiverScopeCall() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composble fun Foo(onClick: Double.() -> Unit) {}
 
@@ -39,7 +39,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testImplicitReceiverScopeCall() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Bar {}
 
@@ -74,7 +74,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testSomethingQualifiedTag() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             object Foo {
                 class Bar {
@@ -114,7 +114,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testReceiverScopeTag() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Foo {}
 
@@ -146,7 +146,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testSomething() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Bar(var y: Int = 0) {
                 @Composable
@@ -195,7 +195,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testNestedCalls() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Stateful
             class Bar(var y: Int = 0) {
@@ -260,7 +260,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testTopLevelFunction() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable
             fun Foo(a: Int, z: Int) {
@@ -302,7 +302,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testParameterNamesForInstantiatedClassObjects() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Bar {
                 @Composable
@@ -347,7 +347,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testParameterNamesForLambdas() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable
             fun test() {
@@ -385,7 +385,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testSomethingWithChildren() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Bar(var y: Int = 0) {
                 @Children var children: @Composable() () -> Unit = {}
@@ -443,7 +443,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testViewResolution() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.Button
 
             @Composable
@@ -476,7 +476,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testNonMemoizableClassComponent() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Bar(var a: Int) {
                 @Composable
@@ -527,7 +527,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testChildrenLambdaSetterWithMultipleParams() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Example {
                 @Children
@@ -590,7 +590,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testMemoizableClassComponent() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Stateful
             class Bar(var a: Int) {
@@ -638,7 +638,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testMemoizableClassComponentComponent() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Bar(var a: Int): Component() {
                 override fun compose() {}
@@ -675,7 +675,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testMemoizableClassComponentComponent2() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class TestContainer(@Children var children: @Composable() (x: Double)->Unit): Component() {
               override fun compose() {}
@@ -714,7 +714,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testDynamicTagsMemoizableClassComponent() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Stateful
             class Bar(var a: Int) {
@@ -763,7 +763,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testDynamicTagsInnerClassMemoizableClassComponent() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
 
             class Bar(var a: Int) {
@@ -815,7 +815,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testDeepNestedCalls() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
 
             class A { operator fun invoke(a: Int): B { return B() } }
@@ -891,7 +891,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testRecursionLimitNoParams() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
 
             class A { operator fun invoke(): B { return B() } }
@@ -927,7 +927,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testPivotalsAreNotValidated() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable
             fun A(@Pivotal x: Int, y: Int) {
@@ -970,7 +970,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testConstructorParamsArePivotal() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Foo(a: Int, private val b: Int, var c: Int, d: Int) : Component() {
               var d: Int = d
@@ -1012,7 +1012,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testValChildren() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class A(@Children val children: () -> Unit) : Component() {
                 override fun compose() {}
@@ -1045,7 +1045,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testPrivateValChildren() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class A(@Children private val children: () -> Unit) : Component() {
                 override fun compose() {}
@@ -1078,7 +1078,7 @@ class KtxCallResolutionTests : AbstractResolvedKtxCallsTest() {
 
     fun testIsStaticNature() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
 //            class Bar {
 //                @Composable

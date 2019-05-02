@@ -7,7 +7,7 @@ class FrameDiagnosticTests : AbstractR4aDiagnosticsTest() {
     // Ensure the simple case does not report an error
     fun testModel_Accept_Simple() = doTest(
         """
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         class MyModel {
@@ -19,7 +19,7 @@ class FrameDiagnosticTests : AbstractR4aDiagnosticsTest() {
     // Ensure @Model is not used on an open class
     fun testModel_Report_Open() = doTest(
         """
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         open class <!OPEN_MODEL!>MyModel<!> {
@@ -31,7 +31,7 @@ class FrameDiagnosticTests : AbstractR4aDiagnosticsTest() {
     // Ensure @Model is not used on an abstract class
     fun testModel_Report_Abstract() = doTest(
         """
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         @Model
         abstract class <!OPEN_MODEL!>MyModel<!> {
@@ -43,7 +43,7 @@ class FrameDiagnosticTests : AbstractR4aDiagnosticsTest() {
     // Ensure @Model is not used on a class that specifies a base class
     fun testModel_Report_Inheritance() = doTest(
         """
-        import com.google.r4a.Model
+        import androidx.compose.Model
 
         open class NonModel { }
 

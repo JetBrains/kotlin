@@ -5,7 +5,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testObserveLowering() = testCompile(
         """
             import android.widget.Button
-            import com.google.r4a.*
+            import androidx.compose.*
             import androidx.ui.androidview.adapters.setOnClick
 
             @Model
@@ -27,7 +27,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testEmptyComposeFunction() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Foo {
             @Composable
@@ -38,7 +38,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSingleViewCompose() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
 
         class Foo {
@@ -52,7 +52,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testMultipleRootViewCompose() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
 
         class Foo {
@@ -68,7 +68,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testNestedViewCompose() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
 
         class Foo {
@@ -88,7 +88,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSingleComposite() = testCompile(
         """
-         import com.google.r4a.*
+         import androidx.compose.*
 
         class Bar {
             @Composable
@@ -106,7 +106,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testMultipleRootComposite() = testCompile(
         """
-         import com.google.r4a.*
+         import androidx.compose.*
 
         class Bar {
             @Composable
@@ -126,7 +126,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testViewAndComposites() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
 
         class Bar {
@@ -147,7 +147,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testAttributes() = testCompile(
         """
-         import com.google.r4a.*
+         import androidx.compose.*
         import android.widget.*
 
         class Bar {
@@ -174,7 +174,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     // TODO(lmr): add test in r4a-runtime around behavior of this attribute
     fun testKeyAttributes() = testCompile(
         """
-         import com.google.r4a.*
+         import androidx.compose.*
 
         class Foo {
             var key: Int = 0
@@ -188,7 +188,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testForEach() = testCompile(
         """
-         import com.google.r4a.*
+         import androidx.compose.*
 
         class Bar {
             @Composable
@@ -208,7 +208,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testForLoop() = testCompile(
         """
-         import com.google.r4a.*
+         import androidx.compose.*
 
         class Bar {
             @Composable
@@ -228,7 +228,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testEarlyReturns() = testCompile(
         """
-         import com.google.r4a.*
+         import androidx.compose.*
 
         class Bar {
             @Composable
@@ -249,7 +249,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testConditionalRendering() = testCompile(
         """
-         import com.google.r4a.*
+         import androidx.compose.*
         import java.util.Random
 
         class Bar {
@@ -278,7 +278,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testFunctionInstanceZeroArgs() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Bar {
             @Composable
@@ -300,7 +300,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testFunctionInstanceMultipleArgs() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Bar {
             @Composable
@@ -322,7 +322,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testComposeAttribute() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Bar {
             @Composable
@@ -341,7 +341,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testComposeWithParamsAttribute() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Bar {
             @Composable
@@ -360,7 +360,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testComposeAttributeFunctionType() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class X {
             lateinit var composeItem: Function1<@kotlin.ParameterName("arg0") Int, Unit>
@@ -375,7 +375,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testExtensionFunctions() = testCompile(
         """
 
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
 
         fun LinearLayout.setSomeExtension(x: Int) {
@@ -392,7 +392,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenOfComponent() = testCompile(
         """
         import android.widget.*
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class HelperComponent {
             private lateinit var children: () -> Unit
@@ -421,7 +421,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenWithTypedParameters() = testCompile(
         """
         import android.widget.*
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class HelperComponent {
             private lateinit var children: (title: String, rating: Int) -> Unit
@@ -451,7 +451,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenWithUntypedParameters() = testCompile(
         """
         import android.widget.*
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class HelperComponent {
             private lateinit var children: (title: String, rating: Int) -> Unit
@@ -481,7 +481,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenCaptureVariables() = testCompile(
         """
         import android.widget.*
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class HelperComponent {
             lateinit private var children: () -> Unit
@@ -509,7 +509,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenDeepCaptureVariables() = testCompile(
         """
         import android.widget.*
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class A {
             lateinit private var children: () -> Unit
@@ -549,7 +549,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenDeepCaptureVariablesWithParameters() = testCompile(
         """
         import android.widget.*
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class A {
             lateinit private var children: (String) -> Unit
@@ -589,7 +589,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenOfNativeView() = testCompile(
         """
         import android.widget.*
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class MainComponent {
             @Composable
@@ -606,7 +606,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testIrSpecial() = testCompile(
         """
         import android.widget.*
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class HelperComponent {
             private lateinit var children: () -> Unit
@@ -647,7 +647,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testGenericsInnerClass() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class A<T>(val value: T) {
             inner class Getter {
@@ -668,7 +668,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testXGenericInnerClassConstructor() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class A<T>(val value: T) {
             inner class C {
@@ -687,7 +687,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testXGenericConstructorParams() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class A<T>(
             val value: T
@@ -716,7 +716,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSimpleNoArgsComponent() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Simple {
             @Composable
@@ -731,7 +731,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSimpleVarInConstructor() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class SimpleConstructorArg(var foo: String) {
             @Composable
@@ -746,7 +746,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testLateInitProp() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class SimpleLateInitArg {
             lateinit var foo: String
@@ -762,7 +762,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testGenericCtorArg() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class GenericCtorArg<T>(var foo: T) {
             @Composable
@@ -778,7 +778,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testPropsAndSettersAndExtensionSetters() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class OneArg {
             var bar: String? = null
@@ -810,7 +810,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testGenericAttribute() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Simple {
             @Composable
@@ -834,7 +834,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSimpleFunctionComponent() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         fun OneArg(foo: String) {}
 
@@ -846,7 +846,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testOverloadedFunctions() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         fun OneArg(foo: String) {}
         fun OneArg(foo: Int) {}
@@ -860,7 +860,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testConstructorVal() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Foo(val x: Int) {
             @Composable
@@ -875,7 +875,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testConstructorNonPropertyParam() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Foo(x: Int) {
             @Composable
@@ -890,7 +890,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testDotQualifiedObjectToClass() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         object Obj {
             class B {
@@ -907,7 +907,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testPackageQualifiedTags() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         fun run() {
             <android.widget.TextView text="bar" />
@@ -917,7 +917,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testDotQualifiedClassToClass() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Y {
             class Z {
@@ -936,7 +936,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testInnerClass() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class A(var foo: String) {
             inner class B(var bar: String) {
@@ -954,7 +954,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testGenericInnerClass() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class A<T>(var foo: T) {
             inner class B(var bar: T) {
@@ -974,7 +974,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testLocalLambda() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Simple {
             @Composable
@@ -990,7 +990,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testPropertyLambda() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Test(var children: () -> Unit) {
             @Composable
@@ -1003,7 +1003,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testLambdaWithArgs() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Test(var children: (x: Int) -> Unit) {
             @Composable
@@ -1016,7 +1016,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testLocalMethod() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Test {
             fun doStuff() {}
@@ -1030,7 +1030,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testPunningProperty() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Simple(var foo: String) {
             fun setBar(bar: String) {}
@@ -1049,7 +1049,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testPunningLocalVar() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Simple() {
             var bar: String? = null
@@ -1071,7 +1071,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSimpleLambdaChildrenSetter() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
         import android.content.*
 
@@ -1092,7 +1092,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSimpleLambdaChildrenProperty() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
         import android.content.*
 
@@ -1113,7 +1113,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSimpleLambdaChildrenPropertyInCtor() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
         import android.content.*
 
@@ -1134,7 +1134,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testBlockChildrenForViews() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
 
         fun run(text: String) {
@@ -1147,7 +1147,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testChildrenLambdaSetterWithSingleParam() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Example {
             @Children
@@ -1166,7 +1166,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testChildrenLambdaPropertyWithSingleParam() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Example {
             @Children
@@ -1185,7 +1185,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testChildrenLambdaSetterWithMultipleParams() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Example {
             @Children
@@ -1213,7 +1213,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testChildrenLambdaPropertyWithMultipleParams() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Example {
             @Children
@@ -1232,7 +1232,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testGenericChildrenArgSetter() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Example<T>(var value: T) {
             @Children
@@ -1254,7 +1254,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testGenericChildrenArgProperty() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Example<T>(var value: T) {
             @Children
@@ -1276,7 +1276,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testFunctionComponentsWithChildrenSimple() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         fun Example(@Children children: () -> Unit) {}
 
@@ -1290,7 +1290,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testFunctionComponentWithChildrenOneArg() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         fun Example(@Children children: (String) -> Unit) {}
 
@@ -1304,7 +1304,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testFunctionComponentWithGenericChildren() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         fun <T> Example(foo: T, @Children children: (T) -> Unit) {}
 
@@ -1321,7 +1321,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKtxLambdaInForLoop() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.TextView
 
         fun foo() {
@@ -1336,7 +1336,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKtxLambdaInIfElse() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.TextView
 
         fun foo(x: Boolean) {
@@ -1354,7 +1354,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testLateUsingObjectLiteral() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
          class Example {
              lateinit var callback: (Int) -> Unit
@@ -1373,7 +1373,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testMultiplePivotalAttributesOdd() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Foo(
             val a: Int,
@@ -1403,7 +1403,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testMultiplePivotalAttributesEven() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Foo(
             val a: Int,
@@ -1431,7 +1431,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSinglePivotalAttribute() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Foo(
             val a: Int
@@ -1453,7 +1453,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKeyAttributeWithPivotal() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import androidx.ui.androidview.adapters.*
 
         class Foo(
@@ -1481,7 +1481,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKeyAttributeWithoutPivotal() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import androidx.ui.androidview.adapters.*
 
         @Pivotal
@@ -1510,7 +1510,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testNamedChildrenAttributeProperty() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import androidx.ui.androidview.adapters.*
 
         class Foo {
@@ -1532,7 +1532,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testNamedChildrenAttributeSetter() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import androidx.ui.androidview.adapters.*
 
         class Foo {
@@ -1554,7 +1554,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testOverloadedChildren() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import androidx.ui.androidview.adapters.*
 
         class Foo {
@@ -1587,7 +1587,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKtxVariableTagsProperlyCapturedAcrossKtxLambdas() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import androidx.ui.androidview.adapters.*
 
         class Foo(@Children var children: (sub: () -> Unit) -> Unit) {
@@ -1615,7 +1615,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testPassChildrenLambdaVarWithCorrectType() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import androidx.ui.androidview.adapters.*
 
         class Boo(@Children var children: () -> Unit) {
@@ -1635,7 +1635,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testPassChildrenLambdaLiteralWithCorrectType() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import androidx.ui.androidview.adapters.*
 
         class Boo {
@@ -1657,7 +1657,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testChildrenLiteral() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import androidx.ui.androidview.adapters.*
 
         class Boo(@Children var children: () -> Unit) {
@@ -1678,7 +1678,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKtxLambdaCapturedVariableInAssignment() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Tabs(@Children var children: () -> Unit) {
             @Composable
@@ -1699,7 +1699,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKtxParameterlessFunction() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
         import android.widget.*
 
         @Composable
@@ -1718,7 +1718,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKtxEmittable() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         open class MockEmittable: Emittable {
           override fun emitInsertAt(index: Int, instance: Emittable) {}
@@ -1741,7 +1741,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKtxCompoundEmittable() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         open class MockEmittable: Emittable {
           override fun emitInsertAt(index: Int, instance: Emittable) {}
@@ -1769,7 +1769,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testInvocableObject() = testCompile(
         """
-        import com.google.r4a.*
+        import androidx.compose.*
 
         class Foo { }
         @Composable

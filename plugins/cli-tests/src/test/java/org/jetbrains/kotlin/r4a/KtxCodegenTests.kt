@@ -9,22 +9,20 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.google.r4a.Component
-import com.google.r4a.CompositionContext
-import com.google.r4a.R4a
-import com.google.r4a.composer
-import com.google.r4a.runWithCurrent
+import androidx.compose.Component
+import androidx.compose.CompositionContext
+import androidx.compose.R4a
+import androidx.compose.composer
+import androidx.compose.runWithCurrent
 import junit.framework.TestCase
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RuntimeEnvironment
-
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.net.URLClassLoader
 
-@RunWith(RobolectricTestRunner::class)
+@RunWith(ComposeRobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
     minSdk = 23,
@@ -49,7 +47,7 @@ class ModelClass() {
         compose(
             """
                 import android.widget.Button
-                import com.google.r4a.*
+                import androidx.compose.*
                 import androidx.ui.androidview.adapters.setOnClick
 
                 @Model
@@ -85,7 +83,7 @@ class ModelClass() {
         compose(
             """
                 import android.widget.*
-                import com.google.r4a.*
+                import androidx.compose.*
                 import androidx.ui.androidview.adapters.setOnClick
 
                 @Model
@@ -178,7 +176,7 @@ class ModelClass() {
     fun testImplicitReceiverScopeCall(): Unit = ensureSetup {
         compose(
             """
-                import com.google.r4a.*
+                import androidx.compose.*
 
                 class Bar(val text: String)
 
@@ -1722,7 +1720,7 @@ class ModelClass() {
             """
            import android.content.Context
            import android.widget.*
-           import com.google.r4a.*
+           import androidx.compose.*
 
            $text
 
@@ -1768,8 +1766,8 @@ class ModelClass() {
             """
            import android.content.Context
            import android.widget.*
-           import com.google.r4a.*
-           import com.google.r4a.adapters.*
+           import androidx.compose.*
+           import androidx.compose.adapters.*
            import androidx.ui.androidview.adapters.*
 
            $prefix

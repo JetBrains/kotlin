@@ -12,7 +12,7 @@ class UnionCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testUnionTypeReporting001() {
         doTest(
             """
-            import com.google.r4a.*;
+            import androidx.compose.*;
 
             @Composable fun foo(value: @UnionType(Int::class, String::class) Any) {
                 System.out.println(value)
@@ -30,7 +30,7 @@ class UnionCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testUnionTypeReporting002() {
         doTest(
             """
-            import com.google.r4a.*;
+            import androidx.compose.*;
 
             @Composable fun foo(value: @UnionType(Int::class, String::class) Any) {
                 System.out.println(value)
@@ -46,7 +46,7 @@ class UnionCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testUnionTypeReporting003() {
         doTest(
             """
-            import com.google.r4a.*;
+            import androidx.compose.*;
 
             @Composable fun foo(value: @UnionType(Int::class, String::class, Float::class) Any) {
                 System.out.println(value)
@@ -62,7 +62,7 @@ class UnionCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testUnionTypeReporting004() {
         doTest(
             """
-            import com.google.r4a.*;
+            import androidx.compose.*;
 
             @Composable fun foo(value: @UnionType(Int::class, String::class) Any) {
                 System.out.println(value)

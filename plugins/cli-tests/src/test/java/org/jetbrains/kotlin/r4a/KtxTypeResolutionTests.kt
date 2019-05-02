@@ -4,7 +4,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testImplicitlyPassedReceiverScope1() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable
             fun Int.Foo(@Children children: Int.() -> Unit) {
@@ -15,7 +15,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testImplicitlyPassedReceiverScope2() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable
             fun Int.Foo(@Children children: Int.(foo: String) -> Unit) {
@@ -31,7 +31,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testThatUnresolvedTagDiagnosticIsOnlyOnTagName() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Foo {
                 @Composable operator fun invoke() {}
@@ -47,7 +47,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testAmbiguousKtxTags() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Foo {
                 var foo: Int = 0
@@ -65,7 +65,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testSmartCastsAndPunning() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable
             fun Foo(bar: String) { print(bar) }
@@ -83,7 +83,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testExtensionInvoke() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Foo {}
             @Composable operator fun Foo.invoke() {}
@@ -96,7 +96,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testResolutionInsideWhenExpression() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView
 
             @Composable fun doSomething(foo: Boolean) {
@@ -110,7 +110,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposerExtensions() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             open class Foo {}
             class Bar : Foo() {}
@@ -132,7 +132,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testUsedParameters() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.LinearLayout
 
             class Foo {
@@ -178,7 +178,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testDispatchInvoke() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Bam {
                 @Composable fun Foo() {}
@@ -194,7 +194,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testDispatchAndExtensionReceiver() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Bam {
                 inner class Foo {}
@@ -212,7 +212,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testDispatchAndExtensionReceiverLocal() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
 
             class Foo {}
@@ -229,7 +229,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testMissingAttributes() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             data class Foo(val value: Int)
 
@@ -272,7 +272,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testDuplicateAttributes() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             data class Foo(val value: Int)
 
@@ -302,7 +302,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testChildrenNamedAndBodyDuplicate() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable fun A(@Children children: @Composable() () -> Unit) { <children /> }
             class B(@Children var children: @Composable() () -> Unit) { @Composable operator fun invoke() { <children /> } }
@@ -327,7 +327,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testAbstractClassTags() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.content.Context
             import android.widget.LinearLayout
 
@@ -345,7 +345,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testAmbiguousTags() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable fun Foo() {}
             @Composable fun Foo(x: Int) { println(x) }
@@ -373,7 +373,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testOverloadedTargets() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             data class FooModel(val x: Int, val y: Double)
 
@@ -407,7 +407,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testGenerics() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class A { fun a() {} }
             class B { fun b() {} }
@@ -448,7 +448,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testUnresolvedAttributeValueResolvedTarget() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Foo {
                 var bar: Int = 0
@@ -478,7 +478,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testEmptyAttributeValue() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable fun Foo(abc: Int, xyz: Int) {
                 print(abc)
@@ -499,7 +499,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testMissingComposer() = doTest(
         """
-            import com.google.r4a.Composable
+            import androidx.compose.Composable
 
             @Composable fun A() {}
             @Composable fun B(a: Int, b: Int) { print(a + b) }
@@ -543,7 +543,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testValidInvalidAttributes() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Foo(val a: Int, var b: Int, c: Int, d: Int = 1) {
                 init { println(c); println(d); }
@@ -591,7 +591,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testMismatchedAttributes() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             open class A {}
             class B : A() {}
@@ -626,7 +626,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testErrorAttributeValue() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Foo() {
                 var x: Int = 1
@@ -645,7 +645,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testUnresolvedQualifiedTag() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             object MyNamespace {
                 class Foo() {
@@ -719,7 +719,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testExtensionAttributes() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             class Foo() {
                 var x: Int = 1
@@ -754,7 +754,7 @@ class KtxTypeResolutionTests : AbstractR4aDiagnosticsTest() {
 
     fun testChildren() = doTest(
         """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.Button
             import android.widget.LinearLayout
 

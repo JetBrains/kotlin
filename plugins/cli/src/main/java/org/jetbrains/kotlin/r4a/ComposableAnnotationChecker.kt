@@ -260,7 +260,7 @@ open class ComposableAnnotationChecker(val nullableMode: Mode? = null) : CallChe
                 trace.report(
                     Errors.WRONG_ANNOTATION_TARGET.on(
                         annotationEntry,
-                        "class which does not extend com.google.r4a.Component"
+                        "class which does not extend androidx.compose.Component"
                     )
                 )
             }
@@ -377,7 +377,7 @@ open class ComposableAnnotationChecker(val nullableMode: Mode? = null) : CallChe
                         trace.report(
                             Errors.WRONG_ANNOTATION_TARGET.on(
                                 composableAnnotationEntry,
-                                "class which does not extend com.google.r4a.Component"
+                                "class which does not extend androidx.compose.Component"
                             )
                         )
                     }
@@ -502,7 +502,7 @@ open class ComposableAnnotationChecker(val nullableMode: Mode? = null) : CallChe
             trace.report(
                 Errors.WRONG_ANNOTATION_TARGET.on(
                     entry,
-                    "class which does not extend com.google.r4a.Component"
+                    "class which does not extend androidx.compose.Component"
                 )
             )
         }
