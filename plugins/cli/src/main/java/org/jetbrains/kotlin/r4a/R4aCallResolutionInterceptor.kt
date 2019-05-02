@@ -112,12 +112,9 @@ class R4aCallResolutionInterceptorExtension : CallResolutionInterceptorExtension
                 temporaryForKtxCall
             )
         } catch (e: Throwable) {
-            e.printStackTrace();
-            throw e;
+            e.printStackTrace()
+            throw e
         }
-
-        // Doesn't appear to be resolvable to a composable; return normal resolution candidates
-        if (resolvedKtxElementCall == null) return candidates
 
         // Doesn't appear to be resolvable to a composable; return normal resolution candidates
         val resolvedCall = when(resolvedKtxElementCall.emitOrCall) {

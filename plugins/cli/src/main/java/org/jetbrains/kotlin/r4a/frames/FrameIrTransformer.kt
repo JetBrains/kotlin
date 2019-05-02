@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
@@ -136,18 +137,18 @@ class FrameIrTransformer(val context: JvmBackendContext) :
         irFile.transformChildrenVoid(this)
     }
 
-    override fun visitClassNew(framedClass: IrClass): IrStatement {
-        val className = framedClass.descriptor.fqNameSafe
+    override fun visitClassNew(declaration: IrClass): IrStatement {
+        val className = declaration.descriptor.fqNameSafe
         val bindingContext = context.state.bindingContext
         val symbolTable = context.ir.symbols.externalSymbolTable
 
         val recordClassDescriptor =
             bindingContext.get(
                 FrameWritableSlices.RECORD_CLASS, className
-            ) ?: return super.visitClassNew(framedClass)
+            ) ?: return super.visitClassNew(declaration)
 
         // If there are no properties, skip the class
-        if (!framedClass.anyChild { it is IrProperty }) return super.visitClassNew(framedClass)
+        if (!declaration.anyChild { it is IrProperty }) return super.visitClassNew(declaration)
 
         val framesPackageDescriptor = context.state.module.getPackage(framesPackageName)
 
@@ -158,7 +159,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
         ) ?: error("Cannot find the Record class")
 
         val framedDescriptor =
-            bindingContext.get(FRAMED_DESCRIPTOR, framedClass.descriptor.fqNameSafe)
+            bindingContext.get(FRAMED_DESCRIPTOR, declaration.descriptor.fqNameSafe)
             ?: error("Could not find framed class descriptor")
 
         val metadata = FrameMetadata(framedDescriptor)
@@ -170,7 +171,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
             context.state.module.findClassAcrossModuleDependencies(ClassId.topLevel(framedTypeName))
             ?: error("Cannot find the Framed interface")
 
-        val classBuilder = IrClassBuilder(context, framedClass, framedClass.descriptor)
+        val classBuilder = IrClassBuilder(context, declaration, declaration.descriptor)
 
         with(classBuilder) {
 
@@ -257,8 +258,8 @@ class FrameIrTransformer(val context: JvmBackendContext) :
             // augment this class with the Framed interface
             addInterface(framedType)
 
-            val thisSymbol = framedClass.thisReceiver?.symbol
-                ?: error("No this receiver found for class ${framedClass.name}")
+            val thisSymbol = declaration.thisReceiver?.symbol
+                ?: error("No this receiver found for class ${declaration.name}")
             val thisValue = syntheticGetValue(thisSymbol)
 
             val recordPropertyDescriptor = PropertyDescriptorImpl.create(
@@ -336,7 +337,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                 // Create the initial state record
                 +syntheticSetField(
                     fieldReference, thisValue, syntheticCall(
-                        recordClassDescriptor.defaultType.toIrType()!!,
+                        recordClassDescriptor.defaultType.toIrType(),
                         recordCtorSymbol!!,
                         // Non-null was already validated when the record class was constructed
                         recordClassDescriptor.unsubstitutedPrimaryConstructor!!
@@ -346,7 +347,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                 // Assign the fields
                 metadata.getFramedProperties(bindingContext).forEach { propertyDescriptor ->
                     // Move backing field initializer to an anonymous initializer of the record field
-                    val irFramedProperty = framedClass.declarations.find {
+                    val irFramedProperty = declaration.declarations.find {
                         it.descriptor.name == propertyDescriptor.name
                     } as? IrProperty
                         ?: error("Could not find ir representation of ${propertyDescriptor.name}")
@@ -397,7 +398,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
             metadata.getFramedProperties(
                 context.state.bindingContext
             ).forEach { propertyDescriptor ->
-                val irFramedProperty = framedClass.declarations.find {
+                val irFramedProperty = declaration.declarations.find {
                     it.descriptor.name == propertyDescriptor.name
                 } as? IrProperty
                     ?: error("Could not find ir representation of ${propertyDescriptor.name}")
@@ -646,7 +647,7 @@ class IrClassBuilder(
             IrTypeParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
-                it
+                IrTypeParameterSymbolImpl(it)
             ).also { typeParameter ->
                 typeParameter.parent = this
             }

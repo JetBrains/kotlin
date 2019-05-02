@@ -131,15 +131,14 @@ open class ComposableAnnotationChecker(val nullableMode: Mode? = null) : CallChe
 
     open fun getMode(psi: PsiElement): Mode {
         if (nullableMode != null) return nullableMode
-        return DEFAULT_MODE;
+        return DEFAULT_MODE
     }
 
     fun analyze(trace: BindingTrace, descriptor: FunctionDescriptor): Composability {
         val unwrappedDescriptor = if(descriptor is R4aCallResolutionInterceptorExtension.ComposableInvocationDescriptor) descriptor.original else descriptor
         val psi = unwrappedDescriptor.findPsi() as? KtElement
         psi?.let { trace.bindingContext.get(COMPOSABLE_ANALYSIS, it)?.let { return it } }
-        if (unwrappedDescriptor is FunctionDescriptor &&
-            unwrappedDescriptor.name == Name.identifier("compose") &&
+        if (unwrappedDescriptor.name == Name.identifier("compose") &&
             unwrappedDescriptor.containingDeclaration is ClassDescriptor && ComponentMetadata.isR4AComponent(
                 unwrappedDescriptor.containingDeclaration
             )
@@ -362,7 +361,7 @@ open class ComposableAnnotationChecker(val nullableMode: Mode? = null) : CallChe
                 val trace = context.trace
                 val element = descriptor.findPsi()
                 if (element is KtClass) {
-                    val descriptor =
+                    val classDescriptor =
                         trace.bindingContext.get(
                             BindingContext.CLASS,
                             element
@@ -374,7 +373,7 @@ open class ComposableAnnotationChecker(val nullableMode: Mode? = null) : CallChe
                         )?.isComposableAnnotation ?: false
                     }
                     if (composableAnnotationEntry != null &&
-                        !ComponentMetadata.isR4AComponent(descriptor)) {
+                        !ComponentMetadata.isR4AComponent(classDescriptor)) {
                         trace.report(
                             Errors.WRONG_ANNOTATION_TARGET.on(
                                 composableAnnotationEntry,
@@ -412,7 +411,6 @@ open class ComposableAnnotationChecker(val nullableMode: Mode? = null) : CallChe
             (context.resolutionContext as CallResolutionContext).call.callElement is KtCallExpression
         ) {
             if (shouldBeTag) {
-                val f = reportOn.getText()
                 context.trace.reportFromPlugin(
                     R4AErrors.SVC_INVOCATION.on(
                         reportOn as KtElement,
