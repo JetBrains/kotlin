@@ -52,7 +52,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting001() {
         doTest(
             MODE_KTX_CHECKED, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun myStatelessFunctionalComponent() {
@@ -65,7 +65,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
         """)
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -82,14 +82,14 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting002() {
         doTest(MODE_KTX_CHECKED, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             val myLambda1 = { <TextView text="Hello World!" /> }
             val myLambda2: ()->Unit = { <TextView text="Hello World!" /> }
         """)
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             val myLambda1 = @Composable() { <TextView text="Hello World!" /> }
@@ -100,7 +100,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting003() {
         doTest(
             MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun <!KTX_IN_NON_COMPOSABLE!>myRandomFunction<!>() {
@@ -112,7 +112,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting004() {
         doTest(
             MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -125,7 +125,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting005() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             class MyComponent : Component() {
@@ -139,7 +139,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting006() {
         doTest(
             MODE_KTX_CHECKED, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun foo() {
@@ -151,7 +151,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             }
         """)
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -167,7 +167,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting007() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun foo(children: @Composable() ()->Unit) {
@@ -178,7 +178,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting008() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun foo() {
@@ -194,7 +194,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting009() {
         doTest(
             MODE_KTX_CHECKED, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun myStatelessFunctionalComponent() {
@@ -206,7 +206,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             }
         """)
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -222,7 +222,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting010() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             class MyComponent : Component() {
@@ -238,7 +238,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting011() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             class MyComponent : Component() {
@@ -253,7 +253,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting012() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             class MyComponent : Component() {
@@ -267,7 +267,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting013() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             class MyComponent : Component() {
@@ -281,7 +281,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting014() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             class MyReceiver {}
@@ -297,7 +297,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting015() {
         doTest(MODE_KTX_CHECKED, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             class MyComponent : Component() {
@@ -318,7 +318,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
         """)
         doTest(
             MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             class MyComponent : Component() {
@@ -341,14 +341,14 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting016() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
 
             <!WRONG_ANNOTATION_TARGET!>@Composable<!>
             class Noise() {}
         """)
 
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
 
             val adHoc = <!WRONG_ANNOTATION_TARGET!>@Composable()<!> object {
                 var x: Int = 0
@@ -357,7 +357,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
         """)
 
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
 
             open class Noise() {}
 
@@ -371,7 +371,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting017() {
         doTest(
             MODE_KTX_CHECKED, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.LinearLayout;
             import android.widget.TextView;
 
@@ -386,7 +386,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             }
         """)
         doTest(MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.LinearLayout;
             import android.widget.TextView;
 
@@ -405,7 +405,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting018() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun foo() {
@@ -414,7 +414,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             }
         """)
         doTest(MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun foo() {
@@ -426,7 +426,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting019() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT, """
-           import com.google.r4a.*;
+           import androidx.compose.*;
            import android.widget.TextView;
 
            @Composable
@@ -437,7 +437,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
            }
         """)
         doTest(MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -451,7 +451,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting020() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun nonComposableFunction() {}
@@ -466,7 +466,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting021() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -480,7 +480,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting022() {
         doTest(
             MODE_KTX_CHECKED, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun foo() {
@@ -490,7 +490,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
         """)
         doTest(
             MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun <!KTX_IN_NON_COMPOSABLE!>foo<!>() {
@@ -503,7 +503,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting023() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-               import com.google.r4a.*;
+               import androidx.compose.*;
                import android.widget.TextView;
 
                fun foo() {}
@@ -517,7 +517,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting024() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
             import android.widget.LinearLayout;
 
@@ -529,7 +529,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting025() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -541,7 +541,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting026() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.LinearLayout;
             import android.widget.TextView;
 
@@ -556,7 +556,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting027() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.LinearLayout;
             import android.widget.TextView;
 
@@ -574,7 +574,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting028() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun foo(v: @Composable() ()->Unit) {
@@ -583,7 +583,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             }
         """)
         doTest(MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun foo(v: @Composable() ()->Unit) {
@@ -596,7 +596,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting029() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -606,7 +606,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             }
         """)
         doTest(MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -620,7 +620,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting030() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             @Composable
@@ -634,7 +634,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting031() {
         doTest(
             MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun foo() {
@@ -647,8 +647,8 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting032() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
-            import com.google.r4a.Children;
+            import androidx.compose.*;
+            import androidx.compose.Children;
             import android.widget.TextView;
 
             @Composable
@@ -664,8 +664,8 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting033() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
-            import com.google.r4a.Children;
+            import androidx.compose.*;
+            import androidx.compose.Children;
             import android.widget.TextView;
 
             @Composable
@@ -681,7 +681,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting034() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun identity(f: ()->Unit): ()->Unit { return f; }
@@ -694,7 +694,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
         """)
         doTest(
             MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             fun identity(f: ()->Unit): ()->Unit { return f; }
@@ -709,7 +709,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting035() {
         doTest(MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable
             fun Foo(x: String) {
@@ -721,7 +721,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting036() {
         doTest(MODE_KTX_CHECKED, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             fun Foo() {
@@ -735,7 +735,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             }
         """)
         doTest(MODE_KTX_CHECKED, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             fun Foo() {
@@ -752,7 +752,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting037() {
         doTest(MODE_KTX_CHECKED, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             fun Foo() {
@@ -770,7 +770,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting038() {
         doTest(
             MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             // Function intentionally not inline
@@ -786,7 +786,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting039() {
         doTest(MODE_KTX_CHECKED, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             fun composeInto(l: @Composable() ()->Unit) { System.out.println(l) }
@@ -802,7 +802,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             }
         """)
         doTest(MODE_KTX_CHECKED, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             inline fun noise(l: ()->Unit) { l() }
@@ -821,7 +821,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting040() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             @Composable
@@ -839,7 +839,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting041() {
         doTest(MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             typealias UNIT_LAMBDA = () -> Unit
@@ -859,7 +859,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting042() {
         doTest(MODE_FCS, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             fun composeInto(l: @Composable() ()->Unit) { System.out.println(l) }
@@ -878,7 +878,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
             }
         """)
         doTest(MODE_FCS, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             inline fun noise(l: ()->Unit) { l() }
@@ -897,7 +897,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
     fun testComposableReporting043() {
         doTest(
             MODE_FCS, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             typealias UNIT_LAMBDA = () -> Unit
@@ -913,7 +913,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting044() {
         doTest(MODE_FCS, """
-            import com.google.r4a.*
+            import androidx.compose.*
             import android.widget.TextView;
 
             typealias UNIT_LAMBDA = () -> Unit
@@ -930,7 +930,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting045() {
         doTest(MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
 
             @Composable
             fun foo() {
@@ -943,7 +943,7 @@ class ComposableCheckerTests : AbstractR4aDiagnosticsTest() {
 
     fun testComposableReporting046() {
         doTest(MODE_FCS, """
-            import com.google.r4a.*;
+            import androidx.compose.*;
             import android.widget.TextView;
 
             class MyComponent : Component() {

@@ -7,12 +7,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import com.google.r4a.FrameManager
+import androidx.compose.FrameManager
 
-@RunWith(RobolectricTestRunner::class)
+@RunWith(ComposeRobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
     minSdk = 23,
@@ -273,7 +272,7 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
         val compiledClasses = classLoader("""
            import android.content.Context
            import android.widget.*
-           import com.google.r4a.*
+           import androidx.compose.*
 
            $prefix
 

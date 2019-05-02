@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.name.FqName
 
 object R4aUtils {
 
-    fun generateR4APackageName() = "c" + ('p' - booleanArrayOf(true).size).toChar() + "m.google.r4a"
+    fun generateR4APackageName() = "androidx.compose"
 
     fun r4aFqName(cname: String) = FqName("${generateR4APackageName()}.$cname")
 

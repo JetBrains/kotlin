@@ -6,7 +6,7 @@ class R4aClassAnalysisHandlerExtensionTests : AbstractR4aDiagnosticsTest() {
 
     fun testReportOpen() {
         doTest("""
-            import com.google.r4a.Component;
+            import androidx.compose.Component;
 
             open class <!OPEN_COMPONENT!>MyComponent<!> : Component() {
                override fun compose() { }
@@ -16,7 +16,7 @@ class R4aClassAnalysisHandlerExtensionTests : AbstractR4aDiagnosticsTest() {
 
     fun testAllowClosed() {
         doTest("""
-            import com.google.r4a.Component;
+            import androidx.compose.Component;
 
             class MyComponent: Component() {
                override fun compose() { }
@@ -26,7 +26,7 @@ class R4aClassAnalysisHandlerExtensionTests : AbstractR4aDiagnosticsTest() {
 
     fun testReportAbstract() {
         doTest("""
-            import com.google.r4a.Component;
+            import androidx.compose.Component;
 
             abstract class <!OPEN_COMPONENT!>MyComponent<!>: Component() {
                override fun compose() { }

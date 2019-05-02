@@ -10,12 +10,11 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import java.net.URLClassLoader
 
-@RunWith(RobolectricTestRunner::class)
+@RunWith(ComposeRobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
     minSdk = 23,
@@ -27,7 +26,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testSimpleFunctionResolution(): Unit = ensureSetup {
         compose(
             """
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable
             fun noise(text: String) {}
@@ -47,7 +46,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
             import android.widget.TextView
-            import com.google.r4a.*
+            import androidx.compose.*
 
             @Composable
             fun bar() {
@@ -76,7 +75,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
                 import android.widget.Button
-                import com.google.r4a.*
+                import androidx.compose.*
                 import androidx.ui.androidview.adapters.setOnClick
 
                 @Model
@@ -112,7 +111,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
                 import android.widget.*
-                import com.google.r4a.*
+                import androidx.compose.*
                 import androidx.ui.androidview.adapters.setOnClick
 
                 @Model
@@ -205,7 +204,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testImplicitReceiverScopeCall(): Unit = ensureSetup {
         compose(
             """
-                import com.google.r4a.*
+                import androidx.compose.*
 
                 class Bar(val text: String)
 
@@ -1548,9 +1547,9 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testSimpleClassConstructor(): Unit = codegen(
         """
-import com.google.r4a.Emittable
+import androidx.compose.Emittable
 
-import com.google.r4a.composer
+import androidx.compose.composer
 
 class Path2() : Emittable {
 
@@ -1788,7 +1787,7 @@ class Path3(private val internalPath: android.graphics.Path = android.graphics.P
             """
            import android.content.Context
            import android.widget.*
-           import com.google.r4a.*
+           import androidx.compose.*
 
            $text
 
@@ -1827,7 +1826,7 @@ class Path3(private val internalPath: android.graphics.Path = android.graphics.P
             """
            import android.content.Context
            import android.widget.*
-           import com.google.r4a.*
+           import androidx.compose.*
            import androidx.ui.androidview.adapters.*
 
            $prefix

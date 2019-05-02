@@ -13,8 +13,8 @@ class GenerateWrapperViewTest : AbstractCodegenTest() {
         val klass = loadClass("MainComponent", """
             import android.app.Activity
             import android.os.Bundle
-            import com.google.r4a.Component
-            import com.google.r4a.CompositionContext
+            import androidx.compose.Component
+            import androidx.compose.CompositionContext
 
             class MainActivity : Activity() {
                 override fun onCreate(savedInstanceState: Bundle?) {
