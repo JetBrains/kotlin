@@ -394,6 +394,12 @@ class Collections {
         }
 
         @Sample
+        fun map() {
+            val numbers = listOf(75, 111, 116, 108, 105, 110)
+            assertPrints(numbers.map { it.toChar() }, "[K, o, t, l, i, n]")
+        }
+
+        @Sample
         fun take() {
             val chars = ('a'..'z').toList()
             assertPrints(chars.take(3), "[a, b, c]")

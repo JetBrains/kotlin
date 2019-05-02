@@ -4005,6 +4005,8 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UShortArray.group
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.map
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -4016,6 +4018,8 @@ public inline fun <R> UIntArray.map(transform: (UInt) -> R): List<R> {
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.map
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -4027,6 +4031,8 @@ public inline fun <R> ULongArray.map(transform: (ULong) -> R): List<R> {
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.map
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -4038,6 +4044,8 @@ public inline fun <R> UByteArray.map(transform: (UByte) -> R): List<R> {
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.map
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

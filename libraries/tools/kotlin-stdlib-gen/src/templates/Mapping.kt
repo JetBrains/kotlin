@@ -92,6 +92,7 @@ object Mapping : TemplateGroupBase() {
             to each ${f.element} in the original ${f.collection}.
             """
         }
+        sample("samples.collections.Collections.Transformations.map")
         typeParam("R")
         returns("List<R>")
         body(Iterables) {
