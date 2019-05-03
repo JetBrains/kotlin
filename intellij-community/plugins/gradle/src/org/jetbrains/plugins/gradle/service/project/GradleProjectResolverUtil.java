@@ -445,7 +445,7 @@ public class GradleProjectResolverUtil {
                                        @Nullable DataNode<ProjectData> ideProject) throws IllegalStateException {
     Map<ExternalDependencyId, ExternalDependency> dependencyMap = new HashMap<>();
 
-    Queue<ExternalDependency> queue = ContainerUtil.newLinkedList(dependencies);
+    Queue<ExternalDependency> queue = new LinkedList<>(dependencies);
     while (!queue.isEmpty()) {
       final ExternalDependency dependency = queue.remove();
       ExternalDependency seenDependency = dependencyMap.get(dependency.getId());

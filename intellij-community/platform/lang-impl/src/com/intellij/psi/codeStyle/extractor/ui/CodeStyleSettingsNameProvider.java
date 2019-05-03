@@ -51,7 +51,7 @@ public class CodeStyleSettingsNameProvider implements CodeStyleSettingsCustomiza
     }
     List<CodeStyleSettingPresentation> settingsList = groups.get(group);
     if (settingsList == null) {
-      settingsList = ContainerUtil.newLinkedList();
+      settingsList = new LinkedList<>();
     }
     if (settingsList.contains(setting)) return;
     if (anchor != null && anchorFieldName != null) {

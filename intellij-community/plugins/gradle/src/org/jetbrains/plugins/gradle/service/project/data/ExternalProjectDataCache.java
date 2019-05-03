@@ -21,10 +21,7 @@ import org.jetbrains.plugins.gradle.model.ExternalSourceSet;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * @author Vladislav.Soroka
@@ -95,7 +92,7 @@ public class ExternalProjectDataCache {
   private static Map<String, ExternalSourceSet> findExternalProject(@NotNull ExternalProject parentProject,
                                                                     @NotNull String externalProjectId,
                                                                     boolean isSourceSet) {
-    Queue<ExternalProject> queue = ContainerUtil.newLinkedList();
+    Queue<ExternalProject> queue = new LinkedList<>();
     queue.add(parentProject);
 
     while (!queue.isEmpty()) {
