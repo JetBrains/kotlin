@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.view;
 
 import com.intellij.execution.Location;
@@ -73,7 +73,7 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
   @NotNull
   private final ExternalSystemUiAware myUiAware;
   @NotNull
-  private final Set<Listener> listeners = ContainerUtil.newHashSet();
+  private final Set<Listener> listeners = new HashSet<>();
 
   @Nullable
   private ExternalProjectsStructure myStructure;

@@ -43,10 +43,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Vladislav.Soroka
@@ -208,7 +205,7 @@ public class ExternalSystemKeymapExtension implements KeymapExtension {
   public static void clearActions(Project project, Collection<? extends DataNode<TaskData>> taskData) {
     ActionManager actionManager = ActionManager.getInstance();
     if (actionManager != null) {
-      Set<String> externalProjectPaths = ContainerUtil.newHashSet();
+      Set<String> externalProjectPaths = new HashSet<>();
       for (DataNode<TaskData> node : taskData) {
         externalProjectPaths.add(node.getData().getLinkedExternalProjectPath());
       }

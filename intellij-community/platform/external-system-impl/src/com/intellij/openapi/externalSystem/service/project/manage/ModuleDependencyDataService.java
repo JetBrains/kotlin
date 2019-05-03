@@ -66,7 +66,7 @@ public class ModuleDependencyDataService extends AbstractDependencyDataService<M
         toRemove.put(Pair.create(e.getModuleName(), e.getScope()), e);
       }
     }
-    final Set<ModuleDependencyData> processed = ContainerUtil.newHashSet();
+    final Set<ModuleDependencyData> processed = new HashSet<>();
     final ModifiableRootModel modifiableRootModel = modelsProvider.getModifiableRootModel(module);
     for (DataNode<ModuleDependencyData> dependencyNode : toImport) {
       final ModuleDependencyData dependencyData = dependencyNode.getData();

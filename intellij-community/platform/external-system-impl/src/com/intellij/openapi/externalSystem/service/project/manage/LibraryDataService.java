@@ -168,7 +168,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
     final List<Library> orphanIdeLibraries = ContainerUtil.newSmartList();
     final LibraryTable.ModifiableModel librariesModel = modelsProvider.getModifiableProjectLibrariesModel();
     final Map<String, Library> namesToLibs = new HashMap<>();
-    final Set<Library> potentialOrphans = ContainerUtil.newHashSet();
+    final Set<Library> potentialOrphans = new HashSet<>();
     RootPolicy<Void> excludeUsedLibraries = new RootPolicy<Void>() {
       @Override
       public Void visitLibraryOrderEntry(@NotNull LibraryOrderEntry ideDependency, Void value) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.internal.psiView;
 
 import com.intellij.ide.highlighter.ArchiveFileType;
@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ class PsiViewerSourceWrapper implements Comparable<PsiViewerSourceWrapper> {
 
   @NotNull
   public static List<PsiViewerSourceWrapper> getFileTypeBasedWrappers() {
-    Set<FileType> allFileTypes = ContainerUtil.newHashSet();
+    Set<FileType> allFileTypes = new HashSet<>();
     List<PsiViewerSourceWrapper> sourceWrappers = ContainerUtil.newArrayList();
     Collections.addAll(allFileTypes, FileTypeManager.getInstance().getRegisteredFileTypes());
     for (Language language : Language.getRegisteredLanguages()) {

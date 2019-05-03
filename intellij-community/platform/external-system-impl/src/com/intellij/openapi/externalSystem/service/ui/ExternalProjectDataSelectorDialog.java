@@ -437,7 +437,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
 
   @NotNull
   private static Set<Key<? extends Identifiable>> getDependencyAwareDataKeys() {
-    Set<Key<? extends Identifiable>> result = ContainerUtil.newHashSet();
+    Set<Key<? extends Identifiable>> result = new HashSet<>();
     result.add(ProjectKeys.MODULE);
     for (ExternalProjectStructureCustomizer customizer : ExternalProjectStructureCustomizer.EP_NAME.getExtensions()) {
       result.addAll(customizer.getDependencyAwareDataKeys());
@@ -566,7 +566,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
         }
       }
 
-      final Set<DataNode<Identifiable>> deps = ContainerUtil.newHashSet();
+      final Set<DataNode<Identifiable>> deps = new HashSet<>();
       for (DataNode<Identifiable> selectedModule : selectedModules) {
         if (checked) {
           deps.addAll(ContainerUtil.filter(dependentNodeMap.get(selectedModule), node -> {

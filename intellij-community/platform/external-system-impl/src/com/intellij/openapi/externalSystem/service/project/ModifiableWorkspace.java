@@ -51,7 +51,7 @@ public class ModifiableWorkspace {
   public ModifiableWorkspace(ExternalProjectsWorkspaceImpl.State state,
                              AbstractIdeModifiableModelsProvider modelsProvider) {
     myModelsProvider = modelsProvider;
-    Set<String> existingModules = ContainerUtil.newHashSet();
+    Set<String> existingModules = new HashSet<>();
     for (Module module : modelsProvider.getModules()) {
       register(module, modelsProvider);
       existingModules.add(module.getName());
@@ -75,7 +75,7 @@ public class ModifiableWorkspace {
   }
 
   public void commit() {
-    Set<String> existingModules = ContainerUtil.newHashSet();
+    Set<String> existingModules = new HashSet<>();
     Arrays.stream(myModelsProvider.getModules()).map(Module::getName).forEach(existingModules::add);
 
     myState.names = new HashMap<>();

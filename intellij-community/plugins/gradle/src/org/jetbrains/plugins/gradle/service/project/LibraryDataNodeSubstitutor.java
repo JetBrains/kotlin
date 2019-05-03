@@ -18,10 +18,7 @@ import org.jetbrains.plugins.gradle.model.ExternalSourceSet;
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.find;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.attachGradleSdkSources;
@@ -97,7 +94,7 @@ public class LibraryDataNodeSubstitutor {
 
       final ModuleData moduleData = pair.first.getData();
       if (targetModuleOutputPaths == null) {
-        final Set<String> compileSet = ContainerUtil.newHashSet();
+        final Set<String> compileSet = new HashSet<>();
         MultiMap<ExternalSystemSourceType, String> gradleOutputs = pair.first.getUserData(GradleProjectResolver.GRADLE_OUTPUTS);
         if (gradleOutputs != null) {
           ContainerUtil.addAllNotNull(compileSet,
@@ -109,7 +106,7 @@ public class LibraryDataNodeSubstitutor {
           targetModuleOutputPaths = compileSet;
         }
         else {
-          final Set<String> testSet = ContainerUtil.newHashSet();
+          final Set<String> testSet = new HashSet<>();
           if (gradleOutputs != null) {
             ContainerUtil.addAllNotNull(testSet,
                                         gradleOutputs.get(ExternalSystemSourceType.TEST));

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.nativeplatform.project;
 
 import com.intellij.openapi.externalSystem.model.DataNode;
@@ -7,7 +7,6 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.ContentRootData;
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.util.containers.ContainerUtil;
@@ -30,6 +29,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -45,9 +45,9 @@ public class GradleNativeProjectResolver extends AbstractProjectResolverExtensio
     CppProjectImpl cppProject = appendCppProject(gradleModule, ideModule);
     if (cppProject != null) {
       CppComponent mainComponent = cppProject.getMainComponent();
-      Set<File> sourceFolders = mainComponent == null ? ContainerUtil.newHashSet() : getSourceFolders(mainComponent);
+      Set<File> sourceFolders = mainComponent == null ? new HashSet<>() : getSourceFolders(mainComponent);
       CppTestSuite testComponent = cppProject.getTestComponent();
-      Set<File> testSourceFolders = testComponent == null ? ContainerUtil.newHashSet() : getSourceFolders(testComponent);
+      Set<File> testSourceFolders = testComponent == null ? new HashSet<>() : getSourceFolders(testComponent);
       testSourceFolders.removeAll(sourceFolders);
       for (File folder : sourceFolders) {
         ContentRootData ideContentRoot = new ContentRootData(GradleConstants.SYSTEM_ID, folder.getAbsolutePath());

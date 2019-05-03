@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.impl;
 
 import com.intellij.openapi.compiler.CompileContext;
@@ -12,11 +12,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ThrowableRunnable;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * @author Jeka
@@ -50,7 +50,7 @@ public class CompilerUtil {
    */
   public static void refreshOutputRoots(@NotNull Collection<String> outputRoots) {
     LocalFileSystem fs = LocalFileSystem.getInstance();
-    Collection<VirtualFile> toRefresh = ContainerUtil.newHashSet();
+    Collection<VirtualFile> toRefresh = new HashSet<>();
 
     for (String outputRoot : outputRoots) {
       FileAttributes attributes = FileSystemUtil.getAttributes(FileUtil.toSystemDependentName(outputRoot));

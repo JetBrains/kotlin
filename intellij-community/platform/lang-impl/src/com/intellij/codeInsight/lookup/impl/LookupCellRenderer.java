@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.lookup.impl;
 
@@ -24,7 +24,6 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FList;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
@@ -37,6 +36,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -127,7 +127,7 @@ public class LookupCellRenderer implements ListCellRenderer {
 
     FontMetrics normalMetrics = getRealFontMetrics(item, false);
     FontMetrics boldMetrics = getRealFontMetrics(item, true);
-    final LookupElementPresentation presentation = new RealLookupElementPresentation(isSelected ? getMaxWidth() : allowedWidth, 
+    final LookupElementPresentation presentation = new RealLookupElementPresentation(isSelected ? getMaxWidth() : allowedWidth,
                                                                                      normalMetrics, boldMetrics, myLookup);
     ApplicationManager.getApplication().runReadAction(() -> {
       if (item.isValid()) {
@@ -442,7 +442,7 @@ public class LookupCellRenderer implements ListCellRenderer {
     String sampleString = p.getItemText() + p.getTailText() + p.getTypeText();
 
     // assume a single font can display all lookup item chars
-    Set<Font> fonts = ContainerUtil.newHashSet();
+    Set<Font> fonts = new HashSet<>();
     FontPreferences fontPreferences = myLookup.getFontPreferences();
     for (int i = 0; i < sampleString.length(); i++) {
       fonts.add(ComplementaryFontsRegistry.getFontAbleToDisplay(sampleString.charAt(i), Font.PLAIN, fontPreferences, null).getFont());
@@ -450,7 +450,7 @@ public class LookupCellRenderer implements ListCellRenderer {
 
     eachFont: for (Font font : fonts) {
       if (font.equals(myNormalFont)) continue;
-      
+
       for (int i = 0; i < sampleString.length(); i++) {
         if (!font.canDisplay(sampleString.charAt(i))) {
           continue eachFont;

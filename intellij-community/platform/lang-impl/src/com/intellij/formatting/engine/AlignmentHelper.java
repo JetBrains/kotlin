@@ -7,7 +7,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 
 import java.util.*;
@@ -21,7 +20,7 @@ public class AlignmentHelper {
     ALIGNMENT_PROCESSORS.put(Alignment.Anchor.RIGHT, new RightEdgeAlignmentProcessor());
   }
 
-  private final Set<Alignment> myAlignmentsToSkip = ContainerUtil.newHashSet();
+  private final Set<Alignment> myAlignmentsToSkip = new HashSet<>();
   private final Document myDocument;
   private final BlockIndentOptions myBlockIndentOptions;
 

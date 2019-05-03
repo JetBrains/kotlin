@@ -197,7 +197,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       }
     }
 
-    final Set<Class> toolingExtensionClasses = ContainerUtil.newHashSet();
+    final Set<Class> toolingExtensionClasses = new HashSet<>();
     final GradleImportCustomizer importCustomizer = GradleImportCustomizer.get();
     for (GradleProjectResolverExtension resolverExtension = tracedResolverChain;
          resolverExtension != null;
@@ -600,7 +600,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       }
 
       for (DataNode<GradleSourceSetData> sourceSetNode : findAll(moduleNode, GradleSourceSetData.KEY)) {
-        final Set<String> set = ContainerUtil.newHashSet();
+        final Set<String> set = new HashSet<>();
         for (DataNode<ContentRootData> contentRootNode : findAll(sourceSetNode, ProjectKeys.CONTENT_ROOT)) {
           File file = new File(contentRootNode.getData().getRootPath());
           while (file != null) {

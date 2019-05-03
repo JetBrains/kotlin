@@ -2,7 +2,6 @@
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
-import com.intellij.util.containers.ContainerUtil;
 import org.gradle.initialization.BuildCancellationToken;
 import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.classpath.DefaultClassPath;
@@ -29,10 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CancellationException;
 
 import static org.gradle.internal.FileUtils.hasExtension;
@@ -161,7 +157,7 @@ public class DistributionFactoryExt extends DistributionFactory {
       if (installedDistribution == null) {
         final DistributionInstaller installer = new DistributionInstaller(progressLoggerFactory, progressListener, clock);
         File installDir;
-        Set<String> propertiesToCleanup = ContainerUtil.newHashSet();
+        Set<String> propertiesToCleanup = new HashSet<>();
         Map<String, String> propertiesToRestore = new HashMap<>();
         try {
           cancellationToken.addCallback(() -> installer.cancel());

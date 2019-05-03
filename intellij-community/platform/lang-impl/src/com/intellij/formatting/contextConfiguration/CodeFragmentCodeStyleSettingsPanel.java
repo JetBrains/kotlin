@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.formatting.contextConfiguration;
 
 import com.intellij.application.options.TabbedLanguageCodeStylePanel;
@@ -22,16 +8,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.SPACING_SETTINGS;
 import static com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS;
@@ -103,7 +86,7 @@ class CodeFragmentCodeStyleSettingsPanel extends TabbedLanguageCodeStylePanel {
   }
 
   public JComponent getPreferredFocusedComponent() {
-    return mySpacesPanel != null ? mySpacesPanel.getPreferredFocusedComponent() 
+    return mySpacesPanel != null ? mySpacesPanel.getPreferredFocusedComponent()
                                  : myWrappingPanel.getPreferredFocusedComponent();
   }
 
@@ -169,11 +152,11 @@ class CodeFragmentCodeStyleSettingsPanel extends TabbedLanguageCodeStylePanel {
 
       isFirstUpdate = false;
     }
-    
+
     public boolean hasSomethingToShow() {
       return !myKeys.isEmpty();
     }
-    
+
     @Override
     public JComponent getPanel() {
       return myPanel;
@@ -202,7 +185,7 @@ class CodeFragmentCodeStyleSettingsPanel extends TabbedLanguageCodeStylePanel {
       if (settingNames.isEmpty()) {
         settingNames = mySettingsToShow.getOtherSetting();
       }
-      
+
       initTables();
 
       Collection<String> fields = populateWithAssociatedFields(settingNames);
@@ -226,7 +209,7 @@ class CodeFragmentCodeStyleSettingsPanel extends TabbedLanguageCodeStylePanel {
 
     @NotNull
     private Collection<String> populateWithAssociatedFields(Collection<String> settingNames) {
-      Set<String> commonFields = ContainerUtil.newHashSet();
+      Set<String> commonFields = new HashSet<>();
       for (String fieldName : settingNames) {
         SettingsGroup settingsGroup = getAssociatedSettingsGroup(fieldName);
         if (settingsGroup == null) {
@@ -243,14 +226,14 @@ class CodeFragmentCodeStyleSettingsPanel extends TabbedLanguageCodeStylePanel {
     public JComponent getPanel() {
       return myPanel;
     }
-    
+
     @Override
     protected void somethingChanged() {
       mySelectedTextFormatter.restoreSelectedText();
       reformatSelectedTextWithNewSettings();
       CodeFragmentCodeStyleSettingsPanel.this.somethingChanged();
     }
-    
+
     @Override
     protected String getPreviewText() {
       return null;

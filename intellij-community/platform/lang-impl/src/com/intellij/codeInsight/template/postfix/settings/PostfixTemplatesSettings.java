@@ -21,12 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 @State(name = "PostfixTemplatesSettings", storages = @Storage("postfixTemplates.xml"))
 public class PostfixTemplatesSettings implements PersistentStateComponent<Element> {
-  public static final Factory<Set<String>> SET_FACTORY = () -> ContainerUtil.newHashSet();
+  public static final Factory<Set<String>> SET_FACTORY = () -> new HashSet<>();
   private Map<String, Set<String>> myProviderToDisabledTemplates = new HashMap<>();
   /**
    * @deprecated use myProviderToDisabledTemplates

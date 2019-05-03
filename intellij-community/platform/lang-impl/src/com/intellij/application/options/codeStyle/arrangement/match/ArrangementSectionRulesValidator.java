@@ -1,13 +1,13 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle.arrangement.match;
 
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.arrangement.match.StdArrangementMatchRule;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,7 +40,7 @@ public class ArrangementSectionRulesValidator extends ArrangementMatchingRulesVa
   @Nullable
   private String validateSectionRule(@NotNull ArrangementSectionRuleManager.ArrangementSectionRuleData data, int index) {
     int startSectionIndex = -1;
-    final Set<String> sectionRules = ContainerUtil.newHashSet();
+    final Set<String> sectionRules = new HashSet<>();
     for (int i = 0; i < index; i++) {
       final ArrangementSectionRuleManager.ArrangementSectionRuleData section = extractSectionText(i);
       if (section != null) {

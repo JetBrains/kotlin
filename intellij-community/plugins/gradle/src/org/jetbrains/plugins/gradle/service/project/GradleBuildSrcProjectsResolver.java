@@ -230,8 +230,8 @@ public class GradleBuildSrcProjectsResolver {
       }
     }
     if (buildSrcModuleNode != null) {
-      Set<String> buildSrcRuntimeSourcesPaths = ContainerUtil.newHashSet();
-      Set<String> buildSrcRuntimeClassesPaths = ContainerUtil.newHashSet();
+      Set<String> buildSrcRuntimeSourcesPaths = new HashSet<>();
+      Set<String> buildSrcRuntimeClassesPaths = new HashSet<>();
 
       addSourcePaths(buildSrcRuntimeSourcesPaths, buildSrcModuleNode);
 

@@ -21,7 +21,6 @@ import com.intellij.ui.table.JBTable;
 import com.intellij.util.CatchingConsumer;
 import com.intellij.util.IconUtil;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.StatusText;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +55,7 @@ public class InstalledPackagesPanel extends JPanel {
   protected volatile PackageManagementService myPackageManagementService;
   protected final Project myProject;
   protected final PackagesNotificationPanel myNotificationArea;
-  private final Set<String> myCurrentlyInstalling = ContainerUtil.newHashSet();
+  private final Set<String> myCurrentlyInstalling = new HashSet<>();
   private final Map<InstalledPackage, String> myWaitingToUpgrade = new HashMap<>();
 
   public InstalledPackagesPanel(@NotNull Project project, @NotNull PackagesNotificationPanel area) {
