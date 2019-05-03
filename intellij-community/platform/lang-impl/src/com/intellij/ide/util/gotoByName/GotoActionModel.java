@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.util.gotoByName;
 
@@ -55,6 +41,7 @@ import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +74,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   private final Map<AnAction, GroupMapping> myActionGroups = new HashMap<>();
 
   private final NotNullLazyValue<Map<String, String>> myConfigurablesNames = VolatileNotNullLazyValue.createValue(() -> {
-    Map<String, String> map = ContainerUtil.newTroveMap();
+    Map<String, String> map = new THashMap<>();
     for (Configurable configurable : ShowSettingsUtilImpl.getConfigurables(getProject(), true)) {
       if (configurable instanceof SearchableConfigurable) {
         map.put(((SearchableConfigurable)configurable).getId(), configurable.getDisplayName());
@@ -121,7 +108,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   @NotNull
   Map<String, ApplyIntentionAction> getAvailableIntentions() {
     Map<String, ApplyIntentionAction> map = new TreeMap<>();
-    if (myProject != null && !myProject.isDisposed() && !DumbService.isDumb(myProject) &&    
+    if (myProject != null && !myProject.isDisposed() && !DumbService.isDumb(myProject) &&
         myEditor != null && !myEditor.isDisposed()) {
       PsiFile file = PsiDocumentManager.getInstance(myProject).getPsiFile(myEditor.getDocument());
       ApplyIntentionAction[] children = file == null ? null : ApplyIntentionAction.getAvailableIntentions(myEditor, file);
@@ -281,14 +268,14 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     LayeredIcon layeredIcon = new LayeredIcon(2);
     layeredIcon.setIcon(EMPTY_ICON, 0);
     if (icon == null) return new JLabel(layeredIcon);
-    
+
     int width = icon.getIconWidth();
     int height = icon.getIconHeight();
     int emptyIconWidth = EMPTY_ICON.getIconWidth();
     int emptyIconHeight = EMPTY_ICON.getIconHeight();
     if (width <= emptyIconWidth && height <= emptyIconHeight) {
-      layeredIcon.setIcon(disabled && IconLoader.isGoodSize(icon) ? IconLoader.getDisabledIcon(icon) : icon, 1, 
-                          (emptyIconWidth - width) / 2, 
+      layeredIcon.setIcon(disabled && IconLoader.isGoodSize(icon) ? IconLoader.getDisabledIcon(icon) : icon, 1,
+                          (emptyIconWidth - width) / 2,
                           (emptyIconHeight - height) / 2);
     }
 
@@ -671,7 +658,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
       if (myAction instanceof ActionGroup && Comparing.equal(myAction.getTemplatePresentation().getText(), groupName)) return null;
       return groupName;
     }
-    
+
     public boolean isGroupAction() {
       return myAction instanceof ActionGroup;
     }
@@ -724,7 +711,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
       }
       nameComponent.setBackground(bg);
       panel.add(nameComponent, BorderLayout.CENTER);
-      
+
       if (matchedValue instanceof String) { //...
         if (showIcon) {
           panel.add(new JBLabel(EMPTY_ICON), BorderLayout.WEST);
@@ -752,7 +739,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
         if (disabled) {
           groupFg = UIUtil.getLabelDisabledForeground();
         }
-        
+
         if (showIcon) {
           Icon icon = presentation.getIcon();
           panel.add(createIconLabel(icon, disabled), BorderLayout.WEST);
@@ -880,7 +867,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     @NotNull
     private static String getName(@Nullable String text, @Nullable String groupName, boolean toggle) {
       return toggle && StringUtil.isNotEmpty(groupName)
-             ? StringUtil.isNotEmpty(text) ? groupName + ": " + text 
+             ? StringUtil.isNotEmpty(text) ? groupName + ": " + text
                                            : groupName : StringUtil.notNullize(text);
     }
 

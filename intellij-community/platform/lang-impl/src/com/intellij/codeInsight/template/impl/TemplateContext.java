@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TemplateContext {
-  private final Map<String, Boolean> myContextStates = ContainerUtil.newTroveMap();
+  private final Map<String, Boolean> myContextStates = new THashMap<>();
 
   private static final ClearableLazyValue<Map<String, String>> INTERN_MAP = new ClearableLazyValue<Map<String, String>>() {
     private final AtomicBoolean isListenerAdded = new AtomicBoolean();
