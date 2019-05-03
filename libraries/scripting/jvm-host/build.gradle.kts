@@ -33,6 +33,6 @@ publish()
 standardPublicJars()
 
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
