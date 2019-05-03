@@ -28,7 +28,7 @@ fun runCompiledScript(scriptClass: Class<*>, vararg args: String) {
             mainArguments(args)
         }
     }
-    val result = runBlocking {
+    runBlocking {
         evaluator(script, evaluationConfiguration)
     }.onFailure {
         it.reports.forEach(System.err::println)
