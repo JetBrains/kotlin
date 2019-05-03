@@ -344,7 +344,7 @@ public class ExternalSystemTaskActivator {
       }
     }
 
-    Map<String, TaskActivationState> rearrangedMap = ContainerUtil.newLinkedHashMap();
+    Map<String, TaskActivationState> rearrangedMap = new LinkedHashMap<>();
     for (String path : currentPaths) {
       rearrangedMap.put(path, activationMap.get(path));
       activationMap.remove(path);

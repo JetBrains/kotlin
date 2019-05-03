@@ -1506,7 +1506,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
       int row = rows[i];
       Object valueAt = myResultsPreviewTable.getModel().getValueAt(row, 0);
       if (valueAt instanceof Usage) {
-        if (result == null) result = ContainerUtil.newLinkedHashMap();
+        if (result == null) result = new LinkedHashMap<>();
         result.put(row, (Usage)valueAt);
       }
     }
