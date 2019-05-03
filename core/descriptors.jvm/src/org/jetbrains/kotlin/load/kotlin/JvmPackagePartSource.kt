@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.SourceFile
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -58,7 +58,7 @@ class JvmPackagePartSource(
 
     val moduleName =
         packageProto.getExtensionOrNull(JvmProtoBuf.packageModuleName)?.let(nameResolver::getString)
-            ?: JvmAbi.DEFAULT_MODULE_NAME
+            ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
 
     override val presentableString: String
         get() = "Class '${classId.asSingleFqName().asString()}'"

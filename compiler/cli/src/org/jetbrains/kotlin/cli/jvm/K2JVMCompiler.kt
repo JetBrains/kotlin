@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -41,12 +40,11 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.JavaRootPath
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -74,7 +72,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         val pluginLoadResult = loadPlugins(arguments, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
-        val moduleName = arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME
+        val moduleName = arguments.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         configuration.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
 
         configuration.configureExplicitContentRoots(arguments)

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -59,7 +59,7 @@ class UastAnalysisHandlerExtension : AnalysisHandlerExtension {
 
         val typeMapper = KotlinTypeMapper(
             bindingContext, ClassBuilderMode.LIGHT_CLASSES,
-            JvmAbi.DEFAULT_MODULE_NAME,
+            JvmProtoBufUtil.DEFAULT_MODULE_NAME,
             KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT // TODO use proper LanguageVersionSettings
         )
         this.typeMapper = typeMapper

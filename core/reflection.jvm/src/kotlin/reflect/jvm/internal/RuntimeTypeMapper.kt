@@ -117,7 +117,7 @@ internal sealed class JvmPropertySignature {
             if (descriptor.visibility == Visibilities.INTERNAL && containingDeclaration is DeserializedClassDescriptor) {
                 val classProto = containingDeclaration.classProto
                 val moduleName = classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(nameResolver::getString)
-                    ?: JvmAbi.DEFAULT_MODULE_NAME
+                    ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 return "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
             }
             if (descriptor.visibility == Visibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {

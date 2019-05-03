@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -46,7 +46,7 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
     override fun getTypeMapper(element: KtElement): KotlinTypeMapper? {
         return KotlinTypeMapper(
             getBindingContext(element), ClassBuilderMode.LIGHT_CLASSES,
-            JvmAbi.DEFAULT_MODULE_NAME, element.languageVersionSettings
+            JvmProtoBufUtil.DEFAULT_MODULE_NAME, element.languageVersionSettings
         )
     }
 

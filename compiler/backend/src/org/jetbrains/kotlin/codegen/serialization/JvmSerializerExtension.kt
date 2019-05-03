@@ -70,7 +70,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             versionRequirementTable: MutableVersionRequirementTable,
             childSerializer: DescriptorSerializer
     ) {
-        if (moduleName != JvmAbi.DEFAULT_MODULE_NAME) {
+        if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }
 
@@ -100,7 +100,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     }
 
     override fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
-        if (moduleName != JvmAbi.DEFAULT_MODULE_NAME) {
+        if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.packageModuleName, stringTable.getStringIndex(moduleName))
         }
     }
