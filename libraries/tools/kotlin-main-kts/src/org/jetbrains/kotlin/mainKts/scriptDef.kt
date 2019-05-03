@@ -29,7 +29,7 @@ object MainKtsScriptDefinition : ScriptCompilationConfiguration(
     {
         defaultImports(DependsOn::class, Repository::class, Import::class)
         jvm {
-            dependenciesFromClassContext(MainKtsScriptDefinition::class, "kotlin-main-kts")
+            dependenciesFromClassContext(MainKtsScriptDefinition::class, "kotlin-main-kts", "kotlin-stdlib", "kotlin-reflect")
         }
         refineConfiguration {
             onAnnotations(DependsOn::class, Repository::class, Import::class, handler = MainKtsConfigurator())
