@@ -225,7 +225,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
   public void onStart(@NotNull ExternalSystemTaskId id, String workingDir) {
     if (id.getType() == ExternalSystemTaskType.RESOLVE_PROJECT) {
       final ProjectSystemId systemId = id.getProjectSystemId();
-      for (String filePath : ContainerUtil.newArrayList(myKnownAffectedFiles.get(workingDir))) {
+      for (String filePath : new ArrayList<>(myKnownAffectedFiles.get(workingDir))) {
         VirtualFile file = VfsUtil.findFileByIoFile(new File(filePath), false);
         if (file != null && !file.isDirectory()) {
           file.putUserData(CRC_WITHOUT_SPACES_BEFORE_LAST_IMPORT, file.getUserData(CRC_WITHOUT_SPACES_CURRENT));
@@ -607,7 +607,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     }
 
     private void handleRevertedChanges(final String externalProjectPath) {
-      for (String filePath : ContainerUtil.newArrayList(myKnownAffectedFiles.get(externalProjectPath))) {
+      for (String filePath : new ArrayList<>(myKnownAffectedFiles.get(externalProjectPath))) {
         VirtualFile f = VfsUtil.findFileByIoFile(new File(filePath), false);
         if (f == null ||
             !Objects.equals(f.getUserData(CRC_WITHOUT_SPACES_BEFORE_LAST_IMPORT), f.getUserData(CRC_WITHOUT_SPACES_CURRENT))) {

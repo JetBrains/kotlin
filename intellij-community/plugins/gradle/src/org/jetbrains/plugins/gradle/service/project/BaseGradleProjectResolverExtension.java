@@ -188,7 +188,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
         for (ExternalSourceDirectorySet directorySet : sourceSet.getSources().values()) {
           artifacts.addAll(directorySet.getGradleOutputDirs());
         }
-        sourceSetData.setArtifacts(ContainerUtil.newArrayList(artifacts));
+        sourceSetData.setArtifacts(new ArrayList<>(artifacts));
 
         DataNode<GradleSourceSetData> sourceSetDataNode = mainModuleNode.createChild(GradleSourceSetData.KEY, sourceSetData);
         final Map<String, Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>> sourceSetMap =

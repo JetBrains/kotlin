@@ -331,7 +331,7 @@ public class ExternalSystemTaskActivator {
 
     final ExternalProjectsStateProvider stateProvider = ExternalProjectsManagerImpl.getInstance(myProject).getStateProvider();
     final Map<String, TaskActivationState> activationMap = stateProvider.getProjectsTasksActivationMap(systemId);
-    final List<String> currentPaths = ContainerUtil.newArrayList(activationMap.keySet());
+    final List<String> currentPaths = new ArrayList<>(activationMap.keySet());
     if (pathsGroup != null) {
       currentPaths.retainAll(pathsGroup);
     }

@@ -67,7 +67,7 @@ public class GradleBuildClasspathManager {
       }
 
       for (final ExternalModuleBuildClasspathPojo moduleBuildClasspathPojo : projectBuildClasspathPojo.getModulesBuildClasspath().values()) {
-        final List<VirtualFile> moduleBuildClasspath = ContainerUtil.newArrayList(projectBuildClasspath);
+        final List<VirtualFile> moduleBuildClasspath = new ArrayList<>(projectBuildClasspath);
             for (String path : moduleBuildClasspathPojo.getEntries()) {
               final VirtualFile virtualFile = ExternalSystemUtil.findLocalFileByPath(path);
               ContainerUtil.addIfNotNull(moduleBuildClasspath,
@@ -86,7 +86,7 @@ public class GradleBuildClasspathManager {
     for (List<VirtualFile> virtualFiles : myClasspathMap.get().values()) {
       set.addAll(virtualFiles);
     }
-    allFilesCache = ContainerUtil.newArrayList(set);
+    allFilesCache = new ArrayList<>(set);
     myClassFinderCache.clear();
   }
 

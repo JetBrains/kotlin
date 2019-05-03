@@ -1361,7 +1361,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
 
         int count = elements.size();
         if (count > lastCount) {
-          setElementsToList(mySelectionPolicy, ContainerUtil.newArrayList(elements));
+          setElementsToList(mySelectionPolicy, new ArrayList<>(elements));
           if (currentChosenInfo != null) {
             mySelectionPolicy = PreserveSelection.INSTANCE;
           }

@@ -9,11 +9,11 @@ import com.intellij.pom.Navigatable;
 import com.intellij.pom.NavigatableAdapter;
 import com.intellij.pom.NonNavigatable;
 import com.intellij.util.IJSwingUtilities;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +154,7 @@ public class NotificationData implements Disposable {
   }
 
   public List<String> getRegisteredListenerIds() {
-    return ContainerUtil.newArrayList(myListenerMap.keySet());
+    return new ArrayList<>(myListenerMap.keySet());
   }
 
   @Nullable

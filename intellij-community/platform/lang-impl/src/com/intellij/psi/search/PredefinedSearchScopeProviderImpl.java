@@ -216,7 +216,7 @@ public class PredefinedSearchScopeProviderImpl extends PredefinedSearchScopeProv
 
     ContainerUtil.addIfNotNull(result, getSelectedFilesScope(project, dataContext));
 
-    return ContainerUtil.newArrayList(result);
+    return new ArrayList<>(result);
   }
 
   private static void addHierarchyScope(@NotNull Project project, Collection<? super SearchScope> result) {

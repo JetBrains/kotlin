@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.source.tree.injected.changesHandler
 
 import com.intellij.openapi.diagnostic.Attachment
@@ -11,7 +11,6 @@ import com.intellij.openapi.util.ProperTextRange
 import com.intellij.openapi.util.Segment
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.ApiStatus
 import java.util.*
 import kotlin.math.max
@@ -25,7 +24,7 @@ open class CommonInjectedFileChangesHandler(
 ) : BaseInjectedFileChangesHandler(hostEditor, fragmentDocument, injectedFile) {
 
   protected val markers: MutableList<MarkersMapping> =
-    ContainerUtil.newLinkedList<MarkersMapping>().apply {
+    LinkedList<MarkersMapping>().apply {
       addAll(getMarkersFromShreds(shreds))
     }
 

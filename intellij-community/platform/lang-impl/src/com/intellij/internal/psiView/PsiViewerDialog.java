@@ -336,7 +336,7 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
       }
     }
 
-    myFileTypeComboBox.setModel(new CollectionComboBoxModel<>(ContainerUtil.newArrayList(mySourceWrappers), lastUsed));
+    myFileTypeComboBox.setModel(new CollectionComboBoxModel<>(new ArrayList<>(mySourceWrappers), lastUsed));
     myFileTypeComboBox.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
       if (value != null) {
         label.setText(value.getText());

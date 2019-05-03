@@ -461,7 +461,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     ArrayList<CompletionResult> delayed;
     synchronized (myDelayedMiddleMatches) {
       if (myDelayedMiddleMatches.isEmpty()) return;
-      delayed = ContainerUtil.newArrayList(myDelayedMiddleMatches);
+      delayed = new ArrayList<>(myDelayedMiddleMatches);
       myDelayedMiddleMatches.clear();
     }
     for (CompletionResult item : delayed) {

@@ -21,7 +21,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
@@ -124,7 +123,7 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
           localProjectBuildClasspath.put(linkedExternalProjectPath, projectBuildClasspathPojo);
         }
 
-        List<String> projectBuildClasspath = ContainerUtil.newArrayList(externalProjectGradleSdkLibs.getValue());
+        List<String> projectBuildClasspath = new ArrayList<>(externalProjectGradleSdkLibs.getValue());
 
         projectBuildClasspathPojo.setProjectBuildClasspath(projectBuildClasspath);
         List<String> buildClasspath = StreamEx.of(buildClasspathSources).append(buildClasspathClasses).collect(Collectors.toList());

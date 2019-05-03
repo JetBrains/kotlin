@@ -10,9 +10,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +51,7 @@ public class RerunTestsAction extends DumbAwareAction implements AnAction.Transp
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    List<RunContentDescriptor> descriptors = ContainerUtil.newArrayList(REGISTRY);
+    List<RunContentDescriptor> descriptors = new ArrayList<>(REGISTRY);
     for (RunContentDescriptor descriptor : descriptors) {
       if (Disposer.isDisposed(descriptor)) {
         REGISTRY.remove(descriptor);

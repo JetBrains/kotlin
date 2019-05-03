@@ -8,7 +8,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.ThreeState;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.Converter;
 import com.intellij.util.xmlb.annotations.*;
 import org.gradle.util.GradleVersion;
@@ -201,7 +200,7 @@ public class GradleProjectSettings extends ExternalProjectSettings {
     }
 
     public void setCompositeParticipants(List<BuildParticipant> compositeParticipants) {
-      myCompositeParticipants = compositeParticipants == null ? new SmartList<>() : ContainerUtil.newArrayList(compositeParticipants);
+      myCompositeParticipants = compositeParticipants == null ? new SmartList<>() : new ArrayList<>(compositeParticipants);
     }
 
     @NotNull

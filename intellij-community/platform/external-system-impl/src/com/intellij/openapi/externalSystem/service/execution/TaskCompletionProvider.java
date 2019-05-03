@@ -18,7 +18,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.TextAccessor;
-import com.intellij.util.containers.ContainerUtil;
 import groovyjarjarcommonscli.Options;
 import icons.ExternalSystemIcons;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +70,7 @@ public class TaskCompletionProvider extends CommandLineCompletionProvider {
 
       if (projectData == null || projectData.getExternalProjectStructure() == null) return;
 
-      cachedElements = ContainerUtil.newArrayList(getVariants(projectData.getExternalProjectStructure(), projectPath));
+      cachedElements = new ArrayList<>(getVariants(projectData.getExternalProjectStructure(), projectPath));
 
       myCachedElements = cachedElements;
       myCachedWorkingDir = projectPath;

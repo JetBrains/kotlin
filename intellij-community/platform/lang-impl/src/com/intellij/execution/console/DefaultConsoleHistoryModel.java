@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
 import com.intellij.ide.ui.UISettings;
@@ -9,6 +9,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +96,7 @@ public class DefaultConsoleHistoryModel extends SimpleModificationTracker implem
   @Override
   public List<String> getEntries() {
     synchronized (myLock) {
-      return ContainerUtil.newArrayList(myEntries);
+      return new ArrayList<>(myEntries);
     }
   }
 

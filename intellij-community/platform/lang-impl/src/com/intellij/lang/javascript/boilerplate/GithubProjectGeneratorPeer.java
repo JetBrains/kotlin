@@ -10,7 +10,6 @@ import com.intellij.platform.WebProjectGenerator;
 import com.intellij.platform.templates.github.GithubTagInfo;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.ReloadableComboBoxPanel;
 import com.intellij.util.ui.ReloadablePanel;
 import org.jetbrains.annotations.NotNull;
@@ -141,7 +140,7 @@ public class GithubProjectGeneratorPeer implements WebProjectGenerator.Generator
 
   @NotNull
   private static List<GithubTagInfo> createSortedTagList(@NotNull Collection<GithubTagInfo> tags) {
-    List<GithubTagInfo> sortedTags = ContainerUtil.newArrayList(tags);
+    List<GithubTagInfo> sortedTags = new ArrayList<>(tags);
     Collections.sort(sortedTags, (tag1, tag2) -> {
       GithubTagInfo.Version v1 = tag1.getVersion();
       GithubTagInfo.Version v2 = tag2.getVersion();

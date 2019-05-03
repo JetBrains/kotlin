@@ -22,7 +22,6 @@ import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.usageView.UsageInfo;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -193,7 +192,7 @@ public abstract class IntroduceHandler<Target extends IntroduceTarget, Scope ext
 
     map.put(OccurrencesChooser.ReplaceChoice.NO, Collections.singletonList(target));
     if (usages.size() > 1) {
-      map.put(OccurrencesChooser.ReplaceChoice.ALL, ContainerUtil.newArrayList(usages));
+      map.put(OccurrencesChooser.ReplaceChoice.ALL, new ArrayList<>(usages));
     }
     return map;
   }

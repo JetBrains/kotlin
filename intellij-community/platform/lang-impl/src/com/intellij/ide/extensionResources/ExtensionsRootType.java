@@ -211,7 +211,7 @@ public class ExtensionsRootType extends RootType {
     for (ClassLoader classLoader : dependentPluginClassLoaders) {
       urls.removeAll(ContainerUtil.toList(classLoader.getResources(resourcesPath)));
     }
-    return ContainerUtil.newArrayList(urls);
+    return new ArrayList<>(urls);
   }
 
   private static void extractResources(@NotNull VirtualFile from, @NotNull File to) throws IOException {

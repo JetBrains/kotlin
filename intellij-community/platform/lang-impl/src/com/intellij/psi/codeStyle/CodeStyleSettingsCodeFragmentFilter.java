@@ -18,7 +18,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.SequentialModalProgressTask;
 import com.intellij.util.SequentialTask;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,7 +94,7 @@ public class CodeStyleSettingsCodeFragmentFilter {
 
       @Override
       public List<String> getOtherSetting() {
-        return ContainerUtil.newArrayList(otherFieldsTask.getAffectedFields());
+        return new ArrayList<>(otherFieldsTask.getAffectedFields());
       }
     };
   }
@@ -172,7 +171,7 @@ public class CodeStyleSettingsCodeFragmentFilter {
 
     @Override
     public void stop() {
-      if (!isDone()) myAffectingFields = ContainerUtil.newArrayList(myAllFields);
+      if (!isDone()) myAffectingFields = new ArrayList<>(myAllFields);
     }
 
     @Override

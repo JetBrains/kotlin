@@ -82,7 +82,7 @@ public class ShowExpressionTypeHandler implements CodeInsightActionHandler {
     }
     else {
       IntroduceTargetChooser.showChooser(
-        editor, ContainerUtil.newArrayList(map.keySet()), callback,
+        editor, new ArrayList<>(map.keySet()), callback,
         PsiElement::getText
       );
     }

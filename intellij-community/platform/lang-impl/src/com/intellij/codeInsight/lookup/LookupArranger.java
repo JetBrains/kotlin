@@ -8,7 +8,6 @@ import com.intellij.codeInsight.completion.impl.CompletionServiceImpl;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,7 +83,7 @@ public abstract class LookupArranger implements WeighingContext {
   }
 
   public final void prefixReplaced(Lookup lookup, String newPrefix) {
-    ArrayList<LookupElement> itemCopy = ContainerUtil.newArrayList(myItems);
+    ArrayList<LookupElement> itemCopy = new ArrayList<>(myItems);
     myItems.clear();
     for (LookupElement item : itemCopy) {
       if (item.isValid()) {

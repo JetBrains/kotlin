@@ -130,7 +130,7 @@ public class LiftShorterItemsClassifier extends Classifier<LookupElement> {
     Collection<LookupElement> removed = mainMap.remove(key);
     if (removed == null) return;
 
-    for (LookupElement reference : ContainerUtil.newArrayList(removed)) {
+    for (LookupElement reference : new ArrayList<>(removed)) {
       inverseMap.remove(reference, key);
     }
   }

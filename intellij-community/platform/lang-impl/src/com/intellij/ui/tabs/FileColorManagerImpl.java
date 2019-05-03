@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ui.tabs;
 
@@ -17,10 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author spleaner
@@ -125,7 +123,7 @@ public class FileColorManagerImpl extends FileColorManager implements Persistent
 
   @Override
   public Collection<String> getColorNames() {
-    List<String> sorted = ContainerUtil.newArrayList(ourDefaultColors.keySet());
+    List<String> sorted = new ArrayList<>(ourDefaultColors.keySet());
     Collections.sort(sorted);
     return sorted;
   }

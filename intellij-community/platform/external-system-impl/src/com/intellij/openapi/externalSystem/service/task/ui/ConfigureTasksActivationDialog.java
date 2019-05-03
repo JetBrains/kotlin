@@ -268,7 +268,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
   private MyNode[] buildProjectsNodes(final ExternalProjectSettings projectSettings,
                                       final ExternalProjectsStateProvider stateProvider,
                                       final RootNode parent) {
-    List<String> paths = ContainerUtil.newArrayList(stateProvider.getProjectsTasksActivationMap(myProjectSystemId).keySet());
+    List<String> paths = new ArrayList<>(stateProvider.getProjectsTasksActivationMap(myProjectSystemId).keySet());
     paths.retainAll(projectSettings.getModules());
 
     return ContainerUtil.mapNotNull(ArrayUtil.toStringArray(paths), path -> {
@@ -391,7 +391,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
           final String projectPath = projectPopupItem.myModuleData.getLinkedExternalProjectPath();
           final List<String> tasks = activationMap.get(projectPath).getTasks(selectedPhase);
 
-          final List<String> tasksToSuggest = ContainerUtil.newArrayList(projectPopupItem.myTasks);
+          final List<String> tasksToSuggest = new ArrayList<>(projectPopupItem.myTasks);
           tasksToSuggest.removeAll(tasks);
           return new BaseListPopupStep<String>("Choose task", tasksToSuggest) {
             @Override
