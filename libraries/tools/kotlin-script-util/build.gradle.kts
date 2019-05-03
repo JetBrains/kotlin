@@ -40,10 +40,8 @@ projectTest {
     workingDir = rootDir
 }
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
-
-publish()
-
-ideaPlugin()

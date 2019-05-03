@@ -42,6 +42,7 @@ LANGUAGE="language"
 LIBRARY_PATHS="libraryPaths"
 LINKER="linker"
 LINKER_OPTS="linkerOpts"
+MODULES="modules"
 NON_STRICT_ENUMS="nonStrictEnums"
 NO_STRING_CONVERSION="noStringConversion"
 PACKAGE="package"
@@ -100,6 +101,7 @@ X64="x64"
   {LIBRARY_PATHS} { yybegin(WAITING_PLATFORM); return LIBRARY_PATHS; }
   {LINKER} { yybegin(WAITING_PLATFORM); return LINKER; }
   {LINKER_OPTS} { yybegin(WAITING_PLATFORM); return LINKER_OPTS; }
+  {MODULES} { yybegin(WAITING_PLATFORM); return MODULES; }
   {NON_STRICT_ENUMS} { yybegin(WAITING_PLATFORM); return NON_STRICT_ENUMS; }
   {NO_STRING_CONVERSION} { yybegin(WAITING_PLATFORM); return NO_STRING_CONVERSION; }
   {PACKAGE} { yybegin(WAITING_PLATFORM); return PACKAGE; }

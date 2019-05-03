@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization
@@ -37,8 +37,8 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
             val descriptor = module.findUnambiguousDescriptorByFqName(fqName)
 
             val requirement = when (descriptor) {
-                is DeserializedMemberDescriptor -> descriptor.versionRequirements.single()
-                is DeserializedClassDescriptor -> descriptor.versionRequirements.single()
+                is DeserializedMemberDescriptor -> descriptor.versionRequirements.singleOrNull()
+                is DeserializedClassDescriptor -> descriptor.versionRequirements.singleOrNull()
                 else -> throw AssertionError("Unknown descriptor: $descriptor")
             } ?: throw AssertionError("No VersionRequirement for $descriptor")
 

@@ -18,20 +18,23 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
-class ArrayIterator : IntrinsicMethod() {
-    override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        val method = context.state.typeMapper.mapToCallableMethod(expression.descriptor as FunctionDescriptor, false)
+object ArrayIterator : IntrinsicMethod() {
+    override fun toCallable(
+        expression: IrFunctionAccessExpression,
+        signature: JvmMethodSignature,
+        context: JvmBackendContext
+    ): IrIntrinsicFunction {
+        val method = context.state.typeMapper.mapToCallableMethod(expression.descriptor, false)
         return IrIntrinsicFunction.create(expression, signature, context, method.owner) {
             val methodSignature = "(${method.owner.descriptor})${method.returnType.descriptor}"
             val intrinsicOwner =
-                    if (AsmUtil.isPrimitive(method.owner.elementType))
-                        "kotlin/jvm/internal/ArrayIteratorsKt"
-                    else
-                        "kotlin/jvm/internal/ArrayIteratorKt"
+                if (AsmUtil.isPrimitive(method.owner.elementType))
+                    "kotlin/jvm/internal/ArrayIteratorsKt"
+                else
+                    "kotlin/jvm/internal/ArrayIteratorKt"
             it.invokestatic(intrinsicOwner, "iterator", methodSignature, false)
         }
     }

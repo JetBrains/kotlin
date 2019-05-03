@@ -1,176 +1,161 @@
 FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
-  FUN name:test0 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T) returnType:kotlin.Boolean flags:
+  FUN name:test0 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test0) returnType:kotlin.Boolean 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
-    VALUE_PARAMETER name:y index:1 type:T flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test0 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test0(Any, T): Boolean'
+      RETURN type=kotlin.Nothing from='public final fun test0 <T> (x: kotlin.Any, y: T of <root>.test0): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-            then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-              arg1: GET_VAR 'value-parameter y: T' type=T origin=null
+              GET_VAR 'x: kotlin.Any declared in <root>.test0' type=kotlin.Any origin=null
+            then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test0' type=kotlin.Any origin=null
+              arg1: GET_VAR 'y: T of <root>.test0 declared in <root>.test0' type=T of <root>.test0 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test1 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T) returnType:kotlin.Boolean flags:
+  FUN name:test1 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test1) returnType:kotlin.Boolean 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
-    VALUE_PARAMETER name:y index:1 type:T flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test1 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(Any, T): Boolean'
+      RETURN type=kotlin.Nothing from='public final fun test1 <T> (x: kotlin.Any, y: T of <root>.test1): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
-              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-            then: CALL 'ieee754equals(Float?, Float?): Boolean' type=kotlin.Boolean origin=EQEQ
+              GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
-                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-              arg1: GET_VAR 'value-parameter y: T' type=T origin=null
+                GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+              arg1: GET_VAR 'y: T of <root>.test1 declared in <root>.test1' type=T of <root>.test1 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test2 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T) returnType:kotlin.Boolean flags:
+  FUN name:test2 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test2) returnType:kotlin.Boolean 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
-    VALUE_PARAMETER name:y index:1 type:T flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test2 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(Any, T): Boolean'
+      RETURN type=kotlin.Nothing from='public final fun test2 <T> (x: kotlin.Any, y: T of <root>.test2): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
-              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-            then: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: CALL 'toDouble(): Double' type=kotlin.Double origin=null
+              GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                 $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
-                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-              arg1: GET_VAR 'value-parameter y: T' type=T origin=null
+                  GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+              arg1: GET_VAR 'y: T of <root>.test2 declared in <root>.test2' type=T of <root>.test2 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T) returnType:kotlin.Boolean flags:
+  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test3) returnType:kotlin.Boolean 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
-    VALUE_PARAMETER name:y index:1 type:T flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test3 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(Any, T): Boolean'
+      RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any, y: T of <root>.test3): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-            then: CALL 'ieee754equals(Float?, Float?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: CALL 'toFloat(): Float' type=kotlin.Float origin=null
+              GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
                 $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-              arg1: GET_VAR 'value-parameter y: T' type=T origin=null
+                  GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+              arg1: GET_VAR 'y: T of <root>.test3 declared in <root>.test3' type=T of <root>.test3 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T) returnType:kotlin.Boolean flags:
+  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test4) returnType:kotlin.Boolean 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float?]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
-    VALUE_PARAMETER name:y index:1 type:T flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test4 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test4(Any, T): Boolean'
+      RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any, y: T of <root>.test4): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-            then: CALL 'ieee754equals(Float?, Float?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: CALL 'toFloat(): Float' type=kotlin.Float origin=null
+              GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
                 $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-              arg1: GET_VAR 'value-parameter y: T' type=T origin=null
+                  GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
+              arg1: GET_VAR 'y: T of <root>.test4 declared in <root>.test4' type=T of <root>.test4 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test5 visibility:public modality:FINAL <T, R> (x:kotlin.Any, y:R) returnType:kotlin.Boolean flags:
+  FUN name:test5 visibility:public modality:FINAL <T, R> (x:kotlin.Any, y:R of <root>.test5) returnType:kotlin.Boolean 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float?]
-    TYPE_PARAMETER name:R index:1 variance: superTypes:[T]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
-    VALUE_PARAMETER name:y index:1 type:R flags:
+    TYPE_PARAMETER name:R index:1 variance: superTypes:[T of <root>.test5]
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
+    VALUE_PARAMETER name:y index:1 type:R of <root>.test5 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test5(Any, R): Boolean'
+      RETURN type=kotlin.Nothing from='public final fun test5 <T, R> (x: kotlin.Any, y: R of <root>.test5): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-            then: CALL 'ieee754equals(Float?, Float?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: CALL 'toFloat(): Float' type=kotlin.Float origin=null
+              GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+            then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
                 $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-                  GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-              arg1: GET_VAR 'value-parameter y: R' type=R origin=null
+                  GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+              arg1: GET_VAR 'y: R of <root>.test5 declared in <root>.test5' type=R of <root>.test5 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test6 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T) returnType:kotlin.Boolean flags:
+  FUN name:test6 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test6) returnType:kotlin.Boolean 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Number]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
-    VALUE_PARAMETER name:y index:1 type:T flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test6 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test6(Any, T): Boolean'
+      RETURN type=kotlin.Nothing from='public final fun test6 <T> (x: kotlin.Any, y: T of <root>.test6): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-            then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-              arg1: GET_VAR 'value-parameter y: T' type=T origin=null
+              GET_VAR 'x: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
+            then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
+              arg1: GET_VAR 'y: T of <root>.test6 declared in <root>.test6' type=T of <root>.test6 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  CLASS CLASS name:F modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:F<T> flags:
+  CLASS CLASS name:F modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F<T of <root>.F> 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float]
-    CONSTRUCTOR visibility:public <> () returnType:F<T> flags:primary
+    CONSTRUCTOR visibility:public <> () returnType:<root>.F<T of <root>.F> [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='F'
-    FUN name:testCapturedType visibility:public modality:FINAL <> ($this:F<T>, x:T, y:kotlin.Any) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:F<T> flags:
-      VALUE_PARAMETER name:x index:0 type:T flags:
-      VALUE_PARAMETER name:y index:1 type:kotlin.Any flags:
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN name:testCapturedType visibility:public modality:FINAL <> ($this:<root>.F<T of <root>.F>, x:T of <root>.F, y:kotlin.Any) returnType:kotlin.Boolean 
+      $this: VALUE_PARAMETER name:<this> type:<root>.F<T of <root>.F> 
+      VALUE_PARAMETER name:x index:0 type:T of <root>.F 
+      VALUE_PARAMETER name:y index:1 type:kotlin.Any 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='testCapturedType(T, Any): Boolean'
+        RETURN type=kotlin.Nothing from='public final fun testCapturedType (x: T of <root>.F, y: kotlin.Any): kotlin.Boolean declared in <root>.F'
           WHEN type=kotlin.Boolean origin=ANDAND
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
-                GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
-              then: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: CALL 'toDouble(): Double' type=kotlin.Double origin=null
-                  $this: GET_VAR 'value-parameter x: T' type=T origin=null
+                GET_VAR 'y: kotlin.Any declared in <root>.F.testCapturedType' type=kotlin.Any origin=null
+              then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
+                  $this: GET_VAR 'x: T of <root>.F declared in <root>.F.testCapturedType' type=T of <root>.F origin=null
                 arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
-                  GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
+                  GET_VAR 'y: kotlin.Any declared in <root>.F.testCapturedType' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Boolean type=kotlin.Boolean value=false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

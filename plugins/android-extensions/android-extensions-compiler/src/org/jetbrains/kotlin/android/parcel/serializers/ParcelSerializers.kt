@@ -816,12 +816,12 @@ private fun writeValueNullAware(v: InstructionAdapter, block: () -> Unit) {
 
     v.goTo(labelReturn)
 
-    labelNull@ v.visitLabel(labelNull)
+    v.visitLabel(labelNull)
     v.pop()
     v.aconst(0)
     v.invokevirtual(PARCEL_TYPE.internalName, "writeInt", "(I)V", false)
 
-    labelReturn@ v.visitLabel(labelReturn)
+    v.visitLabel(labelReturn)
 }
 
 internal class Method<out T : String?>(val name: String, val signature: T) {

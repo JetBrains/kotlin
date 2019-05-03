@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.coroutines
@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.boxing.isPrimitiveUnboxing
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
@@ -25,8 +24,6 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -37,6 +34,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
+import kotlin.math.max
 
 private const val COROUTINES_DEBUG_METADATA_VERSION = 1
 
@@ -48,6 +46,10 @@ private const val COROUTINES_METADATA_INDEX_TO_LABEL_JVM_NAME = "i"
 private const val COROUTINES_METADATA_METHOD_NAME_JVM_NAME = "m"
 private const val COROUTINES_METADATA_CLASS_NAME_JVM_NAME = "c"
 private const val COROUTINES_METADATA_VERSION_JVM_NAME = "v"
+
+const val SUSPEND_FUNCTION_CONTINUATION_PARAMETER = "\$completion"
+const val SUSPEND_CALL_RESULT_NAME = "\$result"
+const val ILLEGAL_STATE_ERROR_MESSAGE = "call to 'resume' before 'invoke' with coroutine"
 
 class CoroutineTransformerMethodVisitor(
     delegate: MethodVisitor,
@@ -61,20 +63,18 @@ class CoroutineTransformerMethodVisitor(
     private val isForNamedFunction: Boolean,
     private val shouldPreserveClassInitialization: Boolean,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val sourceFile: String,
     // These two are needed to report diagnostics about suspension points inside critical section
     private val element: KtElement,
     private val diagnostics: DiagnosticSink,
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
-    private val internalNameForDispatchReceiver: String? = null,
-    // For crossinline lambdas we do not generate DebugMetadata annotation, otherwise it will be generated twice
-    private val isCrossinlineLambda: Boolean = false
+    private val internalNameForDispatchReceiver: String? = null
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
-    private val lineNumber = element?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
+    private val lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0
+    private val sourceFile = element.containingKtFile.name
 
     private var continuationIndex = if (isForNamedFunction) -1 else 0
     private var dataIndex = if (isForNamedFunction) -1 else 1
@@ -104,6 +104,8 @@ class CoroutineTransformerMethodVisitor(
 
         if (isForNamedFunction) {
             ReturnUnitMethodTransformer.transform(containingClassInternalName, methodNode)
+
+            addCompletionParameterToLVT(methodNode)
 
             if (allSuspensionPointsAreTailCalls(containingClassInternalName, methodNode, suspensionPoints)) {
                 dropSuspensionMarkers(methodNode, suspensionPoints)
@@ -176,7 +178,7 @@ class CoroutineTransformerMethodVisitor(
             insert(last, defaultLabel)
 
             insert(last, withInstructionAdapter {
-                AsmUtil.genThrow(this, "java/lang/IllegalStateException", "call to 'resume' before 'invoke' with coroutine")
+                AsmUtil.genThrow(this, "java/lang/IllegalStateException", ILLEGAL_STATE_ERROR_MESSAGE)
                 areturn(Type.VOID_TYPE)
             })
         }
@@ -192,9 +194,35 @@ class CoroutineTransformerMethodVisitor(
 
         fixLvtForParameters(methodNode, startLabel, endLabel)
 
-        if (languageVersionSettings.isReleaseCoroutines() && !isCrossinlineLambda) {
+        if (languageVersionSettings.isReleaseCoroutines()) {
             writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
         }
+    }
+
+    private fun addCompletionParameterToLVT(methodNode: MethodNode) {
+        val index =
+                /*  all args */ Type.getMethodType(methodNode.desc).argumentTypes.fold(0) { a, b -> a + b.size } +
+                /* this */ (if (isStatic(methodNode.access)) 0 else 1) -
+                /* only last */ 1
+        val startLabel = with(methodNode.instructions) {
+            if (first is LabelNode) first as LabelNode
+            else LabelNode().also { insertBefore(first, it) }
+        }
+
+        val endLabel = with(methodNode.instructions) {
+            if (last is LabelNode) last as LabelNode
+            else LabelNode().also { insert(last, it) }
+        }
+        methodNode.localVariables.add(
+            LocalVariableNode(
+                SUSPEND_FUNCTION_CONTINUATION_PARAMETER,
+                languageVersionSettings.continuationAsmType().descriptor,
+                null,
+                startLabel,
+                endLabel,
+                index
+            )
+        )
     }
 
     private fun findSuspensionPointLineNumber(suspensionPoint: SuspensionPoint) =
@@ -238,15 +266,11 @@ class CoroutineTransformerMethodVisitor(
     }
 
     private fun fixLvtForParameters(methodNode: MethodNode, startLabel: LabelNode, endLabel: LabelNode) {
-        // We need to skip continuation, since the inliner likes to remap variables there.
-        // But this is not a problem, since we have separate $continuation LVT entry
-
         val paramsNum =
-                /* this */ (if (internalNameForDispatchReceiver != null) 1 else 0) +
-                /* real params */ Type.getArgumentTypes(methodNode.desc).size -
-                /* no continuation */ if (isForNamedFunction) 1 else 0
+                /* this */ (if (isStatic(methodNode.access)) 0 else 1) +
+                /* real params */ Type.getArgumentTypes(methodNode.desc).fold(0) { a, b -> a + b.size }
 
-        for (i in 0..paramsNum) {
+        for (i in 0 until paramsNum) {
             fixRangeOfLvtRecord(methodNode, i, startLabel, endLabel)
         }
     }
@@ -294,18 +318,28 @@ class CoroutineTransformerMethodVisitor(
 
     // Warning! This is _continuation_, not _completion_, it can be allocated inside the method, thus, it is incorrect to treat it
     // as a parameter
-    private fun addContinuationToLvt(methodNode: MethodNode, startLabel: LabelNode) {
-        val endLabel = LabelNode()
-        methodNode.instructions.insert(methodNode.instructions.last, endLabel)
-        methodNode.localVariables.add(
-            LocalVariableNode(
-                "\$continuation",
-                languageVersionSettings.continuationAsmType().descriptor,
-                null,
-                startLabel,
-                endLabel,
-                continuationIndex
-            )
+    private fun addContinuationAndResultToLvt(
+        methodNode: MethodNode,
+        startLabel: Label,
+        resultStartLabel: Label
+    ) {
+        val endLabel = Label()
+        methodNode.instructions.add(withInstructionAdapter { mark(endLabel) })
+        methodNode.visitLocalVariable(
+            CONTINUATION_VARIABLE_NAME,
+            languageVersionSettings.continuationAsmType().descriptor,
+            null,
+            startLabel,
+            endLabel,
+            continuationIndex
+        )
+        methodNode.visitLocalVariable(
+            SUSPEND_CALL_RESULT_NAME,
+            AsmTypes.OBJECT_TYPE.descriptor,
+            null,
+            resultStartLabel,
+            endLabel,
+            dataIndex
         )
     }
 
@@ -433,11 +467,14 @@ class CoroutineTransformerMethodVisitor(
 
             visitLabel(afterCoroutineStateCreated)
 
-            addContinuationToLvt(methodNode, LabelNode(afterCoroutineStateCreated))
-
             visitVarInsn(Opcodes.ALOAD, continuationIndex)
             getfield(classBuilderForCoroutineState.thisName, languageVersionSettings.dataFieldName(), AsmTypes.OBJECT_TYPE.descriptor)
             visitVarInsn(Opcodes.ASTORE, dataIndex)
+
+            val resultStartLabel = Label()
+            visitLabel(resultStartLabel)
+
+            addContinuationAndResultToLvt(methodNode, afterCoroutineStateCreated, resultStartLabel)
 
             if (!languageVersionSettings.isReleaseCoroutines()) {
                 visitVarInsn(Opcodes.ALOAD, continuationIndex)
@@ -592,7 +629,7 @@ class CoroutineTransformerMethodVisitor(
             spilledToVariableMapping.add(spilledToVariable)
 
             varsCountByType.forEach {
-                maxVarsCountByType[it.key] = Math.max(maxVarsCountByType[it.key] ?: 0, it.value)
+                maxVarsCountByType[it.key] = max(maxVarsCountByType[it.key] ?: 0, it.value)
             }
         }
 
@@ -644,7 +681,7 @@ class CoroutineTransformerMethodVisitor(
         val continuationLabel = LabelNode()
         val continuationLabelAfterLoadedResult = LabelNode()
         val suspendElementLineNumber = lineNumber
-        val nextLineNumberNode = suspension.suspensionCallEnd.findNextOrNull { it is LineNumberNode } as? LineNumberNode
+        var nextLineNumberNode = suspension.suspensionCallEnd.findNextOrNull { it is LineNumberNode } as? LineNumberNode
         with(methodNode.instructions) {
             // Save state
             insertBefore(
@@ -694,33 +731,17 @@ class CoroutineTransformerMethodVisitor(
 
                 // Extend next instruction linenumber. Can't use line number of suspension point here because both non-suspended execution
                 // and re-entering after suspension passes this label.
-
-                // However, for primitives we generate it separately
-                if (possibleTryCatchBlockStart.next?.isUnboxingSequence() != true) {
+                if (possibleTryCatchBlockStart.next?.opcode?.let {
+                        it != Opcodes.ASTORE && it != Opcodes.CHECKCAST && it != Opcodes.INVOKESTATIC &&
+                                it != Opcodes.INVOKEVIRTUAL && it != Opcodes.INVOKEINTERFACE
+                    } == true
+                ) {
                     visitLineNumber(afterSuspensionPointLineNumber, continuationLabelAfterLoadedResult.label)
+                } else {
+                    // But keep the linenumber if the result of the call is is used afterwards
+                    nextLineNumberNode = null
                 }
             })
-
-            // In code like val a = suspendReturnsInt()
-            // `a` is coerced from Object to int, and coercion happens before scopeStart's mark:
-            //  LL
-            //   CHECKCAST java/lang/Number
-            //   INVOKEVIRTUAL java/lang/Number.intValue ()I
-            //   ISTORE N
-            //  LM
-            //   /* put lineNumber here */
-            //   ...
-            //  LOCALVARIABLE name LM LK N
-            if (continuationLabelAfterLoadedResult.label.info.safeAs<AbstractInsnNode>()?.next?.isUnboxingSequence() == true) {
-                // Find next label after unboxing and put linenumber there
-                var current = (continuationLabelAfterLoadedResult.label.info as AbstractInsnNode).next
-                while (current != null && current !is LabelNode) {
-                    current = current.next
-                }
-                if (current != null) {
-                    insert(current, LineNumberNode(afterSuspensionPointLineNumber, current.cast()))
-                }
-            }
 
             if (nextLineNumberNode != null) {
                 // Remove the line number instruction as it now covered with line number on continuation label.
@@ -730,10 +751,6 @@ class CoroutineTransformerMethodVisitor(
         }
 
         return continuationLabel
-    }
-
-    private fun AbstractInsnNode.isUnboxingSequence(): Boolean {
-        return opcode == Opcodes.CHECKCAST && next?.isPrimitiveUnboxing() == true
     }
 
     // It's necessary to preserve some sensible invariants like there should be no jump in the middle of try-catch-block

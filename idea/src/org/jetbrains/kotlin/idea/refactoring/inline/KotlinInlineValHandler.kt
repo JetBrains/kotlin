@@ -119,7 +119,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
         val referenceExpressions = mutableListOf<KtExpression>()
         val conflictUsages = MultiMap.create<PsiElement, String>()
         for (ref in references) {
-            val refElement = ref.element ?: continue
+            val refElement = ref.element
             if (refElement !is KtElement) {
                 conflictUsages.putValue(refElement, "Non-Kotlin usage: ${refElement.text}")
                 continue

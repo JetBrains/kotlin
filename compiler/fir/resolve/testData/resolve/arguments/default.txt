@@ -1,0 +1,23 @@
+FILE: default.kt
+    public final fun foo(first: R|kotlin/Int|, second: R|kotlin/Double| = Double(3.14), third: R|kotlin/Boolean| = Boolean(false)): R|kotlin/Unit| {
+    }
+    public final fun bar(first: R|kotlin/Int|, second: R|kotlin/Double| = Double(2.71), third: R|kotlin/Boolean|, fourth: R|kotlin/String| = String()): R|kotlin/Unit| {
+    }
+    public final fun baz(x: R|kotlin/Int|, vararg y: R|kotlin/Array<kotlin/String>|, z: R|kotlin/Boolean| = Boolean(false)): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|(Int(1))
+        R|/foo|(Int(1), Double(2.0))
+        R|/foo|(Int(1), Double(2.0), Boolean(true))
+        R|/foo|(Int(1), third = Boolean(true))
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#()
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(Int(0), Double(0.0), Boolean(false), String())
+        R|/bar|(Int(1), third = Boolean(true))
+        R|/bar|(Int(1), Double(2.0), Boolean(true))
+        R|/bar|(Int(1), Double(2.0), Boolean(true), String(my))
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(Int(1), Boolean(true))
+        R|/baz|(Int(1))
+        R|/baz|(Int(1), String(my), String(yours))
+        R|/baz|(Int(1), z = Boolean(true))
+        <Inapplicable(INAPPLICABLE): [/baz]>#(Int(0), String(), Boolean(false))
+    }

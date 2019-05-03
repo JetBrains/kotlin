@@ -1,89 +1,87 @@
 FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
-  CLASS CLASS name:Cell modality:OPEN visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Cell<T> flags:
+  CLASS CLASS name:Cell modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cell<T of <root>.Cell> 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> (value:T) returnType:Cell<T> flags:primary
-      VALUE_PARAMETER name:value index:0 type:T flags:
+    CONSTRUCTOR visibility:public <> (value:T of <root>.Cell) returnType:<root>.Cell<T of <root>.Cell> [primary] 
+      VALUE_PARAMETER name:value index:0 type:T of <root>.Cell 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='Cell'
-    PROPERTY name:value visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:value type:T visibility:public flags:final
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Cell modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:value visibility:public modality:FINAL [val] 
+      FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'value-parameter value: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell<T>) returnType:T flags:
-        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:val
-        $this: VALUE_PARAMETER name:<this> type:Cell<T> flags:
+          GET_VAR 'value: T of <root>.Cell declared in <root>.Cell.<init>' type=T of <root>.Cell origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell<T of <root>.Cell>) returnType:T of <root>.Cell 
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.Cell<T of <root>.Cell> 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-value>(): T'
-            GET_FIELD 'value: T' type=T origin=null
-              receiver: GET_VAR 'this@Cell: Cell<T>' type=Cell<T> origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          RETURN type=kotlin.Nothing from='public final fun <get-value> (): T of <root>.Cell declared in <root>.Cell'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:public [final] ' type=T of <root>.Cell origin=null
+              receiver: GET_VAR '<this>: <root>.Cell<T of <root>.Cell> declared in <root>.Cell.<get-value>' type=<root>.Cell<T of <root>.Cell> origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  TYPEALIAS typealias CT = Cell<T> type=Cell<T>
-  TYPEALIAS typealias CStr = Cell<String> type=Cell<kotlin.String>
-  CLASS CLASS name:C1 modality:FINAL visibility:public flags: superTypes:[Cell<kotlin.String>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C1 flags:
-    CONSTRUCTOR visibility:public <> () returnType:C1 flags:primary
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C1 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C1 [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(T)'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) [primary] declared in <root>.Cell'
           <T>: kotlin.String
           value: CONST String type=kotlin.String value="O"
-        INSTANCE_INITIALIZER_CALL classDescriptor='C1'
-    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL flags:val
-      FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:Cell<kotlin.String>) returnType:kotlin.String flags:
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL flags:val
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]'
+    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [val] 
+      FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell<kotlin.String>) returnType:kotlin.String 
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [val] 
         overridden:
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell<T>) returnType:T flags:
-        $this: VALUE_PARAMETER name:<this> type:Cell<kotlin.String> flags:
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          public final fun <get-value> (): T of <root>.Cell declared in <root>.Cell
+        $this: VALUE_PARAMETER name:<this> type:<root>.Cell<kotlin.String> 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Cell
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in <root>.Cell
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  CLASS CLASS name:C2 modality:FINAL visibility:public flags: superTypes:[Cell<kotlin.String>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C2 flags:
-    CONSTRUCTOR visibility:public <> () returnType:C2 flags:primary
+        public open fun toString (): kotlin.String declared in <root>.Cell
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C2 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C2 [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(T)'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) [primary] declared in <root>.Cell'
           <T>: kotlin.String
           value: CONST String type=kotlin.String value="K"
-        INSTANCE_INITIALIZER_CALL classDescriptor='C2'
-    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL flags:val
-      FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:Cell<kotlin.String>) returnType:kotlin.String flags:
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL flags:val
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell<kotlin.String>]'
+    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [val] 
+      FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell<kotlin.String>) returnType:kotlin.String 
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [val] 
         overridden:
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell<T>) returnType:T flags:
-        $this: VALUE_PARAMETER name:<this> type:Cell<kotlin.String> flags:
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          public final fun <get-value> (): T of <root>.Cell declared in <root>.Cell
+        $this: VALUE_PARAMETER name:<this> type:<root>.Cell<kotlin.String> 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Cell
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in <root>.Cell
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        public open fun toString (): kotlin.String declared in <root>.Cell
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

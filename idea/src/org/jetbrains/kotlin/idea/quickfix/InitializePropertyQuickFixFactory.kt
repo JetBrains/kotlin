@@ -175,7 +175,6 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
             val descriptor = descriptorsToProcess.next()
             val constructorPointer = descriptor.source.getPsi()?.createSmartPointer()
             val config = configureChangeSignature(propertyDescriptor)
-            val changeSignature = {  }
 
             object : CompositeRefactoringRunner(project, "refactoring.changeSignature") {
                 override fun runRefactoring() {

@@ -41,7 +41,11 @@ For local development, if you're not working on bytecode generation or the stand
 
 You also can use [Gradle properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_properties_and_system_properties) to setup JDK_* variables.
 
-> Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572). 
+> Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572).
+
+On Windows you might need to add long paths setting to the repo:
+
+    git config core.longpaths true 
 
 ## Building
 

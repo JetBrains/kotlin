@@ -1,18 +1,19 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -34,7 +35,9 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import kotlin.properties.Delegates
 
-abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
+interface FunctionalArgument
+
+abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgument, ReturnLabelOwner {
 
     abstract val isBoundCallableReference: Boolean
 
@@ -76,6 +79,8 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
     }
 }
 
+class NonInlineableArgumentForInlineableParameterCalledInSuspend(val isSuspend: Boolean) : FunctionalArgument
+object NonInlineableArgumentForInlineableSuspendParameter : FunctionalArgument
 
 class DefaultLambda(
     override val lambdaClassType: Type,
@@ -98,7 +103,7 @@ class DefaultLambda(
     override lateinit var capturedVars: List<CapturedParamDesc>
         private set
 
-    override fun isMyLabel(name: String): Boolean = false
+    override fun isReturnFromMe(labelName: String): Boolean = false
 
     var originalBoundReceiverType: Type? = null
         private set
@@ -177,11 +182,11 @@ class DefaultLambda(
     }
 }
 
-fun Type.boxReceiverForBoundReference() =
+internal fun Type.boxReceiverForBoundReference() =
     AsmUtil.boxType(this)
 
-fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, state: GenerationState) =
-    AsmUtil.boxType(this, kotlinType, state)
+internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMapper: KotlinTypeMapper) =
+    AsmUtil.boxType(this, kotlinType, typeMapper)
 
 abstract class ExpressionLambda(protected val typeMapper: KotlinTypeMapper, isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
 
@@ -225,7 +230,8 @@ class PsiExpressionLambda(
 
     private val labels: Set<String>
 
-    private lateinit var closure: CalculatedClosure
+    var closure: CalculatedClosure
+        private set
 
     init {
         val bindingContext = typeMapper.bindingContext
@@ -234,8 +240,9 @@ class PsiExpressionLambda(
         if (function == null && expression is KtCallableReferenceExpression) {
             val variableDescriptor =
                 bindingContext.get(BindingContext.VARIABLE, functionWithBodyOrCallableReference) as? VariableDescriptorWithAccessors
-                    ?: throw AssertionError("""Reference expression not resolved to variable descriptor with accessors: ${expression.getText()}""")
-            classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor)
+                    ?: throw AssertionError("Reference expression not resolved to variable descriptor with accessors: ${expression.getText()}")
+            classDescriptor = bindingContext.get(CLASS_FOR_CALLABLE, variableDescriptor)
+                ?: throw IllegalStateException("Class for callable not found: $variableDescriptor\n${expression.text}")
             lambdaClassType = typeMapper.mapClass(classDescriptor)
             val getFunction = PropertyReferenceCodegen.findGetFunction(variableDescriptor)
             invokeMethodDescriptor = PropertyReferenceCodegen.createFakeOpenDescriptor(getFunction, classDescriptor)
@@ -246,7 +253,8 @@ class PsiExpressionLambda(
         } else {
             propertyReferenceInfo = null
             invokeMethodDescriptor = function ?: throw AssertionError("Function is not resolved to descriptor: " + expression.text)
-            classDescriptor = anonymousClassForCallable(bindingContext, invokeMethodDescriptor)
+            classDescriptor = bindingContext.get(CLASS_FOR_CALLABLE, invokeMethodDescriptor)
+                ?: throw IllegalStateException("Class for invoke method not found: $invokeMethodDescriptor\n${expression.text}")
             lambdaClassType = asmTypeForAnonymousClass(bindingContext, invokeMethodDescriptor)
         }
 
@@ -294,8 +302,8 @@ class PsiExpressionLambda(
         }
     }
 
-    override fun isMyLabel(name: String): Boolean {
-        return labels.contains(name)
+    override fun isReturnFromMe(labelName: String): Boolean {
+        return labels.contains(labelName)
     }
 
     val isPropertyReference: Boolean

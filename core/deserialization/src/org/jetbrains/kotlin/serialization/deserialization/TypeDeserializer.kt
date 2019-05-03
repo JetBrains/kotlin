@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization.deserialization
@@ -25,6 +25,7 @@ class TypeDeserializer(
     private val parent: TypeDeserializer?,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     private val debugName: String,
+    private val containerPresentableName: String,
     var experimentalSuspendFunctionTypeEncountered: Boolean = false
 ) {
     private val classDescriptors: (Int) -> ClassDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues { fqNameIndex ->
@@ -112,7 +113,9 @@ class TypeDeserializer(
             proto.hasClassName() -> (classDescriptors(proto.className) ?: notFoundClass(proto.className)).typeConstructor
             proto.hasTypeParameter() ->
                 typeParameterTypeConstructor(proto.typeParameter)
-                    ?: ErrorUtils.createErrorTypeConstructor("Unknown type parameter ${proto.typeParameter}")
+                    ?: ErrorUtils.createErrorTypeConstructor(
+                        "Unknown type parameter ${proto.typeParameter}. Please try recompiling module containing \"$containerPresentableName\""
+                    )
             proto.hasTypeParameterName() -> {
                 val container = c.containingDeclaration
                 val name = c.nameResolver.getString(proto.typeParameterName)

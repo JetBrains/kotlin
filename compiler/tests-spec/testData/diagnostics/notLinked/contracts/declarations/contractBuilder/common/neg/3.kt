@@ -37,7 +37,7 @@ fun case_4(value_1: Nothing?, value_2: Boolean?): Boolean? {
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Any?, value_2: String?): Boolean? {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns(null) implies (value_1 != null && value_2 != null || value_2 == ".") }
+    contract { returns(null) implies (value_1 != null && value_2 != null || value_2 == <!ERROR_IN_CONTRACT_DESCRIPTION!>"."<!>) }
     return if (value_1 != null && value_2 != null || value_2 == ".") null else true
 }
 

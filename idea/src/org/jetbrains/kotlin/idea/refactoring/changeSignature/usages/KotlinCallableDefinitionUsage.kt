@@ -131,7 +131,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
             val receiverTypeText = changeInfo.renderReceiverType(this)
             val receiverTypeRef = if (receiverTypeText != null) psiFactory.createType(receiverTypeText) else null
             val newReceiverTypeRef = element.setReceiverTypeReference(receiverTypeRef)
-            newReceiverTypeRef?.addToShorteningWaitSet(ShortenReferences.Options.DEFAULT)
+            newReceiverTypeRef?.addToShorteningWaitSet(Options.DEFAULT)
         }
 
         if (changeInfo.isVisibilityChanged() && !KtPsiUtil.isLocal(element as KtDeclaration)) {

@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 

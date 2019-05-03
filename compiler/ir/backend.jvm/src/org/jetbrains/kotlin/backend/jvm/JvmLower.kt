@@ -18,15 +18,17 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.load.java.JvmAbi
 
 private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     lower = object : SameTypeCompilerPhase<CommonBackendContext, IrFile> {
-        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState, context: CommonBackendContext, input: IrFile): IrFile {
+        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: CommonBackendContext, input: IrFile): IrFile {
             input.acceptVoid(PatchDeclarationParentsVisitor())
             return input
         }
@@ -36,19 +38,37 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     nlevels = 0
 )
 
-internal val jvmPhases = namedIrFilePhase(
+private val expectDeclarationsRemovingPhase = makeIrFilePhase(
+    ::ExpectDeclarationsRemoving,
+    name = "ExpectDeclarationsRemoving",
+    description = "Remove expect declaration from module fragment"
+)
+
+private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
+    { context ->
+        PropertiesLowering(context, JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS) { propertyName ->
+            JvmAbi.getSyntheticMethodNameForAnnotatedProperty(propertyName)
+        }
+    },
+    name = "Properties",
+    description = "Move fields and accessors for properties to their classes",
+    stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
+)
+
+val jvmPhases = namedIrFilePhase<JvmBackendContext>(
     name = "IrLowering",
     description = "IR lowering",
-    lower = jvmCoercionToUnitPhase then
+    lower = expectDeclarationsRemovingPhase then
             fileClassPhase then
             kCallableNamePropertyPhase then
 
             jvmLateinitPhase then
 
             moveCompanionObjectFieldsPhase then
+            propertyReferencePhase then
             constPhase then
             propertiesToFieldsPhase then
-            makePropertiesPhase(JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS) then
+            propertiesPhase then
             renameFieldsPhase then
             annotationPhase then
 
@@ -56,23 +76,26 @@ internal val jvmPhases = namedIrFilePhase(
 
             interfacePhase then
             interfaceDelegationPhase then
+            interfaceSuperCallsPhase then
             sharedVariablesPhase then
 
             makePatchParentsPhase(1) then
 
+            singletonReferencesPhase then
             jvmLocalDeclarationsPhase then
+            singleAbstractMethodPhase then
             callableReferencePhase then
             functionNVarargInvokePhase then
 
             innerClassesPhase then
             innerClassConstructorCallsPhase then
+            forLoopsPhase then
 
             makePatchParentsPhase(2) then
 
             enumClassPhase then
             objectClassPhase then
             makeInitializersPhase(JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, true) then
-            singletonReferencesPhase then
             syntheticAccessorPhase then
             bridgePhase then
             jvmOverloadsAnnotationPhase then
@@ -81,9 +104,13 @@ internal val jvmPhases = namedIrFilePhase(
 
             tailrecPhase then
             toArrayPhase then
-            jvmTypeOperatorLoweringPhase then
+            flattenStringConcatenationPhase then
+            foldConstantLoweringPhase then
             jvmBuiltinOptimizationLoweringPhase then
+            additionalClassAnnotationPhase then
 
+            // should be last transformation
+            removeDeclarationsThatWouldBeInlined then
             makePatchParentsPhase(3)
 )
 

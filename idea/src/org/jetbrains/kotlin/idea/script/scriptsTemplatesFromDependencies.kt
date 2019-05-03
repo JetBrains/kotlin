@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.script
@@ -14,7 +14,9 @@ import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
+import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_PATH
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
@@ -69,15 +71,14 @@ private data class TemplatesWithCp(
 private fun scriptDefinitionsFromDependencies(project: Project): TemplatesWithCp {
     val templates = LinkedHashSet<String>()
     val classpath = LinkedHashSet<File>()
-    val templatesPath = "META-INF/kotlin/script/templates/"
 
     fun addTemplatesFromRoot(vfile: VirtualFile): Boolean {
         var templatesFound = false
         val root = JarFileSystem.getInstance().getJarRootForLocalFile(vfile) ?: vfile
         if (root.isValid) {
-            root.findFileByRelativePath(templatesPath)?.takeIf { it.isDirectory }?.children?.forEach {
+            root.findFileByRelativePath(SCRIPT_DEFINITION_MARKERS_PATH)?.takeIf { it.isDirectory }?.children?.forEach {
                 if (it.isValid && !it.isDirectory) {
-                    templates.add(it.name)
+                    templates.add(it.name.removeSuffix(SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT))
                     templatesFound = true
                 }
             }

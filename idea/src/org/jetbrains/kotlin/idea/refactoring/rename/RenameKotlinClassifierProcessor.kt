@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -98,10 +99,9 @@ class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
             result: MutableList<UsageInfo>
     ) {
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return
-        val descriptor = declaration.unsafeResolveToDescriptor() as ClassifierDescriptor
 
         val collisions = SmartList<UsageInfo>()
-        checkRedeclarations(descriptor, newName, collisions)
+        checkRedeclarations(declaration, newName, collisions)
         checkOriginalUsagesRetargeting(declaration, newName, result, collisions)
         checkNewNameUsagesRetargeting(declaration, newName, collisions)
         result += collisions

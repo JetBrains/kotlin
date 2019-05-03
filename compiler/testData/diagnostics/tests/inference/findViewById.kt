@@ -31,7 +31,7 @@ val xCastExplicitType = Test().findViewById<X>(0) as X
 val xSafeCastExplicitType = Test().findViewById<X>(0) <!USELESS_CAST!>as? X<!>
 
 val yExplicit: Y<String> = Test().findViewById(0)
-val yCast = Test().findViewById(0) <!NI;UNCHECKED_CAST!>as Y<String><!>
+val yCast = Test().findViewById(0) as Y<String>
 
 
 class TestChild : Test() {
@@ -39,7 +39,7 @@ class TestChild : Test() {
     val xCast = findViewById(0) as X
 
     val yExplicit: Y<String> = findViewById(0)
-    val yCast = findViewById(0) <!NI;UNCHECKED_CAST!>as Y<String><!>
+    val yCast = findViewById(0) as Y<String>
 }
 
 fun test(t: Test) {
@@ -47,7 +47,7 @@ fun test(t: Test) {
     val xCast = t.findViewById(0) as X
 
     val yExplicit: Y<String> = t.findViewById(0)
-    val yCast = t.findViewById(0) <!NI;UNCHECKED_CAST!>as Y<String><!>
+    val yCast = t.findViewById(0) as Y<String>
 }
 
 fun test2(t: Test?) {

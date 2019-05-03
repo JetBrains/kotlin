@@ -5,6 +5,6 @@
     }
 }
 
-<caret>interface Foo {
+interface <caret>Foo {
 
 }

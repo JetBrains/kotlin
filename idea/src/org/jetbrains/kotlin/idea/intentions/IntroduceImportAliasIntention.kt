@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.imports.canBeAddedToImport
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceImportAlias.KotlinIntroduceImportAliasHandler
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
+import org.jetbrains.kotlin.psi.KtInstanceExpressionWithLabel
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 class IntroduceImportAliasIntention : SelfTargetingRangeIntention<KtNameReferenceExpression>(
@@ -18,6 +19,7 @@ class IntroduceImportAliasIntention : SelfTargetingRangeIntention<KtNameReferenc
     "Introduce import alias"
 ) {
     override fun applicabilityRange(element: KtNameReferenceExpression): TextRange? {
+        if (element.parent is KtInstanceExpressionWithLabel) return null
         if (element.mainReference.getImportAlias() != null) return null
 
         val targets = element.resolveMainReferenceToDescriptors()

@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.tower
@@ -307,9 +307,7 @@ internal fun createSimplePSICallArgument(
         ExpressionReceiver.create(ktExpression, baseType, bindingContext),
         languageVersionSettings,
         dataFlowValueFactory
-    ).let {
-        if (onlyResolvedCall == null) it.prepareReceiverRegardingCaptureTypes() else it
-    }
+    ).prepareReceiverRegardingCaptureTypes()
 
     return if (onlyResolvedCall == null) {
         ExpressionKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast)

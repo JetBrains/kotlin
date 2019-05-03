@@ -1,0 +1,2 @@
+public final class ClassWithTypeP<P> : R|kotlin/Any| {
+}

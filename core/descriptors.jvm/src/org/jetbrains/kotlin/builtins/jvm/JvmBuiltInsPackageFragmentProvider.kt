@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.builtins.jvm
@@ -24,13 +24,14 @@ class JvmBuiltInsPackageFragmentProvider(
     moduleDescriptor: ModuleDescriptor,
     notFoundClasses: NotFoundClasses,
     additionalClassPartsProvider: AdditionalClassPartsProvider,
-    platformDependentDeclarationFilter: PlatformDependentDeclarationFilter
+    platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
+    deserializationConfiguration: DeserializationConfiguration
 ) : AbstractDeserializedPackageFragmentProvider(storageManager, finder, moduleDescriptor) {
     init {
         components = DeserializationComponents(
             storageManager,
             moduleDescriptor,
-            DeserializationConfiguration.Default, // TODO
+            deserializationConfiguration,
             DeserializedClassDataFinder(this),
             AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol),
             this,
@@ -51,6 +52,6 @@ class JvmBuiltInsPackageFragmentProvider(
 
     override fun findPackage(fqName: FqName): DeserializedPackageFragment? =
         finder.findBuiltInsData(fqName)?.let { inputStream ->
-            BuiltInsPackageFragmentImpl.create(fqName, storageManager, moduleDescriptor, inputStream)
+            BuiltInsPackageFragmentImpl.create(fqName, storageManager, moduleDescriptor, inputStream, isFallback = false)
         }
 }

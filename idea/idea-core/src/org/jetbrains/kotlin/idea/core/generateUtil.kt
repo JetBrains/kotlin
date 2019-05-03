@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.ifEmpty
+import kotlin.math.min
 
 fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
     val project = element.project
@@ -120,7 +121,7 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
                 val start = firstInBlock.textRange!!.startOffset
                 val end = lastInBlock.textRange!!.endOffset
 
-                editor.moveCaret(Math.min(start, end))
+                editor.moveCaret(min(start, end))
 
                 if (start < end) {
                     editor.selectionModel.setSelection(start, end)

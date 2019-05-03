@@ -1,0 +1,36 @@
+FILE fqName:<root> fileName:/javaInnerClass.kt
+  CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.J]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 [primary] 
+      BLOCK_BODY
+        ERROR_CALL 'Cannot find delegated constructor call' type=<root>.Test1
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.J]'
+    PROPERTY name:test visibility:public modality:FINAL [val] 
+      FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:public [final] 
+        EXPRESSION_BODY
+          ERROR_CALL 'Unresolved reference: <Unresolved name: JInner>#' type=IrErrorType
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:IrErrorType 
+        correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test1 
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test> (): IrErrorType declared in <root>.Test1'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
+              receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-test>' type=<root>.Test1 origin=null
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.J) returnType:kotlin.Unit 
+      overridden:
+        public open fun bar (): kotlin.Unit declared in <root>.J
+      $this: VALUE_PARAMETER name:<this> type:<root>.J 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+

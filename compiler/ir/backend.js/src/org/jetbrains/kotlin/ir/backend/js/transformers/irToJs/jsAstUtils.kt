@@ -1,15 +1,18 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
+import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.js.backend.ast.*
 
 fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
@@ -17,14 +20,14 @@ fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext
     return JsVars(JsVars.JsVar(name, jsInitializer))
 }
 
-fun <T : JsNode, D : JsGenerationContext> IrWhen.toJsNode(
-    tr: BaseIrElementToJsNodeTransformer<T, D>,
-    data: D,
+fun <T : JsNode> IrWhen.toJsNode(
+    tr: BaseIrElementToJsNodeTransformer<T, JsGenerationContext>,
+    data: JsGenerationContext,
     node: (JsExpression, T, T?) -> T
 ): T? =
-    branches.foldRight<IrBranch, T?>(null) { br, n ->
+    branches.foldRight(null) { br, n ->
         val body = br.result.accept(tr, data)
-        if (br is IrElseBranch) body
+        if (isElseBranch(br)) body
         else {
             val condition = br.condition.accept(IrElementToJsExpressionTransformer(), data)
             node(condition, body, n)
@@ -38,7 +41,7 @@ fun prototypeOf(classNameRef: JsExpression) = JsNameRef(Namer.PROTOTYPE_NAME, cl
 fun translateFunction(declaration: IrFunction, name: JsName?, isObjectConstructor: Boolean, context: JsGenerationContext): JsFunction {
     val functionScope = JsFunctionScope(context.currentScope, "scope for ${name ?: "annon"}")
     val functionContext = context.newDeclaration(functionScope, declaration)
-    val functionParams = declaration.valueParameters.map { functionContext.getNameForSymbol(it.symbol) }
+    val functionParams = declaration.valueParameters.map { functionContext.getNameForValueDeclaration(it) }
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val functionBody = if (isObjectConstructor) {
@@ -55,7 +58,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, isObjectConstructo
         parameters.add(JsParameter(parameter))
     }
 
-    declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForSymbol(it.symbol)) }
+    declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForValueDeclaration(it)) }
     functionParams.forEach { function.addParameter(it) }
     if (declaration.descriptor.isSuspend) {
         function.addParameter(context.currentScope.declareName(Namer.CONTINUATION))
@@ -81,12 +84,26 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
 
 fun JsStatement.asBlock() = this as? JsBlock ?: JsBlock(this)
 
+// TODO: Don't use implicit name conventions
 fun JsName.objectInstanceName() = "${ident}_instance"
 
 fun defineProperty(receiver: JsExpression, name: String, value: () -> JsExpression): JsInvocation {
     val objectDefineProperty = JsNameRef("defineProperty", Namer.JS_OBJECT)
     return JsInvocation(objectDefineProperty, receiver, JsStringLiteral(name), value())
 }
+
+
+fun defineProperty(receiver: JsExpression, name: String, getter: JsExpression?, setter: JsExpression? = null) =
+    defineProperty(receiver, name) {
+        val literal = JsObjectLiteral(true)
+        literal.apply {
+            if (getter != null)
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getter)
+            if (setter != null)
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), setter)
+        }
+    }
+
 
 // Partially copied from org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 object JsAstUtils {
@@ -103,9 +120,7 @@ object JsAstUtils {
         thenStatement: JsStatement,
         elseStatement: JsStatement? = null
     ): JsIf {
-        var elseStatement = elseStatement
-        elseStatement = if (elseStatement != null) deBlockIfPossible(elseStatement) else null
-        return JsIf(ifExpression, deBlockIfPossible(thenStatement), elseStatement)
+        return JsIf(ifExpression, deBlockIfPossible(thenStatement), elseStatement?.let { deBlockIfPossible(it) })
     }
 
     fun and(op1: JsExpression, op2: JsExpression): JsBinaryOperation {

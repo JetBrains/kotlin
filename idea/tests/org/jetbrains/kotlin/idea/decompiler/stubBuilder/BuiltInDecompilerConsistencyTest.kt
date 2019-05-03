@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
@@ -21,8 +21,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class BuiltInDecompilerConsistencyTest : KotlinLightCodeInsightFixtureTestCase() {
     private val classFileDecompiler = KotlinClassFileDecompiler()
     private val builtInsDecompiler = KotlinBuiltInDecompiler()
@@ -62,7 +66,7 @@ class BuiltInDecompilerConsistencyTest : KotlinLightCodeInsightFixtureTestCase()
             val fileContent = FileContentImpl.createByFile(classFile)
             if (IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(fileContent.file) == null) continue
             val fileStub = classFileDecompiler.stubBuilder.buildFileStub(fileContent) ?: continue
-            val classStub = fileStub.findChildStubByType(KtClassElementType.getStubType(false)) as? KotlinClassStub ?: continue
+            val classStub = fileStub.findChildStubByType(KtClassElementType.getStubType(false)) ?: continue
             val classFqName = classStub.getFqName()!!
             val builtInClassStub = builtInFileStub.childrenStubs.firstOrNull {
                 it is KotlinClassStub && it.getFqName() == classFqName

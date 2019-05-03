@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle
@@ -60,7 +60,7 @@ import java.util.*
 
 abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizard>() {
 
-    private val pluginVersion = "1.3.20-eap-25"
+    private val pluginVersion = "1.3.21"
 
     override fun createWizard(project: Project?, directory: File): AbstractProjectWizard {
         return NewProjectWizard(project, ModulesProvider.EMPTY_MODULES_PROVIDER, directory.path)
@@ -261,7 +261,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             addSdk(SimpleJavaSdkType().createJdk("_other", javaHome))
 
             println("ProjectWizardTestCase.configureJdk:")
-            println(Arrays.asList(*ProjectJdkTable.getInstance().allJdks))
+            println(listOf(*ProjectJdkTable.getInstance().allJdks))
 
             FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
         }

@@ -20,7 +20,6 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.editor.fixers.range
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -28,10 +27,11 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
+@Suppress("DEPRECATION")
 class RemoveEmptyClassBodyInspection :
-        IntentionBasedInspection<KtClassBody>(RemoveEmptyClassBodyIntention::class), CleanupLocalInspectionTool {
+    IntentionBasedInspection<KtClassBody>(RemoveEmptyClassBodyIntention::class), CleanupLocalInspectionTool {
     override fun problemHighlightType(element: KtClassBody): ProblemHighlightType =
-            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+        ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
 class RemoveEmptyClassBodyIntention : SelfTargetingOffsetIndependentIntention<KtClassBody>(KtClassBody::class.java, "Redundant empty class body") {

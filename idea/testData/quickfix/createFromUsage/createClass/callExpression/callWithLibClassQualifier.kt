@@ -1,6 +1,8 @@
 // "Create class 'Foo'" "false"
 // ACTION: Create extension function 'Int.Foo'
 // ACTION: Rename reference
+// ACTION: Convert to run
+// ACTION: Convert to with
 // ERROR: Unresolved reference: Foo
 // WITH_RUNTIME
 

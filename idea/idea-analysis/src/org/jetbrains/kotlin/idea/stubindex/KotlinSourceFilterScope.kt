@@ -54,7 +54,7 @@ class KotlinSourceFilterScope private constructor(
 
     override fun toString(): String {
         return "KotlinSourceFilterScope(delegate=$myBaseScope src=$includeProjectSourceFiles libSrc=$includeLibrarySourceFiles " +
-               "cls=$includeClassFiles script=$includeScriptDependencies)"
+                "cls=$includeClassFiles scriptDeps=$includeScriptDependencies scripts=$includeScriptsOutsideSourceRoots)"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -1,5 +1,5 @@
 val a : <caret>
 
 
-// EXIST: suspend
+// EXIST: suspend fun
 // NOTHING_ELSE

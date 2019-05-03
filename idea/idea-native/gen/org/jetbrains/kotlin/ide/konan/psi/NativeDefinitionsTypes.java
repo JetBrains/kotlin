@@ -20,7 +20,6 @@ public interface NativeDefinitionsTypes {
   IElementType ANDROID_ARM64 = new NativeDefinitionsTokenType("android_arm64");
   IElementType ARM32 = new NativeDefinitionsTokenType("arm32");
   IElementType ARM64 = new NativeDefinitionsTokenType("arm64");
-  IElementType BAD_CHARACTER = new NativeDefinitionsTokenType("BAD_CHARACTER");
   IElementType CODE_CHARS = new NativeDefinitionsTokenType("CODE_CHARS");
   IElementType COMMENT = new NativeDefinitionsTokenType("COMMENT");
   IElementType COMPILER_OPTS = new NativeDefinitionsTokenType("compilerOpts");
@@ -53,6 +52,7 @@ public interface NativeDefinitionsTypes {
   IElementType MINGW_X64 = new NativeDefinitionsTokenType("mingw_x64");
   IElementType MIPS32 = new NativeDefinitionsTokenType("mips32");
   IElementType MIPSEL32 = new NativeDefinitionsTokenType("mipsel32");
+  IElementType MODULES = new NativeDefinitionsTokenType("modules");
   IElementType NON_STRICT_ENUMS = new NativeDefinitionsTokenType("nonStrictEnums");
   IElementType NO_STRING_CONVERSION = new NativeDefinitionsTokenType("noStringConversion");
   IElementType OSX = new NativeDefinitionsTokenType("osx");

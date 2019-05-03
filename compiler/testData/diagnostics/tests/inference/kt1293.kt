@@ -5,7 +5,7 @@ package kt1293
 
 fun main() {
     val intArray = arrayOfNulls<Int>(10)
-    val <!UNUSED_VARIABLE!>i<!> : Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>intArray[0]<!>
+    val <!UNUSED_VARIABLE!>i<!> : Int = <!TYPE_MISMATCH!>intArray[0]<!>
     requiresInt(<!TYPE_MISMATCH!>intArray[0]<!>)
 }
 

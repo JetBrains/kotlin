@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
+import kotlin.math.min
 
 class CandidateResolver(
     private val argumentTypeResolver: ArgumentTypeResolver,
@@ -591,7 +592,7 @@ class CandidateResolver(
         }
 
         val typeParameters = functionDescriptor.typeParameters
-        for (i in 0..Math.min(typeParameters.size, ktTypeArguments.size) - 1) {
+        for (i in 0..min(typeParameters.size, ktTypeArguments.size) - 1) {
             val typeParameterDescriptor = typeParameters[i]
             val typeArgument = typeArguments[i]
             val typeReference = ktTypeArguments[i].typeReference
@@ -686,7 +687,7 @@ class CandidateResolver(
         // TODO do not perform substitution for type arguments multiple times
         val substitutedTypeArguments = typeAliasParametersSubstitutor.safeSubstitute(unsubstitutedType, Variance.INVARIANT).arguments
 
-        for (i in 0..Math.min(typeParameters.size, substitutedTypeArguments.size) - 1) {
+        for (i in 0..min(typeParameters.size, substitutedTypeArguments.size) - 1) {
             val substitutedTypeProjection = substitutedTypeArguments[i]
             if (substitutedTypeProjection.isStarProjection) continue
 

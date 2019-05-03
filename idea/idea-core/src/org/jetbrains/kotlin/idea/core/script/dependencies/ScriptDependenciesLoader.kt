@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.core.script.dependencies
@@ -16,10 +16,10 @@ import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache.Companion.MAX_SCRIPTS_CACHED
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptContentLoader
-import org.jetbrains.kotlin.script.ScriptReportSink
-import org.jetbrains.kotlin.script.adjustByDefinition
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.ScriptContentLoader
+import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
+import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
 import kotlin.script.experimental.dependencies.DependenciesResolver
 
 abstract class ScriptDependenciesLoader(protected val project: Project) {
@@ -36,6 +36,8 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
 
     protected abstract fun loadDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition)
     protected abstract fun shouldShowNotification(): Boolean
+
+    protected var shouldNotifyRootsChanged = false
 
     protected val contentLoader = ScriptContentLoader(project)
     protected val cache: ScriptDependenciesCache = ServiceManager.getService(project, ScriptDependenciesCache::class.java)
@@ -55,6 +57,7 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
                 file.addScriptDependenciesNotificationPanel(result, project) {
                     saveDependencies(it, file, scriptDef)
                     attachReportsIfChanged(it, file, scriptDef)
+                    submitMakeRootsChange()
                 }
             } else {
                 saveDependencies(result, file, scriptDef)
@@ -87,15 +90,20 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         }
 
         if (rootsChanged) {
-            notifyRootsChanged()
+            shouldNotifyRootsChanged = true
         }
     }
 
-    protected fun notifyRootsChanged() {
+    open fun notifyRootsChanged(): Boolean = submitMakeRootsChange()
+
+    protected fun submitMakeRootsChange(): Boolean {
+        if (!shouldNotifyRootsChanged) return false
+
         val doNotifyRootsChanged = Runnable {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
 
+                shouldNotifyRootsChanged = false
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
                 ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
             }
@@ -106,5 +114,7 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         } else {
             TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
         }
+
+        return true
     }
 }

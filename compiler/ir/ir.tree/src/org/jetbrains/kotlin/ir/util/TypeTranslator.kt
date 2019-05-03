@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -12,12 +13,10 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
@@ -25,11 +24,12 @@ import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 class TypeTranslator(
     private val symbolTable: ReferenceSymbolTable,
     val languageVersionSettings: LanguageVersionSettings,
+    builtIns: KotlinBuiltIns,
     private val typeParametersResolver: TypeParametersResolver = ScopedTypeParametersResolver(),
     private val enterTableScope: Boolean = false
 ) {
 
-    private val typeApproximatorForNI = TypeApproximator()
+    private val typeApproximatorForNI = TypeApproximator(builtIns)
     lateinit var constantValueGenerator: ConstantValueGenerator
 
     fun enterScope(irElement: IrTypeParametersContainer) {
@@ -76,30 +76,26 @@ class TypeTranslator(
         val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor
             ?: throw AssertionError("No descriptor for type $approximatedType")
 
-        return when (ktTypeDescriptor) {
-            is TypeParameterDescriptor ->
-                IrSimpleTypeImpl(
-                    approximatedType,
-                    resolveTypeParameter(ktTypeDescriptor),
-                    approximatedType.isMarkedNullable,
-                    emptyList(),
-                    translateTypeAnnotations(approximatedType.annotations),
-                    variance
-                )
+        return IrSimpleTypeBuilder().apply {
+            kotlinType = approximatedType
+            hasQuestionMark = approximatedType.isMarkedNullable
+            this.variance = variance
+            when (ktTypeDescriptor) {
+                is TypeParameterDescriptor -> {
+                    classifier = resolveTypeParameter(ktTypeDescriptor)
+                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                }
 
-            is ClassDescriptor ->
-                IrSimpleTypeImpl(
-                    approximatedType,
-                    symbolTable.referenceClass(ktTypeDescriptor),
-                    approximatedType.isMarkedNullable,
-                    translateTypeArguments(approximatedType.arguments),
-                    translateTypeAnnotations(approximatedType.annotations),
-                    variance
-                )
+                is ClassDescriptor -> {
+                    classifier = symbolTable.referenceClass(ktTypeDescriptor)
+                    arguments = translateTypeArguments(approximatedType.arguments)
+                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                }
 
-            else ->
-                throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
-        }
+                else ->
+                    throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
+            }
+        }.buildTypeProjection()
     }
 
     private inner class LegacyTypeApproximation {
@@ -124,7 +120,11 @@ class TypeTranslator(
             if (ktType.constructor.isDenotable) return ktType
 
             return if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-                typeApproximatorForNI.approximateDeclarationType(ktType, local = false, languageVersionSettings = languageVersionSettings)
+                typeApproximatorForNI.approximateDeclarationType(
+                    ktType,
+                    local = false,
+                    languageVersionSettings = languageVersionSettings
+                )
             else
                 approximateCapturedTypes(ktType).upper
         }
@@ -132,7 +132,7 @@ class TypeTranslator(
     }
 
 
-    private fun translateTypeAnnotations(annotations: Annotations): List<IrCall> =
+    private fun translateTypeAnnotations(annotations: Annotations): List<IrConstructorCall> =
         annotations.map(constantValueGenerator::generateAnnotationConstructorCall)
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =

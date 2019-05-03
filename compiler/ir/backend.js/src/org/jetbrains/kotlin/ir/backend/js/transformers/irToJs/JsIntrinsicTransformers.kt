@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
@@ -8,17 +8,20 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.ir.util.getInlinedClass
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.js.backend.ast.*
 
-typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
+typealias IrCallTransformer = (IrFunctionAccessExpression, context: JsGenerationContext) -> JsExpression
 
 class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
     private val transformers: Map<IrSymbol, IrCallTransformer>
@@ -77,8 +80,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             prefixOp(intrinsics.jsTypeOf, JsUnaryOperator.TYPEOF)
 
             add(intrinsics.jsObjectCreate) { call, context ->
-                val classToCreate = call.getTypeArgument(0)!!
-                val className = context.getNameForSymbol(classToCreate.classifierOrFail)
+                val classToCreate = call.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
+                val className = context.getNameForClass(classToCreate)
                 val prototype = prototypeOf(className.makeRef())
                 JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
             }
@@ -105,12 +108,20 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsClass) { call, context ->
-                val typeName = context.getNameForSymbol(call.getTypeArgument(0)!!.classifierOrFail)
-                typeName.makeRef()
+                val classifier: IrClassifierSymbol = call.getTypeArgument(0)!!.classifierOrFail
+                val owner = classifier.owner
+
+                when {
+                    owner is IrClass && owner.isEffectivelyExternal() ->
+                        context.getRefForExternalClass(owner)
+
+                    else ->
+                        context.getNameForStaticDeclaration(owner as IrDeclarationWithName).makeRef()
+                }
             }
 
             addIfNotNull(intrinsics.jsCode) { call, context ->
-                val jsCode = translateJsCode(call, context.currentScope)
+                val jsCode = translateJsCode(call as IrCall, context.currentScope)
 
                 when (jsCode) {
                     is JsExpression -> jsCode
@@ -119,20 +130,20 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 }
             }
 
-            add(intrinsics.jsName) { call: IrCall, context ->
+            add(intrinsics.jsName) { call, context ->
                 val args = translateCallArguments(call, context)
                 val receiver = args[0]
                 JsNameRef(Namer.KCALLABLE_NAME, receiver)
             }
 
-            add(intrinsics.jsPropertyGet) { call: IrCall, context ->
+            add(intrinsics.jsPropertyGet) { call, context ->
                 val args = translateCallArguments(call, context)
                 val reference = args[0]
                 val receiver = args[1]
                 JsInvocation(JsNameRef(Namer.KPROPERTY_GET, reference), listOf(receiver))
             }
 
-            add(intrinsics.jsPropertySet) { call: IrCall, context ->
+            add(intrinsics.jsPropertySet) { call, context ->
                 val args = translateCallArguments(call, context)
                 val reference = args[0]
                 val receiver = args[1]
@@ -146,7 +157,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsCoroutineContext) { _, context: JsGenerationContext ->
                 val contextGetter = backendContext.coroutineGetContext
-                val getterName = context.getNameForSymbol(contextGetter)
+                val getterName = context.getNameForStaticFunction(contextGetter.owner)
                 val continuation = context.continuation
                 JsInvocation(JsNameRef(getterName, continuation))
             }
@@ -188,33 +199,37 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 }
             }
 
-            add(intrinsics.jsBoxIntrinsic) { call: IrCall, context ->
-                val arg = translateCallArguments(call, context).single()
+            add(intrinsics.jsBoxIntrinsic) { call, context ->
+                val arg = translateCallArguments(call as IrCall, context).single()
                 val inlineClass = call.getTypeArgument(0)!!.getInlinedClass()!!
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
-                JsNew(context.getNameForSymbol(constructor.symbol).makeRef(), listOf(arg))
+                JsNew(context.getNameForConstructor(constructor).makeRef(), listOf(arg))
             }
 
-            add(intrinsics.jsUnboxIntrinsic) { call: IrCall, context ->
+            add(intrinsics.jsUnboxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
                 val inlineClass = call.getTypeArgument(1)!!.getInlinedClass()!!
                 val field = getInlineClassBackingField(inlineClass)
-                val fieldName = context.getNameForSymbol(field.symbol)
+                val fieldName = context.getNameForField(field)
                 JsNameRef(fieldName, arg)
             }
 
-            add(intrinsics.jsBind) { call: IrCall, context: JsGenerationContext ->
+            add(intrinsics.jsBind) { call, context: JsGenerationContext ->
                 val receiver = call.getValueArgument(0)!!
                 val reference = call.getValueArgument(1) as IrFunctionReference
-                val superClass = call.superQualifierSymbol!!
+                val superClass = (call as IrCall).superQualifierSymbol!!
 
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val functionName = context.getNameForSymbol(reference.symbol)
-                val superName = context.getNameForSymbol(superClass).makeRef()
+                val functionName = context.getNameForMemberFunction(reference.symbol.owner as IrSimpleFunction)
+                val superName = context.getNameForClass(superClass.owner).makeRef()
                 val qPrototype = JsNameRef(functionName, prototypeOf(superName))
                 val bindRef = JsNameRef(Namer.BIND_FUNCTION, qPrototype)
 
                 JsInvocation(bindRef, jsReceiver)
+            }
+
+            add(intrinsics.unreachable) { _, _ ->
+                JsInvocation(JsNameRef(Namer.UNREACHABLE_NAME))
             }
         }
     }
@@ -235,21 +250,21 @@ private fun MutableMap<IrSymbol, IrCallTransformer>.addIfNotNull(symbol: IrSymbo
     put(symbol, t)
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrFunction, op: JsBinaryOperator) {
+private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrFunctionSymbol, op: JsBinaryOperator) {
     withTranslatedArgs(function) { JsBinaryOperation(op, it[0], it[1]) }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.prefixOp(function: IrFunction, op: JsUnaryOperator) {
+private fun MutableMap<IrSymbol, IrCallTransformer>.prefixOp(function: IrFunctionSymbol, op: JsUnaryOperator) {
     withTranslatedArgs(function) { JsPrefixOperation(op, it[0]) }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.postfixOp(function: IrFunction, op: JsUnaryOperator) {
+private fun MutableMap<IrSymbol, IrCallTransformer>.postfixOp(function: IrFunctionSymbol, op: JsUnaryOperator) {
     withTranslatedArgs(function) { JsPostfixOperation(op, it[0]) }
 }
 
 private inline fun MutableMap<IrSymbol, IrCallTransformer>.withTranslatedArgs(
-    function: IrFunction,
+    function: IrFunctionSymbol,
     crossinline t: (List<JsExpression>) -> JsExpression
 ) {
-    put(function.symbol) { call, context -> t(translateCallArguments(call, context)) }
+    put(function) { call, context -> t(translateCallArguments(call, context)) }
 }

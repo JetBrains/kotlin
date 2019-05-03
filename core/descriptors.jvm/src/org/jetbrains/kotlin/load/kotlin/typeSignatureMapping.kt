@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.kotlin
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
 
 interface JvmTypeFactory<T : Any> {
@@ -43,7 +44,7 @@ interface TypeMappingConfiguration<out T : Any> {
     // returns null when type doesn't need to be preprocessed
     fun preprocessType(kotlinType: KotlinType): KotlinType? = null
 
-    fun releaseCoroutines(): Boolean
+    fun releaseCoroutines(): Boolean = true
 }
 
 const val NON_EXISTENT_CLASS_NAME = "error/NonExistentClass"
@@ -122,12 +123,12 @@ fun <T : Any> mapType(
                 descriptorTypeWriter?.writeArrayType()
 
                 arrayElementType =
-                        mapType(
-                            memberType, factory,
-                            mode.toGenericArgumentMode(memberProjection.projectionKind),
-                            typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
-                            isIrBackend
-                        )
+                    mapType(
+                        memberType, factory,
+                        mode.toGenericArgumentMode(memberProjection.projectionKind),
+                        typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
+                        isIrBackend
+                    )
 
                 descriptorTypeWriter?.writeArrayEnd()
             }
@@ -181,7 +182,7 @@ fun <T : Any> mapType(
 
         descriptor is TypeParameterDescriptor -> {
             val type = mapType(
-                getRepresentativeUpperBound(descriptor),
+                descriptor.representativeUpperBound,
                 factory,
                 mode,
                 typeMappingConfiguration,
@@ -255,7 +256,7 @@ internal fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
 
     val descriptor = inlineClassType.unsubstitutedUnderlyingType()?.constructor?.declarationDescriptor ?: return null
     return if (descriptor is TypeParameterDescriptor)
-        getRepresentativeUpperBound(descriptor)
+        descriptor.representativeUpperBound
     else
         inlineClassType.substitutedUnderlyingType()
 }
@@ -270,7 +271,7 @@ internal fun computeExpandedTypeInner(kotlinType: KotlinType, visitedClassifiers
 
     return when {
         classifier is TypeParameterDescriptor ->
-            computeExpandedTypeInner(getRepresentativeUpperBound(classifier), visitedClassifiers)
+            computeExpandedTypeInner(classifier.representativeUpperBound, visitedClassifiers)
                 ?.let { expandedUpperBound ->
                     if (expandedUpperBound.isNullable() || !kotlinType.isMarkedNullable)
                         expandedUpperBound
@@ -279,7 +280,7 @@ internal fun computeExpandedTypeInner(kotlinType: KotlinType, visitedClassifiers
                 }
 
         classifier is ClassDescriptor && classifier.isInline -> {
-            val inlineClassBoxType = kotlinType
+            // kotlinType is the boxed inline class type
 
             val underlyingType = kotlinType.substitutedUnderlyingType() ?: return null
             val expandedUnderlyingType = computeExpandedTypeInner(underlyingType, visitedClassifiers) ?: return null
@@ -289,10 +290,10 @@ internal fun computeExpandedTypeInner(kotlinType: KotlinType, visitedClassifiers
                 // Here inline class type is nullable. Apply nullability to the expandedUnderlyingType.
 
                 // Nullable types become inline class boxes
-                expandedUnderlyingType.isNullable() -> inlineClassBoxType
+                expandedUnderlyingType.isNullable() -> kotlinType
 
                 // Primitives become inline class boxes
-                KotlinBuiltIns.isPrimitiveType(expandedUnderlyingType) -> inlineClassBoxType
+                KotlinBuiltIns.isPrimitiveType(expandedUnderlyingType) -> kotlinType
 
                 // Non-null reference types become nullable reference types
                 else -> expandedUnderlyingType.makeNullable()
@@ -338,16 +339,6 @@ fun computeInternalName(
 private fun getContainer(container: DeclarationDescriptor?): DeclarationDescriptor? =
     container as? ClassDescriptor ?: container as? PackageFragmentDescriptor ?: container?.let { getContainer(it.containingDeclaration) }
 
-fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
-    val upperBounds = descriptor.upperBounds
-    assert(!upperBounds.isEmpty()) { "Upper bounds should not be empty: $descriptor" }
-
-    return upperBounds.firstOrNull {
-        val classDescriptor = it.constructor.declarationDescriptor as? ClassDescriptor ?: return@firstOrNull false
-        classDescriptor.kind != ClassKind.INTERFACE && classDescriptor.kind != ClassKind.ANNOTATION_CLASS
-    } ?: upperBounds.first()
-}
-
 open class JvmDescriptorTypeWriter<T : Any>(private val jvmTypeFactory: JvmTypeFactory<T>) {
     private var jvmCurrentTypeArrayLevel: Int = 0
     protected var jvmCurrentType: T? = null
@@ -374,11 +365,11 @@ open class JvmDescriptorTypeWriter<T : Any>(private val jvmTypeFactory: JvmTypeF
     protected fun writeJvmTypeAsIs(type: T) {
         if (jvmCurrentType == null) {
             jvmCurrentType =
-                    if (jvmCurrentTypeArrayLevel > 0) {
-                        jvmTypeFactory.createFromString("[".repeat(jvmCurrentTypeArrayLevel) + jvmTypeFactory.toString(type))
-                    } else {
-                        type
-                    }
+                if (jvmCurrentTypeArrayLevel > 0) {
+                    jvmTypeFactory.createFromString("[".repeat(jvmCurrentTypeArrayLevel) + jvmTypeFactory.toString(type))
+                } else {
+                    type
+                }
         }
     }
 

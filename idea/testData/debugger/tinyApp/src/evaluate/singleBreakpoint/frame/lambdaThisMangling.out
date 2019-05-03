@@ -1,0 +1,15 @@
+LineBreakpoint created at lambdaThisMangling.kt:10
+Run Java
+Connected to the target VM
+lambdaThisMangling.kt:10
+Compile bytecode for foo
+ frame    = invoke:10, LambdaThisManglingKt$main$1 {lambdaThisMangling}
+   local    = foo: java.lang.String = foo (sp = lambdaThisMangling.kt, 8)
+     field    = value: char[] = {char[3]@uniqueID} (sp = String.!EXT!)
+       element  = 0 = 'f' 102
+       element  = 1 = 'o' 111
+       element  = 2 = 'o' 111
+     field    = hash: int = 0 (sp = String.!EXT!)
+Disconnected from the target VM
+
+Process finished with exit code 0

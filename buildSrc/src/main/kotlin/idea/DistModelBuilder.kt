@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.buildUtils.idea
@@ -75,9 +75,9 @@ open class DistModelBuilder(val rootProject: Project, pw: PrintWriter) {
         val rootSpec = copy.rootSpec
 
         when (copy) {
-            is Copy -> context.setDest(copy.destinationDir.path)
-            is Sync -> context.setDest(copy.destinationDir.path)
-            is AbstractArchiveTask -> context.setDest(copy.archivePath.path)
+            is Copy -> copy.destinationDir?.also { context.setDest(it.path) }
+            is Sync -> copy.destinationDir?.also { context.setDest(it.path) }
+            is AbstractArchiveTask -> copy.archivePath?.also { context.setDest(it.path) }
         }
 
         when (copy) {
@@ -100,15 +100,17 @@ open class DistModelBuilder(val rootProject: Project, pw: PrintWriter) {
                     processCopySpec(it, newCtx)
                 }
                 is DefaultCopySpec -> ctx.child("DEFAULT COPY SPEC") { newCtx ->
-                    val buildRootResolver = it.buildRootResolver()
-                    ctx.addCopyActions(buildRootResolver.allCopyActions)
-                    newCtx.setDest(buildRootResolver.destPath.getFile(ctx.destination!!.file).path)
-                    processCopySpec(it, newCtx)
-                    it.includes
+                    if (ctx.destination != null) {
+                        val buildRootResolver = it.buildRootResolver()
+                        ctx.addCopyActions(buildRootResolver.allCopyActions)
+                        newCtx.setDest(buildRootResolver.destPath.getFile(ctx.destination!!.file).path)
+                        processCopySpec(it, newCtx)
+                        it.includes
 
-                    newCtx.child("SINGE PARENT COPY SPEC") { child ->
-                        it.sourcePaths.forEach {
-                            processSourcePath(it, child)
+                        newCtx.child("SINGE PARENT COPY SPEC") { child ->
+                            it.sourcePaths.forEach {
+                                processSourcePath(it, child)
+                            }
                         }
                     }
                 }

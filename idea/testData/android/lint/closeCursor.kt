@@ -1,6 +1,6 @@
 // INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintRecycleInspection
 
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 
 import android.app.Activity
 import android.os.Bundle

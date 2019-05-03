@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -11,15 +11,14 @@ import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
+import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 internal val syntheticAccessorPhase = makeIrFilePhase(
     ::SyntheticAccessorLowering,
@@ -114,9 +112,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.addValueParameter(
-                Name.identifier("marker"),
-                context.ir.symbols.defaultConstructorMarker.owner.defaultType,
-                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                "marker", context.ir.symbols.defaultConstructorMarker.owner.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             )
 
             accessor.body = IrExpressionBodyImpl(
@@ -130,7 +126,8 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         IrDelegatingConstructorCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             context.irBuiltIns.unitType,
-            targetSymbol, targetSymbol.descriptor, targetSymbol.owner.typeParameters.size
+            targetSymbol, targetSymbol.descriptor,
+            targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
         ).also {
             copyAllParamsToArgs(it, accessor)
         }
@@ -139,7 +136,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         val source = this
         return buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = source.descriptor.accessorName()
+            name = source.accessorName()
             visibility = Visibilities.PUBLIC
             isSuspend = source.isSuspend
         }.also { accessor ->
@@ -170,7 +167,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
     private fun makeGetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol =
         buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = fieldSymbol.descriptor.accessorNameForGetter()
+            name = fieldSymbol.owner.accessorNameForGetter()
             visibility = Visibilities.PUBLIC
             modality = Modality.FINAL
             returnType = fieldSymbol.owner.type
@@ -180,9 +177,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
 
             if (!fieldSymbol.owner.isStatic) {
                 accessor.addValueParameter(
-                    Name.identifier("\$this"),
-                    (fieldSymbol.owner.parent as IrClass).defaultType,
-                    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    "\$this", fieldSymbol.owner.parentAsClass.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
@@ -208,7 +203,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
     private fun makeSetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol =
         buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = fieldSymbol.descriptor.accessorNameForSetter()
+            name = fieldSymbol.owner.accessorNameForSetter()
             visibility = Visibilities.PUBLIC
             modality = Modality.FINAL
             returnType = context.irBuiltIns.unitType
@@ -218,13 +213,11 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
 
             if (!fieldSymbol.owner.isStatic) {
                 accessor.addValueParameter(
-                    Name.identifier("\$this"),
-                    (fieldSymbol.owner.parent as IrClass).defaultType,
-                    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    "\$this", fieldSymbol.owner.parentAsClass.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
-            accessor.addValueParameter(Name.identifier("value"), fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.addValueParameter("value", fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
 
             accessor.body = createAccessorBodyForSetter(fieldSymbol.owner, accessor)
         }.symbol
@@ -269,7 +262,14 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
                 accessorSymbol as IrConstructorSymbol, accessorSymbol.descriptor,
                 oldExpression.typeArgumentsCount
             )
-            else -> error("Need IrCall or IrDelegatingConstructor call, got $oldExpression")
+            is IrConstructorCall ->
+                IrConstructorCallImpl.fromSymbolDescriptor(
+                    oldExpression.startOffset, oldExpression.endOffset,
+                    oldExpression.type,
+                    accessorSymbol as IrConstructorSymbol
+                )
+            else ->
+                error("Unexpected IrFunctionAccessExpression: $oldExpression")
         }
         newExpression.copyTypeArgumentsFrom(oldExpression)
         val receiverAndArgs = oldExpression.receiverAndArgs()
@@ -328,11 +328,15 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         call: IrFunctionAccessExpression,
         syntheticFunction: IrFunction
     ) {
+        var typeArgumentOffset = 0
+        if (syntheticFunction is IrConstructor) {
+            call.passTypeArgumentsFrom(syntheticFunction.parentAsClass)
+            typeArgumentOffset = syntheticFunction.parentAsClass.typeParameters.size
+        }
+        call.passTypeArgumentsFrom(syntheticFunction, offset = typeArgumentOffset)
+
         var offset = 0
         val delegateTo = call.symbol.owner
-        syntheticFunction.typeParameters.forEachIndexed { i, typeParam ->
-            call.putTypeArgument(i, IrSimpleTypeImpl(typeParam.symbol, false, emptyList(), emptyList()))
-        }
         delegateTo.dispatchReceiverParameter?.let {
             call.dispatchReceiver =
                 IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
@@ -355,21 +359,20 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         }
     }
 
-    // !!!!!! Should I use syntheticAccesssorUtils here ???
-    private fun FunctionDescriptor.accessorName(): Name {
-        val jvmName = DescriptorUtils.getJvmName(this) ?: context.state.typeMapper.mapFunctionName(
-            this,
-            OwnerKind.getMemberOwnerKind(containingDeclaration)
+    private fun IrFunction.accessorName(): Name {
+        val jvmName = context.state.typeMapper.mapFunctionName(
+            descriptor,
+            OwnerKind.getMemberOwnerKind(parentAsClass.descriptor)
         )
         return Name.identifier("access\$$jvmName")
     }
 
-    private fun PropertyDescriptor.accessorNameForGetter(): Name {
+    private fun IrField.accessorNameForGetter(): Name {
         val getterName = JvmAbi.getterName(name.asString())
         return Name.identifier("access\$prop\$$getterName")
     }
 
-    private fun PropertyDescriptor.accessorNameForSetter(): Name {
+    private fun IrField.accessorNameForSetter(): Name {
         val setterName = JvmAbi.setterName(name.asString())
         return Name.identifier("access\$prop\$$setterName")
     }

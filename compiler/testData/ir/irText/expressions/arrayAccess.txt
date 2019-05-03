@@ -1,30 +1,29 @@
 FILE fqName:<root> fileName:/arrayAccess.kt
-  PROPERTY name:p visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:final,static
+  PROPERTY name:p visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
-      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int 
+      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-p>(): Int'
-          GET_FIELD 'p: Int' type=kotlin.Int origin=null
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+        RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='foo(): Int'
+      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
-  FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.Int flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.IntArray flags:
+  FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.Int 
+    VALUE_PARAMETER name:a index:0 type:kotlin.IntArray 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(IntArray): Int'
-        CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
-          $this: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
-            $this: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-              $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
+      RETURN type=kotlin.Nothing from='public final fun test (a: kotlin.IntArray): kotlin.Int declared in <root>'
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
               index: CONST Int type=kotlin.Int value=0
-            other: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-              $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
-              index: CALL '<get-p>(): Int' type=kotlin.Int origin=GET_PROPERTY
-          other: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-            $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
-            index: CALL 'foo(): Int' type=kotlin.Int origin=null
-
+            other: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
+              index: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          other: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
+            index: CALL 'public final fun foo (): kotlin.Int declared in <root>' type=kotlin.Int origin=null

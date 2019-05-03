@@ -72,14 +72,7 @@ object ReplaceWithAnnotationAnalyzer {
         }
 
         val module = resolutionFacade.moduleDescriptor
-        val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
-        val defaultImportsScopes = buildDefaultImportsScopes(resolutionFacade, module, languageVersionSettings)
-
-        val scope = getResolutionScope(
-            symbolDescriptor, symbolDescriptor,
-            listOf(explicitImportsScope), defaultImportsScopes, languageVersionSettings
-        ) ?: return null
+        val scope = buildScope(resolutionFacade, annotation, symbolDescriptor) ?: return null
 
         val expressionTypingServices = resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
 
@@ -102,14 +95,7 @@ object ReplaceWithAnnotationAnalyzer {
         }
         if (typeReference.typeElement !is KtUserType) return null
 
-        val module = resolutionFacade.moduleDescriptor
-
-        val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
-        val defaultImportScopes = buildDefaultImportsScopes(resolutionFacade, module, languageVersionSettings)
-        val scope = getResolutionScope(
-            symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope), defaultImportScopes, languageVersionSettings
-        ) ?: return null
+        val scope = buildScope(resolutionFacade, annotation, symbolDescriptor) ?: return null
 
         val typeResolver = resolutionFacade.getFrontendService(TypeResolver::class.java)
         val bindingTrace = BindingTraceContext()
@@ -121,7 +107,7 @@ object ReplaceWithAnnotationAnalyzer {
             val parentType = expression.parent as? KtUserType ?: return@forEachDescendantOfType
             if (parentType.qualifier != null) return@forEachDescendantOfType
             val targetClass = bindingTrace.bindingContext[BindingContext.REFERENCE_TARGET, expression] as? ClassDescriptor
-                    ?: return@forEachDescendantOfType
+                ?: return@forEachDescendantOfType
             val fqName = targetClass.fqNameUnsafe
             if (fqName.isSafe) {
                 typesToQualify.add(expression to fqName.toSafe())
@@ -133,6 +119,21 @@ object ReplaceWithAnnotationAnalyzer {
         }
 
         return typeReference.typeElement as KtUserType
+    }
+
+    private fun buildScope(
+        resolutionFacade: ResolutionFacade,
+        annotation: ReplaceWith,
+        symbolDescriptor: DeclarationDescriptor
+    ): LexicalScope? {
+        val module = resolutionFacade.moduleDescriptor
+        val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
+        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
+        val defaultImportsScopes = buildDefaultImportsScopes(resolutionFacade, module, languageVersionSettings)
+
+        return getResolutionScope(
+            symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope), defaultImportsScopes, languageVersionSettings
+        )
     }
 
     private fun buildDefaultImportsScopes(

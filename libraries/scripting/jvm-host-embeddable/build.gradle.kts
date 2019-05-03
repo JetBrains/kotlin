@@ -24,6 +24,8 @@ sourceSets {
     "test" {}
 }
 
+publish()
+
 noDefaultJar()
 
 runtimeJar(rewriteDepsToShadedCompiler(
@@ -33,5 +35,3 @@ runtimeJar(rewriteDepsToShadedCompiler(
 ))
 sourcesJar()
 javadocJar()
-
-publish()

@@ -47,7 +47,7 @@ class ReflectJavaClassifierType(public override val reflectType: Type) : Reflect
         get() = with(reflectType) { this is Class<*> && getTypeParameters().isNotEmpty() }
 
     override val typeArguments: List<JavaType>
-        get() = reflectType.parameterizedTypeArguments.map(ReflectJavaType.Factory::create)
+        get() = reflectType.parameterizedTypeArguments.map(Factory::create)
 
     override val annotations: Collection<JavaAnnotation>
         get() {

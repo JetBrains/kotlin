@@ -91,6 +91,7 @@ open class KotlinUMethod(
 
 
     override val uastBody by lz {
+        if (kotlinOrigin?.canAnalyze() != true) return@lz null // EA-137193
         val bodyExpression = when (kotlinOrigin) {
             is KtFunction -> kotlinOrigin.bodyExpression
             is KtProperty -> when {
@@ -121,6 +122,12 @@ open class KotlinUMethod(
     override fun getBody(): PsiCodeBlock? = super<UAnnotationMethod>.getBody()
 
     override fun getOriginalElement(): PsiElement? = super<UAnnotationMethod>.getOriginalElement()
+
+    override val returnTypeReference: UTypeReferenceExpression? by lz {
+        (sourcePsi as? KtCallableDeclaration)?.typeReference?.let {
+            LazyKotlinUTypeReferenceExpression(it, this) { javaPsi.returnType ?: UastErrorType }
+        }
+    }
 
     override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
 

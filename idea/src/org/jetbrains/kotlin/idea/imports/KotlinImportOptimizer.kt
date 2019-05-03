@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.imports
 
 import com.intellij.lang.ImportOptimizer
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -47,26 +47,29 @@ import java.util.*
 class KotlinImportOptimizer : ImportOptimizer {
     override fun supports(file: PsiFile?) = file is KtFile
 
-    override fun processFile(file: PsiFile?) = Runnable {
-        OptimizeProcess(file as KtFile).execute()
+    override fun processFile(file: PsiFile?): Runnable {
+        val ktFile = (file as? KtFile) ?: return Runnable { /* empty runnable */ }
+        val preparedImports = prepareImports(ktFile) ?: return Runnable { /* empty runnable */ }
+
+        return Runnable {
+            replaceImports(ktFile, preparedImports)
+        }
     }
 
-    private class OptimizeProcess(private val file: KtFile) {
-        fun execute() {
-            val moduleInfo = file.getNullableModuleInfo()
-            if (moduleInfo !is ModuleSourceInfo && moduleInfo !is ScriptModuleInfo) return
+    private fun prepareImports(file: KtFile): List<ImportPath>? {
+        ApplicationManager.getApplication().assertReadAccessAllowed()
 
-            val oldImports = file.importDirectives
-            if (oldImports.isEmpty()) return
+        val moduleInfo = file.getNullableModuleInfo()
+        if (moduleInfo !is ModuleSourceInfo && moduleInfo !is ScriptModuleInfo) return null
 
-            //TODO: keep existing imports? at least aliases (comments)
+        val oldImports = file.importDirectives
+        if (oldImports.isEmpty()) return null
 
-            val descriptorsToImport = collectDescriptorsToImport(file)
+        //TODO: keep existing imports? at least aliases (comments)
 
-            val imports = prepareOptimizedImports(file, descriptorsToImport) ?: return
+        val descriptorsToImport = collectDescriptorsToImport(file)
 
-            runWriteAction { replaceImports(file, imports) }
-        }
+        return prepareOptimizedImports(file, descriptorsToImport)
     }
 
     private class CollectUsedDescriptorsVisitor(file: KtFile) : KtVisitorVoid() {

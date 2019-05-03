@@ -32,6 +32,8 @@ import com.intellij.xdebugger.settings.XDebuggerSettingsManager
 import com.sun.jdi.*
 import com.sun.jdi.Type
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
+import org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState
+import org.jetbrains.kotlin.idea.debugger.canRunEvaluation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.util.*
 import com.sun.jdi.Type as JdiType
@@ -54,17 +56,18 @@ class KotlinClassWithDelegatedPropertyRenderer(private val rendererSettings: Nod
 
         try {
             return jdiType.allFields().any { it.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) }
-        }
-        catch (notPrepared: ClassNotPreparedException) {
+        } catch (notPrepared: ClassNotPreparedException) {
             LOG.error(notPreparedClassMessage(jdiType), notPrepared)
         }
 
         return false
     }
 
-    override fun calcLabel(descriptor: ValueDescriptor,
-                           evaluationContext: EvaluationContext,
-                           listener: DescriptorLabelListener): String {
+    override fun calcLabel(
+        descriptor: ValueDescriptor,
+        evaluationContext: EvaluationContext,
+        listener: DescriptorLabelListener
+    ): String {
         val res = calcToStringLabel(descriptor, evaluationContext, listener)
         if (res != null) {
             return res
@@ -73,10 +76,12 @@ class KotlinClassWithDelegatedPropertyRenderer(private val rendererSettings: Nod
         return super.calcLabel(descriptor, evaluationContext, listener)
     }
 
-    private fun calcToStringLabel(descriptor: ValueDescriptor, evaluationContext: EvaluationContext,
-                                  listener: DescriptorLabelListener): String? {
+    private fun calcToStringLabel(
+        descriptor: ValueDescriptor, evaluationContext: EvaluationContext,
+        listener: DescriptorLabelListener
+    ): String? {
         val toStringRenderer = rendererSettings.toStringRenderer
-        if (toStringRenderer.isEnabled && DebuggerManagerEx.getInstanceEx(evaluationContext.project).context.isEvaluationPossible) {
+        if (toStringRenderer.isEnabled && DebuggerManagerEx.getInstanceEx(evaluationContext.project).context.canRunEvaluation) {
             if (toStringRenderer.isApplicable(descriptor.type)) {
                 return toStringRenderer.calcLabel(descriptor, evaluationContext, listener)
             }
@@ -108,18 +113,18 @@ class KotlinClassWithDelegatedPropertyRenderer(private val rendererSettings: Nod
 
             if (field.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)) {
                 val shouldRenderDelegatedProperty = KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES
-                if (shouldRenderDelegatedProperty) {
+                if (shouldRenderDelegatedProperty && !ToggleKotlinVariablesState.getService().kotlinVariableView) {
                     children.add(nodeManager.createNode(fieldDescriptor, context))
                 }
 
                 val delegatedPropertyDescriptor = DelegatedPropertyFieldDescriptor(
-                        context.debugProcess.project!!,
-                        value,
-                        field,
-                        shouldRenderDelegatedProperty)
+                    context.debugProcess.project!!,
+                    value,
+                    field,
+                    shouldRenderDelegatedProperty
+                )
                 children.add(nodeManager.createNode(delegatedPropertyDescriptor, context))
-            }
-            else {
+            } else {
                 children.add(nodeManager.createNode(fieldDescriptor, context))
             }
         }

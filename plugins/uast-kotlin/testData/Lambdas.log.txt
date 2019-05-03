@@ -8,31 +8,31 @@ UFile (package = )
                         USimpleNameReferenceExpression (identifier = Stream)
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                             UIdentifier (Identifier (empty))
-                            USimpleNameReferenceExpression (identifier = empty)
+                            USimpleNameReferenceExpression (identifier = empty, resolvesTo = null)
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                         UIdentifier (Identifier (filter))
-                        USimpleNameReferenceExpression (identifier = filter)
+                        USimpleNameReferenceExpression (identifier = filter, resolvesTo = null)
                         ULambdaExpression
                             UBlockExpression
                                 UQualifiedReferenceExpression
                                     USimpleNameReferenceExpression (identifier = it)
                                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                                         UIdentifier (Identifier (isEmpty))
-                                        USimpleNameReferenceExpression (identifier = isEmpty)
+                                        USimpleNameReferenceExpression (identifier = isEmpty, resolvesTo = null)
         UAnnotationMethod (name = doSelectItem)
             UParameter (name = selectItemFunction)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                     UIdentifier (Identifier (selectItemFunction))
-                    USimpleNameReferenceExpression (identifier = invoke)
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
                 UDeclarationsExpression
                     ULocalVariable (name = baz)
                         ULambdaExpression
                             UBlockExpression
                                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                                     UIdentifier (Identifier (Local))
-                                    USimpleNameReferenceExpression (identifier = <anonymous class>)
+                                    USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                     UIdentifier (Identifier (baz))
-                    USimpleNameReferenceExpression (identifier = invoke)
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)

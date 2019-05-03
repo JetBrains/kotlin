@@ -6,12 +6,12 @@ import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 
-class KaptIncrementalIT : BaseGradleIT() {
+open class KaptIncrementalIT : BaseGradleIT() {
     companion object {
         private val EXAMPLE_ANNOTATION_REGEX = "@(field:)?example.ExampleAnnotation".toRegex()
     }
 
-    private fun getProject() =
+    open fun getProject() =
         Project(
             "kaptIncrementalCompilationProject",
             GradleVersionRequired.None
@@ -25,13 +25,13 @@ class KaptIncrementalIT : BaseGradleIT() {
 
     @Test
     fun testAddNewLine() {
-        val project = Project("simple", directoryPrefix = "kapt2")
+        val project = getProject()
 
         project.build("clean", "build") {
             assertSuccessful()
         }
 
-        project.projectFile("test.kt").modify { "\n$it" }
+        project.projectFile("useB.kt").modify { "\n$it" }
         project.build("build") {
             assertSuccessful()
             assertTasksExecuted(":kaptGenerateStubsKotlin", ":compileKotlin")

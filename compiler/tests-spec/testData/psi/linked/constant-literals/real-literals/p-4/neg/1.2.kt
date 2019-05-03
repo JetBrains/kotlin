@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-draft
- * PLACES: constant-literals, real-literals -> paragraph 4 -> sentence 1
+ * PLACE: constant-literals, real-literals -> paragraph 4 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: Real literals with dots separated by underscores.
  */

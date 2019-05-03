@@ -92,7 +92,7 @@ enum class LibraryJarDescriptor(
     RUNTIME_JAR(PathUtil.KOTLIN_JAVA_STDLIB_JAR, OrderRootType.CLASSES, true, { it.stdlibPath }) {
         override fun findExistingJar(library: Library): VirtualFile? {
             if (isExternalLibrary(library)) return null
-            return JavaRuntimeDetectionUtil.getRuntimeJar(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)))
+            return JavaRuntimeDetectionUtil.getRuntimeJar(listOf(*library.getFiles(OrderRootType.CLASSES)))
         }
     },
 
@@ -132,7 +132,7 @@ enum class LibraryJarDescriptor(
 
     open fun findExistingJar(library: Library): VirtualFile? {
         if (isExternalLibrary(library)) return null
-        return LibraryUtils.getJarFile(Arrays.asList(*library.getFiles(orderRootType)), jarName)
+        return LibraryUtils.getJarFile(listOf(*library.getFiles(orderRootType)), jarName)
     }
 
     fun getPathInPlugin() = getPath(PathUtil.kotlinPathsForIdeaPlugin)

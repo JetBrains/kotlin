@@ -58,7 +58,7 @@ class JvmPackagePartSource(
 
     val moduleName =
         packageProto.getExtensionOrNull(JvmProtoBuf.packageModuleName)?.let(nameResolver::getString)
-                ?: JvmAbi.DEFAULT_MODULE_NAME
+            ?: JvmAbi.DEFAULT_MODULE_NAME
 
     override val presentableString: String
         get() = "Class '${classId.asSingleFqName().asString()}'"

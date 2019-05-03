@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 interface IThing
 
 fun test1(x: Any) = x is IThing

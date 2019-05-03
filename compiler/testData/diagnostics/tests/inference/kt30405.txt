@@ -1,0 +1,4 @@
+package
+
+public inline fun </*0*/ reified T> foo(): T
+public fun test(): kotlin.Unit

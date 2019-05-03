@@ -15,7 +15,7 @@ fun box(): String {
 
 // METHOD : DestructuringInlineLambdaKt.box()Ljava/lang/String;
 // VARIABLE : NAME=i TYPE=I INDEX=2
-// VARIABLE : NAME=$a1_a2_a3 TYPE=LStation; INDEX=1
+// VARIABLE : NAME=$dstr$a1$a2$a3 TYPE=LStation; INDEX=1
 // VARIABLE : NAME=a1 TYPE=Ljava/lang/String; INDEX=4
 // VARIABLE : NAME=a2 TYPE=Ljava/lang/String; INDEX=5
 // VARIABLE : NAME=a3 TYPE=I INDEX=6

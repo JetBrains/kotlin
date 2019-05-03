@@ -15,22 +15,22 @@ UFile (package = )
                     USimpleNameReferenceExpression (identifier = runnable)
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                         UIdentifier (Identifier (run))
-                        USimpleNameReferenceExpression (identifier = run)
+                        USimpleNameReferenceExpression (identifier = run, resolvesTo = null)
                 UDeclarationsExpression
                     ULocalVariable (name = runnable2)
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                             UIdentifier (Identifier (Runnable))
-                            USimpleNameReferenceExpression (identifier = Runnable)
+                            USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = Runnable)
                             ULambdaExpression
                                 UBlockExpression
                                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                                         UIdentifier (Identifier (println))
-                                        USimpleNameReferenceExpression (identifier = println)
+                                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null)
                 UQualifiedReferenceExpression
                     USimpleNameReferenceExpression (identifier = runnable2)
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                         UIdentifier (Identifier (run))
-                        USimpleNameReferenceExpression (identifier = run)
+                        USimpleNameReferenceExpression (identifier = run, resolvesTo = null)
                 UDeclarationsExpression
                     ULocalVariable (name = closeableRunnable)
                         UObjectLiteralExpression

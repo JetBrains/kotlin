@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.fir;
@@ -34,6 +34,16 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
         runTest("idea/testData/fir/multiModule/basic/");
     }
 
+    @TestMetadata("basicWithAnnotatedJava")
+    public void testBasicWithAnnotatedJava() throws Exception {
+        runTest("idea/testData/fir/multiModule/basicWithAnnotatedJava/");
+    }
+
+    @TestMetadata("basicWithAnnotatedOverriddenJava")
+    public void testBasicWithAnnotatedOverriddenJava() throws Exception {
+        runTest("idea/testData/fir/multiModule/basicWithAnnotatedOverriddenJava/");
+    }
+
     @TestMetadata("basicWithJava")
     public void testBasicWithJava() throws Exception {
         runTest("idea/testData/fir/multiModule/basicWithJava/");
@@ -42,6 +52,31 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
     @TestMetadata("basicWithJavaFakeOverride")
     public void testBasicWithJavaFakeOverride() throws Exception {
         runTest("idea/testData/fir/multiModule/basicWithJavaFakeOverride/");
+    }
+
+    @TestMetadata("basicWithPrimitiveJava")
+    public void testBasicWithPrimitiveJava() throws Exception {
+        runTest("idea/testData/fir/multiModule/basicWithPrimitiveJava/");
+    }
+
+    @TestMetadata("fullWithJavaPredefinedSignature")
+    public void testFullWithJavaPredefinedSignature() throws Exception {
+        runTest("idea/testData/fir/multiModule/fullWithJavaPredefinedSignature/");
+    }
+
+    @TestMetadata("javaInheritsKotlinExtension")
+    public void testJavaInheritsKotlinExtension() throws Exception {
+        runTest("idea/testData/fir/multiModule/javaInheritsKotlinExtension/");
+    }
+
+    @TestMetadata("javaInheritsKotlinProperty")
+    public void testJavaInheritsKotlinProperty() throws Exception {
+        runTest("idea/testData/fir/multiModule/javaInheritsKotlinProperty/");
+    }
+
+    @TestMetadata("javaInheritsRawKotlin")
+    public void testJavaInheritsRawKotlin() throws Exception {
+        runTest("idea/testData/fir/multiModule/javaInheritsRawKotlin/");
     }
 
     @TestMetadata("mppFakeOverrides")

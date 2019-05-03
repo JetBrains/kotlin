@@ -1,0 +1,26 @@
+package
+
+public fun </*0*/ T> accept(/*0*/ s: T): kotlin.Unit
+public fun ofK(/*0*/ t: kotlin.String): StreamMock
+public fun </*0*/ T> toSetK(): CollectorMock<*, T>
+
+public interface CollectorMock</*0*/ A, /*1*/ R> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class KotlinCollectionUser1 {
+    public constructor KotlinCollectionUser1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun use(): kotlin.Unit
+}
+
+public interface StreamMock {
+    public abstract fun </*0*/ R, /*1*/ A> collect(/*0*/ collector: CollectorMock<A, R>): R
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

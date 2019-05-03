@@ -1,0 +1,410 @@
+plugins {
+    id "com.moowork.node" version "1.2.0"
+}
+
+description = 'Kotlin Standard Library for JS'
+
+apply plugin: 'kotlin-platform-js'
+apply plugin: 'idea'
+
+configureDist(project)
+configurePublishing(project)
+
+
+def builtinsSrcDir = "${buildDir}/builtin-sources"
+def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
+def commonSrcDir = "${projectDir}/../src/kotlin"
+def commonSrcDir2 = "${projectDir}/../common/src"
+def jsCommonDir = "${projectDir}/../js"
+def coroutinesExpJsSrcDir = "${rootDir}/libraries/stdlib/coroutines-experimental/js/src"
+
+def builtinsDir = "${rootDir}/core/builtins"
+def unsignedCommonSrcDir = "${rootDir}/libraries/stdlib/unsigned/src"
+def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
+def experimentalJsModuleName = 'kotlin-experimental'
+def coroutinesJsModuleName = 'kotlin-stdlib-coroutines'
+
+def jsSrcDir = "src"
+def jsCommonSrcDir = "${jsCommonDir}/src"
+def jsTestSrcDir = "test"
+def jsCommonTestSrcDir = "${jsCommonDir}/test"
+
+def jsSrcJsDir = "${jsSrcDir}/js"
+def jsOutputFile = "${buildDir}/classes/kotlin.js"
+def jsOutputMetaFile = "${buildDir}/classes/kotlin.meta.js"
+
+def kotlinTestJsOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/main/kotlin-test.js"
+
+// TODO: take from sourcesets' outputs
+def jsTestOutputFile = "${buildDir}/classes/kotlin/test/kotlin-stdlib-js_test.js"
+def kotlinTestJsTestOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/kotlin/test/kotlin-test-js_test.js"
+
+sourceSets {
+    builtins {
+        kotlin {
+            srcDir builtinsSrcDir2
+            srcDir "${jsCommonDir}/runtime"
+            srcDir 'runtime'
+        }
+    }
+
+    main {
+        kotlin {
+            srcDir builtinsSrcDir
+            srcDir jsCommonSrcDir
+            srcDir jsSrcDir
+        }
+    }
+
+    experimental {
+        if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
+        kotlin {
+            srcDir experimentalSrcDir
+        }
+    }
+
+    test {
+        kotlin {
+            srcDir jsTestSrcDir
+            srcDir jsCommonTestSrcDir
+        }
+    }
+
+    coroutinesExperimental {
+        kotlin {
+            srcDir coroutinesExpJsSrcDir
+        }
+    }
+}
+
+configurations {
+    commonSources
+}
+dependencies {
+    expectedBy project(":kotlin-stdlib-common")
+    commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
+    testCompile project(':kotlin-test:kotlin-test-js')
+    coroutinesExperimentalCompile project.files { sourceSets.main.output.files }.builtBy(compileKotlin2Js)
+}
+
+task prepareComparableSource(type: Copy) {
+    doFirst {
+        delete builtinsSrcDir2
+    }
+    from("${builtinsDir}/native/kotlin") {
+        include "Comparable.kt"
+    }
+    into builtinsSrcDir2
+}
+
+task prepareBuiltinsSources(type: Copy) {
+    doFirst {
+        delete builtinsSrcDir
+    }
+    from("${builtinsDir}/native/kotlin") {
+        include "Iterator.kt"
+        include "Collections.kt"
+        include "CharSequence.kt"
+        include "Annotation.kt"
+    }
+    from("${builtinsDir}/src/kotlin/") {
+        include "annotation/Annotations.kt"
+        include "Function.kt"
+        include "Iterators.kt"
+        include "Range.kt"
+        include "Progressions.kt"
+        include "ProgressionIterators.kt"
+        include "Ranges.kt"
+        include "internal/InternalAnnotations.kt"
+        include "internal/progressionUtil.kt"
+        include "reflect/**/*.kt"
+        include "Unit.kt"
+    }
+    into builtinsSrcDir
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile) {
+    kotlinOptions {
+        main = "noCall"
+        moduleKind = "commonjs"
+        freeCompilerArgs = [
+                "-version",
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
+        ]
+    }
+}
+
+compileBuiltinsKotlin2Js {
+    dependsOn prepareComparableSource
+    kotlinOptions {
+        metaInfo = false
+        outputFile = "${buildDir}/classes/builtins/kotlin.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+    }
+}
+
+compileKotlin2Js {
+    dependsOn prepareBuiltinsSources
+    kotlinOptions {
+        outputFile = "${buildDir}/classes/main/kotlin.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+        freeCompilerArgs += [
+            "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, jsCommonSrcDir, commonSrcDir, commonSrcDir2, unsignedCommonSrcDir].collect { file(it).absoluteFile }.join(File.pathSeparator),
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-XXLanguage:+InlineClasses"
+        ]
+    }
+}
+
+compileExperimentalKotlin2Js {
+    dependsOn compileKotlin2Js
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        outputFile = "${buildDir}/classes/experimental/${experimentalJsModuleName}.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+        freeCompilerArgs += ["-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator)]
+    }
+}
+
+compileCoroutinesExperimentalKotlin2Js {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        outputFile = "${buildDir}/classes/coroutinesExperimental/kotlin.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+        freeCompilerArgs += [
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xcoroutines=enable",
+            "-XXLanguage:-ReleaseCoroutines"
+        ]
+    }
+}
+
+compileTestKotlin2Js {
+    kotlinOptions {
+        moduleKind = "umd"
+        freeCompilerArgs += [
+            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+        ]
+    }
+}
+
+task compileJs(type: NoDebugJavaExec) {
+    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js, compileExperimentalKotlin2Js, compileCoroutinesExperimentalKotlin2Js
+    inputs.files(compileBuiltinsKotlin2Js.outputs.files)
+    inputs.files(compileKotlin2Js.outputs.files)
+    inputs.files(compileExperimentalKotlin2Js.outputs.files)
+    inputs.files(compileCoroutinesExperimentalKotlin2Js.outputs.files)
+    inputs.dir(jsSrcDir)
+    inputs.dir(jsCommonSrcDir)
+    outputs.file(jsOutputFile)
+    outputs.file("${jsOutputFile}.map")
+
+    def inputFiles = fileTree(jsSrcJsDir) {
+        include '**/*.js'
+    }
+
+    main = "org.jetbrains.kotlin.cli.js.internal.JSStdlibLinker"
+    doFirst {
+        args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
+               (compileBuiltinsKotlin2Js.outputs.files.collect { it.path }.sort() +
+                compileKotlin2Js.outputs.files.collect { it.path }.sort() +
+                compileCoroutinesExperimentalKotlin2Js.outputs.files.collect { it.path }.sort() /* +
+                compileExperimentalKotlin2Js.outputs.files.collect { it.path }.sort() */).findAll {
+                   it.endsWith(".js") && !it.endsWith(".meta.js")
+               }
+    }
+    classpath = configurations.kotlinCompilerClasspath
+
+    doLast {
+        ant.replaceregexp(
+                file: jsOutputFile,
+                match: "module.exports,\\s*require\\([^)]+\\)",
+                replace: "",
+                byline: "true", encoding: "UTF-8")
+        ant.replaceregexp(
+                file: jsOutputFile,
+                match: "function\\s*\\(_,\\s*Kotlin\\)",
+                replace: "function()",
+                byline: "true", encoding: "UTF-8")
+        ant.replaceregexp(
+                file: jsOutputFile,
+                match: "return\\s+_;",
+                replace: "",
+                byline: "true", encoding: "UTF-8")
+
+        def sourceMapFile = file("${jsOutputFile}.map")
+        def sourceMap = new groovy.json.JsonSlurper().parseText(sourceMapFile.text)
+
+        def sourceMapBasePaths = [
+                "./",
+                "libraries/stdlib/js-v1/src/js/",
+                "libraries/stdlib/js-v1/src/",
+        ]
+        sourceMap.sources = sourceMap.sources.collect { sourcePath ->
+            def prefixToRemove = sourceMapBasePaths.find { basePath -> sourcePath.startsWith(basePath) }
+            if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
+        }
+
+        def sourceMapSourcesBaseDirs = [jsSrcDir, jsCommonSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir, experimentalSrcDir,  unsignedCommonSrcDir]
+
+        sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
+            def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text
+            if (text == null) logger.warn("Sources missing for file $sourceName")
+            text
+        }
+
+        sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
+
+        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text +
+                                      file(compileCoroutinesExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text /* +
+                                      file(compileExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text
+                                              .replaceFirst(experimentalJsModuleName, 'kotlin') */
+    }
+}
+
+classes.dependsOn compileJs
+
+
+jar {
+    enabled false
+}
+
+task mergedJar(type: Jar, dependsOn: compileJs) {
+    classifier = null
+    manifestAttributes(manifest, project, 'Main')
+
+    // TODO: Use standard implementation title after js stdlib detector becomes more flexible (KT-17655)
+    Properties properties = new Properties()
+    new File("${rootDir}/resources/kotlinManifest.properties").withInputStream {
+        properties.load(it)
+    }
+    manifest.attributes 'Implementation-Title': properties."manifest.impl.title.kotlin.javascript.stdlib"
+
+    includeEmptyDirs false
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    from jsOutputFile
+    from jsOutputMetaFile
+    from "${jsOutputFile}.map"
+    from sourceSets.main.output
+    from sourceSets.experimental.output
+    from("${buildDir}/classes/coroutinesExperimental/kotlin") {
+        into coroutinesJsModuleName
+    }
+    exclude "${experimentalJsModuleName}.*"
+}
+
+task sourcesJar(type: Jar, dependsOn: compileJs) {
+    classifier = 'sources'
+    includeEmptyDirs false
+    from(sourceSets.builtins.allSource) {
+        into 'kotlin'
+    }
+    from(sourceSets.main.allSource) {
+        into 'kotlin'
+        exclude '**/*.java'
+        exclude 'org.w3c/**'
+        exclude 'js/**'
+    }
+    from(sourceSets.main.allSource) {
+        include 'org.w3c/**'
+    }
+    from(sourceSets.experimental.allSource) {
+        into 'kotlin'
+    }
+    from(sourceSets.coroutinesExperimental.allSource) {
+        into 'kotlin'
+    }
+}
+
+task distSourcesJar(type: Jar) {
+    dependsOn(sourcesJar, configurations.commonSources)
+    baseName = 'dist-kotlin-stdlib-js'
+    version = null
+    classifier = 'sources'
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    from zipTree(sourcesJar.outputs.files.singleFile)
+
+    from(zipTree(configurations.commonSources.singleFile)) {
+        it.includeEmptyDirs = false
+        exclude 'META-INF/*'
+        into 'common'
+    }
+
+    from(project(":kotlin-stdlib-common").sourceSets.coroutinesExperimental.allSource) {
+        into 'kotlin'
+    }
+}
+
+
+
+artifacts {
+    runtime mergedJar
+    archives mergedJar
+    archives sourcesJar
+}
+
+javadocJar()
+
+task distJs(type: Copy) {
+    from(compileJs)
+    into "$distDir/js"
+}
+
+dist {
+    dependsOn distJs
+    [mergedJar, distSourcesJar].forEach {
+        rename("dist-", "")
+        from(it)
+    }
+}
+
+node {
+    download = true
+    version = '8.9.4' // The default 6.9.1 has buggy hyperbolic functions implementation
+    nodeModulesDir = buildDir
+}
+
+// Otherwise Node ignores nodeModulesDir
+task deleteLegacyNodeModules(type: Delete) {
+    delete "$projectDir/node_modules"
+}
+
+task installMocha(type: NpmTask, dependsOn: [deleteLegacyNodeModules]) {
+    args = ['install', 'mocha']
+}
+
+task installTeamcityReporter(type: NpmTask, dependsOn: [deleteLegacyNodeModules]) {
+    args = ['install', 'mocha-teamcity-reporter']
+}
+
+task runMocha(type: NodeTask, dependsOn: [testClasses, installMocha, ':kotlin-test:kotlin-test-js:testClasses']) {
+    script = file("${buildDir}/node_modules/mocha/bin/mocha")
+
+    if (project.hasProperty("teamcity")) {
+        dependsOn installTeamcityReporter
+        args = ['--reporter', 'mocha-teamcity-reporter']
+    }
+    else {
+        args = ['--reporter', 'min']
+    }
+
+    args += [jsTestOutputFile, kotlinTestJsTestOutputFile]
+
+    execOverrides {
+        it.ignoreExitValue = rootProject.ignoreTestFailures
+        it.environment('NODE_PATH', [file(jsOutputFile).parent, file(kotlinTestJsOutputFile).parent].join(File.pathSeparator))
+        it.workingDir = buildDir
+    }
+}
+
+test.dependsOn runMocha

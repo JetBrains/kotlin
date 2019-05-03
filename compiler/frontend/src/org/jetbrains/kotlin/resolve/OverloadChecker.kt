@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
-    override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean =
+    override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean =
         false
 }
 

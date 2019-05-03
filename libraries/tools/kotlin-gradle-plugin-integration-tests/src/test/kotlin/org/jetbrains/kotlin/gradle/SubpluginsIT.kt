@@ -1,13 +1,16 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class SubpluginsIT : BaseGradleIT() {
@@ -114,12 +117,69 @@ class SubpluginsIT : BaseGradleIT() {
 
     @Test
     fun testScripting() {
-        Project("kotlinScripting").build("build") {
+        Project("scripting").build("build") {
             assertSuccessful()
             assertCompiledKotlinSources(
                 listOf("app/src/main/kotlin/world.greet.kts", "script-template/src/main/kotlin/GreetScriptTemplate.kt")
             )
             assertFileExists("${kotlinClassesDir("app", "main")}World_greet.class")
+        }
+    }
+
+    @Test
+    fun testScriptingCustomExtensionNonIncremental() {
+        testScriptingCustomExtensionImpl(withIC = false)
+    }
+
+    @Test
+    fun testScriptingCustomExtensionIncremental() {
+        testScriptingCustomExtensionImpl(withIC = true)
+    }
+
+    private fun testScriptingCustomExtensionImpl(withIC: Boolean) {
+        val project = Project("scriptingCustomExtension")
+        val options = defaultBuildOptions().copy(incremental = withIC)
+
+        project.setupWorkingDir()
+        val bobGreet = project.projectFile("bob.greet")
+        val aliceGreet = project.projectFile("alice.greet")
+        val worldGreet = project.projectFile("world.greet")
+        val greetScriptTemplateKt = project.projectFile("GreetScriptTemplate.kt")
+
+        var isFailed = false
+        project.build("build", options = options) {
+            val classesDir = kotlinClassesDir("app", "main")
+            if (project.testGradleVersionAtLeast("5.0")) {
+                assertSuccessful()
+                assertFileExists("${classesDir}World.class")
+                assertFileExists("${classesDir}Alice.class")
+                assertFileExists("${classesDir}Bob.class")
+
+                if (withIC) {
+                    // compile iterations are not logged when IC is disabled
+                    assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
+                }
+            } else {
+                val usedGradleVersion =
+                    GradleVersion.version(
+                        System.getProperty("kotlin.gradle.version.for.tests")
+                            ?: project.gradleVersionRequirement.minVersion
+                    )
+                assertEquals(true, usedGradleVersion.version.substringBefore('.').toIntOrNull()?.let { it < 5 }, "Expected gradle version < 5, got ${usedGradleVersion.version}")
+                assertContains("kotlin scripting plugin: incompatible Gradle version")
+                isFailed = true
+            }
+        }
+
+        if (!isFailed) {
+            bobGreet.modify { it.replace("Bob", "Uncle Bob") }
+            project.build("build", options = options) {
+                assertSuccessful()
+
+                if (withIC) {
+                    assertCompiledKotlinSources(project.relativize(bobGreet))
+                }
+            }
         }
     }
 

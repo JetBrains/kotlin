@@ -37,6 +37,9 @@ public final class kotlin/Experimental$Level : java/lang/Enum {
 public abstract interface annotation class kotlin/ExperimentalMultiplatform : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/ExperimentalStdlibApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExperimentalUnsignedTypes : java/lang/annotation/Annotation {
 }
 
@@ -459,12 +462,16 @@ public abstract interface annotation class kotlin/UnsafeVariance : java/lang/ann
 }
 
 public final class kotlin/UnsignedKt {
+	public static final fun doubleToUInt (D)I
+	public static final fun doubleToULong (D)J
 	public static final fun uintCompare (II)I
 	public static final fun uintDivide-J1ME1BU (II)I
 	public static final fun uintRemainder-J1ME1BU (II)I
+	public static final fun uintToDouble (I)D
 	public static final fun ulongCompare (JJ)I
 	public static final fun ulongDivide-eb3DHEI (JJ)J
 	public static final fun ulongRemainder-eb3DHEI (JJ)J
+	public static final fun ulongToDouble (J)D
 }
 
 public abstract interface annotation class kotlin/UseExperimental : java/lang/annotation/Annotation {
@@ -2278,6 +2285,7 @@ public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kot
 }
 
 public final class kotlin/collections/UArraysKt {
+	public static final field INSTANCE Lkotlin/collections/UArraysKt;
 	public static final fun contentEquals-ctEhBpI ([I[I)Z
 	public static final fun contentEquals-kdPth3s ([B[B)Z
 	public static final fun contentEquals-mazbYpA ([S[S)Z
@@ -2308,6 +2316,17 @@ public abstract class kotlin/collections/UByteIterator : java/util/Iterator, kot
 	public fun remove ()V
 }
 
+public final class kotlin/collections/UCollectionsKt {
+	public static final fun sumOfUByte (Ljava/lang/Iterable;)I
+	public static final fun sumOfUInt (Ljava/lang/Iterable;)I
+	public static final fun sumOfULong (Ljava/lang/Iterable;)J
+	public static final fun sumOfUShort (Ljava/lang/Iterable;)I
+	public static final fun toUByteArray (Ljava/util/Collection;)[B
+	public static final fun toUIntArray (Ljava/util/Collection;)[I
+	public static final fun toULongArray (Ljava/util/Collection;)[J
+	public static final fun toUShortArray (Ljava/util/Collection;)[S
+}
+
 public abstract class kotlin/collections/UIntIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
 	public synthetic fun next ()Ljava/lang/Object;
@@ -2332,6 +2351,177 @@ public abstract class kotlin/collections/UShortIterator : java/util/Iterator, ko
 	public fun remove ()V
 }
 
+public final class kotlin/collections/unsigned/UArraysKt {
+	public static final fun asList--ajY-9A ([I)Ljava/util/List;
+	public static final fun asList-GBYM_sE ([B)Ljava/util/List;
+	public static final fun asList-QwZRm1k ([J)Ljava/util/List;
+	public static final fun asList-rL5Bavg ([S)Ljava/util/List;
+	public static final fun binarySearch-2fe2U9s ([IIII)I
+	public static synthetic fun binarySearch-2fe2U9s$default ([IIIIILjava/lang/Object;)I
+	public static final fun binarySearch-EtDCXyQ ([SSII)I
+	public static synthetic fun binarySearch-EtDCXyQ$default ([SSIIILjava/lang/Object;)I
+	public static final fun binarySearch-K6DWlUc ([JJII)I
+	public static synthetic fun binarySearch-K6DWlUc$default ([JJIIILjava/lang/Object;)I
+	public static final fun binarySearch-WpHrYlw ([BBII)I
+	public static synthetic fun binarySearch-WpHrYlw$default ([BBIIILjava/lang/Object;)I
+	public static final fun contentEquals-ctEhBpI ([I[I)Z
+	public static final fun contentEquals-kdPth3s ([B[B)Z
+	public static final fun contentEquals-mazbYpA ([S[S)Z
+	public static final fun contentEquals-us8wMrg ([J[J)Z
+	public static final fun contentHashCode--ajY-9A ([I)I
+	public static final fun contentHashCode-GBYM_sE ([B)I
+	public static final fun contentHashCode-QwZRm1k ([J)I
+	public static final fun contentHashCode-rL5Bavg ([S)I
+	public static final fun contentToString--ajY-9A ([I)Ljava/lang/String;
+	public static final fun contentToString-GBYM_sE ([B)Ljava/lang/String;
+	public static final fun contentToString-QwZRm1k ([J)Ljava/lang/String;
+	public static final fun contentToString-rL5Bavg ([S)Ljava/lang/String;
+	public static final fun drop-PpDY95g ([BI)Ljava/util/List;
+	public static final fun drop-nggk6HY ([SI)Ljava/util/List;
+	public static final fun drop-qFRl0hI ([II)Ljava/util/List;
+	public static final fun drop-r7IrZao ([JI)Ljava/util/List;
+	public static final fun dropLast-PpDY95g ([BI)Ljava/util/List;
+	public static final fun dropLast-nggk6HY ([SI)Ljava/util/List;
+	public static final fun dropLast-qFRl0hI ([II)Ljava/util/List;
+	public static final fun dropLast-r7IrZao ([JI)Ljava/util/List;
+	public static final fun fill-2fe2U9s ([IIII)V
+	public static synthetic fun fill-2fe2U9s$default ([IIIIILjava/lang/Object;)V
+	public static final fun fill-EtDCXyQ ([SSII)V
+	public static synthetic fun fill-EtDCXyQ$default ([SSIIILjava/lang/Object;)V
+	public static final fun fill-K6DWlUc ([JJII)V
+	public static synthetic fun fill-K6DWlUc$default ([JJIIILjava/lang/Object;)V
+	public static final fun fill-WpHrYlw ([BBII)V
+	public static synthetic fun fill-WpHrYlw$default ([BBIIILjava/lang/Object;)V
+	public static final fun firstOrNull--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun firstOrNull-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun firstOrNull-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun firstOrNull-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun getIndices--ajY-9A ([I)Lkotlin/ranges/IntRange;
+	public static final fun getIndices-GBYM_sE ([B)Lkotlin/ranges/IntRange;
+	public static final fun getIndices-QwZRm1k ([J)Lkotlin/ranges/IntRange;
+	public static final fun getIndices-rL5Bavg ([S)Lkotlin/ranges/IntRange;
+	public static final fun getLastIndex--ajY-9A ([I)I
+	public static final fun getLastIndex-GBYM_sE ([B)I
+	public static final fun getLastIndex-QwZRm1k ([J)I
+	public static final fun getLastIndex-rL5Bavg ([S)I
+	public static final fun getOrNull-PpDY95g ([BI)Lkotlin/UByte;
+	public static final fun getOrNull-nggk6HY ([SI)Lkotlin/UShort;
+	public static final fun getOrNull-qFRl0hI ([II)Lkotlin/UInt;
+	public static final fun getOrNull-r7IrZao ([JI)Lkotlin/ULong;
+	public static final fun lastOrNull--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun lastOrNull-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun lastOrNull-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun lastOrNull-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun max--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun max-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun max-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun max-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun maxWith-XMRcp5o ([BLjava/util/Comparator;)Lkotlin/UByte;
+	public static final fun maxWith-YmdZ_VM ([ILjava/util/Comparator;)Lkotlin/UInt;
+	public static final fun maxWith-eOHTfZs ([SLjava/util/Comparator;)Lkotlin/UShort;
+	public static final fun maxWith-zrEWJaI ([JLjava/util/Comparator;)Lkotlin/ULong;
+	public static final fun min--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun min-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun min-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun min-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun minWith-XMRcp5o ([BLjava/util/Comparator;)Lkotlin/UByte;
+	public static final fun minWith-YmdZ_VM ([ILjava/util/Comparator;)Lkotlin/UInt;
+	public static final fun minWith-eOHTfZs ([SLjava/util/Comparator;)Lkotlin/UShort;
+	public static final fun minWith-zrEWJaI ([JLjava/util/Comparator;)Lkotlin/ULong;
+	public static final fun plus-CFIt9YE ([ILjava/util/Collection;)[I
+	public static final fun plus-kzHmqpY ([JLjava/util/Collection;)[J
+	public static final fun plus-ojwP5H8 ([SLjava/util/Collection;)[S
+	public static final fun plus-xo_DsdI ([BLjava/util/Collection;)[B
+	public static final fun random-2D5oskM ([ILkotlin/random/Random;)I
+	public static final fun random-JzugnMA ([JLkotlin/random/Random;)J
+	public static final fun random-oSF2wD8 ([BLkotlin/random/Random;)B
+	public static final fun random-s5X_as8 ([SLkotlin/random/Random;)S
+	public static final fun reversed--ajY-9A ([I)Ljava/util/List;
+	public static final fun reversed-GBYM_sE ([B)Ljava/util/List;
+	public static final fun reversed-QwZRm1k ([J)Ljava/util/List;
+	public static final fun reversed-rL5Bavg ([S)Ljava/util/List;
+	public static final fun singleOrNull--ajY-9A ([I)Lkotlin/UInt;
+	public static final fun singleOrNull-GBYM_sE ([B)Lkotlin/UByte;
+	public static final fun singleOrNull-QwZRm1k ([J)Lkotlin/ULong;
+	public static final fun singleOrNull-rL5Bavg ([S)Lkotlin/UShort;
+	public static final fun slice-F7u83W8 ([JLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun slice-HwE9HBo ([ILjava/lang/Iterable;)Ljava/util/List;
+	public static final fun slice-JGPC0-M ([SLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun slice-JQknh5Q ([BLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun slice-Q6IL4kU ([SLkotlin/ranges/IntRange;)Ljava/util/List;
+	public static final fun slice-ZRhS8yI ([JLkotlin/ranges/IntRange;)Ljava/util/List;
+	public static final fun slice-c0bezYM ([BLkotlin/ranges/IntRange;)Ljava/util/List;
+	public static final fun slice-tAntMlw ([ILkotlin/ranges/IntRange;)Ljava/util/List;
+	public static final fun sliceArray-CFIt9YE ([ILjava/util/Collection;)[I
+	public static final fun sliceArray-Q6IL4kU ([SLkotlin/ranges/IntRange;)[S
+	public static final fun sliceArray-ZRhS8yI ([JLkotlin/ranges/IntRange;)[J
+	public static final fun sliceArray-c0bezYM ([BLkotlin/ranges/IntRange;)[B
+	public static final fun sliceArray-kzHmqpY ([JLjava/util/Collection;)[J
+	public static final fun sliceArray-ojwP5H8 ([SLjava/util/Collection;)[S
+	public static final fun sliceArray-tAntMlw ([ILkotlin/ranges/IntRange;)[I
+	public static final fun sliceArray-xo_DsdI ([BLjava/util/Collection;)[B
+	public static final fun sort--ajY-9A ([I)V
+	public static final fun sort-GBYM_sE ([B)V
+	public static final fun sort-QwZRm1k ([J)V
+	public static final fun sort-rL5Bavg ([S)V
+	public static final fun sortDescending--ajY-9A ([I)V
+	public static final fun sortDescending-GBYM_sE ([B)V
+	public static final fun sortDescending-QwZRm1k ([J)V
+	public static final fun sortDescending-rL5Bavg ([S)V
+	public static final fun sorted--ajY-9A ([I)Ljava/util/List;
+	public static final fun sorted-GBYM_sE ([B)Ljava/util/List;
+	public static final fun sorted-QwZRm1k ([J)Ljava/util/List;
+	public static final fun sorted-rL5Bavg ([S)Ljava/util/List;
+	public static final fun sortedArray--ajY-9A ([I)[I
+	public static final fun sortedArray-GBYM_sE ([B)[B
+	public static final fun sortedArray-QwZRm1k ([J)[J
+	public static final fun sortedArray-rL5Bavg ([S)[S
+	public static final fun sortedArrayDescending--ajY-9A ([I)[I
+	public static final fun sortedArrayDescending-GBYM_sE ([B)[B
+	public static final fun sortedArrayDescending-QwZRm1k ([J)[J
+	public static final fun sortedArrayDescending-rL5Bavg ([S)[S
+	public static final fun sortedDescending--ajY-9A ([I)Ljava/util/List;
+	public static final fun sortedDescending-GBYM_sE ([B)Ljava/util/List;
+	public static final fun sortedDescending-QwZRm1k ([J)Ljava/util/List;
+	public static final fun sortedDescending-rL5Bavg ([S)Ljava/util/List;
+	public static final fun sumOfUByte ([Lkotlin/UByte;)I
+	public static final fun sumOfUInt ([Lkotlin/UInt;)I
+	public static final fun sumOfULong ([Lkotlin/ULong;)J
+	public static final fun sumOfUShort ([Lkotlin/UShort;)I
+	public static final fun take-PpDY95g ([BI)Ljava/util/List;
+	public static final fun take-nggk6HY ([SI)Ljava/util/List;
+	public static final fun take-qFRl0hI ([II)Ljava/util/List;
+	public static final fun take-r7IrZao ([JI)Ljava/util/List;
+	public static final fun takeLast-PpDY95g ([BI)Ljava/util/List;
+	public static final fun takeLast-nggk6HY ([SI)Ljava/util/List;
+	public static final fun takeLast-qFRl0hI ([II)Ljava/util/List;
+	public static final fun takeLast-r7IrZao ([JI)Ljava/util/List;
+	public static final fun toTypedArray--ajY-9A ([I)[Lkotlin/UInt;
+	public static final fun toTypedArray-GBYM_sE ([B)[Lkotlin/UByte;
+	public static final fun toTypedArray-QwZRm1k ([J)[Lkotlin/ULong;
+	public static final fun toTypedArray-rL5Bavg ([S)[Lkotlin/UShort;
+	public static final fun toUByteArray ([Lkotlin/UByte;)[B
+	public static final fun toUIntArray ([Lkotlin/UInt;)[I
+	public static final fun toULongArray ([Lkotlin/ULong;)[J
+	public static final fun toUShortArray ([Lkotlin/UShort;)[S
+	public static final fun withIndex--ajY-9A ([I)Ljava/lang/Iterable;
+	public static final fun withIndex-GBYM_sE ([B)Ljava/lang/Iterable;
+	public static final fun withIndex-QwZRm1k ([J)Ljava/lang/Iterable;
+	public static final fun withIndex-rL5Bavg ([S)Ljava/lang/Iterable;
+	public static final fun zip-C-E_24M ([I[Ljava/lang/Object;)Ljava/util/List;
+	public static final fun zip-F7u83W8 ([JLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun zip-HwE9HBo ([ILjava/lang/Iterable;)Ljava/util/List;
+	public static final fun zip-JGPC0-M ([SLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun zip-JQknh5Q ([BLjava/lang/Iterable;)Ljava/util/List;
+	public static final fun zip-ctEhBpI ([I[I)Ljava/util/List;
+	public static final fun zip-f7H3mmw ([J[Ljava/lang/Object;)Ljava/util/List;
+	public static final fun zip-kdPth3s ([B[B)Ljava/util/List;
+	public static final fun zip-mazbYpA ([S[S)Ljava/util/List;
+	public static final fun zip-nl983wc ([B[Ljava/lang/Object;)Ljava/util/List;
+	public static final fun zip-uaTIQ5s ([S[Ljava/lang/Object;)Ljava/util/List;
+	public static final fun zip-us8wMrg ([J[J)Ljava/util/List;
+}
+
 public final class kotlin/comparisons/ComparisonsKt {
 	public static final fun compareBy ([Lkotlin/jvm/functions/Function1;)Ljava/util/Comparator;
 	public static final fun compareValues (Ljava/lang/Comparable;Ljava/lang/Comparable;)I
@@ -2351,6 +2541,17 @@ public final class kotlin/comparisons/ComparisonsKt {
 	public static final fun reversed (Ljava/util/Comparator;)Ljava/util/Comparator;
 	public static final fun then (Ljava/util/Comparator;Ljava/util/Comparator;)Ljava/util/Comparator;
 	public static final fun thenDescending (Ljava/util/Comparator;Ljava/util/Comparator;)Ljava/util/Comparator;
+}
+
+public final class kotlin/comparisons/UComparisonsKt {
+	public static final fun maxOf-5PvTz6A (SS)S
+	public static final fun maxOf-J1ME1BU (II)I
+	public static final fun maxOf-Kr8caGY (BB)B
+	public static final fun maxOf-eb3DHEI (JJ)J
+	public static final fun minOf-5PvTz6A (SS)S
+	public static final fun minOf-J1ME1BU (II)I
+	public static final fun minOf-Kr8caGY (BB)B
+	public static final fun minOf-eb3DHEI (JJ)J
 }
 
 public final class kotlin/concurrent/ThreadsKt {
@@ -3522,11 +3723,19 @@ public class kotlin/jvm/internal/Reflection {
 	public static fun mutableProperty0 (Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
 	public static fun mutableProperty1 (Lkotlin/jvm/internal/MutablePropertyReference1;)Lkotlin/reflect/KMutableProperty1;
 	public static fun mutableProperty2 (Lkotlin/jvm/internal/MutablePropertyReference2;)Lkotlin/reflect/KMutableProperty2;
+	public static fun nullableTypeOf (Ljava/lang/Class;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;[Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
 	public static fun property0 (Lkotlin/jvm/internal/PropertyReference0;)Lkotlin/reflect/KProperty0;
 	public static fun property1 (Lkotlin/jvm/internal/PropertyReference1;)Lkotlin/reflect/KProperty1;
 	public static fun property2 (Lkotlin/jvm/internal/PropertyReference2;)Lkotlin/reflect/KProperty2;
 	public static fun renderLambdaToString (Lkotlin/jvm/internal/FunctionBase;)Ljava/lang/String;
 	public static fun renderLambdaToString (Lkotlin/jvm/internal/Lambda;)Ljava/lang/String;
+	public static fun typeOf (Ljava/lang/Class;)Lkotlin/reflect/KType;
+	public static fun typeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun typeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun typeOf (Ljava/lang/Class;[Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
 }
 
 public class kotlin/jvm/internal/ReflectionFactory {
@@ -3545,6 +3754,7 @@ public class kotlin/jvm/internal/ReflectionFactory {
 	public fun property2 (Lkotlin/jvm/internal/PropertyReference2;)Lkotlin/reflect/KProperty2;
 	public fun renderLambdaToString (Lkotlin/jvm/internal/FunctionBase;)Ljava/lang/String;
 	public fun renderLambdaToString (Lkotlin/jvm/internal/Lambda;)Ljava/lang/String;
+	public fun typeOf (Lkotlin/reflect/KClassifier;Ljava/util/List;Z)Lkotlin/reflect/KType;
 }
 
 public final class kotlin/jvm/internal/ShortCompanionObject {
@@ -3615,6 +3825,17 @@ public class kotlin/jvm/internal/TypeIntrinsics {
 	public static fun throwCce (Ljava/lang/ClassCastException;)Ljava/lang/ClassCastException;
 	public static fun throwCce (Ljava/lang/Object;Ljava/lang/String;)V
 	public static fun throwCce (Ljava/lang/String;)V
+}
+
+public final class kotlin/jvm/internal/TypeReference : kotlin/reflect/KType {
+	public fun <init> (Lkotlin/reflect/KClassifier;Ljava/util/List;Z)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAnnotations ()Ljava/util/List;
+	public fun getArguments ()Ljava/util/List;
+	public fun getClassifier ()Lkotlin/reflect/KClassifier;
+	public fun hashCode ()I
+	public fun isMarkedNullable ()Z
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class kotlin/jvm/internal/markers/KMappedMarker {
@@ -4068,6 +4289,26 @@ public final class kotlin/ranges/ULongRange$Companion {
 }
 
 public final class kotlin/ranges/URangesKt {
+	public static final fun coerceAtLeast-5PvTz6A (SS)S
+	public static final fun coerceAtLeast-J1ME1BU (II)I
+	public static final fun coerceAtLeast-Kr8caGY (BB)B
+	public static final fun coerceAtLeast-eb3DHEI (JJ)J
+	public static final fun coerceAtMost-5PvTz6A (SS)S
+	public static final fun coerceAtMost-J1ME1BU (II)I
+	public static final fun coerceAtMost-Kr8caGY (BB)B
+	public static final fun coerceAtMost-eb3DHEI (JJ)J
+	public static final fun coerceIn-JPwROB0 (JLkotlin/ranges/ClosedRange;)J
+	public static final fun coerceIn-VKSA0NQ (SSS)S
+	public static final fun coerceIn-WZ9TVnA (III)I
+	public static final fun coerceIn-b33U2AM (BBB)B
+	public static final fun coerceIn-sambcqE (JJJ)J
+	public static final fun coerceIn-wuiCnnA (ILkotlin/ranges/ClosedRange;)I
+	public static final fun contains-68kG9v0 (Lkotlin/ranges/UIntRange;B)Z
+	public static final fun contains-Gab390E (Lkotlin/ranges/ULongRange;I)Z
+	public static final fun contains-ULb-yJY (Lkotlin/ranges/ULongRange;B)Z
+	public static final fun contains-ZsK3CEQ (Lkotlin/ranges/UIntRange;S)Z
+	public static final fun contains-fz5IDCE (Lkotlin/ranges/UIntRange;J)Z
+	public static final fun contains-uhHAxoY (Lkotlin/ranges/ULongRange;S)Z
 	public static final fun downTo-5PvTz6A (SS)Lkotlin/ranges/UIntProgression;
 	public static final fun downTo-J1ME1BU (II)Lkotlin/ranges/UIntProgression;
 	public static final fun downTo-Kr8caGY (BB)Lkotlin/ranges/UIntProgression;
@@ -4440,6 +4681,13 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun zip (Lkotlin/sequences/Sequence;Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun zipWithNext (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun zipWithNext (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+}
+
+public final class kotlin/sequences/USequencesKt {
+	public static final fun sumOfUByte (Lkotlin/sequences/Sequence;)I
+	public static final fun sumOfUInt (Lkotlin/sequences/Sequence;)I
+	public static final fun sumOfULong (Lkotlin/sequences/Sequence;)J
+	public static final fun sumOfUShort (Lkotlin/sequences/Sequence;)I
 }
 
 public final class kotlin/system/TimingKt {

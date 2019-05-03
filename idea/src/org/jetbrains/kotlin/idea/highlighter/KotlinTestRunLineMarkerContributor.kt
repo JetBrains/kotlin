@@ -40,8 +40,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         fun getTestStateIcon(url: String, project: Project): Icon? {
             val defaultIcon = AllIcons.RunConfigurations.TestState.Run
             val state = TestStateStorage.getInstance(project).getState(url) ?: return defaultIcon
-            val magnitude = TestIconMapper.getMagnitude(state.magnitude)
-            return when (magnitude) {
+            return when (TestIconMapper.getMagnitude(state.magnitude)) {
                 TestStateInfo.Magnitude.ERROR_INDEX,
                 TestStateInfo.Magnitude.FAILED_INDEX -> AllIcons.RunConfigurations.TestState.Red2
                 TestStateInfo.Magnitude.PASSED_INDEX,
@@ -51,7 +50,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         }
     }
 
-    override fun getInfo(element: PsiElement): RunLineMarkerContributor.Info? {
+    override fun getInfo(element: PsiElement): Info? {
         val declaration = element.getStrictParentOfType<KtNamedDeclaration>() ?: return null
         if (declaration.nameIdentifier != element) return null
 
@@ -64,6 +63,6 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
 
         val targetPlatform = declaration.module?.platform ?: return null
         val icon = targetPlatform.kind.tooling.getTestIcon(declaration, descriptor) ?: return null
-        return RunLineMarkerContributor.Info(icon, { "Run Test" }, ExecutorAction.getActions())
+        return Info(icon, { "Run Test" }, ExecutorAction.getActions())
     }
 }

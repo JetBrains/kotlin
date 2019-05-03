@@ -1,10 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
@@ -12,9 +14,8 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -60,12 +61,14 @@ class DispatchPointTransformer(val action: (SuspendState) -> IrExpression) : IrE
 
 class StateMachineBuilder(
     private val suspendableNodes: MutableSet<IrElement>,
-    val context: JsIrBackendContext,
+    val context: CommonBackendContext,
     val function: IrFunctionSymbol,
     private val rootLoop: IrLoop,
-    private val exceptionSymbol: IrProperty,
-    private val exStateSymbol: IrProperty,
-    private val stateSymbol: IrProperty,
+    private val exceptionSymbolGetter: IrSimpleFunction,
+    private val exceptionSymbolSetter: IrSimpleFunction,
+    private val exStateSymbolGetter: IrSimpleFunction,
+    private val exStateSymbolSetter: IrSimpleFunction,
+    private val stateSymbolSetter: IrSimpleFunction,
     private val thisSymbol: IrValueParameterSymbol,
     private val suspendResult: IrVariableSymbol
 ) : IrElementVisitorVoid {
@@ -83,14 +86,10 @@ class StateMachineBuilder(
 
     val entryState = SuspendState(unit)
     val rootExceptionTrap = buildExceptionTrapState()
-    private val globalExceptionVar = JsIrBuilder.buildVar(exceptionSymbol.getter!!.returnType, function.owner, "e")
+    private val globalExceptionVar = JsIrBuilder.buildVar(exceptionSymbolGetter.returnType, function.owner, "e")
     lateinit var globalCatch: IrCatch
 
     fun finalizeStateMachine() {
-        val unitValue = JsIrBuilder.buildGetObjectValue(
-            unit,
-            context.symbolTable.referenceClass(context.builtIns.unit)
-        )
         globalCatch = buildGlobalCatch()
         if (currentBlock.statements.lastOrNull() !is IrReturn) {
             addStatement(JsIrBuilder.buildReturn(function, unitValue, nothing))
@@ -117,11 +116,11 @@ class StateMachineBuilder(
             )
 
             // TODO: exception table
-            elseBlock.statements += JsIrBuilder.buildCall(stateSymbol.setter!!.symbol, unit).apply {
+            elseBlock.statements += JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
                 dispatchReceiver = thisReceiver
                 putValueArgument(0, exceptionState())
             }
-            elseBlock.statements += JsIrBuilder.buildCall(exceptionSymbol.setter!!.symbol, unit).apply {
+            elseBlock.statements += JsIrBuilder.buildCall(exceptionSymbolSetter.symbol, unit).apply {
                 dispatchReceiver = thisReceiver
                 putValueArgument(0, JsIrBuilder.buildGetValue(globalExceptionSymbol))
             }
@@ -179,7 +178,7 @@ class StateMachineBuilder(
     private fun doDispatchImpl(target: SuspendState, block: IrContainerExpression, andContinue: Boolean) {
         val irDispatch = IrDispatchPoint(target)
         currentState.successors.add(target)
-        block.addStatement(JsIrBuilder.buildCall(stateSymbol.setter!!.symbol, unit).apply {
+        block.addStatement(JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
             dispatchReceiver = thisReceiver
             putValueArgument(0, irDispatch)
         })
@@ -230,7 +229,7 @@ class StateMachineBuilder(
         l.condition.acceptVoid(this)
 
         transformLastExpression {
-            val exitCond = JsIrBuilder.buildCall(booleanNotSymbol).apply { putValueArgument(0, it) }
+            val exitCond = JsIrBuilder.buildCall(booleanNotSymbol).apply { dispatchReceiver = it }
             val irBreak = buildDispatchBlock(exit)
             JsIrBuilder.buildIfElse(unit, exitCond, irBreak)
         }
@@ -296,7 +295,7 @@ class StateMachineBuilder(
             currentState.successors += continueState
 
             transformLastExpression {
-                JsIrBuilder.buildCall(stateSymbol.setter!!.symbol, unit).apply {
+                JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
                     dispatchReceiver = thisReceiver
                     putValueArgument(0, dispatch)
                 }
@@ -351,8 +350,8 @@ class StateMachineBuilder(
                 if (it.result in suspendableNodes) {
                     suspendableNodes += wrapped
                 }
-                when (it) {
-                    is IrElseBranch -> IrElseBranchImpl(it.startOffset, it.endOffset, it.condition, wrapped)
+                when {
+                    isElseBranch(it) -> IrElseBranchImpl(it.startOffset, it.endOffset, it.condition, wrapped)
                     else /* IrBranch */ -> IrBranchImpl(it.startOffset, it.endOffset, it.condition, wrapped)
                 }
             }
@@ -365,7 +364,7 @@ class StateMachineBuilder(
         val rootBlock = currentBlock
 
         for (branch in branches) {
-            if (branch !is IrElseBranch) {
+            if (!isElseBranch(branch)) {
                 branch.condition.acceptVoid(this)
                 val branchBlock = JsIrBuilder.buildComposite(branch.result.type)
                 val elseBlock = JsIrBuilder.buildComposite(expression.type)
@@ -534,10 +533,7 @@ class StateMachineBuilder(
         })
     }
 
-    private val unitValue = JsIrBuilder.buildGetObjectValue(
-        unit,
-        context.symbolTable.referenceClass(context.builtIns.unit)
-    )
+    private val unitValue get() = JsIrBuilder.buildGetObjectValue(unit, context.irBuiltIns.unitClass)
 
     override fun visitReturn(expression: IrReturn) {
         expression.acceptChildrenVoid(this)
@@ -685,7 +681,7 @@ class StateMachineBuilder(
             aTry.finallyExpression?.acceptVoid(this)
             currentState.successors += listOf(throwExitState, exitState)
             addStatement(
-                JsIrBuilder.buildCall(stateSymbol.setter!!.symbol, unit).also {
+                JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).also {
                     it.dispatchReceiver = thisReceiver
                     it.putValueArgument(0, JsIrBuilder.buildGetValue(finallyStateVar.symbol))
                 }
@@ -705,15 +701,15 @@ class StateMachineBuilder(
 
     private fun setupExceptionState(target: SuspendState) {
         addStatement(
-            JsIrBuilder.buildCall(exStateSymbol.setter!!.symbol, unit).apply {
+            JsIrBuilder.buildCall(exStateSymbolSetter.symbol, unit).apply {
                 dispatchReceiver = thisReceiver
                 putValueArgument(0, IrDispatchPoint(target))
             }
         )
     }
 
-    private fun exceptionState() = JsIrBuilder.buildCall(exStateSymbol.getter!!.symbol).also { it.dispatchReceiver = thisReceiver }
-    private fun pendingException() = JsIrBuilder.buildCall(exceptionSymbol.getter!!.symbol).also { it.dispatchReceiver = thisReceiver }
+    private fun exceptionState() = JsIrBuilder.buildCall(exStateSymbolGetter.symbol).also { it.dispatchReceiver = thisReceiver }
+    private fun pendingException() = JsIrBuilder.buildCall(exceptionSymbolGetter.symbol).also { it.dispatchReceiver = thisReceiver }
 
     private fun buildTryState(aTry: IrTry) =
         TryState(

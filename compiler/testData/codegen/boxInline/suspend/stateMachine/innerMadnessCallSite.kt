@@ -4,6 +4,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// CHECK_STATE_MACHINE
 
 interface SuspendRunnable {
     suspend fun run()
@@ -12,7 +13,9 @@ interface SuspendRunnable {
 suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
     val l: suspend () -> Unit = {
         c()
+        c()
     }
+    l()
     l()
 }
 
@@ -24,14 +27,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(EmptyContinuation)
-}
-
-var i = 0;
-
-suspend fun suspendHere() = suspendCoroutineUninterceptedOrReturn<Unit> {
-    i++
-    COROUTINE_SUSPENDED
+    c.startCoroutine(CheckStateMachineContinuation)
 }
 
 fun box(): String {
@@ -45,26 +41,28 @@ fun box(): String {
                                 val l : suspend () -> Unit = {
                                     val sr = object: SuspendRunnable {
                                         override suspend fun run() {
-                                            suspendHere()
-                                            suspendHere()
-                                            suspendHere()
-                                            suspendHere()
-                                            suspendHere()
+                                            StateMachineChecker.suspendHere()
+                                            StateMachineChecker.suspendHere()
                                         }
                                     }
                                     sr.run()
+                                    sr.run()
                                 }
+                                l()
                                 l()
                             }
                         }
                         sr.run()
+                        sr.run()
                     }
+                    l()
                     l()
                 }
             }
             sr.run()
+            sr.run()
         }
     }
-    if (i != 1) return "FAIL $i"
+    StateMachineChecker.check(numberOfSuspensions = 256)
     return "OK"
 }

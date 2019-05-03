@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.common.arguments
@@ -59,7 +59,7 @@ class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeat
             return null
         }
 
-        val colon = tail.getOrNull(0) ?: return reportAndReturnNull("Incorrect internal argument syntax, missing colon: $wholeArgument")
+        if (tail.getOrNull(0) != ':') return reportAndReturnNull("Incorrect internal argument syntax, missing colon: $wholeArgument")
 
         val modificator = tail.getOrNull(1)
         val languageFeatureState = when (modificator) {

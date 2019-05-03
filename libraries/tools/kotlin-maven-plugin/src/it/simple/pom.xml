@@ -40,7 +40,7 @@
                         </goals>
                         <configuration>
                             <args combine.children="append">
-                                <arg>-Xadd-compiler-builtins</arg>
+                                <arg>-Xsuppress-missing-builtins-error</arg>
                             </args>
                         </configuration>
                     </execution>

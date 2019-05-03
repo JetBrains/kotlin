@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // Enable when KT-14833 is fixed.
 // IGNORE_BACKEND: JVM
 import kotlin.reflect.KProperty

@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("unused")
@@ -66,7 +66,9 @@ interface ExternalSourceCode : SourceCode {
 /**
  * The source code [range] with the the optional [name]
  */
-data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Range)
+data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Range) : Serializable {
+    companion object { private const val serialVersionUID: Long = 1L }
+}
 
 /**
  * The general interface to the Script dependency (see platform-specific implementations)
@@ -90,10 +92,18 @@ class ScriptCollectedData(properties: Map<PropertiesCollection.Key<*>, Any>) : P
 val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
 
 /**
- * The facade to the script data for refinement callbacks
+ * The facade to the script data for compilation configuration refinement callbacks
  */
 class ScriptConfigurationRefinementContext(
     val script: SourceCode,
     val compilationConfiguration: ScriptCompilationConfiguration,
     val collectedData: ScriptCollectedData? = null
+)
+
+/**
+ * The facade to the script data for evaluation configuration refinement callbacks
+ */
+class ScriptEvaluationConfigurationRefinementContext(
+    val compiledScript: CompiledScript<*>,
+    val evaluationConfiguration: ScriptEvaluationConfiguration
 )

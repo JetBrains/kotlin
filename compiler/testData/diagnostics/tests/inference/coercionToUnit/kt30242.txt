@@ -1,0 +1,18 @@
+package
+
+public fun bar(/*0*/ block: () -> kotlin.String): kotlin.Unit
+public fun foo(/*0*/ f: () -> kotlin.Any): kotlin.Unit
+public fun println(/*0*/ s: kotlin.String = ...): kotlin.Unit
+public fun test1(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun test2(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun test3(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun test4(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun test_5(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun test_6(/*0*/ b: kotlin.Boolean): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

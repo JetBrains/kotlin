@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.COROUTINE_SWITCH
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
@@ -20,7 +21,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitFunction(declaration: IrFunction, data: JsGenerationContext) = JsEmpty.also {
         assert(declaration.origin == JsIrBackendContext.callableClosureOrigin) {
-            "The only possible Function Declarartion is one composed in Callable Reference Lowering"
+            "The only possible Function Declaration is one composed in Callable Reference Lowering"
         }
     }
 
@@ -42,11 +43,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitBreak(jump: IrBreak, context: JsGenerationContext): JsStatement {
-        return JsBreak(context.getNameForLoop(jump.loop)?.makeRef())
+        return JsBreak(context.getNameForLoop(jump.loop)?.let { JsNameRef(it) })
     }
 
     override fun visitContinue(jump: IrContinue, context: JsGenerationContext): JsStatement {
-        return JsContinue(context.getNameForLoop(jump.loop)?.makeRef())
+        return JsContinue(context.getNameForLoop(jump.loop)?.let { JsNameRef(it) })
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
@@ -58,7 +59,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {
-        val varName = context.getNameForSymbol(declaration.symbol)
+        val varName = context.getNameForValueDeclaration(declaration)
         return jsVar(varName, declaration.initializer, context)
     }
 
@@ -80,7 +81,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val jsTryBlock = aTry.tryResult.accept(this, context).asBlock()
 
         val jsCatch = aTry.catches.singleOrNull()?.let {
-            val name = context.getNameForSymbol(it.catchParameter.symbol)
+            val name = context.getNameForValueDeclaration(it.catchParameter)
             val jsCatchBlock = it.result.accept(this, context)
             JsCatch(context.currentScope, name.ident, jsCatchBlock)
         }
@@ -99,7 +100,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         var expr: IrExpression? = null
         val cases = expression.branches.map {
             val body = it.result
-            val id = if (it is IrElseBranch) null else {
+            val id = if (isElseBranch(it)) null else {
                 val call = it.condition as IrCall
                 expr = call.getValueArgument(0) as IrExpression
                 call.getValueArgument(1)
@@ -127,14 +128,14 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitWhileLoop(loop: IrWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
-        val label = context.getNameForLoop(loop)
+        val label = context.getNameForLoop(loop)?.let { context.staticContext.rootScope.declareName(it) }
         val loopStatement = JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
         return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
-        val label = context.getNameForLoop(loop)
+        val label = context.getNameForLoop(loop)?.let { context.staticContext.rootScope.declareName(it) }
         val loopStatement =
             JsDoWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
         return label?.let { JsLabel(it, loopStatement) } ?: loopStatement

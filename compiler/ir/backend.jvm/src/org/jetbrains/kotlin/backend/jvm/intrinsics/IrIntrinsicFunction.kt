@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
@@ -11,15 +11,9 @@ import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toIrType
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
@@ -27,26 +21,8 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
-private class IrEmptyVarargExpression(
-    override val type: IrType,
-    override val startOffset: Int,
-    override val endOffset: Int
-) : IrExpression {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        TODO("not implemented")
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        TODO("not implemented")
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        TODO("not implemented")
-    }
-}
-
 open class IrIntrinsicFunction(
-    val expression: IrMemberAccessExpression,
+    val expression: IrFunctionAccessExpression,
     val signature: JvmMethodSignature,
     val context: JvmBackendContext,
     val argsTypes: List<Type> = expression.argTypes(context)
@@ -94,33 +70,34 @@ open class IrIntrinsicFunction(
         codegen: ExpressionCodegen,
         data: BlockInfo
     ) {
-        val args = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver) +
-                expression.descriptor.valueParameters.mapIndexed { i, descriptor ->
-                    expression.getValueArgument(i) ?: if (descriptor.isVararg)
-                        IrEmptyVarargExpression(descriptor.type.toIrType()!!, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                    else error("Unknown parameter: $descriptor in $expression")
+        var offset = 0
+        expression.dispatchReceiver?.let { genArg(it, codegen, offset++, data) }
+        expression.extensionReceiver?.let { genArg(it, codegen, offset++, data) }
+        for ((i, descriptor) in expression.descriptor.valueParameters.withIndex()) {
+            val argument = expression.getValueArgument(i)
+            when {
+                argument != null ->
+                    genArg(argument, codegen, i + offset, data)
+                descriptor.isVararg -> {
+                    val parameterType = codegen.typeMapper.kotlinTypeMapper.mapType(descriptor.type)
+                    StackValue.operation(parameterType) {
+                        it.aconst(0)
+                        it.newarray(AsmUtil.correctElementType(parameterType))
+                    }.put(parameterType, codegen.mv)
                 }
-
-        args.forEachIndexed { i, irExpression ->
-            if (irExpression is IrEmptyVarargExpression) {
-                val parameterType = codegen.typeMapper.mapType(irExpression.type.toKotlinType())
-                StackValue.operation(parameterType) {
-                    it.aconst(0)
-                    it.newarray(AsmUtil.correctElementType(parameterType))
-                }.put(parameterType, codegen.mv)
-            } else {
-                genArg(irExpression, codegen, i, data)
+                else ->
+                    error("Unknown parameter: $descriptor in $expression")
             }
         }
     }
 
-    open fun genArg(expression: IrExpression, codegen: ExpressionCodegen, index: Int, data: BlockInfo) {
+    private fun genArg(expression: IrExpression, codegen: ExpressionCodegen, index: Int, data: BlockInfo) {
         codegen.gen(expression, argsTypes[index], data)
     }
 
     companion object {
         fun create(
-            expression: IrMemberAccessExpression,
+            expression: IrFunctionAccessExpression,
             signature: JvmMethodSignature,
             context: JvmBackendContext,
             argsTypes: List<Type> = expression.argTypes(context),
@@ -132,11 +109,12 @@ open class IrIntrinsicFunction(
             }
         }
 
-        fun createWithResult(expression: IrMemberAccessExpression,
-                   signature: JvmMethodSignature,
-                   context: JvmBackendContext,
-                   argsTypes: List<Type> = expression.argTypes(context),
-                   invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Type): IrIntrinsicFunction {
+        fun createWithResult(
+            expression: IrFunctionAccessExpression, signature: JvmMethodSignature,
+            context: JvmBackendContext,
+            argsTypes: List<Type> = expression.argTypes(context),
+            invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Type
+        ): IrIntrinsicFunction {
             return object : IrIntrinsicFunction(expression, signature, context, argsTypes) {
 
                 override fun genInvokeInstructionWithResult(v: InstructionAdapter) = invokeInstruction(v)
@@ -144,7 +122,7 @@ open class IrIntrinsicFunction(
         }
 
         fun create(
-            expression: IrMemberAccessExpression,
+            expression: IrFunctionAccessExpression,
             signature: JvmMethodSignature,
             context: JvmBackendContext,
             type: Type,
@@ -155,17 +133,17 @@ open class IrIntrinsicFunction(
     }
 }
 
-fun IrMemberAccessExpression.argTypes(context: JvmBackendContext): ArrayList<Type> {
-    val callableMethod = context.state.typeMapper.mapToCallableMethod(descriptor as FunctionDescriptor, false)
+fun IrFunctionAccessExpression.argTypes(context: JvmBackendContext): ArrayList<Type> {
+    val callableMethod = context.state.typeMapper.mapToCallableMethod(descriptor, false)
     return arrayListOf<Type>().apply {
         callableMethod.dispatchReceiverType?.let { add(it) }
         addAll(callableMethod.getAsmMethod().argumentTypes)
     }
 }
 
-fun IrMemberAccessExpression.receiverAndArgs(): List<IrExpression> {
+fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
     return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
-            descriptor.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
+            symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
 }
 
 fun List<IrExpression>.asmTypes(context: JvmBackendContext): List<Type> {

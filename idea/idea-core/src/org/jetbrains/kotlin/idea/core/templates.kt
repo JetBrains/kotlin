@@ -60,7 +60,7 @@ fun getFunctionBodyTextFromTemplate(
     }
 
     return try {
-        fileTemplate!!.getText(properties)
+        fileTemplate.getText(properties)
     }
     catch (e: ProcessCanceledException) {
         throw e

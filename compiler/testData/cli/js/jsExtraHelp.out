@@ -2,9 +2,14 @@ Usage: kotlinc-js <options> <source files>
 where advanced options include:
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
+  -Xir                       Use IR backend
+  -Xir-produce-only={ klib, js } Type of output to produce. Overrides -meta-info argument.
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
+  -Xcheck-phase-conditions   Check pre- and postconditions on phases
+  -Xcheck-sticky-phase-conditions
+                             Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
@@ -18,12 +23,16 @@ where advanced options include:
   -Xlist-phases              List backend phases
   -Xmetadata-version         Change metadata version of the generated binary files
   -Xmulti-platform           Enable experimental language support for multi-platform projects
+  -Xexclude-from-dumping     Names of elements that should not be dumped
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
   -Xphases-to-dump           Dump backend state both before and after these phases
   -Xphases-to-dump-after     Dump backend state after these phases
   -Xphases-to-dump-before    Dump backend state before these phases
+  -Xphases-to-validate       Validate backend state both before and after these phases
+  -Xphases-to-validate-after Validate backend state after these phases
+  -Xphases-to-validate-before Validate backend state before these phases
   -Xplugin=<path>            Load plugins from the given classpath
   -Xprofile-phases           Profile backend phases
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types

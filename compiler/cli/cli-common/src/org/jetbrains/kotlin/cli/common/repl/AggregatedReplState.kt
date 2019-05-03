@@ -86,11 +86,12 @@ open class AggregatedReplStageState<T1, T2>(val state1: IReplStageState<T1>, val
     override val history: IReplStageHistory<Pair<T1, T2>> = AggregatedReplStateHistory(state1.history, state2.history, lock)
 
     override fun <StateT : IReplStageState<*>> asState(target: Class<out StateT>): StateT =
-            when {
-                target.isAssignableFrom(state1::class.java) -> state1 as StateT
-                target.isAssignableFrom(state2::class.java) -> state2 as StateT
-                else -> super.asState(target)
-            }
+        @Suppress("UNCHECKED_CAST")
+        when {
+            target.isAssignableFrom(state1::class.java) -> state1 as StateT
+            target.isAssignableFrom(state2::class.java) -> state2 as StateT
+            else -> super.asState(target)
+        }
 
     override fun getNextLineNo() = state1.getNextLineNo()
 

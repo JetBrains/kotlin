@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
@@ -13,6 +13,98 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.ranges.contains
+import kotlin.ranges.reversed
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun <T> Array<out T>.elementAt(index: Int): T {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun ByteArray.elementAt(index: Int): Byte {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun ShortArray.elementAt(index: Int): Short {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun IntArray.elementAt(index: Int): Int {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun LongArray.elementAt(index: Int): Long {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun FloatArray.elementAt(index: Int): Float {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun DoubleArray.elementAt(index: Int): Double {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun BooleanArray.elementAt(index: Int): Boolean {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun CharArray.elementAt(index: Int): Char {
+    return get(index)
+}
 
 /**
  * Returns a list containing all elements that are instances of specified class.

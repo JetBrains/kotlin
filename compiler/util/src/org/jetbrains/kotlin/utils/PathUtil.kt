@@ -31,7 +31,7 @@ object PathUtil {
     const val ALLOPEN_PLUGIN_JAR_NAME = "$ALLOPEN_PLUGIN_NAME.jar"
     const val NOARG_PLUGIN_NAME = "noarg-compiler-plugin"
     const val NOARG_PLUGIN_JAR_NAME = "$NOARG_PLUGIN_NAME.jar"
-    const val SAM_WITH_RECEIVER_PLUGIN_NAME = ".jar"
+    const val SAM_WITH_RECEIVER_PLUGIN_NAME = "sam-with-receiver-compiler-plugin"
     const val SAM_WITH_RECEIVER_PLUGIN_JAR_NAME = "$SAM_WITH_RECEIVER_PLUGIN_NAME.jar"
     const val JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar"
 
@@ -67,6 +67,15 @@ object PathUtil {
     const val KOTLIN_SCRIPTING_JVM_JAR = "$KOTLIN_SCRIPTING_JVM_NAME.jar"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME = "kotlin-scripting-compiler"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR = "$KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME.jar"
+    const val KOTLINX_COROUTINES_CORE_NAME = "kotlinx-coroutines-core"
+    const val KOTLINX_COROUTINES_CORE_JAR = "$KOTLINX_COROUTINES_CORE_NAME.jar"
+    const val KOTLIN_SCRIPTING_COMPILER_IMPL_NAME = "kotlin-scripting-compiler-impl"
+    const val KOTLIN_SCRIPTING_COMPILER_IMPL_JAR = "$KOTLIN_SCRIPTING_COMPILER_IMPL_NAME.jar"
+
+    val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS = arrayOf(
+        KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
+        KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
+    )
 
     const val KOTLIN_TEST_NAME = "kotlin-test"
     const val KOTLIN_TEST_JAR = "$KOTLIN_TEST_NAME.jar"

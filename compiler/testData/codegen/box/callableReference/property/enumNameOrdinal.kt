@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 enum class E {
     I
 }

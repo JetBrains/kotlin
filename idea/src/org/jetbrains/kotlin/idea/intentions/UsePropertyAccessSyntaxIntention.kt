@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import javax.swing.JComponent
 
+@Suppress("DEPRECATION")
 class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpression>(UsePropertyAccessSyntaxIntention::class),
     CleanupLocalInspectionTool {
 
@@ -78,6 +79,19 @@ class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpress
     override fun createOptionsPanel(): JComponent? {
         val list = NotPropertyListPanel(fqNameList)
         return LabeledComponent.create(list, "Excluded methods")
+    }
+
+    override fun inspectionTarget(element: KtCallExpression): PsiElement? {
+        return element.calleeExpression
+    }
+
+    override fun inspectionProblemText(element: KtCallExpression): String? {
+        val accessor = when (element.valueArguments.size) {
+            0 -> "getter"
+            1 -> "setter"
+            else -> null
+        }
+        return "Use of $accessor method instead of property access syntax"
     }
 }
 

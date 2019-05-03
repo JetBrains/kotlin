@@ -102,6 +102,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             @NotNull KotlinType enhancedReturnType,
             @Nullable Pair<UserDataKey<?>, ?> additionalUserData
     ) {
+        PropertyDescriptor enhancedOriginal = getOriginal() == this ? null : getOriginal();
         JavaPropertyDescriptor enhanced = new JavaPropertyDescriptor(
                 getContainingDeclaration(),
                 getAnnotations(),
@@ -110,7 +111,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
                 isVar(),
                 getName(),
                 getSource(),
-                getOriginal() == this ? null : getOriginal(),
+                enhancedOriginal,
                 getKind(),
                 isStaticFinal,
                 additionalUserData);
@@ -120,7 +121,9 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         if (getter != null) {
             newGetter = new PropertyGetterDescriptorImpl(
                     enhanced, getter.getAnnotations(), getter.getModality(), getter.getVisibility(),
-                    getter.isDefault(), getter.isExternal(), getter.isInline(), getKind(), getter, getter.getSource()
+                    getter.isDefault(), getter.isExternal(), getter.isInline(), getKind(),
+                    enhancedOriginal == null ? null : enhancedOriginal.getGetter(),
+                    getter.getSource()
             );
             newGetter.setInitialSignatureDescriptor(getter.getInitialSignatureDescriptor());
             newGetter.initialize(enhancedReturnType);
@@ -131,7 +134,9 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         if (setter != null) {
             newSetter = new PropertySetterDescriptorImpl(
                     enhanced, setter.getAnnotations(), setter.getModality(), setter.getVisibility(),
-                    setter.isDefault(), setter.isExternal(), setter.isInline(), getKind(), setter, setter.getSource()
+                    setter.isDefault(), setter.isExternal(), setter.isInline(), getKind(),
+                    enhancedOriginal == null ? null : enhancedOriginal.getSetter(),
+                    setter.getSource()
             );
             newSetter.setInitialSignatureDescriptor(newSetter.getInitialSignatureDescriptor());
             newSetter.initialize(setter.getValueParameters().get(0));

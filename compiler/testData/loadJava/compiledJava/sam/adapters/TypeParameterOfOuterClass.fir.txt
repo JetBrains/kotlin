@@ -1,0 +1,2 @@
+public open class TypeParameterOfOuterClass<T> : R|kotlin/Any| {
+}

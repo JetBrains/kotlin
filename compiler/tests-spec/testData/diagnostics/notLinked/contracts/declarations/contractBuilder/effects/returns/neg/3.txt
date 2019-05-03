@@ -54,6 +54,7 @@ public object DeepObject {
 
                                 public object J {
                                     private constructor J()
+                                    public final val prop_1: kotlin.Int? = 10
                                     public final val x: kotlin.Int? = 10
                                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

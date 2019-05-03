@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 object DebuggerUtils {
-    @TestOnly
+    @get:TestOnly
     var forceRanking = false
 
     fun findSourceFileForClassIncludeLibrarySources(

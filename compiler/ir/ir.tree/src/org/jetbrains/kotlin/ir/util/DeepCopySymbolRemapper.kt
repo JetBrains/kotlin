@@ -27,8 +27,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 open class DeepCopySymbolRemapper(
-    private val descriptorsRemapper: DescriptorsRemapper = DescriptorsRemapper.DEFAULT
+    private val descriptorsRemapper: DescriptorsRemapper = DescriptorsRemapper.Default
 ) : IrElementVisitorVoid, SymbolRemapper {
+
     private val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
     private val constructors = hashMapOf<IrConstructorSymbol, IrConstructorSymbol>()
     private val enumEntries = hashMapOf<IrEnumEntrySymbol, IrEnumEntrySymbol>()
@@ -36,10 +37,12 @@ open class DeepCopySymbolRemapper(
     private val fields = hashMapOf<IrFieldSymbol, IrFieldSymbol>()
     private val files = hashMapOf<IrFileSymbol, IrFileSymbol>()
     private val functions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+    private val properties = hashMapOf<IrPropertySymbol, IrPropertySymbol>()
     private val returnableBlocks = hashMapOf<IrReturnableBlockSymbol, IrReturnableBlockSymbol>()
     private val typeParameters = hashMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
     private val valueParameters = hashMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
     private val variables = hashMapOf<IrVariableSymbol, IrVariableSymbol>()
+    private val localDelegatedProperties = hashMapOf<IrLocalDelegatedPropertySymbol, IrLocalDelegatedPropertySymbol>()
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -103,6 +106,13 @@ open class DeepCopySymbolRemapper(
         declaration.acceptChildrenVoid(this)
     }
 
+    override fun visitProperty(declaration: IrProperty) {
+        remapSymbol(properties, declaration) {
+            IrPropertySymbolImpl(descriptorsRemapper.remapDeclaredProperty(it.descriptor))
+        }
+        declaration.acceptChildrenVoid(this)
+    }
+
     override fun visitTypeParameter(declaration: IrTypeParameter) {
         remapSymbol(typeParameters, declaration) {
             IrTypeParameterSymbolImpl(descriptorsRemapper.remapDeclaredTypeParameter(it.descriptor))
@@ -120,6 +130,13 @@ open class DeepCopySymbolRemapper(
     override fun visitVariable(declaration: IrVariable) {
         remapSymbol(variables, declaration) {
             IrVariableSymbolImpl(descriptorsRemapper.remapDeclaredVariable(it.descriptor))
+        }
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
+        remapSymbol(localDelegatedProperties, declaration) {
+            IrLocalDelegatedPropertySymbolImpl(descriptorsRemapper.remapDeclaredLocalDelegatedProperty(it.descriptor))
         }
         declaration.acceptChildrenVoid(this)
     }
@@ -143,6 +160,7 @@ open class DeepCopySymbolRemapper(
 
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = classes.getDeclared(symbol)
     override fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getDeclared(symbol)
+    override fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getDeclared(symbol)
     override fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getDeclared(symbol)
     override fun getDeclaredFile(symbol: IrFileSymbol): IrFileSymbol = files.getDeclared(symbol)
     override fun getDeclaredConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getDeclared(symbol)
@@ -153,14 +171,20 @@ open class DeepCopySymbolRemapper(
     override fun getDeclaredVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getDeclared(symbol)
     override fun getDeclaredTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol = typeParameters.getDeclared(symbol)
     override fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol = valueParameters.getDeclared(symbol)
+    override fun getDeclaredLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol =
+        localDelegatedProperties.getDeclared(symbol)
 
     override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol = classes.getReferenced(symbol)
     override fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? = symbol?.let { classes.getReferenced(it) }
     override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = enumEntries.getReferenced(symbol)
     override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getReferenced(symbol)
+    override fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol =
+        localDelegatedProperties.getReferenced(symbol)
+
     override fun getReferencedField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getReferenced(symbol)
     override fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getReferenced(symbol)
     override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getReferenced(symbol)
+    override fun getReferencedProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getReferenced(symbol)
     override fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol =
         when (symbol) {
             is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)

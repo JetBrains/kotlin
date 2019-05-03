@@ -241,11 +241,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             IrStatementOrigin.IN ->
                 irContainsCall
             IrStatementOrigin.NOT_IN ->
-                IrUnaryPrimitiveImpl(
+                primitiveOp1(
                     expression.startOffsetSkippingComments, expression.endOffset,
+                    context.irBuiltIns.booleanNotSymbol,
                     context.irBuiltIns.booleanType,
                     IrStatementOrigin.NOT_IN,
-                    context.irBuiltIns.booleanNotSymbol,
                     irContainsCall
                 )
             else ->
@@ -272,11 +272,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             IrStatementOrigin.EQEQEQ ->
                 irIdentityEquals
             IrStatementOrigin.EXCLEQEQ ->
-                IrUnaryPrimitiveImpl(
+                primitiveOp1(
                     expression.startOffsetSkippingComments, expression.endOffset,
+                    context.irBuiltIns.booleanNotSymbol,
                     context.irBuiltIns.booleanType,
                     IrStatementOrigin.EXCLEQEQ,
-                    context.irBuiltIns.booleanNotSymbol,
                     irIdentityEquals
                 )
             else ->
@@ -298,8 +298,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val comparisonInfo = getPrimitiveNumericComparisonInfo(expression)
         val comparisonType = comparisonInfo?.comparisonType
 
-        val eqeqSymbol = context.irBuiltIns.ieee754equalsFunByOperandType[comparisonType]?.symbol
-            ?: context.irBuiltIns.eqeqSymbol
+        val eqeqSymbol = context.irBuiltIns.ieee754equalsFunByOperandType[comparisonType] ?: context.irBuiltIns.eqeqSymbol
 
         val irEquals = IrBinaryPrimitiveImpl(
             expression.startOffsetSkippingComments, expression.endOffset,
@@ -314,11 +313,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             IrStatementOrigin.EQEQ ->
                 irEquals
             IrStatementOrigin.EXCLEQ ->
-                IrUnaryPrimitiveImpl(
+                primitiveOp1(
                     expression.startOffsetSkippingComments, expression.endOffset,
+                    context.irBuiltIns.booleanNotSymbol,
                     context.irBuiltIns.booleanType,
                     IrStatementOrigin.EXCLEQ,
-                    context.irBuiltIns.booleanNotSymbol,
                     irEquals
                 )
             else ->
@@ -337,8 +336,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         if (comparisonInfo != null) {
             val comparisonType = comparisonInfo.comparisonType
             val eqeqSymbol =
-                context.irBuiltIns.ieee754equalsFunByOperandType[comparisonType]?.symbol
-                    ?: context.irBuiltIns.eqeqSymbol
+                context.irBuiltIns.ieee754equalsFunByOperandType[comparisonType] ?: context.irBuiltIns.eqeqSymbol
             IrBinaryPrimitiveImpl(
                 startOffset, endOffset,
                 context.irBuiltIns.booleanType,
@@ -463,7 +461,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             IrStatementOrigin.GT -> context.irBuiltIns.greaterFunByOperandType
             IrStatementOrigin.GTEQ -> context.irBuiltIns.greaterOrEqualFunByOperandType
             else -> throw AssertionError("Unexpected comparison operator: $origin")
-        }[primitiveNumericType]!!.symbol
+        }[primitiveNumericType]!!
 
     private fun generateExclExclOperator(expression: KtPostfixExpression, origin: IrStatementOrigin): IrExpression {
         val ktArgument = expression.baseExpression!!

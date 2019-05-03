@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.ranges
@@ -416,15 +416,11 @@ public class RangeTest {
         assertFailsWithIllegalArgument { CharProgression.fromClosedRange('a', 'b', Int.MIN_VALUE) }
         assertFailsWithIllegalArgument { IntProgression.fromClosedRange(0, 1, Int.MIN_VALUE) }
         assertFailsWithIllegalArgument { LongProgression.fromClosedRange(0, 1, Long.MIN_VALUE) }
-        assertFailsWithIllegalArgument { UIntProgression.fromClosedRange(0u, 1u, Int.MIN_VALUE) }
-        assertFailsWithIllegalArgument { ULongProgression.fromClosedRange(0u, 1u, Long.MIN_VALUE) }
     }
 
     @Test fun randomInEmptyRange() {
         assertFailsWith<NoSuchElementException> { IntRange.EMPTY.random() }
         assertFailsWith<NoSuchElementException> { LongRange.EMPTY.random() }
         assertFailsWith<NoSuchElementException> { CharRange.EMPTY.random() }
-        assertFailsWith<NoSuchElementException> { UIntRange.EMPTY.random() }
-        assertFailsWith<NoSuchElementException> { ULongRange.EMPTY.random() }
     }
 }

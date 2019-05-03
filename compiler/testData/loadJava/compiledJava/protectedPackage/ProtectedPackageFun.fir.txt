@@ -1,0 +1,4 @@
+public open class ProtectedPackageFun : R|kotlin/Any| {
+    protected/*protected and package*/ open operator fun foo(): R|kotlin/Unit|
+
+}

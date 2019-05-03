@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.script.experimental.jvm
@@ -15,6 +15,8 @@ import kotlin.script.experimental.util.PropertiesCollection
 data class JvmDependency(val classpath: List<File>) : ScriptDependency {
     @Suppress("unused")
     constructor(vararg classpathEntries: File) : this(classpathEntries.asList())
+
+    companion object { private const val serialVersionUID: Long = 1L }
 }
 
 interface JvmScriptCompilationConfigurationKeys

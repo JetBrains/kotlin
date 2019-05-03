@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class X {
     val result: String
         inline get() = "OK"

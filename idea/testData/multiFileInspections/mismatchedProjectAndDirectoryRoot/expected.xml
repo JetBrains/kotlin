@@ -1,0 +1,10 @@
+<problems>
+    <problem>
+        <file>rootPackageMatched.kt</file>
+        <line>1</line>
+        <module>testMismatchedProjectAndDirectoryRoot_MismatchedProjectAndDirectoryRoot</module>
+        <entry_point TYPE="file" FQNAME="rootPackageMatched.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package name does not match containing directory</problem_class>
+        <description>Package directive doesn't match file location</description>
+    </problem>
+</problems>

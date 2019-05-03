@@ -1,7 +1,6 @@
 import com.moowork.gradle.node.NodeExtension
-import com.moowork.gradle.node.exec.ExecRunner
-import com.moowork.gradle.node.npm.NpmExecRunner
 import com.moowork.gradle.node.npm.NpmTask
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
     kotlin("jvm")
@@ -27,6 +26,7 @@ dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
     testCompile(project(":compiler:backend.js"))
+    testCompile(projectTests(":compiler:ir.serialization.js"))
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))
@@ -42,6 +42,18 @@ dependencies {
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
 
+    val currentOs = OperatingSystem.current()
+
+    when {
+        currentOs.isWindows -> {
+            val suffix = if (currentOs.toString().endsWith("64")) "_64" else ""
+            testCompile("com.eclipsesource.j2v8:j2v8_win32_x86$suffix:4.6.0")
+        }
+        currentOs.isMacOsX -> testCompile("com.eclipsesource.j2v8:j2v8_macosx_x86_64:4.6.0")
+        currentOs.run { isLinux || isUnix } -> testCompile("com.eclipsesource.j2v8:j2v8_linux_x86_64:4.8.0")
+        else -> logger.error("unsupported platform $currentOs - can not compile com.eclipsesource.j2v8 dependency")
+    }
+    
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(files(toolsJar()))
 }
@@ -51,13 +63,23 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+
+fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     dependsOn(":dist")
-    dependsOn(testJsRuntime)
+    if (jsEnabled) dependsOn(testJsRuntime)
+    if (jsIrEnabled) {
+        dependsOn(":compiler:ir.serialization.js:generateFullRuntimeKLib")
+        dependsOn(":compiler:ir.serialization.js:generateReducedRuntimeKLib")
+        dependsOn(":compiler:ir.serialization.js:generateKotlinTestKLib")
+    }
+
+    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
+    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
+
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
     if (findProperty("kotlin.compiler.js.ir.tests.skip")?.toString()?.toBoolean() == true) {
-        exclude("org/jetbrains/kotlin/js/test/semantics/Ir*")
+        exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
     }
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
@@ -65,25 +87,31 @@ projectTest {
     }
 
     val prefixForPpropertiesToForward = "fd."
-    for((key, value) in properties) {
+    for ((key, value) in properties) {
         if (key.startsWith(prefixForPpropertiesToForward)) {
-            systemProperty(key.substring(prefixForPpropertiesToForward.length), value)
+            systemProperty(key.substring(prefixForPpropertiesToForward.length), value!!)
         }
     }
 }
 
-testsJar {}
-
-projectTest("quickTest") {
-    dependsOn(":dist")
-    dependsOn(testJsRuntime)
-    workingDir = rootDir
-    systemProperty("kotlin.js.skipMinificationTest", "true")
-    doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
-        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
-    }
+projectTest(parallel = true) {
+    setUpBoxTests(jsEnabled = true, jsIrEnabled = true)
 }
+
+projectTest("jsTest", true) {
+    setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
+}
+
+projectTest("jsIrTest", true) {
+    setUpBoxTests(jsEnabled = false, jsIrEnabled = true)
+}
+
+projectTest("quickTest", true) {
+    setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
+    systemProperty("kotlin.js.skipMinificationTest", "true")
+}
+
+testsJar {}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")

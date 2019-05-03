@@ -10,7 +10,7 @@ open class A(val n: Int): T {
 }
 
 class B: A(1) {
-    override val foo: Boolean
+    override val foo<caret>: Boolean
         get() = true
 }
 

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 
+@Suppress("DEPRECATION")
 class RemoveEmptyParenthesesFromLambdaCallInspection : IntentionBasedInspection<KtValueArgumentList>(
     RemoveEmptyParenthesesFromLambdaCallIntention::class
 ), CleanupLocalInspectionTool {

@@ -9,12 +9,10 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":compiler:frontend.script"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:frontend.script"))
     testCompile(project(":compiler:plugin-api"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
@@ -34,14 +32,14 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
+
+publish()
 
 runtimeJar()
 sourcesJar()
 javadocJar()
 
 dist()
-
-publish()

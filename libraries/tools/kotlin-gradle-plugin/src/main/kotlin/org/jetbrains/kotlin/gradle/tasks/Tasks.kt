@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.*
@@ -29,9 +28,14 @@ import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.*
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformPluginBase
+import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.isParentOf
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
+import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
@@ -141,7 +145,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         get() = File(taskBuildDirectory, "build-history.bin")
 
     @get:Input
-    internal var useModuleDetection: Boolean = false
+    internal open var useModuleDetection: Boolean = false
 
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
@@ -321,7 +325,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
      */
     internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
-    override fun setupCompilerArgs(args: T, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.coroutinesState = when (coroutines) {
             Coroutines.ENABLE -> CommonCompilerArguments.ENABLE
             Coroutines.WARN -> CommonCompilerArguments.WARN
@@ -389,16 +393,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     override fun createCompilerArgs(): K2JVMCompilerArguments =
         K2JVMCompilerArguments()
 
-    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.apply { fillDefaultValues() }
-        super.setupCompilerArgs(args, defaultsOnly)
-
-        args.addCompilerBuiltIns = true
-
-        val gradleVersion = getGradleVersion()
-        if (gradleVersion == null || gradleVersion >= ParsedGradleVersion(3, 2)) {
-            args.loadBuiltInsFromDependencies = true
-        }
+        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.moduleName = friendTask?.moduleName ?: moduleName
         logger.kotlinDebug { "args.moduleName = ${args.moduleName}" }
@@ -408,7 +405,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         if (defaultsOnly) return
 
-        args.classpathAsList = compileClasspath.toList()
+        args.allowNoSourceFiles = true
+        args.classpathAsList = try {
+            compileClasspath.toList()
+        } catch (e: Exception) {
+            if (ignoreClasspathResolutionErrors) emptyList() else throw(e)
+        }
         args.destinationAsFile = destinationDir
         parentKotlinOptionsImpl?.updateArguments(args)
         kotlinOptionsImpl.updateArguments(args)
@@ -441,7 +443,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             computedCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
             buildReportMode = buildReportMode,
-            incrementalCompilationEnvironment = icEnv
+            incrementalCompilationEnvironment = icEnv,
+            kotlinScriptExtensions = sourceFilesExtensions.toTypedArray()
         )
         compilerRunner.runJvmCompilerAsync(
             sourceRoots.kotlinSourceFiles,
@@ -535,9 +538,9 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
 
-    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.apply { fillDefaultValues() }
-        super.setupCompilerArgs(args, defaultsOnly)
+        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.outputFile = outputFile.canonicalPath
 
@@ -564,8 +567,20 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
 
+        val libraryFilter: (File) -> Boolean
+
+        if ("-Xir" in args.freeArgs) {
+            logger.kotlinDebug("Using JS IR backend")
+            incremental = false
+
+            // TODO: Detect IR libraries
+            libraryFilter = { true }
+        } else {
+            libraryFilter = LibraryUtils::isKotlinJavascriptLibrary
+        }
+
         val dependencies = compileClasspath
-            .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
+            .filter(libraryFilter)
             .map { it.canonicalPath }
 
         args.libraries = (dependencies + listOfNotNull(friendDependency)).distinct().let {
@@ -609,13 +624,3 @@ private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
 
 private fun filterModuleName(moduleName: String): String =
     moduleName.replace(invalidModuleNameCharactersRegex, "_")
-
-private fun Task.getGradleVersion(): ParsedGradleVersion? {
-    val gradleVersion = project.gradle.gradleVersion
-    val result = ParsedGradleVersion.parse(gradleVersion)
-    if (result == null) {
-        logger.kotlinDebug("Could not parse gradle version: $gradleVersion")
-    }
-    return result
-}
-

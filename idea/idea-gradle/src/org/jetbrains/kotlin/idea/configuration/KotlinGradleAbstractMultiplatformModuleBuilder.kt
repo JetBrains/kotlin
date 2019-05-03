@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -26,6 +26,8 @@ import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import javax.swing.Icon
 
 abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
@@ -75,6 +77,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
 
     override fun setupModule(module: Module) {
         try {
+            KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
             module.gradleModuleBuilder = this
             super.setupModule(module)
 

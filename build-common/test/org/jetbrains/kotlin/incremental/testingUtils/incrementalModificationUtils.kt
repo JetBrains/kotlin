@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental.testingUtils
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import java.util.*
+import kotlin.math.max
 
 private val COMMANDS = listOf("new", "touch", "delete")
 private val COMMANDS_AS_REGEX_PART = COMMANDS.joinToString("|")
@@ -166,7 +167,7 @@ class TouchFile(path: String, private val touchPolicy: TouchPolicy) : Modificati
             TouchPolicy.TIMESTAMP -> {
                 val oldLastModified = file.lastModified()
                 //Mac OS and some versions of Linux truncate timestamp to nearest second
-                file.setLastModified(Math.max(System.currentTimeMillis(), oldLastModified + 1000))
+                file.setLastModified(max(System.currentTimeMillis(), oldLastModified + 1000))
             }
             TouchPolicy.CHECKSUM -> {
                 file.appendText(" ")

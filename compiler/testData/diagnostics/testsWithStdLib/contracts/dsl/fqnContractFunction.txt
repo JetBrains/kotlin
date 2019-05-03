@@ -1,0 +1,6 @@
+package
+
+public inline fun foo(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun main(): kotlin.Unit

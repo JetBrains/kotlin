@@ -16,6 +16,7 @@ messages/**)
 
 -dontnote **
 -dontwarn com.intellij.util.ui.IsRetina*
+-dontwarn com.intellij.util.ui.UIUtilities
 -dontwarn com.intellij.util.RetinaImage*
 -dontwarn apple.awt.*
 -dontwarn dk.brics.automaton.*
@@ -114,8 +115,6 @@ messages/**)
 }
 
 -keep class org.jetbrains.kotlin.container.** { *; }
-
--keep class org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
 

@@ -23,6 +23,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
 
     testCompile(projectRuntimeJar(":kotlin-compiler-embeddable"))
+    testCompile(intellijCoreDep()) { includeJars("jdom") }
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntime on shaded artifact is needed for running tests with shaded compiler
     testCompileOnly(project(path = ":kotlin-gradle-plugin-test-utils-embeddable", configuration = "compile"))
@@ -41,6 +42,14 @@ dependencies {
     // Workaround for missing transitive import of the common(project `kotlin-test-common`
     // for `kotlin-test-jvm` into the IDE:
     testCompileOnly(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
+
+    // Workaround for IDE import. IDEA cannot resolve kotlin-native-shared included in the
+    // Gradle plugin's fat jar so we declare it here explicitly.
+    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        testCompileOnly(commonDep("org.jetbrains.kotlin:kotlin-native-shared")) {
+            isTransitive = false
+        }
+    }
 }
 
 val jpsIncrementalTestsClass = "**/KotlinGradlePluginJpsParametrizedIT.class"
@@ -50,12 +59,15 @@ projectTest {
     dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
     dependsOn(
         ":kotlin-allopen:install",
+        ":kotlin-allopen:plugin-marker:install",
         ":kotlin-noarg:install",
+        ":kotlin-allopen:plugin-marker:install",
         ":kotlin-sam-with-receiver:install",
         ":kotlin-android-extensions:install",
         ":kotlin-build-common:install",
         ":kotlin-compiler-embeddable:install",
         ":kotlin-gradle-plugin:install",
+        ":kotlin-gradle-plugin:plugin-marker:install",
         ":kotlin-reflect:install",
         ":kotlin-annotation-processing-gradle:install",
         ":kotlin-test:kotlin-test-jvm:install",
@@ -64,7 +76,8 @@ projectTest {
         ":examples:annotation-processor-example:install",
         ":kotlin-scripting-common:install",
         ":kotlin-scripting-jvm:install",
-        ":kotlin-scripting-compiler-embeddable:install"
+        ":kotlin-scripting-compiler-embeddable:install",
+        ":kotlin-test-nodejs-runner:install"
     )
     exclude(jpsIncrementalTestsClass)
 }
@@ -75,7 +88,7 @@ tasks.register<Test>("testsFromJps") {
 }
 
 tasks.register<Test>("testAdvanceGradleVersion") {
-    val gradleVersionForTests = "5.1.1"
+    val gradleVersionForTests = "5.3-rc-2"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
     dependsOn(tasks.getByName("test").dependsOn)
     exclude(jpsIncrementalTestsClass)
@@ -120,6 +133,8 @@ tasks.withType<Test> {
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
+    systemProperty("jdk10Home", rootProject.extra["JDK_10"] as String)
+    systemProperty("jdk11Home", rootProject.extra["JDK_11"] as String)
 
     val mavenLocalRepo = System.getProperty("maven.repo.local")
     if (mavenLocalRepo != null) {

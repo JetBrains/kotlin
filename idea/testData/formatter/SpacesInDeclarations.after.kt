@@ -45,7 +45,7 @@ public var varWithAccessors1: Int
     get() {
         return 1
     }
-    set  (value: Int) { /**/
+    set(value: Int) { /**/
     }
 
 public var varWithAccessors2: Int

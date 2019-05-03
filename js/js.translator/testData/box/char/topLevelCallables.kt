@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JS_IR
 // SKIP_MINIFICATION
+@JsName("foo")
 fun foo(): Char = '1'
 
 val p1: Char = '2'

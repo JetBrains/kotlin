@@ -37,8 +37,8 @@ fun KotlinType.lexicalCastFrom(value: String): JavaDefaultValue? {
     val typeDescriptor = constructor.declarationDescriptor
     if (typeDescriptor is ClassDescriptor && typeDescriptor.kind == ClassKind.ENUM_CLASS) {
         val descriptor = typeDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(
-                Name.identifier(value),
-                NoLookupLocation.FROM_BACKEND
+            Name.identifier(value),
+            NoLookupLocation.FROM_BACKEND
         )
 
         return if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) EnumEntry(descriptor) else null

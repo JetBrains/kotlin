@@ -216,7 +216,7 @@ abstract class AbstractKapt3Extension(
     private fun runAnnotationProcessing(kaptContext: KaptContext, processors: LoadedProcessors) {
         if (!options.mode.runAnnotationProcessing) return
 
-        val javaSourceFiles = options.collectJavaSourceFiles()
+        val javaSourceFiles = options.collectJavaSourceFiles(kaptContext.sourcesToReprocess)
         logger.info { "Java source files: " + javaSourceFiles.joinToString { it.canonicalPath } }
 
         val (annotationProcessingTime) = measureTimeMillis {

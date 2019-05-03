@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers.javac;
@@ -1137,6 +1137,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/callUsualContractFunction.kt");
             }
 
+            @TestMetadata("fqnContractFunction.kt")
+            public void testFqnContractFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/fqnContractFunction.kt");
+            }
+
             @TestMetadata("rewriteAtSliceFunctor.kt")
             public void testRewriteAtSliceFunctor() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/rewriteAtSliceFunctor.kt");
@@ -1169,14 +1174,14 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/callInContractDescription.kt");
                 }
 
+                @TestMetadata("contractCallSites.kt")
+                public void testContractCallSites() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/contractCallSites.kt");
+                }
+
                 @TestMetadata("emptyContract.kt")
                 public void testEmptyContract() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/emptyContract.kt");
-                }
-
-                @TestMetadata("illegalCallSites.kt")
-                public void testIllegalCallSites() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/illegalCallSites.kt");
                 }
 
                 @TestMetadata("illegalConstructionInContractBlock.kt")
@@ -1202,6 +1207,16 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 @TestMetadata("notFirstStatement.kt")
                 public void testNotFirstStatement() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/notFirstStatement.kt");
+                }
+
+                @TestMetadata("recursiveContract.kt")
+                public void testRecursiveContract() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/recursiveContract.kt");
+                }
+
+                @TestMetadata("recursiveContractCustomContractFunction.kt")
+                public void testRecursiveContractCustomContractFunction() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/recursiveContractCustomContractFunction.kt");
                 }
 
                 @TestMetadata("referenceToProperty.kt")
@@ -1538,6 +1553,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt18292.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("kt28658.kt")
+        public void testKt28658() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt28658.kt");
+        }
+
         @TestMetadata("lambdaExpectedType.kt")
         public void testLambdaExpectedType() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/lambdaExpectedType.kt");
@@ -1768,6 +1788,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             public void testProperty_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference/property.kt", "kotlin.coroutines");
             }
+
+            @TestMetadata("suspendConversionForCallableReferences.kt")
+            public void testSuspendConversionForCallableReferences() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference/suspendConversionForCallableReferences.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference")
@@ -1785,6 +1810,16 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             @TestMetadata("applyInsideCoroutine.kt")
             public void testApplyInsideCoroutine() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/applyInsideCoroutine.kt");
+            }
+
+            @TestMetadata("callableReferenceToASuspendFunction.kt")
+            public void testCallableReferenceToASuspendFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/callableReferenceToASuspendFunction.kt");
+            }
+
+            @TestMetadata("chainCallWithExtensionExplicitTypes.kt")
+            public void testChainCallWithExtensionExplicitTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/chainCallWithExtensionExplicitTypes.kt");
             }
 
             @TestMetadata("correctMember.kt")
@@ -1890,6 +1925,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             @TestMetadata("useInferenceInformationFromExtension.kt")
             public void testUseInferenceInformationFromExtension() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/useInferenceInformationFromExtension.kt");
+            }
+
+            @TestMetadata("variableCallInsideBuilderFunction.kt")
+            public void testVariableCallInsideBuilderFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/variableCallInsideBuilderFunction.kt");
             }
 
             @TestMetadata("withParameter.kt")
@@ -2279,14 +2319,14 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/localFunctions.kt");
             }
 
-            @TestMetadata("nothingTypedSuspendFunction.kt")
+            @TestMetadata("nothingTypedSuspendFunction_1_2.kt")
             public void testNothingTypedSuspendFunction_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction.kt", "kotlin.coroutines.experimental");
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction_1_2.kt");
             }
 
-            @TestMetadata("nothingTypedSuspendFunction.kt")
+            @TestMetadata("nothingTypedSuspendFunction_1_3.kt")
             public void testNothingTypedSuspendFunction_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction.kt", "kotlin.coroutines");
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction_1_3.kt");
             }
 
             @TestMetadata("recursive.kt")
@@ -2631,6 +2671,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/arrayConstructor.kt");
         }
 
+        @TestMetadata("integerLiterals.kt")
+        public void testIntegerLiterals() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/integerLiterals.kt");
+        }
+
         @TestMetadata("kt11266.kt")
         public void testKt11266() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt11266.kt");
@@ -2720,6 +2765,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("inlineOnlySuppressesNothingToInline.kt")
         public void testInlineOnlySuppressesNothingToInline() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inline/inlineOnlySuppressesNothingToInline.kt");
+        }
+
+        @TestMetadata("synchronizedOnInline.kt")
+        public void testSynchronizedOnInline() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inline/synchronizedOnInline.kt");
         }
     }
 
@@ -2933,6 +2983,24 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("wrongTypeParametersCount.kt")
         public void testWrongTypeParametersCount() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/wrongTypeParametersCount.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reflection extends AbstractDiagnosticsTestWithStdLibUsingJavac {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReflection() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/reflection"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("typeOfWithNonReifiedParameter.kt")
+        public void testTypeOfWithNonReifiedParameter() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/typeOfWithNonReifiedParameter.kt");
         }
     }
 

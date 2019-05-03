@@ -180,3 +180,9 @@ class ManyCandidatesCallDiagnostic(
         reporter.onCall(this)
     }
 }
+
+class NonApplicableCallForBuilderInferenceDiagnostic(val kotlinCall: KotlinCall) : KotlinCallDiagnostic(CONVENTION_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}

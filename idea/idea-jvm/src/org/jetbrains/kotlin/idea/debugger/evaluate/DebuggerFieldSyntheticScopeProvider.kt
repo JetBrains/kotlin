@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
@@ -23,10 +23,9 @@ import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -47,7 +46,7 @@ class DebuggerFieldSyntheticScopeProvider : SyntheticScopeProviderExtension {
     }
 }
 
-private class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheticPropertiesScope) : SyntheticScope.Default() {
+class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheticPropertiesScope) : SyntheticScope.Default() {
     private val javaSourceElementFactory = JavaSourceElementFactoryImpl()
 
     override fun getSyntheticExtensionProperties(
@@ -83,7 +82,7 @@ private class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: Java
             return false
         }
 
-        return containingFile.suppressDiagnosticsInDebugMode
+        return containingFile is KtCodeFragment
     }
 
     private fun getSyntheticPropertiesForClass(clazz: ClassDescriptor): Collection<PropertyDescriptor> {

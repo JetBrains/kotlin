@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.lightClasses;
@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDe
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase {
     @NotNull
     @Override

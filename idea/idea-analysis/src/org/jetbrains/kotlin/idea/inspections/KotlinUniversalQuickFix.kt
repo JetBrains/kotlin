@@ -22,6 +22,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 
 interface KotlinUniversalQuickFix : IntentionAction, LocalQuickFix {
+    @JvmDefault
     override fun getName() = text
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

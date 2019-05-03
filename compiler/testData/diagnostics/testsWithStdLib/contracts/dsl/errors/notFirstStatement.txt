@@ -1,3 +1,10 @@
 package
 
+public inline fun case1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_2(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun case_3(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_4(/*0*/ number: kotlin.Int?): kotlin.Boolean
+public inline fun case_5(/*0*/ cond: kotlin.Boolean): kotlin.Boolean
+public inline fun case_6(/*0*/ cond: kotlin.Boolean): kotlin.Boolean
+public fun case_7(/*0*/ cond: kotlin.Boolean): kotlin.Boolean
 public fun foo(/*0*/ y: kotlin.Boolean): kotlin.Unit

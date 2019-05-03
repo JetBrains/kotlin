@@ -203,8 +203,8 @@ class MoveKotlinDeclarationsProcessor(
         fun collectUsages(kotlinToLightElements: Map<KtNamedDeclaration, List<PsiNamedElement>>, result: MutableCollection<UsageInfo>) {
             kotlinToLightElements.values.flatten().flatMapTo(result) { lightElement ->
                 val searchScope = getSearchScope(lightElement) ?: return@flatMapTo emptyList()
-
-                val newFqName = StringUtil.getQualifiedName(newContainerName, lightElement.name)
+                val elementName = lightElement.name ?: return@flatMapTo emptyList()
+                val newFqName = StringUtil.getQualifiedName(newContainerName, elementName)
 
                 val foundReferences = HashSet<PsiReference>()
                 val results = ReferencesSearch

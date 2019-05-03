@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.internal
@@ -13,6 +13,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKa
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureArtifactTransform
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
@@ -90,6 +93,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         private val USE_WORKER_API = "kapt.use.worker.api"
         private val INFO_AS_WARNINGS = "kapt.info.as.warnings"
         private val INCLUDE_COMPILE_CLASSPATH = "kapt.include.compile.classpath"
+        private val INCREMENTAL_APT = "kapt.incremental.apt"
 
         const val KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME = "kotlinKaptWorkerDependencies"
 
@@ -117,6 +121,10 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         fun Project.isUseWorkerApi(): Boolean {
             return isWorkerAPISupported() && hasProperty(USE_WORKER_API) && property(USE_WORKER_API) == "true"
+        }
+
+        fun Project.isIncrementalKapt(): Boolean {
+            return hasProperty(INCREMENTAL_APT) && property(INCREMENTAL_APT) == "true"
         }
 
         fun Project.isInfoAsWarnings(): Boolean {
@@ -156,6 +164,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     private fun Kapt3SubpluginContext.getKaptStubsDir() = createAndReturnTemporaryKaptDirectory("stubs")
 
     private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = createAndReturnTemporaryKaptDirectory("incrementalData")
+
+    private fun Kapt3SubpluginContext.getKaptIncrementalAnnotationProcessingCache() = createAndReturnTemporaryKaptDirectory("incApCache")
 
     private fun Kapt3SubpluginContext.createAndReturnTemporaryKaptDirectory(name: String): File {
         val dir = File(project.buildDir, "tmp/kapt3/$name/$sourceSetName")
@@ -367,7 +377,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun Kapt3SubpluginContext.createKaptKotlinTask(useWorkerApi: Boolean): KaptTask {
         val taskClass = if (useWorkerApi) KaptWithoutKotlincTask::class.java else KaptWithKotlincTask::class.java
-        val kaptTask = project.tasks.create(getKaptTaskName("kapt"), taskClass)
+        val taskName = getKaptTaskName("kapt")
+        val kaptTask = project.tasks.create(taskName, taskClass)
 
         kaptTask.useBuildCache = kaptExtension.useBuildCache
 
@@ -378,6 +389,18 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.kotlinSourcesDestinationDir = kotlinSourcesOutputDir
         kaptTask.classesDir = classesOutputDir
         kaptTask.includeCompileClasspath = includeCompileClasspath
+
+        kaptTask.isIncremental = project.isIncrementalKapt()
+        if (kaptTask.isIncremental) {
+            kaptTask.incAptCache = getKaptIncrementalAnnotationProcessingCache()
+
+            maybeRegisterTransform(project)
+            val classStructure = project.configurations.create("_classStructure${taskName}")
+            project.dependencies.add(classStructure.name, kotlinCompile.classpath)
+            kaptTask.classpathStructure = classStructure.incoming.artifactView { viewConfig ->
+                viewConfig.attributes.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+            }.files
+        }
 
         kotlinCompilation?.run {
             output.apply {
@@ -403,6 +426,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         if (kaptTask is KaptWithKotlincTask) {
+            if (kaptTask.isIncremental) {
+                kaptTask.pluginOptions.addPluginArgument(
+                    getCompilerPluginId(),
+                    SubpluginOption("incrementalCache", kaptTask.incAptCache!!.absolutePath))
+            }
+
             buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "apt")
         }
 
@@ -417,6 +446,23 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         return kaptTask
+    }
+
+    private fun maybeRegisterTransform(project: Project) {
+        if (!project.extensions.extraProperties.has("KaptStructureTransformAdded")) {
+            project.dependencies.registerTransform { variantTransform ->
+                variantTransform.artifactTransform(StructureArtifactTransform::class.java)
+                variantTransform.from.attribute(artifactType, "jar")
+                variantTransform.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+            }
+            project.dependencies.registerTransform { variantTransform ->
+                variantTransform.artifactTransform(StructureArtifactTransform::class.java)
+                variantTransform.from.attribute(artifactType, "directory")
+                variantTransform.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+            }
+
+            project.extensions.extraProperties["KaptStructureTransformAdded"] = true
+        }
     }
 
     private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): KaptGenerateStubsTask {
@@ -477,6 +523,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = KAPT_ARTIFACT_NAME)
 }
+private val artifactType = Attribute.of("artifactType", String::class.java)
+
 
 internal fun registerGeneratedJavaSource(kaptTask: KaptTask, javaTask: AbstractCompile) {
     javaTask.source(kaptTask.destinationDir)

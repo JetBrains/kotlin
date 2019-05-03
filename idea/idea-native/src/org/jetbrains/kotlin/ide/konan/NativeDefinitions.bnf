@@ -29,6 +29,7 @@
     LIBRARY_PATHS="libraryPaths"
     LINKER="linker"
     LINKER_OPTS="linkerOpts"
+    MODULES="modules"
     NON_STRICT_ENUMS="nonStrictEnums"
     NO_STRING_CONVERSION="noStringConversion"
     PACKAGE="package"
@@ -81,7 +82,7 @@ stringValue ::= VALUE
 private stringsDefinition_ ::= stringsKey platform_? SEPARATOR stringsValue
 stringsKey ::= COMPILER_OPTS | DEPENDS  | ENTRY_POINT | EXCLUDED_FUNCTIONS
                             | EXCLUDED_MACROS  | EXPORT_FORWARD_DECLARATIONS | HEADER_FILTER
-                            | HEADERS | LIBRARY_PATHS | LINKER_OPTS | NON_STRICT_ENUMS
+                            | HEADERS | LIBRARY_PATHS | LINKER_OPTS | MODULES | NON_STRICT_ENUMS
                             | NO_STRING_CONVERSION | PACKAGE | STATIC_LIBRARIES | STRICT_ENUMS
 
 stringsValue ::= VALUE

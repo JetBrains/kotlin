@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger;
@@ -70,7 +70,17 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     // LOCAL_CACHE_DIR removing can be used to force caches invalidating as well.
     private static final boolean LOCAL_CACHE_REUSE = true;
 
-    private static final File LOCAL_CACHE_DIR = new File("out/debuggerTinyApp");
+    private static final File LOCAL_CACHE_DIR;
+
+    static {
+        try {
+            LOCAL_CACHE_DIR = KotlinTestUtils.tmpDir("debuggerTinyApp");
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static final File LOCAL_CACHE_JAR_DIR = new File(LOCAL_CACHE_DIR, "jar");
     private static final File LOCAL_CACHE_APP_DIR = new File(LOCAL_CACHE_DIR, "app");
     private static final File LOCAL_CACHE_LAST_MODIFIED_FILE = new File(LOCAL_CACHE_DIR, "lastModified.txt");

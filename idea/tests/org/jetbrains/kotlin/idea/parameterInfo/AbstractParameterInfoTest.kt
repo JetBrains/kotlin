@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.parameterInfo
@@ -45,7 +45,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
         val prefix = FileUtil.getNameWithoutExtension(PathUtil.getFileName(fileName))
         val mainFile = File(FileUtil.toSystemDependentName(fileName))
         mainFile.parentFile
-            .listFiles { dir, name -> name.startsWith("$prefix.") && name != mainFile.name }
+            .listFiles { _, name -> name.startsWith("$prefix.") && name != mainFile.name }
             .forEach { myFixture.configureByFile(FileUtil.toSystemIndependentName(it.path)) }
 
         myFixture.configureByFile(fileName)

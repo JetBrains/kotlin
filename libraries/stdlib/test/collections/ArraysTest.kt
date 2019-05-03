@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
@@ -99,7 +99,7 @@ class ArraysTest {
         assertEquals(0.toShort(), arr[0])
         assertEquals(1.toShort(), arr[1])
     }
-    
+
     @Test fun intArray() {
         val arr = IntArray(2)
 
@@ -107,7 +107,7 @@ class ArraysTest {
         assertEquals(0, arr[0])
         assertEquals(0, arr[1])
     }
-    
+
     @Test fun intArrayInit() {
         val arr = IntArray(2) { it.toInt() }
 
@@ -115,7 +115,7 @@ class ArraysTest {
         assertEquals(0.toInt(), arr[0])
         assertEquals(1.toInt(), arr[1])
     }
-    
+
     @Test fun longArray() {
         val arr = LongArray(2)
 
@@ -141,7 +141,7 @@ class ArraysTest {
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
-    
+
     @Test fun floatArrayInit() {
         val arr = FloatArray(2) { it.toFloat() }
 
@@ -916,7 +916,7 @@ class ArraysTest {
             byteArrayOf(1, 2, 3), byteArrayOf(4, 5, 6),
             byteArrayOf(5, 6, 3), byteArrayOf(6, 3, 3), byteArrayOf(6, 6, 3)
         )
-        
+
         doTest(
             CharArray::copyInto, ::assertArrayNotSameButEquals, CharArray::contentToString,
             charArrayOf('a', 'b', 'c'), charArrayOf('e', 'f', 'g'),
@@ -1044,6 +1044,10 @@ class ArraysTest {
         doTest(build = { map {it % 2 == 0}.toBooleanArray() },  reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() },  reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> },  reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toUInt()}.toUIntArray() },     reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toULong()}.toULongArray() },   reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toUByte()}.toUByteArray() },   reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toUShort()}.toUShortArray() }, reverse = { reverse() }, snapshot = { toList() })
     }
 
 
@@ -1485,6 +1489,16 @@ class ArraysTest {
         val array = Array(6) { it }
         array.sortWith(comparator)
         array.iterator().assertSorted { a, b -> comparator.compare(a, b) <= 0 }
+    }
+
+    @Test
+    fun elementAt() {
+        expect(0) { byteArrayOf(0, 1, 2).elementAt(0) }
+        expect(1) { shortArrayOf(0, 1, 2).elementAt(1) }
+        expect(2) { intArrayOf(0, 1, 2).elementAt(2) }
+
+        assertFailsWith<IndexOutOfBoundsException> { arrayOf<String>().elementAt(0) }
+        assertFailsWith<IndexOutOfBoundsException> { longArrayOf(0, 1, 2).elementAt(-1) }
     }
 }
 

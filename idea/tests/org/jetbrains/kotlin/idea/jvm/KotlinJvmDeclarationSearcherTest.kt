@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.jvm
@@ -17,8 +17,11 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import kotlin.reflect.KClass
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinJvmDeclarationSearcherTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
@@ -146,12 +149,13 @@ private class JvmDeclared(val textToContain: String, vararg jvmClasses: KClass<o
 }
 
 fun <T> assertMatches(elements: Collection<T>, vararg conditions: (T) -> Boolean) {
-    val matchResult = matchElementsToConditions(elements, conditions.toList())
-    when (matchResult) {
+    when (val matchResult = matchElementsToConditions(elements, conditions.toList())) {
         is MatchResult.UnmatchedCondition ->
             throw AssertionError("no one matches the ${matchResult.condition}, elements = ${elements.joinToString { it.toString() }}")
         is MatchResult.UnmatchedElements ->
             throw AssertionError("elements ${matchResult.elements.joinToString { it.toString() }} wasn't matched by any condition")
+        is MatchResult.Matched -> {
+        }
     }
 }
 

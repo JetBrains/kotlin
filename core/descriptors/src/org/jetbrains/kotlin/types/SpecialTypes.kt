@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.checker.NullabilityChecker
+import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.canHaveUndefinedNullability
 
 abstract class DelegatingSimpleType : SimpleType() {
@@ -60,7 +61,9 @@ class LazyWrappedType(storageManager: StorageManager, computation: () -> KotlinT
     override fun isComputed(): Boolean = lazyValue.isComputed()
 }
 
-class DefinitelyNotNullType private constructor(val original: SimpleType) : DelegatingSimpleType(), CustomTypeVariable {
+class DefinitelyNotNullType private constructor(val original: SimpleType) : DelegatingSimpleType(), CustomTypeVariable,
+    DefinitelyNotNullTypeMarker {
+
     companion object {
         internal fun makeDefinitelyNotNull(type: UnwrappedType): DefinitelyNotNullType? {
             return when {

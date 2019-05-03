@@ -30,15 +30,22 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 
 object JvmResolveUtil {
     @JvmStatic
     @JvmOverloads
-    fun createContainer(environment: KotlinCoreEnvironment, files: Collection<KtFile> = emptyList()): ComponentProvider =
+    fun createContainer(
+        environment: KotlinCoreEnvironment,
+        files: Collection<KtFile> = emptyList(),
+        targetEnvironment: TargetEnvironment = CompilerEnvironment
+    ): ComponentProvider =
         TopDownAnalyzerFacadeForJVM.createContainer(
             environment.project, files, NoScopeRecordCliBindingTrace(),
-            environment.configuration, { PackagePartProvider.Empty }, ::FileBasedDeclarationProviderFactory
+            environment.configuration, { PackagePartProvider.Empty }, ::FileBasedDeclarationProviderFactory,
+            targetEnvironment
         )
 
     @JvmStatic

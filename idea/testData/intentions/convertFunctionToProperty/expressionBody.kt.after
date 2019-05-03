@@ -1,5 +1,5 @@
 class A(val n: Int) {
-    val foo: Boolean
+    val foo<caret>: Boolean
         get() = n > 1
 }
 

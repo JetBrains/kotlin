@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -44,7 +44,8 @@ private fun KtReferenceExpression.isRedundantUnit(): Boolean {
     if (!isUnitLiteral()) return false
     val parent = this.parent ?: return false
     if (parent is KtReturnExpression) {
-        return parent.expectedReturnType()?.nameIfStandardType != KotlinBuiltIns.FQ_NAMES.any.shortName()
+        val expectedReturnType = parent.expectedReturnType() ?: return false
+        return expectedReturnType.nameIfStandardType != KotlinBuiltIns.FQ_NAMES.any.shortName() && !expectedReturnType.isMarkedNullable
     }
     if (parent is KtBlockExpression) {
         // Do not report just 'Unit' in function literals (return@label Unit is OK even in literals)

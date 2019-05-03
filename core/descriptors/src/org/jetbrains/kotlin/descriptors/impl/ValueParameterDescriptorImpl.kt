@@ -61,16 +61,6 @@ open class ValueParameterDescriptorImpl(
                     WithDestructuringDeclaration(containingDeclaration, original, index, annotations, name, outType,
                                                  declaresDefaultValue, isCrossinline, isNoinline, varargElementType, source,
                                                  destructuringVariables)
-
-        @JvmStatic
-        fun getNameForDestructuredParameterOrNull(valueParameterDescriptor: ValueParameterDescriptor): String? {
-            val variablesOrNull = ValueParameterDescriptorImpl.getDestructuringVariablesOrNull(valueParameterDescriptor)
-            return if (variablesOrNull == null) null else
-                "$" + join(
-                    variablesOrNull.map { descriptor -> if (descriptor.name.isSpecial) "\$_\$" else descriptor.name.asString() },
-                    "_"
-                )
-        }
     }
 
     class WithDestructuringDeclaration internal constructor(

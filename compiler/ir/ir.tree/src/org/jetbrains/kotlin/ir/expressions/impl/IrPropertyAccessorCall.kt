@@ -21,13 +21,9 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import java.lang.AssertionError
-import java.lang.UnsupportedOperationException
 
 abstract class IrPropertyAccessorCallBase(
     startOffset: Int, endOffset: Int,
@@ -100,20 +96,6 @@ class IrGetterCallImpl(
         ).also { newCall ->
             newCall.copyTypeArgumentsFrom(this)
         }
-
-    override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: FunctionDescriptor, newSuperQualifier: ClassDescriptor?): IrCall =
-        IrGetterCallImpl(
-            startOffset, endOffset, type,
-            createFunctionSymbol(newCallee),
-            newCallee,
-            typeArgumentsCount,
-            dispatchReceiver,
-            extensionReceiver,
-            newOrigin,
-            createClassSymbolOrNull(newSuperQualifier)
-        ).also { newCall ->
-            newCall.copyTypeArgumentsFrom(this)
-        }
 }
 
 class IrSetterCallImpl(
@@ -166,21 +148,6 @@ class IrSetterCallImpl(
             startOffset, endOffset, type, newCallee,
             descriptor, // TODO substitute newCallee.descriptor?
             typeArgumentsCount, dispatchReceiver, extensionReceiver, argumentImpl!!, newOrigin, newSuperQualifier
-        ).also { newCall ->
-            newCall.copyTypeArgumentsFrom(this)
-        }
-
-    override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: FunctionDescriptor, newSuperQualifier: ClassDescriptor?): IrCall =
-        IrSetterCallImpl(
-            startOffset, endOffset, type,
-            createFunctionSymbol(newCallee),
-            newCallee,
-            typeArgumentsCount,
-            dispatchReceiver,
-            extensionReceiver,
-            argumentImpl!!,
-            newOrigin,
-            createClassSymbolOrNull(newSuperQualifier)
         ).also { newCall ->
             newCall.copyTypeArgumentsFrom(this)
         }

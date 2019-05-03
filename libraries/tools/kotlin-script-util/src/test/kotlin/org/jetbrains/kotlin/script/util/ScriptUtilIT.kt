@@ -30,12 +30,13 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
 import org.junit.Test
@@ -107,6 +108,17 @@ done
         }
     }
 
+    @Test
+    fun testResolveStdJUnitDynVer() {
+        val (_, err) = captureOutAndErr {
+            Assert.assertNull(compileScript("args-junit-dynver-error.kts", StandardArgsScriptTemplateWithMavenResolving::class))
+        }
+        Assert.assertTrue("Expecting error: unresolved reference: assertThrows", err.contains("error: unresolved reference: assertThrows"))
+
+        val scriptClass = compileScript("args-junit-dynver.kts", StandardArgsScriptTemplateWithMavenResolving::class)
+        Assert.assertNotNull(scriptClass)
+    }
+
     private fun compileScript(
             scriptFileName: String,
             scriptTemplate: KClass<out Any>,
@@ -114,12 +126,15 @@ done
             suppressOutput: Boolean = false
     ): Class<*>? =
             compileScriptImpl("libraries/tools/kotlin-script-util/src/test/resources/scripts/" + scriptFileName,
-                              KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate, environment), suppressOutput)
+                              KotlinScriptDefinitionFromAnnotatedTemplate(
+                                  scriptTemplate,
+                                  environment
+                              ), suppressOutput)
 
     private fun compileScriptImpl(
-            scriptPath: String,
-            scriptDefinition: KotlinScriptDefinition,
-            suppressOutput: Boolean
+        scriptPath: String,
+        scriptDefinition: KotlinScriptDefinition,
+        suppressOutput: Boolean
     ): Class<*>? {
         val messageCollector =
                 if (suppressOutput) MessageCollector.NONE
@@ -140,7 +155,7 @@ done
                     }
                 }
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script-util-test")
-                add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
+                add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
@@ -170,18 +185,24 @@ done
     private fun String.linesSplitTrim() =
             split('\n','\r').map(String::trim).filter(String::isNotBlank)
 
-    private fun captureOut(body: () -> Unit): String {
+    private fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
+
+    private fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
         val outStream = ByteArrayOutputStream()
+        val errStream = ByteArrayOutputStream()
         val prevOut = System.out
+        val prevErr = System.err
         System.setOut(PrintStream(outStream))
+        System.setErr(PrintStream(errStream))
         try {
             body()
-        }
-        finally {
+        } finally {
             System.out.flush()
+            System.err.flush()
             System.setOut(prevOut)
+            System.setErr(prevErr)
         }
-        return outStream.toString()
+        return outStream.toString() to errStream.toString()
     }
 }
 

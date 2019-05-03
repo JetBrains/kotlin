@@ -24,7 +24,11 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 
 class FieldOverridabilityCondition : ExternalOverridabilityCondition {
-    override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor, subClassDescriptor: ClassDescriptor?): Result {
+    override fun isOverridable(
+        superDescriptor: CallableDescriptor,
+        subDescriptor: CallableDescriptor,
+        subClassDescriptor: ClassDescriptor?
+    ): Result {
         if (subDescriptor !is PropertyDescriptor || superDescriptor !is PropertyDescriptor) return Result.UNKNOWN
         if (subDescriptor.name != superDescriptor.name) return Result.UNKNOWN
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -67,7 +67,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         var nonConfiguredModules = if (!ApplicationManager.getApplication().isUnitTestMode)
             getCanBeConfiguredModules(project, this)
         else
-            Arrays.asList(*ModuleManager.getInstance(project).modules)
+            listOf(*ModuleManager.getInstance(project).modules)
         nonConfiguredModules -= excludeModules
 
         var modulesToConfigure = nonConfiguredModules
@@ -259,7 +259,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         }
 
         collector.addMessage(library.name!! + " library was created")
-        return library!!
+        return library
     }
 
     private fun isProjectLibraryPresent(project: Project): Boolean {
@@ -397,14 +397,14 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         val project = module.project
         val collector = createConfigureKotlinNotificationCollector(project)
 
-        for (library in findAllUsedLibraries(project).keySet()) {
-            val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library) ?: continue
+        for (lib in findAllUsedLibraries(project).keySet()) {
+            val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(lib) ?: continue
 
-            val model = library.modifiableModel
+            val model = lib.modifiableModel
             val libFilesDir = VfsUtilCore.virtualToIoFile(runtimeJar).parent
 
             for (libraryJarDescriptor in libraryJarDescriptors) {
-                if (libraryJarDescriptor.findExistingJar(library) != null) continue
+                if (libraryJarDescriptor.findExistingJar(lib) != null) continue
 
                 val libFile = libraryJarDescriptor.getPathInPlugin()
                 if (!libFile.exists()) continue

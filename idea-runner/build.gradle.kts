@@ -12,6 +12,7 @@ dependencies {
 
     compile(intellijDep())
 
+    runtimeOnly(intellijRuntimeAnnotations())
     runtimeOnly(files(toolsJar()))
 }
 

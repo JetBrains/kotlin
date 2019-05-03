@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
 class JvmPackageScope(
-        private val c: LazyJavaResolverContext,
-        jPackage: JavaPackage,
-        private val packageFragment: LazyJavaPackageFragment
-): MemberScope {
+    private val c: LazyJavaResolverContext,
+    jPackage: JavaPackage,
+    private val packageFragment: LazyJavaPackageFragment
+) : MemberScope {
     internal val javaScope = LazyJavaPackageScope(c, jPackage, packageFragment)
 
     private val kotlinScopes by c.storageManager.createLazyValue {
@@ -66,13 +66,14 @@ class JvmPackageScope(
     }
 
     override fun getContributedDescriptors(
-            kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean
+        kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> =
-            getFromAllScopes(javaScope, kotlinScopes) { it.getContributedDescriptors(kindFilter, nameFilter) }
+        getFromAllScopes(javaScope, kotlinScopes) { it.getContributedDescriptors(kindFilter, nameFilter) }
 
     override fun getFunctionNames() = kotlinScopes.flatMapTo(mutableSetOf()) { it.getFunctionNames() }.apply {
         addAll(javaScope.getFunctionNames())
     }
+
     override fun getVariableNames() = kotlinScopes.flatMapTo(mutableSetOf()) { it.getVariableNames() }.apply {
         addAll(javaScope.getVariableNames())
     }

@@ -29,6 +29,7 @@ kotlin {
         configure(listOf(main, jvmWithoutJavaMain)) {
         	dependencies {
         		implementation(kotlin("stdlib"))
+        		implementation(kotlin("script-runtime"))
         	}
         }
 

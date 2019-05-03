@@ -1,0 +1,17 @@
+FILE: objects.kt
+    public final object A : R|kotlin/Any| {
+        private constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|A| {
+            ^foo this#
+        }
+
+    }
+    public final fun use(): R|A| {
+        ^use R|/A|
+    }
+    public final fun bar(): R|A| {
+        ^bar R|/A|.R|/A.foo|()
+    }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.elements
@@ -102,6 +102,8 @@ class KtLightParameter(
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         val result = ApplicationManager.getApplication().runReadAction(Computable {
             val kotlinOrigin = kotlinOrigin
+            if (kotlinOrigin?.isEquivalentTo(another) == true) return@Computable true
+
             if (another is KtLightParameter && kotlinOrigin != null) {
                 kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate
             }

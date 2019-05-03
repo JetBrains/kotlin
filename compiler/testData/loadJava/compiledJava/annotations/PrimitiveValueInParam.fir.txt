@@ -1,0 +1,2 @@
+public abstract interface PrimitiveValueInParam : R|kotlin/Any| {
+}

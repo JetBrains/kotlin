@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -40,7 +40,7 @@ class SuspiciousVarPropertyInspection : AbstractKotlinInspection() {
 
     companion object {
         private fun KtPropertyAccessor.hasBackingFieldReference(): Boolean {
-            val bodyExpression = this.bodyExpression ?: return false
+            val bodyExpression = this.bodyExpression ?: return true
             return bodyExpression.isBackingFieldReference(property) || bodyExpression.anyDescendantOfType<KtNameReferenceExpression> {
                 it.isBackingFieldReference(property)
             }

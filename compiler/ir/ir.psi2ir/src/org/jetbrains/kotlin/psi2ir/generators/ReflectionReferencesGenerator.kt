@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.referenceClassifier
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -47,7 +48,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         } else {
             val typeConstructorDeclaration = lhs.type.constructor.declarationDescriptor
             val typeClass = typeConstructorDeclaration
-                    ?: throw AssertionError("Unexpected type constructor for ${lhs.type}: $typeConstructorDeclaration")
+                ?: throw AssertionError("Unexpected type constructor for ${lhs.type}: $typeConstructorDeclaration")
             IrClassReferenceImpl(
                 ktClassLiteral.startOffsetSkippingComments, ktClassLiteral.endOffset, resultType,
                 context.symbolTable.referenceClassifier(typeClass), lhs.type.toIrType()
@@ -62,9 +63,6 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val descriptorImportedFromObject = resultingDescriptor as? ImportedFromObjectCallableDescriptor<*>
         val referencedDescriptor = descriptorImportedFromObject?.callableFromObject ?: resultingDescriptor
 
-        val startOffset = ktCallableReference.startOffsetSkippingComments
-        val endOffset = ktCallableReference.endOffset
-
         return statementGenerator.generateCallReceiver(
             ktCallableReference,
             resultingDescriptor,
@@ -72,7 +70,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             isSafe = false
         ).call { dispatchReceiverValue, extensionReceiverValue ->
             generateCallableReference(
-                startOffset, endOffset,
+                ktCallableReference,
                 getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
                 referencedDescriptor,
                 resolvedCall.typeArguments
@@ -84,27 +82,27 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     }
 
     fun generateCallableReference(
-        startOffset: Int,
-        endOffset: Int,
+        ktElement: KtElement,
         type: KotlinType,
         callableDescriptor: CallableDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null
-    ): IrCallableReference =
-        when (callableDescriptor) {
-            is FunctionDescriptor ->
-                generateFunctionReference(
-                    startOffset, endOffset, type,
-                    context.symbolTable.referenceFunction(callableDescriptor.original),
-                    callableDescriptor,
-                    typeArguments,
-                    origin
-                )
-            is PropertyDescriptor ->
-                generatePropertyReference(startOffset, endOffset, type, callableDescriptor, typeArguments, origin)
+    ): IrCallableReference {
+        val startOffset = ktElement.startOffsetSkippingComments
+        val endOffset = ktElement.endOffset
+        return when (callableDescriptor) {
+            is FunctionDescriptor -> {
+                val symbol = context.symbolTable.referenceFunction(callableDescriptor.original)
+                generateFunctionReference(startOffset, endOffset, type, symbol, callableDescriptor, typeArguments, origin)
+            }
+            is PropertyDescriptor -> {
+                val mutable = get(BindingContext.VARIABLE, ktElement)?.isVar ?: true
+                generatePropertyReference(startOffset, endOffset, type, callableDescriptor, typeArguments, origin, mutable)
+            }
             else ->
                 throw AssertionError("Unexpected callable reference: $callableDescriptor")
         }
+    }
 
     fun generateLocalDelegatedPropertyReference(
         startOffset: Int,
@@ -123,7 +121,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         return IrLocalDelegatedPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            variableDescriptor,
+            context.symbolTable.referenceLocalDelegatedProperty(variableDescriptor),
             irDelegateSymbol, getterSymbol, setterSymbol,
             origin
         )
@@ -135,24 +133,34 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         type: KotlinType,
         propertyDescriptor: PropertyDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        origin: IrStatementOrigin?
+        origin: IrStatementOrigin?,
+        mutable: Boolean
     ): IrPropertyReference {
-        val getterDescriptor = propertyDescriptor.getter
-        val setterDescriptor = propertyDescriptor.setter
-
-        val fieldSymbol = if (getterDescriptor == null) context.symbolTable.referenceField(propertyDescriptor) else null
-        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
-        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
+        val originalProperty = propertyDescriptor.original
+        val originalGetter = originalProperty.getter?.original
+        val originalSetter = if (mutable) originalProperty.setter?.original else null
 
         return IrPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            propertyDescriptor, propertyDescriptor.typeParametersCount,
-            fieldSymbol, getterSymbol, setterSymbol,
+            context.symbolTable.referenceProperty(originalProperty),
+            propertyDescriptor.typeParametersCount,
+            getFieldForPropertyReference(originalProperty),
+            originalGetter?.let { context.symbolTable.referenceSimpleFunction(it) },
+            originalSetter?.let { context.symbolTable.referenceSimpleFunction(it) },
             origin
         ).apply {
-            putTypeArguments(typeArguments) { it.toIrType()}
+            putTypeArguments(typeArguments) { it.toIrType() }
         }
     }
+
+    private fun getFieldForPropertyReference(originalProperty: PropertyDescriptor) =
+        // NB this is a hack, we really don't know if an arbitrary property has a backing field or not
+        when {
+            @Suppress("DEPRECATION")
+            originalProperty.isDelegated -> null
+            originalProperty.getter != null -> null
+            else -> context.symbolTable.referenceField(originalProperty)
+        }
 
     private fun generateFunctionReference(
         startOffset: Int,

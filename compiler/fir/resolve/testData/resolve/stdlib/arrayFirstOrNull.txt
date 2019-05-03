@@ -1,0 +1,20 @@
+FILE: arrayFirstOrNull.kt
+    public abstract interface G : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Array<out G>|
+            public get(): R|kotlin/Array<out G>|
+
+    }
+    public final fun goo(g: R|G|): R|kotlin/Unit| {
+        lval x: R|G|? = R|<local>/g|.R|/G.a|.R|/firstOrNullX|<R|G|>()
+    }
+    public final fun <T> R|kotlin/Array<out T>|.firstOrNullX(): R|T|? {
+        ^firstOrNullX when () {
+            <Unresolved name: isEmpty>#() ->  {
+                Null(null)
+            }
+            else ->  {
+                this#.R|FakeOverride<kotlin/Array.get: R|T|>|(Int(0))
+            }
+        }
+
+    }

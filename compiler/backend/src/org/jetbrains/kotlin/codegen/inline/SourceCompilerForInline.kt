@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
@@ -9,6 +9,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.*
+import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
@@ -27,10 +28,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.*
 import kotlin.properties.Delegates
 
 interface SourceCompilerForInline {
@@ -63,11 +61,14 @@ interface SourceCompilerForInline {
         asmMethod: Method
     ): SMAPAndMethodNode
 
-    fun generateAndInsertFinallyBlocks(
-        intoNode: MethodNode,
-        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
-        offsetForFinallyLocalVar: Int
-    )
+    fun hasFinallyBlocks(): Boolean
+
+    fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(
+        finallyNode: MethodNode,
+        curFinallyDepth: Int
+    ): BaseExpressionCodegen
+
+    fun generateFinallyBlocksIfNeeded(finallyCodegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label)
 
     fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean
 
@@ -83,7 +84,8 @@ interface SourceCompilerForInline {
 }
 
 
-class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, override val callElement: KtElement) : SourceCompilerForInline {
+class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, override val callElement: KtElement) :
+    SourceCompilerForInline {
 
     override val state = codegen.state
 
@@ -120,7 +122,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
             val signature = codegen.state.typeMapper.mapSignatureSkipGeneric(context.functionDescriptor, context.contextKind)
             return InlineCallSiteInfo(
-                parentCodegen.className, signature.asmMethod.name, signature.asmMethod.descriptor
+                parentCodegen.className, signature.asmMethod.name, signature.asmMethod.descriptor, compilationContextFunctionDescriptor.isInlineOrInsideInline()
             )
         }
 
@@ -134,11 +136,15 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
     ): SMAP {
         lambdaInfo as? PsiExpressionLambda ?: error("TODO")
         val invokeMethodDescriptor = lambdaInfo.invokeMethodDescriptor
-        val closureContext =
-            if (lambdaInfo.isPropertyReference)
+        val closureContext = when {
+            lambdaInfo.isPropertyReference ->
                 codegen.getContext().intoAnonymousClass(lambdaInfo.classDescriptor, codegen, OwnerKind.IMPLEMENTATION)
-            else
-                codegen.getContext().intoClosure(invokeMethodDescriptor, codegen, state.typeMapper)
+            invokeMethodDescriptor.isSuspend ->
+                codegen.getContext().intoCoroutineClosure(
+                    getOrCreateJvmSuspendFunctionView(invokeMethodDescriptor, state), invokeMethodDescriptor, codegen, state.typeMapper
+                )
+            else -> codegen.getContext().intoClosure(invokeMethodDescriptor, codegen, state.typeMapper)
+        }
         val context = closureContext.intoInlinedLambda(invokeMethodDescriptor, lambdaInfo.isCrossInline, lambdaInfo.isPropertyReference)
 
         return generateMethodBody(
@@ -309,73 +315,20 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         return SMAPAndMethodNode(node, smap)
     }
 
-    override fun generateAndInsertFinallyBlocks(
-        intoNode: MethodNode,
-        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
-        offsetForFinallyLocalVar: Int
-    ) {
-        if (!codegen.hasFinallyBlocks()) return
+    override fun hasFinallyBlocks() = codegen.hasFinallyBlocks()
 
-        val extensionPoints = HashMap<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks>()
-        for (insertPoint in insertPoints) {
-            extensionPoints.put(insertPoint.beforeIns, insertPoint)
-        }
-
-        val processor = DefaultProcessor(intoNode, offsetForFinallyLocalVar)
-
-        var curFinallyDepth = 0
-        var curInstr: AbstractInsnNode? = intoNode.instructions.first
-        while (curInstr != null) {
-            processor.processInstruction(curInstr, true)
-            if (isFinallyStart(curInstr)) {
-                //TODO depth index calc could be more precise
-                curFinallyDepth = getConstant(curInstr.previous)
-            }
-
-            val extension = extensionPoints[curInstr]
-            if (extension != null) {
-                val start = Label()
-
-                val finallyNode = createEmptyMethodNode()
-                finallyNode.visitLabel(start)
-
-                val finallyCodegen = ExpressionCodegen(
-                    finallyNode, codegen.frameMap, codegen.returnType,
-                    codegen.getContext(), codegen.state, codegen.parentCodegen
-                )
-                finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.blockStackElements, curFinallyDepth)
-
-                val frameMap = finallyCodegen.frameMap
-                val mark = frameMap.mark()
-                var marker = -1
-                val intervals = processor.localVarsMetaInfo.currentIntervals
-                for (interval in intervals) {
-                    marker = Math.max(interval.node.index + 1, marker)
-                }
-                while (frameMap.currentSize < Math.max(processor.nextFreeLocalIndex, offsetForFinallyLocalVar + marker)) {
-                    frameMap.enterTemp(Type.INT_TYPE)
-                }
-
-                finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType, null, extension.finallyIntervalEnd.label)
-
-                //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
-                insertNodeBefore(finallyNode, intoNode, curInstr)
-
-                val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
-                processor.tryBlocksMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
-
-                //processor.getLocalVarsMetaInfo().splitAndRemoveIntervalsFromCurrents(splitBy);
-
-                mark.dropTo()
-            }
-
-            curInstr = curInstr.next
-        }
-
-        processor.substituteTryBlockNodes(intoNode)
-
-        //processor.substituteLocalVarTable(intoNode);
+    override fun generateFinallyBlocksIfNeeded(finallyCodegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label) {
+        require(finallyCodegen is ExpressionCodegen)
+        finallyCodegen.generateFinallyBlocksIfNeeded(returnType, null, afterReturnLabel)
     }
+
+    override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
+        ExpressionCodegen(
+            finallyNode, codegen.frameMap, codegen.returnType,
+            codegen.getContext(), codegen.state, codegen.parentCodegen
+        ).also {
+            it.addBlockStackElementsForNonLocalReturns(codegen.blockStackElements, curFinallyDepth)
+        }
 
     override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
         return JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), codegen.state.outDirectory)
@@ -424,7 +377,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             }
 
             val container = descriptor.containingDeclaration ?: error("No container for descriptor: $descriptor")
-            val parent = getContext(
+            val containerContext = getContext(
                 container,
                 descriptor,
                 state,
@@ -435,7 +388,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             return when (descriptor) {
                 is ScriptDescriptor -> {
                     val earlierScripts = state.replSpecific.earlierScriptsForReplInterpreter
-                    parent.intoScript(
+                    containerContext.intoScript(
                         descriptor,
                         earlierScripts ?: emptyList(),
                         descriptor as ClassDescriptor, state.typeMapper
@@ -444,21 +397,27 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 is ClassDescriptor -> {
                     val kind =
                         when {
-                            DescriptorUtils.isInterface(descriptor) && innerDescriptor !is ClassDescriptor &&
-                                    !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation() -> OwnerKind.DEFAULT_IMPLS
-
-                            descriptor.isInlineClass() -> OwnerKind.ERASED_INLINE_CLASS
-
-                            else -> OwnerKind.IMPLEMENTATION
+                            DescriptorUtils.isInterface(descriptor) &&
+                                    innerDescriptor !is ClassDescriptor &&
+                                    !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation() ->
+                                OwnerKind.DEFAULT_IMPLS
+                            else ->
+                                OwnerKind.IMPLEMENTATION
                         }
 
                     additionalInners.addIfNotNull(
                         InnerClassConsumer.classForInnerClassRecord(descriptor, kind == OwnerKind.DEFAULT_IMPLS)
                     )
-                    parent.intoClass(descriptor, kind, state)
+
+                    if (descriptor.isInlineClass()) {
+                        containerContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state)
+                            .intoClass(descriptor, OwnerKind.ERASED_INLINE_CLASS, state)
+                    } else {
+                        containerContext.intoClass(descriptor, kind, state)
+                    }
                 }
                 is FunctionDescriptor -> {
-                    parent.intoFunction(descriptor)
+                    containerContext.intoFunction(descriptor)
                 }
                 else -> {
                     throw IllegalStateException("Couldn't build context for $descriptor")
@@ -468,3 +427,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         }
     }
 }
+
+private fun DeclarationDescriptor.isInlineOrInsideInline(): Boolean =
+    if (this is FunctionDescriptor && isInline) true
+    else containingDeclaration?.isInlineOrInsideInline() == true

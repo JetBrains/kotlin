@@ -17,15 +17,16 @@
 package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.cli.common.repl.ILineId
-import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
+import org.jetbrains.kotlin.cli.common.repl.IReplStageState
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.ReplStateFacade
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import java.rmi.server.UnicastRemoteObject
 
-class RemoteReplStateFacadeServer(val _id: Int,
-                                  val state: GenericReplCompilerState,
-                                  port: Int = SOCKET_ANY_FREE_PORT
+class RemoteReplStateFacadeServer(
+    val _id: Int,
+    val state: IReplStageState<*>,
+    port: Int = SOCKET_ANY_FREE_PORT
 ) : ReplStateFacade,
     UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
 {

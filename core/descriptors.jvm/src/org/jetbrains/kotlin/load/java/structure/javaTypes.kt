@@ -26,7 +26,7 @@ interface JavaArrayType : JavaType {
 
 interface JavaClassifierType : JavaType, JavaAnnotationOwner {
     val classifier: JavaClassifier?
-    val typeArguments: List<JavaType>
+    val typeArguments: List<JavaType?>
 
     val isRaw: Boolean
 

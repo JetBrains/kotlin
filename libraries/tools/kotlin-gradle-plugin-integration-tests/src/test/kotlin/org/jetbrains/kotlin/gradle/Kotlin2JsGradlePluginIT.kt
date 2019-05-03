@@ -349,4 +349,57 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertNotContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
         }
     }
+
+    @Test
+    fun testNewKotlinJsPlugin() = with(Project("kotlin-js-plugin-project", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("publish", "runDceKotlin", "test", "runDceBenchmarkKotlin") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":compileKotlinJs", ":compileTestKotlinJs", ":compileBenchmarkKotlinJs",
+                ":runDceKotlin", ":runDceBenchmarkKotlin"
+            )
+
+            val moduleDir = "build/repo/com/example/kotlin-js-plugin/1.0/"
+
+            val publishedJar = fileInWorkingDir(moduleDir + "kotlin-js-plugin-1.0.jar")
+            ZipFile(publishedJar).use { zip ->
+                val entries = zip.entries().asSequence().map { it.name }
+                assertTrue { "kotlin-js-plugin.js" in entries }
+            }
+
+            val publishedPom = fileInWorkingDir(moduleDir + "kotlin-js-plugin-1.0.pom")
+            val kotlinVersion = defaultBuildOptions().kotlinVersion
+            val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
+            assertTrue { "kotlinx-html-js</artifactId><version>0.6.10</version><scope>compile</scope>" in pomText }
+            assertTrue { "kotlin-stdlib-js</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText }
+
+            assertFileExists(moduleDir + "kotlin-js-plugin-1.0-sources.jar")
+
+            assertFileExists("build/test_node_modules/kotlin.js")
+            assertFileExists("build/test_node_modules/kotlin.js.map")
+            assertFileExists("build/test_node_modules/kotlin-test.js")
+            assertFileExists("build/test_node_modules/kotlin-test.js.map")
+            assertFileExists("build/test_node_modules/kotlin-test-nodejs-runner.js")
+            assertFileExists("build/test_node_modules/kotlin-test-nodejs-runner.js.map")
+            assertFileExists("build/test_node_modules/kotlin-nodejs-source-map-support.js")
+            assertFileExists("build/test_node_modules/kotlin-nodejs-source-map-support.js.map")
+            assertFileExists("build/test_node_modules/kotlin-js-plugin.js")
+            assertFileExists("build/test_node_modules/kotlin-js-plugin.js.map")
+            assertFileExists("build/test_node_modules/kotlin-js-plugin_test.js")
+            assertFileExists("build/test_node_modules/kotlin-js-plugin_test.js.map")
+
+            val slash = File.separator
+            assertFileContains(
+                "build/test_node_modules/kotlin-js-plugin_test.js.map",
+                "\"sources\":[\"..$slash..${slash}src${slash}test${slash}kotlin${slash}MainTest.kt\"]"
+            )
+
+            assertTestResults("testProject/kotlin-js-plugin-project/tests.xml", "test")
+        }
+    }
 }

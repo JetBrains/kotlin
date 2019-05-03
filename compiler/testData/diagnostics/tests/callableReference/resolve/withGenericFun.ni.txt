@@ -2,7 +2,7 @@ package
 
 public val x1: kotlin.Unit
 public val x2: kotlin.Unit
-public val x3: kotlin.Nothing
+public val x3: [ERROR : Type for apply(true, ::foo)]
 public fun </*0*/ T, /*1*/ R> apply(/*0*/ x: T, /*1*/ f: (T) -> R): R
 public fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
 public fun foo(/*0*/ s: kotlin.String): kotlin.Unit

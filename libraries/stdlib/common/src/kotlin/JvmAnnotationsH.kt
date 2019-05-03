@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.jvm
@@ -140,3 +140,11 @@ public expect annotation class Strictfp()
 @MustBeDocumented
 @OptionalExpectation
 public expect annotation class Synchronized()
+
+
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.2")
+@OptionalExpectation
+internal expect annotation class JvmPackageName(val name: String)

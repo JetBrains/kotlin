@@ -83,7 +83,7 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
     @NotNull
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        return JavaElementUtil.getAnnotations(this);
+        return JavaElementUtil.getRegularAndExternalAnnotations(this);
     }
 
     @Nullable

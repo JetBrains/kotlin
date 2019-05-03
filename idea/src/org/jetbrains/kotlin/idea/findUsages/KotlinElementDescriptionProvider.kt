@@ -57,58 +57,58 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
         }
 
         val internalSegments = generateSequence(this) { it.parentForFqName() }
-                .filterIsInstance<KtNamedDeclaration>()
-                .map { it.name ?: "<no name provided>" }
-                .toList()
-                .asReversed()
+            .filterIsInstance<KtNamedDeclaration>()
+            .map { it.name ?: "<no name provided>" }
+            .toList()
+            .asReversed()
         val packageSegments = containingKtFile.packageFqName.pathSegments()
         return FqNameUnsafe((packageSegments + internalSegments).joinToString("."))
     }
 
     private fun KtTypeReference.renderShort(): String {
         return accept(
-                object : KtVisitor<String, Unit>() {
-                    private val visitor get() = this
+            object : KtVisitor<String, Unit>() {
+                private val visitor get() = this
 
-                    override fun visitTypeReference(typeReference: KtTypeReference, data: Unit): String {
-                        val typeText = typeReference.typeElement?.accept(this, data) ?: "???"
-                        return if (typeReference.hasParentheses()) "($typeText)" else typeText
+                override fun visitTypeReference(typeReference: KtTypeReference, data: Unit): String {
+                    val typeText = typeReference.typeElement?.accept(this, data) ?: "???"
+                    return if (typeReference.hasParentheses()) "($typeText)" else typeText
+                }
+
+                override fun visitDynamicType(type: KtDynamicType, data: Unit) = type.text
+
+                override fun visitFunctionType(type: KtFunctionType, data: Unit): String {
+                    return buildString {
+                        type.receiverTypeReference?.let { append(it.accept(visitor, data)).append('.') }
+                        type.parameters.joinTo(this, prefix = "(", postfix = ")") { it.accept(visitor, data) }
+                        append(" -> ")
+                        append(type.returnTypeReference?.accept(visitor, data) ?: "???")
                     }
+                }
 
-                    override fun visitDynamicType(type: KtDynamicType, data: Unit) = type.text
+                override fun visitNullableType(nullableType: KtNullableType, data: Unit): String {
+                    val innerTypeText = nullableType.innerType?.accept(this, data) ?: return "???"
+                    return "$innerTypeText?"
+                }
 
-                    override fun visitFunctionType(type: KtFunctionType, data: Unit): String {
-                        return buildString {
-                            type.receiverTypeReference?.let { append(it.accept(visitor, data)).append('.') }
-                            type.parameters.joinTo(this, prefix = "(", postfix = ")") { it.accept(visitor, data) }
-                            append(" -> ")
-                            append(type.returnTypeReference?.accept(visitor, data) ?: "???")
-                        }
-                    }
+                override fun visitSelfType(type: KtSelfType, data: Unit) = type.text
 
-                    override fun visitNullableType(nullableType: KtNullableType, data: Unit): String {
-                        val innerTypeText = nullableType.innerType?.accept(this, data) ?: return "???"
-                        return "$innerTypeText?"
-                    }
+                override fun visitUserType(type: KtUserType, data: Unit): String {
+                    return buildString {
+                        append(type.referencedName ?: "???")
 
-                    override fun visitSelfType(type: KtSelfType, data: Unit) = type.text
-
-                    override fun visitUserType(type: KtUserType, data: Unit): String {
-                        return buildString {
-                            append(type.referencedName ?: "???")
-
-                            val arguments = type.typeArguments
-                            if (arguments.isNotEmpty()) {
-                                arguments.joinTo(this, prefix = "<", postfix = ">") {
-                                    it.typeReference?.accept(visitor, data) ?: it.text
-                                }
+                        val arguments = type.typeArguments
+                        if (arguments.isNotEmpty()) {
+                            arguments.joinTo(this, prefix = "<", postfix = ">") {
+                                it.typeReference?.accept(visitor, data) ?: it.text
                             }
                         }
                     }
+                }
 
-                    override fun visitParameter(parameter: KtParameter, data: Unit) = parameter.typeReference?.accept(this, data) ?: "???"
-                },
-                Unit
+                override fun visitParameter(parameter: KtParameter, data: Unit) = parameter.typeReference?.accept(this, data) ?: "???"
+            },
+            Unit
         )
     }
 
@@ -140,22 +140,27 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             targetElement.parent as? KtProperty
         } else targetElement as? PsiNamedElement
 
+        @Suppress("FoldInitializerAndIfToElvis")
         if (namedElement == null) {
-            return if (targetElement is KtElement) "'" + StringUtil.shortenTextWithEllipsis(targetElement.text.collapseSpaces(), 53, 0) + "'" else null
+            return if (targetElement is KtElement) "'" + StringUtil.shortenTextWithEllipsis(
+                targetElement.text.collapseSpaces(),
+                53,
+                0
+            ) + "'" else null
         }
 
         if (namedElement.language != KotlinLanguage.INSTANCE) return null
 
-        return when(location) {
+        return when (location) {
             is UsageViewTypeLocation -> elementKind()
             is UsageViewShortNameLocation, is UsageViewLongNameLocation -> namedElement.name
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null
                 if (namedElement !is KtNamedDeclaration) return null
                 val renderFqName = location.includeParent() &&
-                                   namedElement !is KtTypeParameter &&
-                                   namedElement !is KtParameter &&
-                                   namedElement !is KtConstructor<*>
+                        namedElement !is KtTypeParameter &&
+                        namedElement !is KtParameter &&
+                        namedElement !is KtConstructor<*>
                 val desc = when (namedElement) {
                     is KtFunction -> {
                         val baseText = buildString {
@@ -166,7 +171,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
                             namedElement.receiverTypeReference?.let { append(" on ").append(it.renderShort()) }
                         }
                         val parentFqName = if (renderFqName) namedElement.fqName().parent() else null
-                        if (parentFqName?.isRoot ?: true) baseText else "${parentFqName!!.asString()}.$baseText"
+                        if (parentFqName?.isRoot != false) baseText else "${parentFqName.asString()}.$baseText"
                     }
                     else -> (if (renderFqName) namedElement.fqName().asString() else namedElement.name) ?: ""
                 }

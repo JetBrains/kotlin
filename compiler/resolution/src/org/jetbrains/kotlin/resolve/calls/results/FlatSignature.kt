@@ -18,30 +18,28 @@ package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.captureFromExpression
+import org.jetbrains.kotlin.types.model.*
 
 interface SpecificityComparisonCallbacks {
-    fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
+    fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
 }
 
 interface TypeSpecificityComparator {
-    fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType): Boolean
+    fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
 
     object NONE : TypeSpecificityComparator {
-        override fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType) = false
+        override fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker) = false
     }
 }
 
-class FlatSignature<out T> private constructor(
+class FlatSignature<out T> constructor(
     val origin: T,
-    val typeParameters: Collection<TypeParameterDescriptor>,
-    val valueParameterTypes: List<KotlinType?>,
+    val typeParameters: Collection<TypeParameterMarker>,
+    val valueParameterTypes: List<KotlinTypeMarker?>,
     val hasExtensionReceiver: Boolean,
     val hasVarargs: Boolean,
     val numDefaults: Int,
@@ -113,12 +111,14 @@ class FlatSignature<out T> private constructor(
 
 
 interface SimpleConstraintSystem {
-    fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor
-    fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType)
+    fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker
+    fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker)
     fun hasContradiction(): Boolean
 
     // todo hack for migration
     val captureFromArgument get() = false
+
+    val context: TypeSystemInferenceExtensionContext
 }
 
 fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
@@ -140,14 +140,14 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
             return false
         }
 
-        if (typeParameters.isEmpty() || !TypeUtils.dependsOnTypeParameters(generalType, typeParameters)) {
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(specificType, generalType)) {
+        if (typeParameters.isEmpty() || !generalType.dependsOnTypeParameters(context, typeParameters)) {
+            if (!AbstractTypeChecker.isSubtypeOf(context, specificType, generalType)) {
                 if (!callbacks.isNonSubtypeNotLessSpecific(specificType, generalType)) {
                     return false
                 }
             }
         } else {
-            val substitutedGeneralType = typeSubstitutor.safeSubstitute(generalType, Variance.INVARIANT)
+            val substitutedGeneralType = typeSubstitutor.safeSubstitute(context, generalType)
 
             /**
              * Example:
@@ -156,8 +156,9 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
              * Here, when we try solve this CS(Y is variables) then Array<out X> <: Array<out Y> and this system impossible to solve,
              * so we capture types from receiver and value parameters.
              */
-            val specificCapturedType = specificType.unwrap().let { if (captureFromArgument) captureFromExpression(it) ?: it else it }
-            addSubtypeConstraint(specificCapturedType, substitutedGeneralType.unwrap())
+            val specificCapturedType =
+                context.prepareType(specificType).let { if (captureFromArgument) context.captureFromExpression(it) ?: it else it }
+            addSubtypeConstraint(specificCapturedType, substitutedGeneralType)
         }
     }
 

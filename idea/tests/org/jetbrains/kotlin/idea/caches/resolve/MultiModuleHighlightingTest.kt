@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.resolve
@@ -40,9 +40,12 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.PLUGIN_ID
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
 
@@ -193,12 +196,12 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     fun testSamWithReceiverExtension() {
         val module1 = module("m1").setupKotlinFacet {
             settings.compilerArguments!!.pluginOptions =
-                    arrayOf("plugin:${PLUGIN_ID}:${ANNOTATION_OPTION.name}=anno.A")
+                arrayOf("plugin:$PLUGIN_ID:${ANNOTATION_OPTION.optionName}=anno.A")
         }
 
         val module2 = module("m2").setupKotlinFacet {
             settings.compilerArguments!!.pluginOptions =
-                    arrayOf("plugin:${PLUGIN_ID}:${ANNOTATION_OPTION.name}=anno.B")
+                arrayOf("plugin:$PLUGIN_ID:${ANNOTATION_OPTION.optionName}=anno.B")
         }
 
 

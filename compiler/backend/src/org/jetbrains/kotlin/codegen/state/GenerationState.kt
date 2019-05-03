@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.state
@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -120,18 +120,17 @@ class GenerationState private constructor(
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
         abstract fun shouldGeneratePackagePart(ktFile: KtFile): Boolean
         abstract fun shouldGenerateScript(script: KtScript): Boolean
+        abstract fun shouldGenerateCodeFragment(script: KtCodeFragment): Boolean
         open fun shouldGenerateClassMembers(processingClassOrObject: KtClassOrObject) = shouldGenerateClass(processingClassOrObject)
 
         companion object {
             @JvmField
             val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
                 override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean = true
-
                 override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean = true
-
                 override fun shouldGenerateScript(script: KtScript): Boolean = true
-
                 override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean = true
+                override fun shouldGenerateCodeFragment(script: KtCodeFragment) = true
             }
         }
     }
@@ -150,8 +149,12 @@ class GenerationState private constructor(
     init {
         val icComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
         if (icComponents != null) {
-            incrementalCacheForThisTarget =
-                    icComponents.getIncrementalCache(targetId ?: error("Target ID should be specified for incremental compilation"))
+            val targetId = targetId
+                ?: moduleName?.let {
+                    // hack for Gradle IC, Gradle does not use build.xml file, so there is no way to pass target id
+                    TargetId(it, "java-production")
+                } ?: error("Target ID should be specified for incremental compilation")
+            incrementalCacheForThisTarget = icComponents.getIncrementalCache(targetId)
             packagesWithObsoleteParts = incrementalCacheForThisTarget.getObsoletePackageParts().map {
                 JvmClassName.byInternalName(it).packageFqName
             }.toSet()
@@ -192,16 +195,17 @@ class GenerationState private constructor(
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
         this.bindingContext,
         classBuilderMode,
-        IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
         this.moduleName,
-        target,
         languageVersionSettings,
+        IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
+        target,
         isIrBackend
     )
     val intrinsics: IntrinsicMethods = run {
         val shouldUseConsistentEquals = languageVersionSettings.supportsFeature(LanguageFeature.ThrowNpeOnExplicitEqualsForBoxedNull) &&
                 !configuration.getBoolean(JVMConfigurationKeys.NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL)
-        IntrinsicMethods(target, shouldUseConsistentEquals)
+        val canReplaceStdlibRuntimeApiBehavior = languageVersionSettings.apiVersion <= ApiVersion.parse(KotlinVersion.CURRENT.toString())!!
+        IntrinsicMethods(target, canReplaceStdlibRuntimeApiBehavior, shouldUseConsistentEquals)
     }
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext(diagnostics)
@@ -274,8 +278,8 @@ class GenerationState private constructor(
                         ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it
                 }
             )
-            .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { builderFactory, extension ->
-                extension.interceptClassBuilderFactory(builderFactory, bindingContext, diagnostics)
+            .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { classBuilderFactory, extension ->
+                extension.interceptClassBuilderFactory(classBuilderFactory, bindingContext, diagnostics)
             }
 
         this.factory = ClassFileFactory(this, interceptedBuilderFactory)

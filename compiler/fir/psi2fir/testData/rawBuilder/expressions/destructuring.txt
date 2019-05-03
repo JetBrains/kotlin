@@ -1,25 +1,39 @@
 FILE: destructuring.kt
-    public? final? data class Some {
-        public? constructor(first: Int, second: Double, third: String): super<kotlin/Any>()
+    public? final? data class Some : kotlin/Any {
+        public? constructor(first: Int, second: Double, third: String): R|Some| {
+            super<kotlin/Any>()
+        }
 
-        public? final? property first(val): Int
+        public? final? val first: Int = R|<local>/first|
             public? get(): Int
 
-        public? final? property second(val): Double
+        public? final? val second: Double = R|<local>/second|
             public? get(): Double
 
-        public? final? property third(val): String
+        public? final? val third: String = R|<local>/third|
             public? get(): String
 
+        public final fun component1(): <implicit> {
+            ^component1 R|/Some.first|
+        }
+
+        public final fun component2(): <implicit> {
+            ^component2 R|/Some.second|
+        }
+
+        public final fun component3(): <implicit> {
+            ^component3 R|/Some.third|
+        }
+
     }
-    public? final? function foo(some: Some): kotlin/Unit {
-        val <destruct>: <implicit> = some#
-        var x: <implicit> = component1(<destruct>#)
-        var y: <implicit> = component2(<destruct>#)
-        var z: String = component3(<destruct>#)
-        val <unary>: <implicit> = x#
-        x# = inc#(<unary>#)
-        <unary>#
+    public? final? fun foo(some: Some): kotlin/Unit {
+        lval <destruct>: <implicit> = some#
+        lvar x: <implicit> = R|<local>/<destruct>|.component1()
+        lvar y: <implicit> = R|<local>/<destruct>|.component2()
+        lvar z: String = R|<local>/<destruct>|.component3()
+        lval <unary>: <implicit> = x#
+        x# = R|<local>/<unary>|.inc#()
+        R|<local>/<unary>|
         y# *= Double(2.0)
         z# = String()
     }

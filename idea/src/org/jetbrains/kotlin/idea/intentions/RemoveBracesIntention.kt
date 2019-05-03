@@ -35,8 +35,7 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
         val block = element.findChildBlock() ?: return false
         val singleStatement = block.statements.singleOrNull() ?: return false
-        val container = block.parent
-        when (container) {
+        when (val container = block.parent) {
             is KtContainerNode -> {
                 if (singleStatement is KtIfExpression) {
                     val elseExpression = (container.parent as? KtIfExpression)?.`else`
@@ -74,7 +73,8 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
         if (construct is KtIfExpression &&
             container.node.elementType == KtNodeTypes.ELSE &&
             construct.parent is KtExpression &&
-            construct.parent !is KtStatementExpression) {
+            construct.parent !is KtStatementExpression
+        ) {
             construct.replace(factory.createExpressionByPattern("($0)", construct))
         }
     }

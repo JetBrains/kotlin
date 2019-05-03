@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.search.declarationsSearch
@@ -21,7 +21,6 @@ import com.intellij.util.Query
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
@@ -96,7 +95,7 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
     override fun isApplicable(request: HierarchySearchRequest<PsiMethod>): Boolean =
         runReadAction { request.originalElement.isOverridableElement() }
 
-    override fun doSearchDirect(request: HierarchySearchRequest<PsiMethod>, consumer: ExecutorProcessor<PsiMethod>) {
+    override fun doSearchDirect(request: HierarchySearchRequest<PsiMethod>, consumer: Processor<in PsiMethod>) {
         searchDirectOverriders(request.originalElement).forEach { method -> consumer.process(method) }
     }
 }

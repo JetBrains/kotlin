@@ -1,12 +1,17 @@
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.testFramework.TestDataFile
 import org.gradle.api.logging.LogLevel
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
-import org.gradle.util.VersionNumber
+import org.jdom.Element
+import org.jdom.input.SAXBuilder
+import org.jdom.output.Format
+import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert
@@ -144,7 +149,14 @@ abstract class BaseGradleIT {
                 .apply {
                     File(BaseGradleIT.resourcesRootFile, "GradleWrapper").copyRecursively(this)
                     val wrapperProperties = File(this, "gradle/wrapper/gradle-wrapper.properties")
-                    wrapperProperties.modify { it.replace("<GRADLE_WRAPPER_VERSION>", version) }
+                    val isGradleVerisonSnapshot = version.endsWith("+0000")
+                    if (!isGradleVerisonSnapshot) {
+                        wrapperProperties.modify { it.replace("<GRADLE_WRAPPER_VERSION>", version) }
+                    } else {
+                        wrapperProperties.modify {
+                            it.replace("distributions/gradle-<GRADLE_WRAPPER_VERSION>", "distributions-snapshots/gradle-$version")
+                        }
+                    }
                 }
 
         private val runnerGradleVersion = System.getProperty("runnerGradleVersion")
@@ -190,7 +202,7 @@ abstract class BaseGradleIT {
         val parallelTasksInProject: Boolean? = null
     )
 
-    data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean)
+    data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean, val incrementalKapt: Boolean = false, val includeCompileClasspath: Boolean = true)
 
     open inner class Project(
         val projectName: String,
@@ -294,7 +306,7 @@ abstract class BaseGradleIT {
         } catch (t: Throwable) {
             // to prevent duplication of output
             if (!options.forceOutputToStdout) {
-                System.out.println(result.output)
+                println(result.output)
             }
             throw t
         }
@@ -488,6 +500,23 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksRegistered(vararg tasks: String) {
+        for (task in tasks) {
+            assertContains("'Register task $task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksNotRealized(vararg tasks: String) {
+        for (task in tasks) {
+            assertNotContains("'Realize task $task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksRegisteredAndNotRealized(vararg tasks: String) {
+        assertTasksRegistered(*tasks)
+        assertTasksNotRealized(*tasks)
+    }
+
     fun CompiledProject.getOutputForTask(taskName: String): String {
         val taskOutputRegex = ("(?:\\[LIFECYCLE] \\[class org\\.gradle(?:\\.internal\\.buildevents)?\\.TaskExecutionLogger] :$taskName|" +
                 "\\[org\\.gradle\\.execution\\.plan\\.DefaultPlanExecutor\\] :$taskName.*?started)" +
@@ -568,6 +597,74 @@ abstract class BaseGradleIT {
             File(projectDir, it).takeIf(File::exists)
         }.single()
 
+    /**
+     * @param assertionFileName path to xml with expected test results, relative to test resources root
+     */
+    fun CompiledProject.assertTestResults(
+            @TestDataFile assertionFileName: String,
+            testReportName: String
+    ) {
+        val projectDir = project.projectDir
+        val testReportDir = projectDir.resolve("build/test-results/$testReportName")
+
+        if (!testReportDir.isDirectory) {
+            error("Test report dir $testReportDir was not created")
+        }
+
+        val actualTestResults = readAndCleanupTestResults(testReportDir, projectDir)
+        val expectedTestResults = prettyPrintXml(resourcesRootFile.resolve(assertionFileName).readText())
+
+        assertEquals(expectedTestResults, actualTestResults)
+    }
+
+    private fun readAndCleanupTestResults(testReportDir: File, projectDir: File): String {
+        val files = testReportDir
+                .listFiles()
+                .filter { it.isFile && it.name.endsWith(".xml") }
+                .sortedBy {
+                    // let containing test suite be first
+                    it.name.replace(".xml", ".A.xml")
+                }
+
+        val xmlString = buildString {
+            appendln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+            appendln("<results>")
+            files.forEach {
+                appendln(
+                    it.readText()
+                        .trimTrailingWhitespaces()
+                        .replace(projectDir.absolutePath, "/\$PROJECT_DIR$")
+                        .replace(projectDir.name, "\$PROJECT_NAME$")
+                        .replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
+                )
+            }
+            appendln("</results>")
+        }
+
+        val doc = SAXBuilder().build(xmlString.reader())
+        val skipAttrs = setOf("timestamp", "hostname", "time", "message")
+        val skipContentsOf = setOf("failure")
+
+        fun cleanup(e: Element) {
+            if (e.name in skipContentsOf) e.text = "..."
+            e.attributes.forEach {
+                if (it.name in skipAttrs) {
+                    it.value = "..."
+                }
+            }
+
+            e.children.forEach {
+                cleanup(it)
+            }
+        }
+
+        cleanup(doc.rootElement)
+        return XMLOutputter(Format.getPrettyFormat()).outputString(doc)
+    }
+
+    private fun prettyPrintXml(uglyXml: String): String =
+            XMLOutputter(Format.getPrettyFormat()).outputString(SAXBuilder().build(uglyXml.reader()))
+
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
         params.toMutableList().apply {
             add("--stacktrace")
@@ -612,6 +709,8 @@ abstract class BaseGradleIT {
             options.kaptOptions?.also { kaptOptions ->
                 add("-Pkapt.verbose=${kaptOptions.verbose}")
                 add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
+                add("-Pkapt.incremental.apt=${kaptOptions.incrementalKapt}")
+                add("-Pkapt.include.compile.classpath=${kaptOptions.includeCompileClasspath}")
             }
 
             options.parallelTasksInProject?.let {

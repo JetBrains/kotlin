@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.roots.ui
@@ -8,19 +8,18 @@ package org.jetbrains.kotlin.idea.roots.ui
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.roots.ui.configuration.*
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.config.KotlinResourceRootType
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.*
 
 class KotlinContentEntriesEditor(
     moduleName: String,
     state: ModuleConfigurationState
 ) : CommonContentEntriesEditor(
-        moduleName,
-        state,
-        KotlinSourceRootType.Source,
-        KotlinSourceRootType.TestSource,
-        KotlinResourceRootType.Resource,
-        KotlinResourceRootType.TestResource
+    moduleName,
+    state,
+    SourceKotlinRootType,
+    TestSourceKotlinRootType,
+    ResourceKotlinRootType,
+    TestResourceKotlinRootType
 ) {
     private val javaEditor by lazy {
         object : JavaContentEntriesEditor(moduleName, state) {

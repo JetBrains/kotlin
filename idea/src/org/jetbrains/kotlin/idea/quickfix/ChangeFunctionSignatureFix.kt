@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 abstract class ChangeFunctionSignatureFix(
-        element: PsiElement,
-        protected val functionDescriptor: FunctionDescriptor
+    element: PsiElement,
+    protected val functionDescriptor: FunctionDescriptor
 ) : KotlinQuickFixAction<PsiElement>(element) {
     override fun getFamilyName() = FAMILY_NAME
 
@@ -71,9 +71,7 @@ abstract class ChangeFunctionSignatureFix(
     }
 
     companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, CallableDescriptor>() {
-        override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? {
-            return diagnostic.psiElement.getNonStrictParentOfType<KtCallElement>()
-        }
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? = diagnostic.psiElement.getNonStrictParentOfType()
 
         override fun extractFixData(element: KtCallElement, diagnostic: Diagnostic): CallableDescriptor? {
             return DiagnosticFactory.cast(diagnostic, Errors.TOO_MANY_ARGUMENTS, Errors.NO_VALUE_FOR_PARAMETER).a
@@ -81,15 +79,14 @@ abstract class ChangeFunctionSignatureFix(
 
         override fun createFix(originalElement: KtCallElement, data: CallableDescriptor): ChangeFunctionSignatureFix? {
             val functionDescriptor = data as? FunctionDescriptor
-                                     ?: (data as? ValueParameterDescriptor)?.containingDeclaration as? FunctionDescriptor
-                                     ?: return null
+                ?: (data as? ValueParameterDescriptor)?.containingDeclaration as? FunctionDescriptor
+                ?: return null
 
             if (functionDescriptor.kind == SYNTHESIZED) return null
 
             if (data is ValueParameterDescriptor) {
                 return RemoveParameterFix(originalElement, functionDescriptor, data)
-            }
-            else {
+            } else {
                 val parameters = functionDescriptor.valueParameters
                 val arguments = originalElement.valueArguments
 
@@ -97,8 +94,7 @@ abstract class ChangeFunctionSignatureFix(
                     val bindingContext = originalElement.analyze()
                     val call = originalElement.getCall(bindingContext) ?: return null
                     val argumentToParameter = call.mapArgumentsToParameters(functionDescriptor)
-                    val hasTypeMismatches = argumentToParameter.any {
-                        val (argument, parameter) = it
+                    val hasTypeMismatches = argumentToParameter.any { (argument, parameter) ->
                         val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
                         argumentType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
                     }
@@ -110,9 +106,9 @@ abstract class ChangeFunctionSignatureFix(
         }
 
         private class RemoveParameterFix(
-                element: PsiElement,
-                functionDescriptor: FunctionDescriptor,
-                private val parameterToRemove: ValueParameterDescriptor
+            element: PsiElement,
+            functionDescriptor: FunctionDescriptor,
+            private val parameterToRemove: ValueParameterDescriptor
         ) : ChangeFunctionSignatureFix(element, functionDescriptor) {
 
             override fun getText() = "Remove parameter '${parameterToRemove.name.asString()}'"
@@ -122,26 +118,27 @@ abstract class ChangeFunctionSignatureFix(
             }
         }
 
-        val FAMILY_NAME = "Change signature of function/constructor"
+        const val FAMILY_NAME = "Change signature of function/constructor"
 
         fun runRemoveParameter(parameterDescriptor: ValueParameterDescriptor, context: PsiElement) {
             val functionDescriptor = parameterDescriptor.containingDeclaration as FunctionDescriptor
             runChangeSignature(
-                    context.project,
-                    functionDescriptor,
-                    object : KotlinChangeSignatureConfiguration {
-                        override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
-                            return originalDescriptor.modify { descriptor ->
-                                val index = if (descriptor.receiver != null) parameterDescriptor.index + 1 else parameterDescriptor.index
-                                descriptor.removeParameter(index)
-                            }
+                context.project,
+                functionDescriptor,
+                object : KotlinChangeSignatureConfiguration {
+                    override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
+                        return originalDescriptor.modify { descriptor ->
+                            val index = if (descriptor.receiver != null) parameterDescriptor.index + 1 else parameterDescriptor.index
+                            descriptor.removeParameter(index)
                         }
+                    }
 
-                        override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
-                        override fun forcePerformForSelectedFunctionOnly() = false
-                    },
-                    context,
-                    "Remove parameter '${parameterDescriptor.name.asString()}'")
+                    override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
+                    override fun forcePerformForSelectedFunctionOnly() = false
+                },
+                context,
+                "Remove parameter '${parameterDescriptor.name.asString()}'"
+            )
         }
 
     }

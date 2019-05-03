@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.javaFacade;
@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
 import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase {
     @NotNull
     @Override

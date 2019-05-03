@@ -2,24 +2,6 @@ LineBreakpoint created at evPropertyRefExpr.kt:8
 Run Java
 Connected to the target VM
 evPropertyRefExpr.kt:8
-package evPropertyRefExpr
-
-class A {
-    var prop = 1
-
-    fun test() {
-        //Breakpoint!
-        if (prop == 1) {
-
-        }
-    }
-}
-
-fun main(args: Array<String>) {
-    A().test()
-}
-
-// PRINT_FRAME
 Compile bytecode for prop
  frame    = test:8, A {evPropertyRefExpr}
    this     = this = {evPropertyRefExpr.A@uniqueID}

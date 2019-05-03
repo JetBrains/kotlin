@@ -1,4 +1,5 @@
 apply plugin: 'kotlin'
+apply plugin: 'jps-compatible'
 
 configurations {
     testArtifacts
@@ -19,6 +20,10 @@ dependencies {
     testArtifacts project(':kotlin-stdlib-jdk7')
     testArtifacts project(':kotlin-stdlib-jdk8')
     testArtifacts project(':kotlin-reflect')
+}
+
+pill {
+    variant = 'FULL'
 }
 
 sourceSets {

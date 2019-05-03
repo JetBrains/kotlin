@@ -11,5 +11,4 @@ pluginManagement {
     }
 }
 
-include "prepare-deps:android-dx",
-        "prepare-deps:intellij-sdk"
+include "prepare-deps"

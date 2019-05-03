@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Comp
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinModuleDependencySnippet
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSupportProvider
@@ -104,6 +106,8 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
             ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
+
+        KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
     }
 
     private fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
@@ -115,7 +119,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
 }
 
 class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
-    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN", "Kotlin (Java)", KotlinIcons.SMALL_LOGO) {
+    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN", "Kotlin/JVM", KotlinIcons.SMALL_LOGO) {
 
     override fun getOldSyntaxPluginDefinition() = "plugin(\"${KotlinGradleModuleConfigurator.KOTLIN}\")"
     override fun getPluginDefinition() = "kotlin(\"jvm\")"
@@ -141,24 +145,11 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
 }
 
 class KotlinDslGradleKotlinJSFrameworkSupportProvider :
-    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)", KotlinIcons.JS) {
+    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin/JS", KotlinIcons.JS) {
 
     override fun getOldSyntaxPluginDefinition(): String = "plugin(\"${KotlinJsGradleModuleConfigurator.KOTLIN_JS}\")"
-    override fun getPluginDefinition(): String = "id(\"kotlin2js\")"
+    override fun getPluginDefinition(): String = "id(\"org.jetbrains.kotlin.js\")"
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel, version: String?) =
         "implementation(${getKotlinModuleDependencySnippet(MAVEN_JS_STDLIB_ID.removePrefix("kotlin-"), version)})"
-
-    override fun addSupport(
-        projectId: ProjectId,
-        module: Module,
-        rootModel: ModifiableRootModel,
-        modifiableModelsProvider: ModifiableModelsProvider,
-        buildScriptData: BuildScriptDataBuilder
-    ) {
-        super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
-        updateSettingsScript(module) {
-            it.addResolutionStrategy("kotlin2js")
-        }
-    }
 }

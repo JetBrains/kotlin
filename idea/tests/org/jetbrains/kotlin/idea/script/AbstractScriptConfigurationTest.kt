@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.script
@@ -181,7 +181,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
 
         if (configureConflictingModule in environment) {
-            val sharedLib = LocalFileSystem.getInstance().findFileByIoFile(environment["lib-classes"] as File)!!
+            val sharedLib = VfsUtil.findFileByIoFile(environment["lib-classes"] as File, true)!!
             if (module == null) {
                 myModule = createTestModuleByName("mainModule")
             }
@@ -222,6 +222,9 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     private fun createTestModuleByName(name: String): Module {
         val newModuleDir = runWriteAction { VfsUtil.createDirectoryIfMissing(project.baseDir, name) }
         val newModule = createModuleAt(name, project, JavaModuleType.getModuleType(), newModuleDir.path)
+
+        // Return type was changed, but it's not used. BUNCH: 183
+        @Suppress("MissingRecentApi")
         PsiTestUtil.addSourceContentToRoots(newModule, newModuleDir)
         return newModule
     }
@@ -326,7 +329,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     private fun compileLibToDir(srcDir: File, vararg classpath: String): File {
-        val outDir = KotlinTestUtils.tmpDir("${getTestName(false)}${srcDir.name}Out")
+        //TODO: tmpDir would be enough, but there is tricky fail under AS otherwise
+        val outDir = KotlinTestUtils.tmpDirForReusableFolder("${getTestName(false)}${srcDir.name}Out")
 
         val kotlinSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), srcDir)
         if (kotlinSourceFiles.isNotEmpty()) {

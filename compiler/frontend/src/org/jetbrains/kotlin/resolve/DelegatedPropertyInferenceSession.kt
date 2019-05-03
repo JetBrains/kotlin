@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve
@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.DelegatedPropertyConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
-import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaAtom
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ManyCandidatesResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSIPartialCallInfo
@@ -106,4 +103,5 @@ object InferenceSessionForExistingCandidates : InferenceSession {
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
     override fun writeOnlyStubs(): Boolean = false
+    override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
 }

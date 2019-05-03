@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.formatter;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
@@ -90,7 +91,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     }
 
     public static KotlinCodeStyleSettings getInstance(Project project) {
-        return CodeStyleSettingsManager.getSettings(project).getCustomSettings(KotlinCodeStyleSettings.class);
+        return CodeStyle.getSettings(project).getCustomSettings(KotlinCodeStyleSettings.class);
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")

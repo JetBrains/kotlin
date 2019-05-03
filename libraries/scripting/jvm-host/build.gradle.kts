@@ -1,8 +1,9 @@
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
+
+jvmTarget = "1.6"
 
 dependencies {
     compile(project(":kotlin-script-runtime"))
@@ -11,6 +12,7 @@ dependencies {
     compile(project(":kotlin-scripting-jvm"))
     compile(project(":kotlin-script-util"))
     compile(project(":kotlin-scripting-compiler"))
+    compile(project(":kotlin-scripting-compiler-impl"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep())
@@ -26,9 +28,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+publish()
+
 standardPublicJars()
 
-publish()
 
 projectTest {
     workingDir = rootDir

@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object SourceNavigationHelper {
@@ -191,8 +190,8 @@ object SourceNavigationHelper {
         index: StringStubIndexExtension<T>
     ): T? {
         val classFqName = entity.fqName ?: return null
-        return targetScopes(entity, navigationKind).firstNotNullResult {
-            index.get(classFqName.asString(), entity.project, it).firstOrNull()
+        return targetScopes(entity, navigationKind).firstNotNullResult { scope ->
+            index.get(classFqName.asString(), entity.project, scope).sortedBy { it.isExpectDeclaration() }.firstOrNull()
         }
     }
 

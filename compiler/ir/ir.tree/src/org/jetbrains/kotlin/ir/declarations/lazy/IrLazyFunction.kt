@@ -1,18 +1,22 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
@@ -59,18 +63,17 @@ class IrLazyFunction(
 
     override val typeParameters: MutableList<IrTypeParameter> by lazy {
         typeTranslator.buildWithScope(this) {
-            stubGenerator.symbolTable.enterScope(descriptor)
-            val propertyIfAccessor = descriptor.propertyIfAccessor
-            propertyIfAccessor.typeParameters.mapTo(arrayListOf()) {
-                if (descriptor != propertyIfAccessor) {
-                    stubGenerator.generateOrGetScopedTypeParameterStub(it).also {
-                        it.parent = this@IrLazyFunction
+            stubGenerator.symbolTable.withScope(descriptor) {
+                val propertyIfAccessor = descriptor.propertyIfAccessor
+                propertyIfAccessor.typeParameters.mapTo(arrayListOf()) {
+                    if (descriptor != propertyIfAccessor) {
+                        stubGenerator.generateOrGetScopedTypeParameterStub(it).also {
+                            it.parent = this@IrLazyFunction
+                        }
+                    } else {
+                        stubGenerator.generateOrGetTypeParameterStub(it)
                     }
-                } else {
-                    stubGenerator.generateOrGetTypeParameterStub(it)
                 }
-            }.also {
-                stubGenerator.symbolTable.leaveScope(descriptor)
             }
         }
     }
@@ -82,7 +85,14 @@ class IrLazyFunction(
         }
     }
 
-    override var correspondingProperty: IrProperty? = null
+    @Suppress("OverridingDeprecatedMember")
+    override var correspondingProperty: IrProperty?
+        get() = correspondingPropertySymbol?.owner
+        set(value) {
+            correspondingPropertySymbol = value?.symbol
+        }
+
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     init {
         symbol.bind(this)

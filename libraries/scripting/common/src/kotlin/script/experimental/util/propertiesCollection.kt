@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.script.experimental.util
@@ -47,6 +47,11 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
         properties.containsKey(key)
 
     fun entries(): Set<Map.Entry<Key<*>, Any?>> = properties.entries
+
+    override fun equals(other: Any?): Boolean =
+        (other as? PropertiesCollection)?.let { it.properties == properties } == true
+
+    override fun hashCode(): Int = properties.hashCode()
 
     companion object {
         fun <T> key(defaultValue: T? = null) = PropertyKeyDelegate(defaultValue)

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.introduce
@@ -435,7 +435,7 @@ fun doExtractFunction(fixture: CodeInsightTestFixture, file: KtFile) {
                     val allParameters = listOfNotNull(descriptor.receiverParameter) + descriptor.parameters
                     val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
                     val actualTypes = allParameters.map {
-                        it.getParameterTypeCandidates(false).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
+                        it.getParameterTypeCandidates().map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                     }.joinToString()
 
                     if (actualNames.size != 1 || expectedNames.isNotEmpty()) {

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.config.apiVersionView
 import org.jetbrains.kotlin.config.languageVersionView
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.framework.JavaFrameworkSupportProvider
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinFrameworkSupportProviderTest : FrameworkSupportProviderTestCase() {
     private fun doTest(provider: FrameworkSupportInModuleProvider) {
         selectFramework(provider).createLibraryDescription()

@@ -233,13 +233,13 @@ fun <C : Candidate> createSimpleFunctionProcessor(
 ) = createSimpleProcessor(scopeTower, context, explicitReceiver, classValueReceiver) { getFunctions(name, it) }
 
 
-fun <С : Candidate> createFunctionProcessor(
+fun <C : Candidate> createFunctionProcessor(
     scopeTower: ImplicitScopeTower,
     name: Name,
-    simpleContext: CandidateFactory<С>,
-    factoryProviderForInvoke: CandidateFactoryProviderForInvoke<С>,
+    simpleContext: CandidateFactory<C>,
+    factoryProviderForInvoke: CandidateFactoryProviderForInvoke<C>,
     explicitReceiver: DetailedReceiver?
-): PrioritizedCompositeScopeTowerProcessor<С> {
+): PrioritizedCompositeScopeTowerProcessor<C> {
 
     // a.foo() -- simple function call
     val simpleFunction = createSimpleFunctionProcessor(scopeTower, name, simpleContext, explicitReceiver)

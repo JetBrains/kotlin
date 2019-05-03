@@ -1,21 +1,11 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Type
@@ -39,6 +29,10 @@ class VariableLivenessFrame(val maxLocals: Int) : VarFrame<VariableLivenessFrame
         bitSet.set(varIndex, true)
     }
 
+    fun markAllAlive(bitSet: BitSet) {
+        this.bitSet.or(bitSet)
+    }
+
     fun markDead(varIndex: Int) {
         bitSet.set(varIndex, false)
     }
@@ -55,13 +49,29 @@ class VariableLivenessFrame(val maxLocals: Int) : VarFrame<VariableLivenessFrame
 
 fun analyzeLiveness(node: MethodNode): List<VariableLivenessFrame> {
     val typeAnnotatedFrames = MethodTransformer.analyze("fake", node, OptimizationBasicInterpreter())
+    val visibleByDebuggerVariables = analyzeVisibleByDebuggerVariables(node, typeAnnotatedFrames)
     return analyze(node, object : BackwardAnalysisInterpreter<VariableLivenessFrame> {
         override fun newFrame(maxLocals: Int) = VariableLivenessFrame(maxLocals)
         override fun def(frame: VariableLivenessFrame, insn: AbstractInsnNode) = defVar(frame, insn)
         override fun use(frame: VariableLivenessFrame, insn: AbstractInsnNode) =
-            useVar(frame, insn, node, typeAnnotatedFrames[node.instructions.indexOf(insn)])
-
+            useVar(frame, insn, node, visibleByDebuggerVariables[node.instructions.indexOf(insn)])
     })
+}
+
+private fun analyzeVisibleByDebuggerVariables(
+    node: MethodNode,
+    typeAnnotatedFrames: Array<Frame<BasicValue>?>
+): Array<BitSet> {
+    val res = Array(node.instructions.size()) { BitSet(node.maxLocals) }
+    for (local in node.localVariables) {
+        if (local.name.isInvisibleDebuggerVariable()) continue
+        for (index in node.instructions.indexOf(local.start) until node.instructions.indexOf(local.end)) {
+            if (Type.getType(local.desc).sort == typeAnnotatedFrames[index]?.getLocal(local.index)?.type?.sort) {
+                res[index].set(local.index)
+            }
+        }
+    }
+    return res
 }
 
 private fun defVar(frame: VariableLivenessFrame, insn: AbstractInsnNode) {
@@ -74,18 +84,9 @@ private fun useVar(
     frame: VariableLivenessFrame,
     insn: AbstractInsnNode,
     node: MethodNode,
-    // May be null in case of dead code
-    typeAnnotatedFrame: Frame<BasicValue>?
+    visibleByDebuggerVariables: BitSet
 ) {
-    val index = node.instructions.indexOf(insn)
-    node.localVariables.filter {
-        // Inliner fake variables, despite being present in LVT, are not read, thus are always dead
-        !it.name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) && !it.name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) &&
-                node.instructions.indexOf(it.start) < index && index < node.instructions.indexOf(it.end) &&
-                Type.getType(it.desc).sort == typeAnnotatedFrame?.getLocal(it.index)?.type?.sort
-    }.forEach {
-        frame.markAlive(it.index)
-    }
+    frame.markAllAlive(visibleByDebuggerVariables)
 
     if (insn is VarInsnNode && insn.isLoadOperation()) {
         frame.markAlive(insn.`var`)
@@ -93,3 +94,8 @@ private fun useVar(
         frame.markAlive(insn.`var`)
     }
 }
+
+private fun String.isInvisibleDebuggerVariable(): Boolean =
+    startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) ||
+            startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) ||
+            this == SUSPEND_FUNCTION_CONTINUATION_PARAMETER

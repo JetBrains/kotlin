@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
@@ -18,9 +19,29 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
     override fun CompiledProject.checkOutput() {
         assertFileExists("web/js/out.js")
     }
+
+    override fun CompiledProject.checkOutputAfterChange() {
+        assertFileExists("web/js/out.js")
+    }
 }
 
-open class ExecutionStrategyIT : BaseGradleIT() {
+class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
+    override fun CompiledProject.checkOutput() {
+        val classesDir = kotlinClassesDir(subproject = "app") + "foo/"
+        assertFileExists("${classesDir}MainKt.class")
+        assertFileExists("${classesDir}A.class")
+        assertFileExists("${classesDir}B.class")
+    }
+
+    override fun CompiledProject.checkOutputAfterChange() {
+        val classesDir = kotlinClassesDir(subproject = "app") + "foo/"
+        assertFileExists("${classesDir}MainKt.class")
+        assertFileExists("${classesDir}A.class")
+        assertNoSuchFile("${classesDir}B.class")
+    }
+}
+
+abstract class ExecutionStrategyIT : BaseGradleIT() {
     @Test
     fun testDaemon() {
         doTestExecutionStrategy("daemon")
@@ -50,12 +71,15 @@ open class ExecutionStrategyIT : BaseGradleIT() {
             assertNoWarnings()
         }
 
-        val fKt = project.projectDir.getFileByName("f.kt")
-        fKt.delete()
+        val classesKt = project.projectDir.getFileByName("classes.kt")
+        classesKt.modify {
+            it.checkedReplace("class B", "//class B")
+        }
         project.build("build", strategyCLIArg) {
-            assertFailed()
+            assertSuccessful()
             assertContains(finishMessage)
-            assert(output.contains("Unresolved reference: f", ignoreCase = true))
+            checkOutputAfterChange()
+            assertNoWarnings()
         }
     }
 
@@ -66,7 +90,6 @@ open class ExecutionStrategyIT : BaseGradleIT() {
         )
     }
 
-    protected open fun CompiledProject.checkOutput() {
-        assertFileExists(kotlinClassesDir(subproject = "app") + "foo/MainKt.class")
-    }
+    protected abstract fun CompiledProject.checkOutput()
+    protected abstract fun CompiledProject.checkOutputAfterChange()
 }

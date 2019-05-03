@@ -29,7 +29,6 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SequentialModalProgressTask
 import com.intellij.util.SequentialTask
 import org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
@@ -94,7 +93,7 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
         val unusedImports = LinkedHashSet<SmartPsiElementPointer<KtImportDirective>>()
         val findRedundantImports = {
             DumbService.getInstance(project).runReadActionInSmartMode {
-                val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable
+                val progressIndicator = ProgressManager.getInstance().progressIndicator
                 val fileCount = operationData.size
                 for ((i, file) in operationData.withIndex()) {
                     if (!file.isValid) continue

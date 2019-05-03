@@ -51,8 +51,7 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
             val container = element.unsafeResolveToDescriptor().containingDeclaration as? ClassDescriptor
             val containerName = container?.name?.takeUnless { it.isSpecial }?.asString()
             if (containerName != null) "'$containerName.$name'" else "'$name'"
-        }
-        else {
+        } else {
             null
         }
     }
@@ -63,8 +62,7 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
         val variablePresentation = variablePresentation()
         return if (variablePresentation != null) {
             "Change type of $variablePresentation to '$typePresentation'"
-        }
-        else {
+        } else {
             "Change type to '$typePresentation'"
         }
     }
@@ -80,11 +78,9 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
         }
     }
 
-    override fun getFamilyName()
-            = KotlinBundle.message("change.type.family")
+    override fun getFamilyName() = KotlinBundle.message("change.type.family")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: KtFile)
-            = !typeContainsError
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = !typeContainsError
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
@@ -141,25 +137,29 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
                     if (overriddenPropertyType != null) {
                         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
                             overriddenMismatchingProperties.add(overriddenProperty)
-                        }
-                        else if (overriddenProperty.isVar && !KotlinTypeChecker.DEFAULT.equalTypes(overriddenPropertyType, propertyType)) {
+                        } else if (overriddenProperty.isVar && !KotlinTypeChecker.DEFAULT.equalTypes(
+                                overriddenPropertyType,
+                                propertyType
+                            )
+                        ) {
                             canChangeOverriddenPropertyType = false
                         }
                         if (overriddenProperty.isVar && lowerBoundOfOverriddenPropertiesTypes != null &&
-                            !KotlinTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)) {
+                            !KotlinTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)
+                        ) {
                             lowerBoundOfOverriddenPropertiesTypes = null
                         }
                     }
                 }
 
                 if (lowerBoundOfOverriddenPropertiesTypes != null) {
-                    actions.add(ChangeVariableTypeFix.OnType(property, lowerBoundOfOverriddenPropertiesTypes))
+                    actions.add(OnType(property, lowerBoundOfOverriddenPropertiesTypes))
                 }
 
                 if (overriddenMismatchingProperties.size == 1 && canChangeOverriddenPropertyType) {
                     val overriddenProperty = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingProperties.single())
                     if (overriddenProperty is KtProperty) {
-                        actions.add(ChangeVariableTypeFix.ForOverridden(overriddenProperty, propertyType))
+                        actions.add(ForOverridden(overriddenProperty, propertyType))
                     }
                 }
             }

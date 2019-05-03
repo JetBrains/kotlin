@@ -1,0 +1,70 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+.dark .toggle-theme {
+    background-color: #dfdfdf;
+}
+
+.white .return-label {
+    background-color: lightgray;
+}
+
+.white .label {
+    color: dodgerblue;
+    background-color: lightgray;
+}
+
+.white .expression-type {
+    background-color: lightgray;
+}
+
+.white .keyword {
+    color: #8ba558;
+}
+
+.white a.ref.selected {
+    background-color: rgba(77, 255, 27, 0.44);
+}
+
+.white .unresolved {
+    text-decoration-color: blue;
+}
+
+.white .error {
+    text-decoration-color: red;
+}
+
+.white .error.unsupported {
+    text-decoration-color: cyan;
+}
+
+.white a.ref.external {
+    color: black;
+}
+
+.white a.container-ref,
+.white a.ref,
+.white a.ref:visited,
+.white a.package-fqn,
+.white a.package-fqn:visited {
+    color: rgb(0, 0, 238);
+}
+
+.white :target {
+    background-color: yellow;
+}
+
+.white .string-literal {
+    color: #98b884;
+}
+
+.white .declaration .simple-name {
+    font-weight: bold;
+}
+
+.white .line {
+    background-color: lightgray;
+    border-right: thin solid darkgray;
+}

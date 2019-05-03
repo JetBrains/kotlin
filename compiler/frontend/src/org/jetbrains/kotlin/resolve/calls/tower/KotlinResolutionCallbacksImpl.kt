@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.tower
@@ -11,16 +11,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnderKotlinPackage
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.psiUtil.getBinaryWithTypeParent
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -154,7 +155,7 @@ class KotlinResolutionCallbacksImpl(
             .replaceBindingTrace(trace)
             .replaceContextDependency(lambdaInfo.contextDependency)
             .replaceExpectedType(approximatesExpectedType)
-            .replaceDataFlowInfo(psiCallArgument.lambdaInitialDataFlowInfo).let {
+            .replaceDataFlowInfo(psiCallArgument.dataFlowInfoBeforeThisArgument).let {
                 if (coroutineSession != null) it.replaceInferenceSession(coroutineSession) else it
             }
 
@@ -204,7 +205,9 @@ class KotlinResolutionCallbacksImpl(
     }
 
     override fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom) {
-        kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(candidate, trace, emptyList())
+        kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(
+            candidate, trace, emptyList(), substitutor = null
+        )
     }
 
     override fun createReceiverWithSmartCastInfo(resolvedAtom: ResolvedCallAtom): ReceiverValueWithSmartCastInfo? {
@@ -243,5 +246,22 @@ class KotlinResolutionCallbacksImpl(
     private fun findCommonParent(callElement: KtExpression, receiver: ReceiverKotlinCallArgument?): KtExpression {
         if (receiver == null) return callElement
         return PsiTreeUtil.findCommonParent(callElement, receiver.psiExpression)?.safeAs() ?: callElement
+    }
+
+    override fun getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedAtom: ResolvedCallAtom): UnwrappedType? {
+        val candidateDescriptor = resolvedAtom.candidateDescriptor as? FunctionDescriptor ?: return null
+        val call = resolvedAtom.atom.safeAs<PSIKotlinCall>()?.psiCall ?: return null
+
+        if (call.typeArgumentList != null || !candidateDescriptor.isFunctionForExpectTypeFromCastFeature()) return null
+        val binaryParent = call.calleeExpression?.getBinaryWithTypeParent() ?: return null
+        val operationType = binaryParent.operationReference.getReferencedNameElementType().takeIf {
+            it == KtTokens.AS_KEYWORD || it == KtTokens.AS_SAFE
+        } ?: return null
+
+        val leftType = trace.get(BindingContext.TYPE, binaryParent.right ?: return null) ?: return null
+        val expectedType = if (operationType == KtTokens.AS_SAFE) leftType.makeNullable() else leftType
+        val resultType = expectedType.unwrap()
+        trace.record(BindingContext.CAST_TYPE_USED_AS_EXPECTED_TYPE, binaryParent)
+        return resultType
     }
 }

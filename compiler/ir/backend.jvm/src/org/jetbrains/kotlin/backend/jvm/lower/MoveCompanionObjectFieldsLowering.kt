@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
@@ -101,6 +98,7 @@ private class MoveCompanionObjectFieldsLowering(val context: CommonBackendContex
         val newField = createStaticBackingField(oldField, propertyParent, fieldParent)
 
         irProperty.backingField = newField
+        newField.correspondingPropertySymbol = irProperty.symbol
 
         fieldReplacementMap[oldField.symbol] = newField.symbol
 
@@ -187,11 +185,9 @@ private class MoveCompanionObjectFieldsLowering(val context: CommonBackendContex
         }
         val oldInitializer = oldField.initializer
         if (oldInitializer != null) {
-            field.initializer = oldInitializer.replaceThisByStaticReference(
-                context,
-                propertyParent,
-                propertyParent.thisReceiver!!
-            ) as IrExpressionBody
+            field.initializer = oldInitializer
+                .replaceThisByStaticReference(context, propertyParent, propertyParent.thisReceiver!!)
+                .patchDeclarationParents(field) as IrExpressionBody
         }
 
         return field
@@ -216,10 +212,10 @@ private class FieldReplacer(val replacementMap: Map<IrFieldSymbol, IrFieldSymbol
         } ?: super.visitGetField(expression)
 
     override fun visitSetField(expression: IrSetField): IrExpression =
-        replacementMap[expression.symbol]?.let { newSymbol ->
+        replacementMap[expression.symbol]?.let { _ ->
             IrSetFieldImpl(
                 expression.startOffset, expression.endOffset,
-                replacementMap[expression.symbol]!!,
+                replacementMap.getValue(expression.symbol),
                 /* receiver = */ null,
                 visitExpression(expression.value),
                 expression.type,

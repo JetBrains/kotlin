@@ -1,11 +1,5 @@
 // !DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
 
-// FILE: a.kt
-<!JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_MULTIFILE_CLASSES!>@file:JvmPackageName("a")<!>
-@file:JvmMultifileClass
-package a
-fun a() {}
-
 // FILE: b.kt
 <!JVM_PACKAGE_NAME_CANNOT_BE_EMPTY!>@file:JvmPackageName("")<!>
 package b

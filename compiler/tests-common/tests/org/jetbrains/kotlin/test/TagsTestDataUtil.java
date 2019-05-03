@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -25,6 +24,7 @@ import com.intellij.openapi.editor.Editor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TagsTestDataUtil {
     public static String insertInfoTags(List<LineMarkerInfo> lineMarkers, boolean withDescription, String text) {
@@ -61,7 +61,9 @@ public class TagsTestDataUtil {
     public static String insertTagsInText(List<? extends TagInfo> tags, String text) {
         StringBuilder builder = new StringBuilder(text);
 
-        List<? extends TagInfo> sortedTagPoints = Ordering.natural().reverse().sortedCopy(tags);
+        // Need to sort tags for inserting them in reverse order to have valid offsets for yet not inserted tags.
+        // Can't just sort in reverse order but do sort plus reverse instead to preserve final order for tags with the same offset.
+        List<? extends TagInfo> sortedTagPoints = Lists.reverse(tags.stream().sorted().collect(Collectors.toList()));
 
         // Insert tags into text starting from the end for preventing invalidating previous tags offsets
         for (TagInfo point : sortedTagPoints) {

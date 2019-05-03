@@ -123,7 +123,7 @@ fun moveFilesOrDirectories(
         return
     }
 
-    with(KotlinAwareMoveFilesOrDirectoriesDialog(project, ::doRun)) {
+    with(KotlinAwareMoveFilesOrDirectoriesDialog(project, initialTargetDirectory, ::doRun)) {
         setData(elements, initialTargetDirectory, "refactoring.moveFile")
         show()
     }

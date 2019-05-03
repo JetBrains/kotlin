@@ -18,40 +18,39 @@ package org.jetbrains.kotlin.idea.debugger.evaluate.classLoading
 
 import com.intellij.debugger.engine.JVMNameUtil
 import com.intellij.debugger.engine.evaluation.EvaluateException
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.sun.jdi.*
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.isDexDebug
 
 class AndroidOClassLoadingAdapter : AbstractAndroidClassLoadingAdapter() {
-    override fun isApplicable(context: EvaluationContextImpl, info: ClassLoadingAdapter.Companion.ClassInfoForEvaluator) = with(info) {
+    override fun isApplicable(context: ExecutionContext, info: ClassLoadingAdapter.Companion.ClassInfoForEvaluator) = with(info) {
         isCompilingEvaluatorPreferred && context.debugProcess.isDexDebug()
     }
 
-    private fun resolveClassLoaderClass(context: EvaluationContextImpl): ClassType? {
-        try {
-            return context.debugProcess.tryLoadClass(
-                    context, "dalvik.system.InMemoryDexClassLoader", context.classLoader) as? ClassType
+    private fun resolveClassLoaderClass(context: ExecutionContext): ClassType? {
+        return try {
+            val classLoader = context.classLoader
+            tryLoadClass(context, "dalvik.system.InMemoryDexClassLoader", classLoader) as? ClassType
         } catch (e: EvaluateException) {
-            return null
+            null
         }
     }
 
-    override fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference {
-        val process = context.debugProcess
+    override fun loadClasses(context: ExecutionContext, classes: Collection<ClassToLoad>): ClassLoaderReference {
         val inMemoryClassLoaderClass = resolveClassLoaderClass(context) ?: error("InMemoryDexClassLoader class not found")
         val constructorMethod = inMemoryClassLoaderClass.concreteMethodByName(
-                JVMNameUtil.CONSTRUCTOR_NAME, "(Ljava/nio/ByteBuffer;Ljava/lang/ClassLoader;)V") ?: error("Constructor method not found")
+            JVMNameUtil.CONSTRUCTOR_NAME, "(Ljava/nio/ByteBuffer;Ljava/lang/ClassLoader;)V"
+        ) ?: error("Constructor method not found")
 
         val dexBytes = dex(context, classes) ?: error("Can't dex classes")
-        val dexBytesMirror = mirrorOfByteArray(dexBytes, context, process)
-        val dexByteBuffer = wrapToByteBuffer(dexBytesMirror, context, process)
+        val dexBytesMirror = mirrorOfByteArray(dexBytes, context)
+        val dexByteBuffer = wrapToByteBuffer(dexBytesMirror, context)
 
-        val newClassLoader = process.newInstance(context, inMemoryClassLoaderClass, constructorMethod,
-                                                 listOf(dexByteBuffer, context.classLoader))
+        val classLoader = context.classLoader
+        val args = listOf(dexByteBuffer, classLoader)
+        val newClassLoader = context.newInstance(inMemoryClassLoaderClass, constructorMethod, args) as ClassLoaderReference
+        context.keepReference(newClassLoader)
 
-        DebuggerUtilsEx.keep(newClassLoader, context)
-
-        return newClassLoader as ClassLoaderReference
+        return newClassLoader
     }
 }

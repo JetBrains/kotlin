@@ -4,6 +4,8 @@
 // ACTION: Add parameter to function 'foo'
 // ACTION: Create extension function 'X.foo'
 // ACTION: Create member function 'X.foo'
+// ACTION: Convert to run
+// ACTION: Convert to with
 
 package main
 

@@ -1,21 +1,26 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.repl
 
 import com.intellij.execution.console.LanguageConsoleImpl
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
+import org.jetbrains.kotlin.idea.run.createLibraryWithLongPaths
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Test
+import org.junit.runner.RunWith
 import kotlin.reflect.KMutableProperty0
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class IdeReplExecutionTest : PlatformTestCase() {
     private lateinit var consoleRunner: KotlinConsoleRunner
     private var commandsSent = 0
@@ -80,6 +85,16 @@ class IdeReplExecutionTest : PlatformTestCase() {
         assertFalse(hasErrors(output), "Cannot run kotlin repl")
         assertTrue(allOk(output), "Successful run should contain text: ':help for help'")
         assertFalse(consoleRunner.processHandler.isProcessTerminated, "Process accidentally terminated")
+    }
+
+    @Test
+    fun testLongCommandLine() {
+        ModuleRootModificationUtil.addDependency(module, createLibraryWithLongPaths(project))
+
+        consoleRunner.dispose()
+        consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
+
+        testRunPossibility()
     }
 
     @Test fun testOnePlusOne() = testSimpleCommand("1 + 1", "2")

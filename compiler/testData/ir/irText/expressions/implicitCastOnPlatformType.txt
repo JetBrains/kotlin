@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/implicitCastOnPlatformType.kt
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String flags:
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(): String'
-        CALL 'getProperty(String!): String!' type=kotlin.String? origin=null
+      RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String declared in <root>'
+        CALL 'public open fun getProperty (key: kotlin.String?): kotlin.String? declared in java.lang.System' type=kotlin.String? origin=null
           key: CONST String type=kotlin.String value="test"

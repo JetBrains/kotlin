@@ -30,4 +30,7 @@ object KotlinSpecialExpressionKinds {
 
     @JvmField
     val ELVIS = UastSpecialExpressionKind("elvis")
+
+    @JvmField
+    val SUPER_DELEGATION = UastSpecialExpressionKind("super_delegation")
 }

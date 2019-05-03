@@ -1430,10 +1430,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (rightType != null) {
                 if (TypeIntersector.isIntersectionEmpty(leftType, rightType)) {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
+                } else {
+                    EnumCompatibilityCheckerKt.checkEnumsForCompatibility(context, expression, leftType, rightType);
                 }
-                else if (TypeIntersector.isIncompatibleEnums(leftType, rightType)) {
-                    context.trace.report(INCOMPATIBLE_ENUM_COMPARISON.on(expression, leftType, rightType));
-                }
+
 
                 SenselessComparisonChecker.checkSenselessComparisonWithNull(
                         expression, left, right, context,

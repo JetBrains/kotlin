@@ -11,9 +11,9 @@ fun test() {
     takeNotNull(nullable()!!)
 
     var x: String? = null
-    takeNotNull(dependOn(x)<!NI;UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-    takeNotNull(dependOn(dependOn(x))<!NI;UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-    takeNotNull(dependOn(dependOn(x)<!NI;UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>))
+    takeNotNull(dependOn(x)!!)
+    takeNotNull(dependOn(dependOn(x))!!)
+    takeNotNull(dependOn(dependOn(x)!!))
     takeNotNull(dependOn(dependOn(x!!)))
 
     if (x != null) {

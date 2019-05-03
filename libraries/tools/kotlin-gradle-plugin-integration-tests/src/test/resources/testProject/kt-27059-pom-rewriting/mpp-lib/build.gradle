@@ -1,0 +1,42 @@
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "maven-publish"
+}
+
+group = "com.example"
+version = "1.0"
+
+kotlin {
+    jvm()
+    js()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+            }
+        }
+    }
+}
+
+publishing {
+    publications {
+        jvm {
+            artifactId = "mpp-lib-myjvm"
+        }
+    }
+
+    repositories {
+        maven { setUrl("${rootProject.buildDir}/repo") }
+    }
+}

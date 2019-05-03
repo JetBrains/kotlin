@@ -2,7 +2,7 @@
 // ACTION: Create test
 // ACTION: Make primary constructor internal
 // ACTION: Make primary constructor private
-// ACTION: Move 'C' to separate file
+// ACTION: Extract 'C' from current file
 // ACTION: Rename file to C.kt
 
 interface A {

@@ -72,15 +72,10 @@ if (Ide.IJ()) {
 
 testsJar()
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
 
-
 if (Ide.IJ()) {
-    runtimeJar {
-        archiveName = "maven-ide.jar"
-    }
-
-    ideaPlugin()
+    runtimeJar()
 }

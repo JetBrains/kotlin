@@ -34,7 +34,10 @@ import kotlin.properties.Delegates
 
 class LocalCompletionBenchmarkAction : AbstractCompletionBenchmarkAction() {
 
-    override fun createBenchmarkScenario(project: Project, benchmarkSink: CompletionBenchmarkSink.Impl): AbstractCompletionBenchmarkScenario? {
+    override fun createBenchmarkScenario(
+        project: Project,
+        benchmarkSink: CompletionBenchmarkSink.Impl
+    ): AbstractCompletionBenchmarkScenario? {
 
         val settings = showSettingsDialog() ?: return null
 
@@ -84,27 +87,28 @@ class LocalCompletionBenchmarkAction : AbstractCompletionBenchmarkAction() {
         dialogBuilder.centerPanel(jPanel)
         if (!dialogBuilder.showAndGet()) return null
 
-        return Settings(cSeed.text.toLong(),
-                        cLines.text.toInt(),
-                        cFiles.text.toInt(),
-                        cFunctions.text.toInt())
+        return Settings(
+            cSeed.text.toLong(),
+            cLines.text.toInt(),
+            cFiles.text.toInt(),
+            cFunctions.text.toInt()
+        )
     }
 
 }
 
 internal class LocalCompletionBenchmarkScenario(
-        val files: List<KtFile>,
-        val settings: LocalCompletionBenchmarkAction.Settings,
-        project: Project, benchmarkSink: CompletionBenchmarkSink.Impl,
-        random: Random) : AbstractCompletionBenchmarkScenario(project, benchmarkSink, random) {
-    suspend override fun doBenchmark() {
-
+    val files: List<KtFile>,
+    val settings: LocalCompletionBenchmarkAction.Settings,
+    project: Project, benchmarkSink: CompletionBenchmarkSink.Impl,
+    random: Random
+) : AbstractCompletionBenchmarkScenario(project, benchmarkSink, random) {
+    override suspend fun doBenchmark() {
         val allResults = mutableListOf<Result>()
         files.forEach { file ->
             val functions = file.collectDescendantsOfType<KtFunction> { it.hasBlockBody() && it.bodyExpression != null }.toMutableList()
             val randomFunctions = generateSequence { functions.randomElement(random).also { functions.remove(it) } }
-            randomFunctions.take(settings.functions).forEach {
-                function ->
+            randomFunctions.take(settings.functions).forEach { function ->
                 val offset = function.bodyExpression!!.endOffset - 1
                 allResults += typeAtOffsetAndGetResult("listOf(1).", offset, file)
             }

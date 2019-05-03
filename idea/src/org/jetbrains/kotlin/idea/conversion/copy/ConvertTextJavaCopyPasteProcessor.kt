@@ -36,7 +36,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
-import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -109,7 +109,8 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         val additionalImports = dataForConversion.tryResolveImports(targetFile)
         var convertedImportsText = additionalImports.convertCodeToKotlin(project).text
 
-        val convertedText = dataForConversion.convertCodeToKotlin(project).text
+        val convertedResult = dataForConversion.convertCodeToKotlin(project)
+        val convertedText = convertedResult.text
 
         val newBounds = runWriteAction {
 
@@ -129,7 +130,12 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         }
 
         psiDocumentManager.commitAllDocuments()
-        AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
+        AfterConversionPass(project, JavaToKotlinConverterFactory.createPostProcessor(formatCode = true))
+            .run(
+                targetFile,
+                convertedResult.converterContext,
+                newBounds
+            )
 
         conversionPerformed = true
     }
@@ -281,6 +287,6 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }
 
     companion object {
-        @TestOnly var conversionPerformed: Boolean = false
+        @get:TestOnly var conversionPerformed: Boolean = false
     }
 }

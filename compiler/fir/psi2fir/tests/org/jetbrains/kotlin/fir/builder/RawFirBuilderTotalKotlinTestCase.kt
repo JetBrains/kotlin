@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.builder
@@ -232,7 +232,6 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         it is KtValueArgumentList || it is KtParameterList || it is KtTypeParameterList || it is KtTypeArgumentList ||
                         it is KtTypeReference && it.parent.parent.parent is KtCallExpression ||
                         it is KtSuperTypeList || it is KtSuperTypeListEntry ||
-                        // TODO: may be we should look at argument after KT-24081
                         it is KtValueArgument || it is KtLambdaArgument || it is KtValueArgumentName ||
                         it is KtContainerNodeForControlStructureBody || it is KtContainerNode ||
                         it is KtStringTemplateEntry ||
@@ -252,6 +251,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         it is KtLambdaExpression ||
                         it is KtTypeConstraintList ||
                         it is KtTypeConstraint ||
+                        it is KtStringTemplateExpression && it.entries.size <= 1 ||
                         it is KtDestructuringDeclaration && it.parent is KtParameter ||
                         it is KtArrayAccessExpression && it.parent is KtBinaryExpression ||
                         it is KtNameReferenceExpression &&

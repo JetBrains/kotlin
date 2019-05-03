@@ -1,4 +1,8 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.sequence
 
 import com.intellij.debugger.streams.trace.dsl.*
@@ -68,7 +72,7 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
             declare(keys2TimesBefore.defaultDeclaration())
             declare(transitions.defaultDeclaration())
 
-            integerIteration(keys.size(), block@ this) {
+            integerIteration(keys.size(), this) {
                 val key = declare(variable(KotlinSequenceTypes.NULLABLE_ANY, "key"), keys.get(loopVariable), false)
                 val lst = list(dsl.types.INT, "lst")
                 declare(lst, keys2TimesBefore.computeIfAbsent(key, lambda("k") {
@@ -81,7 +85,7 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
                 val afterTime = loopVariable
                 val valueAfter = declare(variable(call.typeAfter, "valueAfter"), time2ValueAfter.get(loopVariable), false)
                 val key = declare(variable(KotlinSequenceTypes.NULLABLE_ANY, "key"), nullExpression, true)
-                integerIteration(beforeTimes.size(), forEachLoop@ this) {
+                integerIteration(beforeTimes.size(), this) {
                     ifBranch((valueAfter same beforeValues.get(loopVariable)) and !transitions.contains(beforeTimes.get(loopVariable))) {
                         key assign keys.get(loopVariable)
                         statement { breakIteration() }

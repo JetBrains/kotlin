@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
@@ -192,22 +192,21 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
     private val oldCtorToNewMap = context.secondaryConstructorToFactoryCache
     private val defaultThrowableConstructor = context.defaultThrowableCtor
 
-    private val IrFunction.isSecondaryConstructorCall
+    private val IrConstructor.isSecondaryConstructorCall
         get() =
-            this is IrConstructor && !isPrimary && this != defaultThrowableConstructor && !isExternal && !parentAsClass.isInline
+            !isPrimary && this != defaultThrowableConstructor && !isExternal && !parentAsClass.isInline
 
     override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement = super.visitFunction(declaration, declaration)
 
-    override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-        super.visitCall(expression, data)
+    override fun visitConstructorCall(expression: IrConstructorCall, data: IrFunction?): IrElement {
+        super.visitConstructorCall(expression, data)
 
         val target = expression.symbol.owner
         return if (target.isSecondaryConstructorCall) {
-            val constructor = target as IrConstructor
-            val ctor = oldCtorToNewMap.getOrPut(constructor) {
-                buildConstructorStubDeclarations(constructor, constructor.parentAsClass)
+            val ctor = oldCtorToNewMap.getOrPut(target) {
+                buildConstructorStubDeclarations(target, target.parentAsClass)
             }
-            replaceSecondaryConstructorWithFactoryFunction(expression, ctor.stub.symbol, data)
+            replaceSecondaryConstructorWithFactoryFunction(expression, ctor.stub.symbol)
         } else expression
     }
 
@@ -219,7 +218,7 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
         return if (target.isSecondaryConstructorCall) {
             val klass = target.parentAsClass
             val ctor = oldCtorToNewMap.getOrPut(target) { buildConstructorStubDeclarations(target, klass) }
-            val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, ctor.delegate.symbol, data)
+            val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, ctor.delegate.symbol)
 
             val readThis = expression.run {
                 if (data!! is IrConstructor) {
@@ -235,22 +234,10 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
 
     private fun replaceSecondaryConstructorWithFactoryFunction(
         call: IrFunctionAccessExpression,
-        newTarget: IrSimpleFunctionSymbol,
-        enclosing: IrFunction?
-    ) = IrCallImpl(call.startOffset, call.endOffset, call.type, newTarget).apply {
+        newTarget: IrSimpleFunctionSymbol
+    ) = IrCallImpl(call.startOffset, call.endOffset, call.type, newTarget, newTarget.descriptor, call.typeArgumentsCount).apply {
 
-        // There are 3 possible cases how Type Parameters should be passed
-        if (call is IrCall) {
-            // if it was just a normal constructor cal via `IrCall` just copy arguments as is
-            copyTypeArgumentsFrom(call)
-        } else {
-            // if it is `IrDelegatingConstructorCall` figure out from constructor is called and extract parameters from here
-            // Since `IrConstructor` doesn't have TypeParameters we take them from its class
-            val typeParameters = enclosing?.let { if (it is IrConstructor) it.parentAsClass.typeParameters else it.typeParameters }!!
-            for (i in 0 until typeParameters.size) {
-                putTypeArgument(i, typeParameters[i].toIrType())
-            }
-        }
+        copyTypeArgumentsFrom(call)
 
         for (i in 0 until call.valueArgumentsCount) {
             putValueArgument(i, call.getValueArgument(i))

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -68,7 +69,7 @@ class LazyJavaClassMemberScope(
     private val jClass: JavaClass
 ) : LazyJavaScope(c) {
 
-    override fun computeMemberIndex() = ClassDeclaredMemberIndex(jClass, { !it.isStatic })
+    override fun computeMemberIndex() = ClassDeclaredMemberIndex(jClass) { !it.isStatic }
 
     override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
         ownerDescriptor.typeConstructor.supertypes.flatMapTo(hashSetOf()) {
@@ -170,7 +171,7 @@ class LazyJavaClassMemberScope(
     private fun SimpleFunctionDescriptor.createSuspendView(): SimpleFunctionDescriptor? {
         val continuationParameter = valueParameters.lastOrNull()?.takeIf {
             isContinuation(
-                it.type.constructor.declarationDescriptor?.fqNameUnsafe?.takeIf { it.isSafe }?.toSafe(),
+                it.type.constructor.declarationDescriptor?.fqNameUnsafe?.takeIf(FqNameUnsafe::isSafe)?.toSafe(),
                 c.components.settings.isReleaseCoroutines
             )
         } ?: return null
@@ -318,7 +319,7 @@ class LazyJavaClassMemberScope(
             result.addAll(
                 additionalOverrides.map { resolvedOverride ->
                     val overriddenBuiltin = resolvedOverride.getOverriddenSpecialBuiltin()
-                            ?: return@map resolvedOverride
+                        ?: return@map resolvedOverride
 
                     resolvedOverride.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, allDescriptors)
                 })
@@ -353,7 +354,7 @@ class LazyJavaClassMemberScope(
     ): SimpleFunctionDescriptor? {
         val overriddenBuiltin =
             BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor)
-                    ?: return null
+                ?: return null
 
         return createOverrideForBuiltinFunctionWithErasedParameterIfNeeded(overriddenBuiltin, functions)
             ?.takeIf(this::isVisibleAsFunctionInCurrentClass)
@@ -551,11 +552,11 @@ class LazyJavaClassMemberScope(
     override fun resolveMethodSignature(
         method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
         valueParameters: List<ValueParameterDescriptor>
-    ): LazyJavaScope.MethodSignatureData {
+    ): MethodSignatureData {
         val propagated = c.components.signaturePropagator.resolvePropagatedSignature(
             method, ownerDescriptor, returnType, null, valueParameters, methodTypeParameters
         )
-        return LazyJavaScope.MethodSignatureData(
+        return MethodSignatureData(
             propagated.returnType, propagated.receiverType, propagated.valueParameters, propagated.typeParameters,
             propagated.hasStableParameterNames(), propagated.errors
         )
@@ -639,13 +640,13 @@ class LazyJavaClassMemberScope(
         if (methodNamedValue != null) {
             val parameterNamedValueJavaType = methodNamedValue.returnType
             val (parameterType, varargType) =
-                    if (parameterNamedValueJavaType is JavaArrayType)
-                        Pair(
-                            c.typeResolver.transformArrayType(parameterNamedValueJavaType, attr, isVararg = true),
-                            c.typeResolver.transformJavaType(parameterNamedValueJavaType.componentType, attr)
-                        )
-                    else
-                        Pair(c.typeResolver.transformJavaType(parameterNamedValueJavaType, attr), null)
+                if (parameterNamedValueJavaType is JavaArrayType)
+                    Pair(
+                        c.typeResolver.transformArrayType(parameterNamedValueJavaType, attr, isVararg = true),
+                        c.typeResolver.transformJavaType(parameterNamedValueJavaType.componentType, attr)
+                    )
+                else
+                    Pair(c.typeResolver.transformJavaType(parameterNamedValueJavaType, attr), null)
 
             result.addAnnotationValueParameter(constructor, 0, methodNamedValue, parameterType, varargType)
         }

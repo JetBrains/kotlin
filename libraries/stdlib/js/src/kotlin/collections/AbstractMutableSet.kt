@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package kotlin.collections
 
@@ -14,7 +14,7 @@ public actual abstract class AbstractMutableSet<E> protected actual constructor(
     /**
      * Compares this set with another set instance with the unordered structural equality.
      *
-     * @return true, if [other] instance is a [Set] of the same size, all elements of which are contained in this set.
+     * @return `true`, if [other] instance is a [Set] of the same size, all elements of which are contained in this set.
      */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true

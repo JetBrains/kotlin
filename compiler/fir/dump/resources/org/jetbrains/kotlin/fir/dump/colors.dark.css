@@ -1,0 +1,81 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+body.dark {
+    background-color: #2b2b2b;
+    color: #bababa;
+}
+
+.dark .toggle-theme {
+    background-color: #6a7878;
+}
+
+.dark .return-label {
+    color: #6a7878;
+    background-color: #333333;
+}
+
+.dark .label {
+    color: dodgerblue;
+    background-color: #333333;
+}
+
+.dark .expression-type {
+    color: #6a7878;
+    background-color: #333333;
+}
+
+.dark .keyword {
+    color: #8ba558;
+}
+
+.dark a.ref.selected {
+    background-color: rgba(77, 255, 27, 0.44);
+}
+
+.dark .unresolved {
+    text-decoration-color: blue;
+}
+
+.dark .error {
+    text-decoration-color: red;
+}
+
+.dark .error.unsupported {
+    text-decoration-color: cyan;
+}
+
+.dark a.ref.external {
+    color: #bababa;
+}
+
+.dark a.container-ref,
+.dark a.ref,
+.dark a.ref:visited,
+.dark a.package-fqn,
+.dark a.package-fqn:visited {
+    color: rgb(223, 190, 149);
+}
+
+.dark a.container-ref:visited {
+    color: rgb(223, 185, 67);
+}
+
+.dark :target {
+    background-color: #9f5000;
+}
+
+.dark .string-literal {
+    color: #98b884;
+}
+
+.dark .declaration .simple-name {
+    color: #dfb943
+}
+
+.dark .line {
+    background-color: #313335;
+    border-right: thin solid darkgray;
+}

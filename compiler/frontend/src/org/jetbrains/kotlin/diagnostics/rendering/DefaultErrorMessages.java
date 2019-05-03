@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.diagnostics.rendering;
@@ -128,6 +128,7 @@ public class DefaultErrorMessages {
         MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE,
                 "Use of this annotation with target ''type'' and use site target ''@{0}'' is deprecated", TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
+        MAP.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable");
         MAP.put(NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION, "The lambda expression here is an inlined argument so this annotation cannot be stored anywhere");
 
         MAP.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING);
@@ -362,6 +363,7 @@ public class DefaultErrorMessages {
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 
         MAP.put(MISSING_DEPENDENCY_CLASS, "Cannot access class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
+        MAP.put(MISSING_BUILT_IN_DECLARATION, "Cannot access built-in declaration ''{0}''. Ensure that you have a dependency on the Kotlin standard library", TO_STRING);
         MAP.put(MISSING_SCRIPT_BASE_CLASS, "Cannot access script base class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
         MAP.put(MISSING_SCRIPT_STANDARD_TEMPLATE, "No script runtime was found in the classpath: class ''{0}'' not found. Please add kotlin-script-runtime.jar to the module dependencies.", TO_STRING);
         MAP.put(MISSING_SCRIPT_RECEIVER_CLASS, "Cannot access implicit script receiver class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
@@ -631,6 +633,7 @@ public class DefaultErrorMessages {
         MAP.put(UNSUPPORTED, "Unsupported [{0}]", STRING);
         MAP.put(NEW_INFERENCE_ERROR, "New inference error [{0}]", STRING);
         MAP.put(NEW_INFERENCE_DIAGNOSTIC, "New inference [{0}]", STRING);
+        MAP.put(NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE, "Non-applicable call for builder inference");
 
         MAP.put(UNSUPPORTED_FEATURE, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED));
         MAP.put(EXPERIMENTAL_FEATURE_WARNING, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING));
@@ -740,6 +743,7 @@ public class DefaultErrorMessages {
         }, RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(INCOMPATIBLE_ENUM_COMPARISON, "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(INCOMPATIBLE_ENUM_COMPARISON_ERROR, "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful", RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(SENSELESS_COMPARISON, "Condition ''{0}'' is always ''{1}''", ELEMENT_TEXT, TO_STRING);
         MAP.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null");
@@ -827,6 +831,8 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, "Type inference failed: {0}", TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER);
         MAP.put(TYPE_INFERENCE_CANNOT_CAPTURE_TYPES, "Type inference failed: {0}", TYPE_INFERENCE_CANNOT_CAPTURE_TYPES_RENDERER);
         MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Type inference failed: {0}", TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER);
+        MAP.put(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Not enough information to infer type variable {0}", STRING);
+
         MAP.put(TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR, "Type inference failed: {0}", TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER);
         MAP.put(TYPE_INFERENCE_INCORPORATION_ERROR, "Type inference failed. Please try to specify type arguments explicitly.");
         MAP.put(TYPE_INFERENCE_ONLY_INPUT_TYPES, "Type inference failed. The value of the type parameter {0} should be mentioned in input types " +
@@ -865,6 +871,8 @@ public class DefaultErrorMessages {
         MAP.put(ANNOTATION_ARGUMENT_MUST_BE_CONST, "An annotation argument must be a compile-time constant");
         MAP.put(ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST, "An enum annotation argument must be a enum constant");
         MAP.put(ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL, "An annotation argument must be a class literal (T::class)");
+        MAP.put(ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER, "Type parameter in a class literal is not allowed in an annotation argument");
+        MAP.put(ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR, "Type parameter in a class literal is deprecated in an annotation argument");
         MAP.put(ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, "Default value of annotation parameter must be a compile-time constant");
 
         MAP.put(ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE,
@@ -881,6 +889,9 @@ public class DefaultErrorMessages {
 
         MAP.put(LOCAL_ANNOTATION_CLASS, "Local annotation classes are deprecated and will be unsupported in a future release");
         MAP.put(LOCAL_ANNOTATION_CLASS_ERROR, "Annotation class cannot be local");
+
+        MAP.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless");
+        MAP.put(ANNOTATION_ON_SUPERCLASS_WARNING, "Annotations on superclass are meaningless and deprecated");
 
         MAP.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects");
         MAP.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate");
@@ -952,6 +963,7 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_SUSPEND_PROPERTY_ACCESS, "Suspend property ''{0}'' should be accessed only from a coroutine or suspend function", NAME);
         MAP.put(ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope");
         MAP.put(NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND, "''suspend'' function can only be called in a form of modifier of a lambda: suspend { ... }");
+        MAP.put(IMPLICIT_NOTHING_AS_TYPE_PARAMETER, "One of the type variables was implicitly inferred to Nothing. Please, specify type arguments explicitly to hide this warning.");
         MAP.put(RETURN_FOR_BUILT_IN_SUSPEND, "Using implicit label for this lambda is prohibited");
         MAP.put(MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND, "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Add empty argument list to the call: ''suspend() { ... }''");
 

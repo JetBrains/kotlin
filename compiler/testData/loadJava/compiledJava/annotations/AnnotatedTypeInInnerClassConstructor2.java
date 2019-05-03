@@ -1,3 +1,4 @@
+// SKIP_IN_FIR_TEST
 // SKIP_IN_RUNTIME_TEST
 package test;
 

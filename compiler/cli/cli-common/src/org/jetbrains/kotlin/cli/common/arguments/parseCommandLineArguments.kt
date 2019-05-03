@@ -135,7 +135,15 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
             if (parser == null) {
                 errors.unknownExtraFlags += arg
             } else {
-                internalArguments.add(parser.parseInternalArgument(arg, errors) ?: continue)
+                val newInternalArgument = parser.parseInternalArgument(arg, errors) ?: continue
+                val argumentWillBeOverridden = when (newInternalArgument) {
+                    is ManualLanguageFeatureSetting -> internalArguments.firstOrNull { (it is ManualLanguageFeatureSetting) && (it.languageFeature == newInternalArgument.languageFeature) }
+                    else -> null
+                }
+                if (argumentWillBeOverridden != null) {
+                    internalArguments.remove(argumentWillBeOverridden)
+                }
+                internalArguments.add(newInternalArgument)
             }
 
             continue
@@ -186,7 +194,11 @@ private fun <A : CommonToolArguments> updateField(property: KMutableProperty1<A,
     when (property.returnType.classifier) {
         Boolean::class, String::class -> property.set(result, value)
         Array<String>::class -> {
-            val newElements = (value as String).split(delimiter).toTypedArray()
+            val newElements = if (delimiter.isEmpty()) {
+                arrayOf(value as String)
+            } else {
+                (value as String).split(delimiter).toTypedArray()
+            }
             @Suppress("UNCHECKED_CAST")
             val oldValue = property.get(result) as Array<String>?
             property.set(result, if (oldValue != null) arrayOf(*oldValue, *newElements) else newElements)

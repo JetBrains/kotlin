@@ -36,11 +36,11 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 class PluginDeclarationProviderFactory(
-        private val project: Project,
-        private val indexedFilesScope: GlobalSearchScope,
-        private val storageManager: StorageManager,
-        private val nonIndexedFiles: Collection<KtFile>,
-        private val moduleInfo: ModuleInfo
+    private val project: Project,
+    private val indexedFilesScope: GlobalSearchScope,
+    private val storageManager: StorageManager,
+    private val nonIndexedFiles: Collection<KtFile>,
+    private val moduleInfo: ModuleInfo
 ) : AbstractDeclarationProviderFactory(storageManager) {
     private val fileBasedDeclarationProviderFactory = FileBasedDeclarationProviderFactory(storageManager, nonIndexedFiles)
 
@@ -66,7 +66,7 @@ class PluginDeclarationProviderFactory(
         // We're only looking for source-based declarations
         return (moduleInfo as? IdeaModuleInfo)?.projectSourceModules()
             ?.any { PerModulePackageCacheService.getInstance(project).packageExists(name, it) }
-                ?: false
+            ?: false
     }
 
     private fun getStubBasedPackageMemberDeclarationProvider(name: FqName): PackageMemberDeclarationProvider? {
@@ -77,15 +77,16 @@ class PluginDeclarationProviderFactory(
 
     private fun diagnoseMissingPackageFragmentExactPackageIndexCorruption(message: String): Nothing {
         throw IllegalStateException(
-                "KotlinExactPackageIndex seems corrupted.\n" +
-                message
+            "KotlinExactPackageIndex seems corrupted.\n" +
+                    message
         )
     }
 
     private fun diagnoseMissingPackageFragmentPerModulePackageCacheMiss(message: String): Nothing {
+        PerModulePackageCacheService.getInstance(project).onTooComplexChange() // Postpone cache rebuild
         throw IllegalStateException(
-                "PerModulePackageCache miss.\n" +
-                message
+            "PerModulePackageCache miss.\n" +
+                    message
         )
     }
 
@@ -100,7 +101,8 @@ class PluginDeclarationProviderFactory(
         val packageExists = PackageIndexUtil.packageExists(fqName, indexedFilesScope, project)
         val spiPackageExists = subpackagesIndex.packageExists(fqName)
         val oldPackageExists = oldPackageExists(fqName)
-        val cachedPackageExists = moduleSourceInfo?.let { ServiceManager.getService(project, PerModulePackageCacheService::class.java).packageExists(fqName, it) }
+        val cachedPackageExists =
+            moduleSourceInfo?.let { ServiceManager.getService(project, PerModulePackageCacheService::class.java).packageExists(fqName, it) }
         val moduleModificationCount = moduleSourceInfo?.createModificationTracker()?.modificationCount
 
         val common = """
@@ -123,8 +125,7 @@ class PluginDeclarationProviderFactory(
                 |$common,
                 |packageFqNameByTree = '${file.packageFqNameByTree}', packageDirectiveText = '${file.packageDirective?.text}'
             """.trimMargin()
-        }
-        else {
+        } else {
             """
                 |Cannot find package fragment '$fqName' for unspecified file:
                 |nonIndexedFiles = $nonIndexedFiles,
@@ -134,13 +135,13 @@ class PluginDeclarationProviderFactory(
         }
 
         val scopeNotEmptyAndContainsFile =
-                indexedFilesScope != GlobalSearchScope.EMPTY_SCOPE && (file == null || file.virtualFile in indexedFilesScope)
+            indexedFilesScope != GlobalSearchScope.EMPTY_SCOPE && (file == null || file.virtualFile in indexedFilesScope)
         when {
             scopeNotEmptyAndContainsFile
-            && !packageExists && oldPackageExists == false -> diagnoseMissingPackageFragmentExactPackageIndexCorruption(message)
+                    && !packageExists && oldPackageExists == false -> diagnoseMissingPackageFragmentExactPackageIndexCorruption(message)
 
             scopeNotEmptyAndContainsFile
-            && packageExists && cachedPackageExists == false -> diagnoseMissingPackageFragmentPerModulePackageCacheMiss(message)
+                    && packageExists && cachedPackageExists == false -> diagnoseMissingPackageFragmentPerModulePackageCacheMiss(message)
 
             else -> diagnoseMissingPackageFragmentUnknownReason(message)
         }
@@ -156,14 +157,13 @@ class PluginDeclarationProviderFactory(
     private fun oldPackageExists(packageFqName: FqName): Boolean? = try {
         var result = false
         StubIndex.getInstance().processElements<String, KtFile>(
-                KotlinExactPackagesIndex.getInstance().key, packageFqName.asString(), project, indexedFilesScope, KtFile::class.java
+            KotlinExactPackagesIndex.getInstance().key, packageFqName.asString(), project, indexedFilesScope, KtFile::class.java
         ) {
             result = true
             false
         }
         result
-    }
-    catch (e: Throwable) {
+    } catch (e: Throwable) {
         null
     }
 

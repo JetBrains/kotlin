@@ -37,15 +37,15 @@ fun genericClassCast() {
         val c = ArrayList<Int>()
         c.add(1)
         // EXPRESSION: c.get(0)
-        // RESULT: 1: I
+        // RESULT: instance of java.lang.Integer(id=ID): Ljava/lang/Integer;
         //Breakpoint!
         val b = 1
     }
 
     if (true) {
-        val c = ArrayList<String>()
-        c.add("a")
-        // EXPRESSION: c.get(0)
+        val c = ArrayList<Int>()
+        (c as? ArrayList<String>)?.add("a")
+        // EXPRESSION: c.get(0) + 1
         // RESULT: java.lang.ClassCastException : java.lang.String cannot be cast to java.lang.Number
         //Breakpoint!
         val b = 1

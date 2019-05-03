@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.tower
@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isBinaryRemOperator
-import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
-import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.*
+import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -45,6 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
@@ -67,7 +66,8 @@ class PSICallResolver(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     private val deprecationResolver: DeprecationResolver,
-    private val moduleDescriptor: ModuleDescriptor
+    private val moduleDescriptor: ModuleDescriptor,
+    private val callableReferenceResolver: CallableReferenceResolver
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
 
@@ -190,9 +190,14 @@ class PSICallResolver(
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         if (result is AllCandidatesResolutionResult) {
-            val resolvedCalls = result.allCandidates.map {
-                val resultingSubstitutor = it.getSystem().asReadOnlyStorage().buildResultingSubstitutor()
-                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(it.resolvedCall, null, resultingSubstitutor, result.diagnostics)
+            val resolvedCalls = result.allCandidates.map { (candidate, diagnostics) ->
+                val system = candidate.getSystem()
+                val resultingSubstitutor =
+                    system.asReadOnlyStorage().buildResultingSubstitutor(system as TypeSystemInferenceExtensionContext)
+
+                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(
+                    candidate.resolvedCall, null, resultingSubstitutor, diagnostics
+                )
             }
 
             return AllCandidates(resolvedCalls)
@@ -200,7 +205,7 @@ class PSICallResolver(
 
         val trace = context.trace
 
-        handleErrorResolutionResult<D>(trace, result, tracingStrategy)?.let { errorResult ->
+        handleErrorResolutionResult<D>(context, trace, result, tracingStrategy)?.let { errorResult ->
             context.inferenceSession.addErrorCallInfo(PSIErrorCallInfo(result, errorResult))
             return errorResult
         }
@@ -215,6 +220,7 @@ class PSICallResolver(
     }
 
     private fun <D : CallableDescriptor> handleErrorResolutionResult(
+        context: BasicCallResolutionContext,
         trace: BindingTrace,
         result: CallResolutionResult,
         tracingStrategy: TracingStrategy
@@ -222,12 +228,16 @@ class PSICallResolver(
         val diagnostics = result.diagnostics
 
         diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>()?.let {
+            kotlinToResolvedCallTransformer.transformAndReport<D>(result, context, tracingStrategy)
+
             tracingStrategy.unresolvedReference(trace)
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
         diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.let {
-            return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace)
+            kotlinToResolvedCallTransformer.transformAndReport<D>(result, context, tracingStrategy)
+
+            return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace, context)
         }
 
         if (getResultApplicability(diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
@@ -245,7 +255,8 @@ class PSICallResolver(
     private fun <D : CallableDescriptor> transformManyCandidatesAndRecordTrace(
         diagnostic: ManyCandidatesCallDiagnostic,
         tracingStrategy: TracingStrategy,
-        trace: BindingTrace
+        trace: BindingTrace,
+        context: BasicCallResolutionContext
     ): ManyCandidates<D> {
         val resolvedCalls = diagnostic.candidates.map {
             kotlinToResolvedCallTransformer.onlyTransform<D>(
@@ -262,14 +273,18 @@ class PSICallResolver(
             }
         } else {
             tracingStrategy.recordAmbiguity(trace, resolvedCalls)
-            if (resolvedCalls.first().status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
-                tracingStrategy.cannotCompleteResolve(trace, resolvedCalls)
-            } else {
-                tracingStrategy.ambiguity(trace, resolvedCalls)
+            if (!context.call.hasUnresolvedArguments(context)) {
+                if (resolvedCalls.allIncomplete) {
+                    tracingStrategy.cannotCompleteResolve(trace, resolvedCalls)
+                } else {
+                    tracingStrategy.ambiguity(trace, resolvedCalls)
+                }
             }
         }
         return ManyCandidates(resolvedCalls)
     }
+
+    private val List<ResolvedCall<*>>.allIncomplete: Boolean get() = all { it.status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE }
 
     private fun ResolvedCall<*>.recordEffects(trace: BindingTrace) {
         val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
@@ -389,7 +404,9 @@ class PSICallResolver(
         override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<KotlinResolutionCandidate> {
             val explicitReceiver = if (stripExplicitReceiver) null else kotlinCall.explicitReceiver
             val variableCall = PSIKotlinCallForVariable(kotlinCall, explicitReceiver, kotlinCall.name)
-            return SimpleCandidateFactory(callComponents, scopeTower, variableCall, createResolutionCallbacks(context))
+            return SimpleCandidateFactory(
+                callComponents, scopeTower, variableCall, createResolutionCallbacks(context), callableReferenceResolver
+            )
         }
 
         override fun factoryForInvoke(variable: KotlinResolutionCandidate, useExplicitReceiver: Boolean):
@@ -410,7 +427,7 @@ class PSICallResolver(
             }
 
             return variableCallArgument.receiver to SimpleCandidateFactory(
-                callComponents, scopeTower, callForInvoke, createResolutionCallbacks(context)
+                callComponents, scopeTower, callForInvoke, createResolutionCallbacks(context), callableReferenceResolver
             )
         }
 
@@ -539,8 +556,7 @@ class PSICallResolver(
 
         require(oldCall is CallTransformer.CallForImplicitInvoke) { "Call should be CallForImplicitInvoke, but it is: $oldCall" }
 
-        val dispatchReceiver = oldCall.dispatchReceiver!! // dispatch receiver from CallForImplicitInvoke is always not null
-        return resolveReceiver(context, dispatchReceiver, isSafeCall = false, isForImplicitInvoke = true)
+        return resolveReceiver(context, oldCall.dispatchReceiver, isSafeCall = false, isForImplicitInvoke = true)
     }
 
     private fun resolveReceiver(

@@ -1,0 +1,15 @@
+LineBreakpoint created at asyncFunctions.kt:21
+Run Java
+Connected to the target VM
+asyncFunctions.kt:21
+Async stack trace:
+    asyncFunctions.AsyncFunctionsKt:18
+        y = "zoo"
+    asyncFunctions.AsyncFunctionsKt:13
+        x = "foo"
+    asyncFunctions.AsyncFunctionsKt:7
+        a = 5
+        b = 7
+Disconnected from the target VM
+
+Process finished with exit code 0

@@ -1,16 +1,20 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers.diagnostics
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 import org.jetbrains.kotlin.diagnostics.rendering.AbstractDiagnosticWithParametersRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticWithParameters1Renderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.TO_STRING
 import java.util.regex.Pattern
@@ -136,7 +140,7 @@ class TextDiagnostic(
         private fun asTextDiagnostic(actualDiagnostic: ActualDiagnostic): TextDiagnostic {
             val diagnostic = actualDiagnostic.diagnostic
             val renderer = when (diagnostic.factory) {
-                is DebugInfoDiagnosticFactory1 -> DiagnosticWithParameters1Renderer("{0}", TO_STRING)
+                is DebugInfoDiagnosticFactory1 -> DiagnosticWithParameters1Renderer("{0}", TO_STRING) as DiagnosticRenderer<Diagnostic>
                 else -> DefaultErrorMessages.getRendererForDiagnostic(diagnostic)
             }
             val diagnosticName = actualDiagnostic.name

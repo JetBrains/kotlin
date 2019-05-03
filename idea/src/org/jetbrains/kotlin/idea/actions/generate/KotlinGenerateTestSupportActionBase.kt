@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.generateUnsupportedOrSup
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.setupEditorSelection
 import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.testIntegration.findSuitableFrameworks
-import org.jetbrains.kotlin.idea.util.PopupChooserBuilderWrapper
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -75,7 +74,7 @@ abstract class KotlinGenerateTestSupportActionBase(
             val list = JBList<TestFramework>(*frameworks.toTypedArray())
             list.cellRenderer = TestFrameworkListCellRenderer()
 
-            PopupChooserBuilderWrapper<TestFramework>(list)
+            PopupChooserBuilder<TestFramework>(list)
                     .setFilteringEnabled { (it as TestFramework).name }
                     .setTitle("Choose Framework")
                     .setItemChoosenCallback { consumer(list.selectedValue as TestFramework) }

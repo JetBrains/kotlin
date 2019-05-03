@@ -21,10 +21,9 @@ import com.intellij.openapi.util.Trinity
 import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.org.objectweb.asm.Type
+import java.util.*
 
-import java.util.ArrayList
-
-class FrameMap : FrameMapBase<DeclarationDescriptor>()
+open class FrameMap : FrameMapBase<DeclarationDescriptor>()
 
 open class FrameMapBase<T : Any> {
     private val myVarIndex = TObjectIntHashMap<T>()
@@ -61,7 +60,7 @@ open class FrameMapBase<T : Any> {
         currentSize -= type.size
     }
 
-    fun getIndex(descriptor: T): Int {
+    open fun getIndex(descriptor: T): Int {
         return if (myVarIndex.contains(descriptor)) myVarIndex.get(descriptor) else -1
     }
 
@@ -98,7 +97,7 @@ open class FrameMapBase<T : Any> {
         val descriptors = Lists.newArrayList<Trinity<T, Int, Int>>()
 
         for (descriptor0 in myVarIndex.keys()) {
-            val descriptor = descriptor0 as T
+            @Suppress("UNCHECKED_CAST") val descriptor = descriptor0 as T
             val varIndex = myVarIndex.get(descriptor)
             val varSize = myVarSizes.get(descriptor)
             descriptors.add(Trinity.create(descriptor, varIndex, varSize))

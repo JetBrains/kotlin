@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-draft
- * PLACES: constant-literals, integer-literals, long-integer-literals -> paragraph 1 -> sentence 1
+ * PLACE: constant-literals, integer-literals, long-integer-literals -> paragraph 1 -> sentence 1
  * NUMBER: 9
  * DESCRIPTION: Various integer literals with long literal mark in not allowed lower case (but valid in opinion the parser).
  */

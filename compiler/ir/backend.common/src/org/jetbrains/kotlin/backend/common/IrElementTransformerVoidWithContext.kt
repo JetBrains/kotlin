@@ -121,7 +121,7 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
     }
 
     override final fun visitField(declaration: IrField) {
-        val isDelegated = declaration.descriptor.isDelegated
+        @Suppress("DEPRECATION") val isDelegated = declaration.descriptor.isDelegated
         if (isDelegated) scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         visitFieldNew(declaration)
         if (isDelegated) scopeStack.pop()

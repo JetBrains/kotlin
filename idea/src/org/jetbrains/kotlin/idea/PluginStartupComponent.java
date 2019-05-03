@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
@@ -29,6 +29,7 @@ import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.searches.IndexPatternSearch;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter;
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTodoSearcher;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -37,7 +38,7 @@ import java.io.IOException;
 
 import static org.jetbrains.kotlin.idea.TestResourceBundleKt.registerAdditionalResourceBundleInTests;
 
-public class PluginStartupComponent implements ApplicationComponent {
+public class PluginStartupComponent implements BaseComponent {
     private static final Logger LOG = Logger.getInstance(PluginStartupComponent.class);
 
     private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
@@ -81,6 +82,8 @@ public class PluginStartupComponent implements ApplicationComponent {
         ServiceManager.getService(IndexPatternSearch.class).registerExecutor(new KotlinTodoSearcher());
 
         KotlinPluginCompatibilityVerifier.checkCompatibility();
+
+        KotlinReportSubmitter.Companion.setupReportingFromRelease();
 
         //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also ConfigureKotlinInTempDirTest)
         //KotlinSdkType.Companion.setUpIfNeeded();

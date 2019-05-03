@@ -20,7 +20,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.inspections.PluginVersionDependentInspection
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
@@ -29,13 +28,13 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlo
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
 
-class DifferentKotlinGradleVersionInspection : GradleBaseInspection(), PluginVersionDependentInspection {
+class DifferentKotlinGradleVersionInspection : BaseInspection(), PluginVersionDependentInspection {
     override var testVersionMessage: String? = null
         @TestOnly set
 
     override fun buildVisitor(): BaseInspectionVisitor = MyVisitor()
 
-    override fun getGroupDisplayName() = BaseInspection.PROBABLE_BUGS
+    override fun getGroupDisplayName() = PROBABLE_BUGS
 
     override fun buildErrorString(vararg args: Any): String {
         return "Kotlin version that is used for building with Gradle (${args[0]}) differs from the one bundled into the IDE plugin (${args[1]})"

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
@@ -14,6 +14,8 @@ package kotlin.collections
 //
 
 import kotlin.random.*
+import kotlin.ranges.contains
+import kotlin.ranges.reversed
 
 /**
  * Returns 1st *element* from the collection.
@@ -443,90 +445,63 @@ public operator fun CharArray.contains(element: Char): Boolean {
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<out T>.elementAt(index: Int): T {
-    return get(index)
-}
+public expect fun <T> Array<out T>.elementAt(index: Int): T
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun ByteArray.elementAt(index: Int): Byte {
-    return get(index)
-}
+public expect fun ByteArray.elementAt(index: Int): Byte
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun ShortArray.elementAt(index: Int): Short {
-    return get(index)
-}
+public expect fun ShortArray.elementAt(index: Int): Short
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun IntArray.elementAt(index: Int): Int {
-    return get(index)
-}
+public expect fun IntArray.elementAt(index: Int): Int
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun LongArray.elementAt(index: Int): Long {
-    return get(index)
-}
+public expect fun LongArray.elementAt(index: Int): Long
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun FloatArray.elementAt(index: Int): Float {
-    return get(index)
-}
+public expect fun FloatArray.elementAt(index: Int): Float
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun DoubleArray.elementAt(index: Int): Double {
-    return get(index)
-}
+public expect fun DoubleArray.elementAt(index: Int): Double
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun BooleanArray.elementAt(index: Int): Boolean {
-    return get(index)
-}
+public expect fun BooleanArray.elementAt(index: Int): Boolean
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun CharArray.elementAt(index: Int): Char {
-    return get(index)
-}
+public expect fun CharArray.elementAt(index: Int): Char
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
@@ -2788,6 +2763,8 @@ public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char? {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Array<out T>.drop(n: Int): List<T> {
@@ -2797,6 +2774,8 @@ public fun <T> Array<out T>.drop(n: Int): List<T> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2808,6 +2787,8 @@ public fun ByteArray.drop(n: Int): List<Byte> {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ShortArray.drop(n: Int): List<Short> {
@@ -2817,6 +2798,8 @@ public fun ShortArray.drop(n: Int): List<Short> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2828,6 +2811,8 @@ public fun IntArray.drop(n: Int): List<Int> {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun LongArray.drop(n: Int): List<Long> {
@@ -2837,6 +2822,8 @@ public fun LongArray.drop(n: Int): List<Long> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2848,6 +2835,8 @@ public fun FloatArray.drop(n: Int): List<Float> {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun DoubleArray.drop(n: Int): List<Double> {
@@ -2857,6 +2846,8 @@ public fun DoubleArray.drop(n: Int): List<Double> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2868,6 +2859,8 @@ public fun BooleanArray.drop(n: Int): List<Boolean> {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun CharArray.drop(n: Int): List<Char> {
@@ -2877,6 +2870,8 @@ public fun CharArray.drop(n: Int): List<Char> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2888,6 +2883,8 @@ public fun <T> Array<out T>.dropLast(n: Int): List<T> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ByteArray.dropLast(n: Int): List<Byte> {
@@ -2897,6 +2894,8 @@ public fun ByteArray.dropLast(n: Int): List<Byte> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2908,6 +2907,8 @@ public fun ShortArray.dropLast(n: Int): List<Short> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun IntArray.dropLast(n: Int): List<Int> {
@@ -2917,6 +2918,8 @@ public fun IntArray.dropLast(n: Int): List<Int> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2928,6 +2931,8 @@ public fun LongArray.dropLast(n: Int): List<Long> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun FloatArray.dropLast(n: Int): List<Float> {
@@ -2937,6 +2942,8 @@ public fun FloatArray.dropLast(n: Int): List<Float> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2948,6 +2955,8 @@ public fun DoubleArray.dropLast(n: Int): List<Double> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun BooleanArray.dropLast(n: Int): List<Boolean> {
@@ -2957,6 +2966,8 @@ public fun BooleanArray.dropLast(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -4040,7 +4051,7 @@ public fun CharArray.sliceArray(indices: Collection<Int>): CharArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
     if (indices.isEmpty()) return copyOfRange(0, 0)
@@ -4048,7 +4059,7 @@ public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
     if (indices.isEmpty()) return ByteArray(0)
@@ -4056,7 +4067,7 @@ public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
     if (indices.isEmpty()) return ShortArray(0)
@@ -4064,7 +4075,7 @@ public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun IntArray.sliceArray(indices: IntRange): IntArray {
     if (indices.isEmpty()) return IntArray(0)
@@ -4072,7 +4083,7 @@ public fun IntArray.sliceArray(indices: IntRange): IntArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun LongArray.sliceArray(indices: IntRange): LongArray {
     if (indices.isEmpty()) return LongArray(0)
@@ -4080,7 +4091,7 @@ public fun LongArray.sliceArray(indices: IntRange): LongArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
     if (indices.isEmpty()) return FloatArray(0)
@@ -4088,7 +4099,7 @@ public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
     if (indices.isEmpty()) return DoubleArray(0)
@@ -4096,7 +4107,7 @@ public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
     if (indices.isEmpty()) return BooleanArray(0)
@@ -4104,7 +4115,7 @@ public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun CharArray.sliceArray(indices: IntRange): CharArray {
     if (indices.isEmpty()) return CharArray(0)
@@ -4113,6 +4124,8 @@ public fun CharArray.sliceArray(indices: IntRange): CharArray {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4134,6 +4147,8 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun ByteArray.take(n: Int): List<Byte> {
@@ -4153,6 +4168,8 @@ public fun ByteArray.take(n: Int): List<Byte> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4174,6 +4191,8 @@ public fun ShortArray.take(n: Int): List<Short> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun IntArray.take(n: Int): List<Int> {
@@ -4193,6 +4212,8 @@ public fun IntArray.take(n: Int): List<Int> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4214,6 +4235,8 @@ public fun LongArray.take(n: Int): List<Long> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun FloatArray.take(n: Int): List<Float> {
@@ -4233,6 +4256,8 @@ public fun FloatArray.take(n: Int): List<Float> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4254,6 +4279,8 @@ public fun DoubleArray.take(n: Int): List<Double> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun BooleanArray.take(n: Int): List<Boolean> {
@@ -4273,6 +4300,8 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4294,6 +4323,8 @@ public fun CharArray.take(n: Int): List<Char> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Array<out T>.takeLast(n: Int): List<T> {
@@ -4310,6 +4341,8 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4328,6 +4361,8 @@ public fun ByteArray.takeLast(n: Int): List<Byte> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun ShortArray.takeLast(n: Int): List<Short> {
@@ -4344,6 +4379,8 @@ public fun ShortArray.takeLast(n: Int): List<Short> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4362,6 +4399,8 @@ public fun IntArray.takeLast(n: Int): List<Int> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun LongArray.takeLast(n: Int): List<Long> {
@@ -4378,6 +4417,8 @@ public fun LongArray.takeLast(n: Int): List<Long> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4396,6 +4437,8 @@ public fun FloatArray.takeLast(n: Int): List<Float> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun DoubleArray.takeLast(n: Int): List<Double> {
@@ -4413,6 +4456,8 @@ public fun DoubleArray.takeLast(n: Int): List<Double> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun BooleanArray.takeLast(n: Int): List<Boolean> {
@@ -4429,6 +4474,8 @@ public fun BooleanArray.takeLast(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -6740,80 +6787,56 @@ public expect fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit
  * Returns an array of Boolean containing all of the elements of this generic array.
  */
 public fun Array<out Boolean>.toBooleanArray(): BooleanArray {
-    val result = BooleanArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return BooleanArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Byte containing all of the elements of this generic array.
  */
 public fun Array<out Byte>.toByteArray(): ByteArray {
-    val result = ByteArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return ByteArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Char containing all of the elements of this generic array.
  */
 public fun Array<out Char>.toCharArray(): CharArray {
-    val result = CharArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return CharArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Double containing all of the elements of this generic array.
  */
 public fun Array<out Double>.toDoubleArray(): DoubleArray {
-    val result = DoubleArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return DoubleArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Float containing all of the elements of this generic array.
  */
 public fun Array<out Float>.toFloatArray(): FloatArray {
-    val result = FloatArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return FloatArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Int containing all of the elements of this generic array.
  */
 public fun Array<out Int>.toIntArray(): IntArray {
-    val result = IntArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return IntArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Long containing all of the elements of this generic array.
  */
 public fun Array<out Long>.toLongArray(): LongArray {
-    val result = LongArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return LongArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Short containing all of the elements of this generic array.
  */
 public fun Array<out Short>.toShortArray(): ShortArray {
-    val result = ShortArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return ShortArray(size) { index -> this[index] }
 }
 
 /**
@@ -11022,6 +11045,8 @@ public fun CharArray.max(): Char? {
 public inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R): T? {
     if (isEmpty()) return null
     var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
     var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11042,6 +11067,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R):
 public inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): Byte? {
     if (isEmpty()) return null
     var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
     var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11062,6 +11089,8 @@ public inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): By
 public inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): Short? {
     if (isEmpty()) return null
     var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
     var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11082,6 +11111,8 @@ public inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): 
 public inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int? {
     if (isEmpty()) return null
     var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
     var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11102,6 +11133,8 @@ public inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int?
 public inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Long? {
     if (isEmpty()) return null
     var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
     var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11122,6 +11155,8 @@ public inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Lo
 public inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): Float? {
     if (isEmpty()) return null
     var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
     var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11142,6 +11177,8 @@ public inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): 
 public inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R): Double? {
     if (isEmpty()) return null
     var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
     var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11162,6 +11199,8 @@ public inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R)
 public inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> R): Boolean? {
     if (isEmpty()) return null
     var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
     var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11182,6 +11221,8 @@ public inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> 
 public inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
     var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11467,6 +11508,8 @@ public fun CharArray.min(): Char? {
 public inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R): T? {
     if (isEmpty()) return null
     var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
     var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11487,6 +11530,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R):
 public inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): Byte? {
     if (isEmpty()) return null
     var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
     var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11507,6 +11552,8 @@ public inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): By
 public inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): Short? {
     if (isEmpty()) return null
     var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
     var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11527,6 +11574,8 @@ public inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): 
 public inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int? {
     if (isEmpty()) return null
     var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
     var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11547,6 +11596,8 @@ public inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int?
 public inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Long? {
     if (isEmpty()) return null
     var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
     var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11567,6 +11618,8 @@ public inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Lo
 public inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): Float? {
     if (isEmpty()) return null
     var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
     var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11587,6 +11640,8 @@ public inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): 
 public inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R): Double? {
     if (isEmpty()) return null
     var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
     var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11607,6 +11662,8 @@ public inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R)
 public inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> R): Boolean? {
     if (isEmpty()) return null
     var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
     var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
@@ -11627,6 +11684,8 @@ public inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> 
 public inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
     var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]

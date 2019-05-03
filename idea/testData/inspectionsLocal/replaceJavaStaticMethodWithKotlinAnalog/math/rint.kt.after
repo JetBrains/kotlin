@@ -1,0 +1,6 @@
+import kotlin.math.round
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    round(x)
+}

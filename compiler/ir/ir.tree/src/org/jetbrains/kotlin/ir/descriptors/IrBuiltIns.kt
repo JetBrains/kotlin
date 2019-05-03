@@ -1,22 +1,24 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.withHasQuestionMark
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.FqName
@@ -37,34 +39,27 @@ class IrBuiltIns(
     private val builtInsModule = builtIns.builtInsModule
 
     private val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
-    val irBuiltInsExternalPackageFragment = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(packageFragment))
+    val irBuiltInsSymbols = mutableListOf<IrSimpleFunctionSymbol>()
 
     private val symbolTable = outerSymbolTable ?: SymbolTable()
-    private val stubBuilder =
-        DeclarationStubGenerator(builtInsModule, symbolTable, IrDeclarationOrigin.IR_BUILTINS_STUB, languageVersionSettings)
 
     private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrSimpleFunction {
+    fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrSimpleFunctionSymbol {
         val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragment, Name.identifier(name), returnType)
         for ((i, valueParameterType) in valueParameterTypes.withIndex()) {
             operatorDescriptor.addValueParameter(
                 IrBuiltinValueParameterDescriptorImpl(operatorDescriptor, Name.identifier("arg$i"), i, valueParameterType)
             )
         }
-        return addStubToPackageFragment(operatorDescriptor)
+        return operatorDescriptor.addStub()
     }
 
-    private fun addStubToPackageFragment(descriptor: SimpleFunctionDescriptor): IrSimpleFunction {
-        val irSimpleFunction = stubBuilder.generateFunctionStub(descriptor)
-        irBuiltInsExternalPackageFragment.declarations.add(irSimpleFunction)
-        irSimpleFunction.parent = irBuiltInsExternalPackageFragment
-        return irSimpleFunction
-    }
-
-    private fun <T : SimpleFunctionDescriptor> T.addStub(): IrSimpleFunction =
-        addStubToPackageFragment(this)
+    private fun <T : SimpleFunctionDescriptor> T.addStub(): IrSimpleFunctionSymbol =
+        symbolTable.referenceSimpleFunction(this).also {
+            irBuiltInsSymbols += it
+        }
 
     private fun defineComparisonOperator(name: String, operandType: KotlinType) =
         defineOperator(name, bool, listOf(operandType, operandType))
@@ -128,60 +123,110 @@ class IrBuiltIns(
     val stringType = string.toIrType()
     val stringClass = builtIns.string.toIrSymbol()
 
+    val collectionClass = builtIns.collection.toIrSymbol()
+
     val arrayClass = builtIns.array.toIrSymbol()
 
     val throwableType = builtIns.throwable.defaultType.toIrType()
     val throwableClass = builtIns.throwable.toIrSymbol()
 
-    val kCallableClass = builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe()).toIrSymbol()
-    val kPropertyClass = builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kPropertyFqName.toSafe()).toIrSymbol()
+    private class IrTypeMapper(val type: IrType) {
+        val nType: IrType = with(type as IrSimpleType) {
+            IrSimpleTypeImpl(classifier, true, arguments, annotations)
+        }
+    }
+
+    private val primitiveTypesMapping = mapOf(
+        builtIns.any to IrTypeMapper(anyType),
+        builtIns.boolean to IrTypeMapper(booleanType),
+        builtIns.char to IrTypeMapper(charType),
+        builtIns.number to IrTypeMapper(numberType),
+        builtIns.byte to IrTypeMapper(byteType),
+        builtIns.short to IrTypeMapper(shortType),
+        builtIns.int to IrTypeMapper(intType),
+        builtIns.long to IrTypeMapper(longType),
+        builtIns.float to IrTypeMapper(floatType),
+        builtIns.double to IrTypeMapper(doubleType),
+        builtIns.nothing to IrTypeMapper(nothingType),
+        builtIns.unit to IrTypeMapper(unitType),
+        builtIns.string to IrTypeMapper(stringType),
+        builtIns.throwable to IrTypeMapper(throwableType)
+    )
+
+    fun getPrimitiveTypeOrNullByDescriptor(descriptor: ClassifierDescriptor, isNullable: Boolean) =
+        primitiveTypesMapping[descriptor]?.let {
+            if (isNullable) it.nType else it.type
+        } as IrSimpleType?
+
+    val primitiveIrTypes by lazy { listOf(booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType) }
+
+    val kCallableClass = builtIns.kCallable.toIrSymbol()
+    val kPropertyClass = builtIns.kProperty.toIrSymbol()
+    val kDeclarationContainerClass = builtIns.kDeclarationContainer.toIrSymbol()
+    val kClassClass = builtIns.kClass.toIrSymbol()
+
+    private val kProperty0Class = builtIns.kProperty0.toIrSymbol()
+    private val kProperty1Class = builtIns.kProperty1.toIrSymbol()
+    private val kProperty2Class = builtIns.kProperty2.toIrSymbol()
+    private val kMutableProperty0Class = builtIns.kMutableProperty0.toIrSymbol()
+    private val kMutableProperty1Class = builtIns.kMutableProperty1.toIrSymbol()
+    private val kMutableProperty2Class = builtIns.kMutableProperty2.toIrSymbol()
+
+    fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol = when (n) {
+        0 -> if (mutable) kMutableProperty0Class else kProperty0Class
+        1 -> if (mutable) kMutableProperty1Class else kProperty1Class
+        2 -> if (mutable) kMutableProperty2Class else kProperty2Class
+        else -> error("No KProperty for n=$n mutable=$mutable")
+    }
 
     // TODO switch to IrType
     val primitiveTypes = listOf(bool, char, byte, short, int, long, float, double)
-    val primitiveTypesWithComparisons = listOf(int, long, float, double)
+    val primitiveTypesWithComparisons = listOf(char, byte, short, int, long, float, double)
     val primitiveFloatingPointTypes = listOf(float, double)
 
-    val lessFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType("less")
-    val lessOrEqualFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType("lessOrEqual")
-    val greaterOrEqualFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType("greaterOrEqual")
-    val greaterFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType("greater")
+    val primitiveTypeToIrType = mapOf(
+        PrimitiveType.BOOLEAN to booleanType,
+        PrimitiveType.CHAR to charType,
+        PrimitiveType.BYTE to byteType,
+        PrimitiveType.SHORT to shortType,
+        PrimitiveType.INT to intType,
+        PrimitiveType.FLOAT to floatType,
+        PrimitiveType.LONG to longType,
+        PrimitiveType.DOUBLE to doubleType
+    )
+
+    val lessFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType(OperatorNames.LESS)
+    val lessOrEqualFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType(OperatorNames.LESS_OR_EQUAL)
+    val greaterOrEqualFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType(OperatorNames.GREATER_OR_EQUAL)
+    val greaterFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType(OperatorNames.GREATER)
 
     val ieee754equalsFunByOperandType =
         primitiveFloatingPointTypes.associate {
-            it to defineOperator("ieee754equals", bool, listOf(it.makeNullable(), it.makeNullable()))
+            it to defineOperator(OperatorNames.IEEE754_EQUALS, bool, listOf(it.makeNullable(), it.makeNullable()))
         }
 
-    val eqeqeqFun = defineOperator("EQEQEQ", bool, listOf(anyN, anyN))
-    val eqeqFun = defineOperator("EQEQ", bool, listOf(anyN, anyN))
-    val throwNpeFun = defineOperator("THROW_NPE", nothing, listOf())
-    val throwCceFun = defineOperator("THROW_CCE", nothing, listOf())
-    val throwIseFun = defineOperator("THROW_ISE", nothing, listOf())
-    val booleanNotFun = defineOperator("NOT", bool, listOf(bool))
-    val noWhenBranchMatchedExceptionFun = defineOperator("noWhenBranchMatchedException", nothing, listOf())
-    val illegalArgumentExceptionFun = defineOperator("illegalArgumentException", nothing, listOf(string))
+    val booleanNot = builtIns.boolean.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("not"), NoLookupLocation.FROM_BACKEND).single()
+    val booleanNotSymbol = symbolTable.referenceSimpleFunction(booleanNot)
 
-    val eqeqeq = eqeqeqFun.descriptor
-    val eqeq = eqeqFun.descriptor
-    val throwNpe = throwNpeFun.descriptor
-    val throwCce = throwCceFun.descriptor
-    val booleanNot = booleanNotFun.descriptor
-    val noWhenBranchMatchedException = noWhenBranchMatchedExceptionFun.descriptor
-    val illegalArgumentException = illegalArgumentExceptionFun.descriptor
+    val eqeqeqSymbol = defineOperator(OperatorNames.EQEQEQ, bool, listOf(anyN, anyN))
+    val eqeqSymbol = defineOperator(OperatorNames.EQEQ, bool, listOf(anyN, anyN))
+    val throwNpeSymbol = defineOperator(OperatorNames.THROW_NPE, nothing, listOf())
+    val throwCceSymbol = defineOperator(OperatorNames.THROW_CCE, nothing, listOf())
+    val throwIseSymbol = defineOperator(OperatorNames.THROW_ISE, nothing, listOf())
+    val noWhenBranchMatchedExceptionSymbol = defineOperator(OperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothing, listOf())
+    val illegalArgumentExceptionSymbol = defineOperator(OperatorNames.ILLEGAL_ARGUMENT_EXCEPTION, nothing, listOf(string))
 
-    val eqeqeqSymbol = eqeqeqFun.symbol
-    val eqeqSymbol = eqeqFun.symbol
-    val throwNpeSymbol = throwNpeFun.symbol
-    val throwCceSymbol = throwCceFun.symbol
-    val throwIseSymbol = throwIseFun.symbol
-    val booleanNotSymbol = booleanNotFun.symbol
-    val noWhenBranchMatchedExceptionSymbol = noWhenBranchMatchedExceptionFun.symbol
-    val illegalArgumentExceptionSymbol = illegalArgumentExceptionFun.symbol
+    val eqeqeq = eqeqeqSymbol.descriptor
+    val eqeq = eqeqSymbol.descriptor
+    val throwNpe = throwNpeSymbol.descriptor
+    val throwCce = throwCceSymbol.descriptor
+    val noWhenBranchMatchedException = noWhenBranchMatchedExceptionSymbol.descriptor
+    val illegalArgumentException = illegalArgumentExceptionSymbol.descriptor
 
-    val enumValueOfFun = createEnumValueOfFun()
-    val enumValueOf = enumValueOfFun.descriptor
-    val enumValueOfSymbol = enumValueOfFun.symbol
+    val enumValueOfSymbol = createEnumValueOfFun()
+    val enumValueOf = enumValueOfSymbol.descriptor
 
-    private fun createEnumValueOfFun(): IrSimpleFunction =
+    private fun createEnumValueOfFun(): IrSimpleFunctionSymbol =
         SimpleFunctionDescriptorImpl.create(
             packageFragment,
             Annotations.EMPTY,
@@ -203,15 +248,28 @@ class IrBuiltIns(
             initialize(null, null, listOf(typeParameterT), listOf(valueParameterName), returnType, Modality.FINAL, Visibilities.PUBLIC)
         }.addStub()
 
-    val dataClassArrayMemberHashCodeFun = defineOperator("dataClassArrayMemberHashCode", int, listOf(any))
-    val dataClassArrayMemberHashCode = dataClassArrayMemberHashCodeFun.descriptor
-    val dataClassArrayMemberHashCodeSymbol = dataClassArrayMemberHashCodeFun.symbol
+    val dataClassArrayMemberHashCodeSymbol = defineOperator("dataClassArrayMemberHashCode", int, listOf(any))
+    val dataClassArrayMemberHashCode = dataClassArrayMemberHashCodeSymbol.descriptor
 
-    val dataClassArrayMemberToStringFun = defineOperator("dataClassArrayMemberToString", string, listOf(anyN))
-    val dataClassArrayMemberToString = dataClassArrayMemberToStringFun.descriptor
-    val dataClassArrayMemberToStringSymbol = dataClassArrayMemberToStringFun.symbol
+    val dataClassArrayMemberToStringSymbol = defineOperator("dataClassArrayMemberToString", string, listOf(anyN))
+    val dataClassArrayMemberToString = dataClassArrayMemberToStringSymbol.descriptor
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
+    }
+
+    object OperatorNames {
+        const val LESS = "less"
+        const val LESS_OR_EQUAL = "lessOrEqual"
+        const val GREATER = "greater"
+        const val GREATER_OR_EQUAL = "greaterOrEqual"
+        const val EQEQ = "EQEQ"
+        const val EQEQEQ = "EQEQEQ"
+        const val IEEE754_EQUALS = "ieee754equals"
+        const val THROW_NPE = "THROW_NPE"
+        const val THROW_CCE = "THROW_CCE"
+        const val THROW_ISE = "THROW_ISE"
+        const val NO_WHEN_BRANCH_MATCHED_EXCEPTION = "noWhenBranchMatchedException"
+        const val ILLEGAL_ARGUMENT_EXCEPTION = "illegalArgumentException"
     }
 }

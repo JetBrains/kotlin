@@ -24,5 +24,6 @@ sourceSets {
 
 runtimeJar()
 
-ideaPlugin()
-
+projectTest(parallel = true) {
+    
+}

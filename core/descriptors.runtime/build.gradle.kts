@@ -30,6 +30,6 @@ val compileKotlin by tasks.getting(KotlinCompile::class) {
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }

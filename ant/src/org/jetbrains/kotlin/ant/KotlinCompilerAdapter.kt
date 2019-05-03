@@ -129,7 +129,7 @@ class KotlinCompilerAdapter : Javac13() {
     }
 
     companion object {
-        private val KOTLIN_EXTENSIONS = Arrays.asList("kt", "kts")
+        private val KOTLIN_EXTENSIONS = listOf("kt", "kts")
 
         private fun filterOutKotlinSources(files: Array<File>): Array<File> {
             return files.filterNot {

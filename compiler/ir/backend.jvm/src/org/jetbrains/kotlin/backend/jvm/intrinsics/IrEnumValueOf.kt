@@ -21,23 +21,26 @@ import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class IrEnumValueOf : IntrinsicMethod() {
-    override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
+object IrEnumValueOf : IntrinsicMethod() {
+    override fun toCallable(
+        expression: IrFunctionAccessExpression,
+        signature: JvmMethodSignature,
+        context: JvmBackendContext
+    ): IrIntrinsicFunction {
         val enumType = context.state.typeMapper.mapType(expression.descriptor.returnType!!)
-        val newSignature = context.state.typeMapper.mapSignatureSkipGeneric(expression.descriptor as FunctionDescriptor, OwnerKind.IMPLEMENTATION)
-        val stringType = AsmTypes.JAVA_STRING_TYPE;
+        val newSignature = context.state.typeMapper.mapSignatureSkipGeneric(expression.descriptor, OwnerKind.IMPLEMENTATION)
+        val stringType = AsmTypes.JAVA_STRING_TYPE
 
         return object : IrIntrinsicFunction(expression, newSignature, context, listOf(stringType)) {
             override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
                 v.tconst(enumType)
                 codegen.gen(expression.getValueArgument(0)!!, stringType, data)
-                v.invokestatic("java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;", false);
+                v.invokestatic("java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;", false)
                 v.checkcast(enumType)
                 return StackValue.onStack(enumType)
             }

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: p/Visitor.java
 
 package p;
@@ -21,5 +22,5 @@ public class Element {
 import p.*
 
 fun test(v: Visitor<Nothing>, e: Element) {
-    e.accept(v, null)
+    e.<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>accept<!>(v, null)
 }

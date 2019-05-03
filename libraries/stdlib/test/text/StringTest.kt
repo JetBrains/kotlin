@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.text
@@ -1459,5 +1459,15 @@ ${"    "}
         assertEquals("  ABC\n  \n  123", "ABC\n \n123".prependIndent("  "))
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
+    }
+
+    @Test
+    fun elementAt() {
+        expect('a') { "a c".elementAt(0) }
+        expect(' ') { "a c".elementAt(1) }
+        expect('c') { "a c".elementAt(2) }
+
+        assertFailsWith<IndexOutOfBoundsException> { "".elementAt(0) }
+        assertFailsWith<IndexOutOfBoundsException> { "a c".elementAt(-1) }
     }
 }

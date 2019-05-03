@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.text
@@ -74,5 +74,17 @@ class StringBuilderTest {
         sb.clear()
         assertTrue(sb.isEmpty())
         assertEquals("test", s)
+    }
+
+    @Test fun get() {
+        val sb = StringBuilder()
+        sb.append("test")
+        assertEquals('t', sb[0])
+        assertEquals('e', sb[1])
+        assertEquals('s', sb[2])
+        assertEquals('t', sb[3])
+
+        assertFailsWith<IndexOutOfBoundsException> { assertEquals('t', sb[-1]) }
+        assertFailsWith<IndexOutOfBoundsException> { assertEquals('t', sb[4]) }
     }
 }

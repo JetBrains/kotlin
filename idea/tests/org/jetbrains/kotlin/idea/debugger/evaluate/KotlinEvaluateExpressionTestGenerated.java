@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger.evaluate;
@@ -91,9 +91,29 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/collections.kt");
         }
 
+        @TestMetadata("dataClassCopy.kt")
+        public void testDataClassCopy() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/dataClassCopy.kt");
+        }
+
+        @TestMetadata("defaultParameterValues.kt")
+        public void testDefaultParameterValues() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/defaultParameterValues.kt");
+        }
+
+        @TestMetadata("defaultParameterValues2.kt")
+        public void testDefaultParameterValues2() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/defaultParameterValues2.kt");
+        }
+
         @TestMetadata("delegatedPropertyInOtherFile.kt")
         public void testDelegatedPropertyInOtherFile() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/delegatedPropertyInOtherFile.kt");
+        }
+
+        @TestMetadata("delegatedVariables.kt")
+        public void testDelegatedVariables() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/delegatedVariables.kt");
         }
 
         @TestMetadata("dependentOnFile.kt")
@@ -114,6 +134,16 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("errors.kt")
         public void testErrors() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/errors.kt");
+        }
+
+        @TestMetadata("escapedNames.kt")
+        public void testEscapedNames() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/escapedNames.kt");
+        }
+
+        @TestMetadata("experimentalApi.kt")
+        public void testExperimentalApi() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/experimentalApi.kt");
         }
 
         @TestMetadata("extractLocalVariables.kt")
@@ -231,6 +261,26 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt22366.kt");
         }
 
+        @TestMetadata("kt25220.kt")
+        public void testKt25220() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt25220.kt");
+        }
+
+        @TestMetadata("kt25222.kt")
+        public void testKt25222() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt25222.kt");
+        }
+
+        @TestMetadata("kt28087.kt")
+        public void testKt28087() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt28087.kt");
+        }
+
+        @TestMetadata("kt29179.kt")
+        public void testKt29179() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt29179.kt");
+        }
+
         @TestMetadata("kt5554OnlyIntsShouldBeCoerced.kt")
         public void testKt5554OnlyIntsShouldBeCoerced() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt5554OnlyIntsShouldBeCoerced.kt");
@@ -329,6 +379,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/simple.kt");
+        }
+
+        @TestMetadata("staticField.kt")
+        public void testStaticField() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/staticField.kt");
         }
 
         @TestMetadata("stdlib.kt")
@@ -446,9 +501,39 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("anyUpdateInvokeStatic.kt")
+            public void testAnyUpdateInvokeStatic() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/anyUpdateInvokeStatic.kt");
+            }
+
+            @TestMetadata("anyUpdateVariable.kt")
+            public void testAnyUpdateVariable() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/anyUpdateVariable.kt");
+            }
+
             @TestMetadata("primitivesCoertion.kt")
             public void testPrimitivesCoertion() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/primitivesCoertion.kt");
+            }
+
+            @TestMetadata("stringUpdateInvokeStatic.kt")
+            public void testStringUpdateInvokeStatic() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/stringUpdateInvokeStatic.kt");
+            }
+
+            @TestMetadata("stringUpdateInvokeVirtual.kt")
+            public void testStringUpdateInvokeVirtual() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/stringUpdateInvokeVirtual.kt");
+            }
+
+            @TestMetadata("stringUpdatePutField.kt")
+            public void testStringUpdatePutField() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/stringUpdatePutField.kt");
+            }
+
+            @TestMetadata("stringUpdateVariable.kt")
+            public void testStringUpdateVariable() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/stringUpdateVariable.kt");
             }
         }
 
@@ -565,9 +650,29 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/catchVariable.kt");
             }
 
+            @TestMetadata("coroutineContextFun.kt")
+            public void testCoroutineContextFun() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/coroutineContextFun.kt");
+            }
+
+            @TestMetadata("coroutineContextLambda.kt")
+            public void testCoroutineContextLambda() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/coroutineContextLambda.kt");
+            }
+
+            @TestMetadata("defaultImplsMangling.kt")
+            public void testDefaultImplsMangling() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/defaultImplsMangling.kt");
+            }
+
             @TestMetadata("delegatedPropertyInClass.kt")
             public void testDelegatedPropertyInClass() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClass.kt");
+            }
+
+            @TestMetadata("delegatedPropertyInClassKotlinVariables.kt")
+            public void testDelegatedPropertyInClassKotlinVariables() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/delegatedPropertyInClassKotlinVariables.kt");
             }
 
             @TestMetadata("delegatedPropertyInClassWithToString.kt")
@@ -623,6 +728,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("frameInlineFunCallInsideInlineFun.kt")
             public void testFrameInlineFunCallInsideInlineFun() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameInlineFunCallInsideInlineFun.kt");
+            }
+
+            @TestMetadata("frameInlineFunCallInsideInlineFunKotlinVariables.kt")
+            public void testFrameInlineFunCallInsideInlineFunKotlinVariables() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameInlineFunCallInsideInlineFunKotlinVariables.kt");
             }
 
             @TestMetadata("frameInnerClass.kt")
@@ -683,6 +793,66 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("frameThis0This0.kt")
             public void testFrameThis0This0() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameThis0This0.kt");
+            }
+
+            @TestMetadata("hideContinuationThis.kt")
+            public void testHideContinuationThis() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/hideContinuationThis.kt");
+            }
+
+            @TestMetadata("hideSyntheticThis.kt")
+            public void testHideSyntheticThis() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/hideSyntheticThis.kt");
+            }
+
+            @TestMetadata("inlineFunThisKotlinVariables.kt")
+            public void testInlineFunThisKotlinVariables() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/inlineFunThisKotlinVariables.kt");
+            }
+
+            @TestMetadata("lambdaFun1.kt")
+            public void testLambdaFun1() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/lambdaFun1.kt");
+            }
+
+            @TestMetadata("lambdaFun2.kt")
+            public void testLambdaFun2() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/lambdaFun2.kt");
+            }
+
+            @TestMetadata("lambdaFun3.kt")
+            public void testLambdaFun3() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/lambdaFun3.kt");
+            }
+
+            @TestMetadata("lambdaFun4.kt")
+            public void testLambdaFun4() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/lambdaFun4.kt");
+            }
+
+            @TestMetadata("lambdaParameterMangling.kt")
+            public void testLambdaParameterMangling() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/lambdaParameterMangling.kt");
+            }
+
+            @TestMetadata("lambdaThisMangling.kt")
+            public void testLambdaThisMangling() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/lambdaThisMangling.kt");
+            }
+
+            @TestMetadata("localFunctionMangling.kt")
+            public void testLocalFunctionMangling() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/localFunctionMangling.kt");
+            }
+
+            @TestMetadata("remapThis.kt")
+            public void testRemapThis() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/remapThis.kt");
+            }
+
+            @TestMetadata("suspendContinuation.kt")
+            public void testSuspendContinuation() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/suspendContinuation.kt");
             }
         }
 
@@ -916,6 +1086,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/isInsideInlineLambda.kt");
         }
 
+        @TestMetadata("lambdaParameters.kt")
+        public void testLambdaParameters() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/lambdaParameters.kt");
+        }
+
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/localFun.kt");
@@ -924,6 +1099,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("multipleBreakpointsAtLine.kt")
         public void testMultipleBreakpointsAtLine() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/multipleBreakpointsAtLine.kt");
+        }
+
+        @TestMetadata("nonCapturedVariables.kt")
+        public void testNonCapturedVariables() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/nonCapturedVariables.kt");
         }
 
         @TestMetadata("privateMembersPriority.kt")
@@ -939,6 +1119,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("smartcasts.kt")
         public void testSmartcasts() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/smartcasts.kt");
+        }
+
+        @TestMetadata("thisLabels.kt")
+        public void testThisLabels() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/thisLabels.kt");
         }
 
         @TestMetadata("whenEntry.kt")

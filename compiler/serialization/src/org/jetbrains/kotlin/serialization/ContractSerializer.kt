@@ -63,10 +63,10 @@ class ContractSerializer {
 
                 is ReturnsEffectDeclaration -> {
                     when {
-                        effectDeclaration.value == ConstantReference.NOT_NULL -> builder.effectType =
-                                ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL
-                        effectDeclaration.value == ConstantReference.WILDCARD -> builder.effectType =
-                                ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
+                        effectDeclaration.value == ConstantReference.NOT_NULL ->
+                            builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL
+                        effectDeclaration.value == ConstantReference.WILDCARD ->
+                            builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
                         else -> {
                             builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
                             builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.value, contractDescription))

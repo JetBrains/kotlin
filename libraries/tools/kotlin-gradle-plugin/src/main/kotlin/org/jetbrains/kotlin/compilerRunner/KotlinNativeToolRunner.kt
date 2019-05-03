@@ -20,11 +20,11 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.gradle.plugin.mpp.hostManager
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import java.util.*
 
 /** Copied from Kotlin/Native repository. */
@@ -98,6 +98,12 @@ internal abstract class KonanCliRunner(
             project.jvmArgs.none { it.startsWith("-Xmx") }) {
             add("-Xmx3G")
         }
+        // Disable C2 compiler for HotSpot VM to improve compilation speed.
+        System.getProperty("java.vm.name")?.let {
+            if (it.contains("HotSpot", true)) {
+                add("-XX:TieredStopAtLevel=1")
+            }
+        }
         addAll(additionalJvmArgs)
         addAll(project.jvmArgs)
     }
@@ -153,20 +159,10 @@ internal abstract class KonanCliRunner(
 internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<String> = emptyList()) :
     KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project, additionalJvmArgs) {
     init {
-        if (HostManager.host == KonanTarget.MINGW_X64) {
-            // TODO: Read it from KonanDistribution when it is accessible.
-            val konanProperties = Properties().apply {
-                project.file("${project.konanHome}/konan/konan.properties").inputStream().use(::load)
-            }
-            val toolchainDir = konanProperties.getProperty("targetToolchain.mingw_x64")
-            if (toolchainDir != null) {
-                environment.put(
-                    "PATH",
-                    DependencyDirectories.defaultDependenciesRoot
-                        .resolve("$toolchainDir/bin")
-                        .absolutePath + ";${System.getenv("PATH")}"
-                )
-            }
+        if (HostManager.hostIsMingw) {
+            val distribution = Distribution(konanHomeOverride = project.konanHome)
+            val llvmHome = PlatformManager(distribution).hostPlatform.absoluteLlvmHome
+            environment.put("PATH", "$llvmHome/bin;${System.getenv("PATH")}")
         }
     }
 }

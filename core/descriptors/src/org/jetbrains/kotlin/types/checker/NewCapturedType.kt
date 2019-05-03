@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.DO_NOTHING_2
@@ -109,12 +111,6 @@ fun captureFromArguments(
     return KotlinTypeFactory.simpleType(type.annotations, type.constructor, newArguments, type.isMarkedNullable)
 }
 
-enum class CaptureStatus {
-    FOR_SUBTYPING,
-    FOR_INCORPORATION,
-    FROM_EXPRESSION
-}
-
 /**
  * Now [lowerType] is not null only for in projections.
  * Example: `Inv<in String>` For `in String` we create CapturedType with [lowerType] = String.
@@ -129,7 +125,7 @@ class NewCapturedType(
     val lowerType: UnwrappedType?, // todo check lower type for nullable captured types
     override val annotations: Annotations = Annotations.EMPTY,
     override val isMarkedNullable: Boolean = false
-) : SimpleType() {
+) : SimpleType(), CapturedTypeMarker {
     internal constructor(captureStatus: CaptureStatus, lowerType: UnwrappedType?, projection: TypeProjection) :
             this(captureStatus, NewCapturedTypeConstructor(projection), lowerType)
 

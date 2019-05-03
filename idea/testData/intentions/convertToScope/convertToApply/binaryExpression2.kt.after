@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+class A {
+    fun foo() {}
+}
+fun baz(a: A): Int = 1
+
+fun test() {
+    val a = A().apply {
+        foo()
+        1 + baz(this)
+        foo()
+    }
+}

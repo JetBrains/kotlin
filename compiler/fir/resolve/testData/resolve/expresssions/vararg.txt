@@ -1,0 +1,9 @@
+FILE: vararg.kt
+    public final fun foo(vararg x: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun foo(): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo|()
+        R|/foo|(String(!))
+    }

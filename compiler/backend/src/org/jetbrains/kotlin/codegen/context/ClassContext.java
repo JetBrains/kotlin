@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.context;
@@ -29,6 +29,14 @@ public class ClassContext extends FieldOwnerContext<ClassDescriptor> {
     ) {
         super(contextDescriptor, contextKind, parentContext, typeMapper.getBindingContext().get(CLOSURE, contextDescriptor),
               contextDescriptor, localLookup);
+
+        if (contextKind == OwnerKind.ERASED_INLINE_CLASS) {
+            assert parentContext instanceof ClassContext &&
+                   parentContext.getContextKind() == OwnerKind.IMPLEMENTATION &&
+                   parentContext.getContextDescriptor() == contextDescriptor:
+                    "Erased inline class context should be created inside implementation context for the same class:" + contextDescriptor +
+                    "parent: " + parentContext;
+        }
 
         this.typeMapper = typeMapper;
     }

@@ -28,14 +28,15 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
     dependsOn(":dist")
 }
 
+publish()
+
 sourcesJar()
 javadocJar()
 dist()
-publish()
 
 testsJar()

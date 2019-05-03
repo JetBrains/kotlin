@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:JvmName("KaptCli")
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.modules.isAtLeastJava9
 import org.jetbrains.kotlin.kapt.cli.CliToolOption.Format.*
 import java.io.File
+import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
@@ -29,7 +30,7 @@ fun main(args: Array<String>) {
     val kaptTransformed = transformArgs(args.asList(), messageCollector, false)
 
     if (messageCollector.hasErrors()) {
-        System.exit(ExitCode.COMPILATION_ERROR.code)
+        exitProcess(ExitCode.COMPILATION_ERROR.code)
         return
     }
 

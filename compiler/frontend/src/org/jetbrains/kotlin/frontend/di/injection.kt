@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
@@ -72,6 +73,7 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<ExperimentalUsageChecker>()
     useImpl<ExperimentalUsageChecker.Overrides>()
     useImpl<ExperimentalUsageChecker.ClassifierUsage>()
+    useImpl<ClassicTypeSystemContextForCS>()
 }
 
 fun StorageComponentContainer.configureModule(

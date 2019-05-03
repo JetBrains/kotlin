@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.PARTIAL
 import org.jetbrains.kotlin.types.isFlexible
 
+@Suppress("DEPRECATION")
 class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention::class)
 
 class SimplifyBooleanWithConstantsIntention :

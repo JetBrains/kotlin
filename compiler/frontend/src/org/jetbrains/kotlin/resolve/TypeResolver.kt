@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
@@ -57,6 +56,7 @@ import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliases
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.math.min
 
 class TypeResolver(
     private val annotationResolver: AnnotationResolver,
@@ -112,12 +112,6 @@ class TypeResolver(
         if (cachedType != null) return type(cachedType)
 
         val resolvedTypeSlice = if (c.abbreviated) BindingContext.ABBREVIATED_TYPE else BindingContext.TYPE
-
-        val debugType = typeReference.debugTypeInfo
-        if (debugType != null) {
-            c.trace.record(resolvedTypeSlice, typeReference, debugType)
-            return type(debugType)
-        }
 
         val annotations = resolveTypeAnnotations(c, typeReference)
         val type = resolveTypeElement(c, annotations, typeReference.modifierList, typeReference.typeElement)
@@ -706,7 +700,7 @@ class TypeResolver(
         var wasStatic = false
         val result = SmartList<KtTypeProjection>()
 
-        val classifierChainLastIndex = Math.min(classifierDescriptorChain.size, reversedQualifierParts.size) - 1
+        val classifierChainLastIndex = min(classifierDescriptorChain.size, reversedQualifierParts.size) - 1
 
         for (index in 0..classifierChainLastIndex) {
             val qualifierPart = reversedQualifierParts[index]
@@ -736,7 +730,7 @@ class TypeResolver(
 
         val nonClassQualifierParts =
             reversedQualifierParts.subList(
-                Math.min(classifierChainLastIndex + 1, reversedQualifierParts.size),
+                min(classifierChainLastIndex + 1, reversedQualifierParts.size),
                 reversedQualifierParts.size
             )
 

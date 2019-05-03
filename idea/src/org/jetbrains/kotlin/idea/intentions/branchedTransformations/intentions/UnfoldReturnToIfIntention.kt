@@ -50,16 +50,23 @@ class UnfoldReturnToIfIntention : LowPriorityAction, SelfTargetingRangeIntention
         val psiFactory = KtPsiFactory(element)
         val context = element.analyze()
 
-        newThenExpr.replace(createReturnExpression(thenExpr, psiFactory, context))
-        newElseExpr.replace(createReturnExpression(elseExpr, psiFactory, context))
+        val labelName = element.getLabelName()
+        newThenExpr.replace(createReturnExpression(thenExpr, labelName, psiFactory, context))
+        newElseExpr.replace(createReturnExpression(elseExpr, labelName, psiFactory, context))
         element.replace(newIfExpression)
     }
 
     companion object {
-        fun createReturnExpression(expr: KtExpression, psiFactory: KtPsiFactory, context: BindingContext): KtExpression {
+        fun createReturnExpression(
+            expr: KtExpression,
+            labelName: String?,
+            psiFactory: KtPsiFactory,
+            context: BindingContext
+        ): KtExpression {
+            val label = labelName?.let { "@$it" } ?: ""
             val returnText = when (expr) {
                 is KtBreakExpression, is KtContinueExpression, is KtReturnExpression, is KtThrowExpression -> ""
-                else -> if (expr.getResolvedCall(context)?.resultingDescriptor?.returnType?.isNothing() == true) "" else "return "
+                else -> if (expr.getResolvedCall(context)?.resultingDescriptor?.returnType?.isNothing() == true) "" else "return$label "
             }
             return psiFactory.createExpressionByPattern("$returnText$0", expr)
         }

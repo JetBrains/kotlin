@@ -28,10 +28,10 @@ val test2 = generate {
 
 val test3 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(3)
-    yieldBarReturnType(3)
+    <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>yieldBarReturnType(3)<!>
 }
 
 val test4 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(3)
-    barReturnType()
+    <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>barReturnType()<!>
 }

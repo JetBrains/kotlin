@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.idea.debugger
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 
 class DiagnosticSuppressorForDebugger : DiagnosticSuppressor {
@@ -27,7 +26,7 @@ class DiagnosticSuppressorForDebugger : DiagnosticSuppressor {
         val element = diagnostic.psiElement
         val containingFile = element.containingFile
 
-        if (containingFile is KtFile && containingFile.suppressDiagnosticsInDebugMode) {
+        if (containingFile is KtCodeFragment) {
             val diagnosticFactory = diagnostic.factory
             return diagnosticFactory == Errors.UNSAFE_CALL
         }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections.gradle
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
 import org.jetbrains.kotlin.idea.versions.LibInfo
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
+import org.jetbrains.plugins.groovy.codeInspection.BaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
@@ -31,7 +31,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrC
 private val LibInfo.gradleMarker get() = "$groupId:$name:"
 
 @Suppress("SpellCheckingInspection")
-class GradleKotlinxCoroutinesDeprecationInspection : GradleBaseInspection(), CleanupLocalInspectionTool, MigrationFix {
+class GradleKotlinxCoroutinesDeprecationInspection : BaseInspection(), CleanupLocalInspectionTool, MigrationFix {
     override fun isApplicable(migrationInfo: MigrationInfo): Boolean {
         return migrationInfo.isLanguageVersionUpdate(LanguageVersion.KOTLIN_1_2, LanguageVersion.KOTLIN_1_3)
     }

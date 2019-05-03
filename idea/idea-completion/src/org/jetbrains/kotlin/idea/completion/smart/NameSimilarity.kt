@@ -22,6 +22,7 @@ import com.intellij.codeInsight.lookup.WeighingContext
 import com.intellij.openapi.util.Key
 import com.intellij.psi.codeStyle.NameUtil
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import kotlin.math.min
 
 val NAME_SIMILARITY_KEY = Key<Int>("NAME_SIMILARITY_KEY")
 
@@ -49,7 +50,7 @@ private fun calcNameSimilarity(name: String, expectedName: String): Int {
     val nonNumberWords2 = words2.filter(::isNonNumber)
 
     // count number of words matched at the end (but ignore number words - they are less important)
-    val minWords = Math.min(nonNumberWords1.size, nonNumberWords2.size)
+    val minWords = min(nonNumberWords1.size, nonNumberWords2.size)
     val matchedTailLength = (0..minWords-1).firstOrNull {
         i -> nonNumberWords1[nonNumberWords1.size - i - 1] != nonNumberWords2[nonNumberWords2.size - i - 1]
     } ?: minWords

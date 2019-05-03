@@ -5,9 +5,15 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChanges
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.UnknownSnapshot
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.cacheOnlyIfEnabledForKotlin
+import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.tasks.isBuildCacheSupported
 import org.jetbrains.kotlin.gradle.utils.isJavaFile
 import java.io.File
@@ -19,8 +25,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
         cacheOnlyIfEnabledForKotlin()
 
         if (isBuildCacheSupported()) {
-            val reason = "Caching is disabled by default for kapt because of arbitrary behavior of external " +
-                    "annotation processors. You can enable it by adding 'kapt.useBuildCache = true' to the build script."
+            val reason = "Caching is disabled for kapt with 'kapt.useBuildCache'"
             outputs.cacheIf(reason) { useBuildCache }
         }
     }
@@ -46,6 +51,17 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     @get:Internal
     internal lateinit var kaptClasspathConfigurations: List<Configuration>
 
+
+    @get:PathSensitive(PathSensitivity.NONE)
+    @get:Optional
+    @get:InputFiles
+    internal var classpathStructure: FileCollection? = null
+
+    /** Output directory that contains caches necessary to support incremental annotation processing. */
+    @get:OutputDirectory
+    @get:Optional
+    var incAptCache: File? = null
+
     @get:OutputDirectory
     internal lateinit var classesDir: File
 
@@ -60,6 +76,9 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
 
     @get:Input
     internal var includeCompileClasspath: Boolean = true
+
+    @get:Input
+    internal var isIncremental = true
 
     // @Internal because _abiClasspath and _nonAbiClasspath are used for actual checks
     @get:Internal
@@ -141,6 +160,68 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
             }
 
         }
+    }
+
+    // TODO(gavra): Here we assume that kotlinc and javac output is available for incremental runs. We should insert some checks.
+    @Internal
+    protected fun getCompiledSources() = listOfNotNull(kotlinCompileTask.destinationDir, kotlinCompileTask.javaOutputDir)
+
+    protected fun getIncrementalChanges(inputs: IncrementalTaskInputs): KaptIncrementalChanges {
+        if (!isIncremental) {
+            clearLocalState()
+            return KaptIncrementalChanges.Unknown
+        }
+        if (!inputs.isIncremental) {
+            clearLocalState()
+            findClasspathChanges(classpath.files)
+            return KaptIncrementalChanges.Unknown
+        }
+
+        val changedFiles = with(mutableSetOf<File>()) {
+            inputs.outOfDate { this.add(it.file) }
+            inputs.removed { this.add(it.file) }
+            return@with this.toList()
+        }
+
+        val classpathChanges = classpath.files.let { cp -> changedFiles.filter { cp.contains(it) } }
+
+        val classpathStatus = findClasspathChanges(classpathChanges)
+        return when (classpathStatus) {
+            is KaptClasspathChanges.Unknown -> KaptIncrementalChanges.Unknown
+            is KaptClasspathChanges.Known -> KaptIncrementalChanges.Known(
+                changedFiles.filter { it.extension == "java" }.toSet(), classpathStatus.names
+            )
+        }
+    }
+
+    private fun findClasspathChanges(changedClasspath: Iterable<File>): KaptClasspathChanges {
+        val incAptCacheDir = incAptCache!!
+        incAptCacheDir.mkdirs()
+
+        val startTime = System.currentTimeMillis()
+
+        val previousSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(incAptCacheDir)
+        val currentSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
+            incAptCacheDir, classpath.files.toList(), classpathStructure!!.files
+        )
+
+        val classpathChanges = currentSnapshot.diff(previousSnapshot, changedClasspath.toSet())
+        currentSnapshot.writeToCache()
+
+        if (logger.isInfoEnabled) {
+            val time = "Took ${System.currentTimeMillis() - startTime}ms."
+            when {
+                previousSnapshot == UnknownSnapshot ->
+                    logger.info("Initializing classpath information for KAPT. $time")
+                classpathChanges == KaptClasspathChanges.Unknown ->
+                    logger.info("Unable to use existing data, re-initializing classpath information for KAPT. $time")
+                else -> {
+                    classpathChanges as KaptClasspathChanges.Known
+                    logger.info("Full list of impacted classpath names: ${classpathChanges.names}. $time")
+                }
+            }
+        }
+        return classpathChanges
     }
 
     private fun hasAnnotationProcessors(file: File): Boolean {

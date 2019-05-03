@@ -1,9 +1,5 @@
 package
 
-package a {
-    public fun a(): kotlin.Unit
-}
-
 package b {
     public fun b(): kotlin.Unit
 }

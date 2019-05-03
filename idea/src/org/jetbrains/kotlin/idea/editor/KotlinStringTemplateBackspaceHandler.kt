@@ -28,7 +28,7 @@ class KotlinStringTemplateBackspaceHandler : BackspaceHandlerDelegate() {
     override fun beforeCharDeleted(c: Char, file: PsiFile, editor: Editor) {
         if (c != '{' || file !is KtFile || !CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return
 
-        val offset = editor?.caretModel?.offset ?: return
+        val offset = editor.caretModel.offset
 
         val highlighter = (editor as EditorEx).highlighter
         val iterator = highlighter.createIterator(offset)

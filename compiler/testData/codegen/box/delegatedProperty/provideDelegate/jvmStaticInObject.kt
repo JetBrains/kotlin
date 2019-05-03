@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 
 import kotlin.test.*

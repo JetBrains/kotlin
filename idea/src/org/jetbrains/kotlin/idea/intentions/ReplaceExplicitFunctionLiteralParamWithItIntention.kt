@@ -46,25 +46,23 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntenti
         if (parameter.destructuringDeclaration != null) return false
 
         if (functionLiteral.anyDescendantOfType<KtFunctionLiteral> { literal ->
-            literal.usesName(element.text) &&
-            (!literal.hasParameterSpecification() || literal.usesName("it"))
-        } ) return false
+                literal.usesName(element.text) && (!literal.hasParameterSpecification() || literal.usesName("it"))
+            }) return false
 
         text = "Replace explicit parameter '${parameter.name}' with 'it'"
         return true
     }
 
-    private fun KtFunctionLiteral.usesName(name: String): Boolean =
-            anyDescendantOfType<KtSimpleNameExpression> {
-                nameExpr -> nameExpr.getReferencedName() == name
-            }
+    private fun KtFunctionLiteral.usesName(name: String): Boolean = anyDescendantOfType<KtSimpleNameExpression> { nameExpr ->
+        nameExpr.getReferencedName() == name
+    }
 
     override fun startInWriteAction(): Boolean = false
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
         val caretOffset = editor.caretModel.offset
-        val functionLiteral = targetFunctionLiteral(element, editor.caretModel.offset)!!
-        val cursorInParameterList = functionLiteral.valueParameterList!!.textRange.containsOffset(caretOffset)
+        val functionLiteral = targetFunctionLiteral(element, editor.caretModel.offset) ?: return
+        val cursorInParameterList = functionLiteral.valueParameterList?.textRange?.containsOffset(caretOffset) ?: return
         ParamRenamingProcessor(editor, functionLiteral, cursorInParameterList).run()
     }
 
@@ -83,22 +81,23 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntenti
     }
 
     private class ParamRenamingProcessor(
-            val editor: Editor,
-            val functionLiteral: KtFunctionLiteral,
-            val cursorWasInParameterList: Boolean
-    ) : RenameProcessor(editor.project,
-                        functionLiteral.valueParameters.single(),
-                        "it",
-                        false,
-                        false
+        val editor: Editor,
+        val functionLiteral: KtFunctionLiteral,
+        val cursorWasInParameterList: Boolean
+    ) : RenameProcessor(
+        editor.project,
+        functionLiteral.valueParameters.single(),
+        "it",
+        false,
+        false
     ) {
         override fun performRefactoring(usages: Array<out UsageInfo>) {
             super.performRefactoring(usages)
 
-            functionLiteral.deleteChildRange(functionLiteral.valueParameterList, functionLiteral.arrow!!)
+            functionLiteral.deleteChildRange(functionLiteral.valueParameterList, functionLiteral.arrow ?: return)
 
             if (cursorWasInParameterList) {
-                editor.caretModel.moveToOffset(functionLiteral.bodyExpression!!.textOffset)
+                editor.caretModel.moveToOffset(functionLiteral.bodyExpression?.textOffset ?: return)
             }
 
             val project = functionLiteral.project

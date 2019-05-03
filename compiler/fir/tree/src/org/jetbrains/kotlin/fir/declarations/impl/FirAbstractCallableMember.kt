@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
@@ -10,29 +10,29 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMember
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
-abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCallableMember {
+abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCallableMemberDeclaration {
 
-    final override val symbol: FirBasedSymbol<FirCallableMember>
+//    final override val symbol: FirBasedSymbol<FirCallableDeclaration>
     final override var receiverTypeRef: FirTypeRef?
     final override var returnTypeRef: FirTypeRef
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+    }
 
     constructor(
         session: FirSession,
         psi: PsiElement?,
-        symbol: FirBasedSymbol<FirCallableMember>,
         name: Name,
         receiverTypeRef: FirTypeRef?,
         returnTypeRef: FirTypeRef
     ) : super(session, psi, name) {
-        this.symbol = symbol
-        symbol.bind(this)
         this.receiverTypeRef = receiverTypeRef
         this.returnTypeRef = returnTypeRef
     }
@@ -40,7 +40,6 @@ abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCall
     constructor(
         session: FirSession,
         psi: PsiElement?,
-        symbol: FirBasedSymbol<FirCallableMember>,
         name: Name,
         visibility: Visibility,
         modality: Modality?,
@@ -50,8 +49,6 @@ abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCall
         receiverTypeRef: FirTypeRef?,
         returnTypeRef: FirTypeRef
     ) : super(session, psi, name, visibility, modality, isExpect, isActual) {
-        this.symbol = symbol
-        symbol.bind(this)
         this.receiverTypeRef = receiverTypeRef
         this.returnTypeRef = returnTypeRef
         status.isOverride = isOverride

@@ -29,6 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
+import com.sun.jdi.VirtualMachine
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
@@ -329,6 +330,12 @@ private fun inlinedLinesNumbers(
 
 @Volatile var emulateDexDebugInTests: Boolean = false
 
-fun DebugProcess.isDexDebug() =
-        (emulateDexDebugInTests && ApplicationManager.getApplication().isUnitTestMode) ||
-        (this.virtualMachineProxy as? VirtualMachineProxyImpl)?.virtualMachine?.name() == "Dalvik" // TODO: check other machine names
+fun DebugProcess.isDexDebug(): Boolean {
+    val virtualMachine = (this.virtualMachineProxy as? VirtualMachineProxyImpl)?.virtualMachine
+    return virtualMachine.isDexDebug()
+}
+
+fun VirtualMachine?.isDexDebug(): Boolean {
+    // TODO: check other machine names
+    return (emulateDexDebugInTests && ApplicationManager.getApplication().isUnitTestMode) || this?.name() == "Dalvik"
+}

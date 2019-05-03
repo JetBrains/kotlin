@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
 // EXPECTED_REACHABLE_NODES: 1819
 // MODULE: lib1
 // FILE: lib1.kt
@@ -43,8 +43,10 @@ fun box(): String {
     val b = Derived2()
     if (b.bar() != "B.foo") return "fail2: ${b.bar()}"
 
-    checkJsNames("foo", a)
-    checkJsNames("foo", b)
+    if (testUtils.isLegacyBackend()) {
+        checkJsNames("foo", a)
+        checkJsNames("foo", b)
+    }
 
     return "OK"
 }

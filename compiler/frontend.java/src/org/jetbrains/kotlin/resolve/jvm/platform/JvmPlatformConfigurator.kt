@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.jvm.platform
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
-import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.checkers.BigFunctionTypeAvailabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.*
@@ -38,10 +37,12 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor())),
         JvmAnnotationsTargetNonExistentAccessorChecker(),
         BadInheritedJavaSignaturesChecker,
-        JvmMultifileClassStateChecker
+        JvmMultifileClassStateChecker,
+        SynchronizedOnInlineMethodChecker
     ),
 
     additionalCallCheckers = listOf(
+        MissingBuiltInDeclarationChecker,
         JavaAnnotationCallChecker(),
         SuspensionPointInsideMutexLockChecker(),
         JavaClassOnCompanionChecker(),
@@ -49,7 +50,6 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         UnsupportedSyntheticCallableReferenceChecker(),
         SuperCallWithDefaultArgumentsChecker(),
         ProtectedSyntheticExtensionCallChecker,
-        ReifiedTypeParameterSubstitutionChecker(),
         RuntimeAssertionsOnExtensionReceiverCallChecker,
         ApiVersionIsAtLeastArgumentsChecker,
         InconsistentOperatorFromJavaCallChecker
@@ -64,7 +64,8 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
     ),
 
     additionalClassifierUsageCheckers = listOf(
-        BigFunctionTypeAvailabilityChecker
+        BigFunctionTypeAvailabilityChecker,
+        MissingBuiltInDeclarationChecker.ClassifierUsage
     ),
 
     additionalAnnotationCheckers = listOf(
@@ -95,7 +96,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<InlinePlatformCompatibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker.ClassifierUsage>()
-        container.useInstance(JvmTypeSpecificityComparator)
+        container.useImpl<JvmTypeSpecificityComparator>()
         container.useImpl<JvmDefaultSuperCallChecker>()
         container.useImpl<JvmSamConversionTransformer>()
         container.useInstance(FunctionWithBigAritySupport.LANGUAGE_VERSION_DEPENDENT)

@@ -18,45 +18,8 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleLibraryDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinTargetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.KotlinJavaMPPSourceSetDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryDataService"/>
         <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.core.script.ReloadGradleTemplatesOnSync"/>
-
-        <localInspection
-            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection"
-            displayName="Kotlin Gradle and IDE plugins versions are different"
-            groupName="Kotlin"
-            enabledByDefault="true"
-            language="Groovy"
-            hasStaticDescription="true"
-            level="WARNING"/>
-
-        <localInspection
-            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
-            displayName="Kotlin library and Gradle plugin versions are different"
-            groupName="Kotlin"
-            enabledByDefault="true"
-            language="Groovy"
-            hasStaticDescription="true"
-            level="WARNING"/>
-
-        <localInspection
-            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DeprecatedGradleDependencyInspection"
-            displayName="Deprecated library is used in Gradle"
-            groupName="Kotlin"
-            enabledByDefault="true"
-            cleanupTool="true"
-            language="Groovy"
-            hasStaticDescription="true"
-            level="WARNING"/>
-
-        <localInspection
-            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection"
-            displayName="Incompatible kotlinx.coroutines dependency is used with Kotlin 1.3+ in Gradle"
-            groupPath="Kotlin,Migration"
-            groupName="Gradle"
-            enabledByDefault="true"
-            language="Groovy"
-            hasStaticDescription="true"
-            level="ERROR"/>
 
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestClassGradleConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestMethodGradleConfigurationProducer"/>
@@ -76,11 +39,11 @@
         <gradleModelFacade implementation="org.jetbrains.kotlin.idea.inspections.gradle.DefaultGradleModelFacade"/>
 
         <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefinitionsContributor" order="first"/>
-        <scriptRelatedModulesProvider implementation="org.jetbrains.kotlin.idea.core.script.GradleBuildSrcModuleDependencyProvider"/>
+        <scriptAdditionalIdeaDependenciesProvider implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptAdditionalIdeaDependenciesProvider"/>
 
         <moduleBuilder implementation="org.jetbrains.kotlin.ide.konan.gradle.KotlinGradleNativeMultiplatformModuleBuilder"/>
-        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder"/>
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformModuleBuilder"/>
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder"/>
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileMultiplatformModuleBuilder"/>
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileSharedMultiplatformModuleBuilder"/>
     </extensions>

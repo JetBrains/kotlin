@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // See also KT-5198 / KT-10186
 
 inline fun doCall(f: () -> Unit) = f()
@@ -13,13 +14,13 @@ fun doSomething() {}
 
 fun test2() {
     fun f(x: Any?) = x
-    f(null?.let { return })
+    f(null?.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>let<!> { return })
 
     // false unreachable here
     doSomething()
 }
 
 fun test3(x: Any?): Boolean =
-    x?.let { 
+    x?.let {
         return true
     } ?: false

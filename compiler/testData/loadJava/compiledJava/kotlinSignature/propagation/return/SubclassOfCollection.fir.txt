@@ -1,0 +1,4 @@
+public abstract interface SubclassOfCollection<E> : R|kotlin/collections/Collection<E>| {
+    public abstract operator fun iterator(): R|kotlin/collections/Iterator<ft<E, E?>>|
+
+}

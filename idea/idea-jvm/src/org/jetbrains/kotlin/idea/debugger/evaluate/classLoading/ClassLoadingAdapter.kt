@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.classLoading
 
-import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.sun.jdi.ArrayReference
 import com.sun.jdi.ArrayType
 import com.sun.jdi.ClassLoaderReference
 import com.sun.jdi.Value
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import org.jetbrains.kotlin.idea.debugger.evaluate.GENERATED_FUNCTION_NAME
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -37,8 +36,8 @@ interface ClassLoadingAdapter {
             OrdinaryClassLoadingAdapter()
         )
 
-        fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference? {
-            val mainClass = classes.firstOrNull { it.isMainClass() } ?: return null
+        fun loadClasses(context: ExecutionContext, classes: Collection<ClassToLoad>): ClassLoaderReference? {
+            val mainClass = classes.firstOrNull { it.isMainClass } ?: return null
 
             var info = ClassInfoForEvaluator(containsAdditionalClasses = classes.size > 1)
             if (!info.containsAdditionalClasses) {
@@ -64,8 +63,8 @@ interface ClassLoadingAdapter {
         }
 
         private fun analyzeClass(classToLoad: ClassToLoad, info: ClassInfoForEvaluator): ClassInfoForEvaluator {
-            val classNode = ClassNode().apply { ClassReader(classToLoad.bytes).accept(this, ClassReader.EXPAND_FRAMES) }
-            val methodToRun = classNode.methods.single()
+            val classNode = ClassNode().apply { ClassReader(classToLoad.bytes).accept(this, 0) }
+            val methodToRun = classNode.methods.single { it.name == GENERATED_FUNCTION_NAME }
 
             val visitedLabels = hashSetOf<Label>()
 
@@ -91,18 +90,19 @@ interface ClassLoadingAdapter {
         }
     }
 
-    fun isApplicable(context: EvaluationContextImpl, info: ClassInfoForEvaluator): Boolean
+    fun isApplicable(context: ExecutionContext, info: ClassInfoForEvaluator): Boolean
 
-    fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference
+    fun loadClasses(context: ExecutionContext, classes: Collection<ClassToLoad>): ClassLoaderReference
 
-    fun mirrorOfByteArray(bytes: ByteArray, context: EvaluationContextImpl, process: DebugProcessImpl): ArrayReference {
-        val arrayClass = process.findClass(context, "byte[]", context.classLoader) as ArrayType
-        val reference = process.newInstance(arrayClass, bytes.size)
-        DebuggerUtilsEx.keep(reference, context)
+    fun mirrorOfByteArray(bytes: ByteArray, context: ExecutionContext): ArrayReference {
+        val classLoader = context.classLoader
+        val arrayClass = context.findClass("byte[]", classLoader) as ArrayType
+        val reference = context.newInstance(arrayClass, bytes.size)
+        context.keepReference(reference)
 
         val mirrors = ArrayList<Value>(bytes.size)
         for (byte in bytes) {
-            mirrors += process.virtualMachineProxy.mirrorOf(byte)
+            mirrors += context.vm.mirrorOf(byte)
         }
 
         var loaded = 0

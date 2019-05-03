@@ -62,11 +62,6 @@ class RunScratchAction : ScratchAction(
 
             val module = scratchPanel.getModule()
 
-            @Suppress("FoldInitializerAndIfToElvis")
-            if (module == null) {
-                return defaultOutputHandler.error(scratchFile, "Module should be selected")
-            }
-
             val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
 
             @Suppress("FoldInitializerAndIfToElvis")
@@ -96,7 +91,7 @@ class RunScratchAction : ScratchAction(
                 }
             }
 
-            if (!isAutoRun && isMakeBeforeRun) {
+            if (!isAutoRun && module != null && isMakeBeforeRun) {
                 val project = scratchPanel.scratchFile.project
                 ProjectTaskManager.getInstance(project).build(arrayOf(module)) { result ->
                     if (result.isAborted || result.errors > 0) {

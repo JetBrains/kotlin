@@ -19,16 +19,7 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
-import org.jetbrains.kotlin.android.*
-import org.jetbrains.kotlin.android.annotator.AbstractAndroidGutterIconTest
-import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
-import org.jetbrains.kotlin.android.folding.AbstractAndroidResourceFoldingTest
-import org.jetbrains.kotlin.android.intention.AbstractAndroidIntentionTest
-import org.jetbrains.kotlin.android.intention.AbstractAndroidResourceIntentionTest
-import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
-import org.jetbrains.kotlin.android.quickfix.AbstractAndroidLintQuickfixTest
-import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
@@ -527,7 +518,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractOutOfBlockModificationTest> {
-            model("codeInsight/outOfBlock")
+            model("codeInsight/outOfBlock", pattern = KT_OR_KTS)
         }
 
         testClass<AbstractDataFlowValueRenderingTest> {
@@ -634,10 +625,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSmartStepIntoTest> {
             model("debugger/smartStepInto")
-        }
-
-        testClass<AbstractBeforeExtractFunctionInsertionTest> {
-            model("debugger/insertBeforeExtractFunction", extension = "kt")
         }
 
         testClass<AbstractKotlinSteppingTest> {
@@ -966,7 +953,7 @@ fun main(args: Array<String>) {
     }
 
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
-        testClass<AbstractIncrementalJpsTest> {
+        testClass<AbstractIncrementalJvmJpsTest> {
             model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true)
             model("incremental/multiModule/multiplatform/custom", extension = null, excludeParentDirs = true)
@@ -1134,7 +1121,7 @@ fun main(args: Array<String>) {
             model("script", extension = "kts")
         }
     }
-
+/*
     testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
         testClass<AbstractAndroidCompletionTest> {
             model("android/completion", recursive = false, extension = null)
@@ -1207,4 +1194,5 @@ fun main(args: Array<String>) {
             model("android/gutterIcon")
         }
     }
+*/
 }

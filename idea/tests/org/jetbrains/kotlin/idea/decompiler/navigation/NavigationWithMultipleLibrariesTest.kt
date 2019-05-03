@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
@@ -22,14 +22,16 @@ import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigationChecker.Companion.checkAnnotatedCode
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
 import org.junit.Assert
+import org.junit.runner.RunWith
 import java.io.File
-
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class NavigationWithMultipleCustomLibrariesTest : AbstractNavigationToSourceOrDecompiledTest() {
 
     override val testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigationMultipleLibs/"
@@ -126,7 +128,7 @@ class NavigationToSingleJarInMultipleLibrariesTest : AbstractNavigationWithMulti
 abstract class AbstractNavigationWithMultipleLibrariesTest : ModuleTestCase() {
     abstract val testDataPath: String
 
-    protected fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)!!
+    protected fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)
 
     protected fun checkReferencesInModule(module: Module, libraryName: String, expectedFileName: String) {
         checkAnnotatedCode(findSourceFile(module), File(testDataPath + expectedFileName)) {

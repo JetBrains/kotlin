@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -63,14 +64,13 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
     }
 }
 
-
 class IrReturnableBlockImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    override val symbol: IrReturnableBlockSymbol,
-    origin: IrStatementOrigin? = null,
-    override val sourceFileName: String = "no source file"
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        override val symbol: IrReturnableBlockSymbol,
+        origin: IrStatementOrigin? = null,
+        override val inlineFunctionSymbol: IrFunctionSymbol? = null
 ) :
     IrContainerExpressionBase(startOffset, endOffset, type, origin),
     IrReturnableBlock {
@@ -84,29 +84,8 @@ class IrReturnableBlockImpl(
         symbol: IrReturnableBlockSymbol,
         origin: IrStatementOrigin?,
         statements: List<IrStatement>,
-        sourceFileName: String = "no source file"
-    ) : this(startOffset, endOffset, type, symbol, origin, sourceFileName) {
-        this.statements.addAll(statements)
-    }
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        descriptor: FunctionDescriptor,
-        origin: IrStatementOrigin? = null,
-        sourceFileName: String = "no source file"
-    ) : this(startOffset, endOffset, type, IrReturnableBlockSymbolImpl(descriptor), origin, sourceFileName)
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        descriptor: FunctionDescriptor,
-        origin: IrStatementOrigin?,
-        statements: List<IrStatement>,
-        sourceFileName: String = "no source file"
-    ) : this(startOffset, endOffset, type, descriptor, origin, sourceFileName) {
+        inlineFunctionSymbol: IrFunctionSymbol? = null
+    ) : this(startOffset, endOffset, type, symbol, origin, inlineFunctionSymbol) {
         this.statements.addAll(statements)
     }
 

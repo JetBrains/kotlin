@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir;
@@ -29,9 +29,29 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("arrayFirstOrNull.kt")
+    public void testArrayFirstOrNull() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/arrayFirstOrNull.kt");
+    }
+
+    @TestMetadata("companionLoad.kt")
+    public void testCompanionLoad() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/companionLoad.kt");
+    }
+
+    @TestMetadata("components.kt")
+    public void testComponents() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/components.kt");
+    }
+
     @TestMetadata("concurrent.kt")
     public void testConcurrent() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/concurrent.kt");
+    }
+
+    @TestMetadata("factoryFunctionOverloads.kt")
+    public void testFactoryFunctionOverloads() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/factoryFunctionOverloads.kt");
     }
 
     @TestMetadata("functionX.kt")
@@ -39,8 +59,28 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
         runTest("compiler/fir/resolve/testData/resolve/stdlib/functionX.kt");
     }
 
+    @TestMetadata("helloWorld.kt")
+    public void testHelloWorld() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/helloWorld.kt");
+    }
+
+    @TestMetadata("mapList.kt")
+    public void testMapList() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/mapList.kt");
+    }
+
     @TestMetadata("reflectionClass.kt")
     public void testReflectionClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/reflectionClass.kt");
+    }
+
+    @TestMetadata("typeAliasDeserialization.kt")
+    public void testTypeAliasDeserialization() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/typeAliasDeserialization.kt");
+    }
+
+    @TestMetadata("unaryOperators.kt")
+    public void testUnaryOperators() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/unaryOperators.kt");
     }
 }

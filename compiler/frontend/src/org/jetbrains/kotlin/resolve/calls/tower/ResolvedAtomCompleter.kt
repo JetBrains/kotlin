@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.tower
@@ -31,13 +31,12 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.types.IndexedParametersSubstitution
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResolvedAtomCompleter(
     private val resultSubstitutor: NewTypeSubstitutor,
@@ -55,6 +54,10 @@ class ResolvedAtomCompleter(
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
     private fun complete(resolvedAtom: ResolvedAtom) {
+        if (topLevelCallContext.inferenceSession.callCompleted(resolvedAtom)) {
+            return
+        }
+
         when (resolvedAtom) {
             is ResolvedCollectionLiteralAtom -> completeCollectionLiteralCalls(resolvedAtom)
             is ResolvedCallableReferenceAtom -> completeCallableReference(resolvedAtom)
@@ -81,6 +84,12 @@ class ResolvedAtomCompleter(
             diagnostics
         )
 
+        val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.functionCall else resolvedCall
+        if (ErrorUtils.isError(resolvedCall.candidateDescriptor)) {
+            kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
+            return resolvedCall
+        }
+
         val resolutionContextForPartialCall =
             topLevelCallContext.trace[BindingContext.PARTIAL_CALL_RESOLUTION_CONTEXT, resolvedCallAtom.atom.psiKotlinCall.psiCall]
 
@@ -95,8 +104,6 @@ class ResolvedAtomCompleter(
 
         kotlinToResolvedCallTransformer.bindAndReport(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
 
-        val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.functionCall else resolvedCall
-
         kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
         kotlinToResolvedCallTransformer.runAdditionalReceiversCheckers(resolvedCall, topLevelCallContext)
@@ -104,10 +111,39 @@ class ResolvedAtomCompleter(
         return resolvedCall
     }
 
-    private fun completeLambda(lambda: ResolvedLambdaAtom) {
-        val returnType = resultSubstitutor.safeSubstitute(lambda.returnType)
+    private val ResolvedLambdaAtom.isCoercedToUnit: Boolean
+        get() {
+            val returnTypes =
+                resultArguments.map {
+                    val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
+                    val unwrappedType = when (type) {
+                        is WrappedType -> type.unwrap()
+                        is UnwrappedType -> type
+                    }
+                    resultSubstitutor.safeSubstitute(unwrappedType)
+                }
+            if (returnTypes.isEmpty()) return true
+            val substitutedTypes = returnTypes.filterNotNull()
+            // we have some unsubstituted types
+            if (substitutedTypes.isEmpty()) return false
+            val commonReturnType = CommonSupertypes.commonSupertype(returnTypes)
+            return commonReturnType.isUnit()
+        }
 
-        updateTraceForLambda(lambda, topLevelTrace, returnType)
+    private fun completeLambda(lambda: ResolvedLambdaAtom) {
+        val returnType = if (lambda.isCoercedToUnit) {
+            builtIns.unitType
+        } else {
+            resultSubstitutor.safeSubstitute(lambda.returnType)
+        }
+
+        val approximatedReturnType =
+            TypeApproximator(builtIns).approximateDeclarationType(
+                returnType,
+                local = true,
+                languageVersionSettings = topLevelCallContext.languageVersionSettings
+            )
+        updateTraceForLambda(lambda, topLevelTrace, approximatedReturnType)
 
         for (lambdaResult in lambda.resultArguments) {
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
@@ -170,11 +206,12 @@ class ResolvedAtomCompleter(
             val valueType = receiver.value.type.unwrap()
             val newValueType = resultSubstitutor.substituteKeepAnnotations(valueType)
 
-            val newReceiverValue = receiver.value.replaceType(newValueType)
-
-            functionDescriptor.setExtensionReceiverParameter(
-                ReceiverParameterDescriptorImpl(receiver.containingDeclaration, newReceiverValue, receiver.annotations)
-            )
+            if (valueType !== newValueType) {
+                val newReceiverValue = receiver.value.replaceType(newValueType)
+                functionDescriptor.setExtensionReceiverParameter(
+                    ReceiverParameterDescriptorImpl(receiver.containingDeclaration, newReceiverValue, receiver.annotations)
+                )
+            }
         }
     }
 

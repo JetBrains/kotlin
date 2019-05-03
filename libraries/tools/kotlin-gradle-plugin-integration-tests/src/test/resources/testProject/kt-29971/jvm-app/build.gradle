@@ -1,0 +1,10 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+group = "com.example.jvm"
+version = "1.0"
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}

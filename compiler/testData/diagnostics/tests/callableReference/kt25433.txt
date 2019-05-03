@@ -1,0 +1,14 @@
+package
+
+public fun </*0*/ T, /*1*/ R> hidden(/*0*/ nameProp: kotlin.reflect.KProperty1<T, R>, /*1*/ value: R): kotlin.Unit
+public fun </*0*/ T, /*1*/ R> hiddenFun(/*0*/ nameFunc: kotlin.reflect.KFunction1<T, R>, /*1*/ value: R): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public final class App {
+    public constructor App(/*0*/ nullable: kotlin.String?)
+    public final val nullable: kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun nullableFun(): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

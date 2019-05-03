@@ -1,0 +1,2 @@
+val string: String
+    get() = ""

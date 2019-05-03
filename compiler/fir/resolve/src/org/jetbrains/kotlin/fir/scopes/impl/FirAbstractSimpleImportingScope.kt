@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.scopes.impl
@@ -8,25 +8,32 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-abstract class FirAbstractSimpleImportingScope(val session: FirSession) : FirScope {
+abstract class FirAbstractSimpleImportingScope(session: FirSession) : FirAbstractImportingScope(session, lookupInFir = true) {
 
     protected abstract val simpleImports: Map<Name, List<FirResolvedImportImpl>>
 
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (ConeSymbol) -> Boolean
+        processor: (ConeClassifierSymbol) -> Boolean
     ): Boolean {
         val imports = simpleImports[name] ?: return true
         if (imports.isEmpty()) return true
         val provider = FirSymbolProvider.getInstance(session)
         for (import in imports) {
-            val symbol = provider.getClassLikeSymbolByFqName(import.resolvedFqName) ?: continue
+            val importedName = import.importedName ?: continue
+            val classId =
+                import.resolvedClassId?.createNestedClassId(importedName)
+                    ?: ClassId.topLevel(import.packageFqName.child(importedName))
+            val symbol = provider.getClassLikeSymbolByFqName(classId) ?: continue
             if (!processor(symbol)) {
                 return false
             }
@@ -34,4 +41,21 @@ abstract class FirAbstractSimpleImportingScope(val session: FirSession) : FirSco
         return true
     }
 
+    override fun <T : ConeCallableSymbol> processCallables(
+        name: Name,
+        token: TowerScopeLevel.Token<T>,
+        processor: (ConeCallableSymbol) -> ProcessorAction
+    ): ProcessorAction {
+
+
+        val imports = simpleImports[name] ?: return ProcessorAction.NEXT
+        if (imports.isEmpty()) return ProcessorAction.NEXT
+
+        for (import in imports) {
+            if (processCallables(import, import.importedName!!, token, processor).stop()) {
+                return ProcessorAction.STOP
+            }
+        }
+        return ProcessorAction.NEXT
+    }
 }

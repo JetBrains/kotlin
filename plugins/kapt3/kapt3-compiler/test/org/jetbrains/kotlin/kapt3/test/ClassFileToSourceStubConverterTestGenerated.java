@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.kapt3.test;
@@ -194,6 +194,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/javaKeywordsInPackageNames.kt");
     }
 
+    @TestMetadata("javadoc.kt")
+    public void testJavadoc() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/javadoc.kt");
+    }
+
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmOverloads.kt");
@@ -352,6 +357,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("nonExistentClassWIthoutCorrection.kt")
     public void testNonExistentClassWIthoutCorrection() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/nonExistentClassWIthoutCorrection.kt");
+    }
+
+    @TestMetadata("outProjection.kt")
+    public void testOutProjection() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/outProjection.kt");
     }
 
     @TestMetadata("primitiveTypes.kt")

@@ -7,7 +7,7 @@ UFile (package = ) [public final class Simple {...]
             UBlockExpression [{...}] = external println("Hello, world!")("Hello, world!")
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println("Hello, world!")] = external println("Hello, world!")("Hello, world!")
                     UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
-                    USimpleNameReferenceExpression (identifier = println) [println] = external println("Hello, world!")("Hello, world!")
+                    USimpleNameReferenceExpression (identifier = println, resolvesTo = null) [println] = external println("Hello, world!")("Hello, world!")
                     ULiteralExpression (value = "Hello, world!") ["Hello, world!"] = "Hello, world!"
         UAnnotationMethod (name = getProperty) [public final fun getProperty() : java.lang.String = UastEmptyExpression]
         UAnnotationMethod (name = Simple) [public fun Simple() = UastEmptyExpression]

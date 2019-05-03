@@ -20,7 +20,6 @@ import com.intellij.openapi.fileTypes.StdFileTypes
 import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileContent
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
@@ -76,7 +75,7 @@ object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmM
                                     kind = KotlinClassHeader.Kind.getById(value)
                                 }
                                 METADATA_EXTRA_INT_FIELD_NAME -> if (value is Int) {
-                                    isStrictSemantics = (value and JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0
+                                    isStrictSemantics = (value and METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0
                                 }
                             }
                         }

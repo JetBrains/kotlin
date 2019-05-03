@@ -72,7 +72,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         typeResolver = container.getTypeResolver();
         expressionTypingServices = container.getExpressionTypingServices();
 
-        scopeWithImports = getDeclarationsScope("compiler/testData/type-checker-test.kt");
+        scopeWithImports = getDeclarationsScope();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         super.tearDown();
     }
 
-    public void testConstants() throws Exception {
+    public void testConstants() {
         assertType("1", builtIns.getIntType());
         assertType("0x1", builtIns.getIntType());
         assertType("0X1", builtIns.getIntType());
@@ -114,19 +114,13 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("null", builtIns.getNullableNothingType());
     }
 
-    public void testTypeInfo() throws Exception {
-// todo: obsolete since removal of typeinfo
-//        assertType("typeinfo<Int>", "TypeInfo<Int>");
-//        assertType("typeinfo<TypeInfo<Int>>", "TypeInfo<TypeInfo<Int>>");
-    }
-
-    public void testJumps() throws Exception {
+    public void testJumps() {
         assertType("throw Exception()", builtIns.getNothingType());
         assertType("continue", builtIns.getNothingType());
         assertType("break", builtIns.getNothingType());
     }
 
-    public void testIf() throws Exception {
+    public void testIf() {
         assertType("if (true) 1", "Unit");
         assertType("if (true) 1 else 1", "Int");
         assertType("if (true) 1 else throw Exception()", "Int");
@@ -142,7 +136,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("if (true) else { var a = 0; a = 1 }", "Unit");
     }
 
-    public void testWhen() throws Exception {
+    public void testWhen() {
         assertType("when (1) { is 1 -> 2; }", "Int");
         assertType("when (1) { is 1 -> AI(); is 1 -> BI()}", "I");
         assertType("when (1) { is 1 -> AI(); is 1 -> BI(); is 1 -> null}", "I?");
@@ -150,7 +144,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("when (1) { is 1 -> AI(); is 1 -> BI(); is 1 -> when(2) {is 1 -> null}}", "I?");
     }
 
-    public void testTry() throws Exception {
+    public void testTry() {
         assertType("try {1} finally{2}", "Int");
         assertType("try { AI() } catch (e : Exception) { BI() } finally{ CI() }", "I");
         assertType("try {1} catch (e : Exception) {2} finally{'a'}", "Int");
@@ -160,7 +154,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("try {} catch (e : Exception) {}", "Unit");
     }
 
-    public void testCommonSupertypes() throws Exception {
+    public void testCommonSupertypes() {
         assertCommonSupertype("Int", "Int", "Int");
 
         assertCommonSupertype("Int", "Int", "Nothing");
@@ -187,11 +181,11 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertCommonSupertype("Base_T<out Parent>", "Base_T<A>", "Base_T<B>");
     }
 
-    public void testCommonSupertypesForRecursive() throws Exception {
+    public void testCommonSupertypesForRecursive() {
         assertCommonSupertype("Rec<out Rec<out Rec<out Rec<out Rec<*>>>>>", "ARec", "BRec");
     }
 
-    public void testIntersect() throws Exception {
+    public void testIntersect() {
         assertIntersection("Long", "Long?", "Number");
         assertIntersection("Long", "Number", "Long?");
         assertIntersection("Number", "Number?", "Number");
@@ -217,7 +211,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertIntersection("Nothing?", "Nothing?", "String?");
     }
 
-    public void testBasicSubtyping() throws Exception {
+    public void testBasicSubtyping() {
         assertSubtype("Boolean", "Boolean");
         assertSubtype("Byte", "Byte");
         assertSubtype("Char", "Char");
@@ -249,7 +243,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertNotSubtype("Unit", "Int");
     }
 
-    public void testProjections() throws Exception {
+    public void testProjections() {
         assertSubtype("Base_T<Int>", "Base_T<Int>");
         assertNotSubtype("Base_T<Int>", "Base_T<Any>");
 
@@ -300,7 +294,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 //        assertSubtype("java.lang.Integer", "java.lang.Comparable<java.lang.Integer>?");
     }
 
-    public void testNullable() throws Exception {
+    public void testNullable() {
         assertSubtype("Any?", "Any?");
         assertSubtype("Any", "Any?");
         assertNotSubtype("Any?", "Any");
@@ -309,7 +303,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertNotSubtype("Int?", "Any");
     }
 
-    public void testNothing() throws Exception {
+    public void testNothing() {
         assertSubtype("Nothing", "Any");
         assertSubtype("Nothing?", "Any?");
         assertNotSubtype("Nothing?", "Any");
@@ -322,7 +316,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertSubtype("Nothing?", "Derived_T<*>?");
     }
 
-    public void testStars() throws Exception {
+    public void testStars() {
         assertSubtype("SubStar<*>", "Star<*>");
         assertSubtype("SubStar<SubStar<*>>", "Star<*>");
         assertSubtype("SubStar<SubStar<*>>", "Star<SubStar<*>>");
@@ -339,18 +333,18 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertNotSubtype("Rec<*>", "Rec<out Any>");
     }
 
-    public void testThis() throws Exception {
+    public void testThis() {
         assertType("Derived_T<Int>", "this", "Derived_T<Int>");
 //        assertType("Derived_T<Int>", "super<Base_T>", "Base_T<Int>");
     }
 
-    public void testLoops() throws Exception {
+    public void testLoops() {
         assertType("{ while (1) {1} }", "() -> Unit");
         assertType("{ do {1} while(1) }", "() -> Unit");
         assertType("{ for (i in 1) {1} }", "() -> Unit");
     }
 
-    public void testFunctionLiterals() throws Exception {
+    public void testFunctionLiterals() {
         assertType("{ -> }", "() -> Unit");
         assertType("fun(): Int = 1", "() -> Int");
         assertType("{ 1}", "() -> Int");
@@ -372,18 +366,18 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("fun Any.(a : Int, b : String) = b", "Any.(Int, String) -> String");
     }
 
-    public void testBlocks() throws Exception {
+    public void testBlocks() {
         assertType("if (1) {val a = 1; a} else {null}", "Int?");
         assertType("if (1) { -> val a = 1; a} else { -> null}", "Function0<Int?>");
         assertType("if (1) (fun (): Boolean { val a = 1; a; var b : Boolean; return b }) else null", "Function0<Boolean>?");
         assertType("if (1) (fun (): Int { val a = 1; a; var b = a; return b }) else null", "Function0<Int>?");
     }
 
-    public void testNew() throws Exception {
+    public void testNew() {
         assertType("Base_T<Int>()", "Base_T<Int>");
     }
 
-    public void testPropertiesInClasses() throws Exception {
+    public void testPropertiesInClasses() {
         assertType("Properties().p", "Int");
         assertType("Props<Int>().p", "Int");
         assertType("Props<out Int>().p", "Int");
@@ -392,7 +386,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("(return as Props<in Int>).p", "Any?");
     }
 
-    public void testOverloads() throws Exception {
+    public void testOverloads() {
         assertType("Functions<String>().f()", "Unit");
         assertType("Functions<String>().f(1)", "Int");
         assertType("Functions<Double>().f(Pair(1, 1))", "Double");
@@ -405,7 +399,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("f<String>(1.toFloat())", "String");
     }
 
-    public void testPlus() throws Exception {
+    public void testPlus() {
         assertType("1.0.plus(1.toDouble())", "Double");
         assertType("1.0.plus(1.toFloat())", "Double");
         assertType("1.0.plus(1.toLong())", "Double");
@@ -450,7 +444,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("\"1\".plus('1')", "String");
     }
 
-    public void testBinaryOperations() throws Exception {
+    public void testBinaryOperations() {
         assertType("1 as Any", "Any");
         assertType("1 is Char", "Boolean");
         assertType("1 === null", "Boolean");
@@ -463,13 +457,13 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 //        assertType("WithPredicate()?p", "WithPredicate?");
     }
 
-    public void testSupertypes() throws Exception {
+    public void testSupertypes() {
         assertSupertypes("DDerived1_T<Int>", "Derived_T<Int>", "Base_T<Int>", "Any");
         assertSupertypes("DDerived2_T<Int>", "Derived_T<Int>", "Base_T<Int>", "Any");
         assertSupertypes("Derived1_inT<Int>", "Derived_T<Int>", "Base_T<Int>", "Any", "Base_inT<Int>");
     }
 
-    public void testEffectiveProjectionKinds() throws Exception {
+    public void testEffectiveProjectionKinds() {
         assertSubtype("Base_outT<Int>", "Base_outT<Int>");
         assertSubtype("Base_outT<out Int>", "Base_outT<out Int>");
         assertSubtype("Base_outT<out Int>", "Base_outT<Int>");
@@ -486,10 +480,10 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void assertSupertypes(String typeStr, String... supertypeStrs) {
+    private void assertSupertypes(String typeStr, String... supertypeStrings) {
         Set<KotlinType> allSupertypes = TypeUtils.getAllSupertypes(makeType(scopeWithImports, typeStr));
         Set<KotlinType> expected = new HashSet<>();
-        for (String supertypeStr : supertypeStrs) {
+        for (String supertypeStr : supertypeStrings) {
             KotlinType supertype = makeType(scopeWithImports, supertypeStr);
             expected.add(supertype);
         }
@@ -520,7 +514,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
             subtypes.add(makeType(type));
         }
         KotlinType result = CommonSupertypes.commonSupertype(subtypes);
-        assertTrue(result + " != " + expected, result.equals(makeType(expected)));
+        assertEquals(result + " != " + expected, makeType(expected), result);
     }
 
     private void assertSubtypingRelation(String subtype, String supertype, boolean expected) {
@@ -530,7 +524,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
                 typeNode1,
                 typeNode2);
         String modifier = expected ? "not " : "";
-        assertTrue(typeNode1 + " is " + modifier + "a subtype of " + typeNode2, result == expected);
+        assertEquals(typeNode1 + " is " + modifier + "a subtype of " + typeNode2, expected, result);
     }
 
     private void assertType(String expression, KotlinType expectedType) {
@@ -538,9 +532,10 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
         KotlinType type = expressionTypingServices.getType(scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfoFactory.EMPTY, KotlinTestUtils.DUMMY_TRACE);
         assertNotNull(type);
-        assertTrue(type + " != " + expectedType, type.equals(expectedType));
+        assertEquals(type + " != " + expectedType, expectedType, type);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void assertType(String contextType, String expression, String expectedType) {
         KotlinType thisType = makeType(contextType);
         ReceiverParameterDescriptorImpl receiverParameterDescriptor = new ReceiverParameterDescriptorImpl(
@@ -567,8 +562,8 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    private LexicalScope getDeclarationsScope(String path) throws IOException {
-        KtFile ktFile = KotlinTestUtils.loadJetFile(getProject(), new File(path));
+    private LexicalScope getDeclarationsScope() throws IOException {
+        KtFile ktFile = KotlinTestUtils.loadJetFile(getProject(), new File("compiler/testData/type-checker-test.kt"));
         AnalysisResult result = JvmResolveUtil.analyze(ktFile, getEnvironment());
         //noinspection ConstantConditions
         return result.getBindingContext().get(BindingContext.LEXICAL_SCOPE, ktFile);

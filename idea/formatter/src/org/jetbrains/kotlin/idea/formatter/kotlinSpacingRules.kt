@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.formatter
@@ -388,6 +388,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             before(INDICES).spaces(0)
             before(WHERE_KEYWORD).spaces(1)
+
+            afterInside(GET_KEYWORD, PROPERTY_ACCESSOR).spaces(0)
+            afterInside(SET_KEYWORD, PROPERTY_ACCESSOR).spaces(0)
         }
         custom {
 

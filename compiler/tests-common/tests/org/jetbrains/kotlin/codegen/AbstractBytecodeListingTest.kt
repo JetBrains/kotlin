@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
@@ -45,29 +45,18 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
     companion object {
         @JvmOverloads
         fun getText(
-                factory: ClassFileFactory,
-                filter: Filter = Filter.EMPTY,
-                replaceHash: Boolean = true,
-                withSignatures: Boolean = false
-        ) =
-                factory.getClassFiles()
-                        .sortedBy { it.relativePath }
-                        .mapNotNull {
-                            val cr = ClassReader(it.asByteArray())
-                            val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures)
-                            cr.accept(visitor, ClassReader.SKIP_CODE)
+            factory: ClassFileFactory,
+            filter: Filter = Filter.EMPTY,
+            withSignatures: Boolean = false
+        ) = factory.getClassFiles()
+            .sortedBy { it.relativePath }
+            .mapNotNull {
+                val cr = ClassReader(it.asByteArray())
+                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures)
+                cr.accept(visitor, ClassReader.SKIP_CODE)
 
-                            if (!filter.shouldWriteClass(cr.access, cr.className)) {
-                                return@mapNotNull null
-                            }
-
-                            if (replaceHash) {
-                                KotlinTestUtils.replaceHash(visitor.text, "HASH")
-                            }
-                            else {
-                                visitor.text
-                            }
-                        }.joinToString("\n\n", postfix = "\n")
+                if (!filter.shouldWriteClass(cr.access, cr.className)) null else visitor.text
+            }.joinToString("\n\n", postfix = "\n")
     }
 
     interface Filter {

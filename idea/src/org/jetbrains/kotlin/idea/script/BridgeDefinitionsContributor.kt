@@ -1,20 +1,20 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.script
 
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import kotlin.script.experimental.intellij.ScriptDefinitionsProvider
 
 class BridgeScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionContributor {
@@ -31,7 +31,11 @@ class BridgeScriptDefinitionsContributor(private val project: Project) : ScriptD
                 else emptyList()
             val discoveredDefinitions =
                 if (provider.useDiscovery()) emptySequence()
-                else ScriptDefinitionsFromClasspathDiscoverySource(classPath, emptyMap(), messageCollector).definitions
+                else ScriptDefinitionsFromClasspathDiscoverySource(
+                    classPath,
+                    emptyMap(),
+                    messageCollector
+                ).definitions
             explicitDefinitions + discoveredDefinitions
         }
     }

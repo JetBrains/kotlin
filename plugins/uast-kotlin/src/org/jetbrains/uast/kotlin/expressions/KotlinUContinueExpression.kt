@@ -22,9 +22,9 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
 
 class KotlinUContinueExpression(
-        override val psi: KtContinueExpression,
+        override val sourcePsi: KtContinueExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UContinueExpression {
     override val label: String?
-        get() = psi.getLabelName()
+        get() = sourcePsi.getLabelName()
 }

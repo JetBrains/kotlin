@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers
@@ -195,7 +195,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             exceptionFromDynamicCallDescriptorsValidation = e
         }
 
-        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.toString()) { s ->
+        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.cleanupInferenceDiagnostics()) { s ->
             s.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
 
@@ -210,6 +210,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule
         )
     }
+
+    private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
 
     protected open fun getExpectedDiagnosticsFile(testDataFile: File): File {
         return testDataFile
@@ -286,7 +288,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             }
         }
 
-        return result ?: JvmTarget.JVM_1_6
+        return result ?: JvmTarget.DEFAULT
     }
 
     private fun checkDynamicCallDescriptors(expectedFile: File, testFiles: List<TestFile>) {
@@ -383,6 +385,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             ExpectActualTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             moduleClassResolver,
+            CompilerEnvironment,
             jvmTarget,
             languageVersionSettings
         )
@@ -586,7 +589,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val platform =
             if (nameSuffix.isEmpty()) null
             else if (nameSuffix == "common") MultiTargetPlatform.Common else MultiTargetPlatform.Specific(nameSuffix.toUpperCase())
-        return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JvmBuiltIns(storageManager), platform)
+        val builtIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
+        return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, builtIns, platform)
     }
 
     protected open fun createSealedModule(storageManager: StorageManager): ModuleDescriptorImpl =

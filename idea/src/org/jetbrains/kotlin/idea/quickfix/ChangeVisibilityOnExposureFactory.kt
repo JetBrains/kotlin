@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.DescriptorWithRelation
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility.Permissiveness.LESS
 import org.jetbrains.kotlin.descriptors.Visibilities.*
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.idea.core.toDescriptor
@@ -32,12 +35,12 @@ import java.util.*
 object ChangeVisibilityOnExposureFactory : KotlinIntentionActionsFactory() {
 
     private fun addFixToTargetVisibility(
-            modifierListOwner: KtModifierListOwner,
-            descriptor: DeclarationDescriptorWithVisibility,
-            targetVisibility: Visibility,
-            boundVisibility: Visibility,
-            protectedAllowed: Boolean,
-            fixes: MutableList<IntentionAction>
+        modifierListOwner: KtModifierListOwner,
+        descriptor: DeclarationDescriptorWithVisibility,
+        targetVisibility: Visibility,
+        boundVisibility: Visibility,
+        protectedAllowed: Boolean,
+        fixes: MutableList<IntentionAction>
     ) {
         val possibleVisibilities = when (targetVisibility) {
             PROTECTED -> if (protectedAllowed) listOf(boundVisibility, PROTECTED) else listOf(boundVisibility)
@@ -55,7 +58,7 @@ object ChangeVisibilityOnExposureFactory : KotlinIntentionActionsFactory() {
         val exposedDiagnostic = factory.cast(diagnostic)
         val exposedDescriptor = exposedDiagnostic.b.descriptor as? DeclarationDescriptorWithVisibility ?: return emptyList()
         val exposedDeclaration =
-                DescriptorToSourceUtils.getSourceFromDescriptor(exposedDescriptor) as? KtModifierListOwner ?: return emptyList()
+            DescriptorToSourceUtils.getSourceFromDescriptor(exposedDescriptor) as? KtModifierListOwner ?: return emptyList()
         val exposedVisibility = exposedDiagnostic.c
         val userVisibility = exposedDiagnostic.a
         val (targetUserVisibility, targetExposedVisibility) = when (exposedVisibility.relation(userVisibility)) {
@@ -67,15 +70,19 @@ object ChangeVisibilityOnExposureFactory : KotlinIntentionActionsFactory() {
         val protectedAllowed = exposedDeclaration.parent == userDeclaration?.parent
         if (userDeclaration != null) {
             val userDescriptor = userDeclaration.toDescriptor() as? DeclarationDescriptorWithVisibility
-            if (userDescriptor != null && Visibilities.isVisibleIgnoringReceiver(exposedDescriptor, userDescriptor)) {
-                addFixToTargetVisibility(userDeclaration, userDescriptor,
-                                         targetUserVisibility, PRIVATE,
-                                         protectedAllowed, result)
+            if (userDescriptor != null && isVisibleIgnoringReceiver(exposedDescriptor, userDescriptor)) {
+                addFixToTargetVisibility(
+                    userDeclaration, userDescriptor,
+                    targetUserVisibility, PRIVATE,
+                    protectedAllowed, result
+                )
             }
         }
-        addFixToTargetVisibility(exposedDeclaration, exposedDescriptor,
-                                 targetExposedVisibility, PUBLIC,
-                                 protectedAllowed, result)
+        addFixToTargetVisibility(
+            exposedDeclaration, exposedDescriptor,
+            targetExposedVisibility, PUBLIC,
+            protectedAllowed, result
+        )
         return result
     }
 }

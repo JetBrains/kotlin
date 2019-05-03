@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.compilerRunner
@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
-import org.jetbrains.kotlin.incremental.DELETE_MODULE_FILE_PROPERTY
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URLClassLoader
@@ -52,10 +52,10 @@ internal class GradleKotlinCompilerWorkArguments(
     val isVerbose: Boolean,
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment?,
     val incrementalModuleInfo: IncrementalModuleInfo?,
-    val buildFile: File?,
     val outputFiles: List<File>,
     val taskPath: String,
-    val buildReportMode: BuildReportMode?
+    val buildReportMode: BuildReportMode?,
+    val kotlinScriptExtensions: Array<String>
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -76,7 +76,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     companion object {
         init {
             if (System.getProperty("org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.trace.loading") == "true") {
-                System.out.println("Loaded GradleKotlinCompilerWork")
+                println("Loaded GradleKotlinCompilerWork")
             }
         }
     }
@@ -90,10 +90,10 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val isVerbose = config.isVerbose
     private val incrementalCompilationEnvironment = config.incrementalCompilationEnvironment
     private val incrementalModuleInfo = config.incrementalModuleInfo
-    private val buildFile = config.buildFile
     private val outputFiles = config.outputFiles
     private val taskPath = config.taskPath
     private val buildReportMode = config.buildReportMode
+    private val kotlinScriptExtensions = config.kotlinScriptExtensions
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -113,14 +113,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     override fun run() {
         val messageCollector = GradlePrintingMessageCollector(log)
-        val exitCode = try {
-            compileWithDaemonOrFallbackImpl(messageCollector)
-        } finally {
-            if (buildFile != null && System.getProperty(DELETE_MODULE_FILE_PROPERTY) != "false") {
-                buildFile.delete()
-            }
-        }
-
+        val exitCode = compileWithDaemonOrFallbackImpl(messageCollector)
         if (incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
             incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
         }
@@ -229,7 +222,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             targetPlatform = targetPlatform,
             reportCategories = reportCategories(isVerbose),
             reportSeverity = reportSeverity(isVerbose),
-            requestedCompilationResults = emptyArray()
+            requestedCompilationResults = emptyArray(),
+            kotlinScriptExtensions = kotlinScriptExtensions
         )
         val servicesFacade = GradleCompilerServicesFacadeImpl(log, bufferingMessageCollector)
         return try {
@@ -273,7 +267,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
             outputFiles = outputFiles,
             multiModuleICSettings = icEnv.multiModuleICSettings,
-            modulesInfo = incrementalModuleInfo!!
+            modulesInfo = incrementalModuleInfo!!,
+            kotlinScriptExtensions = kotlinScriptExtensions
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
@@ -291,8 +286,10 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         return result
     }
 
-    private fun compileOutOfProcess(): ExitCode =
-        try {
+    private fun compileOutOfProcess(): ExitCode {
+        clearLocalState(outputFiles, log, reason = "out-of-process execution strategy is non-incremental")
+
+        return try {
             runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log)
         } finally {
             reportExecutionResultIfNeeded {
@@ -302,17 +299,20 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 )
             }
         }
+    }
 
     private fun compileInProcess(messageCollector: MessageCollector): ExitCode {
+        clearLocalState(outputFiles, log, reason = "in-process execution strategy is non-incremental")
+
         // in-process compiler should always be run in a different thread
         // to avoid leaking thread locals from compiler (see KT-28037)
         val threadPool = Executors.newSingleThreadExecutor()
         val bufferingMessageCollector = GradleBufferingMessageCollector()
-        try {
+        return try {
             val future = threadPool.submit(Callable {
                 compileInProcessImpl(bufferingMessageCollector)
             })
-            return future.get()
+            future.get()
         } finally {
             bufferingMessageCollector.flush(messageCollector)
             threadPool.shutdown()

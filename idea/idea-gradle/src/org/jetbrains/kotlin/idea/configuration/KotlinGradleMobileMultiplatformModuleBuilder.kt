@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -29,10 +29,10 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.mobile"
 
-    override fun getPresentableName() = "Kotlin (Mobile Android/iOS)"
+    override fun getPresentableName() = "Mobile Android/iOS | Gradle"
 
     override fun getDescription() =
-        "Multiplatform Gradle projects allow reusing the same Kotlin code between Android and iOS mobile platforms."
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between Android and iOS mobile platforms"
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
         addBuildscriptDependencyNotation("classpath 'com.android.tools.build:gradle:3.2.0'")
@@ -56,6 +56,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
         val androidMain = src.createKotlinSampleFileWriter(mainSourceName, jvmTargetName, languageName = "java")
         val androidTest = src.createKotlinSampleFileWriter(mainTestName, languageName = "java", fileName = "SampleTestsAndroid.kt")
 
+        val appInfo = appDir.createChildData(appDir,"Info.plist").bufferedWriter()
         val androidLocalProperties = rootDir.createChildData(this, "local.properties").bufferedWriter()
         val androidRoot = src.findChild(mainSourceName)!!
         val androidManifest = androidRoot.createChildData(this, "AndroidManifest.xml").bufferedWriter()
@@ -68,6 +69,8 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
         val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName, nativeTargetName)
         val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsIOS.kt")
+
+        val xcodeConfigurator = XcodeProjectConfigurator()
 
         try {
             commonMain.write(
@@ -269,14 +272,18 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
 </android.support.constraint.ConstraintLayout>
             """.trimIndent()
             )
+
+            appInfo.write(xcodeConfigurator.templatePlist("""<key>CFBundlePackageType</key>
+<string>FMWK</string>"""))
+
         } finally {
             listOf(
-                commonMain, commonTest, androidMain, androidTest, nativeMain, nativeTest,
+                commonMain, commonTest, androidMain, androidTest, nativeMain, nativeTest, appInfo,
                 androidLocalProperties, androidManifest, androidStrings, androidStyles, androidActivityMain
             ).forEach(BufferedWriter::close)
         }
 
-        XcodeProjectConfigurator().createSkeleton(rootDir)
+        xcodeConfigurator.createSkeleton(rootDir)
     }
 
 

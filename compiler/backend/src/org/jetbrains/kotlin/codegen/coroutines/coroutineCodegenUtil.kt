@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.coroutines
@@ -123,6 +123,8 @@ val INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION = object : CallableDescriptor.UserDa
 val INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME = object : CallableDescriptor.UserDataKey<FunctionDescriptor> {}
 
 val CONTINUATION_PARAMETER_NAME = Name.identifier("continuation")
+
+const val CONTINUATION_VARIABLE_NAME = "\$continuation"
 
 // Resolved calls to suspension function contain descriptors as they visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`

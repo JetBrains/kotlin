@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
@@ -93,7 +92,6 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val projectContext: ProjectContext,
     modules: Collection<M>,
     private val modulesContent: (M) -> ModuleContent<M>,
-    private val modulePlatforms: (M) -> MultiTargetPlatform?,
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val platformParameters: (TargetPlatform) -> PlatformAnalysisParameters,
@@ -123,6 +121,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
 
+    @Suppress("UNCHECKED_CAST")
     private val moduleInfoToResolvableInfo: Map<M, M> =
         modules.flatMap { module -> module.flatten().map { modulePart -> modulePart to module } }.toMap() as Map<M, M>
 
@@ -256,7 +255,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
             module.name,
             projectContext.storageManager,
             builtIns,
-            modulePlatforms(module),
+            module.platform?.multiTargetPlatform,
             module.capabilities,
             module.stableName
         )
@@ -291,6 +290,12 @@ interface TrackableModuleInfo : ModuleInfo {
     fun createModificationTracker(): ModificationTracker
 }
 
+interface LibraryModuleInfo : ModuleInfo {
+    override val platform: TargetPlatform
+
+    fun getLibraryRoots(): Collection<String>
+}
+
 abstract class ResolverForModuleFactory {
     abstract fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
@@ -322,6 +327,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
                 yield(moduleDescriptor.builtIns.builtInsModule)
             }
             for (dependency in module.dependencies()) {
+                @Suppress("UNCHECKED_CAST")
                 yield(resolverForProject.descriptorForModule(dependency as M))
             }
             if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.LAST) {
@@ -333,12 +339,16 @@ class LazyModuleDependencies<M : ModuleInfo>(
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
 
     override val expectedByDependencies by storageManager.createLazyValue {
-        module.expectedBy.map { resolverForProject.descriptorForModule(it as M) }
+        module.expectedBy.map {
+            @Suppress("UNCHECKED_CAST")
+            resolverForProject.descriptorForModule(it as M)
+        }
     }
 
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
         get() =
             module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
+                @Suppress("UNCHECKED_CAST")
                 resolverForProject.descriptorForModule(it as M)
             }
 

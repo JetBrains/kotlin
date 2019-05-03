@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -28,7 +30,7 @@ class IrPropertyReferenceImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override val descriptor: PropertyDescriptor,
+    override val symbol: IrPropertySymbol,
     typeArgumentsCount: Int,
     override val field: IrFieldSymbol?,
     override val getter: IrSimpleFunctionSymbol?,
@@ -37,6 +39,26 @@ class IrPropertyReferenceImpl(
 ) :
     IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArgumentsCount, origin),
     IrPropertyReference {
+
+    @Deprecated(message = "Don't use descriptor-based API for IrPropertyReference", level = DeprecationLevel.WARNING)
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        descriptor: PropertyDescriptor,
+        typeArgumentsCount: Int,
+        field: IrFieldSymbol?,
+        getter: IrSimpleFunctionSymbol?,
+        setter: IrSimpleFunctionSymbol?,
+        origin: IrStatementOrigin? = null
+    ) : this(
+        startOffset, endOffset, type,
+        IrPropertySymbolImpl(descriptor),
+        typeArgumentsCount, field, getter, setter, origin
+    )
+
+    override val descriptor: PropertyDescriptor
+        get() = symbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitPropertyReference(this, data)

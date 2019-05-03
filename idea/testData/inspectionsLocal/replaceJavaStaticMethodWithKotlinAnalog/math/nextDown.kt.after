@@ -1,0 +1,6 @@
+import kotlin.math.nextDown
+
+// RUNTIME_WITH_FULL_JDK
+fun test(x: Double) {
+    x.nextDown()
+}

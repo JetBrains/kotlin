@@ -1,0 +1,1 @@
+protected enum class Test

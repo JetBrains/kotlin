@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
+@Suppress("DEPRECATION")
 class ConvertTryFinallyToUseCallInspection : IntentionBasedInspection<KtTryExpression>(ConvertTryFinallyToUseCallIntention::class) {
     override fun inspectionTarget(element: KtTryExpression) = element.tryKeyword ?: element.tryBlock
 }

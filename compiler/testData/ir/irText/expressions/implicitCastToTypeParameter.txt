@@ -1,90 +1,82 @@
 FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
-  FUN name:test1 visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:T? flags:inline
+  FUN name:test1 visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:T of <root>.test1? [inline] 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1() on Any: T?'
-        WHEN type=T? origin=null
+      RETURN type=kotlin.Nothing from='public final fun test1 <T> (): T of <root>.test1? [inline] declared in <root>'
+        WHEN type=T of <root>.test1? origin=IF
           BRANCH
-            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T
-              typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
-              GET_VAR 'this@test1: Any' type=kotlin.Any origin=null
-            then: TYPE_OP type=T origin=IMPLICIT_CAST typeOperand=T
-              typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
-              GET_VAR 'this@test1: Any' type=kotlin.Any origin=null
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.test1
+              GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+            then: TYPE_OP type=T of <root>.test1 origin=IMPLICIT_CAST typeOperand=T of <root>.test1
+              GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Null type=kotlin.Nothing? value=null
-  CLASS INTERFACE name:Foo modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Foo<T> flags:
+  CLASS INTERFACE name:Foo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo<T of <root>.Foo> 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  PROPERTY name:asT visibility:public modality:FINAL flags:val
-    FUN name:<get-asT> visibility:public modality:FINAL <T> ($receiver:Foo<T>) returnType:T? flags:inline
-      correspondingProperty: PROPERTY name:asT visibility:public modality:FINAL flags:val
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  PROPERTY name:asT visibility:public modality:FINAL [val] 
+    FUN name:<get-asT> visibility:public modality:FINAL <T> ($receiver:<root>.Foo<T of <root>.<get-asT>>) returnType:T of <root>.<get-asT>? [inline] 
+      correspondingProperty: PROPERTY name:asT visibility:public modality:FINAL [val] 
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
-      $receiver: VALUE_PARAMETER name:<this> type:Foo<T> flags:
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Foo<T of <root>.<get-asT>> 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-asT>() on Foo<T>: T?'
-          WHEN type=T? origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-asT> <T> (): T of <root>.<get-asT>? [inline] declared in <root>'
+          WHEN type=T of <root>.<get-asT>? origin=IF
             BRANCH
-              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T
-                typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
-                GET_VAR 'this@asT: Foo<T>' type=Foo<T> origin=null
-              then: TYPE_OP type=T origin=IMPLICIT_CAST typeOperand=T
-                typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
-                GET_VAR 'this@asT: Foo<T>' type=Foo<T> origin=null
+              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.<get-asT>
+                GET_VAR '<this>: <root>.Foo<T of <root>.<get-asT>> declared in <root>.<get-asT>' type=<root>.Foo<T of <root>.<get-asT>> origin=null
+              then: TYPE_OP type=T of <root>.<get-asT> origin=IMPLICIT_CAST typeOperand=T of <root>.<get-asT>
+                GET_VAR '<this>: <root>.Foo<T of <root>.<get-asT>> declared in <root>.<get-asT>' type=<root>.Foo<T of <root>.<get-asT>> origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Null type=kotlin.Nothing? value=null
-  CLASS CLASS name:Bar modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Bar<T> flags:
+  CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Bar<T of <root>.Bar> 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> () returnType:Bar<T> flags:primary
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Bar<T of <root>.Bar> [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='Bar'
-    FUN name:test visibility:public modality:FINAL <> ($this:Bar<T>, arg:kotlin.Any) returnType:kotlin.Unit flags:
-      $this: VALUE_PARAMETER name:<this> type:Bar<T> flags:
-      VALUE_PARAMETER name:arg index:0 type:kotlin.Any flags:
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Bar<T of <root>.Bar>, arg:kotlin.Any) returnType:kotlin.Unit 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Bar<T of <root>.Bar> 
+      VALUE_PARAMETER name:arg index:0 type:kotlin.Any 
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-          TYPE_OP type=T origin=CAST typeOperand=T
-            typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-            GET_VAR 'value-parameter arg: Any' type=kotlin.Any origin=null
-        CALL 'useT(T): Unit' type=kotlin.Unit origin=null
-          $this: GET_VAR 'this@Bar: Bar<T>' type=Bar<T> origin=null
-          t: TYPE_OP type=T origin=IMPLICIT_CAST typeOperand=T
-            typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-            GET_VAR 'value-parameter arg: Any' type=kotlin.Any origin=null
-    FUN name:useT visibility:public modality:FINAL <> ($this:Bar<T>, t:T) returnType:kotlin.Unit flags:
-      $this: VALUE_PARAMETER name:<this> type:Bar<T> flags:
-      VALUE_PARAMETER name:t index:0 type:T flags:
+          TYPE_OP type=T of <root>.Bar origin=CAST typeOperand=T of <root>.Bar
+            GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
+        CALL 'public final fun useT (t: T of <root>.Bar): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
+          $this: GET_VAR '<this>: <root>.Bar<T of <root>.Bar> declared in <root>.Bar.test' type=<root>.Bar<T of <root>.Bar> origin=null
+          t: TYPE_OP type=T of <root>.Bar origin=IMPLICIT_CAST typeOperand=T of <root>.Bar
+            GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
+    FUN name:useT visibility:public modality:FINAL <> ($this:<root>.Bar<T of <root>.Bar>, t:T of <root>.Bar) returnType:kotlin.Unit 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Bar<T of <root>.Bar> 
+      VALUE_PARAMETER name:t index:0 type:T of <root>.Bar 
       BLOCK_BODY
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

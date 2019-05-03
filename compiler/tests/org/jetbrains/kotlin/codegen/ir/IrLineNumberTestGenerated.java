@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.ir;
@@ -179,6 +179,11 @@ public class IrLineNumberTestGenerated extends AbstractIrLineNumberTest {
         @TestMetadata("ifThenElse.kt")
         public void testIfThenElse() throws Exception {
             runTest("compiler/testData/lineNumber/custom/ifThenElse.kt");
+        }
+
+        @TestMetadata("ifThenElseFalse.kt")
+        public void testIfThenElseFalse() throws Exception {
+            runTest("compiler/testData/lineNumber/custom/ifThenElseFalse.kt");
         }
 
         @TestMetadata("inTheEndOfLambdaArgumentOfInlineCall.kt")

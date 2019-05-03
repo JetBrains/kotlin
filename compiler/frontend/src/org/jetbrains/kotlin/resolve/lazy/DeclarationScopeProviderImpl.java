@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.resolve.lazy;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
@@ -81,7 +81,8 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
         }
         //TODO: this is not how it works for classes and for exact parity we can try to use the code above
         if (parentDeclaration instanceof KtScript) {
-            LazyScriptDescriptor scriptDescriptor = (LazyScriptDescriptor) lazyDeclarationResolver.resolveToDescriptor(parentDeclaration);
+            ClassDescriptorWithResolutionScopes
+                    scriptDescriptor = (ClassDescriptorWithResolutionScopes) lazyDeclarationResolver.resolveToDescriptor(parentDeclaration);
             return scriptDescriptor.getScopeForInitializerResolution();
         }
 

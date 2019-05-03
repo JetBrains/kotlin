@@ -4,4 +4,4 @@
 
 }
 
-annotation class foo(val i: Int, val s: String)
+annotation class <caret>foo(val i: Int, val s: String)

@@ -1,7 +1,7 @@
+val `!u00A0`: Int
+
 // "Create property '!u00A0'" "true"
 // ERROR: Property must be initialized
 fun test() {
     val t: Int = `!u00A0`
 }
-
-val `!u00A0`: Int

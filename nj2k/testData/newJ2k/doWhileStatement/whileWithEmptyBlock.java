@@ -1,0 +1,2 @@
+//statement
+do {} while (true)

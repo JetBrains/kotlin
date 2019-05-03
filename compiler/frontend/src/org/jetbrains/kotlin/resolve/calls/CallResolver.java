@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls;
@@ -573,11 +573,13 @@ public class CallResolver {
         NewResolutionOldInference.ResolutionKind resolutionKind = resolutionTask.resolutionKind;
         if (newInferenceEnabled && PSICallResolver.getDefaultResolutionKinds().contains(resolutionKind)) {
             assert resolutionTask.name != null;
+            BindingContextUtilsKt.recordScope(context.trace, context.scope, context.call.getCalleeExpression());
             return PSICallResolver.runResolutionAndInference(context, resolutionTask.name, resolutionKind, tracing);
         }
 
         if (newInferenceEnabled && resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
             assert resolutionTask.givenCandidates != null;
+            BindingContextUtilsKt.recordScope(context.trace, context.scope, context.call.getCalleeExpression());
             return PSICallResolver.runResolutionAndInferenceForGivenCandidates(context, resolutionTask.givenCandidates, tracing);
         }
 

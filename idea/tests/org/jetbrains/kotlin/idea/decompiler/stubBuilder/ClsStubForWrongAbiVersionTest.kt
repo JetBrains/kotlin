@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.findTestLibraryRoot
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.runner.RunWith
 import java.io.File
-
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class ClsStubBuilderForWrongAbiVersionTest : AbstractClsStubBuilderTest() {
 
     fun testPackage() = testStubsForFileWithWrongAbiVersion("Wrong_packageKt")

@@ -30,7 +30,7 @@ class TestClass {
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual

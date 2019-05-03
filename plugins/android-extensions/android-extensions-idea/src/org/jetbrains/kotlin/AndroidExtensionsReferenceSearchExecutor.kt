@@ -22,7 +22,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.xml.XmlAttributeValue
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -34,9 +34,10 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 
 class AndroidExtensionsReferenceSearchExecutor : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
-    override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: ExecutorProcessor<PsiReference>) {
+    override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
         val elementToSearch = queryParameters.elementToSearch as? XmlAttributeValue ?: return
         val scopeElements = (queryParameters.effectiveSearchScope as? LocalSearchScope)?.scope ?: return
+        @Suppress("UNNECESSARY_SAFE_CALL", "USELESS_ELVIS") // BUNCH: 182
         val referenceName = elementToSearch.value?.substringAfterLast("/") ?: return
 
         scopeElements.filterIsInstance<KtElement>().forEach {

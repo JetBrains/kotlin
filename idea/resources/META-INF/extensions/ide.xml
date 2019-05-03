@@ -7,14 +7,6 @@
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
                         area="IDEA_PROJECT"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.androidDexer"
-                        interface="org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.AndroidDexer"
-                        area="IDEA_PROJECT"/>
-
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.android.model.androidModuleInfoProvider"
-                        interface="org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider"
-                        area="IDEA_MODULE"/>
-
         <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindResolution"
                         interface="org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution"/>
 
@@ -43,8 +35,8 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindTooling"
                         interface="org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptRelatedModulesProvider"
-                        interface="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider"
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptAdditionalIdeaDependenciesProvider"
+                        interface="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider"
                         area="IDEA_PROJECT"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptDefinitionsProvider"
@@ -57,6 +49,9 @@
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.resolveScopeEnlarger"
                         interface="org.jetbrains.kotlin.idea.caches.resolve.util.KotlinResolveScopeEnlarger"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.j2kConverterExtension"
+                        interface="org.jetbrains.kotlin.j2k.J2kConverterExtension"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -87,6 +82,16 @@
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformKindResolution"/>
 
         <scratchFileLanguageProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider"/>
-        <scriptRelatedModulesProvider implementation="org.jetbrains.kotlin.idea.scratch.ScratchModuleDependencyProvider"/>
+        <scriptAdditionalIdeaDependenciesProvider implementation="org.jetbrains.kotlin.idea.scratch.ScratchAdditionalIdeaDependenciesProvider"/>
+
+        <j2kConverterExtension implementation="org.jetbrains.kotlin.idea.j2k.OldJ2kConverterExtension"/>
+        <j2kConverterExtension implementation="org.jetbrains.kotlin.nj2k.NewJ2kConverterExtension"/>
+     </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <registryKey key="kotlin.use.new.j2k"
+                             description="Use new Java to Kotlin Converter (experimental)"
+                             defaultValue="false"
+                             restartRequired="false"/>
     </extensions>
 </idea-plugin>

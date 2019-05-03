@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
-interface NewTypeSubstitutor {
+interface NewTypeSubstitutor: TypeSubstitutorMarker {
     fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType?
 
     fun safeSubstitute(type: UnwrappedType): UnwrappedType = substitute(type, runCapturedChecks = true, keepAnnotation = false) ?: type

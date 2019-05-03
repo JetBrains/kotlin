@@ -27,7 +27,7 @@ import java.util.*
 @Suppress("UNCHECKED_CAST")
 class SmartSet<T> private constructor() : AbstractSet<T>() {
     companion object {
-        private val ARRAY_THRESHOLD = 5
+        private const val ARRAY_THRESHOLD = 5
 
         @JvmStatic
         fun <T> create() = SmartSet<T>()
@@ -42,11 +42,11 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
     override var size: Int = 0
 
     override fun iterator(): MutableIterator<T> = when {
-            size == 0 -> Collections.emptySet<T>().iterator()
-            size == 1 -> SingletonIterator(data as T)
-            size < ARRAY_THRESHOLD -> ArrayIterator(data as Array<T>)
-            else -> (data as MutableSet<T>).iterator()
-        }
+        size == 0 -> Collections.emptySet<T>().iterator()
+        size == 1 -> SingletonIterator(data as T)
+        size < ARRAY_THRESHOLD -> ArrayIterator(data as Array<T>)
+        else -> (data as MutableSet<T>).iterator()
+    }
 
     override fun add(element: T): Boolean {
         when {
@@ -61,7 +61,7 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
                 val arr = data as Array<T>
                 if (element in arr) return false
                 data = if (size == ARRAY_THRESHOLD - 1) linkedSetOf(*arr).apply { add(element) }
-                else Arrays.copyOf(arr, size + 1).apply { set(size - 1, element) }
+                else arr.copyOf(size + 1).apply { set(size - 1, element) }
             }
             else -> {
                 val set = data as MutableSet<T>
@@ -89,11 +89,10 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
         private var hasNext = true
 
         override fun next(): T =
-                if (hasNext) {
-                    hasNext = false
-                    element
-                }
-                else throw NoSuchElementException()
+            if (hasNext) {
+                hasNext = false
+                element
+            } else throw NoSuchElementException()
 
         override fun hasNext() = hasNext
 

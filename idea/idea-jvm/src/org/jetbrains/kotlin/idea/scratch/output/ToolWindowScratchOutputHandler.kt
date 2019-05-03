@@ -130,7 +130,7 @@ private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
     private fun createToolWindow(file: ScratchFile): ToolWindow {
         val project = file.project
         val toolWindowManager = ToolWindowManager.getInstance(project)
-        toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, true, ToolWindowAnchor.BOTTOM)
+        toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, false, ToolWindowAnchor.BOTTOM)
         val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
         ScratchToolWindowFactory().createToolWindowContent(project, window)
 
@@ -168,7 +168,6 @@ private class ScratchToolWindowFactory : ToolWindowFactory {
     }
 }
 
-@TestOnly
 private object TestOutputHandler : ScratchOutputHandlerAdapter() {
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         testPrint(file, output.text, expression)

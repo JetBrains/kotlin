@@ -1,34 +1,33 @@
 FILE: these.kt
-    public? final? class Some {
-        public? constructor(): super<kotlin/Any>()
-
-        public? final? function foo(): Int {
-            return@@@foo Int(1)
+    public? final? class Some : kotlin/Any {
+        public? constructor(): R|Some| {
+            super<kotlin/Any>()
         }
 
-        public? final? function bar(): Int {
-            return@@@bar this#.foo#()
+        public? final? fun foo(): Int {
+            ^foo Int(1)
         }
 
-        public? final? property instance(val): Some
+        public? final? fun bar(): Int {
+            ^bar this#.foo#()
+        }
+
+        public? final? val instance: Some
             public? get(): Some {
-                return this@Some
+                ^ this@Some
             }
 
-        public? final? function extension String.(): Int {
-            return@@@extension plus#(this@Some.bar#(), this#.length#)
+        public? final? fun String.extension(): Int {
+            ^extension this@Some.bar#().plus#(this#.length#)
         }
 
     }
-    public? final? function extension Some.(): <implicit> {
-        return@@@extension this#.bar#()
+    public? final? fun Some.extension(): <implicit> {
+        ^extension this#.bar#()
     }
-    public? final? function test(some: Some): Int {
-        return@@@test with#(some#, with@function  <implicit>.<anonymous>(): <implicit> {
-            return  {
-                plus#(this#.foo#(), this@with.extension#())
-            }
-
+    public? final? fun test(some: Some): Int {
+        ^test with#(some#, <L> = with@fun <implicit>.<anonymous>(): <implicit> {
+            this#.foo#().plus#(this@with.extension#())
         }
         )
     }

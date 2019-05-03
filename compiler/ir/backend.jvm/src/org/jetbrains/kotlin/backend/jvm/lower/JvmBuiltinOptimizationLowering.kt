@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
-import org.jetbrains.kotlin.ir.util.isFalseConst
-import org.jetbrains.kotlin.ir.util.isNullConst
-import org.jetbrains.kotlin.ir.util.isTrueConst
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -34,19 +33,9 @@ internal val jvmBuiltinOptimizationLoweringPhase = makeIrFilePhase(
 class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
 
     companion object {
-        fun isNegation(expression: IrExpression, context: JvmBackendContext): Boolean {
-            // TODO: there should be only one representation of the 'not' operator.
-            return expression is IrCall &&
-                    (expression.symbol == context.irBuiltIns.booleanNotSymbol ||
-                            context.state.intrinsics.getIntrinsic(expression.symbol.descriptor) is Not)
-        }
-
-        fun negationArgument(call: IrCall): IrExpression {
-            // TODO: there should be only one representation of the 'not' operator.
-            // Once there is only the IR definition the negation argument will
-            // always be a value argument and this method can be removed.
-            return call.dispatchReceiver ?: call.getValueArgument(0)!!
-        }
+        fun isNegation(expression: IrExpression, context: JvmBackendContext): Boolean =
+            expression is IrCall &&
+                    context.state.intrinsics.getIntrinsic(expression.symbol.descriptor) is Not
     }
 
     private fun hasNoSideEffectsForNullCompare(expression: IrExpression): Boolean {
@@ -80,11 +69,8 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
-                return if (isNegation(expression, context) && isNegation(negationArgument(expression), context)) {
-                    // TODO: This lowering is currently JvmBackend specific because there are multiple
-                    // definitions of the boolean 'not' operator. Once there is only the irBuiltins
-                    // definition this lowering could be shared with other backends.
-                    negationArgument(negationArgument(expression) as IrCall)
+                return if (isNegation(expression, context) && isNegation(expression.dispatchReceiver!!, context)) {
+                    (expression.dispatchReceiver as IrCall).dispatchReceiver!!
                 } else if (isNullCheckOfPrimitiveTypeValue(expression, context)) {
                     val left = expression.getValueArgument(0)!!
                     val nonNullArgument = if (left.isNullConst()) expression.getValueArgument(1)!! else left
@@ -109,10 +95,30 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
             }
 
             override fun visitWhen(expression: IrWhen): IrExpression {
+                val isCompilerGenerated = expression.origin == null
                 expression.transformChildrenVoid(this)
                 // Remove all branches with constant false condition.
                 expression.branches.removeIf() {
-                    it.condition.isFalseConst()
+                    it.condition.isFalseConst() && isCompilerGenerated
+                }
+                if (expression.origin == IrStatementOrigin.ANDAND) {
+                    assert(expression.type.isBoolean()
+                            && expression.branches.size == 2
+                            && expression.branches[1].condition.isTrueConst()
+                            && expression.branches[1].result.isFalseConst()) {
+                        "ANDAND condition should have an 'if true then false' body on its second branch. " +
+                                "Failing expression: ${expression.dump()}"
+                    }
+                    // Replace conjunction condition with intrinsic "and" function call
+                    return IrCallImpl(
+                        expression.startOffset,
+                        expression.endOffset,
+                        context.irBuiltIns.booleanType,
+                        context.irIntrinsics.andandSymbol
+                    ).apply {
+                        dispatchReceiver = expression.branches[0].condition
+                        putValueArgument(0, expression.branches[0].result)
+                    }
                 }
                 // If the only condition that is left has a constant true condition remove the
                 // when in favor of the result. If there are no conditions left, remove the when
@@ -120,7 +126,7 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                 return if (expression.branches.size == 0) {
                     IrBlockImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
                 } else {
-                    expression.branches.first().takeIf { it.condition.isTrueConst() }?.result ?: expression
+                    expression.branches.first().takeIf { it.condition.isTrueConst() && isCompilerGenerated }?.result ?: expression
                 }
             }
 

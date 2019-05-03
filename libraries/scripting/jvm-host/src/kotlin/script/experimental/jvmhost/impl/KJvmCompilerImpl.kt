@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package kotlin.script.experimental.jvmhost.impl
 
@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.jvm.*
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
+import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -40,8 +42,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.dependencies.ScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 import kotlin.reflect.KClass
@@ -58,6 +63,7 @@ import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.util.KotlinJars
@@ -96,7 +102,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
             val sourcesWithRefinementsState = SourcesWithRefinedConfigurations(script)
 
             kotlinCompilerConfiguration.add(
-                JVMConfigurationKeys.SCRIPT_DEFINITIONS,
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 makeScriptDefinition(initialScriptCompilationConfiguration, script, sourcesWithRefinementsState)
             )
 
@@ -111,7 +117,11 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
 
             val sourceFiles = arrayListOf(mainKtFile)
             val (classpath, newSources, sourceDependencies) =
-                collectScriptsCompilationDependencies(kotlinCompilerConfiguration, environment.project, sourceFiles)
+                collectScriptsCompilationDependencies(
+                    kotlinCompilerConfiguration,
+                    environment.project,
+                    sourceFiles
+                )
 
             // TODO: consider removing, it is probably redundant: the actual index update is performed with environment.updateClasspath
             kotlinCompilerConfiguration.addJvmClasspathRoots(classpath)
@@ -200,14 +210,13 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
         reportingState.currentArguments = baseArguments
 
         return org.jetbrains.kotlin.config.CompilerConfiguration().apply {
-
-            // default value differs from the argument'ss default (see #KT-29405 and #KT-29319)
-            put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
-
             put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             setupCommonArguments(baseArguments)
 
             setupJvmSpecificArguments(baseArguments)
+
+            // Default value differs from the argument's default (see #KT-29405 and #KT-29319)
+            put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
 
             val jdkHomeFromConfigurations = scriptCompilationConfiguration.getNoDefault(ScriptCompilationConfiguration.jvm.jdkHome)
                 ?: hostConfiguration[ScriptingHostConfiguration.jvm.jdkHome]
@@ -361,7 +370,8 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                                 containingKtFile.virtualFile?.path,
                                 getScriptConfiguration(sourceFile),
                                 it.fqName.asString(),
-                                makeOtherScripts(it)
+                                makeOtherScripts(it),
+                                null
                             )
                         }
                     } ?: emptyList()
@@ -370,12 +380,13 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                 return otherScripts
             }
 
+            val module = makeCompiledModule(generationState)
             return KJvmCompiledScript(
                 script.locationId,
                 getScriptConfiguration(ktScript.containingKtFile),
                 ktScript.fqName.asString(),
                 makeOtherScripts(ktScript),
-                KJvmCompiledModule(generationState)
+                module
             )
         }
 
@@ -560,3 +571,8 @@ internal class ScriptLightVirtualFile(name: String, private val _path: String?, 
     override fun getPath(): String = _path ?: super.getPath()
     override fun getCanonicalPath(): String? = path
 }
+
+private fun makeCompiledModule(generationState: GenerationState) = KJvmCompiledModuleInMemory(
+    generationState.factory.asList()
+        .associateTo(sortedMapOf<String, ByteArray>()) { it.relativePath to it.asByteArray() }
+)

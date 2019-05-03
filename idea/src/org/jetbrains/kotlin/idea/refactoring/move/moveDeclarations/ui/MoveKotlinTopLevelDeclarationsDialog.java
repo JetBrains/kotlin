@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 
 import com.intellij.ide.util.DirectoryChooser;
+import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -75,6 +76,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.List;
 import java.util.*;
 
@@ -100,6 +103,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private JCheckBox cbUpdatePackageDirective;
     private JCheckBox cbSearchReferences;
     private KotlinMemberSelectionTable memberTable;
+
     public MoveKotlinTopLevelDeclarationsDialog(
             @NotNull Project project,
             @NotNull Set<KtNamedDeclaration> elementsToMove,
@@ -556,9 +560,14 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                             "File '%s' already exists. Do you want to move selected declarations to this file?",
                             targetFile.getVirtualFile().getPath()
                     );
-                    int ret =
-                            Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"), Messages.getQuestionIcon());
+                    int ret=
+                            Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"),
+                                                     Messages.getQuestionIcon());
                     if (ret != Messages.YES) return null;
+                }
+
+                if (targetFile instanceof KtFile) {
+                    return new KotlinMoveTargetForExistingElement((KtFile) targetFile);
                 }
             }
 
@@ -591,7 +600,31 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             return new KotlinMoveTargetForExistingElement(jetFile);
         }
 
-        File targetDir = targetFile.getParentFile();
+        Path targetFilePath = targetFile.toPath();
+        Path targetDirPath = targetFilePath.getParent();
+        if (targetDirPath == null || !targetDirPath.startsWith(getProject().getBasePath())) {
+            setErrorText("Incorrect target path. Directory " + targetDirPath + " does not belong to current project.");
+            return null;
+        }
+        if (KotlinRefactoringUtilKt.toPsiDirectory(targetDirPath.toFile(), myProject) == null) {
+            int ret = Messages.showYesNoDialog(
+                    myProject,
+                    "You are about to move all declarations to the directory that does not exist. Do you want to create it?",
+                    RefactoringBundle.message("move.title"),
+                    Messages.getQuestionIcon()
+            );
+            if (ret == Messages.YES) {
+                try {
+                    DirectoryUtil.mkdirs(PsiManager.getInstance(getProject()), targetDirPath.toString());
+                }
+                catch (IncorrectOperationException e) {
+                    setErrorText("Failed to create parent directory: " + targetDirPath);
+                    return null;
+                }
+            }
+        }
+
+        File targetDir = targetDirPath.toFile();
         final PsiDirectory psiDirectory = targetDir != null ? KotlinRefactoringUtilKt.toPsiDirectory(targetDir, myProject) : null;
         if (psiDirectory == null) {
             setErrorText("No directory found for file: " + targetFile.getPath());
@@ -718,7 +751,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
             if (isFullFileMove()) {
                 if (isMoveToPackage()) {
-                    Pair<VirtualFile, ? extends MoveDestination> sourceRootWithMoveDestination = selectPackageBasedTargetDirAndDestination(false);
+                    Pair<VirtualFile, ? extends MoveDestination> sourceRootWithMoveDestination =
+                            selectPackageBasedTargetDirAndDestination(false);
                     //noinspection ConstantConditions
                     final MoveDestination moveDestination = sourceRootWithMoveDestination.getSecond();
 

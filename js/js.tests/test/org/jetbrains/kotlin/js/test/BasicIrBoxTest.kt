@@ -1,25 +1,26 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.backend.js.ModuleType
-import org.jetbrains.kotlin.ir.backend.js.CompiledModule
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.ir.backend.js.KlibModuleRef
 import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.ir.backend.js.generateKLib
+import org.jetbrains.kotlin.ir.backend.js.jsPhases
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-private var runtimeResults = mutableMapOf<JsIrTestRuntime, CompiledModule>()
+private val fullRuntimeKlib = KlibModuleRef("JS_IR_RUNTIME", "compiler/ir/serialization.js/build/fullRuntime/klib")
+private val defaultRuntimeKlib = KlibModuleRef("JS_IR_RUNTIME", "compiler/ir/serialization.js/build/reducedRuntime/klib")
+private val kotlinTestKLib = KlibModuleRef("kotlin.test", "compiler/ir/serialization.js/build/kotlin.test/klib")
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -42,12 +43,14 @@ abstract class BasicIrBoxTest(
     // TODO Design incremental compilation for IR and add test support
     override val incrementalCompilationChecksEnabled = false
 
-    private val compilationCache = mutableMapOf<String, CompiledModule>()
+    private val compilationCache = mutableMapOf<String, KlibModuleRef>()
 
     override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
         compilationCache.clear()
         super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
     }
+
+    override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker
 
     override fun translateFiles(
         units: List<TranslationUnit>,
@@ -60,7 +63,7 @@ abstract class BasicIrBoxTest(
         remap: Boolean,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime,
+        needsFullIrRuntime: Boolean,
         isMainModule: Boolean
     ) {
         val filesToCompile = units
@@ -68,67 +71,49 @@ abstract class BasicIrBoxTest(
             // TODO: split input files to some parts (global common, local common, test)
             .filterNot { it.virtualFilePath.contains(BasicBoxTest.COMMON_FILES_DIR_PATH) }
 
-//        config.configuration.put(CommonConfigurationKeys.EXCLUDED_ELEMENTS_FROM_DUMPING, setOf("<JS_IR_RUNTIME>"))
-        config.configuration.put(
-            CommonConfigurationKeys.PHASES_TO_VALIDATE_AFTER,
-            setOf(
-                "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
-                "InnerClassConstructorCallsLowering",
-                "InlineClassLowering", "ConstLowering"
-            )
-        )
+        val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
 
-        val runtimeConfiguration = config.configuration.copy()
+        val libraries = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
+        val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
 
-        // TODO: is it right in general? Maybe sometimes we need to compile with newer versions or with additional language features.
-        runtimeConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(
-            LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
-            specificFeatures = mapOf(
-                LanguageFeature.AllowContractsForCustomFunctions to LanguageFeature.State.ENABLED,
-                LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
-            ),
-            analysisFlags = mapOf(
-                AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
-                AnalysisFlags.allowResultReturnType to true
-            )
-        )
-
-        val runtimeFile = File(runtime.path)
-        val runtimeResult = runtimeResults.getOrPut(runtime) {
-            runtimeConfiguration.put(CommonConfigurationKeys.MODULE_NAME, "JS_IR_RUNTIME")
-            val result = compile(config.project, runtime.sources.map(::createPsiFile), runtimeConfiguration, moduleType = ModuleType.TEST_RUNTIME)
-            runtimeFile.write(result.generatedCode!!)
-            result
+        // TODO: Add proper depencencies
+        val dependencies = runtimeKlibs + libraries.map {
+            compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }
 
-        val dependencyNames = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
-        val dependencies = listOf(runtimeResult) + dependencyNames.mapNotNull {
-            compilationCache[it]
+        val allDependencies = runtimeKlibs + transitiveLibraries.map {
+            compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }
 
-//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, setOf("UnitMaterializationLowering"))
-//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, setOf("ReturnableBlockLowering"))
-//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER, setOf("MultipleCatchesLowering"))
-//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_VALIDATE, setOf("ALL"))
+        val actualOutputFile = outputFile.absolutePath.let {
+            if (!isMainModule) it.replace("_v5.js", "/") else it
+        }
 
-        val result = compile(
-            config.project,
-            filesToCompile,
-            config.configuration,
-            listOf(FqName((testPackage?.let { "$it." } ?: "") + testFunction)),
-            dependencies,
-            runtimeResult,
-            moduleType = if (isMainModule) ModuleType.MAIN else ModuleType.SECONDARY
-        )
+        if (isMainModule) {
+            val jsCode = compile(
+                project = config.project,
+                files = filesToCompile,
+                configuration = config.configuration,
+                phaseConfig = config.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jsPhases),
+                immediateDependencies = dependencies,
+                allDependencies = allDependencies,
+                mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null }
+            )
 
-        compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
+            val wrappedCode = wrapWithModuleEmulationMarkers(jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+            outputFile.write(wrappedCode)
 
-        val generatedCode = result.generatedCode
-        if (generatedCode != null) {
-            // Prefix to help node.js runner find runtime
-            val runtimePrefix = "// RUNTIME: [\"${runtimeFile.path}\"]\n"
-            val wrappedCode = wrapWithModuleEmulationMarkers(generatedCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
-            outputFile.write(runtimePrefix + wrappedCode)
+        } else {
+            val module = generateKLib(
+                project = config.project,
+                files = filesToCompile,
+                configuration = config.configuration,
+                immediateDependencies = dependencies,
+                allDependencies = allDependencies,
+                outputKlibPath = actualOutputFile
+            )
+
+            compilationCache[outputFile.name.replace(".js", ".meta.js")] = module
         }
     }
 
@@ -138,12 +123,12 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String,
         expectedResult: String,
-        withModuleSystem: Boolean,
-        runtime: JsIrTestRuntime
+        withModuleSystem: Boolean
     ) {
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files
-        nashornIrJsTestCheckers[runtime]!!.check(jsFiles, testModuleName, null, testFunction, expectedResult, withModuleSystem)
+
+        testChecker.check(jsFiles, testModuleName, null, testFunction, expectedResult, withModuleSystem)
     }
 }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // a package is omitted to get declarations directly under the module
@@ -15,7 +15,7 @@ internal fun <T : Any> getKClass(jClass: JsClass<T>): KClass<T> = getOrCreateKCl
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
     when (jsTypeOf(e)) {
         "string" -> PrimitiveClasses.stringClass
-        "number" -> if (js("e | 0") === e) PrimitiveClasses.intClass else PrimitiveClasses.doubleClass
+        "number" -> if (jsBitwiseOr(e, 0).asDynamic() === e) PrimitiveClasses.intClass else PrimitiveClasses.doubleClass
         "boolean" -> PrimitiveClasses.booleanClass
         "function" -> PrimitiveClasses.functionClass(e.asDynamic().length)
         else -> {

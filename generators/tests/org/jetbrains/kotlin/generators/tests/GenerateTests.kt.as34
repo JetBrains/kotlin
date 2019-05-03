@@ -67,10 +67,7 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralKotlinToKotlinCo
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralTextToKotlinCopyPasteTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
-import org.jetbrains.kotlin.idea.debugger.AbstractBeforeExtractFunctionInsertionTest
-import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
-import org.jetbrains.kotlin.idea.debugger.AbstractPositionManagerTest
-import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
@@ -510,7 +507,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractOutOfBlockModificationTest> {
-            model("codeInsight/outOfBlock")
+            model("codeInsight/outOfBlock", pattern = KT_OR_KTS)
         }
 
         testClass<AbstractDataFlowValueRenderingTest> {
@@ -619,10 +616,6 @@ fun main(args: Array<String>) {
             model("debugger/smartStepInto")
         }
 
-        testClass<AbstractBeforeExtractFunctionInsertionTest> {
-            model("debugger/insertBeforeExtractFunction", extension = "kt")
-        }
-
         testClass<AbstractKotlinSteppingTest> {
             model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepIntoTest", testClassName = "StepInto")
             model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
@@ -637,6 +630,10 @@ fun main(args: Array<String>) {
         testClass<AbstractKotlinEvaluateExpressionTest> {
             model("debugger/tinyApp/src/evaluate/singleBreakpoint", testMethod = "doSingleBreakpointTest")
             model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
+        }
+
+        testClass<AbstractAsyncStackTraceTest> {
+            model("debugger/tinyApp/src/asyncStackTrace")
         }
 
         testClass<AbstractStubBuilderTest> {

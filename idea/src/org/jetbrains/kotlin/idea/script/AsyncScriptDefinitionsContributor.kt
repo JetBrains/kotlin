@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.script
@@ -11,7 +11,7 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -42,7 +42,12 @@ abstract class AsyncScriptDefinitionsContributor(protected val project: Project)
             }
             return@write null
         }
-        backgroundTask?.queue()
+        // TODO: resolve actual reason for the exception below
+        try {
+            backgroundTask?.queue()
+        } catch (e: IllegalStateException) {
+            if (e.message?.contains("Calling invokeAndWait from read-action leads to possible deadlock") == false) throw e
+        }
     }
 
     protected abstract fun loadScriptDefinitions(previous: List<KotlinScriptDefinition>?): List<KotlinScriptDefinition>

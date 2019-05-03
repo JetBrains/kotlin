@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
@@ -25,6 +26,7 @@ import org.junit.Test
 import java.io.File
 import kotlin.test.assertTrue
 
+@TestDataPath("\$CONTENT_ROOT/resources")
 class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
@@ -274,6 +276,10 @@ class MultiplatformGradleIT : BaseGradleIT() {
             gradleBuildScript(module).appendText(sourceSetDeclaration)
         }
 
+        gradleBuildScript("libJvm").appendText(
+            "\ndependencies { ${sourceSetName}Compile \"org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version\" }"
+        )
+
         listOf(
             "expect fun foo(): String" to "lib/src/$sourceSetName/kotlin",
             "actual fun foo(): String = \"jvm\"" to "libJvm/src/$sourceSetName/kotlin",
@@ -291,6 +297,90 @@ class MultiplatformGradleIT : BaseGradleIT() {
         build(*customSourceSetCompileTasks.toTypedArray()) {
             assertSuccessful()
             assertTasksExecuted(customSourceSetCompileTasks)
+        }
+    }
+
+    @Test
+    fun testMppNodeJsTestRun() = with(Project("new-mpp-js-tests", GradleVersionRequired.AtLeast("5.0"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        // just build without running tests to check configuration avoidance
+        build("assemble") {
+            assertSuccessful()
+
+            assertTasksRegisteredAndNotRealized(
+                ":clientTestNodeModules",
+                ":clientTest",
+
+                ":serverTestNodeModules",
+                ":serverTest"
+            )
+        }
+
+        build("check") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":clientTestNodeModules",
+                ":clientTest",
+
+                ":serverTestNodeModules",
+                ":serverTest"
+            )
+
+            assertFileExists("build/client_test_node_modules/kotlin.js")
+            assertFileExists("build/client_test_node_modules/kotlin.js.map")
+            assertFileExists("build/client_test_node_modules/kotlin-test.js")
+            assertFileExists("build/client_test_node_modules/kotlin-test.js.map")
+            assertFileExists("build/client_test_node_modules/kotlin-test-nodejs-runner.js")
+            assertFileExists("build/client_test_node_modules/kotlin-test-nodejs-runner.js.map")
+            assertFileExists("build/client_test_node_modules/kotlin-nodejs-source-map-support.js")
+            assertFileExists("build/client_test_node_modules/kotlin-nodejs-source-map-support.js.map")
+            assertFileExists("build/client_test_node_modules/new-mpp-js-tests.js")
+            assertFileExists("build/client_test_node_modules/new-mpp-js-tests.js.map")
+            assertFileExists("build/client_test_node_modules/new-mpp-js-tests_test.js")
+            assertFileExists("build/client_test_node_modules/new-mpp-js-tests_test.js.map")
+
+            assertFileContains(
+                "build/client_test_node_modules/new-mpp-js-tests_test.js.map",
+                "\"sources\":[\"../../src/commonTest/kotlin/CommonTest.kt\"]"
+            )
+
+            assertTestResults("testProject/new-mpp-js-tests/TEST-CommonTest.xml", "clientTest")
+            assertTestResults("testProject/new-mpp-js-tests/TEST-CommonTest.xml", "serverTest")
+        }
+
+        // test all is up-to-date when no changes
+        build("check") {
+            assertSuccessful()
+
+            assertTasksUpToDate(
+                ":clientTestNodeModules",
+                ":clientTest",
+
+                ":serverTestNodeModules",
+                ":serverTest"
+            )
+        }
+
+        // change common file and check that all tasks executed
+        projectDir.resolve("src/commonMain/kotlin/common.kt").writeText("fun common() = 777")
+
+        build("check") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":clientTestNodeModules",
+                ":clientTest",
+
+                ":serverTestNodeModules",
+                ":serverTest"
+            )
+
+            assertTestResults("testProject/new-mpp-js-tests/TEST-CommonTest-2.xml", "clientTest")
+            assertTestResults("testProject/new-mpp-js-tests/TEST-CommonTest-2.xml", "serverTest")
         }
     }
 }

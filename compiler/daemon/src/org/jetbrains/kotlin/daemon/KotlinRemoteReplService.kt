@@ -17,20 +17,18 @@
 package org.jetbrains.kotlin.daemon
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
-import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
+import org.jetbrains.kotlin.cli.jvm.plugins.ServiceLoaderLite
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.RemoteOperationsTracer
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.PrintStream
@@ -38,12 +36,14 @@ import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 open class KotlinJvmReplService(
         disposable: Disposable,
         val portForServers: Int,
+        val compilerId: CompilerId,
         templateClasspath: List<File>,
         templateClassName: String,
         protected val messageCollector: MessageCollector,
@@ -51,40 +51,46 @@ open class KotlinJvmReplService(
         protected val operationsTracer: RemoteOperationsTracer?
 ) : ReplCompileAction, ReplCheckAction, CreateReplStageStateAction {
 
+    private val log by lazy { Logger.getLogger("replService") }
+
     protected val configuration = CompilerConfiguration().apply {
+        put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
         addJvmClasspathRoots(PathUtil.kotlinPathsForCompiler.let { listOf(it.stdlibPath, it.reflectPath, it.scriptRuntimePath) })
         addJvmClasspathRoots(templateClasspath)
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
         languageVersionSettings = LanguageVersionSettingsImpl(
                 LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlags.skipMetadataVersionCheck to true)
         )
-        configureScripting()
+        configureScripting(compilerId)
     }
-
-    protected fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition? {
-        val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this::class.java.classLoader)
-
-        try {
-            val cls = classloader.loadClass(templateClassName)
-            val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, emptyMap())
-            messageCollector.report(INFO, "New script definition $templateClassName: files pattern = \"${def.scriptFilePattern}\", " +
-                                          "resolver = ${def.dependencyResolver.javaClass.name}")
-            return def
-        }
-        catch (ex: ClassNotFoundException) {
-            messageCollector.report(ERROR, "Cannot find script definition template class $templateClassName")
-        }
-        catch (ex: Exception) {
-            messageCollector.report(ERROR, "Error processing script definition template $templateClassName: ${ex.message}")
-        }
-        return null
-    }
-
-    private val scriptDef = makeScriptDefinition(templateClasspath, templateClassName)
 
     private val replCompiler: ReplCompiler? by lazy {
-        if (scriptDef == null) null
-        else GenericReplCompiler(disposable, scriptDef, configuration, messageCollector)
+        try {
+            val projectEnvironment =
+                KotlinCoreEnvironment.ProjectEnvironment(
+                    disposable,
+                    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(disposable, configuration)
+                )
+            ReplFactoryExtension.registerExtensionPoint(projectEnvironment.project)
+            projectEnvironment.registerExtensionsFromPlugins(configuration)
+            val replFactories = ReplFactoryExtension.getInstances(projectEnvironment.project)
+            if (replFactories.isEmpty()) {
+                throw java.lang.IllegalStateException("no scripting plugin loaded")
+            } else if (replFactories.size > 1) {
+                throw java.lang.IllegalStateException("several scripting plugins loaded")
+            }
+
+            replFactories.first().makeReplCompiler(
+                templateClassName,
+                templateClasspath,
+                this::class.java.classLoader,
+                configuration,
+                projectEnvironment
+            )
+        } catch (ex: Throwable) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Unable to construct repl compiler: ${ex.message}")
+            throw IllegalStateException("Unable to use scripting/REPL in the daemon: ${ex.message}", ex)
+        }
     }
 
     protected val statesLock = ReentrantReadWriteLock()
@@ -125,7 +131,7 @@ open class KotlinJvmReplService(
 
     fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeServer = statesLock.write {
         val id = getValidId(stateIdCounter) { id -> states.none { it.key.getId() == id} }
-        val stateFacade = RemoteReplStateFacadeServer(id, createState().asState(GenericReplCompilerState::class.java), port)
+        val stateFacade = RemoteReplStateFacadeServer(id, createState(), port)
         states.put(stateFacade, true)
         stateFacade
     }
@@ -175,9 +181,15 @@ inline internal fun getValidId(counter: AtomicInteger, check: (Int) -> Boolean):
     return newId
 }
 
-private fun CompilerConfiguration.configureScripting() {
+private fun CompilerConfiguration.configureScripting(compilerId: CompilerId) {
     val error = try {
-        add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
+        val componentRegistrars =
+            (this::class.java.classLoader as? URLClassLoader)?.let {
+                ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, it)
+            } ?: ServiceLoaderLite.loadImplementations(
+                ComponentRegistrar::class.java, compilerId.compilerClasspath.map(::File), this::class.java.classLoader
+            )
+        addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
         null
     } catch (e: NoClassDefFoundError) {
         e

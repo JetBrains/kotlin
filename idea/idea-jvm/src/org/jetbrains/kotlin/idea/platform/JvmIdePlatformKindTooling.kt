@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.core.platform.impl
@@ -70,7 +70,7 @@ class JvmIdePlatformKindTooling : IdePlatformKindTooling() {
                 val framework = TestFrameworks.detectFramework(lightClass) ?: return null
                 if (!framework.isTestMethod(lightMethod, /*checkAbstract = */ false)) return null
 
-                "java:test://${lightClass.qualifiedName}.${lightMethod.name}" to framework
+                "java:test://${lightClass.qualifiedName}/${lightMethod.name}" to framework
             }
 
             else -> return null

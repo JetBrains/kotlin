@@ -44,7 +44,7 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(K
         for (klass in element.withExpectedActuals()) {
             klass as? KtClass ?: continue
 
-            val classDescriptor = klass.resolveToDescriptorIfAny() as? ClassDescriptor ?: continue
+            val classDescriptor = klass.resolveToDescriptorIfAny() ?: continue
             val isExpect = classDescriptor.isExpect
             val isActual = classDescriptor.isActual
 

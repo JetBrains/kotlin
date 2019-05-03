@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
@@ -39,8 +36,13 @@ import java.util.*
 internal val fileClassPhase = makeIrFilePhase(
     ::FileClassLowering,
     name = "FileClass",
-    description = "Put file level function and property declaration into a class"
+    description = "Put file level function and property declaration into a class",
+    stickyPostconditions = setOf(::checkAllFileLevelDeclarationsAreClasses)
 )
+
+private fun checkAllFileLevelDeclarationsAreClasses(irFile: IrFile) {
+    assert(irFile.declarations.all { it is IrClass })
+}
 
 private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -54,7 +56,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 fileClassMembers.add(it)
         }
 
-        if (fileClassMembers.isEmpty()) return
+        if (fileClassMembers.isEmpty() && irFile.metadata?.descriptors.isNullOrEmpty()) return
 
         val irFileClass = createFileClass(irFile, fileClassMembers)
         classes.add(irFileClass)
@@ -88,8 +90,14 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             parent = irFile
             declarations.addAll(fileClassMembers)
             createImplicitParameterDeclarationWithWrappedDescriptor()
-            // TODO: figure out why reparenting leads to failing tests.
-            // fileClassMembers.forEach { it.parent = this }
+            fileClassMembers.forEach {
+                it.parent = this
+                if (it is IrProperty) {
+                    it.getter?.let { it.parent = this }
+                    it.setter?.let { it.parent = this }
+                    it.backingField?.let { it.parent = this }
+                }
+            }
             metadata = irFile.metadata
 
             val partClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)

@@ -1,0 +1,24 @@
+<idea-plugin>
+    <extensionPoints>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleProjectImportHandler" area="IDEA_PROJECT"
+                        interface="org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleModelFacade"
+                        interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade"/>
+    </extensionPoints>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+        <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinGradleOrderEnumerationHandler$Factory" order="first"/>
+        <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <projectTaskRunner implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner" order="first, before gradle"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
+    </extensions>
+</idea-plugin>

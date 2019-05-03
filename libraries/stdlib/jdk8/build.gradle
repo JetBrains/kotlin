@@ -28,7 +28,7 @@ sourceSets {
     test {
         kotlin {
             srcDir 'test'
-            if(!System.properties.'idea.active') {
+            if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
                 srcDir '../jvm/test'
                 srcDir '../common/test'
                 srcDir '../test'
@@ -105,7 +105,7 @@ task testJdk6Tests(type: Test) { thisTask ->
         testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
         classpath = files(
                 testClassesDirs,
-                configurations.testCompile
+                sourceSets.test.compileClasspath
         )
     }
 }

@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -265,7 +266,7 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
                 val newLoopCondition = newCondition.statements.last() as IrExpression
 
                 val breakCond = JsIrBuilder.buildCall(booleanNotSymbol).apply {
-                    putValueArgument(0, newLoopCondition)
+                    dispatchReceiver = newLoopCondition
                 }
 
                 newLoopBody.statements += JsIrBuilder.buildIfElse(unitType, breakCond, thenBlock)
@@ -366,8 +367,8 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
 
             if (compositeCount == 0) {
                 val branches = results.map { (cond, res, orig) ->
-                    when (orig) {
-                        is IrElseBranch -> IrElseBranchImpl(orig.startOffset, orig.endOffset, cond, res)
+                    when {
+                        isElseBranch(orig) -> IrElseBranchImpl(orig.startOffset, orig.endOffset, cond, res)
                         else /* IrBranch */ -> IrBranchImpl(orig.startOffset, orig.endOffset, cond, res)
                     }
                 }
@@ -384,7 +385,7 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
                 appendBlock.statements += condStatements.run { subList(0, lastIndex) }
 
                 JsIrBuilder.buildBlock(unitType).also {
-                    val elseBlock = if (orig is IrElseBranch) null else it
+                    val elseBlock = if (isElseBranch(orig)) null else it
                     val ifElseNode =
                         JsIrBuilder.buildIfElse(orig.startOffset, orig.endOffset, unitType, condValue, res, elseBlock, expression.origin)
                     appendBlock.statements += ifElseNode
@@ -666,9 +667,9 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
 
                 val newBranches = decomposedResults.map { (branch, condition, result) ->
                     val newResult = wrap(result, irVar)
-                    when (branch) {
-                        is IrElseBranch -> IrElseBranchImpl(branch.startOffset, branch.endOffset, condition, newResult)
-                        else /* IrBranch */ -> IrBranchImpl(branch.startOffset, branch.endOffset, condition, newResult)
+                    when {
+                        isElseBranch(branch) -> IrElseBranchImpl(branch.startOffset, branch.endOffset, condition, newResult)
+                        else /* IrBranch  */ -> IrBranchImpl(branch.startOffset, branch.endOffset, condition, newResult)
                     }
                 }
 
@@ -679,9 +680,9 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
                 return JsIrBuilder.buildComposite(expression.type, listOf(irVar, newWhen, JsIrBuilder.buildGetValue(irVar.symbol)))
             } else {
                 val newBranches = decomposedResults.map { (branch, condition, result) ->
-                    when (branch) {
-                        is IrElseBranch -> IrElseBranchImpl(branch.startOffset, branch.endOffset, condition, result)
-                        else /* IrBranch */ -> IrBranchImpl(branch.startOffset, branch.endOffset, condition, result)
+                    when {
+                        isElseBranch(branch) -> IrElseBranchImpl(branch.startOffset, branch.endOffset, condition, result)
+                        else /* IrBranch  */ -> IrBranchImpl(branch.startOffset, branch.endOffset, condition, result)
                     }
                 }
 

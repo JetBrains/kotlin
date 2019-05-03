@@ -1,0 +1,51 @@
+FILE: companion.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+            public final val D: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            R|/A.Companion.foo|()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|A| {
+            private constructor(): R|B.Companion| {
+                super<R|A|>()
+            }
+
+            public final fun baz(): R|kotlin/Unit| {
+            }
+
+            public final val C: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/A|.R|/A.Companion.foo|()
+        R|/B|.<Inapplicable(WRONG_RECEIVER): [/A.bar]>#()
+        R|/B|.R|/B.Companion.baz|()
+        lval x: R|kotlin/String| = R|/A|.R|/A.Companion.D|
+        lval y: R|kotlin/String| = R|/B|.R|/B.Companion.C|
+        lval z: <ERROR TYPE REF: Unresolved name: D> = R|/B|.<Unresolved name: D>#
+    }

@@ -38,9 +38,10 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
 class AddFunctionParametersFix(
-        callElement: KtCallElement,
-        functionDescriptor: FunctionDescriptor,
-        private val hasTypeMismatches: Boolean) : ChangeFunctionSignatureFix(callElement, functionDescriptor) {
+    callElement: KtCallElement,
+    functionDescriptor: FunctionDescriptor,
+    private val hasTypeMismatches: Boolean
+) : ChangeFunctionSignatureFix(callElement, functionDescriptor) {
     private val callElement: KtCallElement?
         get() = element as? KtCallElement
 
@@ -59,8 +60,7 @@ class AddFunctionParametersFix(
         val callableDescription = if (isConstructor()) {
             val className = functionDescriptor.containingDeclaration.name.asString()
             "constructor '$className'"
-        }
-        else {
+        } else {
             val functionName = functionDescriptor.name.asString()
             "function '$functionName'"
         }
@@ -88,9 +88,9 @@ class AddFunctionParametersFix(
     private fun addParameterConfiguration(): KotlinChangeSignatureConfiguration {
         return object : KotlinChangeSignatureConfiguration {
             override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
-                return originalDescriptor.modify {
-                    val callElement = callElement ?: return@modify
-                    val call = callElement.getCall(callElement.analyze()) ?: return@modify
+                return originalDescriptor.modify(fun(descriptor: KotlinMutableMethodDescriptor) {
+                    val callElement = callElement ?: return
+                    val call = callElement.getCall(callElement.analyze()) ?: return
                     val parameters = functionDescriptor.valueParameters
                     val arguments = callElement.valueArguments
                     val validator = CollectingNameValidator()
@@ -109,15 +109,14 @@ class AddFunctionParametersFix(
                             val parameterType = parameters[i].type
 
                             if (argumentType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
-                                it.parameters[i].currentTypeInfo = KotlinTypeInfo(false, argumentType)
+                                descriptor.parameters[i].currentTypeInfo = KotlinTypeInfo(false, argumentType)
                                 typesToShorten.add(argumentType)
                             }
-                        }
-                        else {
+                        } else {
                             val parameterInfo = getNewParameterInfo(
-                                    originalDescriptor.baseDescriptor as FunctionDescriptor,
-                                    argument,
-                                    validator
+                                originalDescriptor.baseDescriptor as FunctionDescriptor,
+                                argument,
+                                validator
                             )
                             parameterInfo.originalTypeInfo.type?.let { typesToShorten.add(it) }
 
@@ -125,10 +124,10 @@ class AddFunctionParametersFix(
                                 parameterInfo.defaultValueForCall = expression
                             }
 
-                            it.addParameter(parameterInfo)
+                            descriptor.addParameter(parameterInfo)
                         }
                     }
-                }
+                })
             }
 
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean {
@@ -139,15 +138,15 @@ class AddFunctionParametersFix(
     }
 
     private fun getNewParameterInfo(
-            functionDescriptor: FunctionDescriptor,
-            argument: ValueArgument,
-            validator: (String) -> Boolean
+        functionDescriptor: FunctionDescriptor,
+        argument: ValueArgument,
+        validator: (String) -> Boolean
     ): KotlinParameterInfo {
         val name = getNewArgumentName(argument, validator)
         val expression = argument.getArgumentExpression()
         val type = expression?.let { getDataFlowAwareTypes(it).firstOrNull() } ?: functionDescriptor.builtIns.nullableAnyType
         return KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, null))
-                .apply { currentTypeInfo = KotlinTypeInfo(false, type) }
+            .apply { currentTypeInfo = KotlinTypeInfo(false, type) }
     }
 
     private fun hasOtherUsages(function: PsiElement): Boolean {

@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.analyze
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -55,26 +55,22 @@ object TopDownAnalyzerFacadeForJS {
         require(!thisIsBuiltInsModule || customBuiltInsModule == null) {
             "Can't simultaneously use custom built-ins module and set current module as built-ins"
         }
-        val projectContext = ProjectContext(project)
-        val builtIns = if (thisIsBuiltInsModule || customBuiltInsModule != null) {
-            object : KotlinBuiltIns(projectContext.storageManager) {}
-        } else {
-            JsPlatform.builtIns
+
+        val builtIns = when {
+            thisIsBuiltInsModule -> DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
+            customBuiltInsModule != null -> customBuiltInsModule.builtIns
+            else -> JsPlatform.builtIns
         }
 
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
         val context = ContextForNewModule(
-            projectContext,
+            ProjectContext(project),
             Name.special("<$moduleName>"),
             builtIns,
             multiTargetPlatform = null
         )
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
-
-        if (customBuiltInsModule != null) {
-            builtIns.builtInsModule = customBuiltInsModule
-        }
 
         if (thisIsBuiltInsModule) {
             builtIns.builtInsModule = context.module

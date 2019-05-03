@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1230
 // GENERATE_SOURCE_MAPS
 // FILE: Enum.kt
@@ -12,7 +11,8 @@ enum class Enum {
 // RECOMPILE
 
 fun box(): String {
-    println(Enum.A)
+    if (Enum.A.name != "A")
+        return "Fail"
 
     return "OK"
 }

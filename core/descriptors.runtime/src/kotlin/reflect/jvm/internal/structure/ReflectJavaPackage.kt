@@ -37,7 +37,7 @@ class ReflectJavaPackage(override val fqName: FqName) : ReflectJavaElement(), Ja
     // TODO: support it if possible
     override val annotations get() = emptyList<JavaAnnotation>()
 
-    override fun findAnnotation(fqName: FqName) = null
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = false

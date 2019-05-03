@@ -49,8 +49,12 @@ fun KotlinType?.isIterable(builtIns: KotlinBuiltIns): Boolean {
 }
 
 fun KtCallExpression.isCalling(fqName: FqName, context: BindingContext = analyze(BodyResolveMode.PARTIAL)): Boolean {
-    val function = fqName.asString().takeLastWhile { it != '.' }
-    if (calleeExpression?.text != function) return false
+    return isCalling(listOf(fqName), context)
+}
+
+fun KtCallExpression.isCalling(fqNames: List<FqName>, context: BindingContext = analyze(BodyResolveMode.PARTIAL)): Boolean {
+    val calleeText = calleeExpression?.text ?: return false
+    val fqName = fqNames.firstOrNull { fqName -> fqName.asString().takeLastWhile { it != '.' } == calleeText } ?: return false
     return getResolvedCall(context)?.isCalling(fqName) == true
 }
 

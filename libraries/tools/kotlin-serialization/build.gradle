@@ -1,7 +1,12 @@
 apply plugin: 'kotlin'
+apply plugin: 'jps-compatible'
 
 configureJvmProject(project)
 configurePublishing(project)
+
+pill {
+    variant = 'FULL'
+}
 
 compileJava {
     sourceCompatibility = 1.8
@@ -15,13 +20,11 @@ dependencies {
 
     compileOnly kotlinStdlib()
     compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+
+    embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
 }
 
-evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
-
 jar {
-    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
-    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
     manifestAttributes(manifest, project)
 }
 

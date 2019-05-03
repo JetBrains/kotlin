@@ -20,6 +20,7 @@ import com.intellij.codeInsight.NullableNotNullManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.idea.j2k.content
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Annotation
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationTargetMapper
@@ -188,7 +189,7 @@ class AnnotationConverter(private val converter: Converter) {
         val returnType = method.returnType
         if (returnType is PsiArrayType && value !is PsiArrayInitializerMemberValue) {
             return converter.deferredElement { codeConverter ->
-                val convertedType = converter.typeConverter.convertType(returnType) as ArrayType
+                converter.typeConverter.convertType(returnType) as ArrayType
                 val convertAttributeValue = convertAttributeValue(value, returnType.componentType, false, false)
                 createArrayLiteralExpression(codeConverter, convertAttributeValue.toList())
             }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -25,10 +25,10 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.mobileshared"
 
-    override fun getPresentableName() = "Kotlin (Mobile Shared Library)"
+    override fun getPresentableName() = "Mobile Shared Library | Gradle"
 
     override fun getDescription() =
-        "Multiplatform Gradle projects allow sharing the same Kotlin code between two mobile platforms (JVM/Android, Native)."
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between two mobile platforms (JVM/Android and Native)"
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
@@ -149,7 +149,9 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                 // This is for iPhone emulator
                 // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
                 iosX64("$nativeTargetName") {
-                    compilations.main.outputKinds("framework")
+                    binaries {
+                        framework()
+                    }
                 }
                 sourceSets {
                     $commonSourceName {
@@ -177,6 +179,20 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                     $nativeSourceName {
                     }
                     $nativeTestName {
+                    }
+                }
+            }
+
+            task $nativeTestName {
+                def device = project.findProperty("${nativeTargetName}Device")?.toString() ?: "iPhone 8"
+                dependsOn kotlin.targets.$nativeTargetName.binaries.getExecutable('test', 'DEBUG').linkTaskName
+                group = JavaBasePlugin.VERIFICATION_GROUP
+                description = "Runs tests for target '$nativeTargetName' on an iOS simulator"
+
+                doLast {
+                    def binary = kotlin.targets.$nativeTargetName.binaries.getExecutable('test', 'DEBUG').outputFile
+                    exec {
+                        commandLine 'xcrun', 'simctl', 'spawn', device, binary.absolutePath
                     }
                 }
             }

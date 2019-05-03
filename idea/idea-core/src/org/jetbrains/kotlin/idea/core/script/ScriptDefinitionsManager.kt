@@ -38,12 +38,12 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
-import org.jetbrains.kotlin.scripting.legacy.LazyScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinitionAdapterFromNewAPI
+import org.jetbrains.kotlin.scripting.definitions.LazyScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
@@ -68,6 +68,8 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
     private var definitionsByContributor = mutableMapOf<ScriptDefinitionContributor, List<KotlinScriptDefinition>>()
     private var definitions: List<KotlinScriptDefinition>? = null
+
+    private val failedContributorsHashes = HashSet<Int>()
 
     private val scriptDefinitionsCacheLock = ReentrantReadWriteLock()
     private val scriptDefinitionsCache = SLRUMap<String, KotlinScriptDefinition>(10, 10)
@@ -195,13 +197,14 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     }
 
     private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> {
-        return try {
-            getDefinitions()
+        if (!failedContributorsHashes.contains(this@safeGetDefinitions.hashCode())) try {
+            return getDefinitions()
         } catch (t: Throwable) {
-            // TODO: review exception handling
-            // possibly log, see KT-19276
-            emptyList()
+            // reporting failed loading only once
+            LOG.error("[kts] cannot load script definitions using $this", t)
+            failedContributorsHashes.add(this@safeGetDefinitions.hashCode())
         }
+        return emptyList()
     }
 
     companion object {
@@ -236,8 +239,7 @@ fun loadDefinitionsFromTemplates(
             // as a compatibility measure, the asm based reading of annotations should be implemented to filter classes before classloading
             val template = loader.loadClass(templateClassName).kotlin
             when {
-                template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>() != null ||
-                        template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() != null -> {
+                template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() != null -> {
                     KotlinScriptDefinitionFromAnnotatedTemplate(
                         template,
                         environment,

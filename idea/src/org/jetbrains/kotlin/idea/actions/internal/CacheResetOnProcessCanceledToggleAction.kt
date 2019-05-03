@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled
 
 class CacheResetOnProcessCanceledToggleAction : ToggleAction() {
     override fun isSelected(e: AnActionEvent): Boolean =
-            CacheResetOnProcessCanceled.enabled
+        CacheResetOnProcessCanceled.enabled
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
         CacheResetOnProcessCanceled.enabled = state

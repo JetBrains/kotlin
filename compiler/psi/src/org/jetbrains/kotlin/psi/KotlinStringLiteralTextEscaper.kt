@@ -21,6 +21,7 @@ import com.intellij.psi.LiteralTextEscaper
 import gnu.trove.TIntArrayList
 import org.jetbrains.kotlin.psi.psiUtil.getContentRange
 import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
+import kotlin.math.min
 
 class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression) : LiteralTextEscaper<KtStringTemplateExpression>(host) {
     private var sourceOffsets: IntArray? = null
@@ -70,7 +71,7 @@ class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression) : Literal
     override fun getOffsetInHost(offsetInDecoded: Int, rangeInsideHost: TextRange): Int {
         val offsets = sourceOffsets
         if (offsets == null || offsetInDecoded >= offsets.size) return -1
-        return Math.min(offsets[offsetInDecoded], rangeInsideHost.length) + rangeInsideHost.startOffset
+        return min(offsets[offsetInDecoded], rangeInsideHost.length) + rangeInsideHost.startOffset
     }
 
     override fun getRelevantTextRange(): TextRange {

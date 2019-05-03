@@ -14,6 +14,7 @@ sourceSets {
     "test" { none() }
 }
 
+publish()
+
 standardPublicJars()
 
-publish()

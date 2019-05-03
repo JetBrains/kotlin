@@ -22,7 +22,7 @@ import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.TypeVariable
 
 class ReflectJavaTypeParameter(
-        val typeVariable: TypeVariable<*>
+    val typeVariable: TypeVariable<*>
 ) : ReflectJavaElement(), JavaTypeParameter, ReflectJavaAnnotationOwner {
     override val upperBounds: List<ReflectJavaClassifierType>
         get() {
@@ -31,6 +31,7 @@ class ReflectJavaTypeParameter(
             return bounds
         }
 
+    @Suppress("USELESS_CAST")
     override val element: AnnotatedElement?
         // TypeVariable is AnnotatedElement only in JDK8
         get() = typeVariable as? AnnotatedElement

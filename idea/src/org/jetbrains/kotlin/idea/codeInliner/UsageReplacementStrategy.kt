@@ -51,72 +51,72 @@ interface UsageReplacementStrategy {
 private val LOG = Logger.getInstance(UsageReplacementStrategy::class.java)
 
 fun UsageReplacementStrategy.replaceUsagesInWholeProject(
-        targetPsiElement: PsiElement,
-        progressTitle: String,
-        commandName: String,
-        postAction: () -> Unit = {}
+    targetPsiElement: PsiElement,
+    progressTitle: String,
+    commandName: String,
+    postAction: () -> Unit = {}
 ) {
     val project = targetPsiElement.project
     ProgressManager.getInstance().run(
-            object : Task.Modal(project, progressTitle, true) {
-                override fun run(indicator: ProgressIndicator) {
-                    val usages = runReadAction {
-                        val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(project), project)
-                        ReferencesSearch.search(targetPsiElement, searchScope)
-                                .filterIsInstance<KtSimpleNameReference>()
-                                .map { ref -> ref.expression }
-                    }
-                    this@replaceUsagesInWholeProject.replaceUsages(usages, targetPsiElement, project, commandName, postAction)
+        object : Task.Modal(project, progressTitle, true) {
+            override fun run(indicator: ProgressIndicator) {
+                val usages = runReadAction {
+                    val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(project), project)
+                    ReferencesSearch.search(targetPsiElement, searchScope)
+                        .filterIsInstance<KtSimpleNameReference>()
+                        .map { ref -> ref.expression }
                 }
-            })
+                this@replaceUsagesInWholeProject.replaceUsages(usages, targetPsiElement, project, commandName, postAction)
+            }
+        })
 }
 
 fun UsageReplacementStrategy.replaceUsages(
-        usages: Collection<KtSimpleNameExpression>,
-        targetPsiElement: PsiElement,
-        project: Project,
-        commandName: String,
-        postAction: () -> Unit = {}
+    usages: Collection<KtSimpleNameExpression>,
+    targetPsiElement: PsiElement,
+    project: Project,
+    commandName: String,
+    postAction: () -> Unit = {}
 ) {
     GuiUtils.invokeLaterIfNeeded({
-        project.executeWriteCommand(commandName) {
-            val targetDeclaration = targetPsiElement as? KtNamedDeclaration
+                                     project.executeWriteCommand(commandName) {
+                                         val targetDeclaration = targetPsiElement as? KtNamedDeclaration
 
-            val usagesByFile = usages.groupBy { it.containingFile }
+                                         val usagesByFile = usages.groupBy { it.containingFile }
 
-            val KEY = Key<Unit>("UsageReplacementStrategy.replaceUsages")
+                                         val KEY = Key<Unit>("UsageReplacementStrategy.replaceUsages")
 
-            for ((file, usagesInFile) in usagesByFile) {
-                usagesInFile.forEach { it.putCopyableUserData(KEY, Unit) }
+                                         for ((file, usagesInFile) in usagesByFile) {
+                                             usagesInFile.forEach { it.putCopyableUserData(KEY, Unit) }
 
-                // we should delete imports later to not affect other usages
-                val importsToDelete = mutableListOf<KtImportDirective>()
+                                             // we should delete imports later to not affect other usages
+                                             val importsToDelete = mutableListOf<KtImportDirective>()
 
-                var usagesToProcess = usagesInFile
-                while (usagesToProcess.isNotEmpty()) {
-                    if (processUsages(usagesToProcess, targetDeclaration, importsToDelete)) break
+                                             var usagesToProcess = usagesInFile
+                                             while (usagesToProcess.isNotEmpty()) {
+                                                 if (processUsages(usagesToProcess, targetDeclaration, importsToDelete)) break
 
-                    // some usages may get invalidated we need to find them in the tree
-                    usagesToProcess = file.collectDescendantsOfType<KtSimpleNameExpression> { it.getCopyableUserData(KEY) != null }
-                }
+                                                 // some usages may get invalidated we need to find them in the tree
+                                                 usagesToProcess = file.collectDescendantsOfType { it.getCopyableUserData(KEY) != null }
+                                             }
 
-                file.forEachDescendantOfType<KtSimpleNameExpression> { it.putCopyableUserData(KEY, null) }
-                
-                importsToDelete.forEach { it.delete() }
-            }
+                                             file.forEachDescendantOfType<KtSimpleNameExpression> { it.putCopyableUserData(KEY, null) }
 
-            postAction()
-        }
-    }, ModalityState.NON_MODAL)
+                                             importsToDelete.forEach { it.delete() }
+                                         }
+
+                                         postAction()
+                                     }
+                                 }, ModalityState.NON_MODAL)
 }
 
 /**
  * @return false if some usages were invalidated
  */
 private fun UsageReplacementStrategy.processUsages(
-        usages: List<KtSimpleNameExpression>,
-        targetDeclaration: KtNamedDeclaration?,
-        importsToDelete: MutableList<KtImportDirective>
+    usages: List<KtSimpleNameExpression>,
+    targetDeclaration: KtNamedDeclaration?,
+    importsToDelete: MutableList<KtImportDirective>
 ): Boolean {
     var invalidUsagesFound = false
     for (usage in usages) {
@@ -138,17 +138,18 @@ private fun UsageReplacementStrategy.processUsages(
             }
 
             createReplacer(usage)?.invoke()
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             LOG.error(e)
         }
     }
     return !invalidUsagesFound
 }
 
-private fun UsageReplacementStrategy.specialUsageProcessing(usage: KtSimpleNameExpression, targetDeclaration: KtNamedDeclaration?): Boolean {
-    val usageParent = usage.parent
-    when (usageParent) {
+private fun UsageReplacementStrategy.specialUsageProcessing(
+    usage: KtSimpleNameExpression,
+    targetDeclaration: KtNamedDeclaration?
+): Boolean {
+    when (val usageParent = usage.parent) {
         is KtCallableReferenceExpression -> {
             val grandParent = usageParent.parent
             ConvertReferenceToLambdaIntention().applyTo(usageParent, null)
@@ -166,7 +167,7 @@ private fun UsageReplacementStrategy.specialUsageProcessing(usage: KtSimpleNameE
                 for (lambdaArgument in lambdaArguments) {
                     val lambdaExpression = lambdaArgument.getLambdaExpression() ?: continue
                     val functionDescriptor =
-                            lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
+                        lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
                     if (functionDescriptor.valueParameters.isNotEmpty()) {
                         specifySignature.applyTo(lambdaExpression, null)
                     }
@@ -183,7 +184,7 @@ private fun UsageReplacementStrategy.specialUsageProcessing(usage: KtSimpleNameE
 }
 
 private fun UsageReplacementStrategy.doRefactoringInside(
-        element: KtElement, targetName: String?, targetDescriptor: DeclarationDescriptor?
+    element: KtElement, targetName: String?, targetDescriptor: DeclarationDescriptor?
 ) {
     element.forEachDescendantOfType<KtSimpleNameExpression> { usage ->
         if (usage.isValid && usage.getReferencedName() == targetName) {

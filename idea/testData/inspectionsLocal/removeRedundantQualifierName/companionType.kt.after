@@ -1,0 +1,15 @@
+package my.simple.name
+
+
+class Bar {
+    class Foo {
+        companion object {
+            class CheckClass
+        }
+    }
+}
+
+
+fun foo(a: Bar.Foo.Companion.CheckClass) {
+
+}

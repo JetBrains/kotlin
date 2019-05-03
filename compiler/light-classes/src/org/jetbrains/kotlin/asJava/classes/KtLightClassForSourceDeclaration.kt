@@ -139,7 +139,8 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override fun getNavigationElement(): PsiElement = classOrObject
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return another is KtLightClassForSourceDeclaration && Comparing.equal(another.qualifiedName, qualifiedName)
+        return kotlinOrigin.isEquivalentTo(another) ||
+                another is KtLightClassForSourceDeclaration && Comparing.equal(another.qualifiedName, qualifiedName)
     }
 
     override fun getElementIcon(flags: Int): Icon? {
@@ -337,6 +338,12 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             }
 
         fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
+            val containingFile = classOrObject.containingFile
+            if (containingFile is KtCodeFragment) {
+                // Avoid building light classes for code fragments
+                return null
+            }
+
             if (classOrObject.shouldNotBeVisibleAsLightClass()) {
                 return null
             }

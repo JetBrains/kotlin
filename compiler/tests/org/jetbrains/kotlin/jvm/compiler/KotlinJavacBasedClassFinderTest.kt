@@ -66,10 +66,10 @@ class KotlinJavacBasedClassFinderTest : KotlinTestWithEnvironmentManagement() {
         val found = classFinder.findClass(classId)
         assertNotNull(found, "Class not found for $className")
 
-        val binaryClass = VirtualFileFinder.SERVICE.getInstance(project).findKotlinClass(found!!)
+        val binaryClass = VirtualFileFinder.SERVICE.getInstance(project).findKotlinClass(found)
         assertNotNull(binaryClass, "No binary class for $className")
 
-        assertEquals("test/A.B.C", binaryClass?.classId?.toString())
+        assertEquals("test/A.B.C", binaryClass.classId.toString())
     }
 
     private fun createClassFinder(project: Project) = JavacBasedClassFinder().apply {

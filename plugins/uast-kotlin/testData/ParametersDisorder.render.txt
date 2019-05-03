@@ -3,7 +3,7 @@ public final class ParametersDisorderKt {
     }
     public static final fun withDefault(@org.jetbrains.annotations.NotNull c: int, @org.jetbrains.annotations.NotNull d: java.lang.String) : void {
     }
-    public static final fun withReceiver(@org.jetbrains.annotations.NotNull $receiver: java.lang.String, @org.jetbrains.annotations.NotNull a: int, @org.jetbrains.annotations.NotNull b: float) : void {
+    public static final fun withReceiver(@org.jetbrains.annotations.NotNull $this$withReceiver: java.lang.String, @org.jetbrains.annotations.NotNull a: int, @org.jetbrains.annotations.NotNull b: float) : void {
     }
     public static final fun call() : void {
         global(2.2, 2)
@@ -26,7 +26,7 @@ public final class ParametersDisorderKt {
 }
 
 public final class A {
-    public final fun with2Receivers(@org.jetbrains.annotations.NotNull $receiver: java.lang.String, @org.jetbrains.annotations.NotNull a: int, @org.jetbrains.annotations.NotNull b: float) : void {
+    public final fun with2Receivers(@org.jetbrains.annotations.NotNull $this$with2Receivers: java.lang.String, @org.jetbrains.annotations.NotNull a: int, @org.jetbrains.annotations.NotNull b: float) : void {
     }
     public fun A() = UastEmptyExpression
 }

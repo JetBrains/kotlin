@@ -14,30 +14,38 @@
  * limitations under the License.
  */
 
+@file:Suppress("PackageDirectoryMismatch")
+
 package org.jetbrains.kotlin.util.capitalizeDecapitalize
 
 /**
  * "FooBar" -> "fooBar"
  * "FOOBar" -> "fooBar"
  * "FOO" -> "foo"
+ * "FOO_BAR" -> "foO_BAR"
  */
-fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
-    fun isUpperCaseCharAt(index: Int): Boolean {
-        val c = this[index]
-        return if (asciiOnly) c in 'A'..'Z' else c.isUpperCase()
-    }
+fun String.decapitalizeSmartForCompiler(asciiOnly: Boolean = false): String {
+    if (isEmpty() || !isUpperCaseCharAt(0, asciiOnly)) return this
 
-    if (isEmpty() || !isUpperCaseCharAt(0)) return this
-
-    if (length == 1 || !isUpperCaseCharAt(1)) {
+    if (length == 1 || !isUpperCaseCharAt(1, asciiOnly)) {
         return if (asciiOnly) decapitalizeAsciiOnly() else decapitalize()
     }
 
-    fun toLowerCase(string: String) = if (asciiOnly) string.toLowerCaseAsciiOnly() else string.toLowerCase()
+    val secondWordStart = (indices.firstOrNull { !isUpperCaseCharAt(it, asciiOnly) } ?: return toLowerCase(this, asciiOnly)) - 1
 
-    val secondWordStart = (indices.firstOrNull { !isUpperCaseCharAt(it) }
-                           ?: return toLowerCase(this)) - 1
-    return toLowerCase(substring(0, secondWordStart)) + substring(secondWordStart)
+    return toLowerCase(substring(0, secondWordStart), asciiOnly) + substring(secondWordStart)
+}
+
+/**
+ * "FooBar" -> "fooBar"
+ * "FOOBar" -> "fooBar"
+ * "FOO" -> "foo"
+ * "FOO_BAR" -> "fooBar"
+ * "__F_BAR" -> "fBar"
+ */
+fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
+    return decapitalizeWithUnderscores(this, asciiOnly)
+        ?: decapitalizeSmartForCompiler(asciiOnly)
 }
 
 /**
@@ -46,16 +54,55 @@ fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
  * "foo" -> "FOO"
  */
 fun String.capitalizeFirstWord(asciiOnly: Boolean = false): String {
-    fun toUpperCase(string: String) = if (asciiOnly) string.toUpperCaseAsciiOnly() else string.toUpperCase()
+    val secondWordStart = indices.drop(1).firstOrNull { !isLowerCaseCharAt(it, asciiOnly) }
+        ?: return toUpperCase(this, asciiOnly)
 
-    fun isLowerCaseCharAt(index: Int): Boolean {
-        val c = this[index]
-        return if (asciiOnly) c in 'a'..'z' else c.isLowerCase()
+    return toUpperCase(substring(0, secondWordStart), asciiOnly) + substring(secondWordStart)
+}
+
+/**
+ * FOOBAR -> null
+ * FOO_BAR -> "fooBar"
+ * FOO_BAR_BAZ -> "fooBarBaz"
+ * "__F_BAR" -> "fBar"
+ * "_F_BAR" -> "fBar"
+ * "F_BAR" -> "fBar"
+ */
+private fun decapitalizeWithUnderscores(str: String, asciiOnly: Boolean): String? {
+    val words = str.split("_").filter { it.isNotEmpty() }
+
+    if (words.size <= 1) return null
+
+    val builder = StringBuilder()
+
+    words.forEachIndexed { index, word ->
+        if (index == 0) {
+            builder.append(toLowerCase(word, asciiOnly))
+        } else {
+            builder.append(toUpperCase(word.first().toString(), asciiOnly))
+            builder.append(toLowerCase(word.drop(1), asciiOnly))
+        }
     }
 
-    val secondWordStart = indices.drop(1).firstOrNull { !isLowerCaseCharAt(it) }
-                          ?: return toUpperCase(this)
-    return toUpperCase(substring(0, secondWordStart)) + substring(secondWordStart)
+    return builder.toString()
+}
+
+private fun String.isUpperCaseCharAt(index: Int, asciiOnly: Boolean): Boolean {
+    val c = this[index]
+    return if (asciiOnly) c in 'A'..'Z' else c.isUpperCase()
+}
+
+private fun String.isLowerCaseCharAt(index: Int, asciiOnly: Boolean): Boolean {
+    val c = this[index]
+    return if (asciiOnly) c in 'a'..'z' else c.isLowerCase()
+}
+
+private fun toLowerCase(string: String, asciiOnly: Boolean): String {
+    return if (asciiOnly) string.toLowerCaseAsciiOnly() else string.toLowerCase()
+}
+
+private fun toUpperCase(string: String, asciiOnly: Boolean): String {
+    return if (asciiOnly) string.toUpperCaseAsciiOnly() else string.toUpperCase()
 }
 
 fun String.capitalizeAsciiOnly(): String {

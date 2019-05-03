@@ -42,10 +42,9 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 // For flexible types, both bounds are indexed in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`.
 fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = unwrap().enhancePossiblyFlexible(qualifiers, 0).typeIfChanged
 
-fun KotlinType.hasEnhancedNullability()
-        = annotations.findAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) != null
+fun KotlinType.hasEnhancedNullability() = annotations.findAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) != null
 
-private enum class TypeComponentPosition {
+enum class TypeComponentPosition {
     FLEXIBLE_LOWER,
     FLEXIBLE_UPPER,
     INFLEXIBLE
@@ -55,27 +54,27 @@ private open class Result(open val type: KotlinType, val subtreeSize: Int, val w
     val typeIfChanged: KotlinType? get() = type.takeIf { wereChanges }
 }
 
-private class SimpleResult(override val type: SimpleType, subtreeSize: Int, wereChanges: Boolean): Result(type, subtreeSize, wereChanges)
+private class SimpleResult(override val type: SimpleType, subtreeSize: Int, wereChanges: Boolean) : Result(type, subtreeSize, wereChanges)
 
 private fun UnwrappedType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
     if (isError) return Result(this, 1, false)
-    return when(this) {
+    return when (this) {
         is FlexibleType -> {
             val lowerResult = lowerBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER)
             val upperResult = upperBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_UPPER)
             assert(lowerResult.subtreeSize == upperResult.subtreeSize) {
                 "Different tree sizes of bounds: " +
-                "lower = ($lowerBound, ${lowerResult.subtreeSize}), " +
-                "upper = ($upperBound, ${upperResult.subtreeSize})"
+                        "lower = ($lowerBound, ${lowerResult.subtreeSize}), " +
+                        "upper = ($upperBound, ${upperResult.subtreeSize})"
             }
 
             val wereChanges = lowerResult.wereChanges || upperResult.wereChanges
             val enhancement = lowerResult.type.getEnhancement() ?: upperResult.type.getEnhancement()
             val type = if (!wereChanges) this@enhancePossiblyFlexible
-                else when {
-                    this is RawTypeImpl -> RawTypeImpl(lowerResult.type, upperResult.type)
-                    else -> KotlinTypeFactory.flexibleType(lowerResult.type, upperResult.type)
-                }.wrapEnhancement(enhancement)
+            else when {
+                this is RawTypeImpl -> RawTypeImpl(lowerResult.type, upperResult.type)
+                else -> KotlinTypeFactory.flexibleType(lowerResult.type, upperResult.type)
+            }.wrapEnhancement(enhancement)
 
             Result(
                 type,
@@ -87,12 +86,16 @@ private fun UnwrappedType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQ
     }
 }
 
-private fun SimpleType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int, position: TypeComponentPosition): SimpleResult {
+private fun SimpleType.enhanceInflexible(
+    qualifiers: (Int) -> JavaTypeQualifiers,
+    index: Int,
+    position: TypeComponentPosition
+): SimpleResult {
     val shouldEnhance = position.shouldEnhance()
     if (!shouldEnhance && arguments.isEmpty()) return SimpleResult(this, 1, false)
 
     val originalClass = constructor.declarationDescriptor
-                        ?: return SimpleResult(this, 1, false)
+        ?: return SimpleResult(this, 1, false)
 
     val effectiveQualifiers = qualifiers(index)
     val (enhancedClassifier, enhancedMutabilityAnnotations) = originalClass.enhanceMutability(effectiveQualifiers, position)
@@ -101,13 +104,11 @@ private fun SimpleType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
 
     var globalArgIndex = index + 1
     var wereChanges = enhancedMutabilityAnnotations != null
-    val enhancedArguments = arguments.mapIndexed {
-        localArgIndex, arg ->
+    val enhancedArguments = arguments.mapIndexed { localArgIndex, arg ->
         if (arg.isStarProjection) {
             globalArgIndex++
             TypeUtils.makeStarProjection(enhancedClassifier.typeConstructor.parameters[localArgIndex])
-        }
-        else {
+        } else {
             val enhanced = arg.type.unwrap().enhancePossiblyFlexible(qualifiers, globalArgIndex)
             wereChanges = wereChanges || enhanced.wereChanges
             globalArgIndex += enhanced.subtreeSize
@@ -121,17 +122,17 @@ private fun SimpleType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
     val subtreeSize = globalArgIndex - index
     if (!wereChanges) return SimpleResult(this, subtreeSize, wereChanges = false)
 
-    val newAnnotations = listOf(
-            annotations,
-            enhancedMutabilityAnnotations,
-            enhancedNullabilityAnnotations
-    ).filterNotNull().compositeAnnotationsOrSingle()
+    val newAnnotations = listOfNotNull(
+        annotations,
+        enhancedMutabilityAnnotations,
+        enhancedNullabilityAnnotations
+    ).compositeAnnotationsOrSingle()
 
     val enhancedType = KotlinTypeFactory.simpleType(
-            newAnnotations,
-            typeConstructor,
-            enhancedArguments,
-            enhancedNullability
+        newAnnotations,
+        typeConstructor,
+        enhancedArguments,
+        enhancedNullability
     )
 
     val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
@@ -147,14 +148,18 @@ private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
     else -> CompositeAnnotations(this.toList())
 }
 
-private fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
+fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
 
 private data class EnhancementResult<out T>(val result: T, val enhancementAnnotations: Annotations?)
+
 private fun <T> T.noChange() = EnhancementResult(this, null)
 private fun <T> T.enhancedNullability() = EnhancementResult(this, ENHANCED_NULLABILITY_ANNOTATIONS)
 private fun <T> T.enhancedMutability() = EnhancementResult(this, ENHANCED_MUTABILITY_ANNOTATIONS)
 
-private fun ClassifierDescriptor.enhanceMutability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): EnhancementResult<ClassifierDescriptor> {
+private fun ClassifierDescriptor.enhanceMutability(
+    qualifiers: JavaTypeQualifiers,
+    position: TypeComponentPosition
+): EnhancementResult<ClassifierDescriptor> {
     if (!position.shouldEnhance()) return this.noChange()
     if (this !is ClassDescriptor) return this.noChange() // mutability is not applicable for type parameters
 
@@ -167,7 +172,7 @@ private fun ClassifierDescriptor.enhanceMutability(qualifiers: JavaTypeQualifier
             }
         }
         MUTABLE -> {
-            if (position == TypeComponentPosition.FLEXIBLE_UPPER && mapping.isReadOnly(this) ) {
+            if (position == TypeComponentPosition.FLEXIBLE_UPPER && mapping.isReadOnly(this)) {
                 return mapping.convertReadOnlyToMutable(this).enhancedMutability()
             }
         }
@@ -222,8 +227,8 @@ internal class NotNullTypeParameter(override val delegate: SimpleType) : CustomT
         return when (unwrappedType) {
             is SimpleType -> unwrappedType.prepareReplacement()
             is FlexibleType -> KotlinTypeFactory.flexibleType(
-                    unwrappedType.lowerBound.prepareReplacement(),
-                    unwrappedType.upperBound.prepareReplacement()
+                unwrappedType.lowerBound.prepareReplacement(),
+                unwrappedType.upperBound.prepareReplacement()
             ).wrapEnhancement(unwrappedType.getEnhancement())
             else -> error("Incorrect type: $unwrappedType")
         }

@@ -272,7 +272,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                         }
                     }
                     if ((e as? KtNamedDeclaration)?.modifierList?.annotationEntries?.any { it.isJsNativeAnnotation() } == true) {
-                        return MigrateExternalExtensionFix(e as KtNamedDeclaration)
+                        return MigrateExternalExtensionFix(e)
                     }
                 }
             }

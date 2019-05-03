@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
-import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo;
-import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotations;
@@ -85,6 +83,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
+
+    private Project project;
 
     @Inject
     public void setAnnotationResolve(AnnotationResolver annotationResolver) {
@@ -192,6 +192,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         danglingAnnotations = storageManager.createMemoizedFunction(file -> createAnnotations(file, file.getDanglingAnnotations()));
 
         syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
+
+        this.project = project;
     }
 
     private LazyAnnotations createAnnotations(KtFile file, List<KtAnnotationEntry> annotationEntries) {
@@ -263,20 +265,12 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
         result.addAll(ContainerUtil.mapNotNull(
                 provider.getClassOrObjectDeclarations(fqName.shortName()),
-                classLikeInfo -> {
-                    if (classLikeInfo instanceof KtClassOrObjectInfo) {
-                        //noinspection RedundantCast
-                        return getClassDescriptor(((KtClassOrObjectInfo) classLikeInfo).getCorrespondingClassOrObject(), location);
-                    }
-                    else if (classLikeInfo instanceof KtScriptInfo) {
-                        return getScriptDescriptor(((KtScriptInfo) classLikeInfo).getScript());
-                    }
-                    else {
-                        throw new IllegalStateException(
-                                "Unexpected " + classLikeInfo + " of type " + classLikeInfo.getClass().getName()
-                        );
-                    }
-                }
+                classOrObjectInfo -> getClassDescriptor(classOrObjectInfo.getCorrespondingClassOrObject(), location)
+        ));
+
+        result.addAll(ContainerUtil.mapNotNull(
+                provider.getScriptDeclarations(fqName.shortName()),
+                scriptInfo -> getScriptDescriptor(scriptInfo.getScript())
         ));
 
         result.addAll(ContainerUtil.map(
@@ -294,7 +288,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     }
 
     @NotNull
-    public ScriptDescriptor getScriptDescriptor(@NotNull KtScript script) {
+    public ClassDescriptorWithResolutionScopes getScriptDescriptor(@NotNull KtScript script) {
         return lazyDeclarationResolver.getScriptDescriptor(script, NoLookupLocation.FOR_SCRIPT);
     }
 
@@ -459,6 +453,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @NotNull
     public PlatformDiagnosticSuppressor getPlatformDiagnosticSuppressor() {
         return platformDiagnosticSuppressor;
+    }
+
+    @NotNull
+    public Project getProject() {
+        return project;
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -49,7 +50,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
             if (function.modality != Modality.ABSTRACT && function.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
                 val element = context.declarationFactory.getDefaultImplsFunction(function)
                 members.add(element)
-                element.body = function.body
+                element.body = function.body?.patchDeclarationParents(element)
                 function.body = null
                 //TODO reset modality to abstract
             }
@@ -111,7 +112,9 @@ internal fun createStaticFunctionWithReceivers(
         val mapping: Map<IrValueParameter, IrValueParameter> =
             (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
                 .zip(valueParameters).toMap()
-        body = oldFunction.body?.transform(VariableRemapper(mapping), null)
+        body = oldFunction.body
+            ?.transform(VariableRemapper(mapping), null)
+            ?.patchDeclarationParents(this)
 
         metadata = oldFunction.metadata
     }

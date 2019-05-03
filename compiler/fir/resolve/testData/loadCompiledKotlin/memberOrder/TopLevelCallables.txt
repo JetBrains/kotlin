@@ -1,0 +1,5 @@
+public final fun f2(): R|kotlin/Int|
+
+public final fun f4(): R|kotlin/Int|
+
+public final fun f4(i: R|kotlin/Int|): R|kotlin/Int|

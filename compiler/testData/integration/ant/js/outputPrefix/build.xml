@@ -2,6 +2,6 @@
   <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
 
   <target name="build">
-    <kotlin2js src="${test.data}/root1" noStdlib="true" output="${temp}/out.js" outputPrefix="${test.data}/prefix" />
+    <kotlin2js src="${test.data}/root1" output="${temp}/out.js" outputPrefix="${test.data}/prefix" />
   </target>
 </project>

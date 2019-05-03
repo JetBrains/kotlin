@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package org.jetbrains.kotlin.config
 
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -21,10 +22,13 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 enum class JvmTarget(override val description: String) : TargetPlatformVersion {
     JVM_1_6("1.6"),
     JVM_1_8("1.8"),
+    JVM_9("9"),
+    JVM_10("10"),
+    JVM_11("11"),
+    JVM_12("12"),
     ;
 
     val bytecodeVersion: Int by lazy {
-        @Suppress("DEPRECATION")
         when (this) {
             JVM_1_6 -> Opcodes.V1_6
             JVM_1_8 ->
@@ -33,6 +37,10 @@ enum class JvmTarget(override val description: String) : TargetPlatformVersion {
                     java.lang.Boolean.valueOf(System.getProperty("kotlin.test.substitute.bytecode.1.8.to.1.9")) -> Opcodes.V9
                     else -> Opcodes.V1_8
                 }
+            JVM_9 -> Opcodes.V9
+            JVM_10 -> Opcodes.V9 + 1
+            JVM_11 -> Opcodes.V9 + 2
+            JVM_12 -> Opcodes.V9 + 3
         }
     }
 
@@ -44,16 +52,13 @@ enum class JvmTarget(override val description: String) : TargetPlatformVersion {
         fun fromString(string: String) = values().find { it.description == string }
 
         fun getDescription(bytecodeVersion: Int): String {
-            @Suppress("DEPRECATION")
-            val platformDescription = values().find { it.bytecodeVersion == bytecodeVersion }?.description ?:
-                   when (bytecodeVersion) {
-                       Opcodes.V1_7 -> "1.7"
-                       Opcodes.V9 -> "1.9"
-                       else -> null
-                   }
+            val platformDescription = values().find { it.bytecodeVersion == bytecodeVersion }?.description ?: when (bytecodeVersion) {
+                Opcodes.V1_7 -> "1.7"
+                else -> null
+            }
 
             return if (platformDescription != null) "JVM target $platformDescription"
-                    else "JVM bytecode version $bytecodeVersion"
+            else "JVM bytecode version $bytecodeVersion"
         }
     }
 }

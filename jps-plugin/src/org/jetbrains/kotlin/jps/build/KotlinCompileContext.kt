@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jps.build
@@ -14,6 +14,7 @@ import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndex
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndexBuilder
@@ -66,6 +67,11 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     val hasKotlinMarker = HasKotlinMarker(dataManager)
 
+    val fileToPathConverter: FileToPathConverter =
+        JpsFileToPathConverter(jpsContext.projectDescriptor.project)
+
+    val lookupStorageManager = JpsLookupStorageManager(dataManager, fileToPathConverter)
+
     /**
      * Flag to prevent rebuilding twice.
      *
@@ -103,7 +109,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
             // try to perform a lookup
             // request rebuild if storage is corrupted
             try {
-                dataManager.withLookupStorage {
+                lookupStorageManager.withLookupStorage {
                     it.get(LookupSymbol("<#NAME#>", "<#SCOPE#>"))
                 }
             } catch (e: Exception) {
@@ -185,13 +191,11 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
         KotlinBuilder.LOG.info("Rebuilding all Kotlin: $reason")
 
-        val dataManager = jpsContext.projectDescriptor.dataManager
-
         targetsIndex.chunks.forEach {
             markChunkForRebuildBeforeBuild(it)
         }
 
-        dataManager.cleanLookupStorage(KotlinBuilder.LOG)
+        lookupStorageManager.cleanLookupStorage(KotlinBuilder.LOG)
     }
 
     private fun markChunkForRebuildBeforeBuild(chunk: KotlinChunk) {
@@ -219,7 +223,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     private fun clearLookupCache() {
         KotlinBuilder.LOG.info("Clearing lookup cache")
-        dataManager.cleanLookupStorage(KotlinBuilder.LOG)
+        lookupStorageManager.cleanLookupStorage(KotlinBuilder.LOG)
         initialLookupsCacheStateDiff.manager.writeVersion()
     }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix;
@@ -197,6 +197,21 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("convertPropertyGetterToInitializer")
     public void testConvertPropertyGetterToInitializer() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/convertPropertyGetterToInitializer/");
+    }
+
+    @TestMetadata("convertPropertyToFunction")
+    public void testConvertPropertyToFunction() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/convertPropertyToFunction/");
+    }
+
+    @TestMetadata("createClassFromUsageImport")
+    public void testCreateClassFromUsageImport() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/createClassFromUsageImport/");
+    }
+
+    @TestMetadata("createClassFromUsageRef")
+    public void testCreateClassFromUsageRef() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/createClassFromUsageRef/");
     }
 
     @TestMetadata("createFunInExpectClass")

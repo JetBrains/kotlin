@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.codegen.generateAsCast
 import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -30,6 +32,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
+import kotlin.math.max
 
 class ReificationArgument(
     val parameterName: String, val nullable: Boolean, private val arrayDepth: Int
@@ -60,9 +63,13 @@ class ReificationArgument(
     }
 }
 
-class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, private val isReleaseCoroutines: Boolean) {
+class ReifiedTypeInliner(
+    private val parametersMapping: TypeParameterMappings?,
+    private val typeMapper: KotlinTypeMapper,
+    private val isReleaseCoroutines: Boolean
+) {
     enum class OperationKind {
-        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED;
+        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED, TYPE_OF;
 
         val id: Int get() = ordinal
     }
@@ -89,6 +96,16 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, 
                 Opcodes.INVOKESTATIC,
                 IntrinsicMethods.INTRINSICS_CLASS_NAME, NEED_CLASS_REIFICATION_MARKER_METHOD_NAME,
                 Type.getMethodDescriptor(Type.VOID_TYPE), false
+            )
+        }
+
+        @JvmStatic
+        fun putReifiedOperationMarker(operationKind: OperationKind, argument: ReificationArgument, v: InstructionAdapter) {
+            v.iconst(operationKind.id)
+            v.visitLdcInsn(argument.asString())
+            v.invokestatic(
+                IntrinsicMethods.INTRINSICS_CLASS_NAME, REIFIED_OPERATION_MARKER_METHOD_NAME,
+                Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, AsmTypes.JAVA_STRING_TYPE), false
             )
         }
     }
@@ -143,6 +160,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, 
                     OperationKind.IS -> processIs(insn, instructions, kotlinType, asmType)
                     OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
                     OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, asmType)
+                    OperationKind.TYPE_OF -> processTypeOf(insn, instructions, kotlinType)
                 }
             ) {
                 instructions.remove(insn.previous.previous!!) // PUSH operation ID
@@ -177,7 +195,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, 
         instructions.remove(stubCheckcast)
 
         // TODO: refine max stack calculation (it's not always as big as +4)
-        maxStackSize = Math.max(maxStackSize, 4)
+        maxStackSize = max(maxStackSize, 4)
 
         return true
     }
@@ -197,7 +215,22 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, 
         instructions.remove(stubInstanceOf)
 
         // TODO: refine max stack calculation (it's not always as big as +2)
-        maxStackSize = Math.max(maxStackSize, 2)
+        maxStackSize = max(maxStackSize, 2)
+        return true
+    }
+
+    private fun processTypeOf(
+        insn: MethodInsnNode,
+        instructions: InsnList,
+        kotlinType: KotlinType
+    ) = rewriteNextTypeInsn(insn, Opcodes.ACONST_NULL) { stubConstNull: AbstractInsnNode ->
+        val newMethodNode = MethodNode(Opcodes.API_VERSION)
+        val stackSize = generateTypeOf(InstructionAdapter(newMethodNode), kotlinType, typeMapper)
+
+        instructions.insert(insn, newMethodNode.instructions)
+        instructions.remove(stubConstNull)
+
+        maxStackSize = max(maxStackSize, stackSize)
         return true
     }
 

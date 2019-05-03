@@ -1,0 +1,16 @@
+public open class PrivateMembers : R|kotlin/Any| {
+    private open var field: R|kotlin/Int|
+        private get(): R|kotlin/Int|
+        private set(value: R|kotlin/Int|): kotlin/Unit
+
+    private open static var staticField: R|kotlin/Int|
+        private get(): R|kotlin/Int|
+        private set(value: R|kotlin/Int|): kotlin/Unit
+
+    private open operator fun method(): R|kotlin/Unit|
+
+    private open static operator fun staticMethod(): R|kotlin/Unit|
+
+    private constructor(): R|test/PrivateMembers|
+
+}

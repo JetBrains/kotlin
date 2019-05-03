@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
-import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -79,6 +78,15 @@ internal class PropertiesProvider(private val project: Project) {
 
     val useFallbackCompilerSearch: Boolean?
         get() = booleanProperty("kotlin.useFallbackCompilerSearch")
+
+    val keepMppDependenciesIntactInPoms: Boolean?
+        get() = booleanProperty("kotlin.mpp.keepMppDependenciesIntactInPoms")
+
+    val ignorePluginLoadedInMultipleProjects: Boolean?
+        get() = booleanProperty("kotlin.pluginLoadedInMultipleProjects.ignore")
+
+    val setJvmTargetFromAndroidCompileOptions: Boolean?
+        get() = booleanProperty("kotlin.setJvmTargetFromAndroidCompileOptions")
 
     /**
      * Enables parallel tasks execution within a project with Workers API.

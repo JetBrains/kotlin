@@ -1,15 +1,15 @@
 FILE: while.kt
-    public? final? function foo(limit: Int): kotlin/Unit {
-        var k: <implicit> = Int(0)
+    public? final? fun foo(limit: Int): kotlin/Unit {
+        lvar k: <implicit> = Int(0)
         some@while(<(k#, limit#)) {
-            val <unary>: <implicit> = k#
-            k# = inc#(<unary>#)
-            <unary>#
+            lval <unary>: <implicit> = k#
+            k# = R|<local>/<unary>|.inc#()
+            R|<local>/<unary>|
             println#(k#)
             while(==(k#, Int(13))) {
-                val <unary>: <implicit> = k#
-                k# = inc#(<unary>#)
-                <unary>#
+                lval <unary>: <implicit> = k#
+                k# = R|<local>/<unary>|.inc#()
+                R|<local>/<unary>|
                 when () {
                     <(k#, limit#) ->  {
                         break@@@[<(k#, limit#)]
@@ -31,12 +31,12 @@ FILE: while.kt
         }
 
     }
-    public? final? function bar(limit: Int): kotlin/Unit {
-        var k: <implicit> = limit#
+    public? final? fun bar(limit: Int): kotlin/Unit {
+        lvar k: <implicit> = limit#
         do {
-            val <unary>: <implicit> = k#
-            k# = dec#(<unary>#)
-            <unary>#
+            lval <unary>: <implicit> = k#
+            k# = R|<local>/<unary>|.dec#()
+            R|<local>/<unary>|
             println#(k#)
         }
         while(>=(k#, Int(0)))

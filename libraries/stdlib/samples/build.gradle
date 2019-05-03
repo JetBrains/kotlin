@@ -10,7 +10,12 @@ sourceSets {
 }
 
 compileTestKotlin {
-    kotlinOptions.jdkHome = JDK_18
+    kotlinOptions {
+        jdkHome = JDK_18
+        freeCompilerArgs = [
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+        ]
+    }
 }
 
 test {

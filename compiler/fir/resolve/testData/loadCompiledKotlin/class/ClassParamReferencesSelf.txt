@@ -1,0 +1,7 @@
+public final class ClassParamReferencesSelf<A : R|test/TraitWithP<A>|> : R|kotlin/Any| {
+    public constructor<A : R|test/TraitWithP<A>|>(): R|test/ClassParamReferencesSelf<A>|
+
+}
+
+public abstract interface TraitWithP<P> : R|kotlin/Any| {
+}

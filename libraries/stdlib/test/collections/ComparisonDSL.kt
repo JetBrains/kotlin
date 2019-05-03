@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.collections
@@ -29,6 +29,11 @@ public class CompareContext<out T>(public val expected: T, public val actual: T)
 
     public fun propertyFails(getter: T.() -> Unit) {
         assertFailEquals({ expected.getter() }, { actual.getter() })
+    }
+
+    public inline fun <reified E : Throwable> propertyFailsWith(crossinline getter: T.() -> Unit) {
+        assertFailsWith<E> { expected.getter() }
+        assertFailsWith<E> { actual.getter() }
     }
 
     public fun <P> compareProperty(getter: T.() -> P, block: CompareContext<P>.() -> Unit) {

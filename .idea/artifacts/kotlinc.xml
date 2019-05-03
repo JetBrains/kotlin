@@ -7,7 +7,7 @@
       </element>
       <element id="directory" name="lib">
         <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar" />
-        <element id="file-copy" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/trove4j.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/ideaIC/191.6707.61/artifacts/lib/trove4j.jar" />
         <element id="archive" name="allopen-compiler-plugin.jar">
           <element id="module-output" name="kotlin.kotlin-allopen-compiler-plugin.main" />
           <element id="directory" name="META-INF">
@@ -129,8 +129,11 @@
         <element id="archive" name="kotlin-scripting-compiler.jar">
           <element id="module-output" name="kotlin.kotlin-scripting-compiler.main" />
           <element id="directory" name="META-INF">
-            <element id="file-copy" path="$PROJECT_DIR$/plugins/scripting/scripting-cli/build/tmp/jar/MANIFEST.MF" />
+            <element id="file-copy" path="$PROJECT_DIR$/plugins/scripting/scripting-compiler/build/tmp/jar/MANIFEST.MF" />
           </element>
+        </element>
+        <element id="archive" name="kotlin-scripting-compiler-impl.jar">
+          <element id="module-output" name="kotlin.kotlin-scripting-compiler-impl.main" />
         </element>
         <element id="archive" name="kotlin-scripting-jvm.jar">
           <element id="module-output" name="kotlin.kotlin-scripting-jvm.main" />
@@ -223,14 +226,14 @@
             <element id="file-copy" path="$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/build/tmp/jar/MANIFEST.MF" />
           </element>
         </element>
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.30-dev-1419/285fde038cb28087a51aee95919d428a2511b443/kotlin-stdlib-jdk8-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-jdk8.jar" />
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.30-dev-1419/72c0c2470715b0aa18d5624c4fa9db0345b6c09f/kotlin-stdlib-jdk7-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-jdk7.jar" />
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.30-dev-1419/c4bca00118a72c8d59fbe3d2c6621e0d79f12095/kotlin-stdlib-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib.jar" />
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.30-dev-1419/e2746fab1a3723c30250a10362be8c12e3d2bdd/kotlin-stdlib-jdk7-1.3.30-dev-1419-sources.jar" output-file-name="kotlin-stdlib-jdk7-sources.jar" />
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.30-dev-1419/40b256e6fd67b3217ac2aefcb70c4bf2f5d76f4f/kotlin-stdlib-jdk8-1.3.30-dev-1419-sources.jar" output-file-name="kotlin-stdlib-jdk8-sources.jar" />
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.3.30-dev-1419/cc7460047507b64f44b9e156dbcaa3079fc43594/kotlin-stdlib-js-1.3.30-dev-1419-sources.jar" />
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.3.30-dev-1419/4dd9f2176adacefa49984a277b71d7a1645ceda2/kotlin-stdlib-js-1.3.30-dev-1419.jar" output-file-name="kotlin-stdlib-js.jar" />
-        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.30-dev-1419/561605d51586e253a15097d3f1d386fb6758fdd4/kotlin-stdlib-1.3.30-dev-1419-sources.jar" output-file-name="kotlin-stdlib-sources.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.40-dev-2251/50d0a0344d092ba91678896e1a6e9cb595191a73/kotlin-stdlib-jdk8-1.3.40-dev-2251.jar" output-file-name="kotlin-stdlib-jdk8.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.40-dev-2251/255166684fce605986508bff903c78c7da7ee9b2/kotlin-stdlib-jdk7-1.3.40-dev-2251.jar" output-file-name="kotlin-stdlib-jdk7.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.40-dev-2251/cfdbfe7770f01b00c01becb43b8211faada939db/kotlin-stdlib-1.3.40-dev-2251.jar" output-file-name="kotlin-stdlib.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.3.40-dev-2251/b318ccc4b22cc2fcf79e0c06af735e97d3dd4eb/kotlin-stdlib-jdk7-1.3.40-dev-2251-sources.jar" output-file-name="kotlin-stdlib-jdk7-sources.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.3.40-dev-2251/d0b0fea9f4efc6ee45f807914f050465e1ab746e/kotlin-stdlib-jdk8-1.3.40-dev-2251-sources.jar" output-file-name="kotlin-stdlib-jdk8-sources.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.3.40-dev-2251/bf54aaefb744930ef20db15ecd532abeca1730da/kotlin-stdlib-js-1.3.40-dev-2251-sources.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.3.40-dev-2251/65ace589f8f9359ac30790244b1c473297f722d1/kotlin-stdlib-js-1.3.40-dev-2251.jar" output-file-name="kotlin-stdlib-js.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.40-dev-2251/596156dc7a263af8008dc5fd1a6d649d2cfbbfc2/kotlin-stdlib-1.3.40-dev-2251-sources.jar" output-file-name="kotlin-stdlib-sources.jar" />
         <element id="artifact" artifact-name="kotlin-compiler.jar" />
         <element id="artifact" artifact-name="kotlin-reflect.jar" />
         <element id="artifact" artifact-name="kotlin-daemon-client.jar" />

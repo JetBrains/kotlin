@@ -1,8 +1,8 @@
 Usage: kotlinc-jvm <options> <source files>
 where advanced options include:
-  -Xadd-compiler-builtins    Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)
   -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
                              or all modules on the module path if <module> is ALL-MODULE-PATH
+  -Xallow-no-source-files    Allow no source files
   -Xassertions={always-enable|always-disable|jvm|legacy}
                              Assert calls behaviour
                              -Xassertions=always-enable:  enable, ignore jvm assertion settings;
@@ -23,6 +23,8 @@ where advanced options include:
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
+  -Xjava-package-prefix      Package prefix for Java files
+  -Xjava-source-roots=<path> Paths to directories with Java source files
   -Xjavac-arguments=<option[,]> Java compiler arguments
   -Xjsr305={ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}
                              Specify behavior for JSR-305 nullability annotations:
@@ -40,8 +42,6 @@ where advanced options include:
                                                            in the interface (annotating an existing method can break binary compatibility)
                              -Xjvm-default=compatibility   Allow usages of @JvmDefault; generate a compatibility accessor
                                                            in the 'DefaultImpls' class in addition to the interface method
-  -Xload-builtins-from-dependencies
-                             Load definitions of built-in declarations from module dependencies, instead of from the compiler
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
   -Xno-exception-on-explicit-equals-for-boxed-null
                              Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type
@@ -49,8 +49,8 @@ where advanced options include:
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
   -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
-                             This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used as a workaround
-                             of an issue in the ASM bytecode framework. See KT-29475 for more details
+                             This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround
+                             problems with parentheses in identifiers on certain platforms
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
   -Xsingle-module            Combine modules for source files and binary dependencies into a single module
@@ -62,6 +62,8 @@ where advanced options include:
   -Xsupport-compatqual-checker-framework-annotations=enable|disable
                              Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
                              Default value is 'enable'
+  -Xsuppress-missing-builtins-error
+                             Suppress the "cannot access built-in declaration" error (useful with -no-stdlib)
   -Xuse-ir                   Use the IR backend
   -Xuse-javac                Use javac for Java source and class files analysis
   -Xuse-old-class-files-reading Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.
@@ -69,6 +71,9 @@ where advanced options include:
   -Xuse-type-table           Use type table in metadata serialization
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
+  -Xcheck-phase-conditions   Check pre- and postconditions on phases
+  -Xcheck-sticky-phase-conditions
+                             Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
@@ -82,12 +87,16 @@ where advanced options include:
   -Xlist-phases              List backend phases
   -Xmetadata-version         Change metadata version of the generated binary files
   -Xmulti-platform           Enable experimental language support for multi-platform projects
+  -Xexclude-from-dumping     Names of elements that should not be dumped
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
   -Xphases-to-dump           Dump backend state both before and after these phases
   -Xphases-to-dump-after     Dump backend state after these phases
   -Xphases-to-dump-before    Dump backend state before these phases
+  -Xphases-to-validate       Validate backend state both before and after these phases
+  -Xphases-to-validate-after Validate backend state after these phases
+  -Xphases-to-validate-before Validate backend state before these phases
   -Xplugin=<path>            Load plugins from the given classpath
   -Xprofile-phases           Profile backend phases
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types

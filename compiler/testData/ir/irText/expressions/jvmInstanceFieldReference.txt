@@ -1,43 +1,42 @@
 FILE fqName:<root> fileName:/Derived.kt
-  CLASS CLASS name:Derived modality:FINAL visibility:public flags: superTypes:[Base]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Derived flags:
-    CONSTRUCTOR visibility:public <> () returnType:Derived flags:primary
+  CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='Derived'
-    ANONYMOUS_INITIALIZER Derived
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]'
+    ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'value: Int' type=kotlin.Unit origin=EQ
-          receiver: GET_VAR 'this@Derived: Derived' type=Derived origin=null
+        SET_FIELD 'FIELD FAKE_OVERRIDE name:value type:kotlin.Int visibility:public ' type=kotlin.Unit origin=EQ
+          receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
           value: CONST Int type=kotlin.Int value=0
-    FUN name:getValue visibility:public modality:FINAL <> ($this:Derived) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:Derived flags:
+    FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Derived 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='getValue(): Int'
-          GET_FIELD 'value: Int' type=kotlin.Int origin=GET_PROPERTY
-            receiver: GET_VAR 'this@Derived: Derived' type=Derived origin=null
-    FUN name:setValue visibility:public modality:FINAL <> ($this:Derived, value:kotlin.Int) returnType:kotlin.Unit flags:
-      $this: VALUE_PARAMETER name:<this> type:Derived flags:
-      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
+        RETURN type=kotlin.Nothing from='public final fun getValue (): kotlin.Int declared in <root>.Derived'
+          GET_FIELD 'FIELD FAKE_OVERRIDE name:value type:kotlin.Int visibility:public ' type=kotlin.Int origin=GET_PROPERTY
+            receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.getValue' type=<root>.Derived origin=null
+    FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Derived, value:kotlin.Int) returnType:kotlin.Unit 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Derived 
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int 
       BLOCK_BODY
-        SET_FIELD 'value: Int' type=kotlin.Unit origin=EQ
-          receiver: GET_VAR 'this@Derived: Derived' type=Derived origin=null
-          value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
-    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL flags:var
-      FIELD FAKE_OVERRIDE name:value type:kotlin.Int visibility:public flags:
+        SET_FIELD 'FIELD FAKE_OVERRIDE name:value type:kotlin.Int visibility:public ' type=kotlin.Unit origin=EQ
+          receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=null
+          value: GET_VAR 'value: kotlin.Int declared in <root>.Derived.setValue' type=kotlin.Int origin=null
+    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [var] 
+      FIELD FAKE_OVERRIDE name:value type:kotlin.Int visibility:public 
         overridden:
-          FIELD IR_EXTERNAL_DECLARATION_STUB name:value type:kotlin.Int visibility:public flags:
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-
+        public open fun toString (): kotlin.String declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

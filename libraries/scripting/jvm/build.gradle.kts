@@ -17,16 +17,10 @@ sourceSets {
     "test" {}
 }
 
-val jar = runtimeJar()
-val sourcesJar = sourcesJar()
-val javadocJar = javadocJar()
+publish()
+
+runtimeJar()
+sourcesJar()
+javadocJar()
 
 dist()
-
-ideaPlugin {
-    from(jar, sourcesJar)
-}
-
-standardPublicJars()
-
-publish()

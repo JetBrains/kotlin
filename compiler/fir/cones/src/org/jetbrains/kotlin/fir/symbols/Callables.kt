@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.symbols
@@ -14,7 +14,11 @@ import org.jetbrains.kotlin.name.Name
 data class CallableId(val packageName: FqName, val className: FqName?, val callableName: Name) {
     val classId: ClassId? get() = className?.let { ClassId(packageName, it, false) }
 
-    constructor(packageName: FqName, callableName: Name): this(packageName, null, callableName)
+    constructor(packageName: FqName, callableName: Name) : this(packageName, null, callableName)
+
+    @Deprecated("TODO: Better solution for local callables?")
+    constructor(callableName: Name) : this(FqName.topLevel(Name.special("<local>")), null, callableName)
+
 
     override fun toString(): String {
         return buildString {
@@ -33,7 +37,9 @@ interface ConeCallableSymbol : ConeSymbol {
     val callableId: CallableId
 }
 
-interface ConePropertySymbol : ConeCallableSymbol
+interface ConePropertySymbol : ConeVariableSymbol
+
+interface ConeVariableSymbol : ConeCallableSymbol
 
 interface ConeFunctionSymbol : ConeCallableSymbol {
     val parameters: List<ConeKotlinType>

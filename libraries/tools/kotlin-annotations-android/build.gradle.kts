@@ -1,9 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.pill.PillExtension
 
 description = "Kotlin annotations for Android"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
+}
+
+pill {
+    variant = PillExtension.Variant.FULL
 }
 
 jvmTarget = "1.6"
@@ -22,9 +28,14 @@ sourceSets {
     }
 }
 
+dependencies {
+    compile(kotlinBuiltins())
+}
+
+publish()
+
 sourcesJar()
 javadocJar()
 runtimeJar()
 dist()
 
-publish()

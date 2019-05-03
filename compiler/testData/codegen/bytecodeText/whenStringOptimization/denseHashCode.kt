@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 fun foo() : Int {
     val x : String = "dsa"
     when (x) {

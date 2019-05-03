@@ -12,11 +12,6 @@ kotlin {
     sourceSets["commonMain"].apply {
         dependencies {
             api("org.jetbrains.kotlin:kotlin-stdlib-common")
-        }
-    }
-
-    sourceSets.create("iosMain").apply {
-        dependencies {
             api(project(":exported"))
         }
     }
@@ -70,6 +65,7 @@ kotlin {
                 embedBitcode("disable")
                 linkerOpts = mutableListOf("-L.")
                 freeCompilerArgs = mutableListOf("-Xtime")
+                isStatic = true
             }
         }
     }

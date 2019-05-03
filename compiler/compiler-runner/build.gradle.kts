@@ -25,10 +25,10 @@ sourceSets {
     "test" {}
 }
 
+publish()
+
 val jar: Jar by tasks
 
 runtimeJar(rewriteDepsToShadedCompiler(jar))
 sourcesJar()
 javadocJar()
-
-publish()

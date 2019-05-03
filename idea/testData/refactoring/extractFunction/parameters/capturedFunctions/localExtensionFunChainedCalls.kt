@@ -1,4 +1,4 @@
-// OPTIONS: true, false, false, false, true, false
+// OPTIONS: true, false, false, true, false
 // PARAM_DESCRIPTOR: value-parameter n: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: local final fun kotlin.Int.bar1(m: kotlin.Int): kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: local final fun kotlin.Int.bar2(m: kotlin.Int): kotlin.Int defined in foo

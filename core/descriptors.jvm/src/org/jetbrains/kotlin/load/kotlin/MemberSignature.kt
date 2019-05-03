@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 
 // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
 // into a map indexed by these signatures
+@Suppress("DataClassPrivateConstructor")
 data class MemberSignature private constructor(internal val signature: String) {
     companion object {
         @JvmStatic
@@ -36,7 +37,7 @@ data class MemberSignature private constructor(internal val signature: String) {
 
         @JvmStatic
         fun fromFieldNameAndDesc(name: String, desc: String): MemberSignature {
-            return MemberSignature(name + "#" + desc)
+            return MemberSignature("$name#$desc")
         }
 
         @JvmStatic
@@ -47,7 +48,7 @@ data class MemberSignature private constructor(internal val signature: String) {
 
         @JvmStatic
         fun fromMethodSignatureAndParameterIndex(signature: MemberSignature, index: Int): MemberSignature {
-            return MemberSignature(signature.signature + "@" + index)
+            return MemberSignature("${signature.signature}@$index")
         }
     }
 }

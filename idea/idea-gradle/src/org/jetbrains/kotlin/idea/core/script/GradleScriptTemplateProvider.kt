@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.execution.configurations.CommandLineTokenizer
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
@@ -26,9 +27,9 @@ import org.gradle.tooling.ProjectConnection
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPIBase
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinitionAdapterFromNewAPIBase
+import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -37,6 +38,7 @@ import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettingsListener
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
+import java.lang.IllegalStateException
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.LinkedHashSet
@@ -157,6 +159,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     } catch (t: Throwable) {
         // TODO: review exception handling
         failedToLoad.set(true)
+        if (t is IllegalStateException) {
+            Logger.getInstance(GradleScriptDefinitionsContributor::class.java)
+                .info("[kts] error loading gradle script templates: ${t.message}")
+        }
         listOf(ErrorGradleScriptDefinition(t.message))
     }
 
@@ -191,7 +197,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         if (gradleSettings.getLinkedProjectsSettings().isEmpty()) error("Project '${project.name}' isn't linked with Gradle")
 
         val projectSettings = gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull()
-                ?: error("Project '${project.name}' isn't linked with Gradle")
+            ?: error("Project '${project.name}' isn't linked with Gradle")
 
         val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
             project,

@@ -4,31 +4,6 @@ Connected to the target VM
 frameObject.kt:6
 Compile bytecode for O.obProp
 Compile bytecode for O.obMyFun()
-package frameObject
-
-fun main(args: Array<String>) {
-    foo {
-        //Breakpoint!
-        O.obProp
-    }
-}
-
-object O {
-    val obProp = 1
-    fun obMyFun() = 1
-}
-
-fun foo(f: () -> Unit) {
-    f()
-}
-
-// PRINT_FRAME
-
-// EXPRESSION: O.obProp
-// RESULT: 1: I
-
-// EXPRESSION: O.obMyFun()
-// RESULT: 1: I
  frame    = invoke:6, FrameObjectKt$main$1 {frameObject}
    this     = this = {frameObject.FrameObjectKt$main$1@uniqueID}Function0<kotlin.Unit>
      field    = arity: int = 0 (sp = Lambda.!EXT!)

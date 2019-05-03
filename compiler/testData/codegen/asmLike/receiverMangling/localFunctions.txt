@@ -1,0 +1,86 @@
+final class LocalFunctionsKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static LocalFunctionsKt$foo$1 INSTANCE
+
+    static void <clinit>()
+
+    void <init>()
+
+    public java.lang.Object invoke()
+
+    public final void invoke() {
+        Local variables:
+            0 this: LLocalFunctionsKt$foo$1;
+    }
+}
+
+final class LocalFunctionsKt$foo$2 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static LocalFunctionsKt$foo$2 INSTANCE
+
+    static void <clinit>()
+
+    void <init>()
+
+    public java.lang.Object invoke()
+
+    public final void invoke() {
+        Local variables:
+            0 this: LLocalFunctionsKt$foo$2;
+    }
+}
+
+final class LocalFunctionsKt$foo$3 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+    public final static LocalFunctionsKt$foo$3 INSTANCE
+
+    static void <clinit>()
+
+    void <init>()
+
+    public java.lang.Object invoke(java.lang.Object p0)
+
+    public final void invoke(int a) {
+        Local variables:
+            0 this: LLocalFunctionsKt$foo$3;
+            1 a: I
+    }
+}
+
+final class LocalFunctionsKt$foo$4 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static LocalFunctionsKt$foo$4 INSTANCE
+
+    static void <clinit>()
+
+    void <init>()
+
+    public java.lang.Object invoke()
+
+    public final void invoke() {
+        Local variables:
+            0 this: LLocalFunctionsKt$foo$4;
+    }
+}
+
+final class LocalFunctionsKt$foo$5 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static LocalFunctionsKt$foo$5 INSTANCE
+
+    static void <clinit>()
+
+    void <init>()
+
+    public java.lang.Object invoke()
+
+    public final void invoke() {
+        Local variables:
+            0 this: LLocalFunctionsKt$foo$5;
+    }
+}
+
+public final class LocalFunctionsKt : java/lang/Object {
+    public final static void foo() {
+        Local variables:
+            4 $fun$c_u24d$5: LLocalFunctionsKt$foo$5;
+            3 $fun$b_u20c$4: LLocalFunctionsKt$foo$4;
+            2 $fun$a2$3: LLocalFunctionsKt$foo$3;
+            1 $fun$a2$2: LLocalFunctionsKt$foo$2;
+            0 $fun$a$1: LLocalFunctionsKt$foo$1;
+    }
+}

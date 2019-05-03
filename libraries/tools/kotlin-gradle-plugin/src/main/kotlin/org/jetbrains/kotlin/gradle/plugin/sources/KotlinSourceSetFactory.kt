@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin.sources
@@ -38,7 +38,12 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
 
     private fun defineSourceSetConfigurations(project: Project, sourceSet: KotlinSourceSet) = with(project.configurations) {
         sourceSet.relatedConfigurationNames.forEach { configurationName ->
-            maybeCreate(configurationName)
+            maybeCreate(configurationName).apply {
+                if (!configurationName.endsWith(METADATA_CONFIGURATION_NAME_SUFFIX)) {
+                    isCanBeResolved = false
+                }
+                isCanBeConsumed = false
+            }
         }
     }
 

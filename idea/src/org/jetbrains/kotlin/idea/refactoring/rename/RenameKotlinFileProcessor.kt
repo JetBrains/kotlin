@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 
 class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
     class FileRenamingPsiClassWrapper(
@@ -69,7 +69,7 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
 
     override fun findReferences(element: PsiElement): MutableCollection<PsiReference> {
         return super.findReferences(element).also {
-            KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
+            KotlinFUSLogger.log(FUSEventGroups.Refactoring, this::class.java.name)
         }
     }
 }

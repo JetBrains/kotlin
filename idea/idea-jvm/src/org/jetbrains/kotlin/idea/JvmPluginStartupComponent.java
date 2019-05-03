@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.BaseComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
 
-public class JvmPluginStartupComponent implements ApplicationComponent {
+public class JvmPluginStartupComponent implements BaseComponent {
     public static JvmPluginStartupComponent getInstance() {
         return ApplicationManager.getApplication().getComponent(JvmPluginStartupComponent.class);
     }

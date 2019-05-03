@@ -1,13 +1,16 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
+import org.jetbrains.kotlin.codegen.MemberCodegen
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -16,29 +19,22 @@ import org.jetbrains.kotlin.codegen.context.CodegenContextUtil
 import org.jetbrains.kotlin.codegen.context.InlineLambdaContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
-import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.ENUM_TYPE
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_CLASS_TYPE
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -51,6 +47,8 @@ import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 import java.io.PrintWriter
 import java.io.StringWriter
+import kotlin.math.max
+import kotlin.math.min
 
 const val GENERATE_SMAP = true
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
@@ -79,7 +77,6 @@ private const val INLINE_MARKER_RETURNS_UNIT = 2
 private const val INLINE_MARKER_FAKE_CONTINUATION = 3
 private const val INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL = 4
 private const val INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL = 5
-private val INTRINSIC_ARRAY_CONSTRUCTOR_TYPE = AsmUtil.asmTypeByClassId(classId)
 
 internal fun getMethodNode(
     classData: ByteArray,
@@ -126,8 +123,8 @@ internal fun getMethodNode(
             return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
                 override fun visitLineNumber(line: Int, start: Label) {
                     super.visitLineNumber(line, start)
-                    lines[0] = Math.min(lines[0], line)
-                    lines[1] = Math.max(lines[1], line)
+                    lines[0] = min(lines[0], line)
+                    lines[1] = max(lines[1], line)
                 }
             }.also {
                 node = it
@@ -137,11 +134,6 @@ internal fun getMethodNode(
 
     if (node == null) {
         return null
-    }
-
-    if (INTRINSIC_ARRAY_CONSTRUCTOR_TYPE == classType) {
-        // Don't load source map for intrinsic array constructors
-        debugInfo[0] = null
     }
 
     val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classType.internalName, lines[0], lines[1])
@@ -278,7 +270,7 @@ internal fun getMarkedReturnLabelOrNull(returnInsn: AbstractInsnNode): String? {
     return null
 }
 
-internal fun generateGlobalReturnFlag(iv: InstructionAdapter, labelName: String) {
+fun generateGlobalReturnFlag(iv: InstructionAdapter, labelName: String) {
     iv.invokestatic(NON_LOCAL_RETURN, labelName, "()V", false)
 }
 
@@ -293,7 +285,7 @@ internal fun getReturnType(opcode: Int): Type {
     }
 }
 
-internal fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnNode) {
+fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnNode) {
     val iterator = from.instructions.iterator()
     while (iterator.hasNext()) {
         val next = iterator.next()
@@ -301,7 +293,7 @@ internal fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: Abst
     }
 }
 
-internal fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
+fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
 
 internal fun createFakeContinuationMethodNodeForInline(): MethodNode {
     val methodNode = createEmptyMethodNode()
@@ -357,16 +349,16 @@ internal fun buildClassReaderByInternalName(state: GenerationState, internalName
     return ClassReader(file.contentsToByteArray())
 }
 
-internal fun generateFinallyMarker(v: InstructionAdapter, depth: Int, start: Boolean) {
+fun generateFinallyMarker(v: InstructionAdapter, depth: Int, start: Boolean) {
     v.iconst(depth)
     v.invokestatic(INLINE_MARKER_CLASS_NAME, if (start) INLINE_MARKER_FINALLY_START else INLINE_MARKER_FINALLY_END, "(I)V", false)
 }
 
-internal fun isFinallyEnd(node: AbstractInsnNode) = isFinallyMarker(node, INLINE_MARKER_FINALLY_END)
+fun isFinallyEnd(node: AbstractInsnNode) = isFinallyMarker(node, INLINE_MARKER_FINALLY_END)
 
-internal fun isFinallyStart(node: AbstractInsnNode) = isFinallyMarker(node, INLINE_MARKER_FINALLY_START)
+fun isFinallyStart(node: AbstractInsnNode) = isFinallyMarker(node, INLINE_MARKER_FINALLY_START)
 
-internal fun isFinallyMarker(node: AbstractInsnNode?): Boolean = node != null && (isFinallyStart(node) || isFinallyEnd(node))
+fun isFinallyMarker(node: AbstractInsnNode?): Boolean = node != null && (isFinallyStart(node) || isFinallyEnd(node))
 
 private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
     if (node !is MethodInsnNode) return false
@@ -375,7 +367,7 @@ private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
 
 internal fun isFinallyMarkerRequired(context: MethodContext) = context.isInlineMethodContext || context is InlineLambdaContext
 
-internal fun getConstant(ins: AbstractInsnNode): Int {
+fun getConstant(ins: AbstractInsnNode): Int {
     val opcode = ins.opcode
     return when (opcode) {
         in Opcodes.ICONST_0..Opcodes.ICONST_5 -> opcode - Opcodes.ICONST_0
@@ -519,7 +511,7 @@ private fun getIndexAfterLastMarker(node: MethodNode): Int {
     var result = -1
     for (variable in node.localVariables) {
         if (isFakeLocalVariableForInline(variable.name)) {
-            result = Math.max(result, variable.index + 1)
+            result = max(result, variable.index + 1)
         }
     }
     return result
@@ -531,96 +523,6 @@ fun isFakeLocalVariableForInline(name: String): Boolean {
 
 internal fun isThis0(name: String): Boolean = AsmUtil.CAPTURED_THIS_FIELD == name
 
-internal fun isSpecialEnumMethod(functionDescriptor: FunctionDescriptor): Boolean {
-    val containingDeclaration = functionDescriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
-    if (containingDeclaration.fqName != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
-        return false
-    }
-    if (functionDescriptor.typeParameters.size != 1) {
-        return false
-    }
-    val name = functionDescriptor.name.asString()
-    val parameters = functionDescriptor.valueParameters
-    return "enumValues" == name && parameters.size == 0 ||
-            ("enumValueOf" == name && parameters.size == 1 &&
-                    KotlinBuiltIns.isString(parameters[0].type))
-}
-
-internal fun createSpecialEnumMethodBody(
-    name: String,
-    type: KotlinType,
-    typeMapper: KotlinTypeMapper
-): MethodNode {
-    val isValueOf = "enumValueOf" == name
-    val invokeType = typeMapper.mapType(type)
-    val desc = getSpecialEnumFunDescriptor(invokeType, isValueOf)
-    val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", desc, null, null)
-    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(
-        type,
-        ReifiedTypeInliner.OperationKind.ENUM_REIFIED,
-        InstructionAdapter(node)
-    )
-    if (isValueOf) {
-        node.visitInsn(Opcodes.ACONST_NULL)
-        node.visitVarInsn(Opcodes.ALOAD, 0)
-
-        node.visitMethodInsn(
-            Opcodes.INVOKESTATIC, ENUM_TYPE.internalName, "valueOf",
-            Type.getMethodDescriptor(ENUM_TYPE, JAVA_CLASS_TYPE, AsmTypes.JAVA_STRING_TYPE), false
-        )
-    } else {
-        node.visitInsn(Opcodes.ICONST_0)
-        node.visitTypeInsn(Opcodes.ANEWARRAY, ENUM_TYPE.internalName)
-    }
-    node.visitInsn(Opcodes.ARETURN)
-    node.visitMaxs(if (isValueOf) 3 else 2, if (isValueOf) 1 else 0)
-    return node
-}
-
-internal fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String {
-    return if (isValueOf) Type.getMethodDescriptor(
-        type,
-        AsmTypes.JAVA_STRING_TYPE
-    ) else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
-}
-
-
-val FunctionDescriptor.sourceFilePath: String
-    get() {
-        val source = source as PsiSourceElement
-        val containingFile = source.psi?.containingFile
-        return containingFile?.virtualFile?.canonicalPath!!
-    }
-
-fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: IncrementalCache): String {
-    val container = containingDeclaration as? DeclarationDescriptorWithSource
-    val source = container?.source
-
-    return when (source) {
-        is KotlinJvmBinaryPackageSourceElement -> {
-            val directMember = JvmCodegenUtil.getDirectMember(this) as? DeserializedCallableMemberDescriptor
-                ?: throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
-            val kotlinClass =
-                source.getContainingBinaryClass(directMember) ?: throw AssertionError("Descriptor $this is not found, in: $source")
-            if (kotlinClass !is VirtualFileKotlinClass) {
-                throw AssertionError("Expected VirtualFileKotlinClass, got $kotlinClass")
-            }
-            kotlinClass.file.canonicalPath!!
-        }
-        is KotlinJvmBinarySourceElement -> {
-            val directMember = JvmCodegenUtil.getDirectMember(this)
-            assert(directMember is DeserializedCallableMemberDescriptor) { "Expected DeserializedSimpleFunctionDescriptor, got: $this" }
-            val kotlinClass = source.binaryClass as VirtualFileKotlinClass
-            kotlinClass.file.canonicalPath!!
-        }
-        else -> {
-            val implementationOwnerType = typeMapper.mapImplementationOwner(this)
-            val className = implementationOwnerType.internalName
-            cache.getClassFilePath(className)
-        }
-    }
-}
-
 class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
 
     private val callLineNumber = codegen.lastLineNumber
@@ -631,5 +533,21 @@ class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
             mv.visitLabel(label)
             mv.visitLineNumber(callLineNumber, label)
         }
+    }
+}
+
+fun initDefaultSourceMappingIfNeeded(
+    context: CodegenContext<*>, codegen: MemberCodegen<*>, state: GenerationState
+) {
+    if (state.isInlineDisabled) return
+
+    var parentContext: CodegenContext<*>? = context.parentContext
+    while (parentContext != null) {
+        if (parentContext.isInlineMethodContext) {
+            //just init default one to one mapping
+            codegen.orCreateSourceMapper
+            break
+        }
+        parentContext = parentContext.parentContext
     }
 }

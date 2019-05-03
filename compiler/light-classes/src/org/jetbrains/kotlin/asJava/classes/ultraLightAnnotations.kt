@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.lang.jvm.JvmModifier
@@ -141,6 +146,7 @@ private fun ConstantValue<*>.asStringForPsiLiteral(parent: PsiElement): String =
         is NullValue -> "null"
         is StringValue -> "\"$value\""
         is KClassValue -> {
+            val value = (value as KClassValue.Value.NormalClass).value
             val arrayPart = "[]".repeat(value.arrayNestedness)
             val fqName = value.classId.asSingleFqName()
             val canonicalText = psiType(

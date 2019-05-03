@@ -85,15 +85,11 @@ sourceSets {
     }
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
     useAndroidSdk()
 }
 
-testsJar {}
+testsJar()
 
-runtimeJar {
-    archiveName = "android-ide.jar"
-}
-
-ideaPlugin()
+runtimeJar()

@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
+import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -34,6 +31,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.deprecation.DEPRECATED_FUNCTION_KEY
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSourceAnnotation
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -103,6 +101,12 @@ class SignatureEnhancement(
                 isForWarningOnly = true
             )
             else -> null
+        }?.let { migrationStatus ->
+            if (!migrationStatus.isForWarningOnly
+                    && annotationDescriptor is PossiblyExternalAnnotationDescriptor
+                    && annotationDescriptor.isIdeExternalAnnotation)
+                migrationStatus.copy(isForWarningOnly = true)
+            else migrationStatus
         }
     }
 
@@ -244,9 +248,9 @@ class SignatureEnhancement(
 
         private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
             val (lower, upper) =
-                    if (this.isFlexible())
-                        asFlexibleType().let { Pair(it.lowerBound, it.upperBound) }
-                    else Pair(this, this)
+                if (this.isFlexible())
+                    asFlexibleType().let { Pair(it.lowerBound, it.upperBound) }
+                else Pair(this, this)
 
             val mapping = JavaToKotlinClassMap
             return JavaTypeQualifiers(
@@ -462,7 +466,7 @@ class SignatureEnhancement(
     }
 }
 
-private fun createJavaTypeQualifiers(
+fun createJavaTypeQualifiers(
     nullability: NullabilityQualifier?,
     mutability: MutabilityQualifier?,
     forWarning: Boolean,
@@ -474,7 +478,7 @@ private fun createJavaTypeQualifiers(
     return JavaTypeQualifiers(nullability, mutability, true, forWarning)
 }
 
-private fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boolean): T? {
+fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boolean): T? {
     if (isCovariant) {
         val supertypeQualifier = if (low in this) low else if (high in this) high else null
         return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
@@ -488,7 +492,7 @@ private fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boole
     return effectiveSet.singleOrNull()
 }
 
-private fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Boolean) =
+fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Boolean) =
     if (own == NullabilityQualifier.FORCE_FLEXIBILITY)
         NullabilityQualifier.FORCE_FLEXIBILITY
     else

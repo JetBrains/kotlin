@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 
 class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debugName: String) : TypeConstructor,
@@ -42,7 +43,7 @@ class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debu
     override fun toString() = "TypeVariable($debugName)"
 }
 
-sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) {
+sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) : TypeVariableMarker {
     val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name)
 
     // member scope is used if we have receiver with type TypeVariable(T)

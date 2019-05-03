@@ -1,84 +1,83 @@
 FILE fqName:<root> fileName:/chainOfSafeCalls.kt
-  CLASS CLASS name:C modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
-    CONSTRUCTOR visibility:public <> () returnType:C flags:primary
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='C'
-    FUN name:foo visibility:public modality:FINAL <> ($this:C) returnType:C flags:
-      $this: VALUE_PARAMETER name:<this> type:C flags:
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.C) returnType:<root>.C 
+      $this: VALUE_PARAMETER name:<this> type:<root>.C 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='foo(): C'
-          GET_VAR 'this@C: C' type=C origin=null
-    FUN name:bar visibility:public modality:FINAL <> ($this:C) returnType:C? flags:
-      $this: VALUE_PARAMETER name:<this> type:C flags:
+        RETURN type=kotlin.Nothing from='public final fun foo (): <root>.C declared in <root>.C'
+          GET_VAR '<this>: <root>.C declared in <root>.C.foo' type=<root>.C origin=null
+    FUN name:bar visibility:public modality:FINAL <> ($this:<root>.C) returnType:<root>.C? 
+      $this: VALUE_PARAMETER name:<this> type:<root>.C 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='bar(): C?'
-          GET_VAR 'this@C: C' type=C origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+        RETURN type=kotlin.Nothing from='public final fun bar (): <root>.C? declared in <root>.C'
+          GET_VAR '<this>: <root>.C declared in <root>.C.bar' type=<root>.C origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:test visibility:public modality:FINAL <> (nc:C?) returnType:C? flags:
-    VALUE_PARAMETER name:nc index:0 type:C? flags:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:test visibility:public modality:FINAL <> (nc:<root>.C?) returnType:<root>.C? 
+    VALUE_PARAMETER name:nc index:0 type:<root>.C? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(C?): C?'
-        BLOCK type=C? origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:C? flags:val
-            BLOCK type=C? origin=SAFE_CALL
-              VAR IR_TEMPORARY_VARIABLE name:tmp2_safe_receiver type:C? flags:val
-                BLOCK type=C? origin=SAFE_CALL
-                  VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:C? flags:val
-                    BLOCK type=C? origin=SAFE_CALL
-                      VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:C? flags:val
-                        GET_VAR 'value-parameter nc: C?' type=C? origin=null
-                      WHEN type=C? origin=null
+      RETURN type=kotlin.Nothing from='public final fun test (nc: <root>.C?): <root>.C? declared in <root>'
+        BLOCK type=<root>.C? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:<root>.C? [val] 
+            BLOCK type=<root>.C? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp2_safe_receiver type:<root>.C? [val] 
+                BLOCK type=<root>.C? origin=SAFE_CALL
+                  VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:<root>.C? [val] 
+                    BLOCK type=<root>.C? origin=SAFE_CALL
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:<root>.C? [val] 
+                        GET_VAR 'nc: <root>.C? declared in <root>.test' type=<root>.C? origin=null
+                      WHEN type=<root>.C? origin=null
                         BRANCH
-                          if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                            arg0: GET_VAR 'tmp0_safe_receiver: C?' type=C? origin=null
+                          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                            arg0: GET_VAR 'val tmp0_safe_receiver: <root>.C? [val] declared in <root>.test' type=<root>.C? origin=null
                             arg1: CONST Null type=kotlin.Nothing? value=null
                           then: CONST Null type=kotlin.Nothing? value=null
                         BRANCH
                           if: CONST Boolean type=kotlin.Boolean value=true
-                          then: CALL 'foo(): C' type=C origin=null
-                            $this: GET_VAR 'tmp0_safe_receiver: C?' type=C? origin=null
-                  WHEN type=C? origin=null
+                          then: CALL 'public final fun foo (): <root>.C declared in <root>.C' type=<root>.C origin=null
+                            $this: GET_VAR 'val tmp0_safe_receiver: <root>.C? [val] declared in <root>.test' type=<root>.C? origin=null
+                  WHEN type=<root>.C? origin=null
                     BRANCH
-                      if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'tmp1_safe_receiver: C?' type=C? origin=null
+                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        arg0: GET_VAR 'val tmp1_safe_receiver: <root>.C? [val] declared in <root>.test' type=<root>.C? origin=null
                         arg1: CONST Null type=kotlin.Nothing? value=null
                       then: CONST Null type=kotlin.Nothing? value=null
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'bar(): C?' type=C? origin=null
-                        $this: GET_VAR 'tmp1_safe_receiver: C?' type=C? origin=null
-              WHEN type=C? origin=null
+                      then: CALL 'public final fun bar (): <root>.C? declared in <root>.C' type=<root>.C? origin=null
+                        $this: GET_VAR 'val tmp1_safe_receiver: <root>.C? [val] declared in <root>.test' type=<root>.C? origin=null
+              WHEN type=<root>.C? origin=null
                 BRANCH
-                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'tmp2_safe_receiver: C?' type=C? origin=null
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'val tmp2_safe_receiver: <root>.C? [val] declared in <root>.test' type=<root>.C? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
                   then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'foo(): C' type=C origin=null
-                    $this: GET_VAR 'tmp2_safe_receiver: C?' type=C? origin=null
-          WHEN type=C? origin=null
+                  then: CALL 'public final fun foo (): <root>.C declared in <root>.C' type=<root>.C origin=null
+                    $this: GET_VAR 'val tmp2_safe_receiver: <root>.C? [val] declared in <root>.test' type=<root>.C? origin=null
+          WHEN type=<root>.C? origin=null
             BRANCH
-              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp3_safe_receiver: C?' type=C? origin=null
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp3_safe_receiver: <root>.C? [val] declared in <root>.test' type=<root>.C? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'foo(): C' type=C origin=null
-                $this: GET_VAR 'tmp3_safe_receiver: C?' type=C? origin=null
-
+              then: CALL 'public final fun foo (): <root>.C declared in <root>.C' type=<root>.C origin=null
+                $this: GET_VAR 'val tmp3_safe_receiver: <root>.C? [val] declared in <root>.test' type=<root>.C? origin=null

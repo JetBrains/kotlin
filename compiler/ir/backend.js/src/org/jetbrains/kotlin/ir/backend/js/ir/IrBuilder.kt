@@ -1,35 +1,24 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.ir
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -72,8 +61,8 @@ object JsIrBuilder {
             index,
             type,
             null,
-            false,
-            false
+            isCrossinline = false,
+            isNoinline = false
         ).also {
             descriptor.bind(it)
         }
@@ -106,7 +95,7 @@ object JsIrBuilder {
         isTailrec: Boolean = false,
         isSuspend: Boolean = false,
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
-    ) = JsIrBuilder.buildFunction(
+    ) = buildFunction(
         Name.identifier(name),
         returnType,
         parent,
@@ -151,10 +140,11 @@ object JsIrBuilder {
         }
     }
 
+    fun buildAnonymousInitializer() =
+        IrAnonymousInitializerImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, IrAnonymousInitializerSymbolImpl(WrappedClassDescriptor()))
+
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
         IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)
-
-    fun buildGetClass(expression: IrExpression, type: IrType) = IrGetClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, expression)
 
     fun buildGetValue(symbol: IrValueSymbol) =
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, SYNTHESIZED_STATEMENT)
@@ -254,38 +244,13 @@ object JsIrBuilder {
         IrTypeOperatorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, operator, toType, symbol, argument)
 
     fun buildImplicitCast(value: IrExpression, toType: IrType) =
-        JsIrBuilder.buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType, toType.classifierOrFail)
+        buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType, toType.classifierOrFail)
 
 
     fun buildNull(type: IrType) = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
     fun buildBoolean(type: IrType, v: Boolean) = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)
     fun buildInt(type: IrType, v: Int) = IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)
     fun buildString(type: IrType, s: String) = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, s)
+    fun buildTry(type: IrType) = IrTryImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
     fun buildCatch(ex: IrVariable, block: IrBlockImpl) = IrCatchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, ex, block)
-}
-
-object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {
-    override fun visitElement(element: IrElement, data: IrDeclarationParent) {
-        if (element !is IrDeclarationParent) {
-            element.acceptChildren(this, data)
-        }
-    }
-
-    override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent) {
-        declaration.parent = data
-        super.visitDeclaration(declaration, data)
-    }
-}
-
-fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
-    this.declarations += declaration
-    declaration.accept(SetDeclarationsParentVisitor, this)
-}
-
-fun IrClass.simpleFunctions(): List<IrSimpleFunction> = this.declarations.flatMap {
-    when (it) {
-        is IrSimpleFunction -> listOf(it)
-        is IrProperty -> listOfNotNull(it.getter, it.setter)
-        else -> emptyList()
-    }
 }

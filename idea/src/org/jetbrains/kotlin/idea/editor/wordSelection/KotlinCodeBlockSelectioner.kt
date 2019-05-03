@@ -54,9 +54,9 @@ class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
         val start = findBlockContentStart(block)
         val end = findBlockContentEnd(block)
         if (end > start) {
-            result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(start, end)))
+            result.addAll(expandToWholeLine(editorText, TextRange(start, end)))
         }
-        result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, block.textRange!!))
+        result.addAll(expandToWholeLine(editorText, block.textRange!!))
 
         return result
     }

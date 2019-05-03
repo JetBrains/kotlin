@@ -33,9 +33,9 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-annotation-processing-runtime"))
 
-    embeddedComponents(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }
-    embeddedComponents(project(":kotlin-annotation-processing-cli")) { isTransitive = false }
-    embeddedComponents(project(":kotlin-annotation-processing-base")) { isTransitive = false }
+    embedded(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }
+    embedded(project(":kotlin-annotation-processing-cli")) { isTransitive = false }
+    embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
 }
 
 sourceSets {
@@ -45,18 +45,16 @@ sourceSets {
 
 testsJar {}
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
     dependsOn(":dist")
 }
 
-runtimeJar {
-    fromEmbeddedComponents()
-}
+publish()
+
+runtimeJar()
 
 sourcesJar()
 javadocJar()
 
 dist()
-
-publish()

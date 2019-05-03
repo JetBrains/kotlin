@@ -58,7 +58,7 @@ class InFloatingPointRangeLiteralExpressionGenerator(
                 //      goto jumpLabel
                 //  exitLabel:
 
-                frameMap.useTmpVar(operandType) { argVar ->
+                frameMap.useTmpVar(operandType) { _ ->
                     val exitLabel = Label()
                     genJumpIfFalse(v, exitLabel)
                     v.goTo(jumpLabel)

@@ -111,9 +111,9 @@ fun suggestReceiverNames(project: Project, descriptor: CallableDescriptor): List
     val callable = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? KtCallableDeclaration ?: return emptyList()
     val bodyScope = (callable as? KtFunction)?.bodyExpression?.let { it.getResolutionScope(it.analyze(), it.getResolutionFacade()) }
     val paramNames = descriptor.valueParameters.map { it.name.asString() }
-    val validator = bodyScope?.let { bodyScope ->
+    val validator = bodyScope?.let { scope ->
         CollectingNameValidator(paramNames) {
-            bodyScope.findVariable(Name.identifier(it), NoLookupLocation.FROM_IDE) == null
+            scope.findVariable(Name.identifier(it), NoLookupLocation.FROM_IDE) == null
         }
     } ?: CollectingNameValidator(paramNames)
     val receiverType = descriptor.extensionReceiverParameter?.type ?: return emptyList()

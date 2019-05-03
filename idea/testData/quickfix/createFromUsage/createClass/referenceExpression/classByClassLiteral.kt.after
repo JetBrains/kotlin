@@ -5,6 +5,6 @@
     }
 }
 
-<caret>class Foo {
+class <caret>Foo {
 
 }

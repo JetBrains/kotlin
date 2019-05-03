@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.j2k.ConverterContext
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
@@ -56,54 +57,50 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         PROCESS
     }
 
-    override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) =
-            runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
-                do {
-                    var modificationStamp: Long? = file.modificationStamp
-                    val elementToActions = runReadAction {
-                        collectAvailableActions(file, rangeMarker)
-                    }
+    override fun doAdditionalProcessing(file: KtFile, converterContext: ConverterContext?, rangeMarker: RangeMarker?) =
+        runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
+            do {
+                var modificationStamp: Long? = file.modificationStamp
+                val elementToActions = runReadAction {
+                    collectAvailableActions(file, rangeMarker)
+                }
 
-                    withContext(EDT) {
-                        for ((element, action, _, writeActionNeeded) in elementToActions) {
-                            if (element.isValid) {
-                                if (writeActionNeeded) {
-                                    runWriteAction {
-                                        action()
-                                    }
-                                }
-                                else {
+                withContext(EDT) {
+                    for ((element, action, _, writeActionNeeded) in elementToActions) {
+                        if (element.isValid) {
+                            if (writeActionNeeded) {
+                                runWriteAction {
                                     action()
                                 }
+                            } else {
+                                action()
                             }
-                            else {
-                                modificationStamp = null
-                            }
+                        } else {
+                            modificationStamp = null
                         }
                     }
-
-                    if (modificationStamp == file.modificationStamp) break
                 }
-                while (elementToActions.isNotEmpty())
+
+                if (modificationStamp == file.modificationStamp) break
+            } while (elementToActions.isNotEmpty())
 
 
-                if (formatCode) {
-                    withContext(EDT) {
-                        runWriteAction {
-                            val codeStyleManager = CodeStyleManager.getInstance(file.project)
-                            if (rangeMarker != null) {
-                                if (rangeMarker.isValid) {
-                                    codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
-                                }
+            if (formatCode) {
+                withContext(EDT) {
+                    runWriteAction {
+                        val codeStyleManager = CodeStyleManager.getInstance(file.project)
+                        if (rangeMarker != null) {
+                            if (rangeMarker.isValid) {
+                                codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
                             }
-                            else {
-                                codeStyleManager.reformat(file)
-                            }
-                            Unit
+                        } else {
+                            codeStyleManager.reformat(file)
                         }
+                        Unit
                     }
                 }
             }
+        }
 
 
     private data class ActionData(val element: KtElement, val action: () -> Unit, val priority: Int, val writeActionNeeded: Boolean)
@@ -122,12 +119,16 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                     super.visitElement(element)
 
                     if (rangeResult == RangeFilterResult.PROCESS) {
-                        J2KPostProcessingRegistrar.processings.forEach { processing ->
+                        J2KPostProcessingRegistrarImpl.processings.forEach { processing ->
                             val action = processing.createAction(element, diagnostics)
                             if (action != null) {
-                                availableActions.add(ActionData(element, action,
-                                                                J2KPostProcessingRegistrar.priority(processing),
-                                                                processing.writeActionNeeded))
+                                availableActions.add(
+                                    ActionData(
+                                        element, action,
+                                        J2KPostProcessingRegistrarImpl.priority(processing),
+                                        processing.writeActionNeeded
+                                    )
+                                )
                             }
                         }
                     }

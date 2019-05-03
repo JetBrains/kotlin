@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
@@ -33,7 +33,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer() {
         return when (this) {
             is FirEnumEntry -> Modality.FINAL
             is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
-            is FirCallableMember -> {
+            is FirCallableMemberDeclaration -> {
                 val containingClass = classes.lastOrNull()
                 when {
                     containingClass == null -> Modality.FINAL

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
+import org.junit.Assume
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
@@ -66,6 +67,30 @@ class Kapt3WorkersIT : Kapt3IT() {
         project.build("build") {
             assertSuccessful()
         }
+    }
+
+    private fun testSimpleWithCustomJdk(gradleVersion: String, javaHome: File, jdkDescription: String) {
+        val gradleVersionRequired = GradleVersionRequired.AtLeast(gradleVersion)
+
+        Assume.assumeTrue("$jdkDescription isn't available", javaHome.isDirectory)
+        val options = defaultBuildOptions().copy(javaHome = javaHome)
+
+        val project =
+            Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
+    }
+
+    @Test
+    fun testSimpleWithJdk10() {
+        testSimpleWithCustomJdk("4.7", File(System.getProperty("jdk10Home")!!), "JDK 10")
+    }
+
+    @Test
+    fun testSimpleWithJdk11() {
+        testSimpleWithCustomJdk("5.0", File(System.getProperty("jdk11Home")!!), "JDK 11")
     }
 }
 

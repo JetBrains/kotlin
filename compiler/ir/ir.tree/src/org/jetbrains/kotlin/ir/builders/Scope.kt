@@ -26,11 +26,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -111,12 +107,11 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     }
 }
 
-@Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated("Creates unbound symbol")
-fun createSymbolForScopeOwner(descriptor: DeclarationDescriptor) =
+private fun createSymbolForScopeOwner(descriptor: DeclarationDescriptor) =
     when (descriptor) {
         is ClassDescriptor -> IrClassSymbolImpl(descriptor)
-        is FunctionDescriptor -> createFunctionSymbol(descriptor)
+        is ClassConstructorDescriptor -> IrConstructorSymbolImpl(descriptor.original)
+        is FunctionDescriptor -> IrSimpleFunctionSymbolImpl(descriptor.original)
         is PropertyDescriptor -> IrFieldSymbolImpl(descriptor)
         else -> throw AssertionError("Unexpected scopeOwner descriptor: $descriptor")
     }

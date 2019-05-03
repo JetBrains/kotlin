@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration;
@@ -37,7 +37,9 @@ import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind;
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.jetbrains.kotlin.utils.PathUtil;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +51,7 @@ import java.util.stream.StreamSupport;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testNewLibrary_copyJar() {
         doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
@@ -269,6 +272,11 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
         assertEquals("1.7", arguments.getJvmTarget());
         assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+    }
+
+    public void testJvmProjectWithJvmTarget11() {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
+        assertEquals(new JvmIdePlatformKind.Platform(JvmTarget.JVM_11), settings.getPlatform());
     }
 
     public void testImplementsDependency() {

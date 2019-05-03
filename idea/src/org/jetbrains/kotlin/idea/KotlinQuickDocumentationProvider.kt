@@ -24,6 +24,8 @@ import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -248,11 +250,22 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         }
 
         private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
+            // INRE is already fixed in 191 in CtrlMouseHandler.updateOnPsiChanges(), so after abandoning 183 branch try-catch can be removed.
+            // BUNCH: 183
+            return try {
+                getTextImpl(element, originalElement, quickNavigation)
+            } catch (_: IndexNotReadyException) {
+                DumbService.getInstance(element.project).showDumbModeNotification("Element information is not available during index update")
+                null
+            }
+        }
+
+        private fun getTextImpl(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
             if (element is PsiWhiteSpace) {
                 val itElement = findElementWithText(originalElement, "it")
                 val itReference = itElement?.getParentOfType<KtNameReferenceExpression>(false)
                 if (itReference != null) {
-                    return getText(itReference, originalElement, quickNavigation)
+                    return getTextImpl(itReference, originalElement, quickNavigation)
                 }
             }
 
@@ -261,7 +274,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 if (declaration is KtCallableDeclaration && declaration.receiverTypeReference == element) {
                     val thisElement = findElementWithText(originalElement, "this")
                     if (thisElement != null) {
-                        return getText(declaration, originalElement, quickNavigation)
+                        return getTextImpl(declaration, originalElement, quickNavigation)
                     }
                 }
             }

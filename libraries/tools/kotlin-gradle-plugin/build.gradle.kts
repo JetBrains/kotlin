@@ -11,16 +11,18 @@ plugins {
     id("jps-compatible")
 }
 
+publish()
+
 // todo: make lazy
 val jar: Jar by tasks
-runtimeJar(rewriteDepsToShadedCompiler(jar))
+val jarContents by configurations.creating
 
 sourcesJar()
 javadocJar()
-publish()
 
 repositories {
     google()
+    maven(url = "https://plugins.gradle.org/m2/")
 }
 
 pill {
@@ -35,15 +37,16 @@ dependencies {
     compileOnly(project(":compiler:daemon-common"))
 
     compile(kotlinStdlib())
-    compile(project(":kotlin-native:kotlin-native-utils"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-android-extensions"))
     compileOnly(project(":kotlin-build-common"))
     compileOnly(project(":kotlin-compiler-runner"))
     compileOnly(project(":kotlin-annotation-processing"))
     compileOnly(project(":kotlin-annotation-processing-gradle"))
-    compileOnly(project(":kotlin-scripting-compiler"))
+    compileOnly(project(":kotlin-scripting-compiler-impl"))
 
+    compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+    
     compileOnly("com.android.tools.build:gradle:2.0.0")
     compileOnly("com.android.tools.build:gradle-core:2.0.0")
     compileOnly("com.android.tools.build:builder:2.0.0")
@@ -58,7 +61,16 @@ dependencies {
     runtime(projectRuntimeJar(":kotlin-android-extensions"))
     runtime(projectRuntimeJar(":kotlin-compiler-runner"))
     runtime(projectRuntimeJar(":kotlin-scripting-compiler-embeddable"))
+    runtime(projectRuntimeJar(":kotlin-scripting-compiler-impl-embeddable"))
     runtime(project(":kotlin-reflect"))
+
+    jarContents(compileOnly(intellijDep()) {
+        includeJars("asm-all", "serviceMessages", "gson", rootProject = rootProject)
+    })
+    
+    jarContents(compileOnly(commonDep("org.jetbrains.kotlin:kotlin-native-shared")) {
+        isTransitive = false
+    })
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
     compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
@@ -76,6 +88,21 @@ dependencies {
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
 }
 
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    configurations.compile.get().exclude("com.android.tools.external.com-intellij", "intellij-core")
+}
+
+runtimeJar(rewriteDepsToShadedCompiler(jar)) {
+    dependsOn(jarContents)
+
+    from {
+        jarContents.asFileTree.map {
+            if (it.endsWith(".jar")) zipTree(it) 
+            else it
+        }
+    }
+}
+
 tasks {
     withType<KotlinCompile> {
         kotlinOptions.jdkHome = rootProject.extra["JDK_18"] as String
@@ -85,11 +112,17 @@ tasks {
     }
 
     named<ProcessResources>("processResources") {
-        val propertiesToExpand = mapOf("projectVersion" to project.version)
+        val propertiesToExpand = mapOf(
+            "projectVersion" to project.version,
+            "kotlinNativeVersion" to project.kotlinNativeVersion,
+            "kotlinNativeSharedVersion" to project.kotlinNativeSharedVersion
+        )
         for ((name, value) in propertiesToExpand) {
             inputs.property(name, value)
         }
-        expand("projectVersion" to project.version)
+        filesMatching("project.properties") {
+            expand(propertiesToExpand)
+        }
     }
 
     named<Jar>("jar") {
@@ -126,6 +159,11 @@ pluginBundle {
         display = "Kotlin JVM plugin"
     )
     create(
+        name = "kotlinJsPlugin",
+        id = "org.jetbrains.kotlin.js",
+        display = "Kotlin JS plugin"
+    )
+    create(
         name = "kotlinMultiplatformPlugin",
         id = "org.jetbrains.kotlin.multiplatform",
         display = "Kotlin Multiplatform plugin"
@@ -149,5 +187,10 @@ pluginBundle {
         name = "kotlinScriptingPlugin",
         id = "org.jetbrains.kotlin.plugin.scripting",
         display = "Gradle plugin for kotlin scripting"
+    )
+    create(
+        name = "kotlinNativeCocoapodsPlugin",
+        id = "org.jetbrains.kotlin.native.cocoapods",
+        display = "Kotlin Native plugin for CocoaPods integration"
     )
 }

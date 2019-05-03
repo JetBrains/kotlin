@@ -12,6 +12,8 @@ dependencies {
     runtime(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 }
 
+publish()
+
 noDefaultJar()
 
 // dummy is used for rewriting dependencies to the shaded packages in the embeddable compiler
@@ -25,6 +27,4 @@ runtimeJar(embeddableCompiler()) {
 
 sourcesJar()
 javadocJar()
-
-publish()
 

@@ -1,0 +1,39 @@
+FILE: factoryFunctionOverloads.kt
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public abstract interface C : R|kotlin/Any| {
+        public abstract val b: R|B|
+            public get(): R|B|
+
+    }
+    public final fun A(b: R|B|?, flag: R|kotlin/Boolean| = Boolean(true)): R|A| {
+        ^A R|/A.A|(when (lval <bangbang>: R|B|? = R|<local>/b|) {
+            ==($subj$, Null(null)) ->  {
+                throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
+            }
+            else ->  {
+                R|<local>/<bangbang>|
+            }
+        }
+        , R|<local>/flag|)
+    }
+    public final fun A(c: R|C|, flag: R|kotlin/Boolean| = Boolean(true)): R|A| {
+        ^A R|/A.A|(R|<local>/c|.R|/C.b|, R|<local>/flag|)
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(b: R|B|, flag: R|kotlin/Boolean| = Boolean(true)): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val b: R|B| = R|<local>/b|
+            public get(): R|B|
+
+        public final val flag: R|kotlin/Boolean| = R|<local>/flag|
+            public get(): R|kotlin/Boolean|
+
+    }
+    public final fun foo(c: R|C|, b: R|B|, bn: R|B|?): R|kotlin/Unit| {
+        lval x: R|A| = R|/A|(R|<local>/c|)
+        lval y: R|A| = R|/A.A|(R|<local>/b|)
+        lval z: R|A| = R|/A.A|(R|<local>/bn|)
+    }

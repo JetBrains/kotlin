@@ -65,11 +65,11 @@ the Kotlin IntelliJ IDEA plugin:
       - License: Apache 2 ([license/third_party/gwt_license.txt][gwt])
       - Origin: Derived from GWT, (C) 2007-08 Google Inc.
 
- - Path: libraries/stdlib/js/src/js/long.js
+ - Path: libraries/stdlib/js-v1/src/js/long.js
       - License: Apache 2 ([license/third_party/closure-compiler_LICENSE.txt][closure-compiler])
       - Origin: Google Closure Library, Copyright 2009 The Closure Library Authors
 
- - Path: libraries/stdlib/js/src/js/polyfills.js
+ - Path: libraries/stdlib/js-v1/src/js/polyfills.js
       - License: Boost Software License 1.0 ([license/third_party/boost_LICENSE.txt][boost])
       - Origin: Derived from boost special math functions, Copyright Eric Ford & Hubert Holin 2001.
 

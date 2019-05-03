@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration.ui;
@@ -29,7 +29,16 @@ public class ConfigurePluginUpdatesForm {
 
     public ConfigurePluginUpdatesForm() {
         showVerifierDisabledStatus();
-        currentVersion.setText(KotlinPluginUtil.getPluginVersion());
+
+        String pluginVersion = KotlinPluginUtil.getPluginVersion();
+
+        if (KotlinPluginUtil.isPatched()) {
+            @SuppressWarnings("deprecation")
+            String pluginVersionFromIdea = KotlinPluginUtil.getPluginVersionFromIdea();
+            currentVersion.setText(pluginVersion + " (Patched! Original: " + pluginVersionFromIdea + ")");
+        } else {
+            currentVersion.setText(pluginVersion);
+        }
 
         if (ApplicationManager.getApplication().isInternal()) {
             String buildNumber = VersioningKt.getBuildNumber();

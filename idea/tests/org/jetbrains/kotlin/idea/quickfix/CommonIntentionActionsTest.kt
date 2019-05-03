@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -8,27 +8,25 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.lang.jvm.JvmClass
 import com.intellij.lang.jvm.JvmElement
-import com.intellij.lang.jvm.JvmMethod
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.lang.jvm.actions.*
 import com.intellij.lang.jvm.types.JvmSubstitutor
-import com.intellij.lang.jvm.types.JvmType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair.pair
 import com.intellij.psi.*
-import com.intellij.psi.codeStyle.SuggestedNameInfo
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.uast.UMethod
-import org.jetbrains.uast.UParameter
-import org.jetbrains.uast.UastContext
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.uast.toUElement
 import org.junit.Assert
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
     private class SimpleMethodRequest(
         project: Project,
@@ -36,7 +34,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         private val modifiers: Collection<JvmModifier> = emptyList(),
         private val returnType: ExpectedTypes = emptyList(),
         private val annotations: Collection<AnnotationRequest> = emptyList(),
-        parameters: List<ExpectedParameter> = emptyList(),
+        @Suppress("MissingRecentApi") parameters: List<ExpectedParameter> = emptyList(),
         private val targetSubstitutor: JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
     ) : CreateMethodRequest {
         private val expectedParameters = parameters
@@ -49,6 +47,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         override fun getAnnotations() = annotations
 
+        @Suppress("MissingRecentApi")
         override fun getExpectedParameters(): List<ExpectedParameter> = expectedParameters
 
         override fun getReturnType() = returnType
@@ -56,8 +55,6 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         override fun isValid(): Boolean = true
 
     }
-
-    private class NameInfo(vararg names: String) : SuggestedNameInfo(names)
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
 
@@ -70,7 +67,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createModifierActions(
-                        myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.FINAL, false)
+                        myFixture.atCaret(), TestModifierRequest(JvmModifier.FINAL, false)
                 ).findWithText("Make 'bar' open")
         )
         myFixture.checkResult("""
@@ -89,7 +86,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createModifierActions(
-                        myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PRIVATE, true)
+                        myFixture.atCaret(), TestModifierRequest(JvmModifier.PRIVATE, true)
                 ).findWithText("Make 'Foo' private")
         )
         myFixture.checkResult("""
@@ -108,7 +105,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createModifierActions(
-                        myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PRIVATE, false)
+                        myFixture.atCaret(), TestModifierRequest(JvmModifier.PRIVATE, false)
                 ).findWithText("Remove 'private' modifier")
         )
         myFixture.checkResult("""
@@ -127,7 +124,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
             createModifierActions(
-                myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)
+                myFixture.atCaret(), TestModifierRequest(JvmModifier.PUBLIC, true)
             ).findWithText("Remove 'private' modifier")
         )
         myFixture.checkResult(
@@ -146,7 +143,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
             createModifierActions(
-                myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)
+                myFixture.atCaret(), TestModifierRequest(JvmModifier.PUBLIC, true)
             ).findWithText("Remove 'protected' modifier")
         )
         myFixture.checkResult(
@@ -165,7 +162,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
             createModifierActions(
-                myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)
+                myFixture.atCaret(), TestModifierRequest(JvmModifier.PUBLIC, true)
             ).findWithText("Remove 'internal' modifier")
         )
         myFixture.checkResult(
@@ -240,6 +237,113 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         )
     }
 
+
+    fun testAddJavaAnnotationOnFieldWithoutTarget() {
+
+        myFixture.addFileToProject(
+            "pkg/myannotation/JavaAnnotation.java", """
+            package pkg.myannotation
+
+            import java.lang.annotation.ElementType;
+            import java.lang.annotation.Retention;
+            import java.lang.annotation.RetentionPolicy;
+            import java.lang.annotation.Target;
+
+            //no @Target
+            @Retention(RetentionPolicy.RUNTIME)
+            public @interface JavaAnnotation {
+                String value();
+                int param() default 0;
+            }
+        """.trimIndent()
+        )
+
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |   val bar: String = null
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("bar", KtModifierListOwner::class.java).toLightElements().single { it is PsiField } as PsiField,
+                annotationRequest("pkg.myannotation.JavaAnnotation")
+            ).single()
+        )
+
+        myFixture.checkResult(
+            """
+                import pkg.myannotation.JavaAnnotation
+
+                class Foo {
+                   @field:JavaAnnotation
+                   val bar: String = null
+                }
+                """.trimIndent(), true
+        )
+
+        TestCase.assertEquals(
+            "KtLightMethodImpl -> org.jetbrains.annotations.NotNull," +
+                    " KtLightFieldForDeclaration -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
+            annotationsString(myFixture.findElementByText("bar", KtModifierListOwner::class.java))
+        )
+    }
+
+
+    fun testAddJavaAnnotationOnField() {
+
+        myFixture.addFileToProject(
+            "pkg/myannotation/JavaAnnotation.java", """
+            package pkg.myannotation
+
+            import java.lang.annotation.ElementType;
+            import java.lang.annotation.Retention;
+            import java.lang.annotation.RetentionPolicy;
+            import java.lang.annotation.Target;
+
+            @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+            @Retention(RetentionPolicy.RUNTIME)
+            public @interface JavaAnnotation {
+                String value();
+                int param() default 0;
+            }
+        """.trimIndent()
+        )
+
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |   val bar: String = null
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("bar", KtModifierListOwner::class.java).toLightElements().single { it is PsiField } as PsiField,
+                annotationRequest("pkg.myannotation.JavaAnnotation")
+            ).single()
+        )
+
+        myFixture.checkResult(
+            """
+                import pkg.myannotation.JavaAnnotation
+
+                class Foo {
+                   @JavaAnnotation
+                   val bar: String = null
+                }
+                """.trimIndent(), true
+        )
+
+        TestCase.assertEquals(
+            "KtLightMethodImpl -> org.jetbrains.annotations.NotNull," +
+                    " KtLightFieldForDeclaration -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
+            annotationsString(myFixture.findElementByText("bar", KtModifierListOwner::class.java))
+        )
+    }
+
+    private fun annotationsString(findElementByText: KtModifierListOwner) = findElementByText.toLightElements()
+        .joinToString { elem -> "${elem.javaClass.simpleName} -> ${(elem as PsiModifierListOwner).annotations.joinToString { it.qualifiedName!! }}" }
+
     fun testDontMakePublicPublic() {
         myFixture.configureByText(
             "foo.kt", """class Foo {
@@ -247,7 +351,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
                         |}""".trim().trimMargin()
         )
 
-        assertEmpty(createModifierActions(myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)))
+        assertEmpty(createModifierActions(myFixture.atCaret(), TestModifierRequest(JvmModifier.PUBLIC, true)))
     }
 
     fun testDontMakeFunInObjectsOpen() {
@@ -256,7 +360,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
             fun bar<caret>(){}
         }
         """.trim())
-        assertEmpty(createModifierActions(myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.FINAL, false)))
+        assertEmpty(createModifierActions(myFixture.atCaret(), TestModifierRequest(JvmModifier.FINAL, false)))
     }
 
     fun testAddVoidVoidMethod() {
@@ -495,7 +599,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
 
     private fun createFieldActions(atCaret: JvmClass, fieldRequest: CreateFieldRequest): List<IntentionAction> =
-        com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddFieldActions(atCaret, fieldRequest) }
+        EP_NAME.extensions.flatMap { it.createAddFieldActions(atCaret, fieldRequest) }
 
     fun testAddStringValProperty() {
         myFixture.configureByText("foo.kt", """
@@ -525,56 +629,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
-    fun testSetParameters() {
-        myFixture.configureByText(
-            "foo.kt", """
-        |class Foo {
-        |    fun ba<caret>r() {}
-        |}
-        """.trim().trimMargin()
-        )
-
-
-        myFixture.launchAction(
-            com.intellij.lang.jvm.actions.createChangeParametersActions(
-                myFixture.atCaret<UMethod>().javaPsi,
-                setMethodParametersRequest(
-                    linkedMapOf<String, JvmType>(
-                        "i" to PsiType.INT,
-                        "file" to PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope)
-                    ).entries
-                )
-            ).findWithText("Change method parameters to '(i: Int, file: File)'")
-        )
-        myFixture.checkResult(
-            """
-        import java.io.File
-
-        class Foo {
-            fun bar(i: Int, file: File) {}
-        }
-        """.trimIndent(), true
-        )
-    }
-
-    private fun makeParams(vararg psyTypes: PsiType): List<UParameter> {
-        val uastContext = UastContext(myFixture.project)
-        val factory = JavaPsiFacade.getElementFactory(myFixture.project)
-        val parameters = psyTypes.mapIndexed { index, psiType -> factory.createParameter("param$index", psiType) }
-        return parameters.map { uastContext.convertElement(it, null, UParameter::class.java) as UParameter }
-    }
 
     private fun expectedTypes(vararg psiTypes: PsiType) = psiTypes.map { expectedType(it) }
 
     private fun expectedParams(vararg psyTypes: PsiType) =
         psyTypes.mapIndexed { index, psiType -> expectedParameter(expectedTypes(psiType), "param$index") }
-
-    private inline fun <reified T : JvmElement> CodeInsightTestFixture.atCaret() = elementAtCaret.toUElement() as T
-
-    @Suppress("CAST_NEVER_SUCCEEDS")
-    private fun List<IntentionAction>.findWithText(text: String): IntentionAction =
-            this.firstOrNull { it.text == text } ?:
-            Assert.fail("intention with text '$text' was not found, only ${this.joinToString { "\"${it.text}\"" }} available") as Nothing
 
     class FieldRequest(
         private val project: Project,
@@ -589,14 +648,28 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         override fun isConstant(): Boolean = false
 
         override fun getFieldType(): List<ExpectedType> =
-            com.intellij.lang.jvm.actions.expectedTypes(PsiType.getTypeByName(type, project, project.allScope()))
+            expectedTypes(PsiType.getTypeByName(type, project, project.allScope()))
 
         override fun getFieldName(): String = name
 
         override fun isValid(): Boolean = true
     }
 
-
 }
+
+internal inline fun <reified T : JvmElement> CodeInsightTestFixture.atCaret() = elementAtCaret.toUElement() as T
+
+@Suppress("MissingRecentApi")
+private class TestModifierRequest(private val _modifier: JvmModifier, private val shouldBePresent: Boolean) : ChangeModifierRequest {
+    override fun shouldBePresent(): Boolean = shouldBePresent
+    override fun isValid(): Boolean = true
+    override fun getModifier(): JvmModifier = _modifier
+}
+
+@Suppress("CAST_NEVER_SUCCEEDS")
+internal fun List<IntentionAction>.findWithText(text: String): IntentionAction =
+    this.firstOrNull { it.text == text } ?:
+    Assert.fail("intention with text '$text' was not found, only ${this.joinToString { "\"${it.text}\"" }} available") as Nothing
+
 
 

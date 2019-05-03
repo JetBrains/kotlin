@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
@@ -45,7 +48,10 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         else
             PsiChildRange.singleElement(element)
         val commentSaver = CommentSaver(commentSavingRange)
-
+        if (rBrace != null) {
+            element.nextEolCommentOnSameLine()?.delete()
+        }
+        
         val newCondition = element.condition!!.negate()
 
         val newIf = handleSpecialCases(element, newCondition) ?: handleStandardCase(element, newCondition)
@@ -90,18 +96,17 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         else
             thenBranch
 
-        var thenSpace = " "
-        var elseSpace = " "
-        if (ifExpression.condition?.getLineNumber(false) != thenBranch.getLineNumber()
-            || ifExpression.elseKeyword?.getLineNumber() != elseBranch.getLineNumber()
-        ) {
-            if (newThen !is KtBlockExpression) thenSpace = "\n"
-            if (newElse !is KtBlockExpression) elseSpace = "\n"
-        }
+        val conditionLineNumber = ifExpression.condition?.getLineNumber(false)
+        val thenBranchLineNumber = thenBranch.getLineNumber(false)
+        val elseKeywordLineNumber = ifExpression.elseKeyword?.getLineNumber()
+        val afterCondition = if (newThen !is KtBlockExpression && elseKeywordLineNumber != elseBranch.getLineNumber(false)) "\n" else ""
+        val beforeElse = if (newThen !is KtBlockExpression && conditionLineNumber != elseKeywordLineNumber) "\n" else " "
+        val afterElse = if (newElse !is KtBlockExpression && conditionLineNumber != thenBranchLineNumber) "\n" else " "
+
         val newIf = if (newElse == null) {
-            psiFactory.createExpressionByPattern("if ($0)$thenSpace$1", newCondition, newThen)
+            psiFactory.createExpressionByPattern("if ($0)$afterCondition$1", newCondition, newThen)
         } else {
-            psiFactory.createExpressionByPattern("if ($0)$thenSpace$1${thenSpace}else$elseSpace$2", newCondition, newThen, newElse)
+            psiFactory.createExpressionByPattern("if ($0)$afterCondition$1${beforeElse}else$afterElse$2", newCondition, newThen, newElse)
         } as KtIfExpression
 
         return ifExpression.replaced(newIf)
@@ -248,5 +253,12 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
 
     private fun parentBlockRBrace(element: KtIfExpression): PsiElement? {
         return (element.parent as? KtBlockExpression)?.rBrace
+    }
+
+    private fun KtIfExpression.nextEolCommentOnSameLine(): PsiElement? {
+        val lastLineNumber = getLineNumber(false)
+        return siblings(withItself = false)
+            .takeWhile { it.getLineNumber() == lastLineNumber }
+            .firstOrNull { it is PsiComment && it.node.elementType == KtTokens.EOL_COMMENT }
     }
 }

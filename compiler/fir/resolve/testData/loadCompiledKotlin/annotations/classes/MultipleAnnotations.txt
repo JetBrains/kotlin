@@ -1,0 +1,19 @@
+public final annotation class A1 : R|kotlin/Annotation| {
+    public constructor(): R|test/A1|
+
+}
+
+public final annotation class A2 : R|kotlin/Annotation| {
+    public constructor(): R|test/A2|
+
+}
+
+public final annotation class A3 : R|kotlin/Annotation| {
+    public constructor(): R|test/A3|
+
+}
+
+@R|test/A1|() @R|test/A2|() @R|test/A3|() public final class Class : R|kotlin/Any| {
+    public constructor(): R|test/Class|
+
+}

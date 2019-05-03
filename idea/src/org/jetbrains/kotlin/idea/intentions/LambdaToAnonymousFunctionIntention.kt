@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
@@ -54,6 +55,7 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
             lambda: KtLambdaExpression,
             functionDescriptor: FunctionDescriptor,
             functionName: String = "",
+            typeParameters: Map<String, KtTypeReference> = emptyMap(),
             replaceElement: (KtNamedFunction) -> KtExpression = { lambda.replaced(it) }
         ): KtExpression? {
             val functionLiteral = lambda.functionLiteral
@@ -76,7 +78,12 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
                     name(functionName)
                     for (parameter in functionDescriptor.valueParameters) {
                         val type = parameter.type.let { if (it.isFlexible()) it.makeNotNullable() else it }
-                        param(parameter.name.asString(), typeSourceCode.renderType(type))
+                        val renderType = typeSourceCode.renderType(type)
+                        if (type.isTypeParameter()) {
+                            param(parameter.name.asString(), typeParameters[renderType]?.text ?: renderType)
+                        } else {
+                            param(parameter.name.asString(), renderType)
+                        }
                     }
                     functionDescriptor.returnType?.takeIf { !it.isUnit() }?.let {
                         val lastStatement = bodyExpression.statements.lastOrNull()
@@ -86,7 +93,12 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
                                 lastStatement.replace(psiFactory.createExpressionByPattern("return $0", lastStatement))
                             }
                         }
-                        returnType(typeSourceCode.renderType(it))
+                        val renderType = typeSourceCode.renderType(it)
+                        if (it.isTypeParameter()) {
+                            returnType(typeParameters[renderType]?.text ?: renderType)
+                        } else {
+                            returnType(renderType)
+                        }
                     } ?: noReturnType()
                     blockBody(" " + bodyExpression.text)
                 }.asString()

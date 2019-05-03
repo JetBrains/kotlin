@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.buildStatement
 import org.jetbrains.kotlin.ir.builders.irIfThenMaybeElse
+import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.builders.whenComma
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -77,11 +78,11 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         if (irBranches.size == 1) {
             val irBranch0 = irBranches[0]
             return buildStatement(ktIf.startOffsetSkippingComments, ktIf.endOffset) {
-                irIfThenMaybeElse(resultType, irBranch0.condition, irBranch0.result, irElseResult)
+                irIfThenMaybeElse(resultType, irBranch0.condition, irBranch0.result, irElseResult, IrStatementOrigin.IF)
             }
         }
 
-        val irWhen = IrWhenImpl(ktIf.startOffsetSkippingComments, ktIf.endOffset, resultType, IrStatementOrigin.WHEN)
+        val irWhen = IrWhenImpl(ktIf.startOffsetSkippingComments, ktIf.endOffset, resultType, IrStatementOrigin.IF)
 
         irWhen.branches.addAll(irBranches)
 
@@ -105,7 +106,6 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
         // TODO relies on ControlFlowInformationProvider, get rid of it
         val isUsedAsExpression = get(BindingContext.USED_AS_EXPRESSION, expression) ?: false
-        val isExhaustive = expression.isExhaustiveWhen()
 
         val resultType = when {
             isUsedAsExpression -> inferredType.toIrType()
@@ -218,10 +218,11 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             irSubject.defaultLoad()
         )
         return if (ktCondition.isNegated)
-            IrUnaryPrimitiveImpl(
+            primitiveOp1(
                 ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
+                context.irBuiltIns.booleanNotSymbol,
                 context.irBuiltIns.booleanType,
-                IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
+                IrStatementOrigin.EXCL,
                 irInstanceOf
             )
         else
@@ -237,10 +238,11 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             IrStatementOrigin.IN ->
                 irInCall
             IrStatementOrigin.NOT_IN ->
-                IrUnaryPrimitiveImpl(
+                primitiveOp1(
                     ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
+                    context.irBuiltIns.booleanNotSymbol,
                     context.irBuiltIns.booleanType,
-                    IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
+                    IrStatementOrigin.EXCL,
                     irInCall
                 )
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")

@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.callResolverUtil
@@ -145,7 +145,7 @@ fun isBinaryRemOperator(call: Call): Boolean {
     val operator = callElement.operationToken
     if (operator !is KtToken) return false
 
-    val name = OperatorConventions.getNameForOperationSymbol(operator, true, true)
+    val name = OperatorConventions.getNameForOperationSymbol(operator, true, true) ?: return false
     return name in OperatorConventions.REM_TO_MOD_OPERATION_NAMES.keys
 }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir;
@@ -84,9 +84,19 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/NestedOfAliasedType.kt");
     }
 
+    @TestMetadata("nestedReturnType.kt")
+    public void testNestedReturnType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/nestedReturnType.kt");
+    }
+
     @TestMetadata("NestedSuperType.kt")
     public void testNestedSuperType() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/NestedSuperType.kt");
+    }
+
+    @TestMetadata("recursiveCallOnWhenWithSealedClass.kt")
+    public void testRecursiveCallOnWhenWithSealedClass() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/recursiveCallOnWhenWithSealedClass.kt");
     }
 
     @TestMetadata("simpleClass.kt")
@@ -124,6 +134,39 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/typeParameterVsNested.kt");
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/resolve/arguments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Arguments extends AbstractFirResolveTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInArguments() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("default.kt")
+        public void testDefault() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/default.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/lambda.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/simple.kt");
+        }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/vararg.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolve/builtins")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -139,6 +182,170 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @TestMetadata("lists.kt")
         public void testLists() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/builtins/lists.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/expresssions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Expresssions extends AbstractFirResolveTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("access.kt")
+        public void testAccess() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/access.kt");
+        }
+
+        public void testAllFilesPresentInExpresssions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("checkArguments.kt")
+        public void testCheckArguments() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/checkArguments.kt");
+        }
+
+        @TestMetadata("companion.kt")
+        public void testCompanion() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/companion.kt");
+        }
+
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/constructor.kt");
+        }
+
+        @TestMetadata("dispatchReceiver.kt")
+        public void testDispatchReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/dispatchReceiver.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/lambda.kt");
+        }
+
+        @TestMetadata("localImplicitBodies.kt")
+        public void testLocalImplicitBodies() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/localImplicitBodies.kt");
+        }
+
+        @TestMetadata("memberExtension.kt")
+        public void testMemberExtension() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/memberExtension.kt");
+        }
+
+        @TestMetadata("objectVsProperty.kt")
+        public void testObjectVsProperty() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/objectVsProperty.kt");
+        }
+
+        @TestMetadata("objects.kt")
+        public void testObjects() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/objects.kt");
+        }
+
+        @TestMetadata("receiverConsistency.kt")
+        public void testReceiverConsistency() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/receiverConsistency.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/simple.kt");
+        }
+
+        @TestMetadata("this.kt")
+        public void testThis() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/this.kt");
+        }
+
+        @TestMetadata("typeAliasConstructor.kt")
+        public void testTypeAliasConstructor() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/typeAliasConstructor.kt");
+        }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/vararg.kt");
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/when.kt");
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/expresssions/inference")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inference extends AbstractFirResolveTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInference() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("id.kt")
+            public void testId() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/inference/id.kt");
+            }
+
+            @TestMetadata("typeParameters.kt")
+            public void testTypeParameters() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/inference/typeParameters.kt");
+            }
+
+            @TestMetadata("typeParameters2.kt")
+            public void testTypeParameters2() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/inference/typeParameters2.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/expresssions/invoke")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Invoke extends AbstractFirResolveTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInvoke() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("explicitReceiver.kt")
+            public void testExplicitReceiver() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/explicitReceiver.kt");
+            }
+
+            @TestMetadata("explicitReceiver2.kt")
+            public void testExplicitReceiver2() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/explicitReceiver2.kt");
+            }
+
+            @TestMetadata("extension.kt")
+            public void testExtension() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/extension.kt");
+            }
+
+            @TestMetadata("farInvokeExtension.kt")
+            public void testFarInvokeExtension() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/farInvokeExtension.kt");
+            }
+
+            @TestMetadata("implicitTypeOrder.kt")
+            public void testImplicitTypeOrder() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/implicitTypeOrder.kt");
+            }
+
+            @TestMetadata("threeReceivers.kt")
+            public void testThreeReceivers() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/threeReceivers.kt");
+            }
         }
     }
 
@@ -202,6 +409,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/multifile/ByteArray.kt");
         }
 
+        @TestMetadata("importFromObject.kt")
+        public void testImportFromObject() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/multifile/importFromObject.kt");
+        }
+
         @TestMetadata("NestedSuperType.kt")
         public void testNestedSuperType() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/multifile/NestedSuperType.kt");
@@ -243,6 +455,29 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/resolve/nested")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Nested extends AbstractFirResolveTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInNested() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/nested"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/nested/inner.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/nested/simple.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolve/overrides")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -253,6 +488,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
 
         public void testAllFilesPresentInOverrides() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("generics.kt")
+        public void testGenerics() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/overrides/generics.kt");
         }
 
         @TestMetadata("simple.kt")

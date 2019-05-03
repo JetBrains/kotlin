@@ -1,84 +1,84 @@
 FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
-  CLASS CLASS name:Derived1 modality:FINAL visibility:public flags: superTypes:[Base<T>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Derived1<T> flags:
+  CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base<T of <root>.Derived1>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived1<T of <root>.Derived1> 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> (x:T) returnType:Derived1<T> flags:primary
-      VALUE_PARAMETER name:x index:0 type:T flags:
+    CONSTRUCTOR visibility:public <> (x:T of <root>.Derived1) returnType:<root>.Derived1<T of <root>.Derived1> [primary] 
+      VALUE_PARAMETER name:x index:0 type:T of <root>.Derived1 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Base(T)'
-          <T>: T
-          x: GET_VAR 'value-parameter x: T' type=T origin=null
-        INSTANCE_INITIALIZER_CALL classDescriptor='Derived1'
-    FUN name:foo visibility:public modality:OPEN <Y> ($this:Derived1<T>, y:Y) returnType:T flags:
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.Base) [primary] declared in <root>.Base'
+          <T>: T of <root>.Derived1
+          x: GET_VAR 'x: T of <root>.Derived1 declared in <root>.Derived1.<init>' type=T of <root>.Derived1 origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base<T of <root>.Derived1>]'
+    FUN name:foo visibility:public modality:OPEN <Y> ($this:<root>.Derived1<T of <root>.Derived1>, y:Y of <root>.Derived1.foo) returnType:T of <root>.Derived1 
       overridden:
-        FUN name:foo visibility:public modality:ABSTRACT <Y> ($this:Base<T>, y:Y) returnType:T flags:
+        public abstract fun foo <Y> (y: Y of <root>.Base.foo): T of <root>.Base declared in <root>.Base
       TYPE_PARAMETER name:Y index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
-      VALUE_PARAMETER name:y index:0 type:Y flags:
+      $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1> 
+      VALUE_PARAMETER name:y index:0 type:Y of <root>.Derived1.foo 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='foo(Y): T'
-          CALL '<get-x>(): T' type=T origin=GET_PROPERTY
-            $this: GET_VAR 'this@Derived1: Derived1<T>' type=Derived1<T> origin=null
-    PROPERTY name:bar visibility:public modality:OPEN flags:var
-      FIELD PROPERTY_BACKING_FIELD name:bar type:T visibility:public flags:
+        RETURN type=kotlin.Nothing from='public open fun foo <Y> (y: Y of <root>.Derived1.foo): T of <root>.Derived1 declared in <root>.Derived1'
+          CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Derived1' type=T of <root>.Derived1 origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.foo' type=<root>.Derived1<T of <root>.Derived1> origin=null
+    PROPERTY name:bar visibility:public modality:OPEN [var] 
+      FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:public 
         EXPRESSION_BODY
-          GET_VAR 'value-parameter x: T' type=T origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Derived1<T>) returnType:T flags:
-        correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN flags:var
+          GET_VAR 'x: T of <root>.Derived1 declared in <root>.Derived1.<init>' type=T of <root>.Derived1 origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.Derived1<T of <root>.Derived1>) returnType:T of <root>.Derived1 
+        correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN [var] 
         overridden:
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:Base<T>) returnType:T flags:
-        $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
+          public abstract fun <get-bar> (): T of <root>.Base declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1> 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-bar>(): T'
-            GET_FIELD 'bar: T' type=T origin=null
-              receiver: GET_VAR 'this@Derived1: Derived1<T>' type=Derived1<T> origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:OPEN <> ($this:Derived1<T>, <set-?>:T) returnType:kotlin.Unit flags:
-        correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN flags:var
+          RETURN type=kotlin.Nothing from='public open fun <get-bar> (): T of <root>.Derived1 declared in <root>.Derived1'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:public ' type=T of <root>.Derived1 origin=null
+              receiver: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<get-bar>' type=<root>.Derived1<T of <root>.Derived1> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:OPEN <> ($this:<root>.Derived1<T of <root>.Derived1>, <set-?>:T of <root>.Derived1) returnType:kotlin.Unit 
+        correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN [var] 
         overridden:
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:ABSTRACT <> ($this:Base<T>, <set-?>:T) returnType:kotlin.Unit flags:
-        $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
-        VALUE_PARAMETER name:<set-?> index:0 type:T flags:
+          public abstract fun <set-bar> (<set-?>: T of <root>.Base): kotlin.Unit declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1> 
+        VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Derived1 
         BLOCK_BODY
-          SET_FIELD 'bar: T' type=kotlin.Unit origin=null
-            receiver: GET_VAR 'this@Derived1: Derived1<T>' type=Derived1<T> origin=null
-            value: GET_VAR 'value-parameter <set-?>: T' type=T origin=null
-    PROPERTY name:exn visibility:public modality:OPEN flags:var
-      FUN name:<get-exn> visibility:public modality:OPEN <Z> ($this:Derived1<T>, $receiver:Z) returnType:T flags:
-        correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN flags:var
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:public ' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<set-bar>' type=<root>.Derived1<T of <root>.Derived1> origin=null
+            value: GET_VAR '<set-?>: T of <root>.Derived1 declared in <root>.Derived1.<set-bar>' type=T of <root>.Derived1 origin=null
+    PROPERTY name:exn visibility:public modality:OPEN [var] 
+      FUN name:<get-exn> visibility:public modality:OPEN <Z> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <root>.Derived1.<get-exn>) returnType:T of <root>.Derived1 
+        correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN [var] 
         overridden:
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-exn> visibility:public modality:ABSTRACT <Z> ($this:Base<T>, $receiver:Z) returnType:T flags:
+          public abstract fun <get-exn> <Z> (): T of <root>.Base declared in <root>.Base
         TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
-        $receiver: VALUE_PARAMETER name:<this> type:Z flags:
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1> 
+        $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Derived1.<get-exn> 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-exn>() on Z: T'
-            CALL '<get-x>(): T' type=T origin=GET_PROPERTY
-              $this: GET_VAR 'this@Derived1: Derived1<T>' type=Derived1<T> origin=null
-      FUN name:<set-exn> visibility:public modality:OPEN <Z> ($this:Derived1<T>, $receiver:Z, value:T) returnType:kotlin.Unit flags:
-        correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN flags:var
+          RETURN type=kotlin.Nothing from='public open fun <get-exn> <Z> (): T of <root>.Derived1 declared in <root>.Derived1'
+            CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Derived1' type=T of <root>.Derived1 origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<get-exn>' type=<root>.Derived1<T of <root>.Derived1> origin=null
+      FUN name:<set-exn> visibility:public modality:OPEN <Z> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <root>.Derived1.<set-exn>, value:T of <root>.Derived1) returnType:kotlin.Unit 
+        correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN [var] 
         overridden:
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-exn> visibility:public modality:ABSTRACT <Z> ($this:Base<T>, $receiver:Z, <set-?>:T) returnType:kotlin.Unit flags:
+          public abstract fun <set-exn> <Z> (<set-?>: T of <root>.Base): kotlin.Unit declared in <root>.Base
         TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
-        $receiver: VALUE_PARAMETER name:<this> type:Z flags:
-        VALUE_PARAMETER name:value index:0 type:T flags:
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1> 
+        $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Derived1.<set-exn> 
+        VALUE_PARAMETER name:value index:0 type:T of <root>.Derived1 
         BLOCK_BODY
-    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
-      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:Base<T>) returnType:T flags:
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
+    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val] 
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Derived1>) returnType:T of <root>.Derived1 
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val] 
         overridden:
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Base<T>) returnType:T flags:
-        $this: VALUE_PARAMETER name:<this> type:Base<T> flags:
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          public final fun <get-x> (): T of <root>.Base declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Derived1> 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        public open fun toString (): kotlin.String declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

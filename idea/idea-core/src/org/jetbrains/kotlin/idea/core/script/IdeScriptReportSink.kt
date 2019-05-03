@@ -23,7 +23,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotifications
-import org.jetbrains.kotlin.script.ScriptReportSink
+import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import kotlin.script.experimental.dependencies.ScriptReport
 
 class IdeScriptReportSink(val project: Project) : ScriptReportSink {
@@ -32,7 +32,7 @@ class IdeScriptReportSink(val project: Project) : ScriptReportSink {
         scriptFile.putUserData(Reports, reports)
 
         ApplicationManager.getApplication().invokeLater {
-            if (scriptFile.isValid) {
+            if (scriptFile.isValid && !project.isDisposed) {
                 PsiManager.getInstance(project).findFile(scriptFile)?.let { psiFile ->
                     DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
                     EditorNotifications.getInstance(project).updateNotifications(scriptFile)

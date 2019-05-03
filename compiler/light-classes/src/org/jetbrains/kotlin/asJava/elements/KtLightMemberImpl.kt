@@ -66,6 +66,8 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
     override fun isDeprecated() = (clsDelegate as PsiDocCommentOwner).isDeprecated
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
+        if (lightMemberOrigin?.originalElement?.isEquivalentTo(another) == true) return true
+
         val isEquivalentByOrigin =
                 another is KtLightMember<*> &&
                 lightMemberOrigin?.isEquivalentTo(another.lightMemberOrigin) == true

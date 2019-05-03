@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.formatter;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 // Additional method is introduced in 183 instead of deprecated one
 // BUNCH: 182
-@SuppressWarnings("IncompatibleAPI")
+@SuppressWarnings({"IncompatibleAPI", "MissingRecentApi"})
 public abstract class CodeStyleSettingsProviderCompat extends CodeStyleSettingsProvider {
     // Can't use @Override because it's going to be an error in 182
     @SuppressWarnings("override")

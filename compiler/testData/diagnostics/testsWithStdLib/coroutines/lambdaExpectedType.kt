@@ -33,20 +33,20 @@ fun foo() {
     val y = { 1 }
     <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!TYPE_MISMATCH!>y<!>)
 
-    <!NI;UNREACHABLE_CODE!>unitBuilder {}<!>
-    <!NI;UNREACHABLE_CODE!>unitBuilder { <!OI;UNUSED_EXPRESSION!>1<!> }<!>
-    <!NI;UNREACHABLE_CODE!>unitBuilder({})<!>
-    <!NI;UNREACHABLE_CODE!>unitBuilder({ <!OI;UNUSED_EXPRESSION!>1<!> })<!>
+    unitBuilder {}
+    unitBuilder { <!UNUSED_EXPRESSION!>1<!> }
+    unitBuilder({})
+    unitBuilder({ <!UNUSED_EXPRESSION!>1<!> })
 
-    <!NI;UNREACHABLE_CODE!>manyArgumentsBuilder({}, { "" }) { 1 }<!>
+    manyArgumentsBuilder({}, { "" }) { 1 }
 
-    <!NI;UNREACHABLE_CODE!>val s: String = manyArgumentsBuilder({}, { "" }) { 1 }<!>
+    val s: String = manyArgumentsBuilder({}, { "" }) { 1 }
 
-    <!NI;UNREACHABLE_CODE!>manyArgumentsBuilder<String>({}, { "" }, { 1 })<!>
-    <!NI;UNREACHABLE_CODE!>manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH, NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })<!>
+    manyArgumentsBuilder<String>({}, { "" }, { 1 })
+    manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH, NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })
 
-    <!NI;UNREACHABLE_CODE!>severalParamsInLambda { <!NAME_SHADOWING!>x<!>, <!NAME_SHADOWING!>y<!> ->
+    severalParamsInLambda { <!NAME_SHADOWING!>x<!>, <!NAME_SHADOWING!>y<!> ->
         x checkType { _<String>() }
         y checkType { _<Int>() }
-    }<!>
+    }
 }

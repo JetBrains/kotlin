@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.ClassUsageReplacementStrategy
@@ -37,9 +38,12 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
+import org.jetbrains.kotlin.idea.util.replaceOrCreateTypeArgumentList
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isCallee
+import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -76,7 +80,11 @@ abstract class DeprecatedSymbolUsageFixBase(
     protected abstract fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?)
 
     companion object {
-        fun fetchReplaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
+        fun fetchReplaceWithPattern(
+            descriptor: DeclarationDescriptor,
+            project: Project,
+            contextElement: KtSimpleNameExpression?
+        ): ReplaceWith? {
             val annotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: return null
             val replaceWithValue =
                 annotation.argumentValue(kotlin.Deprecated::replaceWith.name)?.safeAs<AnnotationValue>()?.value ?: return null
@@ -92,7 +100,35 @@ abstract class DeprecatedSymbolUsageFixBase(
                 }
             ) return null
 
-            return ReplaceWith(pattern, imports)
+            return ReplaceWith(pattern.applyContextElement(contextElement, descriptor), imports)
+        }
+
+        private fun String.applyContextElement(
+            element: KtSimpleNameExpression?,
+            descriptor: DeclarationDescriptor
+        ): String {
+            if (element == null) return this
+            val expressionFromPattern = KtPsiFactory(element).createExpressionIfPossible(this) as? KtCallExpression ?: return this
+            val methodFromPattern = expressionFromPattern.referenceExpression()?.let { name ->
+                KotlinShortNamesCache(element.project).getMethodsByName(
+                    name.text,
+                    element.resolveScope
+                ).firstOrNull()
+            }
+
+            val patternTypeArgumentList = expressionFromPattern.typeArgumentList
+            val patternTypeArgumentCount = methodFromPattern?.typeParameterList?.typeParameters?.size
+                ?: patternTypeArgumentList?.arguments?.size
+                ?: return this
+
+            val typeArgumentList = (element.parent as? KtCallExpression)?.typeArgumentList
+            return if (descriptor is CallableDescriptor && descriptor.typeParametersCount == patternTypeArgumentCount ||
+                patternTypeArgumentCount == typeArgumentList?.arguments?.size
+            ) {
+                if (typeArgumentList != null) expressionFromPattern.replaceOrCreateTypeArgumentList(typeArgumentList.copy() as KtTypeArgumentList)
+                else patternTypeArgumentList?.delete()
+                expressionFromPattern.text
+            } else this
         }
 
         data class Data(
@@ -120,7 +156,7 @@ abstract class DeprecatedSymbolUsageFixBase(
                 else -> throw IllegalStateException("Bad QuickFixRegistrar configuration")
             }
 
-            val replacement = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(descriptor, nameExpression.project) ?: return null
+            val replacement = fetchReplaceWithPattern(descriptor, nameExpression.project, nameExpression) ?: return null
             return Data(nameExpression, replacement, descriptor)
         }
 
@@ -135,10 +171,10 @@ abstract class DeprecatedSymbolUsageFixBase(
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
             var target = element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null
 
-            var replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(target, resolutionFacade.project)
+            var replacePatternFromSymbol = fetchReplaceWithPattern(target, resolutionFacade.project, element)
             if (replacePatternFromSymbol == null && target is ConstructorDescriptor) {
                 target = target.containingDeclaration
-                replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(target, resolutionFacade.project)
+                replacePatternFromSymbol = fetchReplaceWithPattern(target, resolutionFacade.project, element)
             }
 
             // check that ReplaceWith hasn't changed
@@ -165,7 +201,7 @@ abstract class DeprecatedSymbolUsageFixBase(
                                     ?.getStrictParentOfType<KtTypeAlias>()
                                 if (typeAlias != null) {
                                     val usedConstructorWithOwnReplaceWith = usedConstructorsWithOwnReplaceWith(
-                                        element.project, target, typeAlias
+                                        element.project, target, typeAlias, element
                                     )
 
                                     if (usedConstructorWithOwnReplaceWith != null) {
@@ -204,10 +240,13 @@ abstract class DeprecatedSymbolUsageFixBase(
         }
 
         private fun usedConstructorsWithOwnReplaceWith(
-            project: Project, classifier: ClassifierDescriptorWithTypeParameters, typeAlias: PsiElement
+            project: Project,
+            classifier: ClassifierDescriptorWithTypeParameters,
+            typeAlias: PsiElement,
+            contextElement: KtSimpleNameExpression
         ): ConstructorDescriptor? {
             val specialReplaceWithForConstructor = classifier.constructors.filter {
-                DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, project) != null
+                fetchReplaceWithPattern(it, project, contextElement) != null
             }.toSet()
 
             if (specialReplaceWithForConstructor.isEmpty()) {

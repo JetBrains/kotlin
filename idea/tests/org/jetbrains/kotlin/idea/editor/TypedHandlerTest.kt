@@ -1,17 +1,22 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.editor
 
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import com.intellij.application.options.CodeStyle
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class TypedHandlerTest : LightCodeInsightTestCase() {
     private val dollar = '$'
 
@@ -810,6 +815,51 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         )
     }
 
+    fun testEnterInFunctionWithExpressionBody() {
+        doTypeTest(
+            '\n',
+            """
+            |fun test() =<caret>
+            """,
+            """
+            |fun test() =
+            |    <caret>
+            """,
+            ENABLE_KOTLIN_OFFICIAL_CODE_STYLE
+        )
+    }
+
+    fun testEnterInMultiDeclaration() {
+        doTypeTest(
+            '\n',
+            """
+            |fun test() {
+            |    val (a, b) =<caret>
+            |}
+            """,
+            """
+            |fun test() {
+            |    val (a, b) =
+            |        <caret>
+            |}
+            """,
+            ENABLE_KOTLIN_OFFICIAL_CODE_STYLE
+        )
+    }
+
+    fun testEnterInVariableDeclaration() {
+        doTypeTest(
+            '\n',
+            """
+            |val test =<caret>
+            """,
+            """
+            |val test =
+            |    <caret>
+            """,
+            ENABLE_KOTLIN_OFFICIAL_CODE_STYLE
+        )
+    }
 
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
@@ -824,7 +874,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
 
     private fun enableSmartEnterWithTabs(): () -> Unit = {
         val project = LightPlatformTestCase.getProject()
-        val indentOptions = CodeStyleSettingsManager.getInstance(project).currentSettings.getIndentOptions(KotlinFileType.INSTANCE)
+        val indentOptions = CodeStyle.getSettings(project).getIndentOptions(KotlinFileType.INSTANCE)
         indentOptions.USE_TAB_CHARACTER = true
         indentOptions.SMART_TABS = true
     }
@@ -847,7 +897,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         } finally {
             if (settingsModifier != null) {
                 val project = LightPlatformTestCase.getProject()
-                CodeStyleSettingsManager.getSettings(project).clearCodeStyleSettings()
+                CodeStyle.getSettings(project).clearCodeStyleSettings()
             }
         }
     }
@@ -869,5 +919,12 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
 
     private fun doLtGtTest(initText: String) {
         doLtGtTest(initText, true)
+    }
+
+    companion object {
+        private val ENABLE_KOTLIN_OFFICIAL_CODE_STYLE: () -> Unit = {
+            val settings = ktCodeStyleSettings(LightPlatformTestCase.getProject())?.all ?: error("No Settings")
+            KotlinStyleGuideCodeStyle.apply(settings)
+        }
     }
 }

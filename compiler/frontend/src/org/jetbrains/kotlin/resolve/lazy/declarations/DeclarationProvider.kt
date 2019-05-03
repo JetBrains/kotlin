@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 interface DeclarationProvider {
@@ -30,7 +31,9 @@ interface DeclarationProvider {
 
     fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry>
 
-    fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
+    fun getClassOrObjectDeclarations(name: Name): Collection<KtClassOrObjectInfo<*>>
+
+    fun getScriptDeclarations(name: Name): Collection<KtScriptInfo>
 
     fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias>
 

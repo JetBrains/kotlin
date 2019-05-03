@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
-import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.refactoring.JavaRefactoringSettings
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -25,11 +24,11 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtProperty
 
 class KotlinInlineValDialog(
-        property: KtProperty,
-        reference: KtSimpleNameReference?,
-        private val replacementStrategy: UsageReplacementStrategy,
-        private val assignmentToDelete: KtBinaryExpression?,
-        withPreview: Boolean = true
+    property: KtProperty,
+    reference: KtSimpleNameReference?,
+    private val replacementStrategy: UsageReplacementStrategy,
+    private val assignmentToDelete: KtBinaryExpression?,
+    withPreview: Boolean = true
 ) : AbstractKotlinInlineDialog(property, reference) {
 
     private val isLocal = (callable as KtProperty).isLocal
@@ -39,7 +38,7 @@ class KotlinInlineValDialog(
     init {
         setPreviewResults(withPreview && shouldBeShown())
         if (simpleLocal) {
-            setDoNotAskOption(object : DialogWrapper.DoNotAskOption {
+            setDoNotAskOption(object : DoNotAskOption {
                 override fun isToBeShown() = EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog
 
                 override fun setToBeShown(value: Boolean, exitCode: Int) {
@@ -62,10 +61,12 @@ class KotlinInlineValDialog(
 
     public override fun doAction() {
         invokeRefactoring(
-                KotlinInlineCallableProcessor(project, replacementStrategy, callable, reference,
-                                              inlineThisOnly = isInlineThisOnly,
-                                              deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration,
-                                              statementToDelete = assignmentToDelete)
+            KotlinInlineCallableProcessor(
+                project, replacementStrategy, callable, reference,
+                inlineThisOnly = isInlineThisOnly,
+                deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration,
+                statementToDelete = assignmentToDelete
+            )
         )
 
         val settings = JavaRefactoringSettings.getInstance()

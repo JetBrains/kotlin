@@ -128,8 +128,8 @@ abstract class BasicOptimizerTest(private var basePath: String) {
 
     private fun runScript(fileName: String, code: String) {
         val engine = createScriptEngine()
-        engine.eval(code)
-        val result = engine.eval("box()")
+        engine.evalVoid(code)
+        val result = engine.eval<String>("box()")
 
         Assert.assertEquals("$fileName: box() function must return 'OK'", "OK", result)
     }

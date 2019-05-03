@@ -1,0 +1,41 @@
+FILE: components.kt
+    public final data class D : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|, y: R|kotlin/String|): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/String| = R|<local>/y|
+            public get(): R|kotlin/String|
+
+        public final fun component1(): R|kotlin/Int| {
+            ^component1 R|/D.x|
+        }
+
+        public final fun component2(): R|kotlin/String| {
+            ^component2 R|/D.y|
+        }
+
+    }
+    public final fun foo(list: R|kotlin/collections/List<D>|): R|kotlin/Unit| {
+        lval <range>: R|kotlin/collections/List<D>| = R|<local>/list|
+        lval <iterator>: R|kotlin/collections/Iterator<D>| = R|<local>/<range>|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<D>|>|()
+        while(R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+            lval <destruct>: R|D| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|D|>|()
+            lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/D.component1|()
+            lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/D.component2|()
+        }
+
+        lval <destruct>: R|D| = R|<local>/list|.R|kotlin/collections/first|<R|D|>()
+        lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/D.component1|()
+        lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/D.component2|()
+        R|<local>/list|.R|kotlin/collections/forEach|<R|D|>(<L> = forEach@fun <anonymous>(<destruct>: R|D|): R|kotlin/Unit| {
+            lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/D.component1|()
+            lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/D.component2|()
+            R|kotlin/io/println|(R|<local>/x|)
+            R|kotlin/io/println|(R|<local>/y|)
+        }
+        )
+    }

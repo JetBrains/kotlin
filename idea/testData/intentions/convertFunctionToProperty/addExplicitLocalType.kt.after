@@ -2,7 +2,7 @@ fun test() {
     class X
 
     class A(val n: Int) {
-        val foo get() = X()
+        val foo<caret> get() = X()
     }
 
     val t = A(1).foo

@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -139,7 +138,6 @@ internal class ProjectResolutionFacade(
             projectContext,
             modulesToCreateResolversFor,
             modulesContentFactory,
-            modulePlatforms = { module -> module.platform?.multiTargetPlatform },
             moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
             resolverForModuleFactoryByPlatform = { modulePlatform ->
                 val platform = modulePlatform ?: settings.platform

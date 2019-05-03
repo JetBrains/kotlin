@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 class FirMemberPropertyImpl(
     session: FirSession,
     psi: PsiElement?,
-    symbol: FirPropertySymbol,
+    override val symbol: FirPropertySymbol,
     name: Name,
     visibility: Visibility,
     modality: Modality?,
@@ -39,9 +39,10 @@ class FirMemberPropertyImpl(
     override var setter: FirPropertyAccessor,
     override var delegate: FirExpression?
 ) : FirAbstractCallableMember(
-    session, psi, symbol, name, visibility, modality, isExpect, isActual, isOverride, receiverTypeRef, returnTypeRef
+    session, psi, name, visibility, modality, isExpect, isActual, isOverride, receiverTypeRef, returnTypeRef
 ), FirProperty {
     init {
+        symbol.bind(this)
         status.isConst = isConst
         status.isLateInit = isLateInit
     }

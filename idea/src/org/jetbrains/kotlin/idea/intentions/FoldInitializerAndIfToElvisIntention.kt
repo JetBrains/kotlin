@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
+@Suppress("DEPRECATION")
 class FoldInitializerAndIfToElvisInspection : IntentionBasedInspection<KtIfExpression>(FoldInitializerAndIfToElvisIntention::class)
 
 class FoldInitializerAndIfToElvisIntention :
@@ -55,7 +56,7 @@ class FoldInitializerAndIfToElvisIntention :
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val newElvis = FoldInitializerAndIfToElvisIntention.applyTo(element)
+        val newElvis = applyTo(element)
         editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
     }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.project
@@ -23,11 +23,12 @@ import com.intellij.util.SmartList
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.analyzer.CombinedModuleInfo
+import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
-import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
 import org.jetbrains.kotlin.caches.resolve.resolution
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.enlargedSearchScope
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
@@ -210,8 +211,8 @@ fun Module.testSourceInfo(): ModuleTestSourceInfo? = if (hasTestRoots()) ModuleT
 
 internal fun Module.correspondingModuleInfos(): List<ModuleSourceInfo> = listOf(testSourceInfo(), productionSourceInfo()).filterNotNull()
 
-private fun Module.hasProductionRoots() = hasRootsOfType(JavaSourceRootType.SOURCE) || hasRootsOfType(KotlinSourceRootType.Source) || (isNewMPPModule && sourceType == SourceType.PRODUCTION)
-private fun Module.hasTestRoots() = hasRootsOfType(JavaSourceRootType.TEST_SOURCE) || hasRootsOfType(KotlinSourceRootType.TestSource) || (isNewMPPModule && sourceType == SourceType.TEST)
+private fun Module.hasProductionRoots() = hasRootsOfType(JavaSourceRootType.SOURCE) || hasRootsOfType(SourceKotlinRootType) || (isNewMPPModule && sourceType == SourceType.PRODUCTION)
+private fun Module.hasTestRoots() = hasRootsOfType(JavaSourceRootType.TEST_SOURCE) || hasRootsOfType(TestSourceKotlinRootType) || (isNewMPPModule && sourceType == SourceType.TEST)
 
 private fun Module.hasRootsOfType(sourceRootType: JpsModuleSourceRootType<*>): Boolean =
     rootManager.contentEntries.any { it.getSourceFolders(sourceRootType).isNotEmpty() }

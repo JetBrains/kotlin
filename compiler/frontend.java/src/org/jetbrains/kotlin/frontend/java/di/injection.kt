@@ -140,13 +140,14 @@ fun createContainerForTopDownAnalyzerForJvm(
         expectActualTracker: ExpectActualTracker,
         packagePartProvider: PackagePartProvider,
         moduleClassResolver: ModuleClassResolver,
+        targetEnvironment: TargetEnvironment,
         jvmTarget: JvmTarget,
         languageVersionSettings: LanguageVersionSettings,
         configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
         javaClassTracker: JavaClassesTracker? = null
 ): ComponentProvider = createContainerForLazyResolveWithJava(
         moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
-        CompilerEnvironment, lookupTracker, expectActualTracker, packagePartProvider, jvmTarget, languageVersionSettings,
+        targetEnvironment, lookupTracker, expectActualTracker, packagePartProvider, jvmTarget, languageVersionSettings,
         useBuiltInsProvider = true,
         configureJavaClassFinder = configureJavaClassFinder,
         javaClassTracker = javaClassTracker

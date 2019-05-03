@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class DeserializedTypeParameterDescriptor(
     private val c: DeserializationContext,
-    private val proto: ProtoBuf.TypeParameter,
+    val proto: ProtoBuf.TypeParameter,
     index: Int
 ) : AbstractLazyTypeParameterDescriptor(
     c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name),

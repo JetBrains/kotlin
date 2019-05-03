@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.jvm.diagnostics;
@@ -57,6 +57,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
         MAP.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");
         MAP.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions");
+        MAP.put(SYNCHRONIZED_ON_INLINE, "'@Synchronized' annotation has no effect on inline functions");
         MAP.put(EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract");
         MAP.put(EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body");
         MAP.put(EXTERNAL_DECLARATION_IN_INTERFACE, "Members of interfaces can not be external");
@@ -67,7 +68,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(NON_SOURCE_REPEATED_ANNOTATION, "Repeatable annotations with non-SOURCE retention are not yet supported");
         MAP.put(ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES, "Annotation ''@{0}'' is not applicable to the multi-file classes", TO_STRING);
 
-        MAP.put(JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_MULTIFILE_CLASSES, "''@JvmPackageName'' annotation is not supported in multi-file classes");
         MAP.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "''@JvmPackageName'' annotation value cannot be empty");
         MAP.put(JVM_PACKAGE_NAME_MUST_BE_VALID_NAME, "''@JvmPackageName'' annotation value must be a valid dot-qualified name of a package");
         MAP.put(JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES, "''@JvmPackageName'' annotation is not supported for files with class declarations");

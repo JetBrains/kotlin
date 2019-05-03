@@ -60,7 +60,7 @@ abstract class KotlinUAnnotationBase<T : KtCallElement>(
 
     protected abstract fun computeClassDescriptor(): ClassDescriptor?
 
-    override fun resolve(): PsiClass? = computeClassDescriptor()?.toSource()?.getMaybeLightElement(this) as? PsiClass
+    override fun resolve(): PsiClass? = computeClassDescriptor()?.toSource()?.getMaybeLightElement() as? PsiClass
 
     override fun findAttributeValue(name: String?): UExpression? =
         findDeclaredAttributeValue(name) ?: findAttributeDefaultValue(name ?: "value")
@@ -117,9 +117,7 @@ class KotlinUAnnotation(
     override val uastAnchor by lazy {
         KotlinUIdentifier(
             javaPsi?.nameReferenceElement,
-            annotationEntry.typeReference?.typeElement?.let {
-                (it as? KtUserType)?.referenceExpression?.getReferencedNameElement() ?: it.navigationElement
-            },
+            annotationEntry.typeReference?.nameElement,
             this
         )
     }

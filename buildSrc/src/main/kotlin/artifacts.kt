@@ -35,14 +35,26 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     }
 }
 
+var Project.artifactsRemovedDiagnosticFlag: Boolean
+    get() = extra.has("artifactsRemovedDiagnosticFlag") && extra["artifactsRemovedDiagnosticFlag"] == true
+    set(value) {
+        extra["artifactsRemovedDiagnosticFlag"] = value
+    }
+
+fun Project.removeArtifacts(configuration: Configuration, task: Task) {
+    configuration.artifacts.removeAll { artifact ->
+        artifact.file in task.outputs.files
+    }
+
+    artifactsRemovedDiagnosticFlag = true
+}
+
 fun Project.noDefaultJar() {
     tasks.findByName("jar")?.let { defaultJarTask ->
         defaultJarTask.enabled = false
         defaultJarTask.actions = emptyList()
         configurations.forEach { cfg ->
-            cfg.artifacts.removeAll { artifact ->
-                artifact.file in defaultJarTask.outputs.files
-            }
+            removeArtifacts(cfg, defaultJarTask)
         }
     }
 }
@@ -58,10 +70,15 @@ fun Project.runtimeJarArtifactBy(task: Task, artifactRef: Any, body: Configurabl
 fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
     extra["runtimeJarTask"] = task
     tasks.findByName("jar")?.let { defaultJarTask ->
-        configurations.getOrCreate("archives")
-            .artifacts.removeAll { (it as? ArchivePublishArtifact)?.archiveTask?.let { it == defaultJarTask } ?: false }
+        removeArtifacts(configurations.getOrCreate("archives"), defaultJarTask)
     }
     return task.apply {
+        configurations.findByName("embedded")?.let { embedded ->
+            dependsOn(embedded)
+            from {
+                embedded.map(::zipTree)
+            }
+        }
         setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         body()
@@ -109,6 +126,10 @@ fun Project.standardPublicJars() {
 fun Project.publish(body: Upload.() -> Unit = {}): Upload {
     apply<plugins.PublishedKotlinModule>()
 
+    if (artifactsRemovedDiagnosticFlag) {
+        error("`publish()` should be called before removing artifacts typically done in `noDefaultJar()` or `runtimeJar()` call")
+    }
+
     afterEvaluate {
         if (configurations.findByName("classes-dirs") != null)
             throw GradleException("classesDirsArtifact() is incompatible with publish(), see sources comments for details")
@@ -116,27 +137,6 @@ fun Project.publish(body: Upload.() -> Unit = {}): Upload {
 
     return (tasks.getByName("uploadArchives") as Upload).apply {
         body()
-    }
-}
-
-fun Project.ideaPlugin(subdir: String = "lib", body: AbstractCopyTask.() -> Unit): Copy {
-    val thisProject = this
-    val pluginTask = task<Copy>("ideaPlugin") {
-        body()
-        into(File(rootProject.extra["ideaPluginDir"].toString(), subdir).path)
-        rename("-${java.util.regex.Pattern.quote(thisProject.version.toString())}", "")
-    }
-
-    task("idea-plugin") {
-        dependsOn(pluginTask)
-    }
-
-    return pluginTask
-}
-
-fun Project.ideaPlugin(subdir: String = "lib"): Copy = ideaPlugin(subdir) {
-    runtimeJarTaskIfExists()?.let {
-        from(it)
     }
 }
 

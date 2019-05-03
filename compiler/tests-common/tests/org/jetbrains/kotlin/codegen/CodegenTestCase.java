@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.TestsCompiletimeError;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
-import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
+import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider;
+import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -785,24 +785,21 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     protected void doTest(String filePath) throws Exception {
         File file = new File(filePath);
-        String expectedText = KotlinTestUtils.doLoadFile(file);
         Ref<File> javaFilesDir = Ref.create();
 
-        List<TestFile> testFiles = createTestFiles(file, expectedText, javaFilesDir, "");
+        String expectedText = KotlinTestUtils.doLoadFile(file);
+        if (!coroutinesPackage.isEmpty()) {
+            expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage);
+        }
+
+        List<TestFile> testFiles = createTestFiles(file, expectedText, javaFilesDir, coroutinesPackage);
 
         doMultiFileTest(file, testFiles, javaFilesDir.get());
     }
 
     protected void doTestWithCoroutinesPackageReplacement(String filePath, String packageName) throws Exception {
-        File file = new File(filePath);
-        String expectedText = KotlinTestUtils.doLoadFile(file);
-        expectedText = expectedText.replace("COROUTINES_PACKAGE", packageName);
         this.coroutinesPackage = packageName;
-        Ref<File> javaFilesDir = Ref.create();
-
-        List<TestFile> testFiles = createTestFiles(file, expectedText, javaFilesDir, coroutinesPackage);
-
-        doMultiFileTest(file, testFiles, javaFilesDir.get());
+        doTest(filePath);
     }
 
     @NotNull

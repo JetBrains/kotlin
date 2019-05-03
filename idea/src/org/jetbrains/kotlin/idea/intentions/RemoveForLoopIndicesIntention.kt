@@ -29,9 +29,10 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
+@Suppress("DEPRECATION")
 class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>(
-        RemoveForLoopIndicesIntention::class,
-        "Index is not used in the loop body"
+    RemoveForLoopIndicesIntention::class,
+    "Index is not used in the loop body"
 ) {
     override fun problemHighlightType(element: KtForExpression): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }

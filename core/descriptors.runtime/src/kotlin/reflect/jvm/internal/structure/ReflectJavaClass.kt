@@ -21,11 +21,12 @@ import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.util.*
 
 class ReflectJavaClass(
-        private val klass: Class<*>
+    private val klass: Class<*>
 ) : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaClass {
     override val element: Class<*> get() = klass
 
@@ -33,20 +34,20 @@ class ReflectJavaClass(
 
     override val innerClassNames: List<Name>
         get() = klass.declaredClasses
-                .asSequence()
-                .filterNot {
-                    // getDeclaredClasses() returns anonymous classes sometimes, for example enums with specialized entries (which are
-                    // in fact anonymous classes) or in case of a special anonymous class created for the synthetic accessor to a private
-                    // nested class constructor accessed from the outer class
-                    it.simpleName.isEmpty()
-                }
-                .mapNotNull { it.simpleName.takeIf(Name::isValidIdentifier)?.let(Name::identifier) }.toList()
+            .asSequence()
+            .filterNot {
+                // getDeclaredClasses() returns anonymous classes sometimes, for example enums with specialized entries (which are
+                // in fact anonymous classes) or in case of a special anonymous class created for the synthetic accessor to a private
+                // nested class constructor accessed from the outer class
+                it.simpleName.isEmpty()
+            }
+            .mapNotNull { it.simpleName.takeIf(Name::isValidIdentifier)?.let(Name::identifier) }.toList()
 
     override fun findInnerClass(name: Name) = klass.declaredClasses
-            .asSequence()
-            .firstOrNull {
-                it.simpleName == name.asString()
-            }?.let(::ReflectJavaClass)
+        .asSequence()
+        .firstOrNull {
+            it.simpleName == name.asString()
+        }?.let(::ReflectJavaClass)
 
     override val fqName: FqName
         get() = klass.classId.asSingleFqName()
@@ -62,16 +63,16 @@ class ReflectJavaClass(
 
     override val methods: List<ReflectJavaMethod>
         get() = klass.declaredMethods
-                .asSequence()
-                .filter { method ->
-                    when {
-                        method.isSynthetic -> false
-                        isEnum -> !isEnumValuesOrValueOf(method)
-                        else -> true
-                    }
+            .asSequence()
+            .filter { method ->
+                when {
+                    method.isSynthetic -> false
+                    isEnum -> !isEnumValuesOrValueOf(method)
+                    else -> true
                 }
-                .map(::ReflectJavaMethod)
-                .toList()
+            }
+            .map(::ReflectJavaMethod)
+            .toList()
 
     private fun isEnumValuesOrValueOf(method: Method): Boolean {
         return when (method.name) {
@@ -83,17 +84,17 @@ class ReflectJavaClass(
 
     override val fields: List<ReflectJavaField>
         get() = klass.declaredFields
-                .asSequence()
-                .filter { field -> !field.isSynthetic }
-                .map(::ReflectJavaField)
-                .toList()
+            .asSequence()
+            .filterNot(Member::isSynthetic)
+            .map(::ReflectJavaField)
+            .toList()
 
     override val constructors: List<ReflectJavaConstructor>
         get() = klass.declaredConstructors
-                .asSequence()
-                .filter { constructor -> !constructor.isSynthetic }
-                .map(::ReflectJavaConstructor)
-                .toList()
+            .asSequence()
+            .filterNot(Member::isSynthetic)
+            .map(::ReflectJavaConstructor)
+            .toList()
 
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null

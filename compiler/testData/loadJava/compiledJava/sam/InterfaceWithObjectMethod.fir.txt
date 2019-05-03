@@ -1,0 +1,4 @@
+public abstract interface InterfaceWithObjectMethod : R|kotlin/Any| {
+    public abstract operator fun toString(): R|kotlin/String|
+
+}

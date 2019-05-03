@@ -1,44 +1,107 @@
 package common
 
 import kotlin.test.FrameworkAdapter
+import kotlin.collections.*
 
-private val context = TestContext()
+private var sortingContext = SortingContext()
 
-fun call(name: String) = context.call(name)
+private var bodyContext: TestBodyContext? = null
+
+fun call(name: String) = bodyContext!!.call(name)
 
 fun raise(name: String): Nothing {
-    context.raised(name)
+    bodyContext!!.raised(name)
     throw Exception(name)
 }
 
 @Suppress("INVISIBLE_MEMBER")
-val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
+private val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
     override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
-        context.suite(name, ignored) { suiteFn() }
+        sortingContext.suite(name, ignored) { suiteFn() }
     }
 
     override fun test(name: String, ignored: Boolean, testFn: () -> dynamic) {
-        context.test(name, ignored) { returned(testFn()) }
+        sortingContext.test(name, ignored) { returned(testFn()) }
     }
 })
 
-class TestContext {
+interface SuiteContext {
+    fun suite(name: String, ignored: Boolean = false, body: SuiteContext.() -> Unit)
+
+    fun test(name: String, ignored: Boolean = false, body: TestBodyContext.() -> Unit = {})
+}
+
+
+interface TestBodyContext {
+    fun call(name: String)
+
+    fun raised(msg: String)
+
+    fun caught(msg: String)
+
+    fun returned(msg: dynamic)
+}
+
+private sealed class Entity(val name: String,
+                    val ignored: Boolean)
+
+private class Suite(name: String, ignored: Boolean, val body: SuiteContext.() -> Unit): Entity(name, ignored)
+
+private class Test(name: String, ignored: Boolean, val body: TestBodyContext.() -> Unit): Entity(name, ignored)
+
+
+private class SortingContext: SuiteContext {
+
+    val structure = mutableListOf<Entity>()
+
+    override fun suite(name: String, ignored: Boolean, body: SuiteContext.() -> Unit) {
+        structure += Suite(name, ignored, body)
+    }
+
+    override fun test(name: String, ignored: Boolean, body: TestBodyContext.() -> Unit) {
+        structure += Test(name, ignored, body)
+    }
+
+    fun <T: SuiteContext> replayInto(context: T): T {
+        structure.sortedBy { it.name }.forEach {
+            when (it) {
+                is Suite -> context.suite(it.name, it.ignored) {
+                    val oldSorter = sortingContext
+
+                    sortingContext = SortingContext()
+                    it.body(sortingContext)
+                    sortingContext.replayInto(this)
+
+                    sortingContext = oldSorter
+                }
+                is Test -> context.test(it.name, it.ignored) {
+                    bodyContext = this
+                    it.body(this)
+                    bodyContext = null
+                }
+            }
+        }
+
+        return context
+    }
+}
+
+private class LoggingContext : SuiteContext, TestBodyContext{
     val log: String
         get() = logHead + (lastRecord ?: "")
 
-    var indentation = ""
+    private var indentation = ""
 
-    fun suite(name: String, ignored: Boolean = false, body: TestContext.() -> Unit) = indent {
+    override fun suite(name: String, ignored: Boolean, body: SuiteContext.() -> Unit) = indent {
         record("suite(\"$name\"${optionalIgnore(ignored)}) {")
-        body.runSafely()
+        runSafely { this.body() }
         record("}")
     }
 
-
-    fun test(name: String, ignored: Boolean = false, body: TestContext.() -> Unit = {}) = indent {
+    override fun test(name: String, ignored: Boolean, body: TestBodyContext.() -> Unit) = indent {
         val num = record("test(\"$name\"${optionalIgnore(ignored)}) {")
 
-        body.runSafely()
+        runSafely { this.body() }
 
         if (!writtenSince(num)) {
             record("test(\"$name\"${optionalIgnore(ignored)})", replaceLast = true)
@@ -48,25 +111,25 @@ class TestContext {
         }
     }
 
-    fun call(name: String) = indent {
+    override fun call(name: String) = indent {
         record("call(\"$name\")")
     }
 
-    fun raised(msg: String) = indent {
+    override fun raised(msg: String) = indent {
         record("raised(\"$msg\")")
     }
 
-    fun caught(msg: String) = indent {
+    override fun caught(msg: String) = indent {
         record("caught(\"$msg\")")
     }
 
-    fun returned(msg: dynamic) = indent {
+    override fun returned(msg: dynamic) = indent {
         if (msg is String) record("returned(\"$msg\")")
     }
 
-    private fun (TestContext.() -> Unit).runSafely() {
+    private fun runSafely(body: () -> Unit) {
         try {
-            this()
+            body()
         }
         catch (t: Throwable) {
             caught(t.message ?: "")
@@ -100,8 +163,8 @@ class TestContext {
     private fun optionalIgnore(ignored: Boolean) = if (ignored) ", true" else ""
 }
 
-fun checkLog(wrapInEmptySuite: Boolean = true, body: TestContext.() -> Unit): String {
-    val expectedContext = TestContext()
+fun checkLog(wrapInEmptySuite: Boolean = true, body: SuiteContext.() -> Unit): String {
+    val expectedContext = SortingContext()
     if (wrapInEmptySuite) {
         expectedContext.suite("") {
             body()
@@ -109,8 +172,12 @@ fun checkLog(wrapInEmptySuite: Boolean = true, body: TestContext.() -> Unit): St
     } else {
         expectedContext.body()
     }
-    if (context.log != expectedContext.log) {
-        return "Failed test structure check. Expected: ${expectedContext.log}; actual: ${context.log}."
+
+    val expectedLog = expectedContext.replayInto(LoggingContext()).log
+    val actualLog = sortingContext.replayInto(LoggingContext()).log
+
+    if (actualLog != expectedLog) {
+        return "Failed test structure check. Expected: ${expectedLog}; actual: ${actualLog}."
     }
     else {
         return "OK"

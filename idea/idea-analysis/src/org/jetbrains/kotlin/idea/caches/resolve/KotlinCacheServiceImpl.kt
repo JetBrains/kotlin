@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.util.contextWithNewLockAndCompositeExceptionTracker
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
-import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider
+import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -111,7 +111,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         )
 
         val scriptFile = (dependenciesModuleInfo as? ScriptDependenciesInfo.ForFile)?.scriptFile
-        val relatedModules = scriptFile?.let { ScriptRelatedModulesProvider.getRelatedModules(it, project) }
+        val relatedModules = scriptFile?.let { ScriptAdditionalIdeaDependenciesProvider.getRelatedModules(it, project) }
         val globalFacade =
             if (relatedModules?.isNotEmpty() == true) {
                 globalFacade(settings)

@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+package my.simple.name
+
+import kotlin.Int.Companion.MAX_VALUE
+
+fun main() {
+    val a = MAX_VALUE
+}

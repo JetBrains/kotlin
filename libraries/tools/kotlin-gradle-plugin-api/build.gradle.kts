@@ -7,12 +7,12 @@ plugins {
     id("jps-compatible")
 }
 
-standardPublicJars()
 publish()
+
+standardPublicJars()
 
 dependencies {
     compile(kotlinStdlib())
-    compile(project(":kotlin-native:kotlin-native-utils"))
 
     compileOnly(gradleApi())
     compileOnly("com.android.tools.build:gradle:0.4.2")

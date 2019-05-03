@@ -28,4 +28,4 @@ open class Base {
 // RESULT: Expecting an element; looking at ERROR_ELEMENT '(1,6) in /fragment.kt
 
 // EXPRESSION: super.baseFun()
-// RESULT: Cannot perform an action for expression with super call
+// RESULT: Evaluation of 'super' call expression is not supported

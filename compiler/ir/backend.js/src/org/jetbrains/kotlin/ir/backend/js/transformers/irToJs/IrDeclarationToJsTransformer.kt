@@ -1,17 +1,15 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.js.backend.ast.JsDeclarationScope
-import org.jetbrains.kotlin.js.backend.ast.JsEmpty
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
-import org.jetbrains.kotlin.js.backend.ast.JsVars
+import org.jetbrains.kotlin.js.backend.ast.*
 
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
@@ -36,7 +34,7 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
     }
 
     override fun visitField(declaration: IrField, context: JsGenerationContext): JsStatement {
-        val fieldName = context.getNameForSymbol(declaration.symbol)
+        val fieldName = context.getNameForField(declaration)
 
         if (declaration.isExternal) return JsEmpty
 

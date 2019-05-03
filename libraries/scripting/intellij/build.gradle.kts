@@ -4,6 +4,8 @@ plugins {
     id("jps-compatible")
 }
 
+jvmTarget = "1.6"
+
 dependencies {
     compile(project(":kotlin-script-runtime"))
     compile(kotlinStdlib())
@@ -16,9 +18,6 @@ sourceSets {
     "test" { }
 }
 
-standardPublicJars()
-
-ideaPlugin()
-
 publish()
 
+standardPublicJars()

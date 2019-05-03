@@ -1,0 +1,11 @@
+LineBreakpoint created at defaultImplsMangling.kt:8
+Run Java
+Connected to the target VM
+defaultImplsMangling.kt:8
+Compile bytecode for x
+ frame    = foo:8, IFoo$DefaultImpls {defaultImplsMangling}
+   local    = this: defaultImplsMangling.IFoo = {defaultImplsMangling.Foo@uniqueID} (sp = null)
+     field    = x: int = 1 (sp = defaultImplsMangling.kt, 13)
+Disconnected from the target VM
+
+Process finished with exit code 0

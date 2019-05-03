@@ -27,9 +27,12 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
+import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
+import org.jetbrains.uast.visitor.UastVisitor
 
 abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUElement(givenParent), UClassTypeSpecific, UAnchorOwner,
     JvmDeclarationUElementPlaceholder {
@@ -43,13 +46,25 @@ abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUEle
         }
     }
 
+    open val ktClass: KtClassOrObject? get() = (psi as? KtLightClass)?.kotlinOrigin
+
     override val uastSuperTypes: List<UTypeReferenceExpression>
-        get() {
-            val ktClass = (psi as? KtLightClass)?.kotlinOrigin ?: return emptyList()
-            return ktClass.superTypeListEntries.mapNotNull { it.typeReference }.map {
-                LazyKotlinUTypeReferenceExpression(it, this)
-            }
+        get() = ktClass?.superTypeListEntries.orEmpty().mapNotNull { it.typeReference }.map {
+            LazyKotlinUTypeReferenceExpression(it, this)
         }
+
+    val delegateExpressions: List<UExpression>
+        get() = ktClass?.superTypeListEntries.orEmpty()
+            .filterIsInstance<KtDelegatedSuperTypeEntry>()
+            .map { KotlinSupertypeDelegationUExpression(it, this) }
+
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitClass(this)) return
+        delegateExpressions.acceptList(visitor)
+        annotations.acceptList(visitor)
+        uastDeclarations.acceptList(visitor)
+        visitor.afterVisitClass(this)
+    }
 
     override val annotations: List<UAnnotation> by lz {
         (sourcePsi as? KtModifierListOwner)?.annotationEntries.orEmpty().map { KotlinUAnnotation(it, this) }
@@ -60,12 +75,32 @@ abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUEle
 
 }
 
+class KotlinSupertypeDelegationUExpression(override val sourcePsi: KtDelegatedSuperTypeEntry, givenParent: UElement?) :
+    KotlinAbstractUExpression(givenParent), UExpressionList {
+
+    override val psi: PsiElement? get() = sourcePsi
+
+    val typeReference: UTypeReferenceExpression? by lazy {
+        sourcePsi.typeReference?.let { KotlinUTypeReferenceExpression(it.toPsiType(this), it, this) }
+    }
+
+    val delegateExpression: UExpression? by lazy {
+        sourcePsi.delegateExpression?.let { kotlinUastPlugin.convertElement(it, this, UExpression::class.java) as? UExpression }
+    }
+
+    override val expressions: List<UExpression>
+        get() = listOfNotNull(typeReference, delegateExpression)
+
+    override val kind: UastSpecialExpressionKind get() = KotlinSpecialExpressionKinds.SUPER_DELEGATION
+
+}
+
 open class KotlinUClass private constructor(
         psi: KtLightClass,
         givenParent: UElement?
 ) : AbstractKotlinUClass(givenParent), PsiClass by psi {
 
-    val ktClass = psi.kotlinOrigin
+    final override val ktClass = psi.kotlinOrigin
 
     override val javaPsi: KtLightClass = psi
 
@@ -214,7 +249,7 @@ class KotlinUAnonymousClass(
 
     override val javaPsi: PsiAnonymousClass = psi
 
-    override val sourcePsi: KtClassOrObject? = (psi as? KtLightClass)?.kotlinOrigin
+    override val sourcePsi: KtClassOrObject? = ktClass
 
     override fun getOriginalElement(): PsiElement? = super<AbstractKotlinUClass>.getOriginalElement()
 

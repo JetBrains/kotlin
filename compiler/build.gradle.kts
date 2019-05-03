@@ -1,7 +1,6 @@
 import java.io.File
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
@@ -44,11 +43,12 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:fir:psi2fir"))
+    testCompile(projectTests(":compiler:fir:fir2ir"))
     testCompile(projectTests(":compiler:fir:resolve"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
-    testCompile(project(":kotlin-scripting-compiler"))
+    testCompile(project(":kotlin-scripting-compiler-impl"))
     testCompile(project(":kotlin-script-util"))
     testCompileOnly(projectRuntimeJar(":kotlin-daemon-client"))
     testCompileOnly(project(":kotlin-reflect-api"))
@@ -66,8 +66,7 @@ dependencies {
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(files(toolsJar()))
 
-    // For JPS build
-    if (System.getProperty("idea.active") != null) {
+    if (project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
     }
 }
@@ -84,7 +83,7 @@ jar.from("../idea/resources") {
     include("META-INF/extensions/compiler.xml")
 }
 
-projectTest {
+projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))

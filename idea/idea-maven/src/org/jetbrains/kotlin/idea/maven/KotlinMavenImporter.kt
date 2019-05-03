@@ -331,8 +331,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             .flatMap { it.goals.asSequence() }
             .any { it in PomFile.KotlinGoals.CompileGoals && it !in PomFile.KotlinGoals.JvmGoals }
 
-        val prodSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) KotlinSourceRootType.Source else JavaSourceRootType.SOURCE
-        val testSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) KotlinSourceRootType.TestSource else JavaSourceRootType.TEST_SOURCE
+        val prodSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) SourceKotlinRootType else JavaSourceRootType.SOURCE
+        val testSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) TestSourceKotlinRootType else JavaSourceRootType.TEST_SOURCE
 
         for ((type, dir) in directories) {
             if (rootModel.getSourceFolder(File(dir)) == null) {
@@ -346,10 +346,10 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         }
 
         if (isNonJvmModule) {
-            mavenProject.sources.forEach { rootModel.addSourceFolder(it, KotlinSourceRootType.Source) }
-            mavenProject.testSources.forEach { rootModel.addSourceFolder(it, KotlinSourceRootType.TestSource) }
-            mavenProject.resources.forEach { rootModel.addSourceFolder(it.directory, KotlinResourceRootType.Resource) }
-            mavenProject.testResources.forEach { rootModel.addSourceFolder(it.directory, KotlinResourceRootType.TestResource) }
+            mavenProject.sources.forEach { rootModel.addSourceFolder(it, SourceKotlinRootType) }
+            mavenProject.testSources.forEach { rootModel.addSourceFolder(it, TestSourceKotlinRootType) }
+            mavenProject.resources.forEach { rootModel.addSourceFolder(it.directory, ResourceKotlinRootType) }
+            mavenProject.testResources.forEach { rootModel.addSourceFolder(it.directory, TestResourceKotlinRootType) }
             KotlinSdkType.setUpIfNeeded()
         }
 

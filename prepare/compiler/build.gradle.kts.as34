@@ -1,8 +1,5 @@
-import java.io.File
-import proguard.gradle.ProGuardTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer.COMPILE
-import org.gradle.api.file.DuplicatesStrategy
+import proguard.gradle.ProGuardTask
 
 description = "Kotlin Compiler"
 
@@ -21,7 +18,6 @@ val fatJarContents by configurations.creating
 
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
-val fatSourcesJarContents by configurations.creating
 val fatJar by configurations.creating
 val compilerJar by configurations.creating
 val runtimeJar by configurations.creating
@@ -39,12 +35,6 @@ val compilerBaseName = name
 val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName.jar")
 
 val compilerModules: Array<String> by rootProject.extra
-
-compilerModules.forEach { evaluationDependsOn(it) }
-
-val compiledModulesSources = compilerModules.map {
-    project(it).mainSourceSet.allSource
-}
 
 dependencies {
     compile(kotlinStdlib())
@@ -65,13 +55,9 @@ dependencies {
         fatJarContents(project(it)) { isTransitive = false }
     }
 
-    compiledModulesSources.forEach {
-        fatSourcesJarContents(it)
-    }
-
     trove4jJar(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
 
-    fatJarContents(project(":core:builtins"))
+    fatJarContents(kotlinBuiltins())
     fatJarContents(commonDep("javax.inject"))
     fatJarContents(commonDep("org.jline", "jline"))
     fatJarContents(commonDep("org.fusesource.jansi", "jansi"))
@@ -87,9 +73,11 @@ dependencies {
         }
     }
     fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-1.3.0") }
-    fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
+    fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
 }
+
+publish()
 
 noDefaultJar()
 
@@ -152,9 +140,11 @@ runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
 }
 
 sourcesJar {
-    from(fatSourcesJarContents)
+    from {
+        compilerModules.map {
+            project(it).mainSourceSet.allSource
+        }
+    }
 }
 
 javadocJar()
-
-publish()

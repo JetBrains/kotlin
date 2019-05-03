@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js
@@ -26,7 +26,9 @@ import java.util.*
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
 
     private val externalPackageFragmentSymbol = IrExternalPackageFragmentSymbolImpl(context.internalPackageFragmentDescriptor)
-    private val externalPackageFragment = IrExternalPackageFragmentImpl(externalPackageFragmentSymbol)
+    val externalPackageFragment = IrExternalPackageFragmentImpl(externalPackageFragmentSymbol)
+
+    // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 
     // Equality operations:
 
@@ -117,6 +119,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val isNumberSymbol = getInternalFunction("isNumber")
     val isComparableSymbol = getInternalFunction("isComparable")
+    val isCharSequenceSymbol = getInternalFunction("isCharSequence")
 
     val isPrimitiveArray = mapOf(
         PrimitiveType.BOOLEAN to getInternalFunction("isBooleanArray"),
@@ -155,10 +158,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsCoroutineContext = context.symbolTable.referenceSimpleFunction(context.coroutineContextProperty.getter!!)
 
-    val jsGetContinuation = context.run {
-        val f = getInternalFunctions("getContinuation")
-        symbolTable.referenceSimpleFunction(f.single())
-    }
+    val jsGetContinuation = getInternalFunction("getContinuation")
     val jsGetKClass = getInternalWithoutPackage("getKClass")
     val jsGetKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
     val jsClass = getInternalFunction("jsClass")
@@ -214,7 +214,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsPrimitiveArrayIteratorFunctions =
         PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCase()}ArrayIterator") }
 
-    val arrayLiteral = unOp("arrayLiteral").symbol
+    val arrayLiteral = unOp("arrayLiteral")
 
     val primitiveToTypedArrayMap = EnumMap(
         mapOf(
@@ -229,14 +229,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val primitiveToSizeConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}Array").symbol
+                unOp("${it.toLowerCase()}Array")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}Array"))
         }
 
     val primitiveToLiteralConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}ArrayOf").symbol
+                unOp("${it.toLowerCase()}ArrayOf")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}ArrayOf"))
         }
 
@@ -249,7 +249,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsBind = defineJsBindIntrinsic()
 
     // TODO move to IntrinsifyCallsLowering
-    val doNotIntrinsifyAnnotationSymbol = context.symbolTable.referenceClass(context.getInternalClass("DoNotIntrinsify"))
+    val doNotIntrinsifyAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("DoNotIntrinsify"))
 
     // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
     val charSequenceClassSymbol = context.symbolTable.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
@@ -271,7 +271,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     // Helpers:
 
     private fun getInternalFunction(name: String) =
-        context.symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
+        context.symbolTable.referenceSimpleFunction(context.getJsInternalFunction(name))
 
     private fun getInternalWithoutPackage(name: String) =
         context.symbolTable.referenceSimpleFunction(context.getFunctions(FqName(name)).single())

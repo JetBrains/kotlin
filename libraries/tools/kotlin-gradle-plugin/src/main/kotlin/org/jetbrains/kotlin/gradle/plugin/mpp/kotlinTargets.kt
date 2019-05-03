@@ -1,31 +1,38 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
-import org.gradle.api.*
+import org.gradle.api.Action
+import org.gradle.api.DomainObjectSet
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
-import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage.JAVA_API
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
-import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.component.ComponentWithCoordinates
+import org.gradle.api.component.ComponentWithVariants
+import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.internal.component.SoftwareComponentInternal
+import org.gradle.api.internal.component.UsageContext
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.ConfigureUtil
 import org.gradle.util.WrapUtil
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.target.KonanTarget
+
+internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 
 abstract class AbstractKotlinTarget(
     final override val project: Project
@@ -51,24 +58,105 @@ abstract class AbstractKotlinTarget(
     override val publishable: Boolean
         get() = true
 
-    override val components: Set<KotlinTargetComponent> by lazy {
+    internal open val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
         val usageContexts = createUsageContexts(mainCompilation)
-        setOf(
-            if (isGradleVersionAtLeast(4, 7)) {
-                val componentName = mainCompilation.target.name
-                createKotlinVariant(componentName, mainCompilation, usageContexts).apply {
-                    sourcesArtifacts = setOf(
-                        sourcesJarArtifact(
-                            mainCompilation, componentName,
-                            dashSeparatedName(target.name.toLowerCase(), componentName.toLowerCase())
-                        )
-                    )
+
+        val componentName =
+            if (project.kotlinExtension is KotlinMultiplatformExtension)
+                targetName
+            else PRIMARY_SINGLE_COMPONENT_NAME
+
+        val result = if (isGradleVersionAtLeast(4, 7)) {
+            createKotlinVariant(componentName, mainCompilation, usageContexts)
+        } else {
+            KotlinVariant(mainCompilation, usageContexts)
+        }
+
+        result.sourcesArtifacts = setOf(
+            sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
+        )
+
+        setOf(result)
+    }
+
+    override val components: Set<SoftwareComponent> by lazy {
+        val kotlinVariants = kotlinComponents
+        if (isGradleVersionAtLeast(5, 3)) {
+            buildAdhocComponentsFromKotlinVariants(kotlinVariants)
+        } else {
+            kotlinVariants.also { project.components.addAll(it) }
+        }
+    }
+
+    // This API is introduced in Gradle 5.3. TODO when we build against Gradle 5.3+, rewrite this function
+    private fun buildAdhocComponentsFromKotlinVariants(kotlinVariants: Set<KotlinTargetComponent>): Set<SoftwareComponent> {
+        val softwareComponentFactoryClass = Class.forName("org.gradle.api.component.SoftwareComponentFactory")
+        // TODO replace internal API access with injection (not possible until we have this class on the compile classpath)
+        val softwareComponentFactory = (project as ProjectInternal).services.get(softwareComponentFactoryClass)
+
+        val adhocMethod = softwareComponentFactoryClass.getMethod("adhoc", String::class.java)
+        val adhocSoftwareComponentClass = Class.forName("org.gradle.api.component.AdhocComponentWithVariants")
+        val addVariantsFromConfigurationMethod = adhocSoftwareComponentClass.getMethod(
+            "addVariantsFromConfiguration", Configuration::class.java, org.gradle.api.Action::class.java
+        )
+        val configurationVariantDetailsClass = Class.forName("org.gradle.api.component.ConfigurationVariantDetails")
+        val mapToMavenScopeMethod = configurationVariantDetailsClass.getMethod(
+            "mapToMavenScope", String::class.java
+        )
+
+        return kotlinVariants.map { kotlinVariant ->
+            val adhocVariant = adhocMethod(softwareComponentFactory, kotlinVariant.name)
+
+            project.whenEvaluated {
+                (kotlinVariant as SoftwareComponentInternal).usages.filterIsInstance<KotlinUsageContext>().forEach { kotlinUsageContext ->
+                    val configuration = project.configurations.findByName(kotlinUsageContext.name)
+                        ?: project.configurations.create(kotlinUsageContext.name).also { configuration ->
+                            configuration.isCanBeConsumed = false
+                            configuration.isCanBeResolved = false
+                            configuration.dependencies.addAll(kotlinUsageContext.dependencies)
+                            configuration.dependencyConstraints.addAll(kotlinUsageContext.dependencyConstraints)
+                            configuration.artifacts.addAll(kotlinUsageContext.artifacts)
+
+                            kotlinUsageContext.attributes.keySet().forEach {
+                                // capture type parameter T
+                                fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
+                                    to.attribute(key, from.getAttribute(key)!!)
+                                }
+                                copyAttribute(it, kotlinUsageContext.attributes, configuration.attributes)
+                            }
+                        }
+
+                    val chooseMavenScopeAction = Action<Any> { configurationVariantDetails ->
+                        val mavenScope = when (kotlinUsageContext.usage.name) {
+                            "java-api-jars" -> "compile"
+                            JAVA_RUNTIME_JARS -> "runtime"
+                            else -> error("unexpected usage value '${kotlinUsageContext.usage.name}'")
+                        }
+                        mapToMavenScopeMethod(configurationVariantDetails, mavenScope)
+                    }
+
+                    addVariantsFromConfigurationMethod(adhocVariant, configuration, chooseMavenScopeAction)
+                }
+            }
+
+            adhocVariant as SoftwareComponent
+
+            if (kotlinVariant is KotlinVariantWithMetadataVariant) {
+                object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
+                    override fun getCoordinates() = kotlinVariant.coordinates
+                    override fun getVariants(): Set<out SoftwareComponent> = kotlinVariant.variants
+                    override fun getName(): String = adhocVariant.name
+                    override fun getUsages(): MutableSet<out UsageContext> = (adhocVariant as SoftwareComponentInternal).usages
                 }
             } else {
-                KotlinVariant(mainCompilation, usageContexts)
+                object : ComponentWithCoordinates, SoftwareComponentInternal {
+                    override fun getCoordinates() = (kotlinVariant as? ComponentWithCoordinates)?.coordinates
+                    override fun getName(): String = adhocVariant.name
+                    override fun getUsages(): MutableSet<out UsageContext> = (adhocVariant as SoftwareComponentInternal).usages
+                }
             }
-        ).also { project.components.addAll(it) }
+        }.toSet()
     }
 
     protected fun createKotlinVariant(
@@ -76,23 +164,24 @@ abstract class AbstractKotlinTarget(
         compilation: KotlinCompilation<*>,
         usageContexts: Set<DefaultKotlinUsageContext>
     ): KotlinVariant {
+        val kotlinExtension = project.kotlinExtension
 
-        val kotlinExtension = project.kotlinExtension as? KotlinMultiplatformExtension
-            ?: return KotlinVariantWithCoordinates(compilation, usageContexts)
+        val result =
+            if (kotlinExtension !is KotlinMultiplatformExtension || targetName == KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
+                KotlinVariantWithCoordinates(compilation, usageContexts)
+            else {
+                val metadataTarget =
+                    kotlinExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as AbstractKotlinTarget
 
-        if (targetName == KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
-            return KotlinVariantWithCoordinates(compilation, usageContexts)
-
-        val separateMetadataTarget = kotlinExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
-
-        val result = if (kotlinExtension.isGradleMetadataAvailable) {
-            KotlinVariantWithMetadataVariant(compilation, usageContexts, separateMetadataTarget)
-        } else {
-            // we should only add the Kotlin metadata dependency if we publish no Gradle metadata related to Kotlin MPP;
-            // with metadata, such a dependency would get invalid, since a platform module should only depend on modules for that
-            // same platform, not Kotlin metadata modules
-            KotlinVariantWithMetadataDependency(compilation, usageContexts, separateMetadataTarget)
-        }
+                if (kotlinExtension.isGradleMetadataAvailable) {
+                    KotlinVariantWithMetadataVariant(compilation, usageContexts, metadataTarget)
+                } else {
+                    // we should only add the Kotlin metadata dependency if we publish no Gradle metadata related to Kotlin MPP;
+                    // with metadata, such a dependency would get invalid, since a platform module should only depend on modules for that
+                    // same platform, not Kotlin metadata modules
+                    KotlinVariantWithMetadataDependency(compilation, usageContexts, metadataTarget)
+                }
+            }
 
         result.componentName = componentName
         return result
@@ -101,11 +190,11 @@ abstract class AbstractKotlinTarget(
     private fun createUsageContexts(
         producingCompilation: KotlinCompilation<*>
     ): Set<DefaultKotlinUsageContext> {
-        // Here, `JAVA_API` and `JAVA_RUNTIME_JARS` are used intentionally as Gradle needs this for
+        // Here, the Java Usage values are used intentionally as Gradle needs this for
         // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
         // These Java usages should not be replaced with the custom Kotlin usages.
         return listOfNotNull(
-            JAVA_API to apiElementsConfigurationName,
+            javaApiUsageForMavenScoping() to apiElementsConfigurationName,
             (JAVA_RUNTIME_JARS to runtimeElementsConfigurationName).takeIf { producingCompilation is KotlinCompilationToRunnableFiles }
         ).mapTo(mutableSetOf()) { (usageName, dependenciesConfigurationName) ->
             DefaultKotlinUsageContext(
@@ -157,221 +246,12 @@ abstract class AbstractKotlinTarget(
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
     lowerCamelCaseName(targetName, simpleName)
 
-open class KotlinAndroidTarget(
-    override val targetName: String,
-    project: Project
-) : AbstractKotlinTarget(project) {
-
-    override var disambiguationClassifier: String? = null
-        internal set
-
-    override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.androidJvm
-
-    private val compilationFactory = KotlinJvmAndroidCompilationFactory(project, this)
-
-    override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
-        project.container(compilationFactory.itemClass, compilationFactory)
-
-    /** Names of the Android library variants that should be published from the target's project within the default publications which are
-     * set up if the `maven-publish` Gradle plugin is applied.
-     *
-     * Item examples:
-     * * 'release' (in case no product flavors were defined)
-     * * 'fooRelease' (for the release build type of a flavor 'foo')
-     * * 'fooBarRelease' (for the release build type multi-dimensional flavors 'foo' and 'bar').
-     *
-     * If set to null, which can also be done with [publishAllLibraryVariants],
-     * all library variants will be published, but not test or application variants. */
-    var publishLibraryVariants: List<String>? = listOf()
-        // Workaround for Groovy GString items in a list:
-        set(value) { field = value?.map(Any::toString) }
-
-    /** Add Android library variant names to [publishLibraryVariants]. */
-    fun publishLibraryVariants(vararg names: String) {
-        publishLibraryVariants = publishLibraryVariants.orEmpty() + names
+internal fun javaApiUsageForMavenScoping() =
+    if (isGradleVersionAtLeast(5, 3)) {
+        "java-api-jars"
+    } else {
+        JAVA_API
     }
-
-    /** Set up all of the Android library variants to be published from this target's project within the default publications, which are
-     * set up if the `maven-publish` Gradle plugin is applied. This overrides the variants chosen with [publishLibraryVariants] */
-    fun publishAllLibraryVariants() {
-        publishLibraryVariants = null
-    }
-
-    /** If true, a publication will be created per merged product flavor, with the build types used as classifiers for the artifacts
-     * published within each publication. If set to false, each Android variant will have a separate publication. */
-    var publishLibraryVariantsGroupedByFlavor = false
-
-    private fun checkPublishLibraryVariantsExist() {
-        // Capture type parameter T
-        fun <T> AbstractAndroidProjectHandler<T>.getLibraryVariantNames() =
-            mutableSetOf<String>().apply {
-                forEachVariant(project) {
-                    if (getLibraryOutputTask(it) != null)
-                        add(getVariantName(it))
-                }
-            }
-
-        val variantNames =
-            KotlinAndroidPlugin.androidTargetHandler(project.getKotlinPluginVersion()!!, this)
-                .getLibraryVariantNames()
-
-        val missingVariants =
-            publishLibraryVariants?.minus(variantNames).orEmpty()
-
-        if (missingVariants.isNotEmpty())
-            throw InvalidUserDataException(
-                "Kotlin target '$targetName' tried to set up publishing for Android build variants that are not library variants " +
-                        "or do not exist:\n" + missingVariants.joinToString("\n") { "* $it" } +
-                        "\nCheck the 'publishLibraryVariants' property, it should point to existing Android library variants. Publishing " +
-                        "of application and test variants is not supported."
-            )
-    }
-
-    override val components by lazy {
-        checkPublishLibraryVariantsExist()
-
-        KotlinAndroidPlugin.androidTargetHandler(project.getKotlinPluginVersion()!!, this).doCreateComponents()
-            .also { project.components.addAll(it) }
-    }
-
-    // Capture the type parameter T for `AbstractAndroidProjectHandler`
-    private fun <T> AbstractAndroidProjectHandler<T>.doCreateComponents(): Set<KotlinTargetComponent> {
-        if (!isGradleVersionAtLeast(4, 7))
-            return emptySet()
-
-        val publishableVariants = mutableListOf<T>()
-            .apply { forEachVariant(project) { add(it) } }
-            .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }
-            .filter { getLibraryOutputTask(it) != null && publishLibraryVariants?.contains(getVariantName(it)) ?: true }
-
-        val publishableVariantGroups = publishableVariants.groupBy { variant ->
-            val flavorNames = getFlavorNames(variant)
-            if (publishLibraryVariantsGroupedByFlavor) {
-                // For each flavor, we group its variants (which differ only in the build type) in a single component in order to publish
-                // all of the build types of the flavor as a single module with the build type as the classifier of the artifacts
-                flavorNames
-            } else {
-                flavorNames + getBuildTypeName(variant)
-            }
-        }
-
-        return publishableVariantGroups.map { (flavorGroupNameParts, androidVariants) ->
-            val nestedVariants = androidVariants.mapTo(mutableSetOf()) { androidVariant ->
-                val androidVariantName = getVariantName(androidVariant)
-                val compilation = compilations.getByName(androidVariantName)
-
-                val flavorNames = getFlavorNames(androidVariant)
-                val buildTypeName = getBuildTypeName(androidVariant)
-
-                val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }
-
-                val usageContexts = createAndroidUsageContexts(androidVariant, compilation, artifactClassifier)
-                createKotlinVariant(
-                    lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
-                    compilation,
-                    usageContexts
-                ).apply {
-                    sourcesArtifacts = setOf(
-                        sourcesJarArtifact(
-                            compilation, compilation.disambiguateName(""),
-                            dashSeparatedName(
-                                compilation.target.name.toLowerCase(),
-                                *flavorNames.map { it.toLowerCase() }.toTypedArray(),
-                                buildTypeName.takeIf { it != "release" }?.toLowerCase()
-                            ),
-                            classifierPrefix = artifactClassifier
-                        )
-                    )
-
-                    if (!publishLibraryVariantsGroupedByFlavor) {
-                        defaultArtifactIdSuffix =
-                            dashSeparatedName(
-                                (getFlavorNames(androidVariant) + getBuildTypeName(androidVariant).takeIf { it != "release" })
-                                    .map { it?.toLowerCase() }
-                            ).takeIf { it.isNotEmpty() }
-                    }
-                }
-            }
-
-            if (publishLibraryVariantsGroupedByFlavor) {
-                JointAndroidKotlinTargetComponent(
-                    this@KotlinAndroidTarget,
-                    nestedVariants,
-                    flavorGroupNameParts,
-                    nestedVariants.flatMap { it.sourcesArtifacts }.toSet()
-                )
-            } else {
-                nestedVariants.single()
-            } as KotlinTargetComponent
-        }.toSet()
-    }
-
-    private fun <T> AbstractAndroidProjectHandler<T>.createAndroidUsageContexts(
-        variant: T,
-        compilation: KotlinCompilation<*>,
-        artifactClassifier: String?
-    ): Set<DefaultKotlinUsageContext> {
-        val variantName = getVariantName(variant)
-        val outputTask = getLibraryOutputTask(variant) ?: return emptySet()
-        val artifact = run {
-            val archivesConfigurationName = lowerCamelCaseName(targetName, variantName, "archives")
-            project.configurations.maybeCreate(archivesConfigurationName).apply {
-                isCanBeConsumed = false
-                isCanBeResolved = false
-            }
-            project.artifacts.add(archivesConfigurationName, outputTask) { artifact ->
-                artifact.classifier = artifactClassifier
-            }
-        }
-
-        val apiElementsConfigurationName = lowerCamelCaseName(variantName, "apiElements")
-        val runtimeElementsConfigurationName = lowerCamelCaseName(variantName, "runtimeElements")
-
-        // Here, `JAVA_API` and `JAVA_RUNTIME_JARS` are used intentionally as Gradle needs this for
-        // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
-        // These Java usages should not be replaced with the custom Kotlin usages.
-        return listOf(
-            apiElementsConfigurationName to JAVA_API,
-            runtimeElementsConfigurationName to JAVA_RUNTIME_JARS
-        ).mapTo(mutableSetOf()) { (dependencyConfigurationName, usageName) ->
-            DefaultKotlinUsageContext(
-                compilation,
-                project.usageByName(usageName),
-                dependencyConfigurationName,
-                overrideConfigurationArtifacts = setOf(artifact)
-            )
-        }
-    }
-}
-
-open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
-    project: Project,
-    override val platformType: KotlinPlatformType,
-    override val targetName: String
-) : AbstractKotlinTarget(project) {
-    override var disambiguationClassifier: String? = null
-        internal set
-
-    override val defaultConfigurationName: String
-        get() = Dependency.DEFAULT_CONFIGURATION
-
-    override val apiElementsConfigurationName: String
-        get() = JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME
-
-    override val runtimeElementsConfigurationName: String
-        get() = JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME
-
-    override val artifactsTaskName: String
-        get() = JavaPlugin.JAR_TASK_NAME
-
-    override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation<KotlinOptionsType>> =
-        @Suppress("UNCHECKED_CAST")
-        project.container(
-            KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>,
-            KotlinWithJavaCompilationFactory(project, this)
-        )
-}
 
 open class KotlinOnlyTarget<T : KotlinCompilation<*>>(
     project: Project,
@@ -386,52 +266,5 @@ open class KotlinOnlyTarget<T : KotlinCompilation<*>>(
 
     override var disambiguationClassifier: String? = null
         internal set
-}
-
-class KotlinNativeTarget(
-    project: Project,
-    val konanTarget: KonanTarget
-) : KotlinOnlyTarget<KotlinNativeCompilation>(project, KotlinPlatformType.native) {
-
-    init {
-        attributes.attribute(konanTargetAttribute, konanTarget.name)
-    }
-
-    val binaries = if(isGradleVersionAtLeast(4, 2)) {
-        // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
-        project.objects.newInstance(KotlinNativeBinaryContainer::class.java, this, WrapUtil.toDomainObjectSet(NativeBinary::class.java))
-    } else {
-        KotlinNativeBinaryContainer(this, WrapUtil.toDomainObjectSet(NativeBinary::class.java))
-    }
-
-    fun binaries(configure: KotlinNativeBinaryContainer.() -> Unit) {
-        binaries.configure()
-    }
-
-    fun binaries(configure: Closure<*>) {
-        ConfigureUtil.configure(configure, binaries)
-    }
-
-    override val artifactsTaskName: String
-        get() = disambiguateName("binaries")
-
-    override val publishable: Boolean
-        get() = konanTarget.enabledOnCurrentHost
-
-    // User-visible constants
-    val DEBUG = NativeBuildType.DEBUG
-    val RELEASE = NativeBuildType.RELEASE
-
-    val EXECUTABLE = NativeOutputKind.EXECUTABLE
-    val FRAMEWORK = NativeOutputKind.FRAMEWORK
-    val DYNAMIC = NativeOutputKind.DYNAMIC
-    val STATIC = NativeOutputKind.STATIC
-
-    companion object {
-        val konanTargetAttribute = Attribute.of(
-            "org.jetbrains.kotlin.native.target",
-            String::class.java
-        )
-    }
 }
 

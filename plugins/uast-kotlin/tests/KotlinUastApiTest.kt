@@ -1,8 +1,11 @@
 package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
+import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -11,6 +14,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UInjectionHost
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.env.kotlin.findElementByText
 import org.jetbrains.uast.test.env.kotlin.findElementByTextFromPsi
@@ -81,28 +85,67 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         }
     }
 
-    @Test fun testSAM() {
+    @Test
+    fun testSAM() {
         doTest("SAM") { _, file ->
-            assertNull(file.findElementByText<ULambdaExpression>("{ /* Not SAM */ }").functionalInterfaceType)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Variable */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Assignment */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                          file.findElementByText<ULambdaExpression>("{/* Type Cast */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Argument */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals("java.lang.Runnable",
-                         file.findElementByText<ULambdaExpression>("{/* Return */}").functionalInterfaceType?.canonicalText)
-
-            assertEquals(
-                "java.lang.Runnable",
-                file.findElementByText<ULambdaExpression>("{ /* SAM */ }").functionalInterfaceType?.canonicalText
+            runAll(
+                { assertNull(file.findElementByText<ULambdaExpression>("{ /* Not SAM */ }").functionalInterfaceType) }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Variable */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Assignment */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Type Cast */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Argument */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{/* Return */}").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{ /* SAM */ }").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{ println(\"hello1\") }").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.lang.Runnable",
+                        file.findElementByText<ULambdaExpression>("{ println(\"hello2\") }").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    val call = file.findElementByText<UCallExpression>("Runnable { println(\"hello2\") }")
+                    assertEquals(
+                        "java.lang.Runnable",
+                        (call.classReference?.resolve() as? PsiClass)?.qualifiedName
+                    )
+                }, {
+                    assertEquals(
+                        "java.util.function.Supplier<T>",
+                        file.findElementByText<ULambdaExpression>("{ \"Supplier\" }").functionalInterfaceType?.canonicalText
+                    )
+                }, {
+                    assertEquals(
+                        "java.util.concurrent.Callable<V>",
+                        file.findElementByText<ULambdaExpression>("{ \"Callable\" }").functionalInterfaceType?.canonicalText
+                    )
+                }
             )
         }
     }
@@ -174,21 +217,21 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     fun testWhenStringLiteral() {
         doTest("WhenStringLiteral") { _, file ->
 
-            file.findElementByTextFromPsi<ULiteralExpression>("abc").let { literalExpression ->
+            file.findElementByTextFromPsi<UInjectionHost>("\"abc\"").let { literalExpression ->
                 val psi = literalExpression.psi!!
-                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                Assert.assertTrue(psi is KtStringTemplateExpression)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findElementByTextFromPsi<ULiteralExpression>("def").let { literalExpression ->
+            file.findElementByTextFromPsi<UInjectionHost>("\"def\"").let { literalExpression ->
                 val psi = literalExpression.psi!!
-                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                Assert.assertTrue(psi is KtStringTemplateExpression)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, USwitchClauseExpressionWithBody::class.java)
             }
 
-            file.findElementByTextFromPsi<ULiteralExpression>("def1").let { literalExpression ->
+            file.findElementByTextFromPsi<UInjectionHost>("\"def1\"").let { literalExpression ->
                 val psi = literalExpression.psi!!
-                Assert.assertTrue(psi is KtLiteralStringTemplateEntry)
+                Assert.assertTrue(psi is KtStringTemplateExpression)
                 UsefulTestCase.assertInstanceOf(literalExpression.uastParent, UBlockExpression::class.java)
             }
 
@@ -389,7 +432,6 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
     @Test
     fun testResolvedDeserializedMethod() = doTest("Resolve") { _, file ->
-        val barMethod = file.findElementByTextFromPsi<UElement>("bar").getParentOfType<UMethod>()!!
 
         fun UElement.assertResolveCall(callText: String, methodName: String = callText.substringBefore("(")) {
             this.findElementByTextFromPsi<UCallExpression>(callText).let {
@@ -397,14 +439,27 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 assertEquals(methodName, resolve.name)
             }
         }
-        barMethod.assertResolveCall("foo()")
-        barMethod.assertResolveCall("inlineFoo()")
-        barMethod.assertResolveCall("forEach { println(it) }", "forEach")
-        barMethod.assertResolveCall("joinToString()")
-        barMethod.assertResolveCall("last()")
-        barMethod.assertResolveCall("setValue(\"123\")")
-        barMethod.assertResolveCall("contains(2 as Int)", "longRangeContains")
-        barMethod.assertResolveCall("IntRange(1, 2)")
+
+        file.findElementByTextFromPsi<UElement>("bar").getParentOfType<UMethod>()!!.let { barMethod ->
+            barMethod.assertResolveCall("foo()")
+            barMethod.assertResolveCall("inlineFoo()")
+            barMethod.assertResolveCall("forEach { println(it) }", "forEach")
+            barMethod.assertResolveCall("joinToString()")
+            barMethod.assertResolveCall("last()")
+            barMethod.assertResolveCall("setValue(\"123\")")
+            barMethod.assertResolveCall("contains(2 as Int)", "longRangeContains")
+            barMethod.assertResolveCall("IntRange(1, 2)")
+        }
+
+        file.findElementByTextFromPsi<UElement>("barT").getParentOfType<UMethod>()!!.let { barMethod ->
+            barMethod.assertResolveCall("foo()")
+        }
+
+        file.findElementByTextFromPsi<UElement>("listT").getParentOfType<UMethod>()!!.let { barMethod ->
+            barMethod.assertResolveCall("isEmpty()")
+            barMethod.assertResolveCall("foo()")
+        }
+
     }
 
     @Test
@@ -440,9 +495,9 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 "invoke",
                 lambdaCall.methodName
             )
-            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            val receiver = lambdaCall.receiver ?: kfail("receiver expected")
             assertEquals("UReferenceExpression", receiver.asLogString())
-            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
             assertEquals("UParameter (name = selectItemFunction)", uParameter.asLogString())
         }
     }
@@ -463,9 +518,9 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 "invoke",
                 lambdaCall.methodName
             )
-            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            val receiver = lambdaCall.receiver ?: kfail("receiver expected")
             assertEquals("UReferenceExpression", receiver.asLogString())
-            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
             assertEquals("ULocalVariable (name = baz)", uParameter.asLogString())
         }
     }
@@ -488,10 +543,55 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 localFunction.methodName
             )
             assertNull(localFunction.resolve())
-            val receiver = localFunction.receiver ?: kotlin.test.fail("receiver expected")
+            val receiver = localFunction.receiver ?: kfail("receiver expected")
             assertEquals("UReferenceExpression", receiver.asLogString())
-            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kfail("uelement expected")
             assertEquals("ULambdaExpression", uParameter.asLogString())
+        }
+    }
+
+    @Test
+    fun testMethodReturnTypeReference() {
+        doTest("Elvis") { _, file ->
+            assertEquals(
+                "UTypeReferenceExpression (name = java.lang.String)",
+                file.findElementByTextFromPsi<UMethod>("fun foo(bar: String): String? = null").returnTypeReference?.asLogString()
+            )
+            assertEquals(
+                null,
+                file.findElementByTextFromPsi<UMethod>("fun bar() = 42").returnTypeReference?.asLogString()
+            )
+
+        }
+    }
+
+    @Test
+    fun testVariablesTypeReferences() {
+        doTest("TypeReferences") { _, file ->
+            run {
+                val localVariable = file.findElementByTextFromPsi<UVariable>("val varWithType: String? = \"Not Null\"")
+                val typeReference = localVariable.typeReference
+                assertEquals("java.lang.String", typeReference?.getQualifiedName())
+                val sourcePsi = typeReference?.sourcePsi ?: kfail("no sourcePsi")
+                assertTrue("sourcePsi = $sourcePsi should be physical", sourcePsi.isPhysical)
+                assertEquals("String?", sourcePsi.text)
+            }
+
+            run {
+                val localVariable = file.findElementByTextFromPsi<UVariable>("val varWithoutType = \"lorem ipsum\"")
+                val typeReference = localVariable.typeReference
+                assertEquals("java.lang.String", typeReference?.getQualifiedName())
+                assertNull(typeReference?.sourcePsi)
+            }
+
+            run {
+                val localVariable = file.findElementByTextFromPsi<UVariable>("parameter: Int")
+                val typeReference = localVariable.typeReference
+                assertEquals("int", typeReference?.type?.presentableText)
+                val sourcePsi = typeReference?.sourcePsi ?: kfail("no sourcePsi")
+                assertTrue("sourcePsi = $sourcePsi should be physical", sourcePsi.isPhysical)
+                assertEquals("Int", sourcePsi.text)
+            }
         }
     }
 
@@ -499,3 +599,5 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T =
     find { transform(it) == value } ?: throw AssertionError("'$value' not found, only ${this.joinToString { transform(it).toString() }}")
+
+fun runAll(vararg asserts: () -> Unit) = RunAll(*asserts.map { ThrowableRunnable<Throwable>(it) }.toTypedArray()).run()

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.ir
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.codegen.AbstractLineNumberTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Label
@@ -18,10 +17,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 
 abstract class AbstractIrLineNumberTest : AbstractLineNumberTest() {
-    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
-        return ConfigurationKind.ALL
-    }
-
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         super.updateConfiguration(configuration)
         configuration.put(JVMConfigurationKeys.IR, true)
@@ -59,13 +54,13 @@ abstract class AbstractIrLineNumberTest : AbstractLineNumberTest() {
 
             override fun visitLabel(label: Label) {
                 if (lastLabel != null && !labels2LineNumbers.containsKey(lastLabel) && lastLine >= 0) {
-                    labels2LineNumbers[lastLabel!!] = Integer.toString(lastLine) // Inherited line number
+                    labels2LineNumbers[lastLabel!!] = lastLine.toString() // Inherited line number
                 }
                 lastLabel = label
             }
 
             override fun visitLineNumber(line: Int, start: Label) {
-                labels2LineNumbers[start] = Integer.toString(line)
+                labels2LineNumbers[start] = line.toString()
                 lastLine = line
             }
         }

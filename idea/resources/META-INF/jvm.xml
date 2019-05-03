@@ -61,6 +61,17 @@
         <action id="AddToProblemApiInspection" class="org.jetbrains.kotlin.idea.inspections.api.AddIncompatibleApiAction"
                 text="Report as incompatible API">
         </action>
+
+        <group id="Kotlin.XDebugger.Actions">
+            <action id="Kotlin.XDebugger.ToggleKotlinVariableView"
+                    class="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesView"
+                    icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"/>
+        </group>
+
+        <group id="Kotlin.XDebugger.Watches.Tree.Toolbar">
+            <reference ref="Kotlin.XDebugger.ToggleKotlinVariableView"/>
+            <add-to-group group-id="XDebugger.Watches.Tree.Toolbar" relative-to-action="XDebugger.SwitchWatchesInVariables" anchor="after"/>
+        </group>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -77,6 +88,9 @@
 
         <projectService serviceImplementation="org.jetbrains.kotlin.idea.versions.SuppressNotificationState"/>
 
+        <applicationService serviceImplementation="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState"/>
+
+        <debugger.asyncStackTraceProvider implementation="org.jetbrains.kotlin.idea.debugger.KotlinCoroutinesAsyncStackTraceProvider"/>
         <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler"/>
         <debugger.positionManagerFactory implementation="org.jetbrains.kotlin.idea.debugger.KotlinPositionManagerFactory"/>
         <debugger.codeFragmentFactory implementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory"/>
@@ -149,9 +163,13 @@
                    restartRequired="false"/>
 
       <registryKey key="kotlin.uast.multiresolve.enabled"
-                   description="Whether to use muiti resolve for UAST in Kotlin provided by `Call.resolveCandidates`,
-                      otherwise PsiPolyVariantReference-based multiResolve will be performed"
+                   description="Whether to use multi resolve for UAST in Kotlin provided by `Call.resolveCandidates`, otherwise PsiPolyVariantReference-based multiResolve will be performed"
                    defaultValue="true"
+                   restartRequired="false"/>
+
+      <registryKey key="kotlin.uast.force.uinjectionhost"
+                   description="Whether to convert `KtStringTemplateExpression` to `KotlinStringTemplateUPolyadicExpression` in all cases"
+                   defaultValue="false"
                    restartRequired="false"/>
     </extensions>
 
@@ -189,5 +207,6 @@
         <syntheticScopeProviderExtension implementation="org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldSyntheticScopeProvider"/>
         <expressionCodegenExtension implementation="org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldExpressionCodegenExtension"/>
         <completionInformationProvider implementation="org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldCompletionInformationProvider" />
+        <kotlinIndicesHelperExtension implementation="org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldKotlinIndicesHelperExtension"/>
     </extensions>
 </idea-plugin>

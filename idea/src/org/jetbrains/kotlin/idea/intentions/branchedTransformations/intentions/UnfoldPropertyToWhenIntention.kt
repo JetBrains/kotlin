@@ -38,7 +38,7 @@ class UnfoldPropertyToWhenIntention : SelfTargetingRangeIntention<KtProperty>(Kt
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
-        val assignment = splitPropertyDeclaration(element)
+        val assignment = splitPropertyDeclaration(element) ?: return
         BranchedUnfoldingUtils.unfoldAssignmentToWhen(assignment, editor)
     }
 }

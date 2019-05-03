@@ -1,6 +1,6 @@
 FILE: branches.kt
-    public? final? function foo(a: Int, b: Int): <implicit> {
-        return@@@foo when () {
+    public? final? fun foo(a: Int, b: Int): <implicit> {
+        ^foo when () {
             >(a#, b#) ->  {
                 a#
             }
@@ -10,34 +10,42 @@ FILE: branches.kt
         }
 
     }
-    public? final? function bar(a: Double, b: Double): Double {
+    public? final? fun bar(a: Double, b: Double): Double {
         when () {
             >(a#, b#) ->  {
                 println#(a#)
-                return@@@bar a#
+                ^bar a#
             }
             else ->  {
                 println#(b#)
-                return@@@bar b#
+                ^bar b#
             }
         }
 
     }
-    public? final? function baz(a: Long, b: Long): Long {
+    public? final? fun baz(a: Long, b: Long): Long {
         when () {
             >(a#, b#) ->  {
                 println#(a#)
-                return@@@baz a#
+                ^baz a#
             }
             else ->  {
-                return@@@baz b#
+                ^baz b#
             }
         }
 
     }
-    public? final? function grade(g: Int): String {
-        return@@@grade when (g#) {
-            ||(==($subj$, Int(6)), ==($subj$, Int(7))) ->  {
+    public? final? fun grade(g: Int): String {
+        ^grade when (g#) {
+            when () {
+                ==($subj$, Int(6)) ->  {
+                    Boolean(true)
+                }
+                else ->  {
+                    ==($subj$, Int(7))
+                }
+            }
+             ->  {
                 String(Outstanding)
             }
             ==($subj$, Int(5)) ->  {
@@ -49,10 +57,10 @@ FILE: branches.kt
             ==($subj$, Int(3)) ->  {
                 String(Mediocre)
             }
-            in($subj$, rangeTo#(Int(1), Int(2))) ->  {
+            Int(1).rangeTo#(Int(2)).contains#($subj$) ->  {
                 String(Fail)
             }
-            is/Number($subj$) ->  {
+            ($subj$ is Number) ->  {
                 String(Number)
             }
             else ->  {

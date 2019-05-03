@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// WITH_RUNTIME
 // FILE: Super.java
 
 class Super {

@@ -39,10 +39,7 @@ val RangeMarker.range: TextRange?
         if (start in 0..end) {
             TextRange(start, end)
         } else {
-            // Probably a race condition had happened
-            LOG.error("Invalid range [$start, $end] for range marker (valid = $isValid)")
+            // Probably a race condition had happened and range marker is invalidated
             null
         }
     } else null
-
-private val LOG = Logger.getInstance("RangeUtils")

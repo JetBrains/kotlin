@@ -134,11 +134,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             override val typeMapper: KotlinTypeMapper by lazyPub {
                 KotlinTypeMapper(
                     BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
-                    IncompatibleClassTracker.DoNothing, moduleName,
-                    JvmTarget.JVM_1_8,
-                    KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
-                    false,
-                    KotlinType::cleanFromAnonymousTypes
+                    moduleName, KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
+                    jvmTarget = JvmTarget.JVM_1_8,
+                    typePreprocessor = KotlinType::cleanFromAnonymousTypes
                 )
             }
         })

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.search;
@@ -14,11 +14,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class JUnitMembersSearcherTest extends AbstractSearcherTest {
     private static final LightProjectDescriptor junitProjectDescriptor =
             new KotlinJdkAndLibraryProjectDescriptor(new File(PathManager.getHomePath().replace(File.separatorChar, '/') + "/lib/junit-4.12.jar"));

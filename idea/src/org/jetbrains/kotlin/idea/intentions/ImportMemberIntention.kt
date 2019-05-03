@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameReferenceExpression>(
     KtNameReferenceExpression::class.java,
     "Add import for member"
-) {
+), HighPriorityAction {
 
     private fun getFullQualifier(element: KtNameReferenceExpression): KtQualifiedExpression? = element.getTopmostParentOfType()
 

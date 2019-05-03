@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test(b: Byte, s: Short, i: Int, l: Long) {
     "$b"
     "$s"

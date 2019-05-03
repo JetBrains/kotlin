@@ -17,15 +17,23 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
-interface IrSimpleFunction : IrFunction, IrSymbolDeclaration<IrSimpleFunctionSymbol>, IrOverridableDeclaration<IrSimpleFunctionSymbol> {
+interface IrSimpleFunction :
+    IrFunction,
+    IrSymbolDeclaration<IrSimpleFunctionSymbol>,
+    IrOverridableDeclaration<IrSimpleFunctionSymbol> {
+
     val modality: Modality
     val isTailrec: Boolean
     val isSuspend: Boolean
 
+    @Deprecated("Use correspondingPropertySymbol")
     var correspondingProperty: IrProperty?
+
+    var correspondingPropertySymbol: IrPropertySymbol?
 }
 
 val IrFunction.isPropertyAccessor: Boolean
-    get() = this is IrSimpleFunction && correspondingProperty != null
+    get() = this is IrSimpleFunction && correspondingPropertySymbol != null

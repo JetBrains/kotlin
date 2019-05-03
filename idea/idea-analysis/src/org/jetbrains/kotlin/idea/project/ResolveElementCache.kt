@@ -33,12 +33,14 @@ import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import java.util.*
 
@@ -455,15 +457,12 @@ class ResolveElementCache(
     }
 
     private fun codeFragmentAdditionalResolve(codeFragment: KtCodeFragment, bodyResolveMode: BodyResolveMode): BindingTrace {
-        val trace = createDelegatingTrace(codeFragment, bodyResolveMode.bindingTraceFilter)
-
         val contextResolveMode = if (bodyResolveMode == BodyResolveMode.PARTIAL)
             BodyResolveMode.PARTIAL_FOR_COMPLETION
         else
             bodyResolveMode
-        codeFragmentAnalyzer.analyzeCodeFragment(codeFragment, trace, contextResolveMode)
 
-        return trace
+        return codeFragmentAnalyzer.analyzeCodeFragment(codeFragment, contextResolveMode)
     }
 
     private fun annotationAdditionalResolve(resolveSession: ResolveSession, ktAnnotationEntry: KtAnnotationEntry): BindingTrace {
@@ -758,7 +757,7 @@ class ResolveElementCache(
 
         override fun getDeclaringScope(declaration: KtDeclaration): LexicalScope? = declaringScopes(declaration)
 
-        override fun getScripts(): MutableMap<KtScript, LazyScriptDescriptor> = hashMapOf()
+        override fun getScripts(): MutableMap<KtScript, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
         override fun getOuterDataFlowInfo(): DataFlowInfo = DataFlowInfo.EMPTY
 

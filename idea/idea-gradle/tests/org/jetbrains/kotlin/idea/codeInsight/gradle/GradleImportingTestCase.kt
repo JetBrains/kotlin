@@ -45,6 +45,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -66,7 +67,7 @@ import org.junit.AfterClass
 import org.junit.Assume.assumeTrue
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
-@RunWith(value = Parameterized::class)
+@RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
 abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
     protected var sdkCreationChecker : KotlinSdkCreationChecker? = null
@@ -143,8 +144,6 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     override fun getName(): String {
         return if (name.methodName == null) super.getName() else FileUtil.sanitizeFileName(name.methodName)
     }
-
-    override fun getTestsTempDir(): String = "gradleImportTests"
 
     override fun getExternalSystemConfigFileName(): String = "build.gradle"
 
@@ -280,7 +279,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: with Gradle-{0}")
         fun data(): Collection<Array<Any>> {
-            return Arrays.asList(*AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS)
+            return listOf(*AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS)
         }
 
         fun wrapperJar(): File {

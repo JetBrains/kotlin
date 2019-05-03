@@ -45,11 +45,7 @@ class MakeClassAnAnnotationClassFix(annotationClass: KtClass) : KotlinQuickFixAc
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val typeReference = diagnostic.psiElement.getNonStrictParentOfType<KtAnnotationEntry>()?.typeReference ?: return null
-            val bindingContext = typeReference.analyze(BodyResolveMode.PARTIAL)
-            val type = bindingContext[BindingContext.TYPE, typeReference] ?: return null
-            val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
-            val klass = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
-            if (!klass.canRefactor()) return null
+            val klass = typeReference.classForRefactor() ?: return null
             return MakeClassAnAnnotationClassFix(klass)
         }
     }

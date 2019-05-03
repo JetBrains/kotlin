@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 
 class Delegate(val value: String) {
     operator fun getValue(thisRef: Any?, kProperty: Any?) = value

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
-import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.psi.*
 
 class KtScratchSourceFileProcessor {
@@ -35,11 +34,11 @@ class KtScratchSourceFileProcessor {
         const val GET_RES_FUN_NAME_PREFIX = "generated_get_instance_res"
     }
 
-    fun process(file: ScratchFile): Result {
+    fun process(expressions: List<ScratchExpression>): Result {
         val sourceProcessor = KtSourceProcessor()
-        file.getExpressions().forEach {
-                sourceProcessor.process(it)
-            }
+        expressions.forEach {
+            sourceProcessor.process(it)
+        }
 
         val codeResult =
             """

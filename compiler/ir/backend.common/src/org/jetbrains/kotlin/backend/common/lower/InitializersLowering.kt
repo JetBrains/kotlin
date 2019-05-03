@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.lower
@@ -8,22 +8,17 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.deepCopyWithWrappedDescriptors
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.SetDeclarationsParentVisitor
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -31,16 +26,30 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 object SYNTHESIZED_INIT_BLOCK: IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
 
-fun makeInitializersPhase(origin: IrDeclarationOrigin, clinitNeeded: Boolean)= makeIrFilePhase(
+fun makeInitializersPhase(origin: IrDeclarationOrigin, clinitNeeded: Boolean)= makeIrFilePhase<CommonBackendContext>(
     { context -> InitializersLowering(context, origin, clinitNeeded) },
     name = "Initializers",
-    description = "Handle initializer statements"
+    description = "Handle initializer statements",
+    stickyPostconditions = setOf(::checkNonAnonymousInitializers)
 )
+
+fun checkNonAnonymousInitializers(irFile: IrFile) {
+    irFile.acceptVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
+            error("No anonymous initializers should remain at this stage")
+        }
+    })
+}
 
 class InitializersLowering(
     val context: CommonBackendContext,
@@ -54,6 +63,7 @@ class InitializersLowering(
         val staticInitializerStatements = handleStatics(irClass)
         if (clinitNeeded && staticInitializerStatements.isNotEmpty())
             createStaticInitializationMethod(irClass, staticInitializerStatements)
+        irClass.declarations.removeAll { it is IrAnonymousInitializer }
         irClass.patchDeclarationParents(irClass.parent)
     }
 
@@ -123,27 +133,29 @@ class InitializersLowering(
     }
 
     fun createStaticInitializationMethod(irClass: IrClass, staticInitializerStatements: List<IrStatement>) {
-        val staticInitializerDescriptor = SimpleFunctionDescriptorImpl.create(
-            irClass.descriptor, Annotations.EMPTY, clinitName,
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            SourceElement.NO_SOURCE
-        )
-        staticInitializerDescriptor.initialize(
-            null, null, emptyList(), emptyList(),
-            irClass.descriptor.builtIns.unitType,
-            Modality.FINAL, Visibilities.PUBLIC
-        )
-        irClass.declarations.add(
-            IrFunctionImpl(
-                irClass.startOffset, irClass.endOffset, declarationOrigin,
-                staticInitializerDescriptor,
-                context.irBuiltIns.unitType,
-                IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,
-                                staticInitializerStatements.map { it.copy(irClass) })
-            ).apply {
-                accept(SetDeclarationsParentVisitor, this)
-            }
-        )
+        // TODO: mark as synthesized
+        val staticInitializerDescriptor = WrappedSimpleFunctionDescriptor()
+        val staticInitializer = IrFunctionImpl(
+            irClass.startOffset, irClass.endOffset,
+            declarationOrigin,
+            IrSimpleFunctionSymbolImpl(staticInitializerDescriptor),
+            clinitName,
+            Visibilities.PUBLIC,
+            Modality.FINAL,
+            returnType = context.irBuiltIns.unitType,
+            isInline = false,
+            isExternal = false,
+            isTailrec = false,
+            isSuspend = false
+        ).apply {
+            staticInitializerDescriptor.bind(this)
+            body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,
+                                   staticInitializerStatements.map { it.copy(irClass) })
+            accept(SetDeclarationsParentVisitor, this)
+            // Should come after SetDeclarationParentVisitor, because it sets staticInitializer's own parent to itself.
+            parent = irClass
+        }
+        irClass.declarations.add(staticInitializer)
     }
 
     companion object {

@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.multiplatform
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckerContext
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
@@ -50,7 +50,7 @@ object ExpectedActualResolver {
                     // TODO: support non-source definitions (e.g. from Java)
                     actual.source.containingFile != SourceFile.NO_SOURCE_FILE
                 }.groupBy { actual ->
-                    areCompatibleCallables(expected, actual)
+                    areCompatibleCallables(expected, actual, platformModule)
                 }
             }
             is ClassDescriptor -> {
@@ -113,7 +113,9 @@ object ExpectedActualResolver {
                 listOf(module.getPackage(containingDeclaration.fqName).memberScope)
             }
             is ClassDescriptor -> {
-                val classes = containingDeclaration.findClassifiersFromModule(module).filterIsInstance<ClassDescriptor>()
+                val classes = containingDeclaration.findClassifiersFromModule(module)
+                    .mapNotNull { if (it is TypeAliasDescriptor) it.classDescriptor else it }
+                    .filterIsInstance<ClassDescriptor>()
                 if (this is ConstructorDescriptor) return classes.flatMap { it.constructors }
 
                 classes.map { it.unsubstitutedMemberScope }
@@ -302,7 +304,7 @@ object ExpectedActualResolver {
         if (b == null) return false
 
         with(NewKotlinTypeChecker) {
-            val context = object : TypeCheckerContext(false) {
+            val context = object : ClassicTypeCheckerContext(false) {
                 override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
                     return isExpectedClassAndActualTypeAlias(a, b, platformModule) ||
                             isExpectedClassAndActualTypeAlias(b, a, platformModule) ||

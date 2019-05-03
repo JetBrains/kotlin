@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -71,7 +72,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
-    override fun transformCall(call: IrCall): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
         val function = call.symbol.owner
         function.dispatchReceiverParameter?.also {
             val key = SimpleMemberKey(it.type, function.name)
@@ -82,7 +83,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         return call
     }
 
-    private fun transformRangeTo(call: IrCall): IrExpression {
+    private fun transformRangeTo(call: IrFunctionAccessExpression): IrExpression {
         if (call.valueArgumentsCount != 1) return call
         return with(call.symbol.owner.valueParameters[0].type) {
             when {
@@ -96,8 +97,8 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
     }
 
     private fun irBinaryOp(
-        call: IrCall,
-        intrinsic: IrFunction,
+        call: IrFunctionAccessExpression,
+        intrinsic: IrFunctionSymbol,
         toInt32: Boolean = false
     ): IrExpression {
         val newCall = irCall(call, intrinsic, dispatchReceiverAsFirstArgument = true)
@@ -106,7 +107,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         return newCall
     }
 
-    class BinaryOp(call: IrCall) {
+    class BinaryOp(call: IrFunctionAccessExpression) {
         val function = call.symbol.owner
         val name = function.name
         val lhs = function.dispatchReceiverParameter!!.type
@@ -117,18 +118,18 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             result.isInt() && (lhs.isInt() || rhs.isInt())
     }
 
-    private fun transformAdd(call: IrCall) =
+    private fun transformAdd(call: IrFunctionAccessExpression) =
         irBinaryOp(call, intrinsics.jsPlus, toInt32 = BinaryOp(call).canAddOrSubOverflow())
 
-    private fun transformSub(call: IrCall) =
+    private fun transformSub(call: IrFunctionAccessExpression) =
         irBinaryOp(call, intrinsics.jsMinus, toInt32 = BinaryOp(call).canAddOrSubOverflow())
 
-    private fun transformMul(call: IrCall) = BinaryOp(call).run {
+    private fun transformMul(call: IrFunctionAccessExpression) = BinaryOp(call).run {
         when {
             result.isInt() -> when {
 
                 lhs.isInt() && rhs.isInt() ->
-                    irBinaryOp(call, intrinsics.jsImul.owner)
+                    irBinaryOp(call, intrinsics.jsImul)
 
                 else ->
                     irBinaryOp(call, intrinsics.jsMult, toInt32 = true)
@@ -138,27 +139,27 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
-    private fun transformDiv(call: IrCall) =
+    private fun transformDiv(call: IrFunctionAccessExpression) =
         irBinaryOp(call, intrinsics.jsDiv, toInt32 = BinaryOp(call).result.isInt())
 
-    private fun transformRem(call: IrCall) =
+    private fun transformRem(call: IrFunctionAccessExpression) =
         irBinaryOp(call, intrinsics.jsMod)
 
-    private fun transformIncrement(call: IrCall) =
+    private fun transformIncrement(call: IrFunctionAccessExpression) =
         transformCrement(call, intrinsics.jsPlus)
 
-    private fun transformDecrement(call: IrCall) =
+    private fun transformDecrement(call: IrFunctionAccessExpression) =
         transformCrement(call, intrinsics.jsMinus)
 
-    private fun transformCrement(call: IrCall, correspondingBinaryOp: IrFunction): IrExpression {
-        val operation = irCall(call, correspondingBinaryOp.symbol, dispatchReceiverAsFirstArgument = true).apply {
+    private fun transformCrement(call: IrFunctionAccessExpression, correspondingBinaryOp: IrFunctionSymbol): IrExpression {
+        val operation = irCall(call, correspondingBinaryOp, dispatchReceiverAsFirstArgument = true).apply {
             putValueArgument(1, buildInt(1))
         }
 
         return convertResultToPrimitiveType(operation, call.type)
     }
 
-    private fun transformUnaryMinus(call: IrCall) =
+    private fun transformUnaryMinus(call: IrFunctionAccessExpression) =
         convertResultToPrimitiveType(
             irCall(call, intrinsics.jsUnaryMinus, dispatchReceiverAsFirstArgument = true),
             call.type
@@ -171,7 +172,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         else -> e
     }
 
-    private fun withLongCoercion(default: (IrCall) -> IrExpression): (IrCall) -> IrExpression = { call ->
+    private fun withLongCoercion(default: (IrFunctionAccessExpression) -> IrExpression): (IrFunctionAccessExpression) -> IrExpression = { call ->
         assert(call.valueArgumentsCount == 1)
         val arg = call.getValueArgument(0)!!
 
@@ -231,7 +232,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
 
     private fun toInt32(e: IrExpression) =
-        JsIrBuilder.buildCall(intrinsics.jsBitOr.symbol, irBuiltIns.intType).apply {
+        JsIrBuilder.buildCall(intrinsics.jsBitOr, irBuiltIns.intType).apply {
             putValueArgument(0, e)
             putValueArgument(1, buildInt(0))
         }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.run
@@ -33,12 +33,15 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 import java.io.File
 import java.util.*
 
 private val RUN_PREFIX = "// RUN:"
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class RunConfigurationTest: KotlinCodeInsightTestCase() {
     fun getTestProject() = myProject!!
     override fun getModule() = myModule!!
@@ -131,6 +134,20 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
         Assert.assertTrue(javaParameters.classPath.rootDirs.contains(dependencyModuleSrcDir))
         Assert.assertTrue(javaParameters.classPath.rootDirs.contains(moduleWithDependencySrcDir))
+    }
+
+    fun testLongCommandLine() {
+        val myModule = configureModule(moduleDirPath("module"), getTestProject().baseDir).module
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, addJdk(testRootDisposable, ::mockJdk))
+
+        ModuleRootModificationUtil.addDependency(myModule, createLibraryWithLongPaths(project))
+
+        val kotlinRunConfiguration = createConfigurationFromMain("some.test.main")
+        kotlinRunConfiguration.setModule(myModule)
+
+        val javaParameters = getJavaRunParameters(kotlinRunConfiguration)
+        val commandLine = javaParameters.toCommandLine().commandLineString
+        Assert.assertTrue(commandLine.length < javaParameters.classPath.pathList.joinToString().length)
     }
 
     fun testClassesAndObjects() {

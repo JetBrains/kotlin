@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class ValueParameterData(val type: KotlinType, val hasDefaultValue: Boolean)
 
 fun copyValueParameters(
-        newValueParametersTypes: Collection<ValueParameterData>,
-        oldValueParameters: Collection<ValueParameterDescriptor>,
-        newOwner: CallableDescriptor
+    newValueParametersTypes: Collection<ValueParameterData>,
+    oldValueParameters: Collection<ValueParameterDescriptor>,
+    newOwner: CallableDescriptor
 ): List<ValueParameterDescriptor> {
     assert(newValueParametersTypes.size == oldValueParameters.size) {
         "Different value parameters sizes: Enhanced = ${newValueParametersTypes.size}, Old = ${oldValueParameters.size}"
@@ -46,17 +46,17 @@ fun copyValueParameters(
 
     return newValueParametersTypes.zip(oldValueParameters).map { (newParameter, oldParameter) ->
         ValueParameterDescriptorImpl(
-                newOwner,
-                null,
-                oldParameter.index,
-                oldParameter.annotations,
-                oldParameter.name,
-                newParameter.type,
-                newParameter.hasDefaultValue,
-                oldParameter.isCrossinline,
-                oldParameter.isNoinline,
-                if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newParameter.type) else null,
-                oldParameter.source
+            newOwner,
+            null,
+            oldParameter.index,
+            oldParameter.annotations,
+            oldParameter.name,
+            newParameter.type,
+            newParameter.hasDefaultValue,
+            oldParameter.isCrossinline,
+            oldParameter.isNoinline,
+            if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newParameter.type) else null,
+            oldParameter.source
         )
     }
 }
@@ -64,18 +64,14 @@ fun copyValueParameters(
 fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
     val superClassDescriptor = getSuperClassNotAny() ?: return null
 
-    val staticScope = superClassDescriptor.staticScope
-
-    if (staticScope !is LazyJavaStaticClassScope) return superClassDescriptor.getParentJavaStaticClassScope()
-
-    return staticScope
+    return superClassDescriptor.staticScope as? LazyJavaStaticClassScope ?: superClassDescriptor.getParentJavaStaticClassScope()
 }
 
 fun DeserializedMemberDescriptor.getImplClassNameForDeserialized(): JvmClassName? =
-        (containerSource as? JvmPackagePartSource)?.className
+    (containerSource as? JvmPackagePartSource)?.className
 
 fun DeserializedMemberDescriptor.isFromJvmPackagePart(): Boolean =
-        containerSource is JvmPackagePartSource
+    containerSource is JvmPackagePartSource
 
 fun ValueParameterDescriptor.getParameterNameAnnotation(): AnnotationDescriptor? {
     val annotation = annotations.findAnnotation(JvmAnnotationNames.PARAMETER_NAME_FQ_NAME) ?: return null
@@ -92,9 +88,9 @@ object NullDefaultValue : AnnotationDefaultValue()
 
 fun ValueParameterDescriptor.getDefaultValueFromAnnotation(): AnnotationDefaultValue? {
     annotations.findAnnotation(JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME)
-            ?.firstArgument()
-            ?.safeAs<StringValue>()?.value
-            ?.let { return StringDefaultValue(it) }
+        ?.firstArgument()
+        ?.safeAs<StringValue>()?.value
+        ?.let { return StringDefaultValue(it) }
 
     if (annotations.hasAnnotation(JvmAnnotationNames.DEFAULT_NULL_FQ_NAME)) {
         return NullDefaultValue

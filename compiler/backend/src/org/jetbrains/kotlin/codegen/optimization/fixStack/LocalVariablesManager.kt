@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization.fixStack
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
+import kotlin.math.max
 
 internal class LocalVariablesManager(val context: FixStackContext, val methodNode: MethodNode) {
     private class AllocatedHandle(val savedStackDescriptor: SavedStackDescriptor, var numRestoreMarkers: Int) {
@@ -35,7 +36,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
     private val allocatedHandles = hashMapOf<AbstractInsnNode, AllocatedHandle>()
 
     private fun updateMaxLocals(newValue: Int) {
-        methodNode.maxLocals = Math.max(methodNode.maxLocals, newValue)
+        methodNode.maxLocals = max(methodNode.maxLocals, newValue)
     }
 
     fun allocateVariablesForSaveStackMarker(saveStackMarker: AbstractInsnNode, savedStackValues: List<BasicValue>): SavedStackDescriptor {
@@ -67,7 +68,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
 
     private fun getFirstUnusedLocalVariableIndex(): Int =
         allocatedHandles.values.fold(initialMaxLocals) { index, handle ->
-            Math.max(index, handle.savedStackDescriptor.firstUnusedLocalVarIndex)
+            max(index, handle.savedStackDescriptor.firstUnusedLocalVarIndex)
         }
 
     fun markRestoreStackMarkerEmitted(restoreStackMarker: AbstractInsnNode) {

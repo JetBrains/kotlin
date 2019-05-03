@@ -42,9 +42,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
+@Suppress("DEPRECATION")
 class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<KtTypeArgumentList>(RemoveExplicitTypeArgumentsIntention::class) {
     override fun problemHighlightType(element: KtTypeArgumentList): ProblemHighlightType =
-            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+        ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
 class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(KtTypeArgumentList::class.java, "Remove explicit type arguments") {

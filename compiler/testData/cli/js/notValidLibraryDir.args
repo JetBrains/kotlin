@@ -1,5 +1,5 @@
 $TESTDATA_DIR$/withLib.kt
 -libraries
-compiler/testData/integration/ant/js/simpleWithStdlibAndJsFileAsAnotherLib
+compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib
 -output
 $TEMP_DIR$/out.js

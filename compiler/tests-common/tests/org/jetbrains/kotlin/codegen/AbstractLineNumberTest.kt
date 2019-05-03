@@ -110,7 +110,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
             }
 
             override fun visitLineNumber(line: Int, start: Label) {
-                labels2LineNumbers[start] = Integer.toString(line)
+                labels2LineNumbers[start] = line.toString()
             }
         }
     }
@@ -147,7 +147,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
         for (i in lines.indices) {
             val matcher = TEST_LINE_NUMBER_PATTERN.matcher(lines[i])
             if (matcher.matches()) {
-                lineNumbers.add(Integer.toString(i + 1))
+                lineNumbers.add((i + 1).toString())
             }
         }
 

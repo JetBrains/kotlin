@@ -1,0 +1,9 @@
+LineBreakpoint created at anyUpdateInvokeStatic.kt:25
+Run Java
+Connected to the target VM
+anyUpdateInvokeStatic.kt:25
+Compile bytecode for A.s
+Disconnected from the target VM
+
+Process finished with exit code 0
+bb

@@ -1,9 +1,9 @@
 @A.Ann(info = "class") local final class `A$foo$Local`
 
 public constructor `A$foo$Local`()
-@field:A.Ann(info = "val") public final val x: `A$foo$Local`
+@A.Bnn(klass = A$foo$Local::class) @field:A.Ann(info = "val") public final val x: `A$foo$Local`
 @A.Ann(info = "fun") public final fun foo(): `A$foo$Local`
 
-@A.Ann(info = "inner") local final inner class Inner {
+@A.Ann(info = "inner") @A.Bnn(klass = kotlin.Array<kotlin.Array<A$foo$Local>>::class) local final inner class Inner {
     public constructor Inner()
 }

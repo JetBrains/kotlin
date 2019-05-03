@@ -20,18 +20,21 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
-object JsTypeSpecificityComparator: TypeSpecificityComparator {
+class JsTypeSpecificityComparator(val context: TypeSystemInferenceExtensionContextDelegate) : TypeSpecificityComparator {
 
-    private fun checkOnlyDynamicFlexibleType(type: KotlinType) {
-        if (type.isFlexible()) {
+    private fun TypeSystemInferenceExtensionContext.checkOnlyDynamicFlexibleType(type: KotlinTypeMarker) {
+        if (type.asFlexibleType() != null) {
             assert(type.isDynamic()) {
                 "Unexpected flexible type in Js: $type"
             }
         }
     }
 
-    override fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType): Boolean {
+    override fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean = with(context) {
         checkOnlyDynamicFlexibleType(specific)
         checkOnlyDynamicFlexibleType(general)
 

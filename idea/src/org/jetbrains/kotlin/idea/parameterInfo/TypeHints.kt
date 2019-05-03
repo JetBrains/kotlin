@@ -1,13 +1,13 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.parameterInfo
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.hints.InlayInfo
 import com.intellij.psi.PsiElement
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -101,9 +101,7 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
     }
 
     return if (isUnclearType(type, element)) {
-        val settings = CodeStyleSettingsManager.getInstance(element.project).currentSettings
-            .getCustomSettings(KotlinCodeStyleSettings::class.java)
-
+        val settings = CodeStyle.getCustomSettings(element.containingFile, KotlinCodeStyleSettings::class.java)
         val declString = buildString {
             append(TYPE_INFO_PREFIX)
             if (settings.SPACE_BEFORE_TYPE_COLON) {

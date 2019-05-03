@@ -22,6 +22,7 @@ import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -44,10 +45,9 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
             result: MutableList<UsageInfo>
     ) {
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return
-        val descriptor = declaration.unsafeResolveToDescriptor() as VariableDescriptor
 
         val collisions = SmartList<UsageInfo>()
-        checkRedeclarations(descriptor, newName, collisions)
+        checkRedeclarations(declaration, newName, collisions)
         checkOriginalUsagesRetargeting(declaration, newName, result, collisions)
         checkNewNameUsagesRetargeting(declaration, newName, collisions)
         result += collisions

@@ -1,21 +1,18 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
-import org.jetbrains.kotlin.backend.common.utils.isPrimitiveArray
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
 
@@ -32,6 +29,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
     override fun IrExpression.useAs(type: IrType): IrExpression {
 
         val actualType = when (this) {
+            is IrConstructorCall -> symbol.owner.returnType
             is IrCall -> {
                 val function = this.symbol.owner
                 if (function.let { it is IrSimpleFunction && it.isSuspend }) {
@@ -72,6 +70,13 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
         val actualInlinedClass = actualType.getInlinedClass()
         val expectedInlinedClass = expectedType.getInlinedClass()
+
+        // Mimicking behaviour of current JS backend
+        // TODO: Revisit
+        if (
+            (actualType is IrDynamicType && expectedType.makeNotNull().isChar()) ||
+            (actualType.makeNotNull().isChar() && expectedType is IrDynamicType)
+        ) return this
 
         val function = when {
             actualInlinedClass == null && expectedInlinedClass == null -> return this
@@ -123,8 +128,9 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
     private val IrFunctionAccessExpression.target: IrFunction
         get() = when (this) {
-            is IrCall -> this.callTarget
+            is IrConstructorCall -> this.symbol.owner
             is IrDelegatingConstructorCall -> this.symbol.owner
+            is IrCall -> this.callTarget
             else -> TODO(this.render())
         }
 

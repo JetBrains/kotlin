@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
@@ -10,12 +10,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class NavigateFromLibrarySourcesTest: AbstractNavigateFromLibrarySourcesTest() {
     fun testJdkClass() {
         checkNavigationFromLibrarySource("Thread", "java.lang.Thread")
@@ -33,10 +36,12 @@ class NavigateFromLibrarySourcesTest: AbstractNavigateFromLibrarySourcesTest() {
     fun testLightClassForLibrarySource() {
         val navigationElement = navigationElementForReferenceInLibrarySource("usage.kt", "Foo")
         assertTrue(navigationElement is KtClassOrObject, "Foo should navigate to JetClassOrObject")
-        val lightClass = (navigationElement as KtClassOrObject).toLightClass()
-        assertTrue(lightClass is KtLightClassForDecompiledDeclaration,
-                   "Light classes for decompiled declaration should be provided for library source")
-        assertEquals("Foo", lightClass!!.name)
+        val lightClass = navigationElement.toLightClass()
+        assertTrue(
+            lightClass is KtLightClassForDecompiledDeclaration,
+            "Light classes for decompiled declaration should be provided for library source"
+        )
+        assertEquals("Foo", lightClass.name)
     }
 
     private fun checkNavigationFromLibrarySource(referenceText: String, targetFqName: String) {

@@ -35,7 +35,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -52,7 +51,6 @@ import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.compat.psiSearchHelperInstance
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
@@ -72,7 +70,7 @@ class ExpressionsOfTypeProcessor(
     private val possibleMatchHandler: (KtExpression) -> Unit,
     private val possibleMatchesInScopeHandler: (SearchScope) -> Unit
 ) {
-    @TestOnly
+    /** For tests only */
     enum class Mode {
         ALWAYS_SMART,
         ALWAYS_PLAIN,
@@ -80,9 +78,10 @@ class ExpressionsOfTypeProcessor(
     }
 
     companion object {
-        @TestOnly
+        @get:TestOnly
         var mode = if (ApplicationManager.getApplication().isUnitTestMode) Mode.ALWAYS_SMART else Mode.PLAIN_WHEN_NEEDED
-        @TestOnly
+
+        @get:TestOnly
         var testLog: MutableList<String>? = null
 
         inline fun testLog(s: () -> String) {
@@ -273,7 +272,7 @@ class ExpressionsOfTypeProcessor(
         RequestResultProcessor(psiMember) {
         val possibleClassesNames: Set<String> = runReadAction { classes.map { it.qualifiedName }.filterNotNullTo(HashSet()) }
 
-        override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: ExecutorProcessor<PsiReference>): Boolean {
+        override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<in PsiReference>): Boolean {
             when (element) {
                 is KtQualifiedExpression -> {
                     val selectorExpression = element.selectorExpression ?: return true
@@ -369,7 +368,7 @@ class ExpressionsOfTypeProcessor(
                     }
                 }
 
-                psiSearchHelperInstance(project).processRequests(searchRequestCollector) { reference ->
+                PsiSearchHelper.getInstance(project).processRequests(searchRequestCollector) { reference ->
                     if (reference.element.parents.any { it is KtImportDirective }) {
                         // Found declaration in import - process all file with an ordinal reference search
                         val containingFile = reference.element.containingFile

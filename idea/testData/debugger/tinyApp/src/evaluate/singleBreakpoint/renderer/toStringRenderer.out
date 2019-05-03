@@ -2,19 +2,6 @@ LineBreakpoint created at toStringRenderer.kt:6
 Run Java
 Connected to the target VM
 toStringRenderer.kt:6
-package toStringRenderer
-
-fun main(args: Array<String>) {
-    val a = A()
-    //Breakpoint!
-    args.size
-}
-
-class A {
-    override fun toString() = "myA"
-}
-
-// PRINT_FRAME
 Compile bytecode for args.size
  frame    = main:6, ToStringRendererKt {toStringRenderer}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = toStringRenderer.kt, 3)

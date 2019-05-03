@@ -16,31 +16,26 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.classLoading
 
-import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.evaluation.EvaluationContext
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.sun.jdi.*
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
 abstract class AbstractAndroidClassLoadingAdapter : ClassLoadingAdapter {
-    protected fun dex(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ByteArray? {
+    protected fun dex(context: ExecutionContext, classes: Collection<ClassToLoad>): ByteArray? {
         return AndroidDexer.getInstances(context.project).single().dex(classes)
     }
 
-    protected fun wrapToByteBuffer(bytes: ArrayReference, context: EvaluationContext, process: DebugProcessImpl): ObjectReference {
-        val byteBufferClass = process.findClass(context, "java.nio.ByteBuffer", context.classLoader) as ClassType
+    protected fun wrapToByteBuffer(bytes: ArrayReference, context: ExecutionContext): ObjectReference {
+        val classLoader = context.classLoader
+        val byteBufferClass = context.findClass("java.nio.ByteBuffer", classLoader) as ClassType
         val wrapMethod = byteBufferClass.concreteMethodByName("wrap", "([B)Ljava/nio/ByteBuffer;")
-                         ?: error("'wrap' method not found")
+            ?: error("'wrap' method not found")
 
-        return process.invokeMethod(context, byteBufferClass, wrapMethod, listOf(bytes)) as ObjectReference
+        return context.invokeMethod(byteBufferClass, wrapMethod, listOf(bytes)) as ObjectReference
     }
 
-    protected fun DebugProcessImpl.tryLoadClass(
-            context: EvaluationContextImpl,
-            fqName: String,
-            classLoader: ClassLoaderReference?
-    ): ReferenceType? {
+    protected fun tryLoadClass(context: ExecutionContext, fqName: String, classLoader: ClassLoaderReference?): ReferenceType? {
         return try {
-            loadClass(context, fqName, classLoader)
+            context.debugProcess.loadClass(context.evaluationContext, fqName, classLoader)
         } catch (e: Throwable) {
             null
         }

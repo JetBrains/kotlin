@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
+import kotlin.math.min
 
 object RenameUnresolvedReferenceActionFactory : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -134,7 +135,7 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
 
 private class HammingComparator<T>(private val referenceString: String, private val asString: T.() -> String) : Comparator<T> {
     private fun countDifference(s1: String): Int {
-        return (0..Math.min(s1.lastIndex, referenceString.lastIndex)).count { s1[it] != referenceString[it] }
+        return (0..min(s1.lastIndex, referenceString.lastIndex)).count { s1[it] != referenceString[it] }
     }
 
     override fun compare(lookupItem1: T, lookupItem2: T): Int {

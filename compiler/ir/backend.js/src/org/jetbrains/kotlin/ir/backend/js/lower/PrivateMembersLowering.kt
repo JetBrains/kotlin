@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.name.Name
 val STATIC_THIS_PARAMETER = object : IrDeclarationOriginImpl("STATIC_THIS_PARAMETER") {}
 
 class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPass {
-    private val memberMap = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
+    private val memberMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
     override fun lower(irClass: IrClass) {
 
@@ -41,7 +42,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
         irClass.declarations.transformFlat {
             when (it) {
                 is IrSimpleFunction -> transformMemberToStaticFunction(it)?.let { staticFunction ->
-                    memberMap[it] = staticFunction
+                    memberMap[it.symbol] = staticFunction
                     listOf(staticFunction)
                 }
                 is IrProperty -> listOf(it.apply {
@@ -56,12 +57,12 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
             override fun visitCall(expression: IrCall): IrExpression {
                 super.visitCall(expression)
 
-                return memberMap[expression.symbol.owner]?.let {
+                return memberMap[expression.symbol]?.let {
                     transformPrivateToStaticCall(expression, it)
                 } ?: expression
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference) = memberMap[expression.symbol.owner]?.let {
+            override fun visitFunctionReference(expression: IrFunctionReference) = memberMap[expression.symbol]?.let {
                 transformPrivateToStaticReference(expression) {
                     IrFunctionReferenceImpl(
                         expression.startOffset, expression.endOffset,
@@ -74,16 +75,16 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
             } ?: expression
 
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-                return if (expression.getter?.owner in memberMap || expression.setter?.owner in memberMap) {
+                return if (expression.getter in memberMap || expression.setter in memberMap) {
                     transformPrivateToStaticReference(expression) {
                         IrPropertyReferenceImpl(
                             expression.startOffset, expression.endOffset,
                             expression.type,
-                            expression.descriptor,
+                            expression.symbol, // TODO remap property symbol based on remapped getter/setter?
                             expression.typeArgumentsCount,
                             expression.field,
-                            memberMap[expression.getter?.owner]?.symbol ?: expression.getter,
-                            memberMap[expression.setter?.owner]?.symbol ?: expression.setter,
+                            memberMap[expression.getter]?.symbol ?: expression.getter,
+                            memberMap[expression.setter]?.symbol ?: expression.setter,
                             expression.origin
                         )
                     }
@@ -132,7 +133,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
     }
 
     private fun transformAccessor(accessor: IrSimpleFunction) =
-        transformMemberToStaticFunction(accessor)?.also { memberMap[accessor] = it } ?: accessor
+        transformMemberToStaticFunction(accessor)?.also { memberMap[accessor.symbol] = it } ?: accessor
 
     private fun transformMemberToStaticFunction(function: IrSimpleFunction): IrSimpleFunction? {
 
@@ -149,7 +150,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
             ).also {
                 descriptor.bind(it)
                 it.parent = parent
-                it.correspondingProperty = correspondingProperty
+                it.correspondingPropertySymbol = correspondingPropertySymbol
             }
         }
 

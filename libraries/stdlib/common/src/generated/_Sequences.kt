@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
@@ -347,6 +347,8 @@ public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
  *
  * The operation is _intermediate_ and _stateless_.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
@@ -477,6 +479,8 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destinat
  * Returns a sequence containing first [n] elements.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -1158,15 +1162,16 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.maxBy(selector: (T) -> R): 
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxElem = iterator.next()
+    if (!iterator.hasNext()) return maxElem
     var maxValue = selector(maxElem)
-    while (iterator.hasNext()) {
+    do {
         val e = iterator.next()
         val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
         }
-    }
+    } while (iterator.hasNext())
     return maxElem
 }
 
@@ -1255,15 +1260,16 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.minBy(selector: (T) -> R): 
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minElem = iterator.next()
+    if (!iterator.hasNext()) return minElem
     var minValue = selector(minElem)
-    while (iterator.hasNext()) {
+    do {
         val e = iterator.next()
         val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
         }
-    }
+    } while (iterator.hasNext())
     return minElem
 }
 

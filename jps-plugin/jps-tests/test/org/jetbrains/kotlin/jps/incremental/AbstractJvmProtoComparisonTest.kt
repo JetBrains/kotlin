@@ -28,7 +28,7 @@ import java.io.File
 
 abstract class AbstractJvmProtoComparisonTest : AbstractProtoComparisonTest<LocalFileKotlinClass>() {
     override fun compileAndGetClasses(sourceDir: File, outputDir: File): Map<ClassId, LocalFileKotlinClass> {
-        MockLibraryUtil.compileKotlin(sourceDir.path, outputDir)
+        MockLibraryUtil.compileKotlin(sourceDir.path, outputDir, extraOptions = listOf("-Xdisable-default-scripting-plugin"))
 
         val classFiles = outputDir.walkMatching { it.name.endsWith(".class") }
         val localClassFiles = classFiles.map { LocalFileKotlinClass.create(it)!! }

@@ -1,18 +1,17 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 
 class DeepCopyTypeRemapper(
     private val symbolRemapper: SymbolRemapper
@@ -40,14 +39,15 @@ class DeepCopyTypeRemapper(
             }
         }
 
-        val annotations = type.annotations.map { it.transform(deepCopy, null) as IrCall }
+        val annotations = type.annotations.map { it.transform(deepCopy, null) as IrConstructorCall }
 
         return IrSimpleTypeImpl(
-            type.originalKotlinType,
+            null,
             symbolRemapper.getReferencedClassifier(type.classifier),
             type.hasQuestionMark,
             arguments,
-            annotations)
+            annotations
+        )
     }
 
 }

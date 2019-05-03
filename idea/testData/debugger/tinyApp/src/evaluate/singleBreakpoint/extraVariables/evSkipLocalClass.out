@@ -2,28 +2,6 @@ LineBreakpoint created at evSkipLocalClass.kt:12
 Run Java
 Connected to the target VM
 evSkipLocalClass.kt:12
-package evSkipLocalClass
-
-class A {
-    var prop = 1
-}
-
-fun main(args: Array<String>) {
-    val a1 = A()
-    val a2 = A()
-
-    //Breakpoint!
-    foo(a1.prop)
-    class B {
-        fun bar() {
-            foo(a2.prop)
-        }
-    }
-}
-
-fun foo(i: Int) {}
-
-// PRINT_FRAME
 Compile bytecode for a1.prop
  frame    = main:12, EvSkipLocalClassKt {evSkipLocalClass}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evSkipLocalClass.kt, 7)
