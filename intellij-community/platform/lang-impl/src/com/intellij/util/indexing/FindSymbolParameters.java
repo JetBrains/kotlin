@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,9 +59,9 @@ public class FindSymbolParameters {
     return myIdFilter;
   }
 
-  @Nullable
+  @NotNull
   public Project getProject() {
-    return mySearchScope.getProject();
+    return ObjectUtils.notNull(mySearchScope.getProject());
   }
 
   public boolean isSearchInLibraries() {
