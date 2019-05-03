@@ -44,6 +44,20 @@ interface MetadataExtensions {
 
     fun writeTypeExtensions(type: KmExtensionType, proto: ProtoBuf.Type.Builder, c: WriteContext): KmTypeExtensionVisitor?
 
+    fun createClassExtension(): KmClassExtension
+
+    fun createPackageExtension(): KmPackageExtension
+
+    fun createFunctionExtension(): KmFunctionExtension
+
+    fun createPropertyExtension(): KmPropertyExtension
+
+    fun createConstructorExtension(): KmConstructorExtension
+
+    fun createTypeParameterExtension(): KmTypeParameterExtension
+
+    fun createTypeExtension(): KmTypeExtension
+
     companion object {
         val INSTANCES: List<MetadataExtensions> by lazy {
             ServiceLoader.load(MetadataExtensions::class.java, MetadataExtensions::class.java.classLoader).toList().also {

@@ -29,6 +29,12 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
     }
 
     /**
+     * Visits metadata of this module with a new [KmModule] instance and returns that instance.
+     */
+    fun toKmModule(): KmModule =
+        KmModule().apply(this::accept)
+
+    /**
      * A [KmModuleVisitor] that generates the metadata of a Kotlin JVM module file.
      */
     class Writer : KmModuleVisitor() {
@@ -151,3 +157,28 @@ abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
 
     // TODO: JvmPackageName
 }
+
+class KmModule : KmModuleVisitor() {
+    val packageParts: MutableMap<String, KmPackageParts> = LinkedHashMap()
+    val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    override fun visitPackageParts(fqName: String, fileFacades: List<String>, multiFileClassParts: Map<String, String>) {
+        packageParts[fqName] = KmPackageParts(fileFacades.toMutableList(), multiFileClassParts.toMutableMap())
+    }
+
+    override fun visitAnnotation(annotation: KmAnnotation) {
+        annotations.add(annotation)
+    }
+
+    fun accept(visitor: KmModuleVisitor) {
+        for ((fqName, parts) in packageParts) {
+            visitor.visitPackageParts(fqName, parts.fileFacades, parts.multiFileClassParts)
+        }
+        annotations.forEach(visitor::visitAnnotation)
+    }
+}
+
+class KmPackageParts(
+    val fileFacades: MutableList<String>,
+    val multiFileClassParts: MutableMap<String, String>
+)

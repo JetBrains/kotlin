@@ -5,10 +5,7 @@
 
 package kotlinx.metadata.jvm
 
-import kotlinx.metadata.InconsistentKotlinMetadataException
-import kotlinx.metadata.KmClassVisitor
-import kotlinx.metadata.KmLambdaVisitor
-import kotlinx.metadata.KmPackageVisitor
+import kotlinx.metadata.*
 import kotlinx.metadata.impl.ClassWriter
 import kotlinx.metadata.impl.LambdaWriter
 import kotlinx.metadata.impl.PackageWriter
@@ -35,6 +32,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
                     ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
             JvmProtoBufUtil.readClassDataFrom(data1, header.data2)
         }
+
+        /**
+         * Visits metadata of this class with a new [KmClass] instance and returns that instance.
+         */
+        fun toKmClass(): KmClass =
+            KmClass().apply(this::accept)
 
         /**
          * Makes the given visitor visit metadata of this class.
@@ -86,6 +89,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         }
 
         /**
+         * Visits metadata of this file facade with a new [KmPackage] instance and returns that instance.
+         */
+        fun toKmPackage(): KmPackage =
+            KmPackage().apply(this::accept)
+
+        /**
          * Makes the given visitor visit metadata of this file facade.
          *
          * @param v the visitor that must visit this file facade
@@ -134,6 +143,14 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
                 JvmProtoBufUtil.readFunctionDataFrom(data1, header.data2)
             }
         }
+
+        /**
+         * Visits metadata of this synthetic class with a new [KmLambda] instance and returns that instance.
+         *
+         * Returns `null` if this synthetic class does not represent a lambda.
+         */
+        fun toKmLambda(): KmLambda? =
+            if (isLambda) KmLambda().apply(this::accept) else null
 
         /**
          * Returns `true` if this synthetic class is a class file compiled for a Kotlin lambda.
@@ -252,6 +269,12 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          */
         val facadeClassName: String
             get() = header.extraString
+
+        /**
+         * Visits metadata of this multi-file class part with a new [KmPackage] instance and returns that instance.
+         */
+        fun toKmPackage(): KmPackage =
+            KmPackage().apply(this::accept)
 
         /**
          * Makes the given visitor visit metadata of this multi-file class part.

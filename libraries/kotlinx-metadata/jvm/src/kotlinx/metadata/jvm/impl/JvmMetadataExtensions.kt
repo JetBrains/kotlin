@@ -7,7 +7,7 @@ package kotlinx.metadata.jvm.impl
 
 import kotlinx.metadata.*
 import kotlinx.metadata.impl.*
-import kotlinx.metadata.impl.extensions.MetadataExtensions
+import kotlinx.metadata.impl.extensions.*
 import kotlinx.metadata.jvm.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
@@ -257,6 +257,20 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             }
         }
     }
+
+    override fun createClassExtension(): KmClassExtension = JvmClassExtension()
+
+    override fun createPackageExtension(): KmPackageExtension = JvmPackageExtension()
+
+    override fun createFunctionExtension(): KmFunctionExtension = JvmFunctionExtension()
+
+    override fun createPropertyExtension(): KmPropertyExtension = JvmPropertyExtension()
+
+    override fun createConstructorExtension(): KmConstructorExtension = JvmConstructorExtension()
+
+    override fun createTypeParameterExtension(): KmTypeParameterExtension = JvmTypeParameterExtension()
+
+    override fun createTypeExtension(): KmTypeExtension = JvmTypeExtension()
 
     private fun JvmMemberSignature.toJvmMethodSignature(c: WriteContext): JvmProtoBuf.JvmMethodSignature =
         JvmProtoBuf.JvmMethodSignature.newBuilder().apply {
