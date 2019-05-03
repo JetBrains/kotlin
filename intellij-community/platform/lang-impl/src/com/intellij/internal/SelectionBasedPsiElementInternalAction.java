@@ -20,7 +20,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -95,15 +95,14 @@ public abstract class SelectionBasedPsiElementInternalAction<T extends PsiElemen
   protected List<T> getElement(@NotNull Editor editor, @NotNull PsiFile file) {
     final SelectionModel selectionModel = editor.getSelectionModel();
     if (selectionModel.hasSelection()) {
-      return Arrays.asList((T[])new PsiElement[]{getElementFromSelection(file, selectionModel)});
+      return Collections.singletonList(getElementFromSelection(file, selectionModel));
     }
     return getElementAtOffset(editor, file);
   }
 
   @NotNull
   protected List<T> getElementAtOffset(@NotNull Editor editor, @NotNull PsiFile file) {
-    return Arrays
-      .asList((T[])new PsiElement[]{PsiTreeUtil.findElementOfClassAtOffset(file, editor.getCaretModel().getOffset(), myClass, false)});
+    return Collections.singletonList(PsiTreeUtil.findElementOfClassAtOffset(file, editor.getCaretModel().getOffset(), myClass, false));
   }
 
   @Nullable

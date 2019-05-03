@@ -129,7 +129,7 @@ public class GradleAttachSourcesProvider implements AttachSourcesProvider {
         ExternalSystemTaskExecutionSettings settings = new ExternalSystemTaskExecutionSettings();
         settings.setExecutionName("Download sources");
         settings.setExternalProjectPath(ExternalSystemApiUtil.getExternalRootProjectPath(module));
-        settings.setTaskNames(Arrays.asList(taskName));
+        settings.setTaskNames(Collections.singletonList(taskName));
         settings.setVmOptions(gradleVmOptions);
         settings.setExternalSystemIdString(GradleConstants.SYSTEM_ID.getId());
         ExternalSystemUtil.runTask(

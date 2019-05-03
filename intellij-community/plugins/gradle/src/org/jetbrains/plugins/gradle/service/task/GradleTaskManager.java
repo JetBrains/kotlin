@@ -96,7 +96,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
           String[] tasksArray;
           if (!args.isEmpty()) {
             // todo append --args only after JavaExec tasks
-            tasksArray = taskNames.stream().flatMap(task -> concat(Arrays.asList(task), args).stream()).toArray(String[]::new);
+            tasksArray = taskNames.stream().flatMap(task -> concat(Collections.singletonList(task), args).stream()).toArray(String[]::new);
           }
           else {
             tasksArray = ArrayUtil.toStringArray(taskNames);

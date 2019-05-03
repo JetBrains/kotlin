@@ -241,7 +241,7 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
   }
 
   public boolean add(ExternalSystemNode externalSystemNode) {
-    return addAll(Arrays.asList(externalSystemNode));
+    return addAll(Collections.singletonList(externalSystemNode));
   }
 
   public boolean removeAll(Collection<ExternalSystemNode> externalSystemNodes) {
@@ -263,7 +263,7 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
   }
 
   public void remove(ExternalSystemNode externalSystemNode) {
-    removeAll(Arrays.asList(externalSystemNode));
+    removeAll(Collections.singletonList(externalSystemNode));
   }
 
   protected void childrenChanged() {

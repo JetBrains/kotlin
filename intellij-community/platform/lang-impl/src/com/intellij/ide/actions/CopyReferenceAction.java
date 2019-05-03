@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.ide.IdeBundle;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.ide.actions.CopyReferenceUtil.*;
@@ -95,7 +95,7 @@ public class CopyReferenceAction extends DumbAwareAction {
   }
 
   public static boolean doCopy(final PsiElement element, final Project project) {
-    return doCopy(Arrays.asList(element), project);
+    return doCopy(Collections.singletonList(element), project);
   }
 
   private static boolean doCopy(List<? extends PsiElement> elements, @Nullable final Project project) {

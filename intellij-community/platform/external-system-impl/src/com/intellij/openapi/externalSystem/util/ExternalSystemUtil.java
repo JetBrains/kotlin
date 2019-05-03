@@ -724,7 +724,8 @@ public class ExternalSystemUtil {
         notificationData.getTitle(), notificationData.getMessage(),
         notificationData.getNotificationCategory().getNotificationType(), notificationData.getListener());
     }
-    return new FailureResultImpl(Arrays.asList(new FailureImpl(notificationData.getMessage(), exception, notification, navigatable)));
+    return new FailureResultImpl(
+      Collections.singletonList(new FailureImpl(notificationData.getMessage(), exception, notification, navigatable)));
   }
 
   public static BuildEvent convert(ExternalSystemTaskExecutionEvent taskExecutionEvent) {
