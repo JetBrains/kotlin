@@ -17,16 +17,48 @@
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.Expression;
 import com.intellij.codeInsight.template.ExpressionContext;
 import com.intellij.codeInsight.template.Result;
 import com.intellij.codeInsight.template.TextResult;
+import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ConstantNode extends Expression {
+import java.util.Collection;
+
+public final class ConstantNode extends Expression {
   private final Result myValue;
+  private final LookupElement[] myLookupElements;
 
-  public ConstantNode(String value) {
-    myValue = new TextResult(value);
+  public ConstantNode(@NotNull String value) {
+    this(new TextResult(value));
+  }
+
+  public ConstantNode(@Nullable Result value) {
+    this(value, LookupElement.EMPTY_ARRAY);
+  }
+
+  private ConstantNode(@Nullable Result value, @NotNull LookupElement... lookupElements) {
+    myValue = value;
+    myLookupElements = lookupElements;
+  }
+
+  public ConstantNode withLookupItems(@NotNull LookupElement... lookupElements) {
+    return new ConstantNode(myValue, lookupElements);
+  }
+
+  public ConstantNode withLookupItems(@NotNull Collection<? extends LookupElement> lookupElements) {
+    return new ConstantNode(myValue, lookupElements.toArray(LookupElement.EMPTY_ARRAY));
+  }
+
+  public ConstantNode withLookupStrings(@NotNull String... lookupElements) {
+    return new ConstantNode(myValue, ContainerUtil.map2Array(lookupElements, LookupElement.class, LookupElementBuilder::create));
+  }
+
+  public ConstantNode withLookupStrings(@NotNull Collection<? extends String> lookupElements) {
+    return new ConstantNode(myValue, ContainerUtil.map2Array(lookupElements, LookupElement.class, LookupElementBuilder::create));
   }
 
   @Override
@@ -46,7 +78,7 @@ public class ConstantNode extends Expression {
 
   @Override
   public LookupElement[] calculateLookupItems(ExpressionContext context) {
-    return LookupElement.EMPTY_ARRAY;
+    return myLookupElements;
   }
 
 }
