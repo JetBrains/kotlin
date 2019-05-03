@@ -22,7 +22,7 @@ public class GradleExecutionSettings extends ExternalSystemExecutionSettings {
   @NotNull private final GradleExecutionWorkspace myExecutionWorkspace = new GradleExecutionWorkspace();
 
   @NotNull private final List<ClassHolder<? extends GradleProjectResolverExtension>> myResolverExtensions =
-    new ArrayList<ClassHolder<? extends GradleProjectResolverExtension>>();
+    new ArrayList<>();
   @Nullable private final String myGradleHome;
 
   @Nullable private final String myServiceDirectory;

@@ -146,7 +146,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
   }
 
   public static class MyState implements State<GradleProjectSettings> {
-    private final Set<GradleProjectSettings> myProjectSettings = new TreeSet<GradleProjectSettings>();
+    private final Set<GradleProjectSettings> myProjectSettings = new TreeSet<>();
 
     @Override
     @XCollection(elementTypes = {GradleProjectSettings.class})

@@ -263,7 +263,7 @@ public class CodeFormatterFacade {
 
     // We use a set here because we encountered a situation when more than one PSI leaf points to the same injected fragment
     // (at least for sql injected into sql).
-    final LinkedHashSet<TextRange> injectedFileRangesSet = new LinkedHashSet<TextRange>();
+    final LinkedHashSet<TextRange> injectedFileRangesSet = new LinkedHashSet<>();
 
     if (!psi.getProject().isDefault()) {
       List<DocumentWindow> injectedDocuments = InjectedLanguageManager.getInstance(file.getProject()).getCachedInjectedDocumentsInRange(file, file.getTextRange());
@@ -370,7 +370,7 @@ public class CodeFormatterFacade {
       PsiElement e = toProcess.pop();
       if (e instanceof PsiLanguageInjectionHost) {
         if (result == null) {
-          result = new HashSet<PsiLanguageInjectionHost>();
+          result = new HashSet<>();
         }
         result.add((PsiLanguageInjectionHost)e);
       }

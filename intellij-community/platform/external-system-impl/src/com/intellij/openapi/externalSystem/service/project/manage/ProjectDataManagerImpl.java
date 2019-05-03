@@ -63,11 +63,11 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
       @NotNull
       @Override
       protected Map<Key<?>, List<ProjectDataService<?, ?>>> compute() {
-        Map<Key<?>, List<ProjectDataService<?, ?>>> result = new HashMap<Key<?>, List<ProjectDataService<?, ?>>>();
+        Map<Key<?>, List<ProjectDataService<?, ?>>> result = new HashMap<>();
         for (ProjectDataService<?, ?> service : supplier.get()) {
           List<ProjectDataService<?, ?>> services = result.get(service.getTargetDataKey());
           if (services == null) {
-            result.put(service.getTargetDataKey(), services = new ArrayList<ProjectDataService<?, ?>>());
+            result.put(service.getTargetDataKey(), services = new ArrayList<>());
           }
           services.add(service);
         }

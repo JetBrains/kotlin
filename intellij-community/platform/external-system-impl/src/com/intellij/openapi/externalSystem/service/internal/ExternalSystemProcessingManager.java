@@ -183,9 +183,9 @@ public class ExternalSystemProcessingManager implements ExternalSystemTaskNotifi
 
   public void update() {
     long delay = TOO_LONG_EXECUTION_MS;
-    Map<ExternalSystemTaskId, Long> newState = new HashMap<ExternalSystemTaskId, Long>();
+    Map<ExternalSystemTaskId, Long> newState = new HashMap<>();
 
-    Map<ExternalSystemTaskId, Long> currentState = new HashMap<ExternalSystemTaskId, Long>(myTasksInProgress);
+    Map<ExternalSystemTaskId, Long> currentState = new HashMap<>(myTasksInProgress);
     if (currentState.isEmpty()) {
       return;
     }

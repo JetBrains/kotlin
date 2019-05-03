@@ -427,7 +427,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
 
   @NotNull
   public SortedSet<Object> sortItems(@NotNull Set<Object> elements) {
-    TreeSet<Object> objects = new TreeSet<Object>(this);
+    TreeSet<Object> objects = new TreeSet<>(this);
     objects.addAll(elements);
     return objects;
   }

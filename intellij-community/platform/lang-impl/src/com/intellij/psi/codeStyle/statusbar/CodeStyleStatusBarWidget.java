@@ -129,7 +129,7 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
 
   @NotNull
   private static AnAction[] getActions(@Nullable final CodeStyleStatusBarUIContributor uiContributor, @NotNull PsiFile psiFile) {
-    List<AnAction> allActions = new ArrayList<AnAction>();
+    List<AnAction> allActions = new ArrayList<>();
     if (uiContributor != null) {
       AnAction[] actions = uiContributor.getActions(psiFile);
       if (actions != null) {

@@ -1210,7 +1210,7 @@ public class ColorAndFontOptions extends SearchableConfigurable.Parent.Abstract
     }
 
     private static Map<Pair<String, String>, Element> createNamedIndex(Element e) {
-      HashMap<Pair<String, String>, Element> index = new HashMap<Pair<String, String>, Element>();
+      HashMap<Pair<String, String>, Element> index = new HashMap<>();
       for (Element child : e.getChildren()) {
         index.put(indexKey(child), child);
       }

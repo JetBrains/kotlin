@@ -57,7 +57,7 @@ public class ModuleDependencyDataService extends AbstractDependencyDataService<M
                                                  @NotNull final Module module,
                                                  @NotNull final IdeModifiableModelsProvider modelsProvider) {
     final Map<Pair<String /* dependency module internal name */, /* dependency module scope */DependencyScope>, ModuleOrderEntry> toRemove =
-      new HashMap<Pair<String, DependencyScope>, ModuleOrderEntry>();
+      new HashMap<>();
     final Map<OrderEntry, OrderAware> orderEntryDataMap = new LinkedHashMap<>();
 
     for (OrderEntry entry : modelsProvider.getOrderEntries(module)) {

@@ -224,9 +224,9 @@ public class ArrangementEngine {
                                                              @NotNull List<? extends ArrangementMatchRule> rulesByPriority,
                                                              @Nullable Map<E, ArrangementSectionRule> entryToSection)
   {
-    List<E> arranged = new ArrayList<E>();
-    Set<E> unprocessed = new LinkedHashSet<E>();
-    List<Pair<Set<ArrangementEntry>, E>> dependent = new ArrayList<Pair<Set<ArrangementEntry>, E>>();
+    List<E> arranged = new ArrayList<>();
+    Set<E> unprocessed = new LinkedHashSet<>();
+    List<Pair<Set<ArrangementEntry>, E>> dependent = new ArrayList<>();
     for (E entry : entries) {
       List<? extends ArrangementEntry> dependencies = entry.getDependencies();
       if (dependencies == null) {
@@ -353,10 +353,10 @@ public class ArrangementEngine {
       return;
     }
 
-    Map<E, ArrangementSectionRule> entryToSection = new HashMap<E, ArrangementSectionRule>();
-    Map<E, ArrangementEntryWrapper<E>> map = new HashMap<E, ArrangementEntryWrapper<E>>();
-    List<E> arranged = new ArrayList<E>();
-    List<E> toArrange = new ArrayList<E>();
+    Map<E, ArrangementSectionRule> entryToSection = new HashMap<>();
+    Map<E, ArrangementEntryWrapper<E>> map = new HashMap<>();
+    List<E> arranged = new ArrayList<>();
+    List<E> toArrange = new ArrayList<>();
     for (ArrangementEntryWrapper<E> wrapper : wrappers) {
       E entry = wrapper.getEntry();
       map.put(wrapper.getEntry(), wrapper);
@@ -485,7 +485,7 @@ public class ArrangementEngine {
 
   private static class Context<E extends ArrangementEntry> {
 
-    @NotNull public final List<ArrangementMoveInfo> moveInfos = new ArrayList<ArrangementMoveInfo>();
+    @NotNull public final List<ArrangementMoveInfo> moveInfos = new ArrayList<>();
 
     @NotNull public final Rearranger<E>                          rearranger;
     @NotNull public final Collection<ArrangementEntryWrapper<E>> wrappers;

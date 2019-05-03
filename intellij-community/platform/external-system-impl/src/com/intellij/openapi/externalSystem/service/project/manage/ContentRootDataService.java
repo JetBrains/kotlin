@@ -135,7 +135,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
     logUnitTest("Import data for module [" + module.getName() + "], data size [" + data.size() + "]");
     final ModifiableRootModel modifiableRootModel = modelsProvider.getModifiableRootModel(module);
     final ContentEntry[] contentEntries = modifiableRootModel.getContentEntries();
-    final Map<String, ContentEntry> contentEntriesMap = new HashMap<String, ContentEntry>();
+    final Map<String, ContentEntry> contentEntriesMap = new HashMap<>();
     for (ContentEntry contentEntry : contentEntries) {
       contentEntriesMap.put(contentEntry.getUrl(), contentEntry);
     }

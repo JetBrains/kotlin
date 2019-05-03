@@ -115,7 +115,7 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
 
         File myWorkingDirectory = new File(configuration);
         params.setWorkingDirectory(myWorkingDirectory.isDirectory() ? myWorkingDirectory.getPath() : PathManager.getBinPath());
-        final List<String> classPath = new ArrayList<String>();
+        final List<String> classPath = new ArrayList<>();
 
         // IDE jars.
         classPath.addAll(PathManager.getUtilClassPath());

@@ -71,7 +71,7 @@ public class DetachExternalProjectAction extends ExternalSystemNodeAction<Projec
     ExternalProjectsManagerImpl.getInstance(project).forgetExternalProjectData(projectSystemId, projectData.getLinkedExternalProjectPath());
 
     // Process orphan modules.
-    List<Module> orphanModules = new ArrayList<Module>();
+    List<Module> orphanModules = new ArrayList<>();
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       if (!ExternalSystemApiUtil.isExternalSystemAwareModule(projectSystemId, module)) continue;
 

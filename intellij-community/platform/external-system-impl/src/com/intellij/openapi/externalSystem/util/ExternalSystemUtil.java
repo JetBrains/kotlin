@@ -119,7 +119,7 @@ public class ExternalSystemUtil {
 
   private static final Logger LOG = Logger.getInstance(ExternalSystemUtil.class);
 
-  @NotNull private static final Map<String, String> RUNNER_IDS = new HashMap<String, String>();
+  @NotNull private static final Map<String, String> RUNNER_IDS = new HashMap<>();
 
   public static final TObjectHashingStrategy<Pair<ProjectSystemId, File>> HASHING_STRATEGY =
     new TObjectHashingStrategy<Pair<ProjectSystemId, File>>() {
@@ -271,7 +271,7 @@ public class ExternalSystemUtil {
       callback = spec.getCallback();
     }
 
-    Set<String> toRefresh = new HashSet<String>();
+    Set<String> toRefresh = new HashSet<>();
     for (ExternalProjectSettings setting : projectsSettings) {
       // don't refresh project when auto-import is disabled if such behavior needed (e.g. on project opening when auto-import is disabled)
       if (!setting.isUseAutoImport() && spec.whenAutoImportEnabled()) continue;

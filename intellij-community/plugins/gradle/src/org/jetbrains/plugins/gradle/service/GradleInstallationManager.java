@@ -84,7 +84,7 @@ public class GradleInstallationManager {
       return null;
     }
 
-    List<File> result = new ArrayList<File>();
+    List<File> result = new ArrayList<>();
 
     File libs = new File(gradleHome, "lib");
     File[] files = libs.listFiles();

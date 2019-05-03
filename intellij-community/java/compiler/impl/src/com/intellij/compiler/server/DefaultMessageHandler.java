@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.server;
 
 import com.intellij.ide.highlighter.JavaFileType;
@@ -91,7 +91,7 @@ public abstract class DefaultMessageHandler implements BuilderMessageHandler {
     final boolean isRemoved = task.getIsFieldRemoved();
     boolean canceled = false;
     final Ref<Boolean> isSuccess = Ref.create(Boolean.TRUE);
-    final Set<String> affectedPaths = Collections.synchronizedSet(new HashSet<String>()); // PsiSearchHelper runs multiple threads
+    final Set<String> affectedPaths = Collections.synchronizedSet(new HashSet<>()); // PsiSearchHelper runs multiple threads
     final long searchStart = System.currentTimeMillis();
     try {
       if (myConstantSearchTime > CONSTANT_SEARCH_TIME_LIMIT) {

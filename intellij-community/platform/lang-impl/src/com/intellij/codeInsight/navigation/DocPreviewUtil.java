@@ -91,11 +91,11 @@ public class DocPreviewUtil {
     }
 
     // Build links info.
-    Map<String/*qName*/, String/*address*/> links = new HashMap<String, String>();
+    Map<String/*qName*/, String/*address*/> links = new HashMap<>();
     process(fullText, new LinksCollector(links));
 
     // Add derived names.
-    Map<String, String> toAdd = new HashMap<String, String>();
+    Map<String, String> toAdd = new HashMap<>();
     for (Map.Entry<String, String> entry : links.entrySet()) {
       String shortName = parseShortName(entry.getKey());
       if (shortName != null) {
@@ -112,7 +112,7 @@ public class DocPreviewUtil {
     }
 
     // Apply links info to the header template.
-    List<TextRange> modifiedRanges = new ArrayList<TextRange>();
+    List<TextRange> modifiedRanges = new ArrayList<>();
     List<String> sortedReplacements = ContainerUtilRt.newArrayList(links.keySet());
     Collections.sort(sortedReplacements, REPLACEMENTS_COMPARATOR);
     StringBuilder buffer = new StringBuilder(header);

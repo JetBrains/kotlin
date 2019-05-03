@@ -46,7 +46,7 @@ public class ArrangementGroupingComponent extends JPanel implements ArrangementR
                                       @NotNull ArrangementStandardSettingsManager settingsManager)
     throws IllegalArgumentException
   {
-    List<ArrangementSettingsToken> children = new ArrayList<ArrangementSettingsToken>();
+    List<ArrangementSettingsToken> children = new ArrayList<>();
     StdArrangementTokenUiRole childRole = null;
     for (CompositeArrangementSettingsToken child : token.getChildren()) {
       if (childRole == null) {

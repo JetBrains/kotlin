@@ -40,7 +40,7 @@ public class GradleScriptContributor extends NonCodeMembersContributor {
                                      @NotNull ResolveState state) {
     if (!UtilKt.isResolvedInGradleScript(aClass)) return;
 
-    List<String> methodInfo = new ArrayList<String>();
+    List<String> methodInfo = new ArrayList<>();
     for (GrMethodCall current = PsiTreeUtil.getParentOfType(place, GrMethodCall.class);
          current != null;
          current = PsiTreeUtil.getParentOfType(current, GrMethodCall.class)) {

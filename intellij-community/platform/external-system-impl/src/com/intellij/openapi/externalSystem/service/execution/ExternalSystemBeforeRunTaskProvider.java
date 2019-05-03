@@ -72,7 +72,7 @@ public abstract class ExternalSystemBeforeRunTaskProvider extends BeforeRunTaskP
   public boolean canExecuteTask(@NotNull RunConfiguration configuration, @NotNull ExternalSystemBeforeRunTask beforeRunTask) {
     final ExternalSystemTaskExecutionSettings executionSettings = beforeRunTask.getTaskExecutionSettings();
 
-    final List<ExternalTaskPojo> tasks = new ArrayList<ExternalTaskPojo>();
+    final List<ExternalTaskPojo> tasks = new ArrayList<>();
     for (String taskName : executionSettings.getTaskNames()) {
       tasks.add(new ExternalTaskPojo(taskName, executionSettings.getExternalProjectPath(), null));
     }
@@ -94,7 +94,7 @@ public abstract class ExternalSystemBeforeRunTaskProvider extends BeforeRunTaskP
 
     final ExternalSystemTaskExecutionSettings executionSettings = beforeRunTask.getTaskExecutionSettings();
 
-    final List<ExternalTaskPojo> tasks = new ArrayList<ExternalTaskPojo>();
+    final List<ExternalTaskPojo> tasks = new ArrayList<>();
     for (String taskName : executionSettings.getTaskNames()) {
       tasks.add(new ExternalTaskPojo(taskName, executionSettings.getExternalProjectPath(), null));
     }

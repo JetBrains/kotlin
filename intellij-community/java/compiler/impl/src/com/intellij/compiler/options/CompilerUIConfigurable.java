@@ -129,7 +129,7 @@ public class CompilerUIConfigurable implements SearchableConfigurable, Configura
       }
     }
 
-    Map<Setting, Collection<JComponent>> controls = new HashMap<Setting, Collection<JComponent>>();
+    Map<Setting, Collection<JComponent>> controls = new HashMap<>();
     controls.put(Setting.RESOURCE_PATTERNS, ContainerUtilRt.newArrayList(myResourcePatternsLabel, myResourcePatternsField, myPatternLegendLabel));
     controls.put(Setting.CLEAR_OUTPUT_DIR_ON_REBUILD, Collections.singleton(myCbClearOutputDirectory));
     controls.put(Setting.ADD_NOT_NULL_ASSERTIONS, Collections.singleton(myAssertNotNullPanel));

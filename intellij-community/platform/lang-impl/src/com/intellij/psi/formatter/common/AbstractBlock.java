@@ -94,7 +94,7 @@ public abstract class AbstractBlock implements ASTBlock, ExtraRangesProvider {
       if (blockRange.containsRange(startOffset, endOffset)) {
         PsiFile injected = PsiDocumentManager.getInstance(psi.getProject()).getCachedPsiFile(documentWindow);
         if (injected != null) {
-          List<Block> result = new ArrayList<Block>();
+          List<Block> result = new ArrayList<>();
           DefaultInjectedLanguageBlockBuilder builder = new DefaultInjectedLanguageBlockBuilder(((SettingsAwareBlock)this).getSettings());
           builder.addInjectedBlocks(result, myNode, getWrap(), getAlignment(), getIndent());
           return result;

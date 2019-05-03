@@ -91,7 +91,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
 
   @NotNull
   public Map<OrderRootType, Collection<File>> prepareLibraryFiles(@NotNull LibraryData data) {
-    Map<OrderRootType, Collection<File>> result = new HashMap<OrderRootType, Collection<File>>();
+    Map<OrderRootType, Collection<File>> result = new HashMap<>();
     for (LibraryPathType pathType: LibraryPathType.values()) {
       Set<String> paths = data.getPaths(pathType);
       if (paths.isEmpty()) {
@@ -233,7 +233,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
       if(pathType != LibraryPathType.BINARY && toAddPerType.isEmpty()) {
         continue;
       }
-      HashSet<String> toRemovePerType = new HashSet<String>();
+      HashSet<String> toRemovePerType = new HashSet<>();
       toRemove.put(ideType, toRemovePerType);
 
       for (VirtualFile ideFile: ideLibrary.getFiles(ideType)) {
@@ -255,7 +255,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
     }
 
     for (Map.Entry<OrderRootType, Set<String>> entry: toAdd.entrySet()) {
-      Map<OrderRootType, Collection<File>> roots = new HashMap<OrderRootType, Collection<File>>();
+      Map<OrderRootType, Collection<File>> roots = new HashMap<>();
       roots.put(entry.getKey(), ContainerUtil.map(entry.getValue(), PATH_TO_FILE));
       registerPaths(externalLibrary.isUnresolved(), roots, libraryModel, externalLibrary.getInternalName());
     }

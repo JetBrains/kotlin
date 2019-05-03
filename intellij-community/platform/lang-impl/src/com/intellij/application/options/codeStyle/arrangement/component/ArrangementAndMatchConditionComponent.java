@@ -32,8 +32,8 @@ import java.util.*;
  */
 public class ArrangementAndMatchConditionComponent extends JPanel implements ArrangementUiComponent {
 
-  @NotNull private final List<ArrangementUiComponent>  myComponents      = new ArrayList<ArrangementUiComponent>();
-  @NotNull private final Set<ArrangementSettingsToken> myAvailableTokens = new HashSet<ArrangementSettingsToken>();
+  @NotNull private final List<ArrangementUiComponent>  myComponents      = new ArrayList<>();
+  @NotNull private final Set<ArrangementSettingsToken> myAvailableTokens = new HashSet<>();
 
   @NotNull private final ArrangementCompositeMatchCondition mySetting;
   @Nullable private      Rectangle                          myScreenBounds;
@@ -49,7 +49,7 @@ public class ArrangementAndMatchConditionComponent extends JPanel implements Arr
     setOpaque(false);
     setLayout(new GridBagLayout());
     final Map<ArrangementSettingsToken, ArrangementMatchCondition> operands =
-      new HashMap<ArrangementSettingsToken, ArrangementMatchCondition>();
+      new HashMap<>();
     ArrangementMatchConditionVisitor visitor = new ArrangementMatchConditionVisitor() {
       @Override
       public void visit(@NotNull ArrangementAtomMatchCondition condition) {

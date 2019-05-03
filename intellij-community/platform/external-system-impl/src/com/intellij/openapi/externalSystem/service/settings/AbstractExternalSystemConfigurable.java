@@ -56,7 +56,7 @@ public abstract class AbstractExternalSystemConfigurable<
 {
 
   @NotNull private final List<ExternalSystemSettingsControl<ProjectSettings>> myProjectSettingsControls =
-    new ArrayList<ExternalSystemSettingsControl<ProjectSettings>>();
+    new ArrayList<>();
 
   @NotNull private final ProjectSystemId myExternalSystemId;
   @NotNull private final Project         myProject;
@@ -218,7 +218,7 @@ public abstract class AbstractExternalSystemConfigurable<
     L publisher = systemSettings.getPublisher();
     publisher.onBulkChangeStart();
     try {
-      List<ProjectSettings> projectSettings = new ArrayList<ProjectSettings>();
+      List<ProjectSettings> projectSettings = new ArrayList<>();
       for (ExternalSystemSettingsControl<ProjectSettings> control : myProjectSettingsControls) {
         ProjectSettings s = newProjectSettings();
         control.apply(s);

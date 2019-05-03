@@ -65,7 +65,7 @@ public class ArrangementAtomMatchConditionComponent implements ArrangementUiComp
     }
   };
 
-  @NotNull private final Set<ArrangementSettingsToken> myAvailableTokens = new HashSet<ArrangementSettingsToken>();
+  @NotNull private final Set<ArrangementSettingsToken> myAvailableTokens = new HashSet<>();
 
   @NotNull private final BorderStrategy myBorderStrategy;
   @NotNull private final String myText;

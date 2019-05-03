@@ -35,8 +35,8 @@ import java.util.*;
 public class ArrangementMatchingRuleEditor extends JPanel implements ArrangementUiComponent.Listener {
 
   @NotNull private final Map<ArrangementSettingsToken, ArrangementUiComponent> myComponents =
-    new HashMap<ArrangementSettingsToken, ArrangementUiComponent>();
-  @NotNull private final List<MultiRowFlowPanel>                               myRows       = new ArrayList<MultiRowFlowPanel>();
+    new HashMap<>();
+  @NotNull private final List<MultiRowFlowPanel>                               myRows       = new ArrayList<>();
 
   @NotNull private final ArrangementMatchingRulesControl    myControl;
   @NotNull private final ArrangementStandardSettingsManager mySettingsManager;
@@ -93,7 +93,7 @@ public class ArrangementMatchingRuleEditor extends JPanel implements Arrangement
     MultiRowFlowPanel panel = new MultiRowFlowPanel(
       FlowLayout.LEFT, ArrangementConstants.HORIZONTAL_GAP, ArrangementConstants.VERTICAL_GAP
     );
-    List<ArrangementSettingsToken> prevTokens = new ArrayList<ArrangementSettingsToken>();
+    List<ArrangementSettingsToken> prevTokens = new ArrayList<>();
     StdArrangementTokenUiRole prevRole = null;
     ArrangementUiComponent component;
     JComponent uiComponent;
@@ -188,7 +188,7 @@ public class ArrangementMatchingRuleEditor extends JPanel implements Arrangement
 
   @Nullable
   private Pair<ArrangementMatchCondition, ArrangementSettingsToken> buildCondition() {
-    List<ArrangementMatchCondition> conditions = new ArrayList<ArrangementMatchCondition>();
+    List<ArrangementMatchCondition> conditions = new ArrayList<>();
     ArrangementSettingsToken orderType = null;
     for (ArrangementUiComponent component : myComponents.values()) {
       if (!component.isEnabled() || !component.isSelected()) {
@@ -261,7 +261,7 @@ public class ArrangementMatchingRuleEditor extends JPanel implements Arrangement
       // We need to disable conditions which are not applicable for empty rules (e.g. we don't want to enable 'volatile' condition
       // for java rearranger if no 'field' condition is selected.
       condition = null;
-      conditionTokens = new HashMap<ArrangementSettingsToken, Object>();
+      conditionTokens = new HashMap<>();
     }
     else if (!(element instanceof StdArrangementMatchRule)) {
       return;

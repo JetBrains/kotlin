@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.util;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -41,7 +41,7 @@ public abstract class FixableUsagesRefactoringProcessor extends BaseRefactoringP
   @Override
   @NotNull
   protected final UsageInfo[] findUsages() {
-    final List<FixableUsageInfo> usages = Collections.synchronizedList(new ArrayList<FixableUsageInfo>());
+    final List<FixableUsageInfo> usages = Collections.synchronizedList(new ArrayList<>());
     findUsages(usages);
     final int numUsages = usages.size();
     final FixableUsageInfo[] usageArray = usages.toArray(new FixableUsageInfo[numUsages]);

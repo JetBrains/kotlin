@@ -32,7 +32,7 @@ public class ArrangementGroupingRulesControl extends JBTable {
   @NotNull public static final DataKey<ArrangementGroupingRulesControl> KEY = DataKey.create("Arrangement.Rule.Group.Control");
 
   @NotNull private final Map<ArrangementSettingsToken, ArrangementGroupingComponent> myComponents =
-    new HashMap<ArrangementSettingsToken, ArrangementGroupingComponent>();
+    new HashMap<>();
 
   @NotNull private final ArrangementStandardSettingsManager mySettingsManager;
 

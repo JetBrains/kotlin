@@ -143,11 +143,11 @@ public abstract class AbstractDependencyDataService<E extends AbstractDependency
 
   @NotNull
   private static Map<Module, Collection<ExportableOrderEntry>> groupByModule(@NotNull Collection<? extends ExportableOrderEntry> data) {
-    Map<Module, Collection<ExportableOrderEntry>> result = new HashMap<Module, Collection<ExportableOrderEntry>>();
+    Map<Module, Collection<ExportableOrderEntry>> result = new HashMap<>();
     for (ExportableOrderEntry entry : data) {
       Collection<ExportableOrderEntry> entries = result.get(entry.getOwnerModule());
       if (entries == null) {
-        result.put(entry.getOwnerModule(), entries = new ArrayList<ExportableOrderEntry>());
+        result.put(entry.getOwnerModule(), entries = new ArrayList<>());
       }
       entries.add(entry);
     }

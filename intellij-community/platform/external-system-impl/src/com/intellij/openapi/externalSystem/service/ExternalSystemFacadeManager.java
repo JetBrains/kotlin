@@ -229,7 +229,7 @@ public class ExternalSystemFacadeManager {
 
   public boolean isTaskActive(@NotNull ExternalSystemTaskId id) {
     Map<IntegrationKey, Pair<RemoteExternalSystemFacade, ExternalSystemExecutionSettings>> copy
-      = new HashMap<IntegrationKey, Pair<RemoteExternalSystemFacade, ExternalSystemExecutionSettings>>(myRemoteFacades);
+      = new HashMap<>(myRemoteFacades);
     for (Map.Entry<IntegrationKey, Pair<RemoteExternalSystemFacade, ExternalSystemExecutionSettings>> entry : copy.entrySet()) {
       try {
         if (entry.getValue().first.isTaskInProgress(id)) {

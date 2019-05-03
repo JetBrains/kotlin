@@ -62,8 +62,8 @@ public class GradleLibraryNamesMixer {
     if (libraries.isEmpty()) {
       return;
     }
-    Map<String, Wrapped> names = new HashMap<String, Wrapped>();
-    List<Wrapped> data = new ArrayList<Wrapped>();
+    Map<String, Wrapped> names = new HashMap<>();
+    List<Wrapped> data = new ArrayList<>();
     for (DataNode<LibraryData> library : libraries) {
       Wrapped wrapped = new Wrapped(library.getData());
       data.add(wrapped);

@@ -20,9 +20,9 @@ import java.util.Map;
 public class ArrangementColorsProviderImpl implements ArrangementColorsProvider {
 
   @NotNull private final Map<ArrangementSettingsToken, TextAttributes> myNormalAttributesCache   =
-    new HashMap<ArrangementSettingsToken, TextAttributes>();
+    new HashMap<>();
   @NotNull private final Map<ArrangementSettingsToken, TextAttributes> mySelectedAttributesCache =
-    new HashMap<ArrangementSettingsToken, TextAttributes>();
+    new HashMap<>();
 
   @NotNull private final TextAttributes myDefaultNormalAttributes   = new TextAttributes();
   @NotNull private final TextAttributes myDefaultSelectedAttributes = new TextAttributes();

@@ -52,10 +52,10 @@ public class LibraryDependencyDataService extends AbstractDependencyDataService<
     // The trick is that we should perform module settings modification inside try/finally block against target root model.
     // That means that we need to prepare all necessary data, obtain a model and modify it as necessary.
     final Map<Set<String>/* library paths */, LibraryDependencyData> moduleLibrariesToImport =
-      new HashMap<Set<String>, LibraryDependencyData>();
+      new HashMap<>();
     final Map<String/* library name + scope */, LibraryDependencyData> projectLibrariesToImport =
-      new HashMap<String, LibraryDependencyData>();
-    final Set<LibraryDependencyData> toImport = new LinkedHashSet<LibraryDependencyData>();
+      new HashMap<>();
+    final Set<LibraryDependencyData> toImport = new LinkedHashSet<>();
     final Map<OrderEntry, OrderAware> orderEntryDataMap = new LinkedHashMap<>();
 
     boolean hasUnresolved = false;
@@ -65,7 +65,7 @@ public class LibraryDependencyDataService extends AbstractDependencyDataService<
       hasUnresolved |= libraryData.isUnresolved();
       switch (dependencyData.getLevel()) {
         case MODULE:
-          Set<String> paths = new HashSet<String>();
+          Set<String> paths = new HashSet<>();
             for (String path : libraryData.getPaths(LibraryPathType.BINARY)) {
               paths.add(ExternalSystemApiUtil.toCanonicalPath(path) + dependencyData.getScope().name());
             }
@@ -161,7 +161,7 @@ public class LibraryDependencyDataService extends AbstractDependencyDataService<
         ModuleLibraryOrderEntryImpl moduleLibraryOrderEntry = (ModuleLibraryOrderEntryImpl)entry;
         Library library = moduleLibraryOrderEntry.getLibrary();
         final VirtualFile[] libraryFiles = library.getFiles(OrderRootType.CLASSES);
-        final Set<String> moduleLibraryKey = new HashSet<String>(libraryFiles.length);
+        final Set<String> moduleLibraryKey = new HashSet<>(libraryFiles.length);
         for (VirtualFile file : libraryFiles) {
           moduleLibraryKey.add(ExternalSystemApiUtil.getLocalFileSystemPath(file) + moduleLibraryOrderEntry.getScope().name());
         }

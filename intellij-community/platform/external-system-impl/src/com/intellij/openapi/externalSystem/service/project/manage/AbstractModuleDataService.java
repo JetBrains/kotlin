@@ -155,7 +155,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
   @NotNull
   private Collection<DataNode<E>> filterExistingModules(@NotNull Collection<DataNode<E>> modules,
                                                         @NotNull IdeModifiableModelsProvider modelsProvider) {
-    Collection<DataNode<E>> result = new ArrayList<DataNode<E>>();
+    Collection<DataNode<E>> result = new ArrayList<>();
     for (DataNode<E> node : modules) {
       ModuleData moduleData = node.getData();
       Module module = modelsProvider.findIdeModule(moduleData);

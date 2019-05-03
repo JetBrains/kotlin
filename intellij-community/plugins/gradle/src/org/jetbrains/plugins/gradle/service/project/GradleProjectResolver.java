@@ -309,7 +309,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
     Collection<IdeaModule> includedModules = exposeCompositeBuild(allModels, resolverCtx, projectDataNode);
     final Map<String /* module id */, Pair<DataNode<ModuleData>, IdeaModule>> moduleMap =
-      new HashMap<String, Pair<DataNode<ModuleData>, IdeaModule>>();
+      new HashMap<>();
     final Map<String /* module id */, Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>> sourceSetsMap = new HashMap<>();
     projectDataNode.putUserData(RESOLVED_SOURCE_SETS, sourceSetsMap);
 
@@ -550,7 +550,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
   private static Map<String, ExternalProject> createExternalProjectsMap(@Nullable String compositePrefix,
                                                                         @Nullable final ExternalProject rootExternalProject) {
-    final Map<String, ExternalProject> externalProjectMap = new HashMap<String, ExternalProject>();
+    final Map<String, ExternalProject> externalProjectMap = new HashMap<>();
 
     if (rootExternalProject == null) return externalProjectMap;
 

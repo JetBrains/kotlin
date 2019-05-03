@@ -36,7 +36,7 @@ public class ExternalSystemTasksTree extends Tree implements Supplier<ExternalTa
   @NotNull private final Alarm myCollapseStateAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
 
   /** Holds list of paths which 'expand/collapse' state should be restored. */
-  @NotNull private final Set<TreePath> myPathsToProcessCollapseState = new HashSet<TreePath>();
+  @NotNull private final Set<TreePath> myPathsToProcessCollapseState = new HashSet<>();
 
   @NotNull private final Map<String/*tree path*/, Boolean/*expanded*/> myExpandedStateHolder;
 

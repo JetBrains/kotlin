@@ -143,7 +143,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
       final AbstractExternalSystemSettings systemSettings =
         ExternalSystemApiUtil.getSettings(externalProjectsView.getProject(), externalProjectsView.getSystemId());
 
-      final Map<String, ModuleNode> groupToModule = new HashMap<String, ModuleNode>(moduleDataNodes.size());
+      final Map<String, ModuleNode> groupToModule = new HashMap<>(moduleDataNodes.size());
 
       List<ModuleNode> moduleNodes = new ArrayList<>();
 

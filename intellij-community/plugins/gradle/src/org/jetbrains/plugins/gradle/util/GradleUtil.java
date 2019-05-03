@@ -167,7 +167,7 @@ public class GradleUtil {
     }
     File rootProjectParent = new File(rootProjectPath);
     StringBuilder buffer = new StringBuilder(FileUtil.toCanonicalPath(rootProjectParent.getAbsolutePath()));
-    Stack<String> stack = new Stack<String>();
+    Stack<String> stack = new Stack<>();
     for (GradleProject p = subProject; p != null; p = p.getParent()) {
       stack.push(p.getName());
     }
