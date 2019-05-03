@@ -40,7 +40,7 @@ public class GradleBuildClasspathManager {
 
   public GradleBuildClasspathManager(@NotNull Project project) {
     myProject = project;
-    allFilesCache = ContainerUtil.newArrayList();
+    allFilesCache = new ArrayList<>();
   }
 
   @NotNull
@@ -57,7 +57,7 @@ public class GradleBuildClasspathManager {
 
     final JarFileSystem jarFileSystem = JarFileSystem.getInstance();
     for (final ExternalProjectBuildClasspathPojo projectBuildClasspathPojo : localSettings.getProjectBuildClasspath().values()) {
-      final List<VirtualFile> projectBuildClasspath = ContainerUtil.newArrayList();
+      final List<VirtualFile> projectBuildClasspath = new ArrayList<>();
       for (String path : projectBuildClasspathPojo.getProjectBuildClasspath()) {
         final VirtualFile virtualFile = ExternalSystemUtil.findLocalFileByPath(path);
         ContainerUtil.addIfNotNull(projectBuildClasspath,

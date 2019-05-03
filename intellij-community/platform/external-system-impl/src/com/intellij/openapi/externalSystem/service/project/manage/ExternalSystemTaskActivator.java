@@ -102,7 +102,7 @@ public class ExternalSystemTaskActivator {
       () -> ContainerUtil.mapNotNull(context.getCompileScope().getAffectedModules(),
                                      module -> ExternalSystemApiUtil.getExternalProjectPath(module)));
 
-    final Collection<Phase> phases = ContainerUtil.newArrayList();
+    final Collection<Phase> phases = new ArrayList<>();
     if (myBefore) {
       if(context.isRebuild()) {
         phases.add(Phase.BEFORE_REBUILD);

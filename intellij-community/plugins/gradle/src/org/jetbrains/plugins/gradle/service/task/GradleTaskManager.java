@@ -155,7 +155,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
   public static void appendInitScriptArgument(@NotNull List<String> taskNames,
                                               @Nullable String jvmAgentSetup,
                                               @NotNull GradleExecutionSettings effectiveSettings) {
-    final List<String> initScripts = newArrayList();
+    final List<String> initScripts = new ArrayList<>();
     final GradleProjectResolverExtension projectResolverChain = GradleProjectResolver.createProjectResolverChain(effectiveSettings);
     for (GradleProjectResolverExtension resolverExtension = projectResolverChain;
          resolverExtension != null;

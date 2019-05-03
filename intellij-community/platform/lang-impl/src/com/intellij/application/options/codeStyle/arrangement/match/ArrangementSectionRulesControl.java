@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle.arrangement.match;
 
 import com.intellij.application.options.codeStyle.arrangement.ArrangementConstants;
@@ -17,15 +17,11 @@ import com.intellij.psi.codeStyle.arrangement.model.ArrangementMatchCondition;
 import com.intellij.psi.codeStyle.arrangement.model.ArrangementMatchConditionVisitor;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsManager;
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementRuleAliasToken;
-import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.application.options.codeStyle.arrangement.match.ArrangementSectionRuleManager.ArrangementSectionRuleData;
 
@@ -91,8 +87,8 @@ public class ArrangementSectionRulesControl extends ArrangementMatchingRulesCont
       return Collections.emptyList();
     }
 
-    final List<ArrangementSectionRule> result = ContainerUtil.newArrayList();
-    final List<StdArrangementMatchRule> buffer = ContainerUtil.newArrayList();
+    final List<ArrangementSectionRule> result = new ArrayList<>();
+    final List<StdArrangementMatchRule> buffer = new ArrayList<>();
     String currentSectionStart = null;
     for (int i = 0; i < getModel().getSize(); i++) {
       final Object element = getModel().getElementAt(i);

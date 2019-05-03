@@ -526,7 +526,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   public static List<TemplateImpl> listApplicableTemplates(PsiFile file, int offset, boolean selectionOnly) {
     Set<TemplateContextType> contextTypes = getApplicableContextTypes(file, offset);
 
-    final ArrayList<TemplateImpl> result = ContainerUtil.newArrayList();
+    final ArrayList<TemplateImpl> result = new ArrayList<>();
     for (final TemplateImpl template : TemplateSettings.getInstance().getTemplates()) {
       if (!template.isDeactivated() && (!selectionOnly || template.isSelectionTemplate()) && isApplicable(template, contextTypes)) {
         result.add(template);

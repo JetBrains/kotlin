@@ -138,7 +138,7 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
     final ExternalSystemNode[] cached = currentNode.getCached();
     if (cached != null) {
 
-      final List<Object> duplicates = ContainerUtil.newArrayList();
+      final List<Object> duplicates = new ArrayList<>();
       final Map<Object, ExternalSystemNode> oldDataMap = new LinkedHashMap<>();
       for (ExternalSystemNode node : cached) {
         Object key = node.getData() != null ? node.getData() : node.getName();

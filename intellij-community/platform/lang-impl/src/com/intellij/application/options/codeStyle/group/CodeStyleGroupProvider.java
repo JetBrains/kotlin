@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle.group;
 
 import com.intellij.ConfigurableFactory;
@@ -11,17 +11,17 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.psi.codeStyle.CodeStyleGroup;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CodeStyleGroupProvider extends CodeStyleSettingsProvider {
   private final CodeStyleGroup myGroup;
   private final CodeStyleSchemesModel myModel;
   private final CodeStyleSchemesConfigurable mySchemesConfigurable;
-  private final List<CodeStyleSettingsProvider> myChildProviders = ContainerUtil.newArrayList();
+  private final List<CodeStyleSettingsProvider> myChildProviders = new ArrayList<>();
 
   public CodeStyleGroupProvider(@NotNull CodeStyleGroup group,
                                 CodeStyleSchemesModel model,
@@ -76,7 +76,7 @@ public class CodeStyleGroupProvider extends CodeStyleSettingsProvider {
     @NotNull
     @Override
     public Configurable[] buildConfigurables() {
-      List<Configurable> childConfigurables = ContainerUtil.newArrayList();
+      List<Configurable> childConfigurables = new ArrayList<>();
       for (CodeStyleSettingsProvider childProvider : myChildProviders) {
         CodeStyleConfigurableWrapper wrapper =
           ConfigurableFactory.Companion.getInstance().createCodeStyleConfigurable(childProvider, myModel, mySchemesConfigurable);

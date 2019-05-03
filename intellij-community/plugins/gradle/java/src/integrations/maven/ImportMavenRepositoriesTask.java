@@ -33,10 +33,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -61,7 +58,7 @@ class ImportMavenRepositoriesTask {
 
   private void performTask() {
     final LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
-    final List<PsiFile> psiFileList = ContainerUtil.newArrayList();
+    final List<PsiFile> psiFileList = new ArrayList<>();
 
     final ModuleManager moduleManager = ModuleManager.getInstance(myProject);
     for (Module module : moduleManager.getModules()) {
@@ -87,7 +84,7 @@ class ImportMavenRepositoriesTask {
     final Set<MavenRemoteRepository> mavenRemoteRepositories = ReadAction.compute(() -> {
       Set<MavenRemoteRepository> myRemoteRepositories = new HashSet<>();
       for (PsiFile psiFile : psiFiles) {
-        List<GrClosableBlock> repositoriesBlocks = ContainerUtil.newArrayList();
+        List<GrClosableBlock> repositoriesBlocks = new ArrayList<>();
         repositoriesBlocks.addAll(findClosableBlocks(psiFile, "repositories"));
 
         for (GrClosableBlock closableBlock : findClosableBlocks(psiFile, "buildscript", "subprojects", "allprojects", "project",

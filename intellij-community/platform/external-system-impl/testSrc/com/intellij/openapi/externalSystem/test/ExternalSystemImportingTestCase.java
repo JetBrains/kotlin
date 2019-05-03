@@ -372,7 +372,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
   @NotNull
   private <T> List<T> getModuleDep(@NotNull String moduleName, @NotNull String depName, @NotNull Class<T> clazz) {
-    List<T> deps = ContainerUtil.newArrayList();
+    List<T> deps = new ArrayList<>();
 
     for (OrderEntry e : getRootManager(moduleName).getOrderEntries()) {
       if (clazz.isInstance(e) && e.getPresentableName().equals(depName)) {

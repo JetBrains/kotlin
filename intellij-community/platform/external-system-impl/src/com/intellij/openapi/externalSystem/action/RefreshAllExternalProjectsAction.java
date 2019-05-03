@@ -18,9 +18,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,7 +86,7 @@ public class RefreshAllExternalProjectsAction extends AnAction implements AnActi
   }
 
   private static List<ProjectSystemId> getSystemIds(@NotNull AnActionEvent e) {
-    final List<ProjectSystemId> systemIds = ContainerUtil.newArrayList();
+    final List<ProjectSystemId> systemIds = new ArrayList<>();
 
     final ProjectSystemId externalSystemId = e.getData(ExternalSystemDataKeys.EXTERNAL_SYSTEM_ID);
     if (externalSystemId != null) {

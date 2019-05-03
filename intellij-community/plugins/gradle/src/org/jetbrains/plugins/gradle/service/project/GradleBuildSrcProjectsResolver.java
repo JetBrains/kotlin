@@ -258,7 +258,7 @@ public class GradleBuildSrcProjectsResolver {
       if (!buildSrcRuntimeSourcesPaths.isEmpty() || !buildSrcRuntimeClassesPaths.isEmpty()) {
         buildClasspathNodes.forEach(classpathNode -> {
           BuildScriptClasspathData data = classpathNode.getData();
-          List<BuildScriptClasspathData.ClasspathEntry> classpathEntries = ContainerUtil.newArrayList();
+          List<BuildScriptClasspathData.ClasspathEntry> classpathEntries = new ArrayList<>();
           classpathEntries.addAll(data.getClasspathEntries());
           classpathEntries.add(new BuildScriptClasspathData.ClasspathEntry(
             new HashSet<>(buildSrcRuntimeClassesPaths),

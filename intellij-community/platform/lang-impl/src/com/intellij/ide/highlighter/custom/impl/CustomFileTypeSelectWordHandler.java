@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.highlighter.custom.impl;
 
 import com.intellij.codeInsight.editorActions.BraceMatcherBasedSelectioner;
@@ -8,9 +8,9 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.impl.CustomSyntaxTableFileType;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +28,7 @@ public class CustomFileTypeSelectWordHandler extends BraceMatcherBasedSelectione
 
     HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(cursorOffset);
     if (CustomFileTypeQuoteHandler.isQuotedToken(iterator.getTokenType())) {
-      List<TextRange> result = ContainerUtil.newArrayList();
+      List<TextRange> result = new ArrayList<>();
       int start = iterator.getStart();
       int end = iterator.getEnd();
       char limitingQuote = CustomFileTypeQuoteHandler.getLimitingQuote(iterator.getTokenType());
@@ -41,7 +41,7 @@ public class CustomFileTypeSelectWordHandler extends BraceMatcherBasedSelectione
       }
       return result;
     }
-    
+
     return superResult;
   }
 }

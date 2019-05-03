@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.script;
 
 import com.intellij.ide.ApplicationInitializedListener;
@@ -30,6 +30,7 @@ import org.jetbrains.ide.script.IdeScriptException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -67,7 +68,7 @@ class IdeStartupScripts implements ApplicationInitializedListener {
     if (scripts.isEmpty()) return Collections.emptyList();
 
     IdeScriptEngineManager scriptEngineManager = IdeScriptEngineManager.getInstance();
-    List<Pair<File, IdeScriptEngine>> result = ContainerUtil.newArrayList();
+    List<Pair<File, IdeScriptEngine>> result = new ArrayList<>();
     for (File script : scripts) {
       String extension = FileUtilRt.getExtension(script.getName());
       IdeScriptEngine engine = extension.isEmpty() ? null : scriptEngineManager.getEngineForFileExtension(extension, null);

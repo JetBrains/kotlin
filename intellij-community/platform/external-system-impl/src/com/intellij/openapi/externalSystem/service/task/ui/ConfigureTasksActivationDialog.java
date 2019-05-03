@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.task.ui;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -149,7 +135,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
 
         if (projectData == null || projectData.getExternalProjectStructure() == null) return;
 
-        final List<ProjectPopupItem> popupItems = ContainerUtil.newArrayList();
+        final List<ProjectPopupItem> popupItems = new ArrayList<>();
         for (DataNode<ModuleData> moduleDataNode : ExternalSystemApiUtil
           .findAllRecursively(projectData.getExternalProjectStructure(), ProjectKeys.MODULE)) {
           if(moduleDataNode.isIgnored()) continue;
@@ -269,7 +255,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
   }
 
   private List<String> findSelectedProjects() {
-    List<String> tasks = ContainerUtil.newArrayList();
+    List<String> tasks = new ArrayList<>();
     for (DefaultMutableTreeNode node : myTree.getSelectedNodes(DefaultMutableTreeNode.class, null)) {
       if (node.getUserObject() instanceof ProjectNode) {
         final ProjectNode projectNode = (ProjectNode)node.getUserObject();

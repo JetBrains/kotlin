@@ -7,6 +7,7 @@ import gnu.trove.TIntIntHashMap;
 import gnu.trove.TIntIntIterator;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class IndentUsageStatisticsImpl implements IndentUsageStatistics {
   private int myTotalLinesWithWhiteSpaces = 0;
 
   private final TIntIntHashMap myIndentToUsagesMap = new TIntIntHashMap();
-  private List<IndentUsageInfo> myIndentUsages = ContainerUtil.newArrayList();
+  private List<IndentUsageInfo> myIndentUsages = new ArrayList<>();
   private final Stack<IndentData> myParentIndents = new Stack<>(new IndentData(0, 0));
 
   public IndentUsageStatisticsImpl(@NotNull List<? extends LineIndentInfo> lineInfos) {
@@ -35,7 +36,7 @@ public class IndentUsageStatisticsImpl implements IndentUsageStatistics {
 
   @NotNull
   private static List<IndentUsageInfo> toIndentUsageList(@NotNull TIntIntHashMap indentToUsages) {
-    List<IndentUsageInfo> indentUsageInfos = ContainerUtil.newArrayList();
+    List<IndentUsageInfo> indentUsageInfos = new ArrayList<>();
     TIntIntIterator it = indentToUsages.iterator();
     while (it.hasNext()) {
       it.advance();

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeEditor.printing;
 
 import com.intellij.CommonBundle;
@@ -25,7 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.print.PageFormat;
@@ -107,7 +106,7 @@ public class TextPrintHandler extends PrintActionHandler {
       painter = new MultiFilePainter(psiFiles, printSettings.EVEN_NUMBER_OF_PAGES);
     }
     else if (printSettings.getPrintScope() == PrintSettings.PRINT_DIRECTORY) {
-      List<PsiFile> filesList = ContainerUtil.newArrayList();
+      List<PsiFile> filesList = new ArrayList<>();
       boolean isRecursive = printSettings.isIncludeSubdirectories();
       addToPsiFileList(psiDirectory, filesList, isRecursive);
       painter = new MultiFilePainter(filesList, printSettings.EVEN_NUMBER_OF_PAGES);
@@ -251,7 +250,7 @@ public class TextPrintHandler extends PrintActionHandler {
     if (doc == null) return null;
     EditorHighlighter highlighter = HighlighterFactory.createHighlighter(virtualFile, EditorColorsUtil.getColorSchemeForPrinting(), psiFile.getProject());
     highlighter.setText(doc.getCharsSequence());
-    return new TextPainter(doc, highlighter, virtualFile.getPresentableUrl(), virtualFile.getPresentableName(), 
+    return new TextPainter(doc, highlighter, virtualFile.getPresentableUrl(), virtualFile.getPresentableName(),
                            psiFile, psiFile.getFileType());
   }
 

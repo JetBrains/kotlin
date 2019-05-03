@@ -156,8 +156,8 @@ public abstract class LRUPopupBuilder<T> {
     if (mySelection != null) {
       ids.add(getStorageId(mySelection));
     }
-    List<T> lru = ContainerUtil.newArrayListWithCapacity(LRU_ITEMS);
-    List<T> items = ContainerUtil.newArrayListWithCapacity(MAX_VISIBLE_SIZE);
+    List<T> lru = new ArrayList<>(LRU_ITEMS);
+    List<T> items = new ArrayList<>(MAX_VISIBLE_SIZE);
     List<T> extra = myExtraItems.toList();
     if (myItemsIterable != null) {
       for (T t : myItemsIterable) {
@@ -247,7 +247,7 @@ public abstract class LRUPopupBuilder<T> {
 
   private void storeLRUItems(@NotNull T t) {
     String[] values = myPropertiesComponent.getValues(getLRUKey());
-    List<String> lastUsed = ContainerUtil.newArrayListWithCapacity(LRU_ITEMS);
+    List<String> lastUsed = new ArrayList<>(LRU_ITEMS);
     lastUsed.add(getStorageId(t));
     if (values != null) {
       for (String value : values) {

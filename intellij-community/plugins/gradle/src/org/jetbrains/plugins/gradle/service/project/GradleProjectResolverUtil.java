@@ -537,7 +537,7 @@ public class GradleProjectResolverUtil {
 
         final ExternalProjectDependency projectDependency = (ExternalProjectDependency)mergedDependency;
 
-        Collection<ProjectDependencyInfo> projectDependencyInfos = ContainerUtil.newArrayList();
+        Collection<ProjectDependencyInfo> projectDependencyInfos = new ArrayList<>();
         String selectionReason = projectDependency.getSelectionReason();
         if ("composite build substitution".equals(selectionReason) && resolverCtx.getSettings() != null) {
           GradleExecutionWorkspace executionWorkspace = resolverCtx.getSettings().getExecutionWorkspace();

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 /*
  * @author max
@@ -69,7 +69,7 @@ public class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesUpdater
 
   public void processAfterVfsChanges(@NotNull List<? extends VFileEvent> events) {
     boolean pushedSomething = false;
-    List<Runnable> delayedTasks = ContainerUtil.newArrayList();
+    List<Runnable> delayedTasks = new ArrayList<>();
     for (VFileEvent event : events) {
       VirtualFile file = event.getFile();
       if (event instanceof VFileCopyEvent) {
@@ -273,7 +273,7 @@ public class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesUpdater
     final ProgressIndicator progress = ProgressManager.getInstance().getProgressIndicator();
 
     final ConcurrentLinkedQueue<Runnable> tasksQueue = new ConcurrentLinkedQueue<>(tasks);
-    List<Future<?>> results = ContainerUtil.newArrayList();
+    List<Future<?>> results = new ArrayList<>();
     if (tasks.size() > 1) {
       int numThreads = Math.max(Math.min(CacheUpdateRunner.indexingThreadCount() - 1, tasks.size() - 1), 1);
 

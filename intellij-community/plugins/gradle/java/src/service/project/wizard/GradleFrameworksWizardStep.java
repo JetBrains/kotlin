@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project.wizard;
 
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider;
@@ -26,6 +26,7 @@ import org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSup
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -86,13 +87,13 @@ public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disp
   }
 
   private void setKotlinDslGradleFrameworkSupportProviders(Set<String> selectedNodeIds) {
-    List<FrameworkSupportInModuleProvider> providers = ContainerUtil.newArrayList();
+    List<FrameworkSupportInModuleProvider> providers = new ArrayList<>();
     Collections.addAll(providers, KotlinDslGradleFrameworkSupportProvider.EP_NAME.getExtensions());
     myFrameworksPanel.setProviders(providers, Collections.emptySet(), selectedNodeIds);
   }
 
   private void setGradleFrameworkSupportProviders(Set<String> selectedNodeIds) {
-    List<FrameworkSupportInModuleProvider> providers = ContainerUtil.newArrayList();
+    List<FrameworkSupportInModuleProvider> providers = new ArrayList<>();
     Collections.addAll(providers, GradleFrameworkSupportProvider.EP_NAME.getExtensions());
     myFrameworksPanel.setProviders(providers, Collections.emptySet(), selectedNodeIds);
   }

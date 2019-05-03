@@ -59,13 +59,13 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
   protected static final ExternalSystemNode[] NO_CHILDREN = new ExternalSystemNode[0];
 
   private final ExternalProjectsView myExternalProjectsView;
-  private final List<ExternalSystemNode<?>> myChildrenList = ContainerUtil.newArrayList();
+  private final List<ExternalSystemNode<?>> myChildrenList = new ArrayList<>();
   protected DataNode<T> myDataNode;
   @Nullable
   private ExternalSystemNode myParent;
   private ExternalSystemNode[] myChildren;
   private ExternalProjectsStructure.ErrorLevel myErrorLevel = ExternalProjectsStructure.ErrorLevel.NONE;
-  private final List<String> myErrors = ContainerUtil.newArrayList();
+  private final List<String> myErrors = new ArrayList<>();
   private ExternalProjectsStructure.ErrorLevel myTotalErrorLevel = null;
 
   public ExternalSystemNode(@NotNull ExternalProjectsView externalProjectsView,

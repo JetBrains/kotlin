@@ -115,8 +115,8 @@ public abstract class LookupArranger implements WeighingContext {
   }
 
   protected List<LookupElement> retainItems(final Set<LookupElement> retained) {
-    List<LookupElement> filtered = ContainerUtil.newArrayList();
-    List<LookupElement> removed = ContainerUtil.newArrayList();
+    List<LookupElement> filtered = new ArrayList<>();
+    List<LookupElement> removed = new ArrayList<>();
     for (LookupElement item : myItems) {
       (retained.contains(item) ? filtered : removed).add(item);
     }

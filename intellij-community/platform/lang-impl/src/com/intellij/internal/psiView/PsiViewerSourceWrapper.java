@@ -13,10 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 class PsiViewerSourceWrapper implements Comparable<PsiViewerSourceWrapper> {
 
@@ -56,7 +53,7 @@ class PsiViewerSourceWrapper implements Comparable<PsiViewerSourceWrapper> {
   @NotNull
   public static List<PsiViewerSourceWrapper> getFileTypeBasedWrappers() {
     Set<FileType> allFileTypes = new HashSet<>();
-    List<PsiViewerSourceWrapper> sourceWrappers = ContainerUtil.newArrayList();
+    List<PsiViewerSourceWrapper> sourceWrappers = new ArrayList<>();
     Collections.addAll(allFileTypes, FileTypeManager.getInstance().getRegisteredFileTypes());
     for (Language language : Language.getRegisteredLanguages()) {
       FileType fileType = language.getAssociatedFileType();

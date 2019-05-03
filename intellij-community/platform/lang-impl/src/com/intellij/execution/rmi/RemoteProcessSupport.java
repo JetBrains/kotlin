@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.rmi;
 
 import com.intellij.execution.ExecutionException;
@@ -24,7 +24,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.FixedFuture;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,7 +69,7 @@ public abstract class RemoteProcessSupport<Target, EntryPoint, Parameters> {
   }
 
   public void stopAll(final boolean wait) {
-    final List<Info> infos = ContainerUtil.newArrayList();
+    final List<Info> infos = new ArrayList<>();
     synchronized (myProcMap) {
       for (Info o : myProcMap.values()) {
         if (o.handler != null) infos.add(o);
@@ -151,7 +150,7 @@ public abstract class RemoteProcessSupport<Target, EntryPoint, Parameters> {
 
   @NotNull
   public Future<?> release(@NotNull Target target, @Nullable Parameters configuration) {
-    List<Info> infos = ContainerUtil.newArrayList();
+    List<Info> infos = new ArrayList<>();
     synchronized (myProcMap) {
       for (Pair<Target, Parameters> key : myProcMap.keySet()) {
         if (key.first == target && (configuration == null || key.second == configuration)) {

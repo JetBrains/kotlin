@@ -79,9 +79,9 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
   private JBTable myTable;
   private MyModel<T> myModel;
 
-  private final List<Runnable> myResetRunnables = ContainerUtil.newArrayList();
+  private final List<Runnable> myResetRunnables = new ArrayList<>();
   private final Map<String, T> myDefaultVals = new HashMap<>();
-  private final List<Trinity<String, Supplier<T>, Consumer<T>>> myDefaultProps = ContainerUtil.newArrayList();
+  private final List<Trinity<String, Supplier<T>, Consumer<T>>> myDefaultProps = new ArrayList<>();
   private VirtualFile myFileToSelect;
 
   protected interface Value<T> extends Setter<T>, Getter<T> {
@@ -768,7 +768,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
   private static class MyModel<T> extends AbstractTableModel {
 
     final String[] columnNames;
-    final List<Pair<Object, T>> data = ContainerUtil.newArrayList();
+    final List<Pair<Object, T>> data = new ArrayList<>();
 
     MyModel(String... names) {
       columnNames = names;

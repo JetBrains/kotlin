@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -629,7 +629,7 @@ public class TemplateState implements Disposable {
     catch (IndexNotReadyException ignored) { }
     if (elements == null) return Collections.emptyList();
 
-    List<TemplateExpressionLookupElement> result = ContainerUtil.newArrayList();
+    List<TemplateExpressionLookupElement> result = new ArrayList<>();
     for (int i = 0; i < elements.length; i++) {
       result.add(new TemplateExpressionLookupElement(this, elements[i], i));
     }
@@ -738,7 +738,7 @@ public class TemplateState implements Disposable {
           }
         }
 
-        List<TemplateDocumentChange> changes = ContainerUtil.newArrayList();
+        List<TemplateDocumentChange> changes = new ArrayList<>();
         boolean selectionCalculated = false;
         for (int i = 0; i < myTemplate.getSegmentsCount(); i++) {
           if (!calcedSegments.get(i)) {
@@ -1152,7 +1152,7 @@ public class TemplateState implements Disposable {
     int selStart = myTemplate.getSelectionStartSegmentNumber();
     int selEnd = myTemplate.getSelectionEndSegmentNumber();
     IntArrayList indices = new IntArrayList();
-    List<TemplateDocumentChange> changes = ContainerUtil.newArrayList();
+    List<TemplateDocumentChange> changes = new ArrayList<>();
     for (int i = 0; i < myTemplate.getSegmentsCount(); i++) {
       int length = mySegments.getSegmentEnd(i) - mySegments.getSegmentStart(i);
       if (length != 0) continue;
@@ -1177,7 +1177,7 @@ public class TemplateState implements Disposable {
   }
 
   private void restoreEmptyVariables(IntArrayList indices) {
-    List<TextRange> rangesToRemove = ContainerUtil.newArrayList();
+    List<TextRange> rangesToRemove = new ArrayList<>();
     for (int i = 0; i < indices.size(); i++) {
       int index = indices.get(i);
       rangesToRemove.add(TextRange.create(mySegments.getSegmentStart(index), mySegments.getSegmentEnd(index)));

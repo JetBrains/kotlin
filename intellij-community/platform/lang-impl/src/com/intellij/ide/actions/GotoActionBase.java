@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -260,7 +261,7 @@ public abstract class GotoActionBase extends AnAction {
       private void updateHistory(@Nullable String text) {
         if (!StringUtil.isEmptyOrSpaces(text)) {
           List<String> history = ourHistory.get(myInAction);
-          if (history == null) history = ContainerUtil.newArrayList();
+          if (history == null) history = new ArrayList<>();
           if (!text.equals(ContainerUtil.getFirstItem(history))) {
             history.add(0, text);
           }

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight;
 
@@ -30,7 +30,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.BitUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThreeState;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -300,7 +299,7 @@ public class TargetElementUtil extends TargetElementUtilBase {
   public PsiElement getNamedElement(@Nullable final PsiElement element, final int offsetInElement) {
     if (element == null) return null;
 
-    final List<PomTarget> targets = ContainerUtil.newArrayList();
+    final List<PomTarget> targets = new ArrayList<>();
     final Consumer<PomTarget> consumer = target -> {
       if (target instanceof PsiDeclaredTarget) {
         final PsiDeclaredTarget declaredTarget = (PsiDeclaredTarget)target;

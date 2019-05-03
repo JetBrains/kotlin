@@ -98,7 +98,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     myRefreshRequestsQueue = new MergingUpdateQueue("ExternalSystemProjectsWatcher: Refresh requests queue",
                                                     REFRESH_MERGING_TIME_SPAN, false, ANY_COMPONENT, myProject, null, false);
 
-    myImportAwareManagers = ContainerUtil.newArrayList();
+    myImportAwareManagers = new ArrayList<>();
     for (ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemApiUtil.getAllManagers()) {
       if (manager instanceof ExternalSystemAutoImportAware) {
         myImportAwareManagers.add((ExternalSystemAutoImportAware)manager);

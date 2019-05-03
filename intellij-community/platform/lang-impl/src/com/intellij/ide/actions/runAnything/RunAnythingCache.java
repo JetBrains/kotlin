@@ -1,16 +1,16 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything;
 
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.XCollection;
 import com.intellij.util.xmlb.annotations.XMap;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,7 +60,7 @@ public class RunAnythingCache implements PersistentStateComponent<RunAnythingCac
               .collect(Collectors.toMap(RunAnythingProvider::getCompletionGroupTitle, group -> true));
 
     @XCollection(elementName = "command")
-    @NotNull private final List<String> myCommands = ContainerUtil.newArrayList();
+    @NotNull private final List<String> myCommands = new ArrayList<>();
 
     @NotNull
     public List<String> getCommands() {

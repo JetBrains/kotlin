@@ -638,7 +638,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     DumbAwareAction.create(__ -> myReplaceAllButton.doClick()).registerCustomShortcutSet(new CustomShortcutSet(REPLACE_ALL), this);
     myReplaceAllButton.setToolTipText(KeymapUtil.getKeystrokeText(REPLACE_ALL));
 
-    List<Shortcut> navigationKeyStrokes = ContainerUtil.newArrayList();
+    List<Shortcut> navigationKeyStrokes = new ArrayList<>();
     KeyStroke viewSourceKeyStroke = KeymapUtil.getKeyStroke(CommonShortcuts.getViewSource());
     if (viewSourceKeyStroke != null && !Comparing.equal(viewSourceKeyStroke, ENTER_WITH_MODIFIERS) && !Comparing.equal(viewSourceKeyStroke, ENTER)) {
       navigationKeyStrokes.add(new KeyboardShortcut(viewSourceKeyStroke, null));

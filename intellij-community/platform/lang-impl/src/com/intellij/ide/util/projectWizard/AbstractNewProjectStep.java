@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -105,7 +106,7 @@ public class AbstractNewProjectStep<T> extends DefaultActionGroup implements Dum
     }
 
     public AnAction[] getActions(@NotNull DirectoryProjectGenerator<T>[] generators, @NotNull AbstractCallback<T> callback) {
-      final List<AnAction> actions = ContainerUtil.newArrayList();
+      final List<AnAction> actions = new ArrayList<>();
       for (DirectoryProjectGenerator<T> projectGenerator : generators) {
         try {
           actions.addAll(Arrays.asList(getActions(projectGenerator, callback)));

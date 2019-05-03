@@ -240,8 +240,8 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
   }
 
   private List<LookupElement> sortByPresentation(Iterable<LookupElement> source) {
-    ArrayList<LookupElement> startMatches = ContainerUtil.newArrayList();
-    ArrayList<LookupElement> middleMatches = ContainerUtil.newArrayList();
+    ArrayList<LookupElement> startMatches = new ArrayList<>();
+    ArrayList<LookupElement> middleMatches = new ArrayList<>();
     for (LookupElement element : source) {
       (itemMatcher(element).isStartMatch(element) ? startMatches : middleMatches).add(element);
     }
@@ -411,8 +411,8 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
 
   private Iterable<LookupElement> sortByRelevance(MultiMap<CompletionSorterImpl, LookupElement> inputBySorter) {
     if (inputBySorter.isEmpty()) return Collections.emptyList();
-    
-    final List<Iterable<LookupElement>> byClassifier = ContainerUtil.newArrayList();
+
+    final List<Iterable<LookupElement>> byClassifier = new ArrayList<>();
     for (CompletionSorterImpl sorter : myClassifiers.keySet()) {
       ProcessingContext context = createContext();
       byClassifier.add(myClassifiers.get(sorter).classify(inputBySorter.get(sorter), context));
@@ -421,7 +421,7 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
     Iterable<LookupElement> result = ContainerUtil.concat(byClassifier.toArray(new Iterable[0]));
     return myFinalSorter.sort(result, Objects.requireNonNull(myProcess.getParameters()));
   }
-  
+
   private ProcessingContext createContext() {
     ProcessingContext context = new ProcessingContext();
     context.put(PREFIX_CHANGES, myPrefixChanges);
@@ -508,13 +508,13 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
   @Nullable
   private LookupElement findMostRelevantItem(Iterable<LookupElement> sorted) {
     final CompletionPreselectSkipper[] skippers = CompletionPreselectSkipper.EP_NAME.getExtensions();
-    
+
     for (LookupElement element : sorted) {
       if (!shouldSkip(skippers, element)) {
         return element;
       }
     }
-    
+
     return null;
   }
 

@@ -25,11 +25,11 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.TreeTraversal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class ChameleonSyntaxHighlightingPass extends GeneralHighlightingPass {
@@ -79,10 +79,10 @@ class ChameleonSyntaxHighlightingPass extends GeneralHighlightingPass {
         return type instanceof ILazyParseableElementType && !(type instanceof IFileElementType);
       });
 
-    List<PsiElement> lazyOutside = ContainerUtil.newArrayListWithCapacity(100);
-    List<PsiElement> lazyInside = ContainerUtil.newArrayListWithCapacity(100);
-    List<HighlightInfo> outside = ContainerUtil.newArrayListWithCapacity(100);
-    List<HighlightInfo> inside = ContainerUtil.newArrayListWithCapacity(100);
+    List<PsiElement> lazyOutside = new ArrayList<>(100);
+    List<PsiElement> lazyInside = new ArrayList<>(100);
+    List<HighlightInfo> outside = new ArrayList<>(100);
+    List<HighlightInfo> inside = new ArrayList<>(100);
 
     for (PsiElement e : s) {
       (e.getTextRange().intersects(myPriorityRange) ? lazyInside : lazyOutside).add(e);

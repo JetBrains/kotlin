@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing;
 
 import com.intellij.openapi.module.Module;
@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.usageView.UsageInfo;
-import com.intellij.util.containers.ContainerUtil;
 import org.gradle.initialization.BuildLayoutParameters;
 import org.gradle.wrapper.PathAssembler;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +20,7 @@ import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -224,7 +224,7 @@ public class GradleFindUsagesTest extends GradleImportingTestCase {
     PsiClass aClass = psiClasses[0];
     if (methodName != null) {
       PsiMethod[] methods = runInEdtAndGet(() -> aClass.findMethodsByName(methodName, false));
-      List<UsageInfo> actualUsages = ContainerUtil.newArrayList();
+      List<UsageInfo> actualUsages = new ArrayList<>();
       for (PsiMethod method : methods) {
         actualUsages.addAll(findUsages(method));
       }

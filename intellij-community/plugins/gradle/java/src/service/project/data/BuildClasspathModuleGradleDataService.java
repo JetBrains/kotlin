@@ -120,7 +120,7 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
         ExternalProjectBuildClasspathPojo projectBuildClasspathPojo = localProjectBuildClasspath.get(linkedExternalProjectPath);
         if (projectBuildClasspathPojo == null) {
           projectBuildClasspathPojo = new ExternalProjectBuildClasspathPojo(
-            moduleDataNode.getData().getExternalName(), ContainerUtil.newArrayList(), new HashMap<>());
+            moduleDataNode.getData().getExternalName(), new ArrayList<>(), new HashMap<>());
           localProjectBuildClasspath.put(linkedExternalProjectPath, projectBuildClasspathPojo);
         }
 

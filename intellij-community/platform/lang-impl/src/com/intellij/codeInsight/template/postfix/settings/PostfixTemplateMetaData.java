@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.template.postfix.settings;
 
@@ -10,7 +10,6 @@ import com.intellij.codeInsight.template.postfix.templates.editable.EditablePost
 import com.intellij.codeInsight.template.postfix.templates.editable.PostfixTemplateWrapper;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.lang.UrlClassLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class PostfixTemplateMetaData extends BeforeAfterActionMetaData {
@@ -71,7 +71,7 @@ public final class PostfixTemplateMetaData extends BeforeAfterActionMetaData {
 
   @NotNull
   static TextDescriptor[] decorateTextDescriptorWithKey(TextDescriptor[] before, @NotNull String key) {
-    List<TextDescriptor> list = ContainerUtil.newArrayListWithCapacity(before.length);
+    List<TextDescriptor> list = new ArrayList<>(before.length);
     for (final TextDescriptor descriptor : before) {
       list.add(new TextDescriptor() {
         @Override

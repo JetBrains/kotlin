@@ -877,7 +877,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
                                                  boolean selected) {
       SimpleTextAttributes plain = new SimpleTextAttributes(STYLE_PLAIN, fg);
       SimpleTextAttributes highlighted = new SimpleTextAttributes(null, fg, null, STYLE_SEARCH_MATCH);
-      List<TextRange> fragments = ContainerUtil.newArrayList();
+      List<TextRange> fragments = new ArrayList<>();
       if (selected) {
         int matchStart = StringUtil.indexOfIgnoreCase(name, pattern, 0);
         if (matchStart >= 0) {

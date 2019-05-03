@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.settings;
 
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil;
@@ -18,6 +18,7 @@ import org.jetbrains.plugins.gradle.model.data.BuildParticipant;
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager;
 import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -206,7 +207,7 @@ public class GradleProjectSettings extends ExternalProjectSettings {
     @NotNull
     public CompositeBuild copy() {
       CompositeBuild result = new CompositeBuild();
-      result.myCompositeParticipants = ContainerUtil.newArrayList();
+      result.myCompositeParticipants = new ArrayList<>();
       for (BuildParticipant participant : myCompositeParticipants) {
         result.myCompositeParticipants.add(participant.copy());
       }

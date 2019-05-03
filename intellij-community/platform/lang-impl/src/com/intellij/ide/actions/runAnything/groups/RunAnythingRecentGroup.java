@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything.groups;
 
 import com.intellij.ide.IdeBundle;
@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class RunAnythingRecentGroup extends RunAnythingGroupBase {
@@ -30,7 +31,7 @@ public class RunAnythingRecentGroup extends RunAnythingGroupBase {
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
     assert project != null;
 
-    Collection<RunAnythingItem> collector = ContainerUtil.newArrayList();
+    Collection<RunAnythingItem> collector = new ArrayList<>();
     for (String command : ContainerUtil.iterateBackward(RunAnythingCache.getInstance(project).getState().getCommands())) {
       for (RunAnythingProvider provider : RunAnythingProvider.EP_NAME.getExtensions()) {
         Object matchingValue = provider.findMatchingValue(dataContext, command);

@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build.output;
 
 import com.intellij.build.FilePosition;
@@ -7,13 +7,13 @@ import com.intellij.build.events.MessageEvent;
 import com.intellij.build.events.impl.FileMessageEventImpl;
 import com.intellij.build.events.impl.MessageEventImpl;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -95,7 +95,7 @@ public class JavacOutputParser implements BuildOutputParser {
           }
 
           BuildOutputCollector outputCollector = new BuildOutputCollector(reader);
-          List<String> messageList = ContainerUtil.newArrayList();
+          List<String> messageList = new ArrayList<>();
           messageList.add(text);
           int column; // 0-based.
           String prevLine = null;

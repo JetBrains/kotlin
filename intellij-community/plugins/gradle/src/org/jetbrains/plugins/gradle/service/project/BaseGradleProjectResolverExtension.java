@@ -599,7 +599,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
 
     if (dependencies == null) return;
 
-    List<String> orphanModules = ContainerUtil.newArrayList();
+    List<String> orphanModules = new ArrayList<>();
     Map<String, ModuleData> modulesIndex = new HashMap<>();
 
     for (DataNode<ModuleData> dataNode : ExternalSystemApiUtil.getChildren(ideProject, ProjectKeys.MODULE)) {
@@ -659,7 +659,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
                                                   @NotNull DataNode<ProjectData> ideProject)
     throws IllegalArgumentException, IllegalStateException {
 
-    final Collection<TaskData> tasks = ContainerUtil.newArrayList();
+    final Collection<TaskData> tasks = new ArrayList<>();
     final String moduleConfigPath = ideModule.getData().getLinkedExternalProjectPath();
 
     ExternalProject externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject.class);
@@ -772,7 +772,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   @Override
   public List<Pair<String, String>> getExtraJvmArgs() {
     if (ExternalSystemApiUtil.isInProcessMode(GradleConstants.SYSTEM_ID)) {
-      final List<Pair<String, String>> extraJvmArgs = ContainerUtil.newArrayList();
+      final List<Pair<String, String>> extraJvmArgs = new ArrayList<>();
 
       final HttpConfigurable httpConfigurable = HttpConfigurable.getInstance();
       if (!StringUtil.isEmpty(httpConfigurable.PROXY_EXCEPTIONS)) {

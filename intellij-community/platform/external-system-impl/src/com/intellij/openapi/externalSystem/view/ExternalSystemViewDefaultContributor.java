@@ -145,7 +145,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
 
       final Map<String, ModuleNode> groupToModule = new HashMap<String, ModuleNode>(moduleDataNodes.size());
 
-      List<ModuleNode> moduleNodes = ContainerUtil.newArrayList();
+      List<ModuleNode> moduleNodes = new ArrayList<>();
 
       for (DataNode<?> dataNode : moduleDataNodes) {
         final ModuleData data = (ModuleData)dataNode.getData();

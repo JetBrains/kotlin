@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.compiler;
 
 import com.google.gson.Gson;
@@ -30,6 +16,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.slf4j.Logger;
 import org.slf4j.impl.Log4jLoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,7 +36,7 @@ public class GradleBuildProcessParametersProvider extends BuildProcessParameters
   @Override
   @NotNull
   public List<String> getClassPath() {
-    List<String> result = ContainerUtil.newArrayList();
+    List<String> result = new ArrayList<>();
     if (!GradleSettings.getInstance(myProject).getLinkedProjectsSettings().isEmpty()) {
       addGradleClassPath(result);
       addOtherClassPath(result);
@@ -59,7 +46,7 @@ public class GradleBuildProcessParametersProvider extends BuildProcessParameters
 
   private void addGradleClassPath(@NotNull final List<String> classpath) {
     if (myGradleClasspath == null) {
-      myGradleClasspath = ContainerUtil.newArrayList();
+      myGradleClasspath = new ArrayList<>();
       String gradleToolingApiJarPath = PathUtil.getJarPathForClass(ProjectConnection.class);
       if (!StringUtil.isEmpty(gradleToolingApiJarPath)) {
         myGradleClasspath.add(gradleToolingApiJarPath);

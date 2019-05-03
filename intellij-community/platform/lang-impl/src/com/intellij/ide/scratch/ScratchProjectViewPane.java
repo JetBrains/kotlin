@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.scratch;
 
 import com.intellij.icons.AllIcons;
@@ -245,7 +245,7 @@ public class ScratchProjectViewPane extends ProjectViewPane {
     @NotNull
     @Override
     public Collection<? extends AbstractTreeNode> getChildren() {
-      List<AbstractTreeNode> list = ContainerUtil.newArrayList();
+      List<AbstractTreeNode> list = new ArrayList<>();
       for (RootType rootType : RootType.getAllRootTypes()) {
         ContainerUtil.addIfNotNull(list, createRootNode(getProject(), rootType, getSettings()));
       }
@@ -340,7 +340,7 @@ public class ScratchProjectViewPane extends ProjectViewPane {
                                                                  @Nullable PsiDirectory directory,
                                                                  @NotNull ViewSettings settings,
                                                                  @NotNull PsiFileSystemItemFilter filter) {
-      final List<AbstractTreeNode> result = ContainerUtil.newArrayList();
+      final List<AbstractTreeNode> result = new ArrayList<>();
       PsiElementProcessor<PsiFileSystemItem> processor = new PsiElementProcessor<PsiFileSystemItem>() {
         @Override
         public boolean execute(@NotNull PsiFileSystemItem element) {

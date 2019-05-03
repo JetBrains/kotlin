@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.actions;
 
 import com.intellij.openapi.application.ReadAction;
@@ -25,10 +25,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FormatChangedTextUtil {
@@ -103,7 +100,7 @@ public class FormatChangedTextUtil {
   @NotNull
   public static List<PsiFile> getChangedFilesFromDirs(@NotNull Project project, @NotNull List<? extends PsiDirectory> dirs)  {
     ChangeListManager changeListManager = ChangeListManager.getInstance(project);
-    Collection<Change> changes = ContainerUtil.newArrayList();
+    Collection<Change> changes = new ArrayList<>();
 
     for (PsiDirectory dir : dirs) {
       changes.addAll(changeListManager.getChangesIn(dir.getVirtualFile()));
@@ -139,8 +136,8 @@ public class FormatChangedTextUtil {
   public boolean isChangeNotTrackedForFile(@NotNull Project project, @NotNull PsiFile file) {
     return false;
   }
-  
-    
+
+
   @Nullable
   public ChangedRangesInfo getChangedRangesInfo(@NotNull PsiFile file) {
     return null;

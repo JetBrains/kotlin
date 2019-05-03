@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.todo.configurable;
 
 import com.intellij.ide.IdeBundle;
@@ -10,12 +10,12 @@ import com.intellij.ui.CheckBoxList;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.components.JBTextField;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 class FilterDialog extends DialogWrapper {
@@ -65,7 +65,7 @@ class FilterDialog extends DialogWrapper {
   @NotNull
   @Override
   protected List<ValidationInfo> doValidateAll() {
-    List<ValidationInfo> result = ContainerUtil.newArrayList();
+    List<ValidationInfo> result = new ArrayList<>();
     String filterName = getNewFilterName();
     if (filterName.isEmpty()) {
       result.add(new ValidationInfo(IdeBundle.message("error.filter.name.should.be.specified"), myNameField));

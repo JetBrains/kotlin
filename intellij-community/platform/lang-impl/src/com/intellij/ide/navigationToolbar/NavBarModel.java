@@ -237,7 +237,7 @@ public class NavBarModel {
   }
 
   protected List<Object> getChildren(final Object object) {
-    final List<Object> result = ContainerUtil.newArrayList();
+    final List<Object> result = new ArrayList<>();
     Processor<Object> processor = o -> {
       ContainerUtil.addIfNotNull(result, o instanceof PsiElement ? normalize((PsiElement)o) : o);
       return true;

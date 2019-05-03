@@ -16,7 +16,6 @@ import com.intellij.psi.codeStyle.CodeStyleScheme;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -193,7 +192,7 @@ public class CodeStyleSchemesConfigurable extends SearchableConfigurable.Parent.
     myPanels = new ArrayList<>();
     Set<CodeStyleGroupProvider> addedGroupProviders = new HashSet<>();
 
-    final List<CodeStyleSettingsProvider> providers = ContainerUtil.newArrayList();
+    final List<CodeStyleSettingsProvider> providers = new ArrayList<>();
     providers.addAll(CodeStyleSettingsProvider.EXTENSION_POINT_NAME.getExtensionList());
     providers.addAll(LanguageCodeStyleSettingsProvider.getSettingsPagesProviders());
 

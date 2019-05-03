@@ -147,7 +147,7 @@ public class CodeStyleSettingsCodeFragmentFilter {
     private final int myTotalFieldsNumber;
     private final Collection<String> myAllFields;
 
-    private List<String> myAffectingFields = ContainerUtil.newArrayList();
+    private List<String> myAffectingFields = new ArrayList<>();
     private final Object myCommonSettings;
     @Nullable private final CustomCodeStyleSettings myCustomSettings;
 
@@ -258,7 +258,7 @@ interface SequentialTaskWithFixedIterationsNumber extends SequentialTask {
 }
 
 class CompositeSequentialTask implements SequentialTask {
-  private final List<SequentialTaskWithFixedIterationsNumber> myUnfinishedTasks = ContainerUtil.newArrayList();
+  private final List<SequentialTaskWithFixedIterationsNumber> myUnfinishedTasks = new ArrayList<>();
   private SequentialTask myCurrentTask = null;
 
   private int myIterationsFinished;

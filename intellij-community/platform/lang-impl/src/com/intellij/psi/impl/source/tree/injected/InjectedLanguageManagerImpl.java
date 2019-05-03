@@ -158,7 +158,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
 
     Map<Class, MultiHostInjector[]> injectors = new HashMap<>();
 
-    List<MultiHostInjector> allInjectors = ContainerUtil.newArrayList();
+    List<MultiHostInjector> allInjectors = new ArrayList<>();
     allInjectors.addAll(myManualInjectors);
     Collections.addAll(allInjectors, MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getExtensions(myProject));
     if (LanguageInjector.EXTENSION_POINT_NAME.hasAnyExtensions()) {
@@ -318,7 +318,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
   @NotNull
   @Override
   public List<TextRange> getNonEditableFragments(@NotNull DocumentWindow window) {
-    List<TextRange> result = ContainerUtil.newArrayList();
+    List<TextRange> result = new ArrayList<>();
     int offset = 0;
     for (PsiLanguageInjectionHost.Shred shred : ((DocumentWindowImpl)window).getShreds()) {
       Segment hostRange = shred.getHostRangeMarker();

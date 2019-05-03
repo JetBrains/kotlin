@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options;
 
 import com.intellij.application.options.editor.EditorOptionsProvider;
@@ -8,10 +8,10 @@ import com.intellij.openapi.options.CompositeConfigurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CodeCompletionOptions extends CompositeConfigurable<UnnamedConfigurable> implements EditorOptionsProvider {
@@ -27,8 +27,8 @@ public class CodeCompletionOptions extends CompositeConfigurable<UnnamedConfigur
   @Override
   public JComponent createComponent() {
     List<UnnamedConfigurable> configurables = getConfigurables();
-    List<JComponent> addonComponents = ContainerUtil.newArrayListWithCapacity(configurables.size());
-    List<JComponent> sectionComponents = ContainerUtil.newArrayListWithCapacity(configurables.size());
+    List<JComponent> addonComponents = new ArrayList<>(configurables.size());
+    List<JComponent> sectionComponents = new ArrayList<>(configurables.size());
     for (UnnamedConfigurable configurable : configurables) {
       if (configurable instanceof CodeCompletionOptionsCustomSection) sectionComponents.add(configurable.createComponent());
       else addonComponents.add(configurable.createComponent());

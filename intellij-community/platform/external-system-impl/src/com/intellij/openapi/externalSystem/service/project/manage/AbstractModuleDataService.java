@@ -287,7 +287,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
       project.putUserData(ORPHAN_MODULE_FILES, null);
       project.putUserData(ORPHAN_MODULE_HANDLERS_COUNTER, null);
       StringBuilder modulesToRestoreText = new StringBuilder();
-      List<Pair<String, Path>> modulesToRestore = ContainerUtil.newArrayList();
+      List<Pair<String, Path>> modulesToRestore = new ArrayList<>();
       for (Path modulePath : orphanModules) {
         try {
           String path = FileUtil.loadFile(modulePath.resolveSibling(modulePath.getFileName() + ".path").toFile());

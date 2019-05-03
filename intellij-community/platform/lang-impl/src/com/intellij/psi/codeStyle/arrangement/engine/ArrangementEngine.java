@@ -274,7 +274,7 @@ public class ArrangementEngine {
 
     for (int i = 0; i < arranged.size() && !dependent.isEmpty(); i++) {
       E e = arranged.get(i);
-      List<E> shouldBeAddedAfterCurrentElement = ContainerUtil.newArrayList();
+      List<E> shouldBeAddedAfterCurrentElement = new ArrayList<>();
 
       for (Iterator<Pair<Set<ArrangementEntry>, E>> iterator = dependent.iterator(); iterator.hasNext(); ) {
         Pair<Set<ArrangementEntry>, E> pair = iterator.next();
