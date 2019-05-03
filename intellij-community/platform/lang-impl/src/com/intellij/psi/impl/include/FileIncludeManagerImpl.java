@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.psi.impl.include;
 
@@ -108,7 +108,7 @@ public class FileIncludeManagerImpl extends FileIncludeManager {
 
   @NotNull
   private static Collection<String> getPossibleIncludeNames(@NotNull PsiFile context, @NotNull String originalName) {
-    Collection<String> names = ContainerUtil.newTroveSet();
+    Collection<String> names = new THashSet<>();
     names.add(originalName);
     for (FileIncludeProvider provider : FileIncludeProvider.EP_NAME.getExtensions()) {
       String newName = provider.getIncludeName(context, originalName);

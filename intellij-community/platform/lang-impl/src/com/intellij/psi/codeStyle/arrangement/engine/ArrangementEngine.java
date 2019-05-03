@@ -226,7 +226,7 @@ public class ArrangementEngine {
                                                              @Nullable Map<E, ArrangementSectionRule> entryToSection)
   {
     List<E> arranged = ContainerUtilRt.newArrayList();
-    Set<E> unprocessed = ContainerUtilRt.newLinkedHashSet();
+    Set<E> unprocessed = new LinkedHashSet<E>();
     List<Pair<Set<ArrangementEntry>, E>> dependent = ContainerUtilRt.newArrayList();
     for (E entry : entries) {
       List<? extends ArrangementEntry> dependencies = entry.getDependencies();

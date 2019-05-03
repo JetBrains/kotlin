@@ -131,7 +131,8 @@ public class ShowExpressionTypeHandler implements CodeInsightActionHandler {
   public static Set<ExpressionTypeProvider> getHandlers(final Project project, Language... languages) {
     DumbService dumbService = DumbService.getInstance(project);
     return JBIterable.of(languages).flatten(
-      language -> dumbService.filterByDumbAwareness(LanguageExpressionTypes.INSTANCE.allForLanguage(language))).addAllTo(ContainerUtil.newLinkedHashSet());
+      language -> dumbService.filterByDumbAwareness(LanguageExpressionTypes.INSTANCE.allForLanguage(language))).addAllTo(
+      new LinkedHashSet<>());
   }
 
   static final class DisplayedTypeInfo {

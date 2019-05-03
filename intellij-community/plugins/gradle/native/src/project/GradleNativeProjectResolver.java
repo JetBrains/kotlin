@@ -213,7 +213,7 @@ public class GradleNativeProjectResolver extends AbstractProjectResolverExtensio
   }
 
   private static Set<File> getSourceFolders(CppComponent component) {
-    Set<File> result = ContainerUtil.newLinkedHashSet();
+    Set<File> result = new LinkedHashSet<>();
     for (CppBinary binary : component.getBinaries()) {
       CompilationDetails compilationDetails = binary.getCompilationDetails();
       result.addAll(compilationDetails.getHeaderDirs());

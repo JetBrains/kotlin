@@ -20,7 +20,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +55,7 @@ public class LibraryDependencyDataService extends AbstractDependencyDataService<
       new HashMap<Set<String>, LibraryDependencyData>();
     final Map<String/* library name + scope */, LibraryDependencyData> projectLibrariesToImport =
       new HashMap<String, LibraryDependencyData>();
-    final Set<LibraryDependencyData> toImport = ContainerUtilRt.newLinkedHashSet();
+    final Set<LibraryDependencyData> toImport = new LinkedHashSet<LibraryDependencyData>();
     final Map<OrderEntry, OrderAware> orderEntryDataMap = new LinkedHashMap<>();
 
     boolean hasUnresolved = false;
@@ -66,7 +65,7 @@ public class LibraryDependencyDataService extends AbstractDependencyDataService<
       hasUnresolved |= libraryData.isUnresolved();
       switch (dependencyData.getLevel()) {
         case MODULE:
-            Set<String> paths = ContainerUtilRt.newHashSet();
+          Set<String> paths = new HashSet<String>();
             for (String path : libraryData.getPaths(LibraryPathType.BINARY)) {
               paths.add(ExternalSystemApiUtil.toCanonicalPath(path) + dependencyData.getScope().name());
             }
@@ -162,7 +161,7 @@ public class LibraryDependencyDataService extends AbstractDependencyDataService<
         ModuleLibraryOrderEntryImpl moduleLibraryOrderEntry = (ModuleLibraryOrderEntryImpl)entry;
         Library library = moduleLibraryOrderEntry.getLibrary();
         final VirtualFile[] libraryFiles = library.getFiles(OrderRootType.CLASSES);
-        final Set<String> moduleLibraryKey = ContainerUtilRt.newHashSet(libraryFiles.length);
+        final Set<String> moduleLibraryKey = new HashSet<String>(libraryFiles.length);
         for (VirtualFile file : libraryFiles) {
           moduleLibraryKey.add(ExternalSystemApiUtil.getLocalFileSystemPath(file) + moduleLibraryOrderEntry.getScope().name());
         }

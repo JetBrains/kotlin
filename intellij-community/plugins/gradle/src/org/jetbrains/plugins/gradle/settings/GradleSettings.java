@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.settings;
 
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -13,7 +13,6 @@ import com.intellij.openapi.project.ExternalStorageConfigurationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.util.ThreeState;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +21,7 @@ import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Holds shared project-level gradle-related settings (should be kept at the '*.ipr' or under '.idea').
@@ -146,7 +146,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
   }
 
   public static class MyState implements State<GradleProjectSettings> {
-    private final Set<GradleProjectSettings> myProjectSettings = ContainerUtilRt.newTreeSet();
+    private final Set<GradleProjectSettings> myProjectSettings = new TreeSet<GradleProjectSettings>();
 
     @Override
     @XCollection(elementTypes = {GradleProjectSettings.class})

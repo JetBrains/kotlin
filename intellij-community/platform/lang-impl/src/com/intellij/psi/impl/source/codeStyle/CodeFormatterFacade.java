@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.psi.impl.source.codeStyle;
 
@@ -263,7 +263,7 @@ public class CodeFormatterFacade {
 
     // We use a set here because we encountered a situation when more than one PSI leaf points to the same injected fragment
     // (at least for sql injected into sql).
-    final LinkedHashSet<TextRange> injectedFileRangesSet = ContainerUtilRt.newLinkedHashSet();
+    final LinkedHashSet<TextRange> injectedFileRangesSet = new LinkedHashSet<TextRange>();
 
     if (!psi.getProject().isDefault()) {
       List<DocumentWindow> injectedDocuments = InjectedLanguageManager.getInstance(file.getProject()).getCachedInjectedDocumentsInRange(file, file.getTextRange());
@@ -370,7 +370,7 @@ public class CodeFormatterFacade {
       PsiElement e = toProcess.pop();
       if (e instanceof PsiLanguageInjectionHost) {
         if (result == null) {
-          result = ContainerUtilRt.newHashSet();
+          result = new HashSet<PsiLanguageInjectionHost>();
         }
         result.add((PsiLanguageInjectionHost)e);
       }

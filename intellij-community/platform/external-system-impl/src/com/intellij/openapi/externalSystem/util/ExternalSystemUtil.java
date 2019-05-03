@@ -94,7 +94,6 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.concurrency.Semaphore;
-import com.intellij.util.containers.ContainerUtilRt;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -272,7 +271,7 @@ public class ExternalSystemUtil {
       callback = spec.getCallback();
     }
 
-    Set<String> toRefresh = ContainerUtilRt.newHashSet();
+    Set<String> toRefresh = new HashSet<String>();
     for (ExternalProjectSettings setting : projectsSettings) {
       // don't refresh project when auto-import is disabled if such behavior needed (e.g. on project opening when auto-import is disabled)
       if (!setting.isUseAutoImport() && spec.whenAutoImportEnabled()) continue;

@@ -272,7 +272,7 @@ public abstract class LRUPopupBuilder<T> {
     ReadonlyStatusHandler.OperationStatus status = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Arrays.asList(sortedFiles));
     if (status.hasReadonlyFiles()) return;
 
-    final Set<VirtualFile> matchedExtensions = ContainerUtil.newLinkedHashSet();
+    final Set<VirtualFile> matchedExtensions = new LinkedHashSet<>();
     final Map<VirtualFile, Language> oldMapping = new HashMap<>();
     for (VirtualFile file : sortedFiles) {
       oldMapping.put(file, mappings.getMapping(file));

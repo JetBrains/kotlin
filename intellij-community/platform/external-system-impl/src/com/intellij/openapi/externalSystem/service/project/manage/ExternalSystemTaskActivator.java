@@ -143,7 +143,7 @@ public class ExternalSystemTaskActivator {
     for (final ExternalProjectsStateProvider.TasksActivation activation : stateProvider.getAllTasksActivation()) {
       final boolean hashPath = modules.contains(activation.projectPath);
 
-      final Set<String> tasks = ContainerUtil.newLinkedHashSet();
+      final Set<String> tasks = new LinkedHashSet<>();
       for (Phase phase : phases) {
         List<String> activationTasks = activation.state.getTasks(phase);
         if (hashPath || (phase.isSyncPhase() && !activationTasks.isEmpty() &&  isShareSameRootPath(modules, activation))) {

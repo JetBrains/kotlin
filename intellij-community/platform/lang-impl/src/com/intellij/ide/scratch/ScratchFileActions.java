@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.scratch;
 
 import com.intellij.featureStatistics.FeatureUsageTracker;
@@ -28,12 +28,12 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.*;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static com.intellij.openapi.util.Conditions.not;
@@ -238,7 +238,7 @@ public class ScratchFileActions {
         .filter(isScratch)
         .map(fileLanguage(project))
         .filter(notNull())
-        .addAllTo(ContainerUtil.newLinkedHashSet());
+        .addAllTo(new LinkedHashSet<>());
       String langName = languages.size() == 1 ? languages.iterator().next().getDisplayName() : languages.size() + " different";
       e.getPresentation().setText(String.format("Change %s (%s)...", getLanguageTerm(), langName));
       e.getPresentation().setEnabledAndVisible(true);

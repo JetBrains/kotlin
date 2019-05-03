@@ -233,7 +233,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
       if(pathType != LibraryPathType.BINARY && toAddPerType.isEmpty()) {
         continue;
       }
-      HashSet<String> toRemovePerType = ContainerUtilRt.newHashSet();
+      HashSet<String> toRemovePerType = new HashSet<String>();
       toRemove.put(ideType, toRemovePerType);
 
       for (VirtualFile ideFile: ideLibrary.getFiles(ideType)) {

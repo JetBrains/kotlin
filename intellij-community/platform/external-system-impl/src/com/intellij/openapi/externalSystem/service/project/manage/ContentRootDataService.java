@@ -88,7 +88,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
       forceDirectoriesCreation = projectDataNode.getUserData(CREATE_EMPTY_DIRECTORIES) == Boolean.TRUE;
     }
 
-    Set<Module> modulesToExpand = ContainerUtil.newTroveSet();
+    Set<Module> modulesToExpand = new THashSet<>();
     MultiMap<DataNode<ModuleData>, DataNode<ContentRootData>> byModule = ExternalSystemApiUtil.groupBy(toImport, ModuleData.class);
 
     filterAndReportDuplicatingContentRoots(byModule, project);

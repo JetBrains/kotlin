@@ -23,13 +23,13 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.Processors;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.KeyDescriptor;
 import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -374,7 +374,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   @Override
   @NotNull
   public <K> Collection<K> getAllKeys(@NotNull StubIndexKey<K, ?> indexKey, @NotNull Project project) {
-    Set<K> allKeys = ContainerUtil.newTroveSet();
+    Set<K> allKeys = new THashSet<>();
     processAllKeys(indexKey, project, Processors.cancelableCollectProcessor(allKeys));
     return allKeys;
   }
@@ -603,7 +603,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
 
     @Override
     protected void prepare() {
-      Iterator<StubIndexExtension<?, ?>> extensionsIterator = 
+      Iterator<StubIndexExtension<?, ?>> extensionsIterator =
         IndexInfrastructure.hasIndices() ?
           ((ExtensionPointImpl<StubIndexExtension<?, ?>>)StubIndexExtension.EP_NAME.getPoint(null)).iterator() :
           Collections.emptyIterator();
@@ -612,8 +612,8 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
       while(extensionsIterator.hasNext()) {
         StubIndexExtension extension = extensionsIterator.next();
         if (extension == null) break;
-        extension.getKey(); // initialize stub index keys 
-        
+        extension.getKey(); // initialize stub index keys
+
         addNestedInitializationTask(() -> {
           @SuppressWarnings("unchecked") boolean rebuildRequested = registerIndexer(extension, forceClean, state);
           if (rebuildRequested) {

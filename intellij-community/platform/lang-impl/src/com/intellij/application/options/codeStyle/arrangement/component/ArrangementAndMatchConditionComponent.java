@@ -21,10 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * {@link ArrangementUiComponent Component} for showing {@link ArrangementCompositeMatchCondition composite nodes}.
@@ -36,7 +34,7 @@ import java.util.Set;
 public class ArrangementAndMatchConditionComponent extends JPanel implements ArrangementUiComponent {
 
   @NotNull private final List<ArrangementUiComponent>  myComponents      = ContainerUtilRt.newArrayList();
-  @NotNull private final Set<ArrangementSettingsToken> myAvailableTokens = ContainerUtilRt.newHashSet();
+  @NotNull private final Set<ArrangementSettingsToken> myAvailableTokens = new HashSet<ArrangementSettingsToken>();
 
   @NotNull private final ArrangementCompositeMatchCondition mySetting;
   @Nullable private      Rectangle                          myScreenBounds;

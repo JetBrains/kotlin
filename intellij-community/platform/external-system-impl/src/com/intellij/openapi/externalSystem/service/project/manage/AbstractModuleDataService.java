@@ -222,7 +222,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
 
       Set<Path> orphanModules = project.getUserData(ORPHAN_MODULE_FILES);
       if (orphanModules == null) {
-        orphanModules = ContainerUtil.newLinkedHashSet();
+        orphanModules = new LinkedHashSet<>();
         project.putUserData(ORPHAN_MODULE_FILES, orphanModules);
       }
 

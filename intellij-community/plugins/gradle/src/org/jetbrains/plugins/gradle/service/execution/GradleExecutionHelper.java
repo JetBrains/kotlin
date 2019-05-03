@@ -605,7 +605,7 @@ public class GradleExecutionHelper {
   }
 
   private static void replaceTestCommandOptionWithInitScript(@NotNull List<String> args) {
-    Set<String> testIncludePatterns = ContainerUtil.newLinkedHashSet();
+    Set<String> testIncludePatterns = new LinkedHashSet<>();
     Iterator<String> it = args.iterator();
     while (it.hasNext()) {
       final String next = it.next();

@@ -280,7 +280,7 @@ public final class GradleManager
 
   @Override
   public void enhanceRemoteProcessing(@NotNull SimpleJavaParameters parameters) throws ExecutionException {
-    final Set<String> additionalEntries = ContainerUtilRt.newHashSet();
+    final Set<String> additionalEntries = new HashSet<String>();
     for (GradleProjectResolverExtension extension : RESOLVER_EXTENSIONS.getValue()) {
       ContainerUtilRt.addIfNotNull(additionalEntries, PathUtil.getJarPathForClass(extension.getClass()));
       for (Class aClass : extension.getExtraProjectModelClasses()) {

@@ -79,7 +79,7 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
       @NotNull
       @Override
       protected Set<String> compute() {
-        final Set<String> gradleSdkLibraries = ContainerUtil.newLinkedHashSet();
+        final Set<String> gradleSdkLibraries = new LinkedHashSet<>();
         File gradleHome = gradleInstallationManager.getGradleHome(project, linkedExternalProjectPath);
         if (gradleHome != null && gradleHome.isDirectory()) {
           final Collection<File> libraries = gradleInstallationManager.getClassRoots(project, linkedExternalProjectPath);
@@ -104,8 +104,8 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
           LOG.warn("Gradle SDK distribution type was not configured for the project at " + linkedExternalProjectPath);
         }
 
-        final Set<String> buildClasspathSources = ContainerUtil.newLinkedHashSet();
-        final Set<String> buildClasspathClasses = ContainerUtil.newLinkedHashSet();
+        final Set<String> buildClasspathSources = new LinkedHashSet<>();
+        final Set<String> buildClasspathClasses = new LinkedHashSet<>();
         BuildScriptClasspathData buildScriptClasspathData = node.getData();
         for (BuildScriptClasspathData.ClasspathEntry classpathEntry : buildScriptClasspathData.getClasspathEntries()) {
           for (String path : classpathEntry.getSourcesFile()) {

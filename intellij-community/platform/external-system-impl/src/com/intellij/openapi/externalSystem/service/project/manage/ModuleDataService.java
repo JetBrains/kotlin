@@ -110,7 +110,7 @@ public class ModuleDataService extends AbstractModuleDataService<ModuleData> {
       }
     }
 
-    Set<String> result = ContainerUtilRt.newHashSet();
+    Set<String> result = new HashSet<String>();
     for (Map.Entry<ExternalProjectPojo, Collection<ExternalProjectPojo>> entry : oldInfo.entrySet()) {
       String newName = map.get(entry.getKey().getPath());
       if (newName != null && !newName.equals(entry.getKey().getName())) {

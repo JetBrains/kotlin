@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util.gotoByName;
 
 import com.intellij.concurrency.JobLauncher;
@@ -140,7 +140,7 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
   @NotNull
   @Override
   public String[] getNames(final boolean checkBoxState) {
-    final THashSet<String> allNames = ContainerUtil.newTroveSet();
+    final THashSet<String> allNames = new THashSet<>();
 
     Collection<String> result = Collections.synchronizedCollection(allNames);
     processNames(Processors.cancelableCollectProcessor(result),

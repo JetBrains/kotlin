@@ -427,7 +427,7 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
     List<ProjectDataService<?, ?>> services = servicesByKey.get(dataNode.getKey());
     if (services != null) {
       try {
-        Set<ClassLoader> classLoaders = ContainerUtil.newLinkedHashSet();
+        Set<ClassLoader> classLoaders = new LinkedHashSet<>();
         for (ProjectDataService<?, ?> dataService : services) {
           classLoaders.add(dataService.getClass().getClassLoader());
         }
