@@ -103,7 +103,7 @@ public final class GradleManager
       @NotNull
       @Override
       protected List<GradleProjectResolverExtension> compute() {
-        List<GradleProjectResolverExtension> result = ContainerUtilRt.newArrayList();
+        List<GradleProjectResolverExtension> result = new ArrayList<GradleProjectResolverExtension>();
 
         // It's possible usecase when 'java' subsystem dependent plugins bundled with the non-java IDE using fat plugin distribution.
         // This approach can lead to unwanted/incompatible extensions to be loaded.
@@ -480,7 +480,7 @@ public final class GradleManager
   @Nullable
   private static Map<String, String> patchLinkedProjects(@NotNull Project project) {
     GradleSettings settings = GradleSettings.getInstance(project);
-    Collection<GradleProjectSettings> correctedSettings = ContainerUtilRt.newArrayList();
+    Collection<GradleProjectSettings> correctedSettings = new ArrayList<GradleProjectSettings>();
     Map<String/* old path */, String/* new path */> adjustedPaths = new HashMap<String, String>();
     for (GradleProjectSettings projectSettings : settings.getLinkedProjectsSettings()) {
       String oldPath = projectSettings.getExternalProjectPath();

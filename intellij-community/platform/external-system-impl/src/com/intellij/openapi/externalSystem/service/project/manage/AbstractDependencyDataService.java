@@ -17,7 +17,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -148,7 +147,7 @@ public abstract class AbstractDependencyDataService<E extends AbstractDependency
     for (ExportableOrderEntry entry : data) {
       Collection<ExportableOrderEntry> entries = result.get(entry.getOwnerModule());
       if (entries == null) {
-        result.put(entry.getOwnerModule(), entries = ContainerUtilRt.newArrayList());
+        result.put(entry.getOwnerModule(), entries = new ArrayList<ExportableOrderEntry>());
       }
       entries.add(entry);
     }

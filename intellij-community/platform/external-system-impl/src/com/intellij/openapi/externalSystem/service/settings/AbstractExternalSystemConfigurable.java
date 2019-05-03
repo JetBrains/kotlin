@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.settings;
 
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
@@ -41,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -58,7 +45,7 @@ import java.util.List;
  *   |   external system-wide settings (optional)   |
       ----------------------------------------------
  * </pre>
- * 
+ *
  * @author Denis Zhdanov
  */
 public abstract class AbstractExternalSystemConfigurable<
@@ -68,7 +55,8 @@ public abstract class AbstractExternalSystemConfigurable<
   > implements SearchableConfigurable, Configurable.NoScroll
 {
 
-  @NotNull private final List<ExternalSystemSettingsControl<ProjectSettings>> myProjectSettingsControls = ContainerUtilRt.newArrayList();
+  @NotNull private final List<ExternalSystemSettingsControl<ProjectSettings>> myProjectSettingsControls =
+    new ArrayList<ExternalSystemSettingsControl<ProjectSettings>>();
 
   @NotNull private final ProjectSystemId myExternalSystemId;
   @NotNull private final Project         myProject;
@@ -165,7 +153,7 @@ public abstract class AbstractExternalSystemConfigurable<
       }
     });
 
-    
+
     if (!myProjectsModel.isEmpty()) {
       myProjectsList.setSelectedIndex(0);
     }
@@ -174,7 +162,7 @@ public abstract class AbstractExternalSystemConfigurable<
   public void selectProject(@NotNull String linkedProjectPath) {
     myProjectsList.setSelectedValue(getProjectName(linkedProjectPath), true);
   }
-  
+
   private void addTitle(@NotNull String title) {
     JPanel panel = new JPanel(new GridBagLayout());
     panel.setBorder(IdeBorderFactory.createTitledBorder(title, false, JBUI.emptyInsets()));
@@ -183,13 +171,13 @@ public abstract class AbstractExternalSystemConfigurable<
 
   /**
    * Creates a control for managing given project settings.
-   * 
+   *
    * @param settings  target external project settings
    * @return          control for managing given project settings
    */
   @NotNull
   protected abstract ExternalSystemSettingsControl<ProjectSettings> createProjectSettingsControl(@NotNull ProjectSettings settings);
-  
+
   @NotNull
   protected String getProjectName(@NotNull String path) {
     File file = new File(path);
@@ -206,7 +194,7 @@ public abstract class AbstractExternalSystemConfigurable<
 
   /**
    * Creates a control for managing given system-level settings (if any).
-   * 
+   *
    * @param settings  target system settings
    * @return          a control for managing given system-level settings;
    *                  {@code null} if current external system doesn't have system-level settings (only project-level settings)
@@ -230,7 +218,7 @@ public abstract class AbstractExternalSystemConfigurable<
     L publisher = systemSettings.getPublisher();
     publisher.onBulkChangeStart();
     try {
-      List<ProjectSettings> projectSettings = ContainerUtilRt.newArrayList();
+      List<ProjectSettings> projectSettings = new ArrayList<ProjectSettings>();
       for (ExternalSystemSettingsControl<ProjectSettings> control : myProjectSettingsControls) {
         ProjectSettings s = newProjectSettings();
         control.apply(s);

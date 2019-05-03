@@ -44,7 +44,6 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.JBUI;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -156,7 +155,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
   @NotNull
   private Collection<DataNode<E>> filterExistingModules(@NotNull Collection<DataNode<E>> modules,
                                                         @NotNull IdeModifiableModelsProvider modelsProvider) {
-    Collection<DataNode<E>> result = ContainerUtilRt.newArrayList();
+    Collection<DataNode<E>> result = new ArrayList<DataNode<E>>();
     for (DataNode<E> node : modules) {
       ModuleData moduleData = node.getData();
       Module module = modelsProvider.findIdeModule(moduleData);

@@ -23,7 +23,6 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +67,7 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
         for (ProjectDataService<?, ?> service : supplier.get()) {
           List<ProjectDataService<?, ?>> services = result.get(service.getTargetDataKey());
           if (services == null) {
-            result.put(service.getTargetDataKey(), services = ContainerUtilRt.newArrayList());
+            result.put(service.getTargetDataKey(), services = new ArrayList<ProjectDataService<?, ?>>());
           }
           services.add(service);
         }

@@ -11,7 +11,6 @@ import com.intellij.psi.codeStyle.arrangement.match.StdArrangementEntryMatcher;
 import com.intellij.psi.codeStyle.arrangement.match.StdArrangementMatchRule;
 import com.intellij.psi.codeStyle.arrangement.model.ArrangementMatchCondition;
 import com.intellij.psi.codeStyle.arrangement.std.*;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.MultiRowFlowPanel;
@@ -37,7 +36,7 @@ public class ArrangementMatchingRuleEditor extends JPanel implements Arrangement
 
   @NotNull private final Map<ArrangementSettingsToken, ArrangementUiComponent> myComponents =
     new HashMap<ArrangementSettingsToken, ArrangementUiComponent>();
-  @NotNull private final List<MultiRowFlowPanel>                               myRows       = ContainerUtilRt.newArrayList();
+  @NotNull private final List<MultiRowFlowPanel>                               myRows       = new ArrayList<MultiRowFlowPanel>();
 
   @NotNull private final ArrangementMatchingRulesControl    myControl;
   @NotNull private final ArrangementStandardSettingsManager mySettingsManager;
@@ -94,7 +93,7 @@ public class ArrangementMatchingRuleEditor extends JPanel implements Arrangement
     MultiRowFlowPanel panel = new MultiRowFlowPanel(
       FlowLayout.LEFT, ArrangementConstants.HORIZONTAL_GAP, ArrangementConstants.VERTICAL_GAP
     );
-    List<ArrangementSettingsToken> prevTokens = ContainerUtilRt.newArrayList();
+    List<ArrangementSettingsToken> prevTokens = new ArrayList<ArrangementSettingsToken>();
     StdArrangementTokenUiRole prevRole = null;
     ArrangementUiComponent component;
     JComponent uiComponent;
@@ -189,7 +188,7 @@ public class ArrangementMatchingRuleEditor extends JPanel implements Arrangement
 
   @Nullable
   private Pair<ArrangementMatchCondition, ArrangementSettingsToken> buildCondition() {
-    List<ArrangementMatchCondition> conditions = ContainerUtilRt.newArrayList();
+    List<ArrangementMatchCondition> conditions = new ArrayList<ArrangementMatchCondition>();
     ArrangementSettingsToken orderType = null;
     for (ArrangementUiComponent component : myComponents.values()) {
       if (!component.isEnabled() || !component.isSelected()) {

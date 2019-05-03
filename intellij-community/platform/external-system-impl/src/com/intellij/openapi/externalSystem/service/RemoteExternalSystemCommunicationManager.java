@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -59,6 +59,7 @@ import org.objenesis.Objenesis;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -114,7 +115,7 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
 
         File myWorkingDirectory = new File(configuration);
         params.setWorkingDirectory(myWorkingDirectory.isDirectory() ? myWorkingDirectory.getPath() : PathManager.getBinPath());
-        final List<String> classPath = ContainerUtilRt.newArrayList();
+        final List<String> classPath = new ArrayList<String>();
 
         // IDE jars.
         classPath.addAll(PathManager.getUtilClassPath());
@@ -260,7 +261,7 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
 
   @Override
   public void clear() {
-    mySupport.stopAll(true); 
+    mySupport.stopAll(true);
   }
 
   @Override

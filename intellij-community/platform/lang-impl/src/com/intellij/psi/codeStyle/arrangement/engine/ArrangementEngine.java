@@ -23,7 +23,6 @@ import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsAwa
 import com.intellij.psi.codeStyle.arrangement.std.CustomArrangementOrderToken;
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.Stack;
 import com.intellij.util.text.CharArrayUtil;
@@ -225,9 +224,9 @@ public class ArrangementEngine {
                                                              @NotNull List<? extends ArrangementMatchRule> rulesByPriority,
                                                              @Nullable Map<E, ArrangementSectionRule> entryToSection)
   {
-    List<E> arranged = ContainerUtilRt.newArrayList();
+    List<E> arranged = new ArrayList<E>();
     Set<E> unprocessed = new LinkedHashSet<E>();
-    List<Pair<Set<ArrangementEntry>, E>> dependent = ContainerUtilRt.newArrayList();
+    List<Pair<Set<ArrangementEntry>, E>> dependent = new ArrayList<Pair<Set<ArrangementEntry>, E>>();
     for (E entry : entries) {
       List<? extends ArrangementEntry> dependencies = entry.getDependencies();
       if (dependencies == null) {
@@ -356,8 +355,8 @@ public class ArrangementEngine {
 
     Map<E, ArrangementSectionRule> entryToSection = new HashMap<E, ArrangementSectionRule>();
     Map<E, ArrangementEntryWrapper<E>> map = new HashMap<E, ArrangementEntryWrapper<E>>();
-    List<E> arranged = ContainerUtilRt.newArrayList();
-    List<E> toArrange = ContainerUtilRt.newArrayList();
+    List<E> arranged = new ArrayList<E>();
+    List<E> toArrange = new ArrayList<E>();
     for (ArrangementEntryWrapper<E> wrapper : wrappers) {
       E entry = wrapper.getEntry();
       map.put(wrapper.getEntry(), wrapper);
@@ -486,7 +485,7 @@ public class ArrangementEngine {
 
   private static class Context<E extends ArrangementEntry> {
 
-    @NotNull public final List<ArrangementMoveInfo> moveInfos = ContainerUtilRt.newArrayList();
+    @NotNull public final List<ArrangementMoveInfo> moveInfos = new ArrayList<ArrangementMoveInfo>();
 
     @NotNull public final Rearranger<E>                          rearranger;
     @NotNull public final Collection<ArrangementEntryWrapper<E>> wrappers;

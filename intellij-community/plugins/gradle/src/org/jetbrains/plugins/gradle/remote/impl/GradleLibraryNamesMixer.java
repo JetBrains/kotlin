@@ -5,7 +5,6 @@ import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.project.LibraryData;
 import com.intellij.openapi.externalSystem.model.project.LibraryPathType;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +63,7 @@ public class GradleLibraryNamesMixer {
       return;
     }
     Map<String, Wrapped> names = new HashMap<String, Wrapped>();
-    List<Wrapped> data = ContainerUtilRt.newArrayList();
+    List<Wrapped> data = new ArrayList<Wrapped>();
     for (DataNode<LibraryData> library : libraries) {
       Wrapped wrapped = new Wrapped(library.getData());
       data.add(wrapped);

@@ -112,7 +112,7 @@ public class DocPreviewUtil {
     }
 
     // Apply links info to the header template.
-    List<TextRange> modifiedRanges = ContainerUtilRt.newArrayList();
+    List<TextRange> modifiedRanges = new ArrayList<TextRange>();
     List<String> sortedReplacements = ContainerUtilRt.newArrayList(links.keySet());
     Collections.sort(sortedReplacements, REPLACEMENTS_COMPARATOR);
     StringBuilder buffer = new StringBuilder(header);

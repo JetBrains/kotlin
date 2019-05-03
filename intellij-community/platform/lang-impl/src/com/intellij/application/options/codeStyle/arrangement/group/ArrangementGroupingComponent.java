@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle.arrangement.group;
 
 import com.intellij.application.options.codeStyle.arrangement.ArrangementConstants;
@@ -22,7 +8,6 @@ import com.intellij.application.options.codeStyle.arrangement.ui.ArrangementRepr
 import com.intellij.application.options.codeStyle.arrangement.util.ArrangementRuleIndexControl;
 import com.intellij.psi.codeStyle.arrangement.ArrangementUtil;
 import com.intellij.psi.codeStyle.arrangement.std.*;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -31,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,7 +38,7 @@ public class ArrangementGroupingComponent extends JPanel implements ArrangementR
    *
    * @param token                       base token which serves as a grouping rule model
    * @param colorsProvider              colors provider
-   *                                    
+   *
    * @throws IllegalArgumentException   if invariant described above is not satisfied
    */
   public ArrangementGroupingComponent(@NotNull CompositeArrangementSettingsToken token,
@@ -60,7 +46,7 @@ public class ArrangementGroupingComponent extends JPanel implements ArrangementR
                                       @NotNull ArrangementStandardSettingsManager settingsManager)
     throws IllegalArgumentException
   {
-    List<ArrangementSettingsToken> children = ContainerUtilRt.newArrayList();
+    List<ArrangementSettingsToken> children = new ArrayList<ArrangementSettingsToken>();
     StdArrangementTokenUiRole childRole = null;
     for (CompositeArrangementSettingsToken child : token.getChildren()) {
       if (childRole == null) {
@@ -119,7 +105,7 @@ public class ArrangementGroupingComponent extends JPanel implements ArrangementR
       add(myOrderTypeToken.getUiComponent(), new GridBag().anchor(GridBagConstraints.WEST));
     }
     add(new JLabel(" "), new GridBag().weightx(1).fillCellHorizontally());
-    
+
     setBackground(UIUtil.getListBackground());
     setBorder(JBUI.Borders.empty(ArrangementConstants.VERTICAL_GAP));
     setOpaque(!UIUtil.isUnderIntelliJLaF() && !UIUtil.isUnderNativeMacLookAndFeel() && !UIUtil.isUnderDarcula());
@@ -184,7 +170,7 @@ public class ArrangementGroupingComponent extends JPanel implements ArrangementR
   public void setHighlight(boolean highlight) {
     setBackground(highlight ? UIUtil.getDecoratedRowColor() : UIUtil.getListBackground());
   }
-  
+
   @Nullable
   public ArrangementSettingsToken getOrderType() {
     return myOrderTypeToken == null ? null : myOrderTypeToken.getToken();

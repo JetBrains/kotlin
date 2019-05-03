@@ -12,7 +12,6 @@ import com.intellij.psi.codeStyle.arrangement.model.ArrangementMatchConditionVis
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementSettingsToken;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsManager;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementUiComponent;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +32,7 @@ import java.util.*;
  */
 public class ArrangementAndMatchConditionComponent extends JPanel implements ArrangementUiComponent {
 
-  @NotNull private final List<ArrangementUiComponent>  myComponents      = ContainerUtilRt.newArrayList();
+  @NotNull private final List<ArrangementUiComponent>  myComponents      = new ArrayList<ArrangementUiComponent>();
   @NotNull private final Set<ArrangementSettingsToken> myAvailableTokens = new HashSet<ArrangementSettingsToken>();
 
   @NotNull private final ArrangementCompositeMatchCondition mySetting;

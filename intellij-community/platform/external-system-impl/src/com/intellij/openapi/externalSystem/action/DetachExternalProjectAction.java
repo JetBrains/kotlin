@@ -16,10 +16,9 @@ import com.intellij.openapi.externalSystem.view.ProjectNode;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfoRt;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,7 +71,7 @@ public class DetachExternalProjectAction extends ExternalSystemNodeAction<Projec
     ExternalProjectsManagerImpl.getInstance(project).forgetExternalProjectData(projectSystemId, projectData.getLinkedExternalProjectPath());
 
     // Process orphan modules.
-    List<Module> orphanModules = ContainerUtilRt.newArrayList();
+    List<Module> orphanModules = new ArrayList<Module>();
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       if (!ExternalSystemApiUtil.isExternalSystemAwareModule(projectSystemId, module)) continue;
 
