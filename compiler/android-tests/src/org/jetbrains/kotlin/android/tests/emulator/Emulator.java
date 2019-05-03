@@ -34,11 +34,12 @@ public class Emulator {
 
     public static final String ARM = "arm";
     public static final String X86 = "x86";
+    private static final String AVD_NAME = "kotlin_box_test_avd";
 
     private final static Pattern EMULATOR_PATTERN = Pattern.compile("emulator-([0-9])*");
 
     private final PathManager pathManager;
-    private String platform;
+    private final String platform;
 
     public Emulator(PathManager pathManager, String platform) {
         this.pathManager = pathManager;
@@ -53,27 +54,23 @@ public class Emulator {
         commandLine.addParameter("avd");
         commandLine.addParameter("--force");
         commandLine.addParameter("-n");
-        commandLine.addParameter("my_avd");
+        commandLine.addParameter(AVD_NAME);
         commandLine.addParameter("-p");
-        commandLine.addParameter(pathManager.getAndroidEmulatorRoot());
-        commandLine.addParameter("-t");
-        commandLine.addParameter("1");
-
-        commandLine.addParameter("-b");
-        commandLine.addParameter(getEmulatorAbi());
+        commandLine.addParameter(pathManager.getAndroidAvdRoot());
+        commandLine.addParameter("-k");
+        if (platform == X86) {
+            commandLine.addParameter("system-images;android-19;default;x86");
+        } else {
+            commandLine.addParameter("system-images;android-19;default;armeabi-v7a");
+        }
         return commandLine;
-    }
-
-    private String getEmulatorAbi(){
-        return platform == X86 ? "x86" : "armeabi-v7a";
     }
 
     private GeneralCommandLine getStartCommand() {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        String emulatorCmdName = SystemInfo.isWindows ? "emulator.exe" : "emulator";
-        commandLine.setExePath(pathManager.getToolsFolderInAndroidSdk() + "/" + emulatorCmdName);
+        commandLine.setExePath(pathManager.getEmulatorFolderInAndroidSdk() + "/" + "emulator");
         commandLine.addParameter("-avd");
-        commandLine.addParameter("my_avd");
+        commandLine.addParameter(AVD_NAME);
         if (platform != X86) {
             //problem with qemu options
             commandLine.addParameter("-no-audio");
@@ -83,17 +80,13 @@ public class Emulator {
     }
 
     private GeneralCommandLine getWaitCommand() {
-        GeneralCommandLine commandLine = new GeneralCommandLine();
-        String adbCmdName = SystemInfo.isWindows ? "adb.exe" : "adb";
-        commandLine.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/" + adbCmdName);
+        GeneralCommandLine commandLine = createAdbCommand();
         commandLine.addParameter("wait-for-device");
         return commandLine;
     }
 
     private GeneralCommandLine getStopCommandForAdb() {
-        GeneralCommandLine commandLine = new GeneralCommandLine();
-        String adbCmdName = SystemInfo.isWindows ? "adb.exe" : "adb";
-        commandLine.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/" + adbCmdName);
+        GeneralCommandLine commandLine = createAdbCommand();
         commandLine.addParameter("kill-server");
         return commandLine;
     }
@@ -118,8 +111,7 @@ public class Emulator {
 
     private GeneralCommandLine createAdbCommand() {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        String adbCmdName = SystemInfo.isWindows ? "adb.exe" : "adb";
-        commandLine.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/" + adbCmdName);
+        commandLine.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/" + "adb");
         return commandLine;
     }
 
