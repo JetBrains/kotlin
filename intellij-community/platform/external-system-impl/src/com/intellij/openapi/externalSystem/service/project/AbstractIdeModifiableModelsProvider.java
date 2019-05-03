@@ -572,7 +572,7 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
     removedModules.removeAll(newModules);
 
 
-    Map<String, String> toSubstitute = ContainerUtil.newHashMap();
+    Map<String, String> toSubstitute = new HashMap<>();
     for (ExternalSystemManager<?, ?, ?, ?, ?> manager: ExternalSystemApiUtil.getAllManagers()) {
       final Collection<ExternalProjectInfo> projectsData =
         ProjectDataManager.getInstance().getExternalProjectsData(myProject, manager.getSystemId());

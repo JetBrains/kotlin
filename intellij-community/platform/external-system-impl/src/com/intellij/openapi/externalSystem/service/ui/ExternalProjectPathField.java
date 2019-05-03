@@ -1,6 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.ui;
 
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -49,6 +47,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +83,7 @@ public class ExternalProjectPathField extends ComponentWithBrowseButton<External
   @NotNull
   public static MyPathAndProjectButtonPanel createPanel(@NotNull final Project project, @NotNull final ProjectSystemId externalSystemId) {
     final EditorTextField textField = createTextField(project, externalSystemId);
-    
+
     final FixedSizeButton selectRegisteredProjectButton = new FixedSizeButton();
     selectRegisteredProjectButton.setIcon(AllIcons.Actions.Module);
     String tooltipText = ExternalSystemBundle.message("run.configuration.tooltip.choose.registered.project",
@@ -131,8 +130,8 @@ public class ExternalProjectPathField extends ComponentWithBrowseButton<External
   @NotNull
   private static Tree buildRegisteredProjectsTree(@NotNull Project project, @NotNull ProjectSystemId externalSystemId) {
     ExternalSystemTasksTreeModel model = new ExternalSystemTasksTreeModel(externalSystemId);
-    ExternalSystemTasksTree result = new ExternalSystemTasksTree(model, ContainerUtilRt.newHashMap(), project, externalSystemId);
-    
+    ExternalSystemTasksTree result = new ExternalSystemTasksTree(model, new HashMap<String, Boolean>(), project, externalSystemId);
+
     ExternalSystemManager<?, ?, ?, ?, ?> manager = ExternalSystemApiUtil.getManager(externalSystemId);
     assert manager != null;
     AbstractExternalSystemLocalSettings<?> settings = manager.getLocalSettingsProvider().fun(project);
@@ -144,7 +143,7 @@ public class ExternalProjectPathField extends ComponentWithBrowseButton<External
     }
     return result;
   }
-  
+
   @NotNull
   private static EditorTextField createTextField(@NotNull final Project project, @NotNull final ProjectSystemId externalSystemId) {
     ExternalSystemManager<?, ?, ?, ?, ?> manager = ExternalSystemApiUtil.getManager(externalSystemId);
@@ -181,7 +180,7 @@ public class ExternalProjectPathField extends ComponentWithBrowseButton<External
     result.setBackground(UIUtil.getTextFieldBackground());
     return result;
   }
-  
+
   @Override
   public void setText(final String text) {
     getChildComponent().getTextField().setText(text);
@@ -233,13 +232,13 @@ public class ExternalProjectPathField extends ComponentWithBrowseButton<External
   public String getText() {
     return getChildComponent().getTextField().getText();
   }
-  
+
   private static class MyBrowseListener implements ActionListener {
-    
+
     @NotNull private final FileChooserDescriptor myDescriptor;
     @NotNull private final Project myProject;
     private EditorTextField myPathField;
-    
+
     MyBrowseListener(@NotNull final FileChooserDescriptor descriptor,
                      @NotNull final String fileChooserTitle,
                      @NotNull final Project project)
@@ -276,7 +275,7 @@ public class ExternalProjectPathField extends ComponentWithBrowseButton<External
       }
     }
   }
-  
+
   public static class MyPathAndProjectButtonPanel extends JPanel {
 
     @NotNull private final EditorTextField myTextField;

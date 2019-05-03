@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 /*
  * @author max
@@ -37,14 +37,13 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.paint.LinePainter2D;
 import com.intellij.util.DocumentUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.IntStack;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class IndentsPass extends TextEditorHighlightingPass implements DumbAware {
   private static final Key<List<RangeHighlighter>> INDENT_HIGHLIGHTERS_IN_EDITOR_KEY = Key.create("INDENT_HIGHLIGHTERS_IN_EDITOR_KEY");
@@ -360,7 +359,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
   }
 
   private class IndentsCalculator {
-    @NotNull final Map<Language, TokenSet> myComments = ContainerUtilRt.newHashMap();
+    @NotNull final Map<Language, TokenSet> myComments = new HashMap<Language, TokenSet>();
     @NotNull final int[] lineIndents; // negative value means the line is empty (or contains a comment) and indent
     // (denoted by absolute value) was deduced from enclosing non-empty lines
     @NotNull final CharSequence myChars;

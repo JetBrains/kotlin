@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.internal;
 
 import com.intellij.openapi.Disposable;
@@ -11,10 +12,10 @@ import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * Provides external system tasks monitoring and management facilities.
  * <p/>
  * Thread-safe.
- * 
+ *
  * @author Denis Zhdanov
  */
 public class ExternalSystemProcessingManager implements ExternalSystemTaskNotificationListener, Disposable {
@@ -70,7 +71,7 @@ public class ExternalSystemProcessingManager implements ExternalSystemTaskNotifi
   }
 
   /**
-   * Allows to check if any task of the given type is being executed at the moment.  
+   * Allows to check if any task of the given type is being executed at the moment.
    *
    * @param type  target task type
    * @return      {@code true} if any task of the given type is being executed at the moment;
@@ -148,7 +149,7 @@ public class ExternalSystemProcessingManager implements ExternalSystemTaskNotifi
 
   @Override
   public void onStatusChange(@NotNull ExternalSystemTaskNotificationEvent event) {
-    myTasksInProgress.put(event.getId(), System.currentTimeMillis() + TOO_LONG_EXECUTION_MS); 
+    myTasksInProgress.put(event.getId(), System.currentTimeMillis() + TOO_LONG_EXECUTION_MS);
   }
 
   @Override
@@ -182,13 +183,13 @@ public class ExternalSystemProcessingManager implements ExternalSystemTaskNotifi
 
   public void update() {
     long delay = TOO_LONG_EXECUTION_MS;
-    Map<ExternalSystemTaskId, Long> newState = ContainerUtilRt.newHashMap();
+    Map<ExternalSystemTaskId, Long> newState = new HashMap<ExternalSystemTaskId, Long>();
 
-    Map<ExternalSystemTaskId, Long> currentState = ContainerUtilRt.newHashMap(myTasksInProgress);
+    Map<ExternalSystemTaskId, Long> currentState = new HashMap<ExternalSystemTaskId, Long>(myTasksInProgress);
     if (currentState.isEmpty()) {
       return;
     }
-    
+
     for (Map.Entry<ExternalSystemTaskId, Long> entry : currentState.entrySet()) {
       long diff = System.currentTimeMillis() - entry.getValue();
       if (diff > 0) {
@@ -202,7 +203,7 @@ public class ExternalSystemProcessingManager implements ExternalSystemTaskNotifi
         }
       }
     }
-    
+
     myTasksInProgress.clear();
     myTasksInProgress.putAll(newState);
 

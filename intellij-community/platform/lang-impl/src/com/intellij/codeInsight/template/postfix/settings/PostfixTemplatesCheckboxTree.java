@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.settings;
 
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplate;
@@ -188,7 +188,7 @@ public class PostfixTemplatesCheckboxTree extends CheckboxTree implements Dispos
 
   @NotNull
   public Map<String, Set<String>> getDisabledTemplatesState() {
-    final Map<String, Set<String>> result = ContainerUtil.newHashMap();
+    final Map<String, Set<String>> result = new HashMap<>();
     visitTemplateNodes(template -> {
       if (!template.isChecked()) {
         Set<String> templatesForProvider =

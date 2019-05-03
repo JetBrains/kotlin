@@ -1,7 +1,6 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.jps.model.java.impl;
 
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -14,6 +13,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JavaModuleIndexImpl extends JpsElementBase<JavaModuleIndexImpl> implements JavaModuleIndex {
@@ -25,7 +25,7 @@ public class JavaModuleIndexImpl extends JpsElementBase<JavaModuleIndexImpl> imp
   private final JpsCompilerExcludes myExcludes;
 
   public JavaModuleIndexImpl(@NotNull JpsCompilerExcludes excludes) {
-    myMapping = ContainerUtil.newHashMap();
+    myMapping = new HashMap<>();
     myExcludes = excludes;
   }
 

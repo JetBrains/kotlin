@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.ui.tree;
 
 import com.intellij.injected.editor.VirtualFileWindow;
@@ -30,7 +30,10 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.ui.table.JBTable;
-import com.intellij.util.*;
+import com.intellij.util.Consumer;
+import com.intellij.util.Function;
+import com.intellij.util.IconUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.JBUI;
@@ -77,7 +80,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
   private MyModel<T> myModel;
 
   private final List<Runnable> myResetRunnables = ContainerUtil.newArrayList();
-  private final Map<String, T> myDefaultVals = ContainerUtil.newHashMap();
+  private final Map<String, T> myDefaultVals = new HashMap<>();
   private final List<Trinity<String, Supplier<T>, Consumer<T>>> myDefaultProps = ContainerUtil.newArrayList();
   private VirtualFile myFileToSelect;
 
@@ -349,7 +352,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
   }
 
   protected Map<VirtualFile, T> getNewMappings() {
-    HashMap<VirtualFile, T> map = ContainerUtil.newHashMap();
+    HashMap<VirtualFile, T> map = new HashMap<>();
     for (Pair<Object, T> p : myModel.data) {
       if (p.second != null) {
         map.put((VirtualFile)p.first, p.second);

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.formatting.engine;
 
 import com.intellij.diagnostic.AttachmentFactory;
@@ -10,10 +10,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class AlignmentHelper {
   private static final Logger LOG = Logger.getInstance(AlignmentHelper.class);
@@ -30,8 +27,8 @@ public class AlignmentHelper {
 
   private final AlignmentCyclesDetector myCyclesDetector;
 
-  private final Map<LeafBlockWrapper, Set<LeafBlockWrapper>> myBackwardShiftedAlignedBlocks = ContainerUtil.newHashMap();
-  private final Map<AbstractBlockWrapper, Set<AbstractBlockWrapper>> myAlignmentMappings = ContainerUtil.newHashMap();
+  private final Map<LeafBlockWrapper, Set<LeafBlockWrapper>> myBackwardShiftedAlignedBlocks = new HashMap<>();
+  private final Map<AbstractBlockWrapper, Set<AbstractBlockWrapper>> myAlignmentMappings = new HashMap<>();
 
   public AlignmentHelper(Document document, MultiMap<Alignment, Block> blocksToAlign, BlockIndentOptions options) {
     myDocument = document;
@@ -39,7 +36,7 @@ public class AlignmentHelper {
     int totalBlocks = blocksToAlign.values().size();
     myCyclesDetector = new AlignmentCyclesDetector(totalBlocks);
   }
-  
+
   private static void reportAlignmentProcessingError(BlockAlignmentProcessor.Context context) {
     ASTNode node = context.targetBlock.getNode();
     Language language = node != null ? node.getPsi().getLanguage() : null;

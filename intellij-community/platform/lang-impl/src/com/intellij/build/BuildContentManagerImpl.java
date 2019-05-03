@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build;
 
 import com.intellij.build.process.BuildProcessHandler;
@@ -35,10 +35,8 @@ import org.jetbrains.concurrency.Promises;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.intellij.util.ContentUtilEx.getFullName;
@@ -228,7 +226,7 @@ public class BuildContentManagerImpl implements BuildContentManager {
     if (processHandler != null) {
       Map<Object, CloseListener> closeListenerMap = content.getUserData(CONTENT_CLOSE_LISTENERS);
       if (closeListenerMap == null) {
-        closeListenerMap = ContainerUtil.newHashMap();
+        closeListenerMap = new HashMap<>();
         content.putUserData(CONTENT_CLOSE_LISTENERS, closeListenerMap);
       }
       closeListenerMap.put(buildDescriptor.getId(), new CloseListener(content, processHandler));

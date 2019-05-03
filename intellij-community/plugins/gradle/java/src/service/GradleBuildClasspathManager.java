@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service;
 
 import com.intellij.openapi.components.ServiceManager;
@@ -53,7 +53,7 @@ public class GradleBuildClasspathManager {
     assert manager != null;
     AbstractExternalSystemLocalSettings<?> localSettings = manager.getLocalSettingsProvider().fun(myProject);
 
-    Map<String/*module path*/, List<VirtualFile> /*module build classpath*/> map = ContainerUtil.newHashMap();
+    Map<String/*module path*/, List<VirtualFile> /*module build classpath*/> map = new HashMap<>();
 
     final JarFileSystem jarFileSystem = JarFileSystem.getInstance();
     for (final ExternalProjectBuildClasspathPojo projectBuildClasspathPojo : localSettings.getProjectBuildClasspath().values()) {

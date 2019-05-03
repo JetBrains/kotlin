@@ -57,7 +57,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
                          @Nullable final ProjectData projectData,
                          @NotNull final Project project,
                          @NotNull final IdeModifiableModelsProvider modelsProvider) {
-    Map<String, LibraryData> processedLibraries = ContainerUtil.newHashMap();
+    Map<String, LibraryData> processedLibraries = new HashMap<>();
     for (DataNode<LibraryData> dataNode: toImport) {
       LibraryData libraryData = dataNode.getData();
       String libraryName = libraryData.getInternalName();
@@ -91,7 +91,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
 
   @NotNull
   public Map<OrderRootType, Collection<File>> prepareLibraryFiles(@NotNull LibraryData data) {
-    Map<OrderRootType, Collection<File>> result = ContainerUtilRt.newHashMap();
+    Map<OrderRootType, Collection<File>> result = new HashMap<OrderRootType, Collection<File>>();
     for (LibraryPathType pathType: LibraryPathType.values()) {
       Set<String> paths = data.getPaths(pathType);
       if (paths.isEmpty()) {
@@ -167,7 +167,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
 
     final List<Library> orphanIdeLibraries = ContainerUtil.newSmartList();
     final LibraryTable.ModifiableModel librariesModel = modelsProvider.getModifiableProjectLibrariesModel();
-    final Map<String, Library> namesToLibs = ContainerUtil.newHashMap();
+    final Map<String, Library> namesToLibs = new HashMap<>();
     final Set<Library> potentialOrphans = ContainerUtil.newHashSet();
     RootPolicy<Void> excludeUsedLibraries = new RootPolicy<Void>() {
       @Override
@@ -255,7 +255,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
     }
 
     for (Map.Entry<OrderRootType, Set<String>> entry: toAdd.entrySet()) {
-      Map<OrderRootType, Collection<File>> roots = ContainerUtilRt.newHashMap();
+      Map<OrderRootType, Collection<File>> roots = new HashMap<OrderRootType, Collection<File>>();
       roots.put(entry.getKey(), ContainerUtil.map(entry.getValue(), PATH_TO_FILE));
       registerPaths(externalLibrary.isUnresolved(), roots, libraryModel, externalLibrary.getInternalName());
     }

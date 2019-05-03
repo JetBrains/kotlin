@@ -443,7 +443,7 @@ public class GradleProjectResolverUtil {
                                        @NotNull DataNode<? extends ExternalEntityData> ownerDataNode,
                                        @NotNull Collection<ExternalDependency> dependencies,
                                        @Nullable DataNode<ProjectData> ideProject) throws IllegalStateException {
-    Map<ExternalDependencyId, ExternalDependency> dependencyMap = ContainerUtil.newHashMap();
+    Map<ExternalDependencyId, ExternalDependency> dependencyMap = new HashMap<>();
 
     Queue<ExternalDependency> queue = ContainerUtil.newLinkedList(dependencies);
     while (!queue.isEmpty()) {

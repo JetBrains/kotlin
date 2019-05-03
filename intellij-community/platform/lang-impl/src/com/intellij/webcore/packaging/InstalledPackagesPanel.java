@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.webcore.packaging;
 
 import com.google.common.collect.Lists;
@@ -35,8 +36,8 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -56,7 +57,7 @@ public class InstalledPackagesPanel extends JPanel {
   protected final Project myProject;
   protected final PackagesNotificationPanel myNotificationArea;
   private final Set<String> myCurrentlyInstalling = ContainerUtil.newHashSet();
-  private final Map<InstalledPackage, String> myWaitingToUpgrade = ContainerUtil.newHashMap();
+  private final Map<InstalledPackage, String> myWaitingToUpgrade = new HashMap<>();
 
   public InstalledPackagesPanel(@NotNull Project project, @NotNull PackagesNotificationPanel area) {
     super(new BorderLayout());

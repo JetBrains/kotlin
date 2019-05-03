@@ -51,22 +51,19 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ThreeState;
-import com.intellij.util.containers.ContainerUtil;
 import org.gradle.util.GradleVersion;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder;
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinBuildScriptDataBuilder;
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl;
-import org.jetbrains.plugins.gradle.settings.DefaultGradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
-import org.jetbrains.plugins.gradle.settings.TestRunner;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -338,7 +335,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
                                     : DEFAULT_TEMPLATE_GRADLE_BUILD;
       }
 
-      Map<String, String> attributes = ContainerUtil.newHashMap();
+      Map<String, String> attributes = new HashMap<>();
       if (myProjectId != null) {
         attributes.put(TEMPLATE_ATTRIBUTE_MODULE_VERSION, myProjectId.getVersion());
         attributes.put(TEMPLATE_ATTRIBUTE_MODULE_GROUP, myProjectId.getGroupId());
@@ -361,7 +358,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
     if (renderNewFile) {
       final String moduleDirName = VfsUtilCore.getRelativePath(modelContentRootDir, file.getParent(), '/');
 
-      Map<String, String> attributes = ContainerUtil.newHashMap();
+      Map<String, String> attributes = new HashMap<>();
       attributes.put(TEMPLATE_ATTRIBUTE_PROJECT_NAME, projectName);
       attributes.put(TEMPLATE_ATTRIBUTE_MODULE_PATH, moduleDirName);
       attributes.put(TEMPLATE_ATTRIBUTE_MODULE_NAME, moduleName);
@@ -371,7 +368,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
       char separatorChar = file.getParent() == null || !VfsUtilCore.isAncestor(file.getParent(), modelContentRootDir, true) ? '/' : ':';
       String modulePath = VfsUtilCore.findRelativePath(file, modelContentRootDir, separatorChar);
 
-      Map<String, String> attributes = ContainerUtil.newHashMap();
+      Map<String, String> attributes = new HashMap<>();
       attributes.put(TEMPLATE_ATTRIBUTE_MODULE_NAME, moduleName);
       // check for flat structure
       final String flatStructureModulePath =

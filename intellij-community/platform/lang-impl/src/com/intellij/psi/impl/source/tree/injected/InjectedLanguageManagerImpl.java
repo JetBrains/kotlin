@@ -156,7 +156,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
       return cached;
     }
 
-    Map<Class, MultiHostInjector[]> injectors = ContainerUtil.newHashMap();
+    Map<Class, MultiHostInjector[]> injectors = new HashMap<>();
 
     List<MultiHostInjector> allInjectors = ContainerUtil.newArrayList();
     allInjectors.addAll(myManualInjectors);

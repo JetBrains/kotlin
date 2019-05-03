@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.colors;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -40,10 +40,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.intellij.application.options.colors.ColorAndFontOptions.selectOrEditColor;
 import static com.intellij.ui.SimpleTextAttributes.*;
@@ -70,7 +68,7 @@ public class JumpToColorsAndFontsAction extends DumbAwareAction {
     Project project = e.getData(CommonDataKeys.PROJECT);
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     if (project == null || editor == null) return;
-    Map<TextAttributesKey, Pair<ColorAndFontDescriptorsProvider, AttributesDescriptor>> keyMap = ContainerUtil.newHashMap();
+    Map<TextAttributesKey, Pair<ColorAndFontDescriptorsProvider, AttributesDescriptor>> keyMap = new HashMap<>();
     Processor<RangeHighlighterEx> processor = r -> {
       HighlightInfo info = HighlightInfo.fromRangeHighlighter(r);
       TextAttributesKey key = info != null

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.openapi.Disposable;
@@ -25,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -36,7 +38,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Entry point to work with remote {@link RemoteExternalSystemFacade}.
  * <p/>
  * Thread-safe.
- * 
+ *
  * @author Denis Zhdanov
  */
 public class ExternalSystemFacadeManager {
@@ -152,7 +154,7 @@ public class ExternalSystemFacadeManager {
   private RemoteExternalSystemFacade doGetFacade(@NotNull IntegrationKey key, @NotNull Project project) throws Exception {
     final boolean currentInProcess = ExternalSystemApiUtil.isInProcessMode(key.getExternalSystemId());
     final ExternalSystemCommunicationManager myCommunicationManager = currentInProcess ? myInProcessCommunicationManager : myRemoteCommunicationManager;
-    
+
     ExternalSystemManager manager = ExternalSystemApiUtil.getManager(key.getExternalSystemId());
     if (project.isDisposed() || manager == null) {
       return RemoteExternalSystemFacade.NULL_OBJECT;
@@ -161,7 +163,7 @@ public class ExternalSystemFacadeManager {
     if (pair != null && prepare(myCommunicationManager, project, key, pair)) {
       return pair.first;
     }
-    
+
     myLock.lock();
     try {
       pair = myRemoteFacades.get(key);
@@ -227,7 +229,7 @@ public class ExternalSystemFacadeManager {
 
   public boolean isTaskActive(@NotNull ExternalSystemTaskId id) {
     Map<IntegrationKey, Pair<RemoteExternalSystemFacade, ExternalSystemExecutionSettings>> copy
-      = ContainerUtilRt.newHashMap(myRemoteFacades);
+      = new HashMap<IntegrationKey, Pair<RemoteExternalSystemFacade, ExternalSystemExecutionSettings>>(myRemoteFacades);
     for (Map.Entry<IntegrationKey, Pair<RemoteExternalSystemFacade, ExternalSystemExecutionSettings>> entry : copy.entrySet()) {
       try {
         if (entry.getValue().first.isTaskInProgress(id)) {
@@ -247,7 +249,7 @@ public class ExternalSystemFacadeManager {
     }
     return false;
   }
-  
+
   private class MyHandler implements InvocationHandler {
 
     @NotNull private final AtomicReference<IntegrationKey> myKey = new AtomicReference<>();
@@ -255,7 +257,7 @@ public class ExternalSystemFacadeManager {
     MyHandler(@NotNull IntegrationKey key) {
       myKey.set(key);
     }
-    
+
     @Nullable
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

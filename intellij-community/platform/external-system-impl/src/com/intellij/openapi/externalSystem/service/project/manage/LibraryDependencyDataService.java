@@ -25,10 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Order(ExternalSystemConstants.BUILTIN_SERVICE_ORDER)
 public class LibraryDependencyDataService extends AbstractDependencyDataService<LibraryDependencyData, LibraryOrderEntry> {
@@ -55,8 +52,10 @@ public class LibraryDependencyDataService extends AbstractDependencyDataService<
     // the given collection.
     // The trick is that we should perform module settings modification inside try/finally block against target root model.
     // That means that we need to prepare all necessary data, obtain a model and modify it as necessary.
-    final Map<Set<String>/* library paths */, LibraryDependencyData> moduleLibrariesToImport = ContainerUtilRt.newHashMap();
-    final Map<String/* library name + scope */, LibraryDependencyData> projectLibrariesToImport = ContainerUtilRt.newHashMap();
+    final Map<Set<String>/* library paths */, LibraryDependencyData> moduleLibrariesToImport =
+      new HashMap<Set<String>, LibraryDependencyData>();
+    final Map<String/* library name + scope */, LibraryDependencyData> projectLibrariesToImport =
+      new HashMap<String, LibraryDependencyData>();
     final Set<LibraryDependencyData> toImport = ContainerUtilRt.newLinkedHashSet();
     final Map<OrderEntry, OrderAware> orderEntryDataMap = new LinkedHashMap<>();
 

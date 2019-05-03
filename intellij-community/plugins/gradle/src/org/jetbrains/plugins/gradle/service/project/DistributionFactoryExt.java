@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
@@ -161,7 +162,7 @@ public class DistributionFactoryExt extends DistributionFactory {
         final DistributionInstaller installer = new DistributionInstaller(progressLoggerFactory, progressListener, clock);
         File installDir;
         Set<String> propertiesToCleanup = ContainerUtil.newHashSet();
-        Map<String, String> propertiesToRestore = ContainerUtil.newHashMap();
+        Map<String, String> propertiesToRestore = new HashMap<>();
         try {
           cancellationToken.addCallback(() -> installer.cancel());
           File effectiveGradleUserHome = determineRealUserHomeDir(userHomeDir);
@@ -209,7 +210,7 @@ public class DistributionFactoryExt extends DistributionFactory {
 
     @NotNull
     private static Map<String, String> readGradleProperties(File userHomeDir, @Nullable File projectDir) {
-      Map<String, String> gradleProperties = ContainerUtil.newHashMap();
+      Map<String, String> gradleProperties = new HashMap<>();
       gradleProperties.putAll(SystemPropertiesHandler.getSystemProperties(new File(userHomeDir, "gradle.properties")));
       if (projectDir != null) {
         gradleProperties.putAll(SystemPropertiesHandler.getSystemProperties(new File(projectDir, "gradle.properties")));

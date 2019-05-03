@@ -120,7 +120,7 @@ public class ExternalSystemUtil {
 
   private static final Logger LOG = Logger.getInstance(ExternalSystemUtil.class);
 
-  @NotNull private static final Map<String, String> RUNNER_IDS = ContainerUtilRt.newHashMap();
+  @NotNull private static final Map<String, String> RUNNER_IDS = new HashMap<String, String>();
 
   public static final TObjectHashingStrategy<Pair<ProjectSystemId, File>> HASHING_STRATEGY =
     new TObjectHashingStrategy<Pair<ProjectSystemId, File>>() {

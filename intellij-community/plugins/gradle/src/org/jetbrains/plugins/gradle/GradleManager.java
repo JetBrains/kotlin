@@ -481,7 +481,7 @@ public final class GradleManager
   private static Map<String, String> patchLinkedProjects(@NotNull Project project) {
     GradleSettings settings = GradleSettings.getInstance(project);
     Collection<GradleProjectSettings> correctedSettings = ContainerUtilRt.newArrayList();
-    Map<String/* old path */, String/* new path */> adjustedPaths = ContainerUtilRt.newHashMap();
+    Map<String/* old path */, String/* new path */> adjustedPaths = new HashMap<String, String>();
     for (GradleProjectSettings projectSettings : settings.getLinkedProjectsSettings()) {
       String oldPath = projectSettings.getExternalProjectPath();
       if (oldPath != null && new File(oldPath).isFile() && FileUtilRt.extensionEquals(oldPath, GradleConstants.EXTENSION)) {
@@ -508,7 +508,8 @@ public final class GradleManager
   }
 
   private static void patchAvailableProjects(@NotNull Map<String, String> adjustedPaths, @NotNull GradleLocalSettings localSettings) {
-    Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> adjustedAvailableProjects = ContainerUtilRt.newHashMap();
+    Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> adjustedAvailableProjects =
+      new HashMap<ExternalProjectPojo, Collection<ExternalProjectPojo>>();
     for (Map.Entry<ExternalProjectPojo, Collection<ExternalProjectPojo>> entry : localSettings.getAvailableProjects().entrySet()) {
       String newPath = adjustedPaths.get(entry.getKey().getPath());
       if (newPath == null) {

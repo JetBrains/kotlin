@@ -18,7 +18,6 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -58,7 +57,7 @@ public class ModuleDependencyDataService extends AbstractDependencyDataService<M
                                                  @NotNull final Module module,
                                                  @NotNull final IdeModifiableModelsProvider modelsProvider) {
     final Map<Pair<String /* dependency module internal name */, /* dependency module scope */DependencyScope>, ModuleOrderEntry> toRemove =
-      ContainerUtilRt.newHashMap();
+      new HashMap<Pair<String, DependencyScope>, ModuleOrderEntry>();
     final Map<OrderEntry, OrderAware> orderEntryDataMap = new LinkedHashMap<>();
 
     for (OrderEntry entry : modelsProvider.getOrderEntries(module)) {

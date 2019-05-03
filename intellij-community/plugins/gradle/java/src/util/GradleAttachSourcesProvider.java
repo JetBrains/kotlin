@@ -189,7 +189,7 @@ public class GradleAttachSourcesProvider implements AttachSourcesProvider {
   }
 
   private static Map<LibraryOrderEntry, Module> getGradleModules(List<LibraryOrderEntry> libraryOrderEntries) {
-    Map<LibraryOrderEntry, Module> result = ContainerUtil.newHashMap();
+    Map<LibraryOrderEntry, Module> result = new HashMap<>();
     for (LibraryOrderEntry entry : libraryOrderEntries) {
       if (entry.isModuleLevel()) continue;
       Module module = entry.getOwnerModule();

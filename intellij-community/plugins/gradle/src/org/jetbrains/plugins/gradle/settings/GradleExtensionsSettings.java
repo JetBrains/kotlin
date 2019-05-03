@@ -79,7 +79,7 @@ public class GradleExtensionsSettings {
 
     public void add(@NotNull String rootPath,
                     @NotNull Collection<DataNode<GradleExtensions>> extensionsData) {
-      Map<String, GradleExtensions> extensionMap = ContainerUtil.newHashMap();
+      Map<String, GradleExtensions> extensionMap = new HashMap<>();
       for (DataNode<GradleExtensions> node : extensionsData) {
         DataNode<?> parent = node.getParent();
         if (parent == null) continue;
@@ -232,7 +232,7 @@ public class GradleExtensionsSettings {
 
     @NotNull
     public Collection<GradleProp> findAllProperties() {
-      return findAllProperties(this, ContainerUtil.newHashMap());
+      return findAllProperties(this, new HashMap<>());
     }
 
     @NotNull

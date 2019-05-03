@@ -273,7 +273,7 @@ public abstract class LRUPopupBuilder<T> {
     if (status.hasReadonlyFiles()) return;
 
     final Set<VirtualFile> matchedExtensions = ContainerUtil.newLinkedHashSet();
-    final Map<VirtualFile, Language> oldMapping = ContainerUtil.newHashMap();
+    final Map<VirtualFile, Language> oldMapping = new HashMap<>();
     for (VirtualFile file : sortedFiles) {
       oldMapping.put(file, mappings.getMapping(file));
       if (ScratchUtil.hasMatchingExtension(project, file)) {

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.task.ui;
 
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
@@ -23,7 +9,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.Alarm;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.tree.TreeModelAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -180,7 +165,7 @@ public class ExternalSystemTasksTree extends Tree implements Supplier<ExternalTa
       return null;
     }
 
-    Map<String, ExternalTaskExecutionInfo> map = ContainerUtil.newHashMap();
+    Map<String, ExternalTaskExecutionInfo> map = new HashMap<>();
     for (TreePath selectionPath : selectionPaths) {
       Object component = selectionPath.getLastPathComponent();
       if (!(component instanceof ExternalSystemNode)) {

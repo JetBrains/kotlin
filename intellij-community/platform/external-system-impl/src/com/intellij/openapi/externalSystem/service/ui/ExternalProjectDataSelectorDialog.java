@@ -300,7 +300,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
     final DataNodeCheckedTreeNode[] rootModuleNode = {null};
 
     final MultiMap<String, String> moduleDependenciesMap = MultiMap.create();
-    final Map<String, DataNode<Identifiable>> modulesNodeMap = ContainerUtil.newHashMap();
+    final Map<String, DataNode<Identifiable>> modulesNodeMap = new HashMap<>();
 
     for (DataNode<ModuleDependencyData> moduleDependencyDataNode : ExternalSystemApiUtil.findAllRecursively(
       myProjectInfo.getExternalProjectStructure(), ProjectKeys.MODULE_DEPENDENCY)) {

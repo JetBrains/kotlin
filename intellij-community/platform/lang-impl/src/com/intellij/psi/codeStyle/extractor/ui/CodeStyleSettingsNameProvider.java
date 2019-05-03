@@ -14,10 +14,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Roman.Shein
@@ -25,9 +22,9 @@ import java.util.Map;
 public class CodeStyleSettingsNameProvider implements CodeStyleSettingsCustomizable {
 
   protected Map<SettingsType, Map<SettingsGroup, List<CodeStyleSettingPresentation>>> mySettings =
-    ContainerUtil.newHashMap();
+    new HashMap<>();
   private final Map<SettingsType, Map<SettingsGroup, List<CodeStyleSettingPresentation>>> standardSettings =
-    ContainerUtil.newHashMap();
+    new HashMap<>();
 
   public CodeStyleSettingsNameProvider() {
     for (SettingsType settingsType : SettingsType.values()) {

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.remote.impl;
 
 import com.intellij.openapi.externalSystem.model.DataNode;
@@ -16,7 +17,7 @@ import java.util.*;
  * tries to diversify them in the case of the positive answer.
  * <p/>
  * Thread-safe.
- * 
+ *
  * @author Denis Zhdanov
  */
 public class GradleLibraryNamesMixer {
@@ -55,14 +56,14 @@ public class GradleLibraryNamesMixer {
   /**
    * Tries to ensure that given libraries have distinct names, i.e. traverses all of them and tries to generate
    * unique name for those with equal names.
-   * 
+   *
    * @param libraries  libraries to process
    */
   public void mixNames(@NotNull Collection<DataNode<LibraryData>> libraries) {
     if (libraries.isEmpty()) {
       return;
     }
-    Map<String, Wrapped> names = ContainerUtilRt.newHashMap();
+    Map<String, Wrapped> names = new HashMap<String, Wrapped>();
     List<Wrapped> data = ContainerUtilRt.newArrayList();
     for (DataNode<LibraryData> library : libraries) {
       Wrapped wrapped = new Wrapped(library.getData());
@@ -76,7 +77,7 @@ public class GradleLibraryNamesMixer {
 
   /**
    * Does the same as {@link #mixNames(Collection)} but uses given {@code ('library name; wrapped library'}} mappings cache.
-   * 
+   *
    * @param libraries  libraries to process
    * @param cache      cache to use
    * @return           {@code true} if all of the given libraries have distinct names now; {@code false} otherwise
@@ -98,7 +99,7 @@ public class GradleLibraryNamesMixer {
 
   /**
    * Tries to generate distinct names for the given wrapped libraries (assuming that they have equal names at the moment).
-   * 
+   *
    * @param wrapped1  one of the libraries with equal names
    * @param wrapped2  another library which name is equal to the name of the given one
    */
@@ -109,7 +110,7 @@ public class GradleLibraryNamesMixer {
     }
     String wrapped1AltText = null;
     String wrapped2AltText = null;
-    
+
     for (File file1 = wrapped1.currentFile, file2 = wrapped2.currentFile;
          file1 != null && file2 != null;
          file1 = file1.getParentFile(), file2 = file2.getParentFile())
@@ -136,7 +137,7 @@ public class GradleLibraryNamesMixer {
         }
         file2 = file2.getParentFile();
       }
-      
+
       if (file1 == null) {
         wrapped1.nextFile();
       }

@@ -238,7 +238,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
   @NotNull
   private DataContext createDataContext(@NotNull DataContext parentDataContext, boolean isAltPressed) {
-    Map<String, Object> map = ContainerUtil.newHashMap();
+    Map<String, Object> map = new HashMap<>();
     map.put(CommonDataKeys.VIRTUAL_FILE.getName(), getWorkDirectory(getModule(), isAltPressed));
     map.put(EXECUTOR_KEY.getName(), getExecutor());
 
@@ -404,7 +404,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
   @NotNull
   public DataContext createDataContext(@NotNull AnActionEvent e) {
-    HashMap<String, Object> dataMap = ContainerUtil.newHashMap();
+    HashMap<String, Object> dataMap = new HashMap<>();
     dataMap.put(CommonDataKeys.PROJECT.getName(), e.getProject());
     dataMap.put(LangDataKeys.MODULE.getName(), getModule());
     return createDataContext(SimpleDataContext.getSimpleContext(dataMap, e.getDataContext()), ALT_IS_PRESSED.get());

@@ -20,18 +20,19 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 @State(name = "PostfixTemplatesSettings", storages = @Storage("postfixTemplates.xml"))
 public class PostfixTemplatesSettings implements PersistentStateComponent<Element> {
   public static final Factory<Set<String>> SET_FACTORY = () -> ContainerUtil.newHashSet();
-  private Map<String, Set<String>> myProviderToDisabledTemplates = ContainerUtil.newHashMap();
+  private Map<String, Set<String>> myProviderToDisabledTemplates = new HashMap<>();
   /**
    * @deprecated use myProviderToDisabledTemplates
    */
   @Deprecated
-  private Map<String, Set<String>> myLangToDisabledTemplates = ContainerUtil.newHashMap();
+  private Map<String, Set<String>> myLangToDisabledTemplates = new HashMap<>();
 
   private boolean postfixTemplatesEnabled = true;
   private boolean templatesCompletionEnabled = true;

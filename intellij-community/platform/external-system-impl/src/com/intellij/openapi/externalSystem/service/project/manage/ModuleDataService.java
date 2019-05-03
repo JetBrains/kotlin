@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
@@ -37,10 +23,7 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Encapsulates functionality of importing external system module to the intellij project.
@@ -100,7 +83,7 @@ public class ModuleDataService extends AbstractModuleDataService<ModuleData> {
     assert manager != null;
 
     final MultiMap<DataNode<ProjectData>, DataNode<ModuleData>> grouped = ExternalSystemApiUtil.groupBy(toImport, ProjectKeys.PROJECT);
-    Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> data = ContainerUtilRt.newHashMap();
+    Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> data = new HashMap<>();
     for (Map.Entry<DataNode<ProjectData>, Collection<DataNode<ModuleData>>> entry : grouped.entrySet()) {
       data.put(ExternalProjectPojo.from(entry.getKey().getData()),
                ContainerUtilRt.map2List(entry.getValue(), node -> ExternalProjectPojo.from(node.getData())));
@@ -111,7 +94,7 @@ public class ModuleDataService extends AbstractModuleDataService<ModuleData> {
     if (!pathsToForget.isEmpty()) {
       settings.forgetExternalProjects(pathsToForget);
     }
-    Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> projects = ContainerUtilRt.newHashMap(settings.getAvailableProjects());
+    Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> projects = new HashMap<>(settings.getAvailableProjects());
     projects.putAll(data);
     settings.setAvailableProjects(projects);
   }
@@ -119,7 +102,7 @@ public class ModuleDataService extends AbstractModuleDataService<ModuleData> {
   @NotNull
   private static Set<String> detectRenamedProjects(@NotNull Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> currentInfo,
                                                    @NotNull Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> oldInfo) {
-    Map<String/* external config path */, String/* project name */> map = ContainerUtilRt.newHashMap();
+    Map<String/* external config path */, String/* project name */> map = new HashMap<>();
     for (Map.Entry<ExternalProjectPojo, Collection<ExternalProjectPojo>> entry : currentInfo.entrySet()) {
       map.put(entry.getKey().getPath(), entry.getKey().getName());
       for (ExternalProjectPojo pojo : entry.getValue()) {

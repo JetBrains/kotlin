@@ -37,7 +37,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.MultiMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -136,7 +135,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
     logUnitTest("Import data for module [" + module.getName() + "], data size [" + data.size() + "]");
     final ModifiableRootModel modifiableRootModel = modelsProvider.getModifiableRootModel(module);
     final ContentEntry[] contentEntries = modifiableRootModel.getContentEntries();
-    final Map<String, ContentEntry> contentEntriesMap = ContainerUtilRt.newHashMap();
+    final Map<String, ContentEntry> contentEntriesMap = new HashMap<String, ContentEntry>();
     for (ContentEntry contentEntry : contentEntries) {
       contentEntriesMap.put(contentEntry.getUrl(), contentEntry);
     }

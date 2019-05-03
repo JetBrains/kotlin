@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.actions;
 
@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,8 +48,8 @@ public abstract class GotoActionBase extends AnAction {
   private static final Logger LOG = Logger.getInstance("#com.intellij.ide.actions.GotoActionBase");
 
   protected static Class myInAction;
-  private static final Map<Class, Pair<String, Integer>> ourLastStrings = ContainerUtil.newHashMap();
-  private static final Map<Class, List<String>> ourHistory = ContainerUtil.newHashMap();
+  private static final Map<Class, Pair<String, Integer>> ourLastStrings = new HashMap<>();
+  private static final Map<Class, List<String>> ourHistory = new HashMap<>();
   private int myHistoryIndex;
 
   @Override

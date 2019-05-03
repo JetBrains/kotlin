@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.impl;
 
 import com.intellij.CommonBundle;
@@ -50,7 +50,7 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
 
   private final Project myProject;
   private final Alarm myAwaitingTerminationAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
-  private final Map<RunProfile, ExecutionEnvironment> myAwaitingRunProfiles = ContainerUtil.newHashMap();
+  private final Map<RunProfile, ExecutionEnvironment> myAwaitingRunProfiles = new HashMap<>();
   protected final List<Trinity<RunContentDescriptor, RunnerAndConfigurationSettings, Executor>> myRunningConfigurations =
     ContainerUtil.createLockFreeCopyOnWriteList();
 

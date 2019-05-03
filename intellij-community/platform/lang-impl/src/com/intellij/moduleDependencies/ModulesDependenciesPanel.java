@@ -1,6 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.moduleDependencies;
 
 import com.intellij.CommonBundle;
@@ -27,11 +25,9 @@ import com.intellij.pom.NavigatableWithText;
 import com.intellij.ui.*;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.graph.DFSTBuilder;
 import com.intellij.util.graph.Graph;
 import com.intellij.util.graph.GraphAlgorithms;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,8 +43,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * @author anna
@@ -88,7 +84,7 @@ public class ModulesDependenciesPanel extends JPanel implements Disposable {
 
   private Content myContent;
   private Graph<Module> myModuleGraph;
-  private final Map<Module, Boolean> myCycleMap = ContainerUtil.newHashMap();
+  private final Map<Module, Boolean> myCycleMap = new HashMap<>();
 
   public ModulesDependenciesPanel(@NotNull Project project, @Nullable Module[] modules) {
     super(new BorderLayout());

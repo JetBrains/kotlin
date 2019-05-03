@@ -33,6 +33,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,7 +58,7 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
   private JPanel myTemplatesTreeContainer;
   private ComboBox<String> myShortcutComboBox;
   private JPanel myDescriptionPanel;
-  private final Map<PostfixTemplateProvider, String> myProviderToLanguage = ContainerUtil.newHashMap();
+  private final Map<PostfixTemplateProvider, String> myProviderToLanguage = new HashMap<>();
   private final Alarm myUpdateDescriptionPanelAlarm = new Alarm();
 
   private static final String SPACE = CodeInsightBundle.message("template.shortcut.space");
