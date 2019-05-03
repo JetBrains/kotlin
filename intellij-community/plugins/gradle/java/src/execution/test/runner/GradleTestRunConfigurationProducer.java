@@ -47,7 +47,7 @@ import static org.jetbrains.plugins.gradle.settings.TestRunner.*;
  * @author Vladislav.Soroka
  */
 public abstract class GradleTestRunConfigurationProducer extends RunConfigurationProducer<ExternalSystemRunConfiguration> {
-  private static final List<String> TEST_SOURCE_SET_TASKS = ContainerUtil.list("cleanTest", "test");
+  private static final List<String> TEST_SOURCE_SET_TASKS = Arrays.asList("cleanTest", "test");
 
   protected static final Logger LOG = Logger.getInstance(GradleTestRunConfigurationProducer.class);
 
@@ -234,7 +234,7 @@ public abstract class GradleTestRunConfigurationProducer extends RunConfiguratio
 
     if (taskNode == null) return ContainerUtil.emptyList();
     String taskName = StringUtil.trimStart(taskNode.getData().getName(), taskPrefix);
-    tasks = ContainerUtil.list("clean" + StringUtil.capitalize(taskName), taskName);
+    tasks = Arrays.asList("clean" + StringUtil.capitalize(taskName), taskName);
     return ContainerUtil.map(tasks, task -> taskPrefix + task);
   }
 

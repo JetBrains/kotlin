@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.wizard;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
@@ -48,7 +49,7 @@ import java.util.*;
 
 /**
  * GoF builder for external system backed projects.
- * 
+ *
  * @author Denis Zhdanov
  */
 public abstract class AbstractExternalProjectImportBuilder<C extends AbstractImportFromExternalSystemControl>
@@ -247,7 +248,7 @@ public abstract class AbstractExternalProjectImportBuilder<C extends AbstractImp
       // execute when current dialog is closed
       ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL, () -> {
         final Module[] committedModules = ModuleManager.getInstance(project).getModules();
-        if (ContainerUtil.list(committedModules).containsAll(modules)) {
+        if (Arrays.asList(committedModules).containsAll(modules)) {
           resolveDependenciesTask.run();
         }
       });
@@ -382,7 +383,7 @@ public abstract class AbstractExternalProjectImportBuilder<C extends AbstractImp
    * <p/>
    * Example: a user might choose a directory which contains target config file and particular implementation expands
    * that to a particular file under the directory.
-   * 
+   *
    * @param file  base external project config file
    * @return      external project config file to use
    */
@@ -396,7 +397,7 @@ public abstract class AbstractExternalProjectImportBuilder<C extends AbstractImp
 
   /**
    * Applies external system-specific settings like project files location etc to the given context.
-   * 
+   *
    * @param context  storage for the project/module settings.
    */
   public void applyProjectSettings(@NotNull WizardContext context) {

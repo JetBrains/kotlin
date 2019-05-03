@@ -20,13 +20,13 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.intellij.openapi.util.io.FileUtil.filesEqual;
 import static com.intellij.openapi.util.io.FileUtil.loadFile;
 import static com.intellij.testFramework.UsefulTestCase.*;
 import static com.intellij.util.containers.ContainerUtil.emptyList;
-import static com.intellij.util.containers.ContainerUtil.list;
 import static org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper.mergeJvmArgs;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -79,22 +79,23 @@ public class GradleExecutionHelperTest {
 
   @Test
   public void testMergeJvmArgs() {
-    assertOrderedEquals(mergeJvmArgs(list("-X:foo"), emptyList()), list("-X:foo"));
-    assertOrderedEquals(mergeJvmArgs(emptyList(), list("-X:foo")), list("-X:foo"));
-    assertOrderedEquals(mergeJvmArgs(list("-Dp=val"), list("-Dp=newVal")), list("-Dp=newVal"));
+    assertOrderedEquals(mergeJvmArgs(Arrays.asList("-X:foo"), emptyList()), Arrays.asList("-X:foo"));
+    assertOrderedEquals(mergeJvmArgs(emptyList(), Arrays.asList("-X:foo")), Arrays.asList("-X:foo"));
+    assertOrderedEquals(mergeJvmArgs(Arrays.asList("-Dp=val"), Arrays.asList("-Dp=newVal")), Arrays.asList("-Dp=newVal"));
 
     assertOrderedEquals(
-      mergeJvmArgs(list("-X:foo"), list("-Dp=v")),
-      list("-X:foo", "-Dp=v"));
+      mergeJvmArgs(Arrays.asList("-X:foo"), Arrays.asList("-Dp=v")),
+      Arrays.asList("-X:foo", "-Dp=v"));
 
     assertOrderedEquals(
-      mergeJvmArgs(list("-X:foo", "-Foo", "bar=001", "-Foo", "baz=002"), list("-Dp=v", "-Foo", "bar=003", "-Foo", "baz=002")),
-      list("-X:foo", "-Foo", "bar=003", "-Foo", "baz=002", "-Dp=v"));
+      mergeJvmArgs(Arrays.asList("-X:foo", "-Foo", "bar=001", "-Foo", "baz=002"),
+                   Arrays.asList("-Dp=v", "-Foo", "bar=003", "-Foo", "baz=002")),
+      Arrays.asList("-X:foo", "-Foo", "bar=003", "-Foo", "baz=002", "-Dp=v"));
 
 
     List<String> jvmArgs = mergeJvmArgs(null,
-                                        list("-Xmx256", "--add-opens", "java.base/java.util=ALL-UNNAMED"),
-                                        list("-Xmx512", "--add-opens", "java.base/java.lang=ALL-UNNAMED"));
+                                        Arrays.asList("-Xmx256", "--add-opens", "java.base/java.util=ALL-UNNAMED"),
+                                        Arrays.asList("-Xmx512", "--add-opens", "java.base/java.lang=ALL-UNNAMED"));
     assertDoesntContain(jvmArgs, "-Xmx256", "--add-opens", "java.base/java.util=ALL-UNNAMED", "java.base/java.lang=ALL-UNNAMED");
     assertContainsElements(jvmArgs, "-Xmx512");
   }

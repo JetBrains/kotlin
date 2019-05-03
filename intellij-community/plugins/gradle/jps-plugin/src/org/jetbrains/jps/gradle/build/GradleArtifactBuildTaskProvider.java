@@ -3,7 +3,6 @@ package org.jetbrains.jps.gradle.build;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.artifacts.ArtifactBuildTaskProvider;
@@ -16,10 +15,7 @@ import org.jetbrains.jps.model.artifact.JpsArtifact;
 import org.jetbrains.jps.model.artifact.elements.JpsArtifactRootElement;
 
 import java.io.File;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarFile;
 
 /**
@@ -34,8 +30,8 @@ public class GradleArtifactBuildTaskProvider extends ArtifactBuildTaskProvider {
         && artifact.getRootElement() instanceof JpsArtifactRootElement) {
       JpsGradleArtifactExtension extension = getArtifactExtension(artifact, buildPhase);
       if (extension != null && extension.getProperties() != null) {
-        return ContainerUtil.list(new GradleManifestGenerationBuildTask(artifact, extension.getProperties()),
-                                  new GradleAdditionalFilesGenerationBuildTask(artifact, extension.getProperties()));
+        return Arrays.asList(new GradleManifestGenerationBuildTask(artifact, extension.getProperties()),
+                             new GradleAdditionalFilesGenerationBuildTask(artifact, extension.getProperties()));
       }
     }
 
