@@ -8,6 +8,7 @@
 
 package conversions
 
+import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -337,4 +338,16 @@ fun createTransformDecimalStringToInt(): Transform<String, Int> = TransformDecim
 
 open class TransformIntToLong : Transform<Int, Long> {
     override fun map(value: Int): Long = value.toLong()
+}
+
+class GH2931 {
+    class Data
+
+    class Holder {
+        val data = Data()
+
+        init {
+            freeze()
+        }
+    }
 }
