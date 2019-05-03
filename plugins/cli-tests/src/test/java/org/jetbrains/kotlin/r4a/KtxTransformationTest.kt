@@ -171,7 +171,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     )
 
     // NOTE: test the key attribute separately as it receives different handling.
-    // TODO(lmr): add test in r4a-runtime around behavior of this attribute
+    // TODO(lmr): add test in compose-runtime around behavior of this attribute
     fun testKeyAttributes() = testCompile(
         """
          import androidx.compose.*

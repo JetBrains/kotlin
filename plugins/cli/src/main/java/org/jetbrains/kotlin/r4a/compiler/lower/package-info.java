@@ -15,7 +15,7 @@
  */
 
 /**
- * This package contains all the logic related to lowering a PSI containing R4A Components into IR.
+ * This package contains all the logic related to lowering a PSI containing Compose Components into IR.
  * The entry-point for this package is ComponentClassLowering, which will generate all supporting
  * synthetics.
  * Each synthetic class of type [ClassName] lives in a file called [ClassName]Generator.

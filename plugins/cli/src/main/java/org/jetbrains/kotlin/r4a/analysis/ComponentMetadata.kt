@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
  * ComponentMetadata takes in a DeclarationDescriptor and interprets it as a component.
  * All assumptions about the Component API (public and private) should reside in this class.
  *
- * A ComponentMetadata can be used to get R4A synthetic method descriptors on a component,
+ * A ComponentMetadata can be used to get Compose synthetic method descriptors on a component,
  * as well as descriptors for the various synthetic helper classes.
  */
 class ComponentMetadata(val descriptor: ClassDescriptor) {
