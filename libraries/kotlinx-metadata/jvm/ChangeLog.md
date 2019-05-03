@@ -1,5 +1,9 @@
 # kotlinx-metadata-jvm
 
+## 0.0.6
+
+- [`KT-31308`](https://youtrack.jetbrains.com/issue/KT-31308) Add module name extensions to kotlinx-metadata-jvm
+
 ## 0.0.5
 
 - [`KT-25371`](https://youtrack.jetbrains.com/issue/KT-25371) Support unsigned integers in kotlinx-metadata-jvm

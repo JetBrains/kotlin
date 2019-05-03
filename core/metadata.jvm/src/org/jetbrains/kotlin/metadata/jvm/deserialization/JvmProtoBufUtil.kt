@@ -20,6 +20,8 @@ object JvmProtoBufUtil {
 
     const val PLATFORM_TYPE_ID = "kotlin.jvm.PlatformType"
 
+    const val DEFAULT_MODULE_NAME = "main"
+
     @JvmStatic
     fun readClassDataFrom(data: Array<String>, strings: Array<String>): Pair<JvmNameResolver, ProtoBuf.Class> =
         readClassDataFrom(BitEncoding.decodeBytes(data), strings)

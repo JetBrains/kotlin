@@ -514,7 +514,11 @@ private fun StringBuilder.appendFlags(flags: Flags, map: Map<Flag, String>) {
     }
 }
 
-private fun StringBuilder.appendLocalDelegatedProperties(localDelegatedProperties: List<StringBuilder>) {
+private fun StringBuilder.appendDeclarationContainerExtensions(
+    settings: KotlinpSettings,
+    localDelegatedProperties: List<StringBuilder>,
+    moduleName: String?
+) {
     for ((i, sb) in localDelegatedProperties.withIndex()) {
         appendln()
         appendln("  // local delegated property #$i")
@@ -526,6 +530,11 @@ private fun StringBuilder.appendLocalDelegatedProperties(localDelegatedPropertie
                 else line
             )
         }
+    }
+
+    if (settings.isVerbose && moduleName != null) {
+        appendln()
+        appendln("  // module name: $moduleName")
     }
 }
 
@@ -615,6 +624,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
         if (type != JvmClassExtensionVisitor.TYPE) return null
         return object : JvmClassExtensionVisitor() {
             private val localDelegatedProperties = mutableListOf<StringBuilder>()
+            private var moduleName: String? = null
 
             override fun visitAnonymousObjectOriginName(internalName: String) {
                 anonymousObjectOriginName = internalName
@@ -626,8 +636,12 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
                 settings, StringBuilder().also { localDelegatedProperties.add(it) }, flags, name, getterFlags, setterFlags
             )
 
+            override fun visitModuleName(name: String) {
+                moduleName = name
+            }
+
             override fun visitEnd() {
-                sb.appendLocalDelegatedProperties(localDelegatedProperties)
+                sb.appendDeclarationContainerExtensions(settings, localDelegatedProperties, moduleName)
             }
         }
     }
@@ -660,6 +674,7 @@ abstract class PackagePrinter(private val settings: KotlinpSettings) : KmPackage
         if (type != JvmPackageExtensionVisitor.TYPE) return null
         return object : JvmPackageExtensionVisitor() {
             private val localDelegatedProperties = mutableListOf<StringBuilder>()
+            private var moduleName: String? = null
 
             override fun visitLocalDelegatedProperty(
                 flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
@@ -668,7 +683,7 @@ abstract class PackagePrinter(private val settings: KotlinpSettings) : KmPackage
             )
 
             override fun visitEnd() {
-                sb.appendLocalDelegatedProperties(localDelegatedProperties)
+                sb.appendDeclarationContainerExtensions(settings, localDelegatedProperties, moduleName)
             }
         }
     }

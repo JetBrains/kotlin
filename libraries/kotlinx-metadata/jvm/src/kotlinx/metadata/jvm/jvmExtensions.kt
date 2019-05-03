@@ -32,6 +32,13 @@ abstract class JvmDeclarationContainerExtensionVisitor @JvmOverloads constructor
      */
     open fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
         delegate?.visitLocalDelegatedProperty(flags, name, getterFlags, setterFlags)
+
+    /**
+     * Visits the name of the module where this container is declared.
+     */
+    open fun visitModuleName(name: String) {
+        delegate?.visitModuleName(name)
+    }
 }
 
 /**

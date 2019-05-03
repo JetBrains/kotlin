@@ -29,6 +29,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             )?.let { property.accept(it, c) }
         }
 
+        ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
+
         ext.visitEnd()
     }
 
@@ -40,6 +42,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
             )?.let { property.accept(it, c) }
         }
+
+        ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.packageModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
 
         ext.visitEnd()
     }
@@ -111,6 +115,12 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
                 proto.addExtension(JvmProtoBuf.classLocalVariable, it.build())
             }
+
+            override fun visitModuleName(name: String) {
+                if (name != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
+                    proto.setExtension(JvmProtoBuf.classModuleName, c[name])
+                }
+            }
         }
     }
 
@@ -123,6 +133,12 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
             ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
                 proto.addExtension(JvmProtoBuf.packageLocalVariable, it.build())
+            }
+
+            override fun visitModuleName(name: String) {
+                if (name != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
+                    proto.setExtension(JvmProtoBuf.packageModuleName, c[name])
+                }
             }
         }
     }
