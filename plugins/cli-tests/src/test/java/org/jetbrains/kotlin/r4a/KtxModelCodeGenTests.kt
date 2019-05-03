@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.Component
 import androidx.compose.FrameManager
-import androidx.compose.R4a
+import androidx.compose.Compose
 import androidx.compose.composer
 import androidx.compose.runWithCurrent
 import org.junit.Before
@@ -361,7 +361,7 @@ class ModelCompositionTest(val composable: () -> Unit, val advance: () -> Unit) 
         val activity = controller.create().get()
         val root = activity.root
         val component = ModelRoot()
-        val cc = R4a.createCompositionContext(root.context, root, component, null)
+        val cc = Compose.createCompositionContext(root.context, root, component, null)
         cc.runWithCurrent {
             val composer = composer.composer
             composer.startRoot()

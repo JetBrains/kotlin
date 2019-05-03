@@ -94,11 +94,11 @@ object R4ADefaultErrorMessages : DefaultErrorMessages.Extension {
         )
         MAP.put(
             R4AErrors.SUSPEND_FUNCTION_USED_AS_SFC,
-            "Suspend functions are not allowed to be used as R4A Components"
+            "Suspend functions are not allowed to be used as Components"
         )
         MAP.put(
             R4AErrors.INVALID_TYPE_SIGNATURE_SFC,
-            "Only Unit-returning functions are allowed to be used as R4A Components"
+            "Only Unit-returning functions are allowed to be used as Components"
         )
         MAP.put(
             R4AErrors.INVALID_TAG_DESCRIPTOR,

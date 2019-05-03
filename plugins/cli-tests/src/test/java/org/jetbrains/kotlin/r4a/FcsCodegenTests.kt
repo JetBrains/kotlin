@@ -514,7 +514,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 LinearLayout(id=$llId, ref=viewRef)
 
                 +onCommit {
-                    R4a.composeInto(
+                    Compose.composeInto(
                         container = viewRef.value ?: error("No View Ref!"),
                         parent = ambientRef
                     ) {
@@ -577,7 +577,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                     LinearLayout(id=$llId, ref=viewRef)
 
                     +onCommit {
-                        R4a.composeInto(
+                        Compose.composeInto(
                             container = viewRef.value ?: error("No View Ref!"),
                             parent = ambientRef
                         ) {
@@ -706,7 +706,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
                     val root = ref.value ?: error("Expected a linear")
 
-                    R4a.composeInto(root, portal) {
+                    Compose.composeInto(root, portal) {
                         DisplayTest(id=$innerId)
                     }
                 }

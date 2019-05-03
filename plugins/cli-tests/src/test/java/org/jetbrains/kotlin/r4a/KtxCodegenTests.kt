@@ -11,7 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.Component
 import androidx.compose.CompositionContext
-import androidx.compose.R4a
+import androidx.compose.Compose
 import androidx.compose.composer
 import androidx.compose.runWithCurrent
 import junit.framework.TestCase
@@ -502,7 +502,7 @@ class ModelClass() {
                 <LinearLayout id=$llId ref=viewRef />
 
                 +onPreCommit {
-                    R4a.composeInto(
+                    Compose.composeInto(
                         container = viewRef.value ?: error("No View Ref!"),
                         parent = compositionRef
                     ) {
@@ -560,7 +560,7 @@ class ModelClass() {
                 <LinearLayout id=$llId ref=viewRef />
 
                 +onPreCommit {
-                    R4a.composeInto(
+                    Compose.composeInto(
                         container = viewRef.value ?: error("No View Ref!"),
                         parent = compositionRef
                     ) {
@@ -683,7 +683,7 @@ class ModelClass() {
 
                     val root = ref.value ?: error("Expected a linear")
 
-                    R4a.composeInto(root, portal) {
+                    Compose.composeInto(root, portal) {
                         <DisplayTest id=$innerId />
                     }
                 }
@@ -1865,7 +1865,7 @@ class CompositionTest(val composable: () -> Unit) {
         val activity = controller.create().get()
         val root = activity.root
         val component = Root(composable)
-        val cc = R4a.createCompositionContext(root.context, root, component, null)
+        val cc = Compose.createCompositionContext(root.context, root, component, null)
         return ActiveTest(activity, cc).then(block)
     }
 }
