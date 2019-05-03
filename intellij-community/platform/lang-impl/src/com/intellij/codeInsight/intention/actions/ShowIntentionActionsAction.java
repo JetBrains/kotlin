@@ -16,7 +16,6 @@
 
 package com.intellij.codeInsight.intention.actions;
 
-import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler;
@@ -48,7 +47,7 @@ public class ShowIntentionActionsAction extends BaseCodeInsightAction implements
     if (psiFile == null) return;
 
     if (!ApplicationManager.getApplication().isUnitTestMode() && !editor.getContentComponent().isShowing()) return;
-    getHandler().invoke(project, editor, psiFile);
+    getHandler().invoke(project, editor, psiFile, e.isFromContextMenu());
   }
 
   @Override
@@ -58,7 +57,7 @@ public class ShowIntentionActionsAction extends BaseCodeInsightAction implements
 
   @NotNull
   @Override
-  protected CodeInsightActionHandler getHandler() {
+  protected ShowIntentionActionsHandler getHandler() {
     return new ShowIntentionActionsHandler();
   }
 }
