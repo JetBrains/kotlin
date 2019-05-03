@@ -77,6 +77,7 @@ private fun Collection<File>.filterNewClasspath(known: Collection<ScriptDependen
 }
 
 @Deprecated("Unused")
+@Suppress("DEPRECATION")
 val JvmScriptCompilationConfigurationKeys.javaHome by PropertiesCollection.keyCopy(ScriptingHostConfiguration.jvm.javaHome)
 
 val JvmScriptCompilationConfigurationKeys.jdkHome by PropertiesCollection.keyCopy(ScriptingHostConfiguration.jvm.jdkHome)
