@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.move.MoveHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MoveAction extends BaseRefactoringAction {
 
@@ -58,5 +59,11 @@ public class MoveAction extends BaseRefactoringAction {
   @Override
   public RefactoringActionHandler getHandler(@NotNull DataContext dataContext) {
     return new MoveHandler();
+  }
+
+  @Nullable
+  @Override
+  protected String getActionName(@NotNull PsiElement[] elements) {
+    return MoveHandler.getActionName(elements);
   }
 }

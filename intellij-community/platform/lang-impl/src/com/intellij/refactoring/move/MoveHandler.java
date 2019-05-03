@@ -143,6 +143,15 @@ public class MoveHandler implements RefactoringActionHandler {
     return false;
   }
 
+  @Nullable
+  public static String getActionName(@NotNull PsiElement[] elements) {
+    for(MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
+      if (delegate.canMove(elements, null)) return delegate.getActionName(elements);
+    }
+
+    return null;
+  }
+
   public static boolean isValidTarget(final PsiElement psiElement, PsiElement[] elements) {
     if (psiElement != null) {
       for(MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {

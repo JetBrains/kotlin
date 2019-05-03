@@ -162,6 +162,9 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
       if (!isEnabled) {
         disableAction(e);
       }
+      else {
+        updateActionText(e, elements);
+      }
     }
     else {
       PsiElement element = e.getData(CommonDataKeys.PSI_ELEMENT);
@@ -185,11 +188,26 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
         if (!isEnabled) {
           disableAction(e);
         }
+        else {
+          updateActionText(e, new PsiElement[] { element });
+        }
       }
       else {
         hideAction(e);
       }
     }
+  }
+
+  private void updateActionText(AnActionEvent e, PsiElement[] elements) {
+    String actionText = getActionName(elements);
+    if (actionText != null) {
+      e.getPresentation().setText(actionText);
+    }
+  }
+
+  @Nullable
+  protected String getActionName(@NotNull PsiElement[] elements) {
+    return null;
   }
 
   protected boolean disableOnCompiledElement() {

@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
@@ -104,19 +105,27 @@ public class CopyElementAction extends AnAction {
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
 
     PsiElement element = getTargetElement(editor, project);
-    boolean result = element != null && CopyHandler.canCopy(new PsiElement[]{element});
+    Ref<String> actionName = new Ref<>();
+    boolean result = element != null && CopyHandler.canCopy(new PsiElement[]{element}, actionName);
 
     if (!result && file != null) {
-      result = CopyHandler.canCopy(new PsiElement[]{file});
+      result = CopyHandler.canCopy(new PsiElement[]{file}, actionName);
     }
 
     presentation.setEnabled(result);
     presentation.setVisible(true);
+    if (!actionName.isNull()) {
+      presentation.setText(actionName.get());
+    }
   }
 
   protected void updateForToolWindow(String toolWindowId, DataContext dataContext,Presentation presentation) {
     PsiElement[] elements = LangDataKeys.PSI_ELEMENT_ARRAY.getData(dataContext);
-    presentation.setEnabled(elements != null && CopyHandler.canCopy(elements));
+    Ref<String> actionName = new Ref<>();
+    presentation.setEnabled(elements != null && CopyHandler.canCopy(elements, actionName));
+    if (!actionName.isNull()) {
+      presentation.setText(actionName.get());
+    }
   }
 
   private static PsiElement getTargetElement(final Editor editor, final Project project) {

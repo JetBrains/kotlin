@@ -71,4 +71,10 @@ public abstract class MoveHandlerDelegate {
   public boolean isMoveRedundant(PsiElement source, PsiElement target) {
     return false;
   }
+
+
+  @Nullable
+  public String getActionName(PsiElement[] elements) {
+    return null;
+  }
 }

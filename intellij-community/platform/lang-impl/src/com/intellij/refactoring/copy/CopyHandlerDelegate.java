@@ -19,6 +19,7 @@ package com.intellij.refactoring.copy;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
@@ -29,4 +30,9 @@ public interface CopyHandlerDelegate {
   boolean canCopy(PsiElement[] elements);
   void doCopy(PsiElement[] elements, PsiDirectory defaultTargetDirectory);
   void doClone(PsiElement element);
+
+  @Nullable
+  default String getActionName(PsiElement[] elements) {
+    return null;
+  }
 }
