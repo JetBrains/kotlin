@@ -16,7 +16,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "ADD",                      "ExpandTreeNode", "Graph.ZoomIn"},
     { "BACK_SPACE",               "EditorBackSpace", "Images.Thumbnails.UpFolder"},
     { "ENTER",                    "Console.Execute", "Console.TableResult.EditValue", "DirDiffMenu.SynchronizeDiff", "EditorChooseLookupItem",
-                                  "EditorEnter", "Images.Thumbnails.EnterAction", "NextTemplateVariable", "PropertyInspectorActions.EditValue",
+                                  "EditorEnter", "Images.Thumbnails.EnterAction", "NextTemplateVariable",
                                   "SearchEverywhere.SelectItem"},
     { "F2",                       "GotoNextError", "GuiDesigner.EditComponent", "GuiDesigner.EditGroup", "Console.TableResult.EditValue", "XDebugger.SetValue", "Arrangement.Rule.Edit", "Git.Reword.Commit", "ShelvedChanges.Rename", "ChangesView.Rename"},
     { "alt ENTER",                "ShowIntentionActions", "Console.TableResult.EditValue"},
