@@ -13,27 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.plugins.gradle.util;
+package org.jetbrains.plugins.gradle.util
 
-import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
+import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 
 /**
  * @author Vladislav.Soroka
  */
-public class GradleEditorTabTitleProvider implements EditorTabTitleProvider, DumbAware {
-  @Override
-  public String getEditorTabTitle(@NotNull Project project, @NotNull VirtualFile file) {
-    if (GradleConstants.DEFAULT_SCRIPT_NAME.equals(file.getName()) || GradleConstants.KOTLIN_DSL_SCRIPT_NAME.equals(file.getName())) {
-      Module module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file);
-      return module == null ? null : module.getName();
+class GradleEditorTabTitleProvider : EditorTabTitleProvider, DumbAware {
+  override fun getEditorTabTitle(project: Project, file: VirtualFile): String? {
+    if (!GradleConstants.KNOWN_GRADLE_FILES.contains(file.name)) return null
+
+    val fileParent = file.parent ?: return null;
+
+    val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file) ?: return null
+    val manager = ExternalSystemModulePropertyManager.getInstance(module)
+
+    if (manager.getExternalSystemId() != GradleConstants.SYSTEM_ID.id) return null
+
+    val projectPath = manager.getLinkedProjectPath() ?: return null
+
+    if (FileUtil.pathsEqual(projectPath, fileParent.path)) {
+      return "${file.name} (${manager.getLinkedProjectId()})"
     }
 
-    return null;
+    return null
   }
 }
