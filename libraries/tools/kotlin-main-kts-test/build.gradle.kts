@@ -24,3 +24,5 @@ sourceSets {
     "main" { }
     "test" { projectDefault() }
 }
+
+projectTest(parallel = true)

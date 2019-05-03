@@ -19,6 +19,7 @@ dependencies {
     compileOnly(intellijCoreDep())
     runtime(projectRuntimeJar(":kotlin-compiler"))
     runtime(project(":kotlin-reflect"))
+    testCompile(commonDep("junit"))
 }
 
 sourceSets {
@@ -29,4 +30,6 @@ sourceSets {
 publish()
 
 standardPublicJars()
+
+projectTest(parallel = true)
 
