@@ -72,9 +72,10 @@
   </extensions>
   <actions>
     <action id="Gradle.ImportExternalProject" class = "org.jetbrains.plugins.gradle.action.ImportProjectFromScriptAction"
-            text="Import Gradle project" description="Import Gradle project described by this file"
+            text="Import Gradle Project" description="Import Gradle project described by this file"
             icon="GradleIcons.Gradle">
-      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" anchor="last"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
     </action>
   </actions>
 </idea-plugin>
