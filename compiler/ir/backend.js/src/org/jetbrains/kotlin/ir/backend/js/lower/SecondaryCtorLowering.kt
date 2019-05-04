@@ -222,9 +222,11 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
 
             val readThis = expression.run {
                 if (data!! is IrConstructor) {
-                    IrGetValueImpl(startOffset, endOffset, type, klass.thisReceiver!!.symbol)
+                    val thisReceiver = klass.thisReceiver!!
+                    IrGetValueImpl(startOffset, endOffset, thisReceiver.type, thisReceiver.symbol)
                 } else {
-                    IrGetValueImpl(startOffset, endOffset, type, data.valueParameters.last().symbol)
+                    val lastValueParameter = data.valueParameters.last()
+                    IrGetValueImpl(startOffset, endOffset, lastValueParameter.type, lastValueParameter.symbol)
                 }
             }
 
