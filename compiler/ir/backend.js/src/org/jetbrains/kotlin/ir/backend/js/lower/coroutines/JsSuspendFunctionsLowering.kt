@@ -12,17 +12,13 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
 
@@ -143,6 +139,18 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
         stateMachineFunction.body = functionBody
         // TODO: Investigate parent problems
         stateMachineFunction.patchDeclarationParents(stateMachineFunction.parent)
+
+        // Move return targets to new function
+        functionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitReturn(expression: IrReturn): IrExpression {
+                expression.transformChildrenVoid(this)
+
+                return if (expression.returnTargetSymbol != transformingFunction.symbol)
+                    expression
+                else
+                    JsIrBuilder.buildReturn(stateMachineFunction.symbol, expression.value, expression.type)
+            }
+        })
 
         val liveLocals = computeLivenessAtSuspensionPoints(functionBody).values.flatten().toSet()
 
