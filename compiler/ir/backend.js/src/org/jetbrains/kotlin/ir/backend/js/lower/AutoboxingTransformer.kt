@@ -26,6 +26,20 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         irFile.patchDeclarationParents()
     }
 
+    private tailrec fun IrExpression.isGetUnit(): Boolean =
+        when(this) {
+            is IrContainerExpression ->
+                when (val lastStmt = this.statements.lastOrNull()) {
+                    is IrExpression -> lastStmt.isGetUnit()
+                    else -> false
+                }
+
+            is IrGetObjectValue ->
+                this.symbol == irBuiltIns.unitClass
+
+            else -> false
+        }
+
     override fun IrExpression.useAs(type: IrType): IrExpression {
 
         val actualType = when (this) {
@@ -67,6 +81,14 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             return this
 
         val expectedType = type
+
+        if (actualType.isUnit() && !expectedType.isUnit()) {
+            // Don't materialize Unit if value is known to be proper Unit on runtime
+            if (!this.isGetUnit()) {
+                val unitValue = JsIrBuilder.buildGetObjectValue(actualType, context.symbolTable.referenceClass(context.builtIns.unit))
+                return JsIrBuilder.buildComposite(actualType, listOf(this, unitValue))
+            }
+        }
 
         val actualInlinedClass = actualType.getInlinedClass()
         val expectedInlinedClass = expectedType.getInlinedClass()
