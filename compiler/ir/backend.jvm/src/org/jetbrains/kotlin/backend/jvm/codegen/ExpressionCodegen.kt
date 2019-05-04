@@ -268,7 +268,6 @@ class ExpressionCodegen(
         visitStatementContainer(expression, data).coerce(expression.asmType)
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: BlockInfo): PromisedValue {
-        expression.markLineNumber(startOffset = true)
         classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
             ?.invoke(expression, this, data)?.let { return it.coerce(expression.asmType) }
 
@@ -353,6 +352,7 @@ class ExpressionCodegen(
             }
         }
 
+        expression.markLineNumber(true)
         callGenerator.genCall(
             callable,
             defaultMask.generateOnStackIfNeeded(callGenerator, callee is IrConstructor, this),
@@ -1088,7 +1088,9 @@ class ExpressionCodegen(
     }
 
     override fun markLineNumberAfterInlineIfNeeded() {
-        //TODO
+        // Inline function has its own line number which is in a separate instance of codegen,
+        // therefore we need to reset lastLineNumber to force a line number generation after visiting inline function.
+        lastLineNumber = -1
     }
 
     fun isFinallyMarkerRequired(): Boolean {
