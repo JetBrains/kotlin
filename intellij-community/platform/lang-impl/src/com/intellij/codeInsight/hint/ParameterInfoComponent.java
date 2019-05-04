@@ -200,7 +200,7 @@ public class ParameterInfoComponent extends JPanel {
   class MyParameterContext implements ParameterInfoUIContextEx {
     private final boolean mySingleParameterInfo;
     private int i;
-    private Function<String, String> myEscapeFunction;
+    private Function<? super String, String> myEscapeFunction;
     private final ParameterInfoController.Model result = new ParameterInfoController.Model();
     
     MyParameterContext(boolean singleParameterInfo) {
@@ -263,7 +263,7 @@ public class ParameterInfoComponent extends JPanel {
     }
 
     @Override
-    public void setEscapeFunction(@Nullable Function<String, String> escapeFunction) {
+    public void setEscapeFunction(@Nullable Function<? super String, String> escapeFunction) {
       myEscapeFunction = escapeFunction;
     }
 
@@ -408,7 +408,7 @@ public class ParameterInfoComponent extends JPanel {
                          boolean strikeout,
                          boolean isDisabledBeforeHighlight,
                          Color background) {
-      StringBuilder buf = new StringBuilder();
+      StringBuilder buf = new StringBuilder(text.length());
       removeAll();
       setBackground(background);
 
@@ -547,12 +547,15 @@ public class ParameterInfoComponent extends JPanel {
                          boolean isStrikeout,
                          Color background, @Nullable TextRange range) {
       Map<TextRange, ParameterInfoUIContextEx.Flag> flagsMap = new TreeMap<>(TEXT_RANGE_COMPARATOR);
-      if (range != null)
+      if (range != null) {
         flagsMap.put(range, ParameterInfoUIContextEx.Flag.HIGHLIGHT);
-      if (isDisabled)
+      }
+      if (isDisabled) {
         flagsMap.put(TextRange.create(0, text.length()), ParameterInfoUIContextEx.Flag.DISABLE);
-      if (isStrikeout)
+      }
+      if (isStrikeout) {
         flagsMap.put(TextRange.create(0, text.length()), ParameterInfoUIContextEx.Flag.STRIKEOUT);
+      }
       return setup(text, flagsMap, background);
     }
 
