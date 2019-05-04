@@ -15,6 +15,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.debugger.UiDebuggerExtension;
@@ -194,14 +195,13 @@ public class DisposerDebugger implements UiDebuggerExtension, Disposable  {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         try {
-          CopyPasteManager.getInstance().setContents(new TextTransferable(myAllocation.getText()));
+          CopyPasteManager.getInstance().setContents(new TextTransferable(StringUtil.notNullize(myAllocation.getText())));
         }
         catch (HeadlessException e1) {
           LOG.error(e1);
         }
       }
     }
-
   }
 
   private static class DisposerTree extends JPanel implements Disposable, ObjectTreeListener, ElementFilter<DisposerNode> {
