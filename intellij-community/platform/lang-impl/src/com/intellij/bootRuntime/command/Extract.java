@@ -7,16 +7,13 @@ import com.intellij.bootRuntime.bundles.Runtime;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.io.Decompressor;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
-import static org.jetbrains.io.TarKt.unpackTarGz;
-
 public class Extract extends RuntimeCommand {
-
   private static final Logger LOG = Logger.getInstance("#com.intellij.bootRuntime.command.Extract");
 
   public Extract(Project project, Controller controller, Runtime runtime) {
@@ -35,9 +32,8 @@ public class Extract extends RuntimeCommand {
 
       File directoryToExtractFile = new File(jdkStoragePathFile, directoryToExtractName);
       if (!directoryToExtractFile.exists()) {
-        FileUtil.createDirectory(directoryToExtractFile);
-        try (FileInputStream inputStream = new FileInputStream(myRuntime.getDownloadPath())) {
-          unpackTarGz(inputStream, directoryToExtractFile.toPath());
+        try {
+          new Decompressor.Tar(myRuntime.getDownloadPath()).extract(directoryToExtractFile);
           FileUtil.delete(myRuntime.getDownloadPath());
         }
         catch (IOException ex) {
