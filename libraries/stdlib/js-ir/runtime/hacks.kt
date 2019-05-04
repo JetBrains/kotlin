@@ -12,12 +12,12 @@ internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
 internal fun noWhenBranchMatchedException(): Nothing = throw NoWhenBranchMatchedException()
 
 
-fun THROW_ISE() {
+fun THROW_ISE(): Nothing {
     throw IllegalStateException()
 }
-fun THROW_CCE() {
+fun THROW_CCE(): Nothing {
     throw ClassCastException()
 }
-fun THROW_NPE() {
+fun THROW_NPE(): Nothing {
     throw NullPointerException()
 }
