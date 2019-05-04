@@ -6,8 +6,6 @@
 package org.jetbrains.konan.resolve
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -16,13 +14,9 @@ import com.jetbrains.cidr.lang.CustomTargetHeaderSerializationHelper
 import com.jetbrains.cidr.lang.OCIncludeHelpers.adjustHeaderName
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.preprocessor.OCResolveRootAndConfiguration
-import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
-import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames
 import com.jetbrains.cidr.xcode.model.PBXTarget
 import com.jetbrains.cidr.xcode.model.XCBuildConfiguration
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
-import org.jetbrains.konan.gradle.KonanProjectDataService
-import org.jetbrains.konan.gradle.execution.AppCodeGradleKonanExternalBuildProvider
 import org.jetbrains.konan.gradle.execution.AppCodeGradleKonanExternalBuildProvider.Companion.GRADLE_BUILD_TASK_NAME
 import org.jetbrains.konan.gradle.execution.filterGradleTasks
 
