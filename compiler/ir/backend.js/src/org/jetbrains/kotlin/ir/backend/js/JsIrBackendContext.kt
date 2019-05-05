@@ -55,7 +55,7 @@ class JsIrBackendContext(
 
     override var inVerbosePhase: Boolean = false
 
-    lateinit var externalPackageFragment: IrPackageFragment
+    var externalPackageFragment = mutableMapOf<FqName, IrPackageFragment>()
     lateinit var bodilessBuiltInsPackageFragment: IrPackageFragment
 
     val externalNestedClasses = mutableListOf<IrClass>()

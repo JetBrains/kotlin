@@ -55,12 +55,6 @@ private class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFra
 }
 
 fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module: IrModuleFragment) {
-    val externalPackageFragment = IrExternalPackageFragmentImpl(
-        DescriptorlessExternalPackageFragmentSymbol(),
-        FqName.ROOT
-    )
-
-    context.externalPackageFragment = externalPackageFragment
 
     val bodilessBuiltInsPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
@@ -86,6 +80,15 @@ fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module:
     }
 
     fun lowerFile(irFile: IrFile): IrFile? {
+        val externalPackageFragment by lazy {
+            context.externalPackageFragment.getOrPut(irFile.fqName) {
+                IrExternalPackageFragmentImpl(
+                    DescriptorlessExternalPackageFragmentSymbol(),
+                    irFile.fqName
+                )
+            }
+        }
+
         context.externalNestedClasses += collectExternalClasses(irFile, includeCurrentLevel = false)
 
         if (irFile.getJsModule() != null || irFile.getJsQualifier() != null) {
