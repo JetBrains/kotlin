@@ -1303,7 +1303,7 @@ public actual fun FloatArray.sort(): Unit {
  * Sorts the array in-place.
  */
 public actual fun CharArray.sort(): Unit {
-    this.asDynamic().sort()
+    this.asDynamic().sort(::primitiveCompareTo)
 }
 
 /**

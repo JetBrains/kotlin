@@ -1038,7 +1038,13 @@ object ArrayOps : TemplateGroupBase() {
                             body { "definedExternally" }
                         }
                         on(Backend.IR) {
-                            body { "this.asDynamic().sort()" }
+                            if (primitive == PrimitiveType.Char) {
+                                // Requires comparator because default comparator of 'Array.prototype.sort' compares
+                                // string representation of values
+                                body { "this.asDynamic().sort(::primitiveCompareTo)" }
+                            } else {
+                                body { "this.asDynamic().sort()" }
+                            }
                         }
                     } else {
                         body {
