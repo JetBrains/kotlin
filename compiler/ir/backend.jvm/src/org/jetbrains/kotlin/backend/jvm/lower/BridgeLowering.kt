@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
+import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.findAllReachableDeclarations
 import org.jetbrains.kotlin.backend.common.bridges.findConcreteSuperDeclaration
@@ -25,12 +27,9 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -45,7 +44,6 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -61,6 +59,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
     private val state = context.state
 
     private val typeMapper = state.typeMapper
+
+    private val specialBridgeMethods = SpecialBridgeMethods(context)
 
     override fun lower(irClass: IrClass) {
         // TODO: Bridges should be generated for @JvmDefaults, so the interface check is too optimistic.
@@ -91,7 +91,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         val ourMethodName = ourSignature.name
 
         val (specialOverride, specialOverrideValueGenerator) =
-            findSpecialWithOverride(irFunction) ?: Pair(null, null)
+            specialBridgeMethods.findSpecialWithOverride(irFunction) ?: Pair(null, null)
         val specialOverrideSignature = specialOverride?.getJvmSignature()
 
 
@@ -389,46 +389,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         }
     }
 
-    private data class SpecialMethodDescription(val kotlinFqClassName: FqName?, val name: Name, val arity: Int)
 
-    private fun makeDescription(classFqName: String, funName: String, arity: Int) = SpecialMethodDescription(FqName(classFqName), Name.identifier(funName), arity)
-
-    private fun IrSimpleFunction.toDescription() = SpecialMethodDescription(parentAsClass.fqNameWhenAvailable, name, valueParameters.size)
-
-    private fun constFalse(bridge: IrSimpleFunction) =
-        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.booleanType, IrConstKind.Boolean, false)
-
-    private fun constNull(bridge: IrSimpleFunction) =
-        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.anyNType, IrConstKind.Null, null)
-
-    private fun constMinusOne(bridge: IrSimpleFunction) =
-        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, IrConstKind.Int, -1)
-
-    private fun getSecondArg(bridge: IrSimpleFunction) =
-        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.valueParameters[1].symbol)
-
-    private val SPECIAL_METHODS_WITH_DEFAULTS_MAP = mapOf<SpecialMethodDescription, (IrSimpleFunction) -> IrExpression>(
-        makeDescription("kotlin.collections.Collection", "contains", 1) to ::constFalse,
-        makeDescription("kotlin.collections.MutableCollection", "remove", 1) to ::constFalse,
-        makeDescription("kotlin.collections.Map", "containsKey", 1) to ::constFalse,
-        makeDescription("kotlin.collections.Map", "containsValue", 1) to ::constFalse,
-        makeDescription("kotlin.collections.MutableMap", "remove", 2) to ::constFalse,
-        makeDescription("kotlin.collections.Map", "getOrDefault", 1) to ::getSecondArg,
-        makeDescription("kotlin.collections.Map", "get", 1) to ::constNull,
-        makeDescription("kotlin.collections.MutableMap", "remove", 1) to ::constNull,
-        makeDescription("kotlin.collections.List", "indexOf", 1) to ::constMinusOne,
-        makeDescription("kotlin.collections.List", "lastIndexOf", 1) to ::constMinusOne
-    )
-
-    private fun findSpecialWithOverride(irFunction: IrSimpleFunction): Pair<IrSimpleFunction, (IrSimpleFunction) -> IrExpression>? {
-        irFunction.allOverridden().forEach { overridden ->
-            val description = overridden.toDescription()
-            SPECIAL_METHODS_WITH_DEFAULTS_MAP[description]?.let {
-                return Pair(overridden, it)
-            }
-        }
-        return null
-    }
 
     private inner class FunctionHandleForIrFunction(val irFunction: IrSimpleFunction) : FunctionHandle {
         override val isDeclaration get() = irFunction.origin != IrDeclarationOrigin.FAKE_OVERRIDE
@@ -464,20 +425,6 @@ private data class SignatureWithSource(val signature: Method, val source: IrSimp
     }
 }
 
-fun IrSimpleFunction.allOverridden(): Sequence<IrSimpleFunction> {
-    val visited = mutableSetOf<IrSimpleFunction>()
-
-    fun IrSimpleFunction.search(): Sequence<IrSimpleFunction> {
-        if (this in visited) return emptySequence()
-        return sequence {
-            yield(this@search)
-            visited.add(this@search)
-            overriddenSymbols.forEach { yieldAll(it.owner.search()) }
-        }
-    }
-
-    return search().drop(1) // First element is `this`
-}
 
 fun IrSimpleFunction.overriddenInClasses(): Sequence<IrSimpleFunction> =
     allOverridden().filter { !(it.parent.safeAs<IrClass>()?.isInterface ?: true) }
