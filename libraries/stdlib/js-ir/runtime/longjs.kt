@@ -24,7 +24,7 @@ internal fun Long.getLowBitsUnsigned() = if (low >= 0) low.toDouble() else TWO_P
 
 internal fun hashCode(l: Long) = l.low xor l.high
 
-internal fun Long.toString(radix: Int): String {
+internal fun Long.toStringImpl(radix: Int): String {
     if (radix < 2 || 36 < radix) {
         throw Exception("radix out of range: $radix")
     }
@@ -39,10 +39,11 @@ internal fun Long.toString(radix: Int): String {
             // the bottom-most digit in this base and then recurse to do the rest.
             val radixLong = fromInt(radix)
             val div = div(radixLong)
-            val rem = div.multiply(radixLong).subtract(this).toInt();
-            return js("div.toString(radix) + rem.toString(radix)")
+            val rem = div.multiply(radixLong).subtract(this).toInt()
+            // Using rem.asDynamic() to break dependency on "kotlin.text" package
+            return div.toStringImpl(radix) + rem.asDynamic().toString(radix).unsafeCast<String>()
         } else {
-            return "-${negate().toString()}"
+            return "-${negate().toStringImpl(radix)}"
         }
     }
 

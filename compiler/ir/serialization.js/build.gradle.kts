@@ -106,6 +106,7 @@ val reducedRuntimeSources by task<Sync> {
                 "libraries/stdlib/common/src/kotlin/ioH.kt",
                 "libraries/stdlib/js-ir/runtime/collectionsHacks.kt",
                 "libraries/stdlib/js-ir/src/generated/**",
+                "libraries/stdlib/js-ir/src/kotlin/text/**",
                 "libraries/stdlib/js/src/jquery/**",
                 "libraries/stdlib/js/src/org.w3c/**",
                 "libraries/stdlib/js/src/kotlin/char.kt",

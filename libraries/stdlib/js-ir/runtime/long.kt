@@ -259,5 +259,5 @@ public class Long internal constructor(
 
     override fun hashCode(): Int = hashCode(this)
 
-    override fun toString(): String = toString(10)
+    override fun toString(): String = this.toStringImpl(radix = 10)
 }
