@@ -6745,6 +6745,39 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         public void testTmpInsidePrimaryConstructor() throws Exception {
             runTest("js/js.translator/testData/box/regression/tmpInsidePrimaryConstructor.kt");
         }
+
+        @TestMetadata("js/js.translator/testData/box/regression/stdlibTestSnippets")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class StdlibTestSnippets extends AbstractIrBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInStdlibTestSnippets() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/regression/stdlibTestSnippets"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("arrayTest_plusInference.kt")
+            public void testArrayTest_plusInference() throws Exception {
+                runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/arrayTest_plusInference.kt");
+            }
+
+            @TestMetadata("iterableChunked.kt")
+            public void testIterableChunked() throws Exception {
+                runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/iterableChunked.kt");
+            }
+
+            @TestMetadata("json.kt")
+            public void testJson() throws Exception {
+                runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/json.kt");
+            }
+
+            @TestMetadata("throwable.kt")
+            public void testThrowable() throws Exception {
+                runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/throwable.kt");
+            }
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/reified")
