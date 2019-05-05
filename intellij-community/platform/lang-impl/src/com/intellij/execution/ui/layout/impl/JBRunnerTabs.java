@@ -15,6 +15,8 @@ import com.intellij.ui.tabs.JBTabsBackgroundAndBorder;
 import com.intellij.ui.tabs.newImpl.JBTabsImpl;
 import com.intellij.ui.tabs.newImpl.TabLabel;
 import com.intellij.util.ui.JBUI;
+import com.intellij.ui.tabs.newImpl.singleRow.ScrollableSingleRowLayout;
+import com.intellij.ui.tabs.newImpl.singleRow.SingleRowLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +38,11 @@ public class JBRunnerTabs extends JBEditorTabs implements JBRunnerTabsBase {
 
   public JBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
     super(project, actionManager, focusManager, parent);
+  }
+
+  @Override
+  protected SingleRowLayout createSingleRowLayout() {
+    return new ScrollableSingleRowLayout(this);
   }
 
   @Override
