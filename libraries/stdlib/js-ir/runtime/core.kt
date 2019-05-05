@@ -5,6 +5,8 @@
 
 package kotlin.js
 
+import kotlin.js.internal.BitUtils
+
 fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     if (obj1 == null) {
         return obj2 == null
@@ -43,7 +45,7 @@ fun hashCode(obj: dynamic): Int {
     return when (jsTypeOf(obj)) {
         "object" -> if ("function" === jsTypeOf(obj.hashCode)) (obj.hashCode)() else getObjectHashCode(obj)
         "function" -> getObjectHashCode(obj)
-        "number" -> getNumberHashCode(obj)
+        "number" -> BitUtils.getNumberHashCode(obj)
         "boolean" -> if(obj.unsafeCast<Boolean>()) 1 else 0
         else -> getStringHashCode(js("String(obj)"))
     }
@@ -73,24 +75,7 @@ fun getStringHashCode(str: String): Int {
     return hash
 }
 
-private external class ArrayBuffer(size: Int)
-private external class Float64Array(buffer: ArrayBuffer)
-private external class Int32Array(buffer: ArrayBuffer)
-
-fun getNumberHashCode(obj: Any?): Int {
-    if (jsBitwiseOr(obj, 0)  === obj) {
-        return obj
-    }
-
-    var byteBuffer = ArrayBuffer(8)
-    var bufFloat64 = Float64Array(byteBuffer).asDynamic()
-    var bufInt32 = Int32Array(byteBuffer).asDynamic()
-    bufFloat64[0] = obj
-    return jsBitwiseOr(bufInt32[1] * 31, 0) + bufInt32[0].unsafeCast<Int>()
-}
-
 fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
-
 
 @JsName("captureStack")
 internal fun captureStack(instance: Throwable) {
