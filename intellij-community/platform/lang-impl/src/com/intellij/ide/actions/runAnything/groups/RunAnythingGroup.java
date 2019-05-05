@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,6 +40,14 @@ public abstract class RunAnythingGroup {
    */
   @NotNull
   public abstract String getTitle();
+
+  /**
+   * @return Group icon to be presented to the left of the group separator rule
+   */
+  @Nullable
+  public Icon getIcon() {
+    return null;
+  }
 
   /**
    * @return Current group maximum number of items to be shown.
@@ -95,6 +104,17 @@ public abstract class RunAnythingGroup {
   }
 
   /**
+   * Finds group icon by {@code titleIndex}.
+   *
+   * @return group icon if {@code titleIndex} is equals to group {@link #myTitleIndex} and {@code null} if nothing found
+   */
+  @Nullable
+  public static Icon getIcon(@NotNull Collection<RunAnythingGroup> groups, int titleIndex) {
+    return Optional.ofNullable(findGroup(groups, titleIndex)).map(RunAnythingGroup::getIcon).orElse(null);
+  }
+
+
+  /**
    * Finds group by {@code titleIndex}.
    *
    * @return group if {@code titleIndex} is equals to group {@link #myTitleIndex} and {@code null} if nothing found
@@ -102,6 +122,25 @@ public abstract class RunAnythingGroup {
   @Nullable
   public static RunAnythingGroup findGroup(@NotNull Collection<RunAnythingGroup> groups, int titleIndex) {
     return groups.stream().filter(runAnythingGroup -> titleIndex == runAnythingGroup.myTitleIndex).findFirst().orElse(null);
+  }
+
+  /**
+   * Finds group {@code itemIndex} belongs to.
+   */
+  @Nullable
+  public static RunAnythingGroup findItemGroup(@NotNull List<RunAnythingGroup> groups, int itemIndex) {
+    RunAnythingGroup runAnythingGroup = null;
+    for (RunAnythingGroup group : groups) {
+      if (group.myTitleIndex == -1) {
+        continue;
+      }
+      if (group.myTitleIndex > itemIndex) {
+        break;
+      }
+      runAnythingGroup = group;
+    }
+
+    return runAnythingGroup;
   }
 
   /**

@@ -534,7 +534,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
   private class MyListRenderer extends ColoredListCellRenderer<Object> {
     private final RunAnythingMyAccessibleComponent myMainPanel = new RunAnythingMyAccessibleComponent(new BorderLayout());
-    private final JLabel myTitle = new JLabel();
 
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean hasFocus) {
@@ -545,7 +544,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
       if (cmp == null) {
         if (value instanceof RunAnythingItem) {
-          cmp = ((RunAnythingItem)value).createComponent(myLastInputText, isSelected, hasFocus);
+          cmp = ((RunAnythingItem)value).createComponent(myLastInputText, findIcon(index), isSelected, hasFocus);
         }
         else {
           cmp = super.getListCellRendererComponent(list, value, index, isSelected, isSelected);
@@ -572,8 +571,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
       if (model != null) {
         String title = model.getTitle(index);
         if (title != null) {
-          myTitle.setText(title);
-          myMainPanel.add(RunAnythingUtil.createTitle(" " + title), BorderLayout.NORTH);
+          myMainPanel.add(RunAnythingUtil.createTitle(" " + title, model.getIcon(index)), BorderLayout.NORTH);
         }
       }
       JPanel wrapped = new JPanel(new BorderLayout());
@@ -587,6 +585,19 @@ public class RunAnythingPopupUI extends BigPopupUI {
       }
 
       return myMainPanel;
+    }
+
+    @Nullable
+    private Icon findIcon(int index) {
+      RunAnythingSearchListModel model = getSearchingModel(myResultsList);
+      Icon groupIcon = null;
+      if (model != null) {
+        RunAnythingGroup group = model.findItemGroup(index);
+        if (group != null) {
+          groupIcon = group.getIcon();
+        }
+      }
+      return groupIcon;
     }
 
     @Override

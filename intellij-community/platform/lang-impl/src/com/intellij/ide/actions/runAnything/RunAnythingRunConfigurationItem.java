@@ -26,8 +26,8 @@ public class RunAnythingRunConfigurationItem extends RunAnythingItemBase {
 
   @NotNull
   @Override
-  public Component createComponent(@Nullable String pattern, boolean isSelected, boolean hasFocus) {
-    JPanel component = (JPanel)super.createComponent(pattern, isSelected, hasFocus);
+  public Component createComponent(@Nullable String pattern, @Nullable Icon groupIcon, boolean isSelected, boolean hasFocus) {
+    JPanel component = (JPanel)super.createComponent(pattern, groupIcon, isSelected, hasFocus);
 
     ConfigurationType type = myWrapper.getType();
     if (type == null) {

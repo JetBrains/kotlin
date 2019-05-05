@@ -10,6 +10,7 @@ import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,6 +33,12 @@ public class RunAnythingCompletionGroup<V, P extends RunAnythingProvider<V>> ext
   @Override
   public String getTitle() {
     return ObjectUtils.assertNotNull(getProvider().getCompletionGroupTitle());
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon() {
+    return getProvider().getHelpIcon();
   }
 
   @NotNull

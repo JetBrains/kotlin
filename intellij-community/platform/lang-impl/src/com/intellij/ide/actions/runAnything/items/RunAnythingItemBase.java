@@ -35,7 +35,7 @@ public class RunAnythingItemBase extends RunAnythingItem {
 
   @NotNull
   @Override
-  public Component createComponent(@Nullable String pattern, boolean isSelected, boolean hasFocus) {
+  public Component createComponent(@Nullable String pattern, @Nullable Icon groupIcon, boolean isSelected, boolean hasFocus) {
     Component oldComponent = createComponent(isSelected);
     if (oldComponent != null) {
       return oldComponent;
@@ -52,16 +52,21 @@ public class RunAnythingItemBase extends RunAnythingItem {
                                                     RunAnythingGroup.RUN_ANYTHING_MATCHER_BUILDER.fun(pattern).build(),
                                                     background,
                                                     isSelected);
-    textComponent.appendTextPadding(20);
-    component.add(textComponent, BorderLayout.WEST);
-    setupIcon(textComponent, myIcon);
+    component.add(textComponent, BorderLayout.CENTER);
+
+    Icon icon = myIcon;
+    if (groupIcon == myIcon) {
+      icon = EmptyIcon.ICON_16;
+    }
+    JLabel iconLabel = new JLabel(icon);
+    iconLabel.setBorder(JBUI.Borders.emptyLeft(3));
+    component.add(iconLabel, BorderLayout.WEST);
 
     return component;
   }
 
   public void setupIcon(@NotNull SimpleColoredComponent component, @Nullable Icon icon) {
     component.setIcon(ObjectUtils.notNull(icon, EmptyIcon.ICON_16));
-    component.setIpad(JBUI.insets(0, 10, 0, 0));
   }
 
   @Override
