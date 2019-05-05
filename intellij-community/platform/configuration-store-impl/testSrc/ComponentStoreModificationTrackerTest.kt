@@ -61,7 +61,7 @@ internal class ComponentStoreModificationTrackerTest {
     }
 
     val component = A()
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
 
     assertThat(component.modificationCount).isEqualTo(0)
     assertThat(component.stateCalledCount.get()).isEqualTo(0)
@@ -128,7 +128,7 @@ internal class ComponentStoreModificationTrackerTest {
     }
 
     val component = A()
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
 
     assertThat(component.modificationCount.get()).isEqualTo(0)
     assertThat(component.stateCalledCount.get()).isEqualTo(0)

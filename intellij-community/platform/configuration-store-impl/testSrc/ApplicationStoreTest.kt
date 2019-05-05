@@ -68,7 +68,7 @@ internal class ApplicationStoreTest {
     componentStore.storageManager.removeStreamProvider(MyStreamProvider::class.java)
     componentStore.storageManager.addStreamProvider(streamProvider)
 
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
     component.foo = "newValue"
     componentStore.save()
 
@@ -87,7 +87,7 @@ internal class ApplicationStoreTest {
     val storageManager = componentStore.storageManager
     storageManager.removeStreamProvider(MyStreamProvider::class.java)
     storageManager.addStreamProvider(streamProvider)
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
     assertThat(component.foo).isEqualTo("newValue")
 
     assertThat(Paths.get(storageManager.expandMacros(fileSpec))).doesNotExist()
@@ -116,7 +116,7 @@ internal class ApplicationStoreTest {
 
     testAppConfig.refreshVfs()
 
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
     assertThat(component.foo).isEqualTo("new")
 
     component.foo = "new2"
@@ -152,7 +152,7 @@ internal class ApplicationStoreTest {
     testAppConfig.refreshVfs()
 
     val component = A()
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
 
     component.options.foo = "new"
 
@@ -203,7 +203,7 @@ internal class ApplicationStoreTest {
     testAppConfig.refreshVfs()
 
     val component = SeveralStoragesConfigured()
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
     assertThat(component.foo).isEqualTo("new")
 
     componentStore.save()
@@ -221,7 +221,7 @@ internal class ApplicationStoreTest {
     testAppConfig.refreshVfs()
 
     val component = A()
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
     assertThat(component.options).isEqualTo(TestState("old"))
 
     componentStore.save()
@@ -247,12 +247,12 @@ internal class ApplicationStoreTest {
     val component = A()
     component.isThrowErrorOnLoadState = true
     assertThatThrownBy {
-      componentStore.initComponent(component, false)
+      componentStore.initComponent(component, null)
     }.isInstanceOf(ProcessCanceledException::class.java)
     assertThat(component.options).isEqualTo(TestState())
 
     component.isThrowErrorOnLoadState = false
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
     assertThat(component.options).isEqualTo(TestState("old"))
   }
 
@@ -266,7 +266,7 @@ internal class ApplicationStoreTest {
     testAppConfig.refreshVfs()
 
     val component = AWorkspace()
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
     assertThat(component.options).isEqualTo(TestState("old"))
 
     try {
@@ -289,7 +289,7 @@ internal class ApplicationStoreTest {
     class AOther : A()
 
     val component = AOther()
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
     component.options.foo = "old"
 
     componentStore.save()
@@ -312,15 +312,15 @@ internal class ApplicationStoreTest {
     class COther : A()
 
     val component = AOther()
-    componentStore.initComponent(component, false)
+    componentStore.initComponent(component, null)
     component.options.foo = "old"
 
     val component2 = BOther()
-    componentStore.initComponent(component2, false)
+    componentStore.initComponent(component2, null)
     component2.options.foo = "old?"
 
     val component3 = COther()
-    componentStore.initComponent(component3, false)
+    componentStore.initComponent(component3, null)
     component3.options.bar = "foo"
 
     componentStore.save()

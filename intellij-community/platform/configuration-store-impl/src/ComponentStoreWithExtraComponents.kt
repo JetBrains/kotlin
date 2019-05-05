@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
+import com.intellij.openapi.components.ServiceDescriptor
 import com.intellij.openapi.components.SettingsSavingComponent
 import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.extensions.ExtensionPointName
@@ -36,7 +37,7 @@ abstract class ComponentStoreWithExtraComponents : ComponentStoreImpl() {
     }
   }
 
-  override fun initComponent(component: Any, isService: Boolean) {
+  override fun initComponent(component: Any, serviceDescriptor: ServiceDescriptor?) {
     @Suppress("DEPRECATION")
     if (component is com.intellij.configurationStore.SettingsSavingComponent) {
       asyncSettingsSavingComponents.add(component)
@@ -45,7 +46,7 @@ abstract class ComponentStoreWithExtraComponents : ComponentStoreImpl() {
       settingsSavingComponents.add(component)
     }
 
-    super.initComponent(component, isService)
+    super.initComponent(component, serviceDescriptor)
   }
 
   internal suspend fun saveSettingsSavingComponentsAndCommitComponents(result: SaveResult, forceSavingAllSettings: Boolean): SaveSessionProducerManager {

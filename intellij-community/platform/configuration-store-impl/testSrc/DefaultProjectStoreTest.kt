@@ -84,12 +84,12 @@ internal class DefaultProjectStoreTest {
         <main name="$TEST_COMPONENT_NAME"/><sub name="foo" /><sub name="bar" />
       </component>""".trimIndent()))
     val stateStore = ProjectManager.getInstance().defaultProject.stateStore as ComponentStoreImpl
-    stateStore.initComponent(defaultTestComponent, true)
+    stateStore.initComponent(defaultTestComponent, null)
     try {
       // obviously, project must be directory-based also
       createProjectAndUseInLoadComponentStateMode(tempDirManager, directoryBased = true) {
         val component = TestComponent()
-        it.stateStore.initComponent(component, true)
+        it.stateStore.initComponent(component, null)
         assertThat(component.state).isEqualTo(defaultTestComponent.state)
       }
     }

@@ -202,7 +202,7 @@ internal class ProjectStoreTest {
       class AOther : A()
 
       val component = AOther()
-      componentStore.initComponent(component, false)
+      componentStore.initComponent(component, null)
       assertThat(component.options.foo).isEqualTo("some data")
 
       componentStore.save()
@@ -237,7 +237,7 @@ internal class ProjectStoreTest {
 
   private suspend fun test(project: Project): TestComponent {
     val testComponent = TestComponent()
-    project.stateStore.initComponent(testComponent, true)
+    project.stateStore.initComponent(testComponent, null)
     assertThat(testComponent.state).isEqualTo(TestState("customValue"))
 
     testComponent.state!!.value = "foo"

@@ -24,6 +24,7 @@ import com.intellij.util.io.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.CalledInAny
 import java.nio.file.AccessDeniedException
 import java.nio.file.Path
@@ -32,7 +33,8 @@ import java.nio.file.Paths
 internal val IProjectStore.nameFile: Path
   get() = Paths.get(directoryStorePath, ProjectImpl.NAME_FILE)
 
-private open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
+@ApiStatus.Internal
+open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
   private var lastSavedProjectName: String? = null
 
   init {
@@ -145,7 +147,8 @@ private open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project
   }
 }
 
-private class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(project) {
+@ApiStatus.Internal
+open class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(project) {
   override suspend fun saveModules(errors: MutableList<Throwable>, isForceSavingAllSettings: Boolean): List<SaveSession> {
     val modules = ModuleManager.getInstance(project)?.modules ?: Module.EMPTY_ARRAY
     if (modules.isEmpty()) {

@@ -31,7 +31,7 @@ abstract class SaveSessionBase : SaveSessionProducer, SafeWriteRequestor, LargeF
     setSerializedState(componentName, element)
   }
 
-  protected abstract fun setSerializedState(componentName: String, element: Element?)
+  abstract fun setSerializedState(componentName: String, element: Element?)
 }
 
 internal fun serializeState(state: Any): Element? {
