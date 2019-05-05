@@ -119,6 +119,13 @@ public final class kotlin/NotImplementedError : java/lang/Error {
 	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public final class kotlin/NumbersKt {
+	public static final fun rotateLeft (BI)B
+	public static final fun rotateLeft (SI)S
+	public static final fun rotateRight (BI)B
+	public static final fun rotateRight (SI)S
+}
+
 public abstract interface annotation class kotlin/OptionalExpectation : java/lang/annotation/Annotation {
 }
 

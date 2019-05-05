@@ -59,3 +59,8 @@ public actual fun Float.toRawBits(): Int = definedExternally
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public actual inline fun Float.Companion.fromBits(bits: Int): Float = js("Kotlin").floatFromBits(bits).unsafeCast<Float>()
+
+
+internal inline fun Long(low: Int, high: Int) = js("Kotlin").Long.fromBits(low, high).unsafeCast<Long>()
+internal inline val Long.low: Int get() = this.asDynamic().getLowBits().unsafeCast<Int>()
+internal inline val Long.high: Int get() = this.asDynamic().getHighBits().unsafeCast<Int>()

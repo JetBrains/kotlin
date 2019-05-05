@@ -92,3 +92,152 @@ public actual inline fun Float.toRawBits(): Int = java.lang.Float.floatToRawIntB
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public actual inline fun Float.Companion.fromBits(bits: Int): Float = java.lang.Float.intBitsToFloat(bits)
+
+
+/**
+ * Counts the number of set bits in the binary representation of this [Int] number.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Int.countOneBits(): Int = Integer.bitCount(this)
+
+/**
+ * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Int] number.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Int.countLeadingZeroBits(): Int = Integer.numberOfLeadingZeros(this)
+
+/**
+ * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Int.countTrailingZeroBits(): Int = Integer.numberOfTrailingZeros(this)
+
+/**
+ * Returns a number having a single bit set in the position of the most significant set bit of this [Int] number,
+ * or zero, if this number is zero.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Int.takeHighestOneBit(): Int = Integer.highestOneBit(this)
+
+/**
+ * Returns a number having a single bit set in the position of the least significant set bit of this [Int] number,
+ * or zero, if this number is zero.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Int.takeLowestOneBit(): Int = Integer.lowestOneBit(this)
+
+/**
+ * Rotates the binary representation of this [Int] number left by the specified [bitCount] number of bits.
+ * The most significant bits pushed out from the left side reenter the number as the least significant bits on the right side.
+ *
+ * Rotating the number left by a negative bit count is the same as rotating it right by the negated bit count:
+ * `number.rotateLeft(-n) == number.rotateRight(n)`
+ *
+ * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
+ * `number.rotateLeft(n) == number.rotateLeft(n % 32)`
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Int.rotateLeft(bitCount: Int): Int = Integer.rotateLeft(this, bitCount)
+
+
+/**
+ * Rotates the binary representation of this [Int] number right by the specified [bitCount] number of bits.
+ * The least significant bits pushed out from the right side reenter the number as the most significant bits on the left side.
+ *
+ * Rotating the number right by a negative bit count is the same as rotating it left by the negated bit count:
+ * `number.rotateRight(-n) == number.rotateLeft(n)`
+ *
+ * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
+ * `number.rotateRight(n) == number.rotateRight(n % 32)`
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Int.rotateRight(bitCount: Int): Int = Integer.rotateRight(this, bitCount)
+
+
+/**
+ * Counts the number of set bits in the binary representation of this [Long] number.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Long.countOneBits(): Int = java.lang.Long.bitCount(this)
+
+/**
+ * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Long.countLeadingZeroBits(): Int = java.lang.Long.numberOfLeadingZeros(this)
+
+/**
+ * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Long.countTrailingZeroBits(): Int = java.lang.Long.numberOfTrailingZeros(this)
+
+/**
+ * Returns a number having a single bit set in the position of the most significant set bit of this [Long] number,
+ * or zero, if this number is zero.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Long.takeHighestOneBit(): Long = java.lang.Long.highestOneBit(this)
+
+/**
+ * Returns a number having a single bit set in the position of the least significant set bit of this [Long] number,
+ * or zero, if this number is zero.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Long.takeLowestOneBit(): Long = java.lang.Long.lowestOneBit(this)
+
+/**
+ * Rotates the binary representation of this [Long] number left by the specified [bitCount] number of bits.
+ * The most significant bits pushed out from the left side reenter the number as the least significant bits on the right side.
+ *
+ * Rotating the number left by a negative bit count is the same as rotating it right by the negated bit count:
+ * `number.rotateLeft(-n) == number.rotateRight(n)`
+ *
+ * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
+ * `number.rotateLeft(n) == number.rotateLeft(n % 64)`
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Long.rotateLeft(bitCount: Int): Long = java.lang.Long.rotateLeft(this, bitCount)
+
+/**
+ * Rotates the binary representation of this [Long] number right by the specified [bitCount] number of bits.
+ * The least significant bits pushed out from the right side reenter the number as the most significant bits on the left side.
+ *
+ * Rotating the number right by a negative bit count is the same as rotating it left by the negated bit count:
+ * `number.rotateRight(-n) == number.rotateLeft(n)`
+ *
+ * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
+ * `number.rotateRight(n) == number.rotateRight(n % 64)`
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Long.rotateRight(bitCount: Int): Long = java.lang.Long.rotateRight(this, bitCount)
+
+
