@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.fir.types.createArrayOf
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -103,7 +100,7 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
 
         if (valueParameter.isVararg) {
             val returnTypeRef = valueParameter.returnTypeRef
-            val returnType = returnTypeRef.coneTypeUnsafe()
+            val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
             valueParameter.transformReturnTypeRef(
                 StoreType,
                 valueParameter.returnTypeRef.withReplacedConeType(

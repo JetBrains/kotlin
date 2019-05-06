@@ -46,8 +46,8 @@ inline fun <reified T : FirScope> scopeSessionKey(): ScopeSessionKey<T> {
     return object : ScopeSessionKey<T>() {}
 }
 
-val USE_SITE = scopeSessionKey()
-val DECLARED = scopeSessionKey()
+val USE_SITE = scopeSessionKey<FirScope>()
+val DECLARED = scopeSessionKey<FirScope>()
 
 data class SubstitutionScopeKey<T : FirClassSubstitutionScope>(val type: ConeClassLikeType) : ScopeSessionKey<T>() {}
 
