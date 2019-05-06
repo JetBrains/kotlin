@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.typeUtil.unCapture
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -190,7 +191,7 @@ sealed class CallResolutionResult(
         return diagnostics.map {
             if (it !is NewConstraintError) return@map it
             val lowerType = it.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
-            val newLowerType = substitutor.safeSubstitute(lowerType)
+            val newLowerType = substitutor.safeSubstitute(lowerType.unCapture())
             NewConstraintError(newLowerType, it.upperType, it.position)
         }
     }
