@@ -48,18 +48,19 @@ private fun Flags.toVisibility() = VISIBILITY_FLAGS_MAP.entries.firstOrNull { (m
 
 private fun visitFunction(flags: Flags, name: String, addMember: (MemberVisibility) -> Unit) =
     object : KmFunctionVisitor() {
-        var jvmDesc: JvmMemberSignature? = null
+        var desc: JvmMemberSignature? = null
+
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
             if (type != JvmFunctionExtensionVisitor.TYPE) return null
             return object : JvmFunctionExtensionVisitor() {
-                override fun visit(desc: JvmMethodSignature?) {
-                    jvmDesc = desc
+                override fun visit(signature: JvmMethodSignature?) {
+                    desc = signature
                 }
             }
         }
 
         override fun visitEnd() {
-            jvmDesc?.let { jvmDesc ->
+            desc?.let { jvmDesc ->
                 addMember(MemberVisibility(jvmDesc, flags))
             }
         }
@@ -67,18 +68,19 @@ private fun visitFunction(flags: Flags, name: String, addMember: (MemberVisibili
 
 private fun visitConstructor(flags: Flags, addMember: (MemberVisibility) -> Unit) =
     object : KmConstructorVisitor() {
-        var jvmDesc: JvmMemberSignature? = null
+        var desc: JvmMemberSignature? = null
+
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? {
             if (type != JvmConstructorExtensionVisitor.TYPE) return null
             return object : JvmConstructorExtensionVisitor() {
-                override fun visit(desc: JvmMethodSignature?) {
-                    jvmDesc = desc
+                override fun visit(signature: JvmMethodSignature?) {
+                    desc = signature
                 }
             }
         }
 
         override fun visitEnd() {
-            jvmDesc?.let { signature ->
+            desc?.let { signature ->
                 addMember(MemberVisibility(signature, flags))
             }
         }
@@ -86,28 +88,30 @@ private fun visitConstructor(flags: Flags, addMember: (MemberVisibility) -> Unit
 
 private fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags, addMember: (MemberVisibility) -> Unit) =
     object : KmPropertyVisitor() {
-        var _fieldDesc: JvmMemberSignature? = null
-        var _getterDesc: JvmMemberSignature? = null
-        var _setterDesc: JvmMemberSignature? = null
+        var fieldDesc: JvmMemberSignature? = null
+        var getterDesc: JvmMemberSignature? = null
+        var setterDesc: JvmMemberSignature? = null
 
         override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? {
             if (type != JvmPropertyExtensionVisitor.TYPE) return null
             return object : JvmPropertyExtensionVisitor() {
-                override fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
-                    _fieldDesc = fieldDesc
-                    _getterDesc = getterDesc
-                    _setterDesc = setterDesc
+                override fun visit(
+                    fieldSignature: JvmFieldSignature?, getterSignature: JvmMethodSignature?, setterSignature: JvmMethodSignature?
+                ) {
+                    fieldDesc = fieldSignature
+                    getterDesc = getterSignature
+                    setterDesc = setterSignature
                 }
             }
         }
 
         override fun visitEnd() {
-            _getterDesc?.let { addMember(MemberVisibility(it, getterFlags)) }
-            _setterDesc?.let { addMember(MemberVisibility(it, setterFlags)) }
-            _fieldDesc?.let {
+            getterDesc?.let { addMember(MemberVisibility(it, getterFlags)) }
+            setterDesc?.let { addMember(MemberVisibility(it, setterFlags)) }
+            fieldDesc?.let {
                 val fieldVisibility = when {
                     Flag.Property.IS_LATEINIT(flags) -> setterFlags
-                    _getterDesc == null && _setterDesc == null -> flags // JvmField or const case
+                    getterDesc == null && setterDesc == null -> flags // JvmField or const case
                     else -> flagsOf(Flag.IS_PRIVATE)
                 }
                 addMember(MemberVisibility(it, fieldVisibility))
