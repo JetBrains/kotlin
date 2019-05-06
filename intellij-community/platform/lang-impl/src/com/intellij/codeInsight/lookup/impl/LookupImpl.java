@@ -36,7 +36,6 @@ import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
@@ -1230,11 +1229,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     }
   }
 
-  private void showItemPopup(JBPopup hint) {
-    final Rectangle bounds = getCurrentItemBounds();
-    hint.show(new RelativePoint(getComponent(), new Point(bounds.x + bounds.width, bounds.y)));
-  }
-
   @Override
   public boolean showElementActions() {
     if (!isVisible()) return false;
@@ -1250,7 +1244,10 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     }
 
     UIEventLogger.logUIEvent(UIEventId.LookupShowElementActions);
-    showItemPopup(JBPopupFactory.getInstance().createListPopup(new LookupActionsStep(actions, this, element)));
+
+    final Rectangle bounds = getCurrentItemBounds();
+    JBPopupFactory.getInstance().createListPopup(new LookupActionsStep(actions, this, element)).
+      show(new RelativePoint(getComponent(), new Point(bounds.x + bounds.width, bounds.y)));
     return true;
   }
 

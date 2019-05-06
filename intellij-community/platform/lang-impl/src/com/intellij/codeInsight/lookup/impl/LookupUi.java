@@ -13,23 +13,28 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
-import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.ScreenUtil;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLayeredPane;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.Alarm;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.ui.*;
+import com.intellij.util.ui.AbstractLayoutManager;
+import com.intellij.util.ui.AsyncProcessIcon;
+import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,11 +60,12 @@ class LookupUi {
   private final JBList myList;
   private final ModalityState myModalityState;
   private final Alarm myHintAlarm = new Alarm();
-  private final ActionButton myMenuButton;
   private final JScrollPane myScrollPane;
   private final AsyncProcessIcon myProcessIcon = new AsyncProcessIcon("Completion progress");
-
+  private final ActionButton myMenuButton;
   private final ActionButton myHintButton;
+  private final JComponent myBottomPanel;
+
   private int myMaximumHeight = Integer.MAX_VALUE;
   private Boolean myPositionedAbove = null;
 
@@ -80,17 +86,14 @@ class LookupUi {
                                     ActionPlaces.EDITOR_POPUP, ActionToolbar.NAVBAR_MINIMUM_BUTTON_SIZE);
     myHintButton.setVisible(false);
 
-    JPanel bottomPanel = new NonOpaquePanel(new GridBagLayout());
-    GridBag gb = new GridBag();
-
-    JComponent adComponent = advertiser.getAdComponent();
-    bottomPanel.add(adComponent, gb.next().weightx(1.0).fillCell().anchor(GridBagConstraints.CENTER));
-    bottomPanel.add(myProcessIcon, gb.next());
-    bottomPanel.add(myHintButton, gb.next());
-    bottomPanel.add(myMenuButton, gb.next());
+    myBottomPanel = new NonOpaquePanel(new LookupBottomLayout());
+    myBottomPanel.add(myAdvertiser.getAdComponent());
+    myBottomPanel.add(myProcessIcon);
+    myBottomPanel.add(myHintButton);
+    myBottomPanel.add(myMenuButton);
 
     LookupLayeredPane layeredPane = new LookupLayeredPane();
-    layeredPane.mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+    layeredPane.mainPanel.add(myBottomPanel, BorderLayout.SOUTH);
 
     myScrollPane = ScrollPaneFactory.createScrollPane(lookup.getList(), true);
     myScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -197,11 +200,10 @@ class LookupUi {
 
     if (calculating) {
       myProcessIcon.resume();
-      new Alarm(myLookup).addRequest(iconUpdater, 100, myModalityState);
     } else {
       myProcessIcon.suspend();
-      iconUpdater.run();
     }
+    new Alarm(myLookup).addRequest(iconUpdater, 100, myModalityState);
   }
 
   //private void updateSorting() {
@@ -311,13 +313,10 @@ class LookupUi {
           int scrollBarWidth = myScrollPane.getPreferredSize().width - myScrollPane.getViewport().getPreferredSize().width;
           int listWidth = Math.min(scrollBarWidth + maxCellWidth, UISettings.getInstance().getMaxLookupWidth());
 
-          Dimension adSize = myAdvertiser.getAdComponent().getPreferredSize();
-          Dimension menuButtonSize = myMenuButton.getPreferredSize();
-          Dimension hintButtonSize = myHintButton.isVisible() ? myHintButton.getPreferredSize() : JBUI.size(0);
-          Dimension processIconSize = myProcessIcon.isVisible() ? myProcessIcon.getPreferredSize() : JBUI.size(0);
+          Dimension bottomPanelSize = myBottomPanel.getPreferredSize();
 
-          int panelHeight = myScrollPane.getPreferredSize().height + adSize.height;
-          int width = Math.max(listWidth, adSize.width + menuButtonSize.width + processIconSize.width + hintButtonSize.width);
+          int panelHeight = myScrollPane.getPreferredSize().height + bottomPanelSize.height;
+          int width = Math.max(listWidth, bottomPanelSize.width);
           width = Math.min(width, Registry.intValue("ide.completion.max.width"));
           int height = Math.min(panelHeight, myMaximumHeight);
 
@@ -447,16 +446,16 @@ class LookupUi {
       group.add(new ChangeSortingAction());
       group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC));
 
-      ActionManagerImpl am = (ActionManagerImpl) ActionManager.getInstance();
-      ActionPopupMenu popupMenu = am.createActionPopupMenu(SORTING_MENU, group);
+      //ActionManagerImpl am = (ActionManagerImpl) ActionManager.getInstance();
+      //ActionPopupMenu popupMenu = am.createActionPopupMenu(SORTING_MENU, group);
+      //
+      //popupMenu.setTargetComponent(myLookup.getEditor().getContentComponent());
+      //JPopupMenu menu = popupMenu.getComponent();
 
-      popupMenu.setTargetComponent(myLookup.getEditor().getContentComponent());
-      JPopupMenu menu = popupMenu.getComponent();
-
-      menu.show(e.getInputEvent().getComponent(), 0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2));
-      //JBPopupFactory.getInstance().createActionGroupPopup(null, group, ((EditorImpl)myLookup.getEditor()).getDataContext(),
-      //                                                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false, ActionPlaces.EDITOR_POPUP).
-      //  show(new RelativePoint(e.getInputEvent().getComponent(), new Point(0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2))));
+      //menu.show(e.getInputEvent().getComponent(), 0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2));
+      JBPopupFactory.getInstance().createActionGroupPopup(null, group, ((EditorImpl)myLookup.getEditor()).getDataContext(),
+                                                          JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false, ActionPlaces.EDITOR_POPUP).
+        show(new RelativePoint(e.getInputEvent().getComponent(), new Point(0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2))));
     }
   }
 
@@ -475,6 +474,68 @@ class LookupUi {
         UISettings.getInstance().setSortLookupElementsLexicographically(!sortByName);
         myLookup.resort(false);
       }
+    }
+  }
+
+  private class LookupBottomLayout implements LayoutManager {
+    @Override
+    public void addLayoutComponent(String name, Component comp) {}
+
+    @Override
+    public void removeLayoutComponent(Component comp) {}
+
+    @Override
+    public Dimension preferredLayoutSize(Container parent) {
+      Dimension adSize = myAdvertiser.getAdComponent().getPreferredSize();
+      Dimension hintButtonSize = myHintButton.getPreferredSize();
+      Dimension menuButtonSize = myMenuButton.getPreferredSize();
+
+      return new Dimension(adSize.width + hintButtonSize.width + menuButtonSize.width,
+                           Math.max(adSize.height, menuButtonSize.height));
+    }
+
+    @Override
+    public Dimension minimumLayoutSize(Container parent) {
+      Dimension adSize = myAdvertiser.getAdComponent().getMinimumSize();
+      Dimension hintButtonSize = myHintButton.getMinimumSize();
+      Dimension menuButtonSize = myMenuButton.getMinimumSize();
+
+      return new Dimension(adSize.width + hintButtonSize.width + menuButtonSize.width,
+                           Math.max(adSize.height, menuButtonSize.height));
+    }
+
+    @Override
+    public void layoutContainer(Container parent) {
+      Dimension size = parent.getSize();
+
+      Dimension menuButtonSize = myMenuButton.getPreferredSize();
+      int x = size.width - menuButtonSize.width;
+      int y = (size.height - menuButtonSize.height) / 2;
+
+      myMenuButton.setBounds(x, y, menuButtonSize.width, menuButtonSize.height);
+
+      Dimension myHintButtonSize = myHintButton.getPreferredSize();
+      if (myHintButton.isVisible() && !myProcessIcon.isVisible()) {
+        x -= myHintButtonSize.width;
+        y = (size.height - myHintButtonSize.height) / 2;
+        myHintButton.setBounds(x, y, myHintButtonSize.width, myHintButtonSize.height);
+      }
+      else if (!myHintButton.isVisible() && myProcessIcon.isVisible()) {
+        Dimension myProcessIconSize = myProcessIcon.getPreferredSize();
+        x -= myProcessIconSize.width;
+        y = (size.height - myProcessIconSize.height) / 2;
+        myProcessIcon.setBounds(x, y, myProcessIconSize.width, myProcessIconSize.height);
+      }
+      else if (!myHintButton.isVisible() && !myProcessIcon.isVisible()) {
+        x -= myHintButtonSize.width;
+      }
+      else {
+        throw new IllegalStateException("Can't show both process icon and hint button");
+      }
+
+      Dimension adSize = myAdvertiser.getAdComponent().getPreferredSize();
+      y = (size.height - adSize.height) / 2;
+      myAdvertiser.getAdComponent().setBounds(0, y, x, adSize.height);
     }
   }
 
