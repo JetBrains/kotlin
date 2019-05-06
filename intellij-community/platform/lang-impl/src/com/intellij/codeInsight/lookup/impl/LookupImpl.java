@@ -148,11 +148,8 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     myList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     myList.setBackground(LookupCellRenderer.BACKGROUND_COLOR);
 
-    //myList.getExpandableItemsHandler();
-
     myAdComponent = new Advertiser();
     myAdComponent.setBackground(LookupCellRenderer.BACKGROUND_COLOR);
-    //myAdComponent.setBackground(JBColor.red);
 
     myOffsets = new LookupOffsets(myEditor);
 

@@ -47,7 +47,7 @@ import static com.intellij.codeInsight.documentation.DocumentationComponent.COLO
  * @author peter
  * @author Konstantin Bulenkov
  */
-public class LookupCellRenderer implements ListCellRenderer {
+public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.lookup.impl.LookupCellRenderer");
 
   //TODO[kb]: move all these awesome constants to Editor's Fonts & Colors settings
@@ -109,11 +109,10 @@ public class LookupCellRenderer implements ListCellRenderer {
   @Override
   public Component getListCellRendererComponent(
       final JList list,
-      Object value,
+      LookupElement item,
       int index,
       boolean isSelected,
       boolean hasFocus) {
-
 
     boolean nonFocusedSelection = isSelected && myLookup.getFocusDegree() == LookupImpl.FocusDegree.SEMI_FOCUSED;
     if (!myLookup.isFocused()) {
@@ -121,7 +120,6 @@ public class LookupCellRenderer implements ListCellRenderer {
     }
 
     myIsSelected = isSelected;
-    final LookupElement item = (LookupElement)value;
     final Color background = nonFocusedSelection ? SELECTED_NON_FOCUSED_BACKGROUND_COLOR :
                              isSelected ? SELECTED_BACKGROUND_COLOR : BACKGROUND_COLOR;
 
@@ -155,7 +153,7 @@ public class LookupCellRenderer implements ListCellRenderer {
     myNameComponent.setBackground(background);
 
     Color itemColor = presentation.getItemTextForeground();
-    allowedWidth -= setItemTextLabel(item, itemColor, isSelected, presentation, allowedWidth);
+    allowedWidth -= setItemTextLabel(item, itemColor, presentation, allowedWidth);
 
     Font font = myLookup.getCustomFont(item, false);
     if (font == null) {
@@ -307,11 +305,12 @@ public class LookupCellRenderer implements ListCellRenderer {
     return defaultForeground;
   }
 
+  @SuppressWarnings("unused")
   public static Color getGrayedForeground(boolean isSelected) {
     return UIUtil.getContextHelpForeground();
   }
 
-  private int setItemTextLabel(LookupElement item, final Color foreground, final boolean selected, LookupElementPresentation presentation, int allowedWidth) {
+  private int setItemTextLabel(LookupElement item, final Color foreground, LookupElementPresentation presentation, int allowedWidth) {
     boolean bold = presentation.isItemTextBold();
 
     Font customItemFont = myLookup.getCustomFont(item, bold);
@@ -322,7 +321,7 @@ public class LookupCellRenderer implements ListCellRenderer {
     final String name = trimLabelText(presentation.getItemText(), allowedWidth, metrics);
     int used = RealLookupElementPresentation.getStringWidth(name, metrics);
 
-    renderItemName(item, foreground, selected, style, name, myNameComponent);
+    renderItemName(item, foreground, style, name, myNameComponent);
     return used;
   }
 
@@ -352,7 +351,6 @@ public class LookupCellRenderer implements ListCellRenderer {
 
   private void renderItemName(LookupElement item,
                       Color foreground,
-                      boolean selected,
                       @SimpleTextAttributes.StyleAttributeConstant int style,
                       String name,
                       final SimpleColoredComponent nameComponent) {
@@ -482,7 +480,7 @@ public class LookupCellRenderer implements ListCellRenderer {
     }
   }
 
-  private class LookupPanel extends JPanel {
+  private static class LookupPanel extends JPanel {
     boolean myUpdateExtender;
     LookupPanel() {
       super(new BorderLayout());
