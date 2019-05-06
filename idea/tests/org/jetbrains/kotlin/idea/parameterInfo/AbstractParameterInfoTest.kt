@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -51,6 +52,9 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
         myFixture.configureByFile(fileName)
 
         val file = myFixture.file as KtFile
+
+        configureCompilerOptions(file.text, project, myFixture.module)
+
         val lastChild = file.allChildren.filter { it !is PsiWhiteSpace }.last()
         val expectedResultText = when (lastChild.node.elementType) {
             KtTokens.BLOCK_COMMENT -> lastChild.text.substring(2, lastChild.text.length - 2).trim()

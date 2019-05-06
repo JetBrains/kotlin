@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 fun bar(p1: String, p2: String?, p3: () -> Boolean)
 
 fun foo(i: I) {

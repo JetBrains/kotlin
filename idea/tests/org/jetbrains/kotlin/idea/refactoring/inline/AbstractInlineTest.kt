@@ -18,6 +18,7 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -38,6 +39,8 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
         }
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(path.replace(mainFileName, it.name)) }
         val file = myFixture.configureByFile(path)
+
+        configureCompilerOptions(file.text, project, module)
 
         val afterFileExists = afterFile.exists()
 
