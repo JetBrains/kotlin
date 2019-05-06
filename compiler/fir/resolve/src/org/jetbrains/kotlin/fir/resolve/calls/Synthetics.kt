@@ -22,7 +22,11 @@ interface SyntheticSymbol : ConeSymbol
 
 class SyntheticPropertySymbol(callableId: CallableId) : FirPropertySymbol(callableId), SyntheticSymbol
 
-class FirSyntheticPropertiesScope(val session: FirSession, val baseScope: FirScope, val typeCalculator: ReturnTypeCalculator) : FirScope {
+class FirSyntheticPropertiesScope(
+    val session: FirSession,
+    private val baseScope: FirScope,
+    private val typeCalculator: ReturnTypeCalculator
+) : FirScope {
 
     val synthetic: MutableMap<ConeCallableSymbol, ConeVariableSymbol> = mutableMapOf()
 
@@ -47,18 +51,18 @@ class FirSyntheticPropertiesScope(val session: FirSession, val baseScope: FirSco
             name,
             fir.visibility,
             fir.modality,
-            false,
-            false,
-            false,
-            false,
-            false,
-            null,
-            returnTypeRef,
-            true,
-            null,
-            FirDefaultPropertyGetter(session, null, returnTypeRef, fir.visibility),
-            FirDefaultPropertySetter(session, null, returnTypeRef, fir.visibility),
-            null
+            isExpect = false,
+            isActual = false,
+            isOverride = false,
+            isConst = false,
+            isLateInit = false,
+            receiverTypeRef = null,
+            returnTypeRef = returnTypeRef,
+            isVar = true,
+            initializer = null,
+            getter = FirDefaultPropertyGetter(session, null, returnTypeRef, fir.visibility),
+            setter = FirDefaultPropertySetter(session, null, returnTypeRef, fir.visibility),
+            delegate = null
         )
         return processor(synthetic)
     }

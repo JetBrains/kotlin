@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 //copied from old j2k
 fun canKeepEqEq(left: PsiExpression, right: PsiExpression?): Boolean {
     if (left.isNullLiteral() || (right?.isNullLiteral() == true)) return true
-    val type = left.type
-    when (type) {
+    when (val type = left.type) {
         is PsiPrimitiveType, is PsiArrayType -> return true
 
         is PsiClassType -> {
@@ -84,7 +83,7 @@ fun PsiMember.modality(assignNonCodeElements: ((JKNonCodeElementsListOwner, PsiE
 private fun PsiMember.handleProtectedVisibility(referenceSearcher: ReferenceSearcher): Visibility {
     val originalClass = containingClass ?: return Visibility.PROTECTED
     // Search for usages only in Java because java-protected member cannot be used in Kotlin from same package
-    val usages = referenceSearcher.findUsagesForExternalCodeProcessing(this, true, false)
+    val usages = referenceSearcher.findUsagesForExternalCodeProcessing(this, searchJava = true, searchKotlin = false)
 
     return if (usages.any { !allowProtected(it.element, this, originalClass) })
         Visibility.PUBLIC

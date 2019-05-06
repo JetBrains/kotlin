@@ -105,7 +105,7 @@ private fun getActualTargetList(annotated: PsiTarget): AnnotationChecker.Compani
                 else -> T_MEMBER_FUNCTION
             }
         is PsiExpression -> T_EXPRESSION
-        is PsiField -> T_MEMBER_PROPERTY(true, false)
+        is PsiField -> T_MEMBER_PROPERTY(backingField = true, delegate = false)
         is PsiLocalVariable -> T_LOCAL_VARIABLE
         is PsiParameter -> T_VALUE_PARAMETER_WITHOUT_VAL
         else -> EMPTY

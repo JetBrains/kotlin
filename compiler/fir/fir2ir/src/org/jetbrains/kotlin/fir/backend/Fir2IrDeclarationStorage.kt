@@ -300,7 +300,7 @@ class Fir2IrDeclarationStorage(
                         startOffset, endOffset, origin, symbol,
                         constructor.name, constructor.visibility,
                         constructor.returnTypeRef.toIrType(session, this),
-                        false, false, isPrimary
+                        isInline = false, isExternal = false, isPrimary = isPrimary
                     ).bindAndDeclareParameters(constructor, descriptor, setParent, shouldLeaveScope)
                 }
             }

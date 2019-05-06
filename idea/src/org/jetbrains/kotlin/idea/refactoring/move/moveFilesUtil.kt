@@ -38,11 +38,11 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 fun invokeMoveFilesOrDirectoriesRefactoring(
-        moveDialog: KotlinAwareMoveFilesOrDirectoriesDialog?,
-        project: Project,
-        elements: Array<out PsiElement>,
-        initialTargetDirectory: PsiDirectory?,
-        moveCallback: MoveCallback?
+    moveDialog: KotlinAwareMoveFilesOrDirectoriesDialog?,
+    project: Project,
+    elements: Array<out PsiElement>,
+    initialTargetDirectory: PsiDirectory?,
+    moveCallback: MoveCallback?
 ) {
     fun closeDialog() {
         moveDialog?.close(DialogWrapper.CANCEL_EXIT_CODE)
@@ -55,19 +55,19 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
         try {
             val choice = if (elements.size > 1 || elements[0] is PsiDirectory) intArrayOf(-1) else null
             val elementsToMove = elements
-                    .filterNot {
-                        it is PsiFile
-                        && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move") }
+                .filterNot {
+                    it is PsiFile
+                            && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move") }
+                }
+                .sortedWith( // process Kotlin files first so that light classes are updated before changing references in Java files
+                    java.util.Comparator { o1, o2 ->
+                        when {
+                            o1 is KtElement && o2 !is KtElement -> -1
+                            o1 !is KtElement && o2 is KtElement -> 1
+                            else -> 0
+                        }
                     }
-                    .sortedWith( // process Kotlin files first so that light classes are updated before changing references in Java files
-                            java.util.Comparator { o1, o2 ->
-                                when {
-                                    o1 is KtElement && o2 !is KtElement -> -1
-                                    o1 !is KtElement && o2 is KtElement -> 1
-                                    else -> 0
-                                }
-                            }
-                    )
+                )
 
             elementsToMove.forEach {
                 MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir)
@@ -79,22 +79,20 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
             if (elementsToMove.isNotEmpty()) {
                 @Suppress("UNCHECKED_CAST")
                 val processor = KotlinAwareMoveFilesOrDirectoriesProcessor(
-                        project,
-                        elementsToMove as List<KtFile>,
-                        selectedDir,
-                        moveDialog?.searchReferences ?: true,
-                        false,
-                        false,
-                        moveCallback,
-                        Runnable(::closeDialog)
+                    project,
+                    elementsToMove as List<KtFile>,
+                    selectedDir,
+                    searchReferences = moveDialog?.searchReferences ?: true,
+                    searchInComments = false,
+                    searchInNonJavaFiles = false,
+                    moveCallback = moveCallback,
+                    prepareSuccessfulCallback = Runnable(::closeDialog)
                 )
                 processor.run()
-            }
-            else {
+            } else {
                 closeDialog()
             }
-        }
-        catch (e: IncorrectOperationException) {
+        } catch (e: IncorrectOperationException) {
             CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("error.title"), e.message, "refactoring.moveFile", project)
         }
     }
@@ -102,12 +100,12 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
 
 // Mostly copied from MoveFilesOrDirectoriesUtil.doMove()
 fun moveFilesOrDirectories(
-        project: Project,
-        elements: Array<PsiElement>,
-        targetElement: PsiElement?,
-        moveCallback: MoveCallback? = null
+    project: Project,
+    elements: Array<PsiElement>,
+    targetElement: PsiElement?,
+    moveCallback: MoveCallback? = null
 ) {
-    elements.forEach { if (it !is PsiFile && it !is PsiDirectory) throw IllegalArgumentException("unexpected element type: " + it) }
+    elements.forEach { if (it !is PsiFile && it !is PsiDirectory) throw IllegalArgumentException("unexpected element type: $it") }
 
     val targetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, targetElement)
     if (targetElement != null && targetDirectory == null) return

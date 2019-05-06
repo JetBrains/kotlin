@@ -85,7 +85,7 @@ object SourceNavigationHelper {
     private fun Collection<GlobalSearchScope>.union(): List<GlobalSearchScope> =
         if (this.isNotEmpty()) listOf(GlobalSearchScope.union(this.toTypedArray())) else emptyList()
 
-    private fun haveRenamesInImports(files: Collection<KtFile>) = files.any { it.importDirectives.any { it.aliasName != null } }
+    private fun haveRenamesInImports(files: Collection<KtFile>) = files.any { file -> file.importDirectives.any { it.aliasName != null } }
 
     private fun findSpecialProperty(memberName: Name, containingClass: KtClass): KtNamedDeclaration? {
         // property constructor parameters
@@ -191,7 +191,7 @@ object SourceNavigationHelper {
     ): T? {
         val classFqName = entity.fqName ?: return null
         return targetScopes(entity, navigationKind).firstNotNullResult { scope ->
-            index.get(classFqName.asString(), entity.project, scope).sortedBy { it.isExpectDeclaration() }.firstOrNull()
+            index.get(classFqName.asString(), entity.project, scope).minBy { it.isExpectDeclaration() }
         }
     }
 
@@ -273,7 +273,15 @@ object SourceNavigationHelper {
             SourceNavigationHelper.NavigationKind.SOURCES_TO_CLASS_FILES -> {
                 val file = from.containingFile
                 if (file is KtFile && file.isCompiled) return from
-                if (!ProjectRootsUtil.isInContent(from, false, true, false, true, false)) return from
+                if (!ProjectRootsUtil.isInContent(
+                        from,
+                        includeProjectSource = false,
+                        includeLibrarySource = true,
+                        includeLibraryClasses = false,
+                        includeScriptDependencies = true,
+                        includeScriptsOutsideSourceRoots = false
+                    )
+                ) return from
                 if (KtPsiUtil.isLocal(from)) return from
             }
         }
