@@ -66,8 +66,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   void createToolWindowContent(@NotNull ToolWindow toolWindow) {
-    ServiceViewUi ui = new ServiceViewUi(myState.viewState);
-    myServiceView = new ServiceView(myProject, ui, myState.viewState);
+    ServiceViewModel model = new ServiceViewModel.AllServicesModel(myProject);
+    myProject.getMessageBus().connect(model).subscribe(ServiceViewEventListener.TOPIC, model::refresh);
+    myServiceView = ServiceView.createTreeView(myProject, model, myState.viewState);
 
     Content toolWindowContent = ContentFactory.SERVICE.getInstance().createContent(myServiceView, null, false);
     toolWindowContent.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
@@ -75,6 +76,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     toolWindowContent.setCloseable(false);
 
     Disposer.register(toolWindowContent, myServiceView);
+    Disposer.register(toolWindowContent, model);
     Disposer.register(toolWindowContent, () -> myServiceView = null);
 
     toolWindow.getContentManager().addContent(toolWindowContent);
@@ -151,7 +153,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   public State getState() {
     ServiceView serviceView = myServiceView;
     if (serviceView != null) {
-      myState.viewState = serviceView.getState();
+      serviceView.saveState(myState.viewState);
       myState.viewState.treeStateElement = new Element("root");
       myState.viewState.treeState.writeExternal(myState.viewState.treeStateElement);
     }
