@@ -8,7 +8,6 @@ package kotlin.script.experimental.jvmhost.test
 import com.intellij.openapi.application.ApplicationManager
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.resetApplicationToNull
 import java.io.Closeable
 import java.util.concurrent.atomic.AtomicInteger
@@ -18,7 +17,8 @@ import kotlin.script.experimental.jvmhost.repl.JvmReplEvaluator
 
 // Adapted form GenericReplTest
 
-class LegacyReplTest : KtUsefulTestCase() {
+// Artificial split into several testsuites, to speed up parallel testing
+class LegacyReplTest : TestCase() {
     fun testReplBasics() {
         LegacyTestRepl().use { repl ->
             val res1 = repl.replCompiler.check(repl.state, ReplCodeLine(0, 0, "val x ="))
@@ -61,31 +61,6 @@ class LegacyReplTest : KtUsefulTestCase() {
         }
     }
 
-    fun test256Evals() {
-        LegacyTestRepl().use { repl ->
-            repl.compileAndEval(ReplCodeLine(0, 0, "val x0 = 0"))
-
-            val evals = 256
-            for (i in 1..evals) {
-                repl.compileAndEval(ReplCodeLine(i, 0, "val x$i = x${i-1} + 1"))
-            }
-
-            val res = repl.compileAndEval(ReplCodeLine(evals + 1, 0, "x$evals"))
-            assertEquals(res.second.toString(), evals, (res.second as? ReplEvalResult.ValueResult)?.value)
-        }
-    }
-
-    fun testReplSlowdownKt22740() {
-        LegacyTestRepl().use { repl ->
-            repl.compileAndEval(ReplCodeLine(0, 0, "class Test<T>(val x: T) { fun <R> map(f: (T) -> R): R = f(x) }".trimIndent()))
-
-            // We expect that analysis time is not exponential
-            for (i in 1..60) {
-                repl.compileAndEval(ReplCodeLine(i, 0, "fun <T> Test<T>.map(f: (T) -> Double): List<Double> = listOf(f(this.x))"))
-            }
-        }
-    }
-
     fun testReplResultFieldWithFunction() {
         LegacyTestRepl().use { repl ->
             assertEvalResultIs<Function0<Int>>(repl, "{ 1 + 2 }")
@@ -100,42 +75,40 @@ class LegacyReplTest : KtUsefulTestCase() {
             assertEvalResult(repl, "res0 + 3", 23)
         }
     }
+}
 
-    private fun assertEvalUnit(repl: LegacyTestRepl, line: String) {
-        val compiledClasses = checkCompile(repl, line)
+// Artificial split into several testsuites, to speed up parallel testing
+class LegacyReplTestLong1 : TestCase() {
 
-        val evalResult = repl.compiledEvaluator.eval(repl.state, compiledClasses!!)
-        val unitResult = evalResult as? ReplEvalResult.UnitResult
-        TestCase.assertNotNull("Unexpected eval result: $evalResult", unitResult)
-    }
+    fun test256Evals() {
+        LegacyTestRepl().use { repl ->
+            repl.compileAndEval(ReplCodeLine(0, 0, "val x0 = 0"))
 
-    private fun<R> assertEvalResult(repl: LegacyTestRepl, line: String, expectedResult: R) {
-        val compiledClasses = checkCompile(repl, line)
+            val evals = 256
+            for (i in 1..evals) {
+                repl.compileAndEval(ReplCodeLine(i, 0, "val x$i = x${i-1} + 1"))
+            }
 
-        val evalResult = repl.compiledEvaluator.eval(repl.state, compiledClasses!!)
-        val valueResult = evalResult as? ReplEvalResult.ValueResult
-        TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-        TestCase.assertEquals(expectedResult, valueResult!!.value)
-    }
-
-    private inline fun<reified R> assertEvalResultIs(repl: LegacyTestRepl, line: String) {
-        val compiledClasses = checkCompile(repl, line)
-
-        val evalResult = repl.compiledEvaluator.eval(repl.state, compiledClasses!!)
-        val valueResult = evalResult as? ReplEvalResult.ValueResult
-        TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-        TestCase.assertTrue(valueResult!!.value is R)
-    }
-
-    private fun checkCompile(repl: LegacyTestRepl, line: String): ReplCompileResult.CompiledClasses? {
-        val codeLine = repl.nextCodeLine(line)
-        val compileResult = repl.replCompiler.compile(repl.state, codeLine)
-        val compiledClasses = compileResult as? ReplCompileResult.CompiledClasses
-        TestCase.assertNotNull("Unexpected compile result: $compileResult", compiledClasses)
-        return compiledClasses
+            val res = repl.compileAndEval(ReplCodeLine(evals + 1, 0, "x$evals"))
+            assertEquals(res.second.toString(), evals, (res.second as? ReplEvalResult.ValueResult)?.value)
+        }
     }
 }
 
+// Artificial split into several testsuites, to speed up parallel testing
+class LegacyReplTestLong2 : TestCase() {
+
+    fun testReplSlowdownKt22740() {
+        LegacyTestRepl().use { repl ->
+            repl.compileAndEval(ReplCodeLine(0, 0, "class Test<T>(val x: T) { fun <R> map(f: (T) -> R): R = f(x) }".trimIndent()))
+
+            // We expect that analysis time is not exponential
+            for (i in 1..60) {
+                repl.compileAndEval(ReplCodeLine(i, 0, "fun <T> Test<T>.map(f: (T) -> Double): List<Double> = listOf(f(this.x))"))
+            }
+        }
+    }
+}
 
 internal class LegacyTestRepl : Closeable {
     val application = ApplicationManager.getApplication()
@@ -172,4 +145,38 @@ private fun LegacyTestRepl.compileAndEval(codeLine: ReplCodeLine): Pair<ReplComp
         compiledEvaluator.eval(state, it)
     }
     return compRes to evalRes
+}
+
+private fun assertEvalUnit(repl: LegacyTestRepl, line: String) {
+    val compiledClasses = checkCompile(repl, line)
+
+    val evalResult = repl.compiledEvaluator.eval(repl.state, compiledClasses!!)
+    val unitResult = evalResult as? ReplEvalResult.UnitResult
+    TestCase.assertNotNull("Unexpected eval result: $evalResult", unitResult)
+}
+
+private fun<R> assertEvalResult(repl: LegacyTestRepl, line: String, expectedResult: R) {
+    val compiledClasses = checkCompile(repl, line)
+
+    val evalResult = repl.compiledEvaluator.eval(repl.state, compiledClasses!!)
+    val valueResult = evalResult as? ReplEvalResult.ValueResult
+    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
+    TestCase.assertEquals(expectedResult, valueResult!!.value)
+}
+
+private inline fun<reified R> assertEvalResultIs(repl: LegacyTestRepl, line: String) {
+    val compiledClasses = checkCompile(repl, line)
+
+    val evalResult = repl.compiledEvaluator.eval(repl.state, compiledClasses!!)
+    val valueResult = evalResult as? ReplEvalResult.ValueResult
+    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
+    TestCase.assertTrue(valueResult!!.value is R)
+}
+
+private fun checkCompile(repl: LegacyTestRepl, line: String): ReplCompileResult.CompiledClasses? {
+    val codeLine = repl.nextCodeLine(line)
+    val compileResult = repl.replCompiler.compile(repl.state, codeLine)
+    val compiledClasses = compileResult as? ReplCompileResult.CompiledClasses
+    TestCase.assertNotNull("Unexpected compile result: $compileResult", compiledClasses)
+    return compiledClasses
 }
