@@ -64,6 +64,14 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
                 cacheManager?.invalidateAndGetDirtyFiles(
                     options.changedFiles, options.classpathChanges
                 ) ?: SourcesToReprocess.FullRebuild
+
+            if (sourcesToReprocess == SourcesToReprocess.FullRebuild) {
+                // remove all generated sources and classes
+                options.sourcesOutputDir.deleteRecursively()
+                options.sourcesOutputDir.mkdir()
+                options.classesOutputDir.deleteRecursively()
+                options.classesOutputDir.mkdir()
+            }
         } else {
             sourcesToReprocess = SourcesToReprocess.FullRebuild
         }
