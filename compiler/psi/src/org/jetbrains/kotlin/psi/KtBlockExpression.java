@@ -21,7 +21,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiModifiableCodeBlock;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
 import com.intellij.psi.util.PsiUtilCore;
@@ -97,14 +96,6 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public PsiReference getReference() {
-        PsiReference[] references = getReferences();
-        if (references.length == 1) return references[0];
-        else return null;
-    }
-
-    @Override
     @NotNull
     public PsiElement[] getChildren() {
         PsiElement psiChild = getFirstChild();
@@ -118,12 +109,6 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
             psiChild = psiChild.getNextSibling();
         }
         return result == null ? PsiElement.EMPTY_ARRAY : PsiUtilCore.toPsiElementArray(result);
-    }
-
-    @NotNull
-    @Override
-    public PsiReference[] getReferences() {
-        return KotlinReferenceProvidersService.getReferencesFromProviders(this);
     }
 
     @NotNull
