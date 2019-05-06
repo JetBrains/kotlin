@@ -15,8 +15,7 @@ import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String =
-            File(TEST_DATA_BASE_PATH, "/context").path + File.separator
+    override fun getTestDataPath(): String = File(TEST_DATA_BASE_PATH, "/context").path + File.separator
 
     fun testInDocComment() {
         assertInContexts(Generic::class.java, Comment::class.java)
@@ -84,7 +83,7 @@ class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
 
     private fun assertInContexts(vararg expectedContexts: java.lang.Class<out KotlinTemplateContextType>) {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val allContexts = TemplateContextType.EP_NAME.extensions.filter { it is KotlinTemplateContextType }
+        val allContexts = TemplateContextType.EP_NAME.extensions.filterIsInstance<KotlinTemplateContextType>()
         val enabledContexts = allContexts.filter { it.isInContext(myFixture.file, myFixture.caretOffset) }.map { it::class.java }
         UsefulTestCase.assertSameElements(enabledContexts, *expectedContexts)
     }
