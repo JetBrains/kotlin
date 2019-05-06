@@ -829,7 +829,7 @@ public inline fun <K> CharSequence.groupingBy(crossinline keySelector: (Char) ->
  * Returns a list containing the results of applying the given [transform] function
  * to each character in the original char sequence.
  * 
- * @sample samples.collections.Collections.Transformations.map
+ * @sample samples.text.Strings.map
  */
 public inline fun <R> CharSequence.map(transform: (Char) -> R): List<R> {
     return mapTo(ArrayList<R>(length), transform)

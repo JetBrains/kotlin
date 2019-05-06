@@ -395,8 +395,8 @@ class Collections {
 
         @Sample
         fun map() {
-            val numbers = listOf(75, 111, 116, 108, 105, 110)
-            assertPrints(numbers.map { it.toChar() }, "[K, o, t, l, i, n]")
+            val numbers = listOf(1, 2, 3)
+            assertPrints(numbers.map { it * it }, "[1, 4, 9]")
         }
 
         @Sample
