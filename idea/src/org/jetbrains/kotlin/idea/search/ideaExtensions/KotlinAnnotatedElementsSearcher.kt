@@ -49,7 +49,7 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
     override fun execute(p: AnnotatedElementsSearch.Parameters, consumer: Processor<in PsiModifierListOwner>): Boolean {
         return processAnnotatedMembers(p.annotationClass, p.scope) { declaration ->
             when (declaration) {
-                is KtClass -> {
+                is KtClassOrObject -> {
                     val lightClass = declaration.toLightClass()
                     consumer.process(lightClass)
                 }
