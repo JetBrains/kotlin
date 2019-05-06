@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.DimensionService;
 import com.intellij.openapi.util.MutualMap;
+import com.intellij.openapi.wm.impl.TabsHeightController;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.panels.NonOpaquePanel;
@@ -78,7 +79,7 @@ public class GridCellImpl implements GridCell {
       @Override
       @NotNull
       public UiDecoration getDecoration() {
-        return new UiDecoration(null, JBTabsFactory.getUseNewTabs()? JBUI.insets(5, 8, 4, 9) : new Insets(1, -1, 1, -1));
+        return new UiDecoration(null, JBTabsFactory.getUseNewTabs()? JBUI.insets(0, 8, 0, 9) : new Insets(1, -1, 1, -1));
       }
     }).setSideComponentVertical(!context.getLayoutSettings().isToolbarHorizontal())
       .setStealthTabMode(!JBTabsFactory.getUseNewTabs()).setFocusCycle(false).setPaintFocus(true)
@@ -492,6 +493,15 @@ public class GridCellImpl implements GridCell {
         @Override
         public void setAlignmentToCenter(boolean toCenter) {
           super.setAlignmentToCenter(false);
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+          Dimension size = super.getPreferredSize();
+
+          Insets insets = getInsets();
+
+          return new Dimension(size.width, TabsHeightController.getToolWindowHeight().getValue() - insets.top - insets.bottom);
         }
       };
     }
