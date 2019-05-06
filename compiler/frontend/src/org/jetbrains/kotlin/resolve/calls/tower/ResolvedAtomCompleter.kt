@@ -102,11 +102,13 @@ class ResolvedAtomCompleter(
         else
             topLevelCallCheckerContext
 
-        kotlinToResolvedCallTransformer.bindAndReport(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
+        kotlinToResolvedCallTransformer.bind(topLevelTrace, resolvedCall)
 
         kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
         kotlinToResolvedCallTransformer.runAdditionalReceiversCheckers(resolvedCall, topLevelCallContext)
+
+        kotlinToResolvedCallTransformer.reportDiagnostics(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
 
         return resolvedCall
     }
@@ -153,7 +155,9 @@ class ResolvedAtomCompleter(
                     .replaceBindingTrace(topLevelTrace)
 
             val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
-            kotlinToResolvedCallTransformer.updateRecordedType(argumentExpression, newContext, true)
+            kotlinToResolvedCallTransformer.updateRecordedType(
+                argumentExpression, parameter = null, context = newContext, reportErrorForTypeMismatch = true
+            )
         }
     }
 
