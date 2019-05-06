@@ -173,6 +173,16 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/suspendReifiedFun.kt", "kotlin.coroutines");
     }
 
+    @TestMetadata("tcoContinuation.kt")
+    public void testTcoContinuation_1_2() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/tcoContinuation.kt", "kotlin.coroutines.experimental");
+    }
+
+    @TestMetadata("tcoContinuation.kt")
+    public void testTcoContinuation_1_3() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/tcoContinuation.kt", "kotlin.coroutines");
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

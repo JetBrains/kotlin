@@ -5,6 +5,8 @@ import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
+suspend fun dummy() {}
+
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
@@ -20,7 +22,7 @@ inline fun inlineMe(crossinline c: suspend () -> String) = object : SuspendRunna
 fun box(): String {
     var res = "FAIL"
     builder {
-        res = inlineMe { "OK" }.run()
+        res = inlineMe { dummy(); "OK" }.run()
     }
     return res
 }

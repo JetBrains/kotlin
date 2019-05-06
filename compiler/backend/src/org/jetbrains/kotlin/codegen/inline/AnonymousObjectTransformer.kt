@@ -141,7 +141,7 @@ class AnonymousObjectTransformer(
             superClassName,
             allCapturedParamBuilder.listCaptured()
         )
-        loop@for (next in methodsToTransform) {
+        loop@ for (next in methodsToTransform) {
             val deferringVisitor =
                 when {
                     coroutineTransformer.shouldSkip(next) -> continue@loop
@@ -162,9 +162,15 @@ class AnonymousObjectTransformer(
         }
 
         deferringMethods.forEach { method ->
+            val continuationToRemove = CoroutineTransformer.findFakeContinuationConstructorClassName(method.intermediate)
+            val oldContinuationName = coroutineTransformer.oldContinuationFrom(method.intermediate)
             coroutineTransformer.replaceFakesWithReals(method.intermediate)
             removeFinallyMarkers(method.intermediate)
             method.visitEnd()
+            if (continuationToRemove != null && coroutineTransformer.safeToRemoveContinuationClass(method.intermediate)) {
+                transformationResult.addClassToRemove(continuationToRemove)
+                innerClassNodes.removeIf { it.name == oldContinuationName }
+            }
         }
 
         SourceMapper.flushToClassBuilder(sourceMapper, classBuilder)
