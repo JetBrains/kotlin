@@ -1108,6 +1108,46 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/explicitLambdaParameter.kt");
             }
 
+            @TestMetadata("filterNotNullBrackets.kt")
+            public void testFilterNotNullBrackets() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterNotNullBrackets.kt");
+            }
+
+            @TestMetadata("filterNotNullDestructuring.kt")
+            public void testFilterNotNullDestructuring() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterNotNullDestructuring.kt");
+            }
+
+            @TestMetadata("filterNotNullExplicit.kt")
+            public void testFilterNotNullExplicit() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterNotNullExplicit.kt");
+            }
+
+            @TestMetadata("filterNotNullFake.kt")
+            public void testFilterNotNullFake() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterNotNullFake.kt");
+            }
+
+            @TestMetadata("filterNotNullIdentity.kt")
+            public void testFilterNotNullIdentity() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterNotNullIdentity.kt");
+            }
+
+            @TestMetadata("filterNotNullMap.kt")
+            public void testFilterNotNullMap() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterNotNullMap.kt");
+            }
+
+            @TestMetadata("filterNotNullReverse.kt")
+            public void testFilterNotNullReverse() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterNotNullReverse.kt");
+            }
+
+            @TestMetadata("filterNotNullSimple.kt")
+            public void testFilterNotNullSimple() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterNotNullSimple.kt");
+            }
+
             @TestMetadata("notOnlyReference.kt")
             public void testNotOnlyReference() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/notOnlyReference.kt");
