@@ -37,6 +37,17 @@ public class MoveHandler implements RefactoringActionHandler {
     if (element == null) {
       element = file;
     }
+
+    final TextRange range = element.getTextRange();
+    if (range != null) {
+      int relative = offset - range.getStartOffset();
+      final PsiReference reference = element.findReferenceAt(relative);
+      if (reference != null) {
+        final PsiElement refElement = reference.resolve();
+        if (refElement != null && tryToMoveElement(refElement, project, dataContext, reference, editor)) return;
+      }
+    }
+
     while(true){
       if (element == null) {
         String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message("the.caret.should.be.positioned.at.the.class.method.or.field.to.be.refactored"));
@@ -46,15 +57,6 @@ public class MoveHandler implements RefactoringActionHandler {
 
       if (tryToMoveElement(element, project, dataContext, null, editor)) {
         return;
-      }
-      final TextRange range = element.getTextRange();
-      if (range != null) {
-        int relative = offset - range.getStartOffset();
-        final PsiReference reference = element.findReferenceAt(relative);
-        if (reference != null) {
-          final PsiElement refElement = reference.resolve();
-          if (refElement != null && tryToMoveElement(refElement, project, dataContext, reference, editor)) return;
-        }
       }
 
       element = element.getParent();
@@ -137,7 +139,9 @@ public class MoveHandler implements RefactoringActionHandler {
    */
   public static boolean canMove(@NotNull PsiElement[] elements, PsiElement targetContainer) {
     for(MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
-      if (delegate.canMove(elements, targetContainer)) return true;
+      if (delegate.canMove(elements, targetContainer)) {
+        return true;
+      }
     }
 
     return false;
@@ -165,8 +169,10 @@ public class MoveHandler implements RefactoringActionHandler {
   }
 
   public static boolean canMove(DataContext dataContext) {
-    for(MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
-      if (delegate.canMove(dataContext)) return true;
+    for (MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
+      if (delegate.canMove(dataContext)) {
+        return true;
+      }
     }
 
     return false;
