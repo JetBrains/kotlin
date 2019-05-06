@@ -56,7 +56,9 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext) {
         return runReadAction { doCompile(codeFragment, bindingContext, moduleDescriptor) }
     }
 
-    private fun doCompile(codeFragment: KtCodeFragment, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): CompilationResult {
+    private fun doCompile(
+        codeFragment: KtCodeFragment, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor
+    ): CompilationResult {
         require(codeFragment is KtBlockCodeFragment || codeFragment is KtExpressionCodeFragment) {
             "Unsupported code fragment type: $codeFragment"
         }
@@ -111,7 +113,7 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext) {
             }
 
             val ownerClassName = typeMapper.mapOwner(parameter.targetDescriptor).internalName
-            val lastDollarIndex = ownerClassName.lastIndexOf('$').takeIf { it >= 0} ?: continue
+            val lastDollarIndex = ownerClassName.lastIndexOf('$').takeIf { it >= 0 } ?: continue
             result[parameter.dumb] = ownerClassName.drop(lastDollarIndex)
         }
 
@@ -176,7 +178,12 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext) {
         val parameters = parameterInfo.parameters.mapIndexed { index, parameter ->
             ValueParameterDescriptorImpl(
                 methodDescriptor, null, index, Annotations.EMPTY, Name.identifier("p$index"),
-                parameter.targetType, false, false, false, null, SourceElement.NO_SOURCE
+                parameter.targetType,
+                declaresDefaultValue = false,
+                isCrossinline = false,
+                isNoinline = false,
+                varargElementType = null,
+                source = SourceElement.NO_SOURCE
             )
         }
 

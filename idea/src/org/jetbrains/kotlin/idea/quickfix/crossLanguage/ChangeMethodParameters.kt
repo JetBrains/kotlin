@@ -125,8 +125,8 @@ internal class ChangeMethodParameters(
                     ValueParameterDescriptorImpl(
                         this, null, index, Annotations.EMPTY,
                         Name.identifier(parameter.name),
-                        parameter.ktType, false,
-                        false, false, null, SourceElement.NO_SOURCE
+                        parameter.ktType, declaresDefaultValue = false,
+                        isCrossinline = false, isNoinline = false, varargElementType = null, source = SourceElement.NO_SOURCE
                     )
                 },
                 functionDescriptor.returnType,

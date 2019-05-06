@@ -81,8 +81,7 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
                 val container = originalElement.containingClassOrObject
                 if (container is KtObjectDeclaration && container.isCompanion() && container.declarations.singleOrNull() == originalElement) {
                     container.deleteSingle()
-                }
-                else {
+                } else {
                     originalElement.deleteSingle()
                 }
             }
@@ -142,11 +141,12 @@ private object ElementHashingStrategy : TObjectHashingStrategy<PsiElement> {
 }
 
 class MoveKotlinDeclarationsProcessor(
-        val descriptor: MoveDeclarationsDescriptor,
-        val mover: Mover = Mover.Default) : BaseRefactoringProcessor(descriptor.project) {
+    val descriptor: MoveDeclarationsDescriptor,
+    val mover: Mover = Mover.Default
+) : BaseRefactoringProcessor(descriptor.project) {
     companion object {
-        private val REFACTORING_NAME = "Move declarations"
-        val REFACTORING_ID = "move.kotlin.declarations"
+        private const val REFACTORING_NAME = "Move declarations"
+        const val REFACTORING_ID = "move.kotlin.declarations"
     }
 
     val project get() = descriptor.project
@@ -155,8 +155,8 @@ class MoveKotlinDeclarationsProcessor(
     private val moveEntireFile = descriptor.moveSource is MoveSource.File
     private val elementsToMove = descriptor.moveSource.elementsToMove.filter { e -> e.parent != descriptor.moveTarget.getTargetPsiIfExists(e) }
     private val kotlinToLightElementsBySourceFile = elementsToMove
-            .groupBy { it.containingKtFile }
-            .mapValues { it.value.keysToMap { it.toLightElements().ifEmpty { listOf(it) } } }
+        .groupBy { it.containingKtFile }
+        .mapValues { it.value.keysToMap { it.toLightElements().ifEmpty { listOf(it) } } }
     private val conflicts = MultiMap<PsiElement, String>()
 
     override fun getRefactoringId() = REFACTORING_ID
@@ -207,23 +207,23 @@ class MoveKotlinDeclarationsProcessor(
 
                 val foundReferences = HashSet<PsiReference>()
                 val results = ReferencesSearch
-                        .search(lightElement, searchScope)
-                        .mapNotNullTo(ArrayList()) { ref ->
-                            if (foundReferences.add(ref) && elementsToMove.none { it.isAncestor(ref.element)}) {
-                                createMoveUsageInfoIfPossible(ref, lightElement, true, false)
-                            }
-                            else null
+                    .search(lightElement, searchScope)
+                    .mapNotNullTo(ArrayList()) { ref ->
+                        if (foundReferences.add(ref) && elementsToMove.none { it.isAncestor(ref.element)}) {
+                            createMoveUsageInfoIfPossible(ref, lightElement, addImportToOriginalFile = true, isInternal = false)
                         }
+                        else null
+                    }
 
                 val name = lightElement.getKotlinFqName()?.quoteIfNeeded()?.asString()
                 if (name != null) {
                     TextOccurrencesUtil.findNonCodeUsages(
-                            lightElement,
-                            name,
-                            descriptor.searchInCommentsAndStrings,
-                            descriptor.searchInNonCode,
-                            FqName(newFqName).quoteIfNeeded().asString(),
-                            results
+                        lightElement,
+                        name,
+                        descriptor.searchInCommentsAndStrings,
+                        descriptor.searchInNonCode,
+                        FqName(newFqName).quoteIfNeeded().asString(),
+                        results
                     )
                 }
 
@@ -237,11 +237,11 @@ class MoveKotlinDeclarationsProcessor(
 
         val usages = ArrayList<UsageInfo>()
         val conflictChecker = MoveConflictChecker(
-                project,
-                elementsToMove,
-                descriptor.moveTarget,
-                elementsToMove.first(),
-                allElementsToMove = descriptor.allElementsToMove
+            project,
+            elementsToMove,
+            descriptor.moveTarget,
+            elementsToMove.first(),
+            allElementsToMove = descriptor.allElementsToMove
         )
         for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
             val internalUsages = LinkedHashSet<UsageInfo>()
@@ -249,12 +249,11 @@ class MoveKotlinDeclarationsProcessor(
 
             if (moveEntireFile) {
                 val changeInfo = ContainerChangeInfo(
-                        ContainerInfo.Package(sourceFile.packageFqName),
-                        descriptor.moveTarget.targetContainerFqName?.let { ContainerInfo.Package(it) } ?: ContainerInfo.UnknownPackage
+                    ContainerInfo.Package(sourceFile.packageFqName),
+                    descriptor.moveTarget.targetContainerFqName?.let { ContainerInfo.Package(it) } ?: ContainerInfo.UnknownPackage
                 )
                 internalUsages += sourceFile.getInternalReferencesToUpdateOnPackageNameChange(changeInfo)
-            }
-            else {
+            } else {
                 kotlinToLightElements.keys.forEach {
                     val packageNameInfo = descriptor.delegate.getContainerChangeInfo(it, descriptor.moveTarget)
                     internalUsages += it.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
@@ -284,7 +283,7 @@ class MoveKotlinDeclarationsProcessor(
     internal fun doPerformRefactoring(usages: List<UsageInfo>) {
         fun moveDeclaration(declaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): KtNamedDeclaration {
             val targetContainer = moveTarget.getOrCreateTargetPsi(declaration)
-                                  ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration::class.java}: ${declaration.text}")
+                ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration::class.java}: ${declaration.text}")
             descriptor.delegate.preprocessDeclaration(descriptor, declaration)
             if (moveEntireFile) return declaration
             return mover(declaration, targetContainer).apply {
@@ -341,12 +340,10 @@ class MoveKotlinDeclarationsProcessor(
             usagesToProcess += newInternalUsages
 
             nonCodeUsages = postProcessMoveUsages(usagesToProcess, oldToNewElementsMapping).toTypedArray()
-        }
-        catch (e: IncorrectOperationException) {
+        } catch (e: IncorrectOperationException) {
             nonCodeUsages = null
             RefactoringUIUtil.processIncorrectOperation(myProject, e)
-        }
-        finally {
+        } finally {
             cleanUpInternalUsages(newInternalUsages + oldInternalUsages)
         }
     }

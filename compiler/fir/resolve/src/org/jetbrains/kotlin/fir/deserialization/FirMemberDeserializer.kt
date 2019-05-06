@@ -167,18 +167,18 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             callableName,
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
-            Flags.IS_EXPECT_PROPERTY.get(flags),
-            false,
-            false,
-            Flags.IS_CONST.get(flags),
-            Flags.IS_LATEINIT.get(flags),
-            proto.receiverType(c.typeTable)?.toTypeRef(local),
-            returnTypeRef,
-            Flags.IS_VAR.get(flags),
-            null,
-            FirDefaultPropertyGetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))),
-            FirDefaultPropertySetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))),
-            null
+            isExpect = Flags.IS_EXPECT_PROPERTY.get(flags),
+            isActual = false,
+            isOverride = false,
+            isConst = Flags.IS_CONST.get(flags),
+            isLateInit = Flags.IS_LATEINIT.get(flags),
+            receiverTypeRef = proto.receiverType(c.typeTable)?.toTypeRef(local),
+            returnTypeRef = returnTypeRef,
+            isVar = Flags.IS_VAR.get(flags),
+            initializer = null,
+            getter = FirDefaultPropertyGetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))),
+            setter = FirDefaultPropertySetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))),
+            delegate = null
         ).apply {
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
             annotations += c.annotationDeserializer.loadPropertyAnnotations(proto, local.nameResolver)
@@ -209,16 +209,16 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
             Flags.IS_EXPECT_FUNCTION.get(flags),
-            false,
-            false,
-            Flags.IS_OPERATOR.get(flags),
-            Flags.IS_INFIX.get(flags),
-            Flags.IS_INLINE.get(flags),
-            Flags.IS_TAILREC.get(flags),
-            Flags.IS_EXTERNAL_FUNCTION.get(flags),
-            Flags.IS_SUSPEND.get(flags),
-            proto.receiverType(local.typeTable)?.toTypeRef(local),
-            proto.returnType(local.typeTable).toTypeRef(local)
+            isActual = false,
+            isOverride = false,
+            isOperator = Flags.IS_OPERATOR.get(flags),
+            isInfix = Flags.IS_INFIX.get(flags),
+            isInline = Flags.IS_INLINE.get(flags),
+            isTailRec = Flags.IS_TAILREC.get(flags),
+            isExternal = Flags.IS_EXTERNAL_FUNCTION.get(flags),
+            isSuspend = Flags.IS_SUSPEND.get(flags),
+            receiverTypeRef = proto.receiverType(local.typeTable)?.toTypeRef(local),
+            returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
         ).apply {
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)

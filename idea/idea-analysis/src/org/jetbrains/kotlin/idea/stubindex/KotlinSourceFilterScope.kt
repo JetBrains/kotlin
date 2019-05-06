@@ -85,50 +85,109 @@ class KotlinSourceFilterScope private constructor(
 
     companion object {
         @JvmStatic
-        fun sourcesAndLibraries(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, true, true, true, project)
+        fun sourcesAndLibraries(delegate: GlobalSearchScope, project: Project) = create(
+            delegate,
+            includeProjectSourceFiles = true,
+            includeLibrarySourceFiles = true,
+            includeClassFiles = true,
+            includeScriptDependencies = true,
+            includeScriptsOutsideSourceRoots = true,
+            project = project
+        )
 
         @JvmStatic
-        fun sourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, true, true, project)
+        fun sourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(
+            delegate,
+            includeProjectSourceFiles = true,
+            includeLibrarySourceFiles = false,
+            includeClassFiles = true,
+            includeScriptDependencies = true,
+            includeScriptsOutsideSourceRoots = true,
+            project = project
+        )
 
         @JvmStatic
-        fun projectSourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, false, true, project)
+        fun projectSourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(
+            delegate,
+            includeProjectSourceFiles = true,
+            includeLibrarySourceFiles = false,
+            includeClassFiles = true,
+            includeScriptDependencies = false,
+            includeScriptsOutsideSourceRoots = true,
+            project = project
+        )
 
         @JvmStatic
-        fun projectSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, false, false, true, project)
+        fun projectSources(delegate: GlobalSearchScope, project: Project) = create(
+            delegate,
+            includeProjectSourceFiles = true,
+            includeLibrarySourceFiles = false,
+            includeClassFiles = false,
+            includeScriptDependencies = false,
+            includeScriptsOutsideSourceRoots = true,
+            project = project
+        )
 
         @JvmStatic
-        fun librarySources(delegate: GlobalSearchScope, project: Project) = create(delegate, false, true, false, true, false, project)
+        fun librarySources(delegate: GlobalSearchScope, project: Project) = create(
+            delegate,
+            includeProjectSourceFiles = false,
+            includeLibrarySourceFiles = true,
+            includeClassFiles = false,
+            includeScriptDependencies = true,
+            includeScriptsOutsideSourceRoots = false,
+            project = project
+        )
 
         @JvmStatic
-        fun libraryClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, false, false, true, true, false, project)
+        fun libraryClassFiles(delegate: GlobalSearchScope, project: Project) = create(
+            delegate,
+            includeProjectSourceFiles = false,
+            includeLibrarySourceFiles = false,
+            includeClassFiles = true,
+            includeScriptDependencies = true,
+            includeScriptsOutsideSourceRoots = false,
+            project = project
+        )
 
         @JvmStatic
-        fun projectAndLibrariesSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, false, false, true, project)
+        fun projectAndLibrariesSources(delegate: GlobalSearchScope, project: Project) = create(
+            delegate,
+            includeProjectSourceFiles = true,
+            includeLibrarySourceFiles = true,
+            includeClassFiles = false,
+            includeScriptDependencies = false,
+            includeScriptsOutsideSourceRoots = true,
+            project = project
+        )
 
         private fun create(
-                delegate: GlobalSearchScope,
-                includeProjectSourceFiles: Boolean,
-                includeLibrarySourceFiles: Boolean,
-                includeClassFiles: Boolean,
-                includeScriptDependencies: Boolean,
-                includeScriptsOutsideSourceRoots: Boolean,
-                project: Project
+            delegate: GlobalSearchScope,
+            includeProjectSourceFiles: Boolean,
+            includeLibrarySourceFiles: Boolean,
+            includeClassFiles: Boolean,
+            includeScriptDependencies: Boolean,
+            includeScriptsOutsideSourceRoots: Boolean,
+            project: Project
         ): GlobalSearchScope {
             if (delegate === GlobalSearchScope.EMPTY_SCOPE) return delegate
 
             if (delegate is KotlinSourceFilterScope) {
                 return KotlinSourceFilterScope(
-                        delegate.myBaseScope,
-                        includeProjectSourceFiles = delegate.includeProjectSourceFiles && includeProjectSourceFiles,
-                        includeLibrarySourceFiles = delegate.includeLibrarySourceFiles && includeLibrarySourceFiles,
-                        includeClassFiles = delegate.includeClassFiles && includeClassFiles,
-                        includeScriptDependencies = delegate.includeScriptDependencies && includeScriptDependencies,
-                        includeScriptsOutsideSourceRoots = delegate.includeScriptsOutsideSourceRoots && includeScriptsOutsideSourceRoots,
-                        project = project
+                    delegate.myBaseScope,
+                    includeProjectSourceFiles = delegate.includeProjectSourceFiles && includeProjectSourceFiles,
+                    includeLibrarySourceFiles = delegate.includeLibrarySourceFiles && includeLibrarySourceFiles,
+                    includeClassFiles = delegate.includeClassFiles && includeClassFiles,
+                    includeScriptDependencies = delegate.includeScriptDependencies && includeScriptDependencies,
+                    includeScriptsOutsideSourceRoots = delegate.includeScriptsOutsideSourceRoots && includeScriptsOutsideSourceRoots,
+                    project = project
                 )
             }
 
-            return KotlinSourceFilterScope(delegate, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, includeScriptsOutsideSourceRoots, project)
+            return KotlinSourceFilterScope(
+                delegate, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles,
+                includeScriptDependencies, includeScriptsOutsideSourceRoots, project
+            )
         }
     }
 }

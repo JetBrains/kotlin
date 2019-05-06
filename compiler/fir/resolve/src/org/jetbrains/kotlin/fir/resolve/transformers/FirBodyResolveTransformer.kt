@@ -435,10 +435,10 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                             null,
                             Name.identifier("it"),
                             FirResolvedTypeRefImpl(session, null, parameters.single(), emptyList()),
-                            null,
-                            false,
-                            false,
-                            false
+                            defaultValue = null,
+                            isCrossinline = false,
+                            isNoinline = false,
+                            isVararg = false
                         )
                     else -> null
                 }

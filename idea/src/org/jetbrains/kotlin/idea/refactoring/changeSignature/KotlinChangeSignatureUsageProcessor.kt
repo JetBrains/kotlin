@@ -210,7 +210,12 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val result = LinkedHashSet<PsiReference>()
 
         val searchScope = functionPsi.useScope
-        val options = KotlinReferencesSearchOptions(true, false, false, false)
+        val options = KotlinReferencesSearchOptions(
+            acceptCallableOverrides = true,
+            acceptOverloads = false,
+            acceptExtensionsOfDeclarationClass = false,
+            acceptCompanionObjectMembers = false
+        )
         val parameters = KotlinReferencesSearchParameters(functionPsi, searchScope, false, null, options)
         result.addAll(ReferencesSearch.search(parameters).findAll())
         if (functionPsi is KtProperty || functionPsi is KtParameter) {

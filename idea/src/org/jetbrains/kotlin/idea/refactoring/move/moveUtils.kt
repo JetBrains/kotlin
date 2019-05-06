@@ -185,7 +185,7 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
         val declarationNotNull = declaration ?: return null
 
         if (isExtension || containerFqName != null || isImported) return {
-            createMoveUsageInfoIfPossible(it.mainReference, declarationNotNull, false, true)
+            createMoveUsageInfoIfPossible(it.mainReference, declarationNotNull, addImportToOriginalFile = false, isInternal = true)
         }
 
         return null
