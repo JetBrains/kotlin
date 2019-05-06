@@ -110,7 +110,7 @@ public class CodeStyleSettingsCodeFragmentFilter {
       if (languageProvider.getLanguage().equals(codeStyleSettingsProvider.getLanguage())) {
         CustomCodeStyleSettings settings = getCustomSettingsFromProvider(codeStyleSettingsProvider, tempSettings);
         if (settings != null) {
-          return null;
+          return settings;
         }
       }
     }
