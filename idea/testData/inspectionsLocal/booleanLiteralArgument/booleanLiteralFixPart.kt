@@ -1,7 +1,7 @@
 // HIGHLIGHT: GENERIC_ERROR_OR_WARNING
-// FIX: Add names to boolean arguments
+// FIX: Add names to call arguments
 fun foo(a: Boolean, b: Boolean, c: Boolean) {}
 
 fun test() {
-    foo(true, <caret>true, c = true)
+    foo(<caret>true, true, c = true)
 }
