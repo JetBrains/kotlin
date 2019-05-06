@@ -3,17 +3,21 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 internal class DeprecatedJavaAnnotationFix(
     element: KtAnnotationEntry,
-    private val annotationFqName: FqName,
-    private val arguments: List<KtValueArgument>
+    private val annotationFqName: FqName
 ) : KotlinQuickFixAction<KtAnnotationEntry>(element) {
     override fun getFamilyName() = "Replace Annotation"
     override fun getText(): String = "Replace annotation with ${annotationFqName.asString()}"
@@ -23,13 +27,23 @@ internal class DeprecatedJavaAnnotationFix(
 
         val psiFactory = KtPsiFactory(project)
 
-        val argumentString = if (arguments.isEmpty()) {
-            ""
-        } else {
-            "(" + updateAnnotationArgument(file, arguments) + ")"
+        val arguments = updateAnnotation(psiFactory)
+
+        val replacementAnnotation = psiFactory.createAnnotationEntry("@" + annotationFqName.shortName())
+
+        val valueArgumentList = psiFactory.buildValueArgumentList {
+            appendFixedText("(")
+            arguments.forEach { argument ->
+                appendExpression(argument.getArgumentExpression())
+            }
+            appendFixedText(")")
         }
 
-        element.replace(psiFactory.createAnnotationEntry("@" + annotationFqName.shortName() + argumentString))
+        if (arguments.isNotEmpty()) {
+            replacementAnnotation.add(valueArgumentList)
+        }
+
+        element.replace(replacementAnnotation)
 
         for ((java, kotlin) in JavaAnnotationMapper.javaToKotlinNameMap) {
             if (kotlin == annotationFqName) {
@@ -42,33 +56,43 @@ internal class DeprecatedJavaAnnotationFix(
         file.importList?.add(psiFactory.createImportDirective(ImportPath(annotationFqName, false, null)))
     }
 
-    private fun updateAnnotationArgument(file: KtFile, args: List<KtValueArgument>): String {
-        return args.joinToString(",") {
-            val type = it.text.split('.')
-            var argumentOutput = ""
+    private fun updateAnnotation(psiFactory: KtPsiFactory): List<KtValueArgument> {
+        val bindingContext = element!!.analyze()
 
-            if (type.size == 2) {
-                val first = type[0]
-                val second = type[1]
+        val descriptor: AnnotationDescriptor? = bindingContext[BindingContext.ANNOTATION, element]
 
-                when (first) {
-                    "RetentionPolicy" -> {
-                        argumentOutput = argumentOutput.plus("AnnotationRetention")
+        val name = descriptor?.fqName ?: return emptyList()
 
-                        argumentOutput = when (second) {
-                            "CLASS" -> argumentOutput.plus(".BINARY")
-                            else -> argumentOutput.plus(".$second")
-                        }
+        val argumentOutput: MutableList<KtValueArgument> = mutableListOf()
 
-                        val oldImport =
-                            file.importDirectives.find { import -> import.importedFqName?.asString() == "java.lang.annotation.RetentionPolicy" }
-                        oldImport?.delete()
+        val arguments = descriptor.allValueArguments.values
+        if (name == FqName("java.lang.annotation.Retention")) {
+            for (arg in arguments) {
+                val typeAndValue = (arg.value as Pair<*, *>)
+                val type: ClassId = typeAndValue.first as ClassId
+                val value = typeAndValue.second
+
+                val retentionMatch = type == ClassId(
+                    FqName("java.lang.annotation"),
+                    FqName("RetentionPolicy"),
+                    false
+                )
+
+                // Migrate!
+
+                if (retentionMatch) {
+                    if (value == Name.identifier("SOURCE")) {
+                        argumentOutput.add(psiFactory.createArgument("AnnotationRetention.$value"))
+                    } else {
+                        // In this case, we add the original back so it won't compile and the author can fix it.
+                        argumentOutput.add(psiFactory.createArgument("${type.shortClassName}.$value"))
                     }
                 }
-            }
 
-            argumentOutput
+            }
         }
+
+        return argumentOutput
     }
 
     companion object Factory : KotlinSingleIntentionActionFactory() {
@@ -79,14 +103,7 @@ internal class DeprecatedJavaAnnotationFix(
 
             val entry = diagnostic.psiElement as? KtAnnotationEntry ?: return null
 
-            val arguments = mutableListOf<KtValueArgument>()
-            entry.valueArguments.forEach {
-                (it as KtValueArgument).children.forEach { child ->
-                    arguments.add(child.context as KtValueArgument)
-                }
-            }
-
-            return DeprecatedJavaAnnotationFix(entry, updatedAnnotation, arguments)
+            return DeprecatedJavaAnnotationFix(entry, updatedAnnotation)
         }
 
     }
