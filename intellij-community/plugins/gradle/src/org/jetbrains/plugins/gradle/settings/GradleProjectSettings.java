@@ -4,6 +4,8 @@ package org.jetbrains.plugins.gradle.settings;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.ThreeState;
@@ -13,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.data.BuildParticipant;
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager;
-import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +22,6 @@ import java.util.Optional;
 
 /**
  * {@link GradleProjectSettings} holds settings for the linked gradle project.
- *
- * @see GradleSettingsService
  *
  * @author Denis Zhdanov
  */
@@ -157,6 +156,18 @@ public class GradleProjectSettings extends ExternalProjectSettings {
     this.delegatedBuild = state;
   }
 
+  public static boolean isDelegatedBuildEnabled(@NotNull Project project, @Nullable String gradleProjectPath) {
+    GradleProjectSettings projectSettings = gradleProjectPath == null
+                                            ? null : GradleSettings.getInstance(project).getLinkedProjectSettings(gradleProjectPath);
+    if (projectSettings == null) return false;
+
+    return projectSettings.getDelegatedBuild();
+  }
+
+  public static boolean isDelegatedBuildEnabled(@NotNull Module module) {
+    return isDelegatedBuildEnabled(module.getProject(), ExternalSystemApiUtil.getExternalRootProjectPath(module));
+  }
+
   /**
    * @return test runner option.
    */
@@ -180,6 +191,20 @@ public class GradleProjectSettings extends ExternalProjectSettings {
   @SuppressWarnings("unused")
   public void setDirectTestRunner(@Nullable TestRunner testRunner) {
     this.testRunner = testRunner;
+  }
+
+  @NotNull
+  public static TestRunner getTestRunner(@NotNull Project project, @Nullable String gradleProjectPath) {
+    GradleProjectSettings projectSettings = gradleProjectPath == null
+                                            ? null : GradleSettings.getInstance(project).getLinkedProjectSettings(gradleProjectPath);
+    if (projectSettings == null) return TestRunner.PLATFORM;
+
+    return projectSettings.getTestRunner();
+  }
+
+  @NotNull
+  public static TestRunner getTestRunner(@NotNull Module module) {
+    return getTestRunner(module.getProject(), ExternalSystemApiUtil.getExternalRootProjectPath(module));
   }
 
   @NotNull

@@ -8,7 +8,6 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.util.ThrowableRunnable
-import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService
 import org.jetbrains.plugins.gradle.settings.TestRunner.GRADLE
 import org.junit.After
 import org.junit.Before
@@ -18,7 +17,6 @@ class GradleSettingsTest : UsefulTestCase() {
 
   private lateinit var myTestFixture: IdeaProjectTestFixture
   private lateinit var myProject: Project
-  private lateinit var settingsService: GradleSettingsService
   private lateinit var gradleProjectSettings: GradleProjectSettings
 
   @Before
@@ -28,7 +26,6 @@ class GradleSettingsTest : UsefulTestCase() {
     myTestFixture.setUp()
     myProject = myTestFixture.project
 
-    settingsService = GradleSettingsService.getInstance(myProject)
     gradleProjectSettings = GradleProjectSettings().apply { externalProjectPath = myProject.guessProjectDir()!!.path }
     GradleSettings.getInstance(myProject).linkProject(gradleProjectSettings)
   }
@@ -45,10 +42,12 @@ class GradleSettingsTest : UsefulTestCase() {
   fun `test delegation settings default configuration`() {
     // check test runner defaults
     assertEquals(GRADLE, gradleProjectSettings.testRunner)
-    assertEquals(GRADLE, settingsService.getTestRunner(gradleProjectSettings.externalProjectPath))
+    assertEquals(GRADLE, GradleProjectSettings.getTestRunner(myProject,
+                                                             gradleProjectSettings.externalProjectPath))
 
     // check build/run defaults
     assertTrue(gradleProjectSettings.delegatedBuild)
-    assertTrue(settingsService.isDelegatedBuildEnabled(gradleProjectSettings.externalProjectPath))
+    assertTrue(GradleProjectSettings.isDelegatedBuildEnabled(myProject,
+                                                             gradleProjectSettings.externalProjectPath))
   }
 }

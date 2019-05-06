@@ -91,7 +91,6 @@
 
     <applicationService serviceImplementation="org.jetbrains.plugins.gradle.service.GradleInstallationManager"/>
 
-    <projectService serviceImplementation="org.jetbrains.plugins.gradle.service.settings.GradleSettingsService"/>
     <applicationService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleSystemSettings"/>
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleSettingsMigration$LegacyDefaultGradleProjectSettings"/>
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleSettings"/>

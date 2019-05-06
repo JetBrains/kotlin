@@ -36,8 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.project.GradleBuildSrcProjectsResolver;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
-import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService;
 import org.jetbrains.plugins.gradle.service.task.GradleTaskManager;
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
@@ -160,7 +160,7 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
   public boolean canRun(@NotNull ProjectTask projectTask) {
     if (projectTask instanceof ModuleBuildTask) {
       Module module = ((ModuleBuildTask)projectTask).getModule();
-      if (!GradleSettingsService.isDelegatedBuildEnabled(module)) return false;
+      if (!GradleProjectSettings.isDelegatedBuildEnabled(module)) return false;
       return isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module);
     }
     if (projectTask instanceof ProjectModelBuildTask) {
@@ -177,7 +177,7 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
       if (runProfile instanceof ModuleBasedConfiguration) {
         RunConfigurationModule module = ((ModuleBasedConfiguration)runProfile).getConfigurationModule();
         if (!isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module.getModule()) ||
-            !GradleSettingsService.isDelegatedBuildEnabled(module.getModule())) {
+            !GradleProjectSettings.isDelegatedBuildEnabled(module.getModule())) {
           return false;
         }
       }

@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.plugins.gradle.GradleManager;
-import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService;
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
@@ -692,7 +692,7 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
   }
 
   protected void assertDefaultGradleJavaProjectFolders(@NotNull String mainModuleName) {
-    boolean isDelegatedBuild = GradleSettingsService.getInstance(myProject).isDelegatedBuildEnabled(getProjectPath());
+    boolean isDelegatedBuild = GradleProjectSettings.isDelegatedBuildEnabled(myProject, getProjectPath());
     String[] excludes = isDelegatedBuild ? new String[]{".gradle", "build"} : new String[]{".gradle", "build", "out"};
     assertExcludes(mainModuleName, excludes);
     final String mainSourceSetModuleName = mainModuleName + ".main";
@@ -707,7 +707,7 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
 
   protected void assertDefaultGradleJavaProjectFoldersForMergedModule(@NotNull String moduleName) {
     assertContentRoots(moduleName, getProjectPath());
-    boolean isDelegatedBuild = GradleSettingsService.getInstance(myProject).isDelegatedBuildEnabled(getProjectPath());
+    boolean isDelegatedBuild = GradleProjectSettings.isDelegatedBuildEnabled(myProject, getProjectPath());
     String[] excludes = isDelegatedBuild ? new String[]{".gradle", "build"} : new String[]{".gradle", "build", "out"};
     assertExcludes(moduleName, excludes);
     assertSources(moduleName, "src/main/java");
