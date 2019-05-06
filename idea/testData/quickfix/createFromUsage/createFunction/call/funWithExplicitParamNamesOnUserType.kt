@@ -1,4 +1,5 @@
 // "Create member function 'A.foo'" "true"
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 class A<T>(val n: T)
 

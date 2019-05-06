@@ -6,6 +6,7 @@
 // ACTION: Change to '1u'
 // ACTION: Do not show hints for current method
 // ACTION: Add 'u =' to argument
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 fun takeUInt(u: UInt) = 0
 

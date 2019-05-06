@@ -1,4 +1,5 @@
 // "Replace with 'newFun()'" "true"
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 @Deprecated("", ReplaceWith("newFun<T>()"))
 fun <T : Any> oldFun(): T? {

@@ -1,6 +1,7 @@
 // FILE: first.before.kt
 // "Import" "true"
 // ERROR: Type mismatch: inferred type is () -> Unit but Int was expected
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 package main
 
@@ -23,6 +24,7 @@ fun X.foo(filter: (String) -> Boolean){}
 // FILE: first.after.kt
 // "Import" "true"
 // ERROR: Type mismatch: inferred type is () -> Unit but Int was expected
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 package main
 
