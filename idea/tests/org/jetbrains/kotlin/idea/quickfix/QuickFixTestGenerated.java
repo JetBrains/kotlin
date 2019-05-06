@@ -5656,6 +5656,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/deprecatedJavaAnnotation/withArgument.kt");
         }
 
+        @TestMetadata("withClassRetention.kt")
+        public void testWithClassRetention() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedJavaAnnotation/withClassRetention.kt");
+        }
+
+        @TestMetadata("withRuntimeRetention.kt")
+        public void testWithRuntimeRetention() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedJavaAnnotation/withRuntimeRetention.kt");
+        }
+
         @TestMetadata("withoutArguments.kt")
         public void testWithoutArguments() throws Exception {
             runTest("idea/testData/quickfix/deprecatedJavaAnnotation/withoutArguments.kt");

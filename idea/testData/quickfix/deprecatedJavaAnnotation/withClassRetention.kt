@@ -3,5 +3,5 @@
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Retention
 
-@Retention<caret>(RetentionPolicy.SOURCE)
+@Retention<caret>(RetentionPolicy.CLASS)
 annotation class Foo
