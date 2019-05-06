@@ -148,9 +148,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmFunctionExtensionVisitor? {
         if (type != JvmFunctionExtensionVisitor.TYPE) return null
         return object : JvmFunctionExtensionVisitor() {
-            override fun visit(desc: JvmMethodSignature?) {
-                if (desc != null) {
-                    proto.setExtension(JvmProtoBuf.methodSignature, desc.toJvmMethodSignature(c))
+            override fun visit(signature: JvmMethodSignature?) {
+                if (signature != null) {
+                    proto.setExtension(JvmProtoBuf.methodSignature, signature.toJvmMethodSignature(c))
                 }
             }
 
@@ -167,36 +167,38 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         return object : JvmPropertyExtensionVisitor() {
             var signature: JvmProtoBuf.JvmPropertySignature.Builder? = null
 
-            override fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
-                if (fieldDesc == null && getterDesc == null && setterDesc == null) return
+            override fun visit(
+                fieldSignature: JvmFieldSignature?, getterSignature: JvmMethodSignature?, setterSignature: JvmMethodSignature?
+            ) {
+                if (fieldSignature == null && getterSignature == null && setterSignature == null) return
 
                 if (signature == null) {
                     signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
                 }
                 signature!!.apply {
-                    if (fieldDesc != null) {
+                    if (fieldSignature != null) {
                         field = JvmProtoBuf.JvmFieldSignature.newBuilder().also { field ->
-                            field.name = c[fieldDesc.name]
-                            field.desc = c[fieldDesc.desc]
+                            field.name = c[fieldSignature.name]
+                            field.desc = c[fieldSignature.desc]
                         }.build()
                     }
-                    if (getterDesc != null) {
-                        getter = getterDesc.toJvmMethodSignature(c)
+                    if (getterSignature != null) {
+                        getter = getterSignature.toJvmMethodSignature(c)
                     }
-                    if (setterDesc != null) {
-                        setter = setterDesc.toJvmMethodSignature(c)
+                    if (setterSignature != null) {
+                        setter = setterSignature.toJvmMethodSignature(c)
                     }
                 }
             }
 
-            override fun visitSyntheticMethodForAnnotations(desc: JvmMethodSignature?) {
-                if (desc == null) return
+            override fun visitSyntheticMethodForAnnotations(signature: JvmMethodSignature?) {
+                if (signature == null) return
 
-                if (signature == null) {
-                    signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
+                if (this.signature == null) {
+                    this.signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
                 }
 
-                signature!!.syntheticMethod = desc.toJvmMethodSignature(c)
+                this.signature!!.syntheticMethod = signature.toJvmMethodSignature(c)
             }
 
             override fun visitEnd() {
@@ -212,9 +214,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmConstructorExtensionVisitor? {
         if (type != JvmConstructorExtensionVisitor.TYPE) return null
         return object : JvmConstructorExtensionVisitor() {
-            override fun visit(desc: JvmMethodSignature?) {
-                if (desc != null) {
-                    proto.setExtension(JvmProtoBuf.constructorSignature, desc.toJvmMethodSignature(c))
+            override fun visit(signature: JvmMethodSignature?) {
+                if (signature != null) {
+                    proto.setExtension(JvmProtoBuf.constructorSignature, signature.toJvmMethodSignature(c))
                 }
             }
         }

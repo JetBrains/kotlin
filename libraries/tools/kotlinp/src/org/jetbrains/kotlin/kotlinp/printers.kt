@@ -19,7 +19,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         var receiverParameterType: String? = null
         var returnType: String? = null
         val versionRequirements = mutableListOf<String>()
-        var jvmDesc: JvmMemberSignature? = null
+        var jvmSignature: JvmMemberSignature? = null
         var lambdaClassOriginName: String? = null
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
@@ -42,8 +42,8 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
             if (type != JvmFunctionExtensionVisitor.TYPE) return null
             return object : JvmFunctionExtensionVisitor() {
-                override fun visit(desc: JvmMethodSignature?) {
-                    jvmDesc = desc
+                override fun visit(signature: JvmMethodSignature?) {
+                    jvmSignature = signature
                 }
 
                 override fun visitLambdaClassOriginName(internalName: String) {
@@ -60,8 +60,8 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
             for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
-            if (jvmDesc != null) {
-                sb.appendln("  // signature: $jvmDesc")
+            if (jvmSignature != null) {
+                sb.appendln("  // signature: $jvmSignature")
             }
             sb.append("  ")
             sb.appendFlags(flags, FUNCTION_FLAGS_MAP)
@@ -91,10 +91,10 @@ private fun visitProperty(
         var returnType: String? = null
         var setterParameter: String? = null
         val versionRequirements = mutableListOf<String>()
-        var jvmFieldDesc: JvmMemberSignature? = null
-        var jvmGetterDesc: JvmMemberSignature? = null
-        var jvmSetterDesc: JvmMemberSignature? = null
-        var jvmSyntheticMethodForAnnotationsDesc: JvmMemberSignature? = null
+        var jvmFieldSignature: JvmMemberSignature? = null
+        var jvmGetterSignature: JvmMemberSignature? = null
+        var jvmSetterSignature: JvmMemberSignature? = null
+        var jvmSyntheticMethodForAnnotationsSignature: JvmMemberSignature? = null
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
@@ -114,14 +114,16 @@ private fun visitProperty(
         override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? {
             if (type != JvmPropertyExtensionVisitor.TYPE) return null
             return object : JvmPropertyExtensionVisitor() {
-                override fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
-                    jvmFieldDesc = fieldDesc
-                    jvmGetterDesc = getterDesc
-                    jvmSetterDesc = setterDesc
+                override fun visit(
+                    fieldSignature: JvmFieldSignature?, getterSignature: JvmMethodSignature?, setterSignature: JvmMethodSignature?
+                ) {
+                    jvmFieldSignature = fieldSignature
+                    jvmGetterSignature = getterSignature
+                    jvmSetterSignature = setterSignature
                 }
 
-                override fun visitSyntheticMethodForAnnotations(desc: JvmMethodSignature?) {
-                    jvmSyntheticMethodForAnnotationsDesc = desc
+                override fun visitSyntheticMethodForAnnotations(signature: JvmMethodSignature?) {
+                    jvmSyntheticMethodForAnnotationsSignature = signature
                 }
             }
         }
@@ -131,17 +133,17 @@ private fun visitProperty(
             for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
-            if (jvmFieldDesc != null) {
-                sb.appendln("  // field: $jvmFieldDesc")
+            if (jvmFieldSignature != null) {
+                sb.appendln("  // field: $jvmFieldSignature")
             }
-            if (jvmGetterDesc != null) {
-                sb.appendln("  // getter: $jvmGetterDesc")
+            if (jvmGetterSignature != null) {
+                sb.appendln("  // getter: $jvmGetterSignature")
             }
-            if (jvmSetterDesc != null) {
-                sb.appendln("  // setter: $jvmSetterDesc")
+            if (jvmSetterSignature != null) {
+                sb.appendln("  // setter: $jvmSetterSignature")
             }
-            if (jvmSyntheticMethodForAnnotationsDesc != null) {
-                sb.appendln("  // synthetic method for annotations: $jvmSyntheticMethodForAnnotationsDesc")
+            if (jvmSyntheticMethodForAnnotationsSignature != null) {
+                sb.appendln("  // synthetic method for annotations: $jvmSyntheticMethodForAnnotationsSignature")
             }
             sb.append("  ")
             sb.appendFlags(flags, PROPERTY_FLAGS_MAP)
@@ -182,7 +184,7 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
     object : KmConstructorVisitor() {
         val params = mutableListOf<String>()
         val versionRequirements = mutableListOf<String>()
-        var jvmDesc: JvmMemberSignature? = null
+        var jvmSignature: JvmMemberSignature? = null
 
         override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             printValueParameter(flags, name) { params.add(it) }
@@ -193,8 +195,8 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? {
             if (type != JvmConstructorExtensionVisitor.TYPE) return null
             return object : JvmConstructorExtensionVisitor() {
-                override fun visit(desc: JvmMethodSignature?) {
-                    jvmDesc = desc
+                override fun visit(signature: JvmMethodSignature?) {
+                    jvmSignature = signature
                 }
             }
         }
@@ -204,8 +206,8 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
             for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
-            if (jvmDesc != null) {
-                sb.appendln("  // signature: $jvmDesc")
+            if (jvmSignature != null) {
+                sb.appendln("  // signature: $jvmSignature")
             }
             sb.append("  ")
             sb.appendFlags(flags, CONSTRUCTOR_FLAGS_MAP)

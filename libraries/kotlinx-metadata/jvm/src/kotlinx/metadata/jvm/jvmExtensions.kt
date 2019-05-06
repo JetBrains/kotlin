@@ -115,10 +115,10 @@ open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
      *
      * Example: `JvmMethodSignature("equals", "(Ljava/lang/Object;)Z")`
      *
-     * @param desc the signature of the function
+     * @param signature the signature of the function
      */
-    open fun visit(desc: JvmMethodSignature?) {
-        delegate?.visit(desc)
+    open fun visit(signature: JvmMethodSignature?) {
+        delegate?.visit(signature)
     }
 
     /**
@@ -156,19 +156,17 @@ open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
     /**
      * Visits JVM signatures of field and accessors generated for the property.
      *
-     * @param fieldDesc the name and the type of the field in the JVM-based format, or `null` if this property has no field.
-     *                  Example: `JvmFieldSignature("X", "Ljava/lang/Object;")`
+     * @param fieldSignature the signature of the field, or `null` if this property has no field.
+     *                       Example: `JvmFieldSignature("X", "Ljava/lang/Object;")`
      *
-     * @param getterDesc the signature of the property getter in the JVM-based format,
-     *                   or `null` if this property has no getter or its signature is unknown.
-     *                   Example: `JvmMethodSignature("getX()", "Ljava/lang/Object;")`
+     * @param getterSignature the signature of the property getter, or `null` if this property has no getter or its signature is unknown.
+     *                        Example: `JvmMethodSignature("getX()", "Ljava/lang/Object;")`
      *
-     * @param setterDesc the signature of the property setter in the JVM-based format,
-     *                   or `null` if this property has no setter or its signature is unknown
-     *                   Example: `JvmMethodSignature("setX", "(Ljava/lang/Object;)V")`,
+     * @param setterSignature the signature of the property setter, or `null` if this property has no setter or its signature is unknown.
+     *                        Example: `JvmMethodSignature("setX", "(Ljava/lang/Object;)V")`
      */
-    open fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
-        delegate?.visit(fieldDesc, getterDesc, setterDesc)
+    open fun visit(fieldSignature: JvmFieldSignature?, getterSignature: JvmMethodSignature?, setterSignature: JvmMethodSignature?) {
+        delegate?.visit(fieldSignature, getterSignature, setterSignature)
     }
 
     /**
@@ -176,10 +174,10 @@ open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
      *
      * Example: `JvmMethodSignature("getX$annotations", "()V")`
      *
-     * @param desc the signature of the synthetic method
+     * @param signature the signature of the synthetic method
      */
-    open fun visitSyntheticMethodForAnnotations(desc: JvmMethodSignature?) {
-        delegate?.visitSyntheticMethodForAnnotations(desc)
+    open fun visitSyntheticMethodForAnnotations(signature: JvmMethodSignature?) {
+        delegate?.visitSyntheticMethodForAnnotations(signature)
     }
 
     /**
@@ -207,15 +205,14 @@ open class JvmConstructorExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmConstructorExtensionVisitor? = null
 ) : KmConstructorExtensionVisitor {
     /**
-     * Visits the JVM signature of the constructor in the JVM-based format,
-     * or null if the JVM signature of this constructor is unknown.
+     * Visits the JVM signature of the constructor, or null if the JVM signature of this constructor is unknown.
      *
      * Example: `JvmMethodSignature("<init>", "(Ljava/lang/Object;)V")`
      *
-     * @param desc the signature of the constructor
+     * @param signature the signature of the constructor
      */
-    open fun visit(desc: JvmMethodSignature?) {
-        delegate?.visit(desc)
+    open fun visit(signature: JvmMethodSignature?) {
+        delegate?.visit(signature)
     }
 
     companion object {
