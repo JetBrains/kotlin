@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
+import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
@@ -24,13 +25,19 @@ abstract class AbstractCompletionWeigherTest(val completionType: CompletionType,
 
         val text = myFixture.editor.document.text
 
-        configureCompilerOptions(text, project, module)
+        val configured = configureCompilerOptions(text, project, module)
 
         val items = InTextDirectivesUtils.findArrayWithPrefixes(text, "// ORDER:")
         Assert.assertTrue("""Some items should be defined with "// ORDER:" directive""", !items.isEmpty())
 
-        myFixture.complete(completionType, InTextDirectivesUtils.getPrefixedInt(text, "// INVOCATION_COUNT:") ?: 1)
-        myFixture.assertPreferredCompletionItems(InTextDirectivesUtils.getPrefixedInt(text, "// SELECTED:") ?: 0, *items)
+        try {
+            myFixture.complete(completionType, InTextDirectivesUtils.getPrefixedInt(text, "// INVOCATION_COUNT:") ?: 1)
+            myFixture.assertPreferredCompletionItems(InTextDirectivesUtils.getPrefixedInt(text, "// SELECTED:") ?: 0, *items)
+        } finally {
+            if (configured) {
+                rollbackCompilerOptions(project, module)
+            }
+        }
     }
 }
 
