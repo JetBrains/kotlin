@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.idea.configuration.ui
 
 import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
-import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
 
 internal fun showMigrationNotification(project: Project, migrationInfo: MigrationInfo) {
     val detectedChangeMessage = buildString {

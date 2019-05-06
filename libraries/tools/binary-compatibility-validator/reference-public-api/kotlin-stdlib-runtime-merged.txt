@@ -4906,12 +4906,16 @@ public final class kotlin/text/StringsKt {
 	public static synthetic fun commonSuffixWith$default (Ljava/lang/CharSequence;Ljava/lang/CharSequence;ZILjava/lang/Object;)Ljava/lang/String;
 	public static final fun compareTo (Ljava/lang/String;Ljava/lang/String;Z)I
 	public static synthetic fun compareTo$default (Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)I
+	public static final fun concatToString ([CII)Ljava/lang/String;
+	public static synthetic fun concatToString$default ([CIIILjava/lang/Object;)Ljava/lang/String;
 	public static final fun contains (Ljava/lang/CharSequence;CZ)Z
 	public static final fun contains (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Z
 	public static synthetic fun contains$default (Ljava/lang/CharSequence;CZILjava/lang/Object;)Z
 	public static synthetic fun contains$default (Ljava/lang/CharSequence;Ljava/lang/CharSequence;ZILjava/lang/Object;)Z
 	public static final fun count (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun decapitalize (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun decodeToString ([BIIZ)Ljava/lang/String;
+	public static synthetic fun decodeToString$default ([BIIZILjava/lang/Object;)Ljava/lang/String;
 	public static final fun drop (Ljava/lang/CharSequence;I)Ljava/lang/CharSequence;
 	public static final fun drop (Ljava/lang/String;I)Ljava/lang/String;
 	public static final fun dropLast (Ljava/lang/CharSequence;I)Ljava/lang/CharSequence;
@@ -4920,6 +4924,8 @@ public final class kotlin/text/StringsKt {
 	public static final fun dropLastWhile (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
 	public static final fun dropWhile (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/CharSequence;
 	public static final fun dropWhile (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
+	public static final fun encodeToByteArray (Ljava/lang/String;IIZ)[B
+	public static synthetic fun encodeToByteArray$default (Ljava/lang/String;IIZILjava/lang/Object;)[B
 	public static final fun endsWith (Ljava/lang/CharSequence;CZ)Z
 	public static final fun endsWith (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Z
 	public static final fun endsWith (Ljava/lang/String;Ljava/lang/String;Z)Z
@@ -5131,6 +5137,8 @@ public final class kotlin/text/StringsKt {
 	public static final fun toBigIntegerOrNull (Ljava/lang/String;I)Ljava/math/BigInteger;
 	public static final fun toByteOrNull (Ljava/lang/String;)Ljava/lang/Byte;
 	public static final fun toByteOrNull (Ljava/lang/String;I)Ljava/lang/Byte;
+	public static final fun toCharArray (Ljava/lang/String;II)[C
+	public static synthetic fun toCharArray$default (Ljava/lang/String;IIILjava/lang/Object;)[C
 	public static final fun toCollection (Ljava/lang/CharSequence;Ljava/util/Collection;)Ljava/util/Collection;
 	public static final fun toDoubleOrNull (Ljava/lang/String;)Ljava/lang/Double;
 	public static final fun toFloatOrNull (Ljava/lang/String;)Ljava/lang/Float;

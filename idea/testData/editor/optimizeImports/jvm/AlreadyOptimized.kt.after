@@ -1,20 +1,20 @@
 /**
 Comment 1
-*/
+ */
 package sometest
 
 import java.util.ArrayList
 import java.util.HashSet
-import java.io as JavaIO
-import java.text.Annotation as TextAnnotation
+import java.io.File as JavaFile
+import java.lang.Runnable as Task
 
 /**
 Comment 2
-*/
+ */
 class Action {
-    fun test(hash : HashSet<Int>) {
-        val some : TextAnnotation? = null
-        val test : ArrayList<Int>? = null
-        JavaIO.File(StringBuilder().append("Hello").toString())
+    fun test(hash: HashSet<Int>) {
+        val some: Task? = null
+        val test: ArrayList<Int>? = null
+        JavaFile(StringBuilder().append("Hello").toString())
     }
 }

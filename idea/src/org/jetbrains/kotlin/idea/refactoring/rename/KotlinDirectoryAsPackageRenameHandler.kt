@@ -22,10 +22,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.DirectoryAsPackageRenameHandler
-import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
-import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 
 class KotlinDirectoryAsPackageRenameHandler : DirectoryAsPackageRenameHandler() {
     override fun isIdentifier(name: String, project: Project): Boolean = name.quoteIfNeeded().isIdentifier()

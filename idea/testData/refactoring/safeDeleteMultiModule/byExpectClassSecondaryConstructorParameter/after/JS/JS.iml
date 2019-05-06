@@ -4,7 +4,9 @@
       <facet type="kotlin-language" name="Kotlin">
         <configuration version="2" platform="JavaScript " useProjectSettings="false">
             <implements>Common</implements>
-            <compilerSettings/>
+            <compilerSettings>
+              <option name="additionalArguments" value="-XXLanguage:-NewInference" />
+            </compilerSettings>
             <compilerArguments/>
         </configuration>
       </facet>

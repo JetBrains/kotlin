@@ -5,29 +5,17 @@
 
 package org.jetbrains.kotlin.idea.stubs
 
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.junit.Assert
-import org.jetbrains.kotlin.psi.KtPackageDirective
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.psi.KtImportList
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
-import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
-import kotlin.test.assertEquals
-import org.jetbrains.kotlin.psi.KtClassBody
-import org.jetbrains.kotlin.psi.KtClassInitializer
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
+import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.Assert
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)

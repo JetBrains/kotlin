@@ -138,7 +138,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
 
         // TODO: get rid of class types with type-alias symbols
         if (typeConstructor is FirTypeAliasSymbol) {
-            return typeConstructor.fir.expandedTypeRef.coneTypeSafe()?.typeConstructor()
+            return typeConstructor.fir.expandedTypeRef.coneTypeSafe<ConeKotlinType>()?.typeConstructor()
                 ?: ErrorTypeConstructor("Failed to expand alias: ${this}")
         }
         return typeConstructor

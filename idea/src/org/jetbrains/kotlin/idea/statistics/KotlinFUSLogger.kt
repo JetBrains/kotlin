@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.statistics
 
-import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 
 

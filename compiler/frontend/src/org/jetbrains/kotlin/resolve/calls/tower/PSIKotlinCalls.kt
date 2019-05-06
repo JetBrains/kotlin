@@ -65,7 +65,8 @@ class PSIKotlinCallImpl(
     override val externalArgument: KotlinCallArgument?,
     override val startingDataFlowInfo: DataFlowInfo,
     override val resultDataFlowInfo: DataFlowInfo,
-    override val dataFlowInfoForArguments: DataFlowInfoForArguments
+    override val dataFlowInfoForArguments: DataFlowInfoForArguments,
+    override val isForImplicitInvoke: Boolean
 ) : PSIKotlinCall()
 
 class PSIKotlinCallForVariable(
@@ -86,6 +87,8 @@ class PSIKotlinCallForVariable(
     override val psiCall: Call = CallTransformer.stripCallArguments(baseCall.psiCall).let {
         if (explicitReceiver == null) CallTransformer.stripReceiver(it) else it
     }
+
+    override val isForImplicitInvoke: Boolean get() = false
 }
 
 class PSIKotlinCallForInvoke(
@@ -105,6 +108,7 @@ class PSIKotlinCallForInvoke(
     override val dataFlowInfoForArguments: DataFlowInfoForArguments get() = baseCall.dataFlowInfoForArguments
     override val psiCall: Call
     override val tracingStrategy: TracingStrategy
+    override val isForImplicitInvoke: Boolean = true
 
     init {
         val variableReceiver = dispatchReceiverForInvokeExtension ?: explicitReceiver

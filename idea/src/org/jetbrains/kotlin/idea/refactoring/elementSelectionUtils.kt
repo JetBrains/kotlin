@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.awt.Component
-import java.lang.RuntimeException
 import java.util.*
 import javax.swing.DefaultListCellRenderer
 import javax.swing.DefaultListModel

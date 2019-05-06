@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -74,6 +75,8 @@ class ExpectDeclarationsRemoving(val context: BackendContext) : FileLoweringPass
 
                 actualParameter.defaultValue = defaultValue.also {
                     it.expression = it.expression.remapExpectValueSymbols()
+                    // Default value might have some declarations inside. Patching parents.
+                    it.expression.patchDeclarationParents(actualParameter.parent)
                 }
             }
         })

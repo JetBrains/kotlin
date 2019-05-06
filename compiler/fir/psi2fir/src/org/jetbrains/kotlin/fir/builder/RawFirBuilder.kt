@@ -762,7 +762,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         }
 
         private fun typeParametersFromSelfType(delegatedSelfTypeRef: FirTypeRef): List<FirTypeParameter> {
-            return delegatedSelfTypeRef.coneTypeSafe()
+            return delegatedSelfTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?.typeArguments
                 ?.map { ((it as ConeTypeParameterType).lookupTag as FirTypeParameterSymbol).fir }
                 ?: emptyList()

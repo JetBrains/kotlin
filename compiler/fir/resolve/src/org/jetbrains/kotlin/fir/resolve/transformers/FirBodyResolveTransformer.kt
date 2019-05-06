@@ -150,7 +150,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 resolved.resultType =
                         resolved.conversionTypeRef.withReplacedConeType(
                             session,
-                            resolved.conversionTypeRef.coneTypeUnsafe().withNullability(ConeNullability.NULLABLE)
+                            resolved.conversionTypeRef.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
                         )
             }
             else -> error("Unknown type operator")
@@ -193,7 +193,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 if (symbol is ConeCallableSymbol) {
                     jump.tryCalculateReturnType(symbol.firUnsafe())
                 } else if (symbol is ConeClassifierSymbol) {
-                    val firUnsafe = symbol.firUnsafe()
+                    val firUnsafe = symbol.firUnsafe<FirElement>()
                     // TODO: unhack
                     if (firUnsafe is FirEnumEntry) {
                         (firUnsafe.superTypeRefs.firstOrNull() as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(
@@ -309,7 +309,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         val receiverTypeRef = anonymousFunction.receiverTypeRef
         fun transform(): FirAnonymousFunction {
             return withScopeCleanup(scopes) {
-                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session, scopeSession))
+                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe<ConeKotlinType>()?.scope(session, scopeSession))
                 val result =
                     super.transformAnonymousFunction(
                         anonymousFunction,
@@ -648,7 +648,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         fun transform(): CompositeTransformResult<FirDeclaration> {
             localScopes.lastOrNull()?.storeDeclaration(namedFunction)
             return withScopeCleanup(scopes) {
-                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session, scopeSession))
+                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe<ConeKotlinType>()?.scope(session, scopeSession))
 
 
                 val result = super.transformNamedFunction(namedFunction, namedFunction.returnTypeRef).single as FirNamedFunction

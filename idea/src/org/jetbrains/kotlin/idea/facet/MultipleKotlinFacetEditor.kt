@@ -44,6 +44,7 @@ class MultipleKotlinFacetEditor(
             helper.bind(targetPlatformComboBox, editors) { it.tabEditor.targetPlatformComboBox }
             with(compilerConfigurable) {
                 helper.bind(reportWarningsCheckBox, editors) { it.compilerConfigurable.reportWarningsCheckBox }
+                helper.bind(enableNewInferenceInIDECheckBox, editors) { it.compilerConfigurable.enableNewInferenceInIDECheckBox }
                 helper.bind(additionalArgsOptionsField.textField, editors) { it.compilerConfigurable.additionalArgsOptionsField.textField }
                 helper.bind(generateSourceMapsCheckBox, editors) { it.compilerConfigurable.generateSourceMapsCheckBox}
                 helper.bind(outputPrefixFile.textField, editors) { it.compilerConfigurable.outputPrefixFile.textField }

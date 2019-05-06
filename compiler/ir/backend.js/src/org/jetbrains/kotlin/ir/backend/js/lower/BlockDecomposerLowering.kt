@@ -456,26 +456,30 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
         private fun mapArguments(
             oldArguments: Collection<IrExpression?>,
             compositeCount: Int,
-            newStatements: MutableList<IrStatement>
+            newStatements: MutableList<IrStatement>,
+            dontDetachFirstArgument: Boolean = false
         ): List<IrExpression?> {
             var compositesLeft = compositeCount
             val arguments = mutableListOf<IrExpression?>()
 
-            for (arg in oldArguments) {
+            for ((index, arg) in oldArguments.withIndex()) {
                 val value = if (arg is IrComposite) {
                     compositesLeft--
                     newStatements += arg.statements.run { subList(0, lastIndex) }
                     arg.statements.last() as IrExpression
                 } else arg
 
-                val newArg = if (compositesLeft != 0) {
-                    if (value != null) {
+                val newArg = when {
+                    compositesLeft == 0 -> value
+                    index == 0 && dontDetachFirstArgument -> value
+                    value == null -> value
+                    else -> {
                         // TODO: do not wrap if value is pure (const, variable, etc)
                         val irVar = makeTempVar(value.type, value)
                         newStatements += irVar
                         JsIrBuilder.buildGetValue(irVar.symbol)
-                    } else value
-                } else value
+                    }
+                }
 
                 arguments += newArg
             }
@@ -561,7 +565,12 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
             if (compositeCount == 0) return expression
 
             val newStatements = mutableListOf<IrStatement>()
-            val newArguments = mapArguments(oldArguments, compositeCount, newStatements)
+            val newArguments = mapArguments(
+                oldArguments,
+                compositeCount,
+                newStatements,
+                dontDetachFirstArgument = expression.isReceiverNonDetachable()
+            )
 
             expression.receiver = newArguments[0]
                 ?: error("No new receiver in destructured composite for:\n${expression.dump()}")
@@ -574,6 +583,23 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
             newStatements.add(expression)
 
             return expression.run { IrCompositeImpl(startOffset, endOffset, type, null, newStatements) }
+        }
+
+        // Return if receiver expression cannot be detached from this expression
+        private fun IrDynamicOperatorExpression.isReceiverNonDetachable(): Boolean {
+            val receiver = when (val r = this.receiver) {
+                is IrComposite -> r.statements.lastOrNull() ?: return false
+                else -> r
+            }
+
+            val receiverIsMemberAccess =
+                receiver is IrDynamicMemberExpression ||
+                        (receiver is IrDynamicOperatorExpression && receiver.operator == IrDynamicOperator.ARRAY_ACCESS)
+
+            val operatorDependsOnMemberAccess =
+                operator.isAssignmentOperator || operator == IrDynamicOperator.INVOKE
+
+            return receiverIsMemberAccess && operatorDependsOnMemberAccess
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {

@@ -3575,6 +3575,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch2.kt");
             }
 
+            @TestMetadata("typeMismatch2_ni.kt")
+            public void testTypeMismatch2_ni() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch2_ni.kt");
+            }
+
             @TestMetadata("typeMismatch3.kt")
             public void testTypeMismatch3() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch3.kt");
@@ -3588,6 +3593,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("typeMismatchMutableList2.kt")
             public void testTypeMismatchMutableList2() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatchMutableList2.kt");
+            }
+
+            @TestMetadata("typeMismatchMutableList2_ni.kt")
+            public void testTypeMismatchMutableList2_ni() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatchMutableList2_ni.kt");
             }
         }
 
@@ -5418,6 +5428,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/notApplicableVararg2.kt");
         }
 
+        @TestMetadata("notApplicableVararg2_ni.kt")
+        public void testNotApplicableVararg2_ni() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/notApplicableVararg2_ni.kt");
+        }
+
+        @TestMetadata("notApplicableVararg_ni.kt")
+        public void testNotApplicableVararg_ni() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/notApplicableVararg_ni.kt");
+        }
+
         @TestMetadata("overload4.kt")
         public void testOverload4() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/overload4.kt");
@@ -5438,9 +5458,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/typeParameter2.kt");
         }
 
+        @TestMetadata("typeParameter2_ni.kt")
+        public void testTypeParameter2_ni() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/typeParameter2_ni.kt");
+        }
+
         @TestMetadata("typeParameter3.kt")
         public void testTypeParameter3() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/typeParameter3.kt");
+        }
+
+        @TestMetadata("typeParameter3_ni.kt")
+        public void testTypeParameter3_ni() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/typeParameter3_ni.kt");
         }
 
         @TestMetadata("underscore.kt")
@@ -8932,6 +8962,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("hasError.kt")
         public void testHasError() throws Exception {
             runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/hasError.kt");
+        }
+
+        @TestMetadata("hasError_ni.kt")
+        public void testHasError_ni() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/hasError_ni.kt");
         }
 
         @TestMetadata("int.kt")

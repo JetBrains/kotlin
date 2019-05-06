@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.idea.refactoring.safeDelete
 
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
+import org.jetbrains.kotlin.psi.KtTypeParameter
+import org.jetbrains.kotlin.psi.KtTypeProjection
 
 class SafeDeleteTypeArgumentListUsageInfo(
         typeProjection: KtTypeProjection, parameter: KtTypeParameter

@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.util.PsiPrecedences
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
-import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Flip binary expression"), LowPriorityAction {

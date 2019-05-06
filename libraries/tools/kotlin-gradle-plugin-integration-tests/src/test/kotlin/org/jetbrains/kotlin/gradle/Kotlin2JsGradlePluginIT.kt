@@ -398,8 +398,6 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
                 "build/test_node_modules/kotlin-js-plugin_test.js.map",
                 "\"sources\":[\"..$slash..${slash}src${slash}test${slash}kotlin${slash}MainTest.kt\"]"
             )
-
-            assertTestResults("testProject/kotlin-js-plugin-project/tests.xml", "test")
         }
     }
 }

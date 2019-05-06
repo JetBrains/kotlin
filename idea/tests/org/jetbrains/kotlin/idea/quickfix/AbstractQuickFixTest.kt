@@ -31,7 +31,6 @@ import org.junit.Assert
 import org.junit.ComparisonFailure
 import java.io.File
 import java.io.IOException
-import kotlin.collections.HashSet
 
 abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), QuickFixTest {
     companion object {

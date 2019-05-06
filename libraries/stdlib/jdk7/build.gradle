@@ -91,7 +91,12 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xmulti-platform",
+            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+            "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
+    ]
 }
 
 compileJava9Sources(project, 'kotlin.stdlib.jdk7')

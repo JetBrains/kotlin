@@ -80,7 +80,8 @@ compileCoroutinesExperimentalKotlinCommon {
 compileTestKotlinCommon {
     kotlinOptions {
         freeCompilerArgs += [
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
         ]
     }
 }

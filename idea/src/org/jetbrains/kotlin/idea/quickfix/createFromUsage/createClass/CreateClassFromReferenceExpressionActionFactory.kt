@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.utils.ifEmpty
-import java.util.Arrays
-import java.util.Collections
+import java.util.*
 
 object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFactory<KtSimpleNameExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {

@@ -14,10 +14,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.RenameHandler
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
 
 class RenameSyntheticDeclarationByReferenceHandler : RenameHandler {
     override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {

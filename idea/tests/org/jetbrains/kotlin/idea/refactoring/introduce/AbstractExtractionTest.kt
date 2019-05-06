@@ -27,6 +27,7 @@ import com.intellij.refactoring.introduceParameter.Util
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.DocCommentPolicy
 import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
@@ -50,10 +51,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.refactoring.markMembersInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.extractClassMembers
 import org.jetbrains.kotlin.idea.refactoring.selectElement
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -332,6 +330,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
 
         fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
 
+
+
         val mainFileName = mainFile.name
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
         val extraFiles = mainFile.parentFile.listFiles { _, name ->
@@ -339,6 +339,9 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         }
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
         val fileText = FileUtil.loadFile(File(path), true)
+
+        val configured = configureCompilerOptions(fileText, project, module)
+        ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
 
         val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null
         if (addKotlinRuntime) {
@@ -351,6 +354,9 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         finally {
             if (addKotlinRuntime) {
                 ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
+            }
+            if (configured) {
+                rollbackCompilerOptions(project, module)
             }
         }
     }

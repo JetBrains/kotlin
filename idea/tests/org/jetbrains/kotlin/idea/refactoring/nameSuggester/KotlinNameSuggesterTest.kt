@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.runner.RunWith
-import java.lang.AssertionError
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinNameSuggesterTest : KotlinLightCodeInsightFixtureTestCase() {

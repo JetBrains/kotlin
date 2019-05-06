@@ -13,3 +13,7 @@ public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
 
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun String.removeLeadingPlusOnJava6(): String = this
+
+internal actual inline fun testOnNonJvm6And7(f: () -> Unit) {
+    f()
+}

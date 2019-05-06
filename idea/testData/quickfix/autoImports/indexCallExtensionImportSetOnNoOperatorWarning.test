@@ -1,6 +1,7 @@
 // FILE: first.before.kt
 // "Import" "true"
 // ERROR: 'operator' modifier is required on 'set' in 'some.Some'
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 package testing
 
@@ -28,6 +29,7 @@ operator fun Some.set(s: String, i: Int) {}
 // FILE: first.after.kt
 // "Import" "true"
 // ERROR: 'operator' modifier is required on 'set' in 'some.Some'
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 package testing
 

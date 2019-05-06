@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 class A
 
 open class X<T : A>(x: List<T>, f: (T) -> Int) {

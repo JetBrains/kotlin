@@ -25,7 +25,8 @@ class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
         MethodsOfAnyCallsTransformer(context),
         ReflectionCallsTransformer(context),
         EnumIntrinsicsTransformer(context),
-        ExceptionHelperCallsTransformer(context)
+        ExceptionHelperCallsTransformer(context),
+        JsonIntrinsics(context)
     )
 
     override fun lower(irFile: IrFile) {

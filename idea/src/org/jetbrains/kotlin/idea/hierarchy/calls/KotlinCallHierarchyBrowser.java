@@ -29,7 +29,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.PopupHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtilsKt;
 import org.jetbrains.kotlin.psi.KtElement;
 
 import javax.swing.*;

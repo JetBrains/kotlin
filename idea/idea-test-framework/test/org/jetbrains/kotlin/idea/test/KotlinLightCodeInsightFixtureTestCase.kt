@@ -231,7 +231,9 @@ object CompilerTestDirectives {
 fun configureCompilerOptions(fileText: String, project: Project, module: Module): Boolean {
     val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $LANGUAGE_VERSION_DIRECTIVE ")
     val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $JVM_TARGET_DIRECTIVE ")
-    val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $COMPILER_ARGUMENTS_DIRECTIVE ")
+    // We can have several such directives in quickFixMultiFile tests
+    // TODO: refactor such tests or add sophisticated check for the directive
+    val options = InTextDirectivesUtils.findListWithPrefixes(fileText, "// $COMPILER_ARGUMENTS_DIRECTIVE ").firstOrNull()
 
     if (version != null || jvmTarget != null || options != null) {
         configureLanguageAndApiVersion(project, module, version ?: LanguageVersion.LATEST_STABLE.versionString)

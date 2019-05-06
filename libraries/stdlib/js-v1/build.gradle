@@ -193,7 +193,8 @@ compileTestKotlin2Js {
     kotlinOptions {
         moduleKind = "umd"
         freeCompilerArgs += [
-            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+            "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
         ]
     }
 }

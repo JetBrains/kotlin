@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -250,7 +252,6 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
         newInferenceLambdaInfo?.let {
             it.lastExpressionInfo.dataFlowInfoAfter = blockReturnedType.dataFlowInfo
-            return null
         }
 
         return computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
@@ -290,6 +291,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         returnedExpressionTypes.addIfNotNull(typeOfBodyExpression)
 
         if (returnedExpressionTypes.isEmpty()) return null
+        if (returnedExpressionTypes.any { it.contains { it.constructor is TypeVariableTypeConstructor }}) return null
         return CommonSupertypes.commonSupertype(returnedExpressionTypes)
     }
 

@@ -11,3 +11,10 @@ package kotlin.text
 
 @Suppress("ACTUAL_WITHOUT_EXPECT") // TODO: some supertypes are missing
 @SinceKotlin("1.1") public actual typealias StringBuilder = java.lang.StringBuilder
+
+/**
+ *  The exception thrown when a character encoding or decoding error occurs.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual typealias CharacterCodingException = java.nio.charset.CharacterCodingException

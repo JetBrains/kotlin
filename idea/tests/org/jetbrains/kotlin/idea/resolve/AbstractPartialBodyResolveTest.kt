@@ -5,34 +5,29 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import java.util.HashSet
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.junit.Assert
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.junit.Assert
+import java.io.File
+import java.util.*
 
 abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()

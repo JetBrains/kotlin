@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
-import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
+import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 // Constructs bridges for inherited generic functions
 //
@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 //
 class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 
+    private val specialBridgeMethods = SpecialBridgeMethods(context)
+
     override fun lower(irClass: IrClass) {
         irClass.declarations
             .asSequence()
@@ -65,6 +67,11 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         // equals(Any?), hashCode(), toString() never need bridges
         if (function.isMethodOfAny())
             return
+
+        val (specialOverride: IrSimpleFunction?, specialOverrideValueGenerator) =
+            specialBridgeMethods.findSpecialWithOverride(function) ?: Pair(null, null)
+
+        val specialOverrideSignature = specialOverride?.let { FunctionAndSignature(it) }
 
         val bridgesToGenerate = generateBridges(
             function = IrBasedFunctionHandle(function),
@@ -85,7 +92,16 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
                 continue
             }
 
-            irClass.declarations.add(createBridge(function, from.function, to.function))
+            val bridge: IrDeclaration = when {
+                specialOverrideSignature == from ->
+                    createBridge(function, from.function, to.function, specialOverrideValueGenerator)
+
+                else ->
+                    createBridge(function, from.function, to.function, null)
+            }
+
+
+            irClass.declarations.add(bridge)
         }
     }
 
@@ -95,7 +111,8 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
     private fun createBridge(
         function: IrSimpleFunction,
         bridge: IrSimpleFunction,
-        delegateTo: IrSimpleFunction
+        delegateTo: IrSimpleFunction,
+        defaultValueGenerator: ((IrSimpleFunction) -> IrExpression)?
     ): IrFunction {
 
         val origin =
@@ -130,6 +147,16 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         }
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
+            if (defaultValueGenerator != null) {
+                irFunction.valueParameters.forEach {
+                    +irIfThen(
+                        context.irBuiltIns.unitType,
+                        irNot(irIs(irGet(it), delegateTo.valueParameters[it.index].type)),
+                        irReturn(defaultValueGenerator(irFunction))
+                    )
+                }
+            }
+
             val call = irCall(delegateTo.symbol)
             call.dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
             irFunction.extensionReceiverParameter?.let {

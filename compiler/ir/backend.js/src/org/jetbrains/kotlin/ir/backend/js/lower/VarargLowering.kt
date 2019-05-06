@@ -112,7 +112,11 @@ private class VarargTransformer(
 
         // empty vararg => empty array literal
         if (segments.isEmpty()) {
-            return emptyList<IrExpression>().toArrayLiteral(primitiveExpressionType, primitiveElementType)
+            val res = emptyList<IrExpression>().toArrayLiteral(primitiveExpressionType, primitiveElementType)
+            return if (needUnboxing)
+                res.boxInlineClassIfNeeded(arrayInlineClass!!)
+            else
+                res
         }
 
         // vararg with a single segment => no need to concatenate

@@ -123,6 +123,15 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
             }
         }
 
+        internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
+            if (startIndex < 0 || endIndex > size) {
+                throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
+            }
+            if (startIndex > endIndex) {
+                throw IllegalArgumentException("startIndex: $startIndex > endIndex: $endIndex")
+            }
+        }
+
         internal fun orderedHashCode(c: Collection<*>): Int {
             var hashCode = 1
             for (e in c) {

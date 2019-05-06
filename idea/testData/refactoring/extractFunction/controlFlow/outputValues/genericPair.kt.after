@@ -1,3 +1,4 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 // WITH_RUNTIME
 // PARAM_TYPES: A?, kotlin.Any?
 // PARAM_TYPES: B, A

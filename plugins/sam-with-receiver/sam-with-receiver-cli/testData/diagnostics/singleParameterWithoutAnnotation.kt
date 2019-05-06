@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: Sam.java
@@ -13,6 +14,6 @@ fun test() {
 
     Sam {
         val a = <!NO_THIS!>this<!>
-        System.out.println(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>)
+        System.out.<!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>)
     }
 }

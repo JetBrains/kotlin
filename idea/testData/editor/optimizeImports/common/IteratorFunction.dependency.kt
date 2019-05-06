@@ -1,9 +1,8 @@
 package test1
 
-public class MyClass {
-}
+class MyClass
 
-public fun MyClass.iterator(): Iterator<MyClass> {
+operator fun MyClass.iterator(): Iterator<MyClass> {
      return object: Iterator<MyClass> {
          override fun next(): MyClass {
              throw Exception()

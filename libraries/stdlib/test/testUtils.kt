@@ -5,6 +5,7 @@
 
 package test
 
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 // just a static type check
@@ -18,3 +19,12 @@ inline fun <reified T> assertStaticAndRuntimeTypeIs(value: @kotlin.internal.NoIn
         fail("Expected value $value to have ${T::class} type")
     }
 }
+
+
+fun assertArrayContentEquals(expected: ByteArray, actual: ByteArray, message: String? = null)     = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: CharArray, actual: CharArray, message: String? = null)     = assertTrue(expected contentEquals actual, message)
+
+fun assertArrayContentEquals(expected: UIntArray, actual: UIntArray, message: String? = null)     = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: ULongArray, actual: ULongArray, message: String? = null)   = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: UShortArray, actual: UShortArray, message: String? = null) = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: UByteArray, actual: UByteArray, message: String? = null)   = assertTrue(expected contentEquals actual, message)

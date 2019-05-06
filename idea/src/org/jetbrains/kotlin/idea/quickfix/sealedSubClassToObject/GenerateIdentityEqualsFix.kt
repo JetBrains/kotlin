@@ -11,8 +11,8 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtPsiFactory.*
-import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.*
+import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
+import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.FUNCTION
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class GenerateIdentityEqualsFix : LocalQuickFix {

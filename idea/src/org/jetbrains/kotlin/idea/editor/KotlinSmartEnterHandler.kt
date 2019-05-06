@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.kotlin.KtNodeTypes

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportProviderTestCase
 import junit.framework.TestCase
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.VersionView
 import org.jetbrains.kotlin.config.apiVersionView
 import org.jetbrains.kotlin.config.languageVersionView

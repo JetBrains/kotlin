@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -138,6 +139,7 @@ fun Project.getLanguageVersionSettings(
             CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this@getLanguageVersionSettings).settings),
             languageVersion
         )
+        configureNewInferenceSupportInIDE(this@getLanguageVersionSettings)
         if (isReleaseCoroutines != null) {
             put(
                 LanguageFeature.ReleaseCoroutines,
@@ -194,6 +196,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
     val languageFeatures = facetSettings.mergedCompilerArguments?.configureLanguageFeatures(MessageCollector.NONE)?.apply {
         configureCoroutinesSupport(facetSettings.coroutineSupport, languageVersion)
         configureMultiplatformSupport(facetSettings.platform?.kind, this@computeLanguageVersionSettings)
+        configureNewInferenceSupportInIDE(project)
     }.orEmpty()
 
     val analysisFlags = facetSettings.mergedCompilerArguments?.configureAnalysisFlags(MessageCollector.NONE).orEmpty()
@@ -248,6 +251,13 @@ fun MutableMap<LanguageFeature, LanguageFeature.State>.configureMultiplatformSup
     }
 }
 
+fun MutableMap<LanguageFeature, LanguageFeature.State>.configureNewInferenceSupportInIDE(
+    project: Project
+) {
+    if (NewInferenceForIDEAnalysisComponent.isEnabled(project)) {
+        putIfAbsent(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
+    }
+}
 
 val PsiElement.languageVersionSettings: LanguageVersionSettings
     get() {

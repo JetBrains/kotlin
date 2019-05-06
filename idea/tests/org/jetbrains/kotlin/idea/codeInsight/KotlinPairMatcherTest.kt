@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
-import java.lang.IllegalArgumentException
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinPairMatcherTest : KotlinLightCodeInsightFixtureTestCase() {

@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 fun foo() {
     takeHandler1 {
         takeHandler2({ -> ret<caret> })

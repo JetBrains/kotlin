@@ -49,12 +49,12 @@ import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.ImportPath
-import java.util.*
 
 class KotlinUnusedImportInspection : AbstractKotlinInspection() {
     data class ImportData(val unusedImports: List<KtImportDirective>, val optimizerData: OptimizedImportsBuilder.InputData)
@@ -75,11 +75,11 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 .map { it.fqName }
                 .toSet()
 
-            val fqNames = HashSet<FqName>()
+            val fqNames = HashMap<FqName, Set<Name>>()
             val parentFqNames = HashSet<FqName>()
-            for (descriptor in optimizerData.descriptorsToImport) {
+            for ((descriptor, names) in optimizerData.descriptorsToImport) {
                 val fqName = descriptor.importableFqName!!
-                fqNames.add(fqName)
+                fqNames.compute(fqName) { _, u -> u?.plus(names) ?: names }
 
                 if (fqName !in explicitlyImportedFqNames) { // we don't add parents of explicitly imported fq-names because such imports are not needed
                     val parentFqName = fqName.parent()
@@ -95,12 +95,11 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             val resolutionFacade = file.getResolutionFacade()
             for (directive in directives) {
                 val importPath = directive.importPath ?: continue
-                if (importPath.alias != null) continue // highlighting of unused alias imports not supported yet
 
                 val isUsed = when {
                     !importPaths.add(importPath) -> false
                     importPath.isAllUnder -> importPath.fqName in parentFqNames
-                    importPath.fqName in fqNames -> true
+                    importPath.fqName in fqNames -> importPath.importedName?.let { it in fqNames.getValue(importPath.fqName) } ?: false
                     // case for type alias
                     else -> directive.targetDescriptors(resolutionFacade).firstOrNull()?.let { it.importableFqName in fqNames } ?: false
                 }
@@ -161,7 +160,12 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             ApplicationManager.getApplication().invokeLater {
                 val editor = PsiUtilBase.findEditor(file)
                 val currentModificationCount = PsiModificationTracker.SERVICE.getInstance(project).modificationCount
-                if (editor != null && currentModificationCount == modificationCount && timeToOptimizeImportsOnTheFly(file, editor, project)) {
+                if (editor != null && currentModificationCount == modificationCount && timeToOptimizeImportsOnTheFly(
+                        file,
+                        editor,
+                        project
+                    )
+                ) {
                     optimizeImportsOnTheFly(file, optimizedImports, editor, project)
                 }
             }

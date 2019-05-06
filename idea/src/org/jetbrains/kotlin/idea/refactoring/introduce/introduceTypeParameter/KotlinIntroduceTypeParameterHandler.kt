@@ -61,7 +61,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getAbbreviatedTypeOrType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.utils.keysToMap
-import java.lang.AssertionError
 
 object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
     @JvmField

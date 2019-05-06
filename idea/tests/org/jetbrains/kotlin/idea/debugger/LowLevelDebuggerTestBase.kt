@@ -19,7 +19,6 @@ import java.io.IOException
 import java.net.Socket
 import java.nio.file.Files
 import kotlin.properties.Delegates
-import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
     private companion object {

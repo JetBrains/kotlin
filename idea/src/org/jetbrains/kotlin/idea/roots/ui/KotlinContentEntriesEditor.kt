@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.idea.roots.ui
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.roots.ui.configuration.*
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ResourceKotlinRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestResourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 
 class KotlinContentEntriesEditor(
     moduleName: String,

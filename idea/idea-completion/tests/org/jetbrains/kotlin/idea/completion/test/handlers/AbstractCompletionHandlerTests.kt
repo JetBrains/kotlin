@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
+import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.io.File
@@ -29,9 +31,12 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
 
         val tempSettings = CodeStyle.getSettings(project).clone()
         CodeStyle.setTemporarySettings(project, tempSettings)
+        val fileText = FileUtil.loadFile(File(testPath))
+        val configured = configureCompilerOptions(fileText, project, module)
         try {
-            val fileText = FileUtil.loadFile(File(testPath))
             assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"));
+
+
             val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
             val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
             val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
@@ -67,6 +72,9 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
 
             doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, File(testPath).name + ".after")
         } finally {
+            if (configured) {
+                rollbackCompilerOptions(project, module)
+            }
             CodeStyle.dropTemporarySettings(project)
             tearDownFixture()
         }

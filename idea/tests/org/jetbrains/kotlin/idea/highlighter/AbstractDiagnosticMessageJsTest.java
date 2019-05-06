@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 
@@ -32,8 +34,8 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
 
     @NotNull
     @Override
-    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion) {
-        return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), getConfig(explicitLanguageVersion));
+    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion, @NotNull Map<LanguageFeature, LanguageFeature.State> specificFeatures) {
+        return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), getConfig(explicitLanguageVersion, specificFeatures));
     }
 
     @NotNull
@@ -49,17 +51,21 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     }
 
     @NotNull
-    private JsConfig getConfig(@Nullable LanguageVersion explicitLanguageVersion) {
+    private JsConfig getConfig(@Nullable LanguageVersion explicitLanguageVersion, @NotNull Map<LanguageFeature, LanguageFeature.State> specificFeatures) {
         CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
         configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME);
         configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB);
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
-        if (explicitLanguageVersion != null) {
-            CommonConfigurationKeysKt.setLanguageVersionSettings(
-                    configuration,
-                    new LanguageVersionSettingsImpl(explicitLanguageVersion, LanguageVersionSettingsImpl.DEFAULT.getApiVersion())
-            );
-        }
+
+        LanguageVersion languageVersion = explicitLanguageVersion == null
+                ? CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion()
+                : explicitLanguageVersion;
+
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
+                languageVersion,
+                LanguageVersionSettingsImpl.DEFAULT.getApiVersion(),
+                Collections.emptyMap(),
+                specificFeatures));
         return new JsConfig(getProject(), configuration);
     }
 }

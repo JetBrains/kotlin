@@ -109,10 +109,10 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 val argument = cacheValue(expression.argument, newStatements, declaration)
                 val check = generateTypeCheck(argument, toType)
 
-                newStatements += JsIrBuilder.buildIfElse(toType, check, argument(), failResult)
+                newStatements += JsIrBuilder.buildIfElse(expression.type, check, argument(), failResult)
 
                 return expression.run {
-                    IrCompositeImpl(startOffset, endOffset, toType, null, newStatements)
+                    IrCompositeImpl(startOffset, endOffset, expression.type, null, newStatements)
                 }
             }
 

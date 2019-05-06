@@ -45,36 +45,52 @@ fun Char.isAsciiUpperCase() = this in 'A'..'Z'
 
 class StringTest {
 
+    private fun testStringFromChars(expected: String, chars: CharArray, offset: Int, length: Int) {
+        assertEquals(expected, String(chars, offset, length))
+        assertEquals(expected, chars.concatToString(startIndex = offset, endIndex = offset + length))
+    }
+
+    private fun testStringFromChars(expected: String, chars: CharArray) {
+        assertEquals(expected, String(chars))
+        assertEquals(expected, chars.concatToString())
+    }
+
     @Test fun stringFromCharArrayFullSlice() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
-        assertEquals("Kotlin", String(chars, 0, chars.size))
+        testStringFromChars("Kotlin", chars, 0, chars.size)
     }
 
     @Test fun stringFromCharArraySlice() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n', ' ', 'r', 'u', 'l', 'e', 's')
-        assertEquals("rule", String(chars, 7, 4))
+        testStringFromChars("rule", chars, 7, 4)
 
         val longChars = CharArray(200_000) { 'k' }
-        val longString = String(longChars, 1000, 190_000)
+        val longString = String(longChars, offset = 1000, length = 190_000)
+        val longConcatString = longChars.concatToString(startIndex = 1000, endIndex = 191_000)
         assertEquals(190_000, longString.length)
+        assertEquals(190_000, longConcatString.length)
         assertTrue(longString.all { it == 'k' })
+        assertTrue(longConcatString.all { it == 'k' })
     }
 
     @Test fun stringFromCharArray() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
-        assertEquals("Kotlin", String(chars))
+        testStringFromChars("Kotlin", chars)
 
         val longChars = CharArray(200_000) { 'k' }
         val longString = String(longChars)
+        val longConcatString = longChars.concatToString()
         assertEquals(200_000, longString.length)
+        assertEquals(200_000, longConcatString.length)
         assertTrue(longString.all { it == 'k' })
+        assertTrue(longConcatString.all { it == 'k' })
     }
 
     @Test fun stringFromCharArrayUnicodeSurrogatePairs() {
         val chars: CharArray = charArrayOf('Ц', '月', '語', '\u016C', '\u138D', '\uD83C', '\uDC3A')
-        assertEquals("Ц月語Ŭᎍ🀺", String(chars))
-        assertEquals("月", String(chars, 1, 1))
-        assertEquals("Ŭᎍ🀺", String(chars, 3, 4))
+        testStringFromChars("Ц月語Ŭᎍ🀺", chars)
+        testStringFromChars("月", chars, 1, 1)
+        testStringFromChars("Ŭᎍ🀺", chars, 3, 4)
     }
 
     @Test fun stringFromCharArrayOutOfBounds() {
@@ -82,9 +98,24 @@ class StringTest {
             assertFailsWith<IndexOutOfBoundsException> { String(chars, -1, 1) }
             assertFailsWith<IndexOutOfBoundsException> { String(chars, 1, -1) }
             assertFailsWith<IndexOutOfBoundsException> { String(chars, chars.size - 1, 2) }
+
+            assertFailsWith<IndexOutOfBoundsException> { chars.concatToString(-1, 1) }
+            assertFailsWith<IllegalArgumentException> { chars.concatToString(1, -1) }
+            assertFailsWith<IllegalArgumentException> { chars.concatToString(chars.size - 1, 2) }
         }
         test(CharArray(16) { 'k' })
         test(CharArray(160_000) { 'k' })
+    }
+
+    @Test
+    fun toCharArray() {
+        val s = "hello"
+        assertArrayContentEquals(charArrayOf('h', 'e', 'l', 'l', 'o'), s.toCharArray())
+        assertArrayContentEquals(charArrayOf('e', 'l'), s.toCharArray(1, 3))
+
+        assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(-1) }
+        assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(0, 6) }
+        assertFailsWith<IllegalArgumentException> { s.toCharArray(3, 1) }
     }
 
     @Test fun isEmptyAndBlank() = withOneCharSequenceArg { arg1 ->

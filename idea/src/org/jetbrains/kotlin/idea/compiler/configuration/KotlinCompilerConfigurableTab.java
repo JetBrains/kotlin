@@ -36,16 +36,18 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
+import org.jetbrains.kotlin.idea.configuration.ProjectUtilsKt;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
+import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent;
 import org.jetbrains.kotlin.idea.roots.RootUtilsKt;
 import org.jetbrains.kotlin.idea.util.CidrUtil;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.platform.IdePlatform;
 import org.jetbrains.kotlin.platform.IdePlatformKind;
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformUtil;
-import org.jetbrains.kotlin.platform.impl.JvmIdePlatformUtil;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind;
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformUtil;
 
 import javax.swing.*;
 import java.util.*;
@@ -110,6 +112,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JLabel labelForSourceMapPrefix;
     private JComboBox sourceMapEmbedSources;
     private JPanel coroutinesPanel;
+    private ThreeStateCheckBox enableNewInferenceInIDECheckBox;
     private boolean isEnabled = true;
 
     public KotlinCompilerConfigurableTab(
@@ -150,6 +153,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         }
 
         reportWarningsCheckBox.setThirdStateEnabled(isMultiEditor);
+        enableNewInferenceInIDECheckBox.setThirdStateEnabled(isMultiEditor);
 
         if (isProjectSettings) {
             List<String> modulesOverridingProjectSettings = ArraysKt.mapNotNull(
@@ -207,6 +211,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             keepAliveCheckBox.setVisible(false);
             k2jvmPanel.setVisible(false);
             enableIncrementalCompilationForJsCheckBox.setVisible(false);
+            enableNewInferenceInIDECheckBox.setVisible(false);
         }
 
         updateOutputDirEnabled();
@@ -438,6 +443,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public boolean isModified() {
         return isModified(reportWarningsCheckBox, !commonCompilerArguments.getSuppressWarnings()) ||
+               isModified(enableNewInferenceInIDECheckBox, NewInferenceForIDEAnalysisComponent.isEnabled(project)) ||
                !getSelectedLanguageVersionView().equals(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments)) ||
                !getSelectedAPIVersionView().equals(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments)) ||
                !getSelectedCoroutineState().equals(commonCompilerArguments.getCoroutinesState()) ||
@@ -515,7 +521,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                     !getSelectedLanguageVersionView().equals(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments)) ||
                     !getSelectedAPIVersionView().equals(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments)) ||
                     !getSelectedCoroutineState().equals(commonCompilerArguments.getCoroutinesState()) ||
-                    !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments());
+                    !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments()) ||
+                    enableNewInferenceInIDECheckBox.isSelected() != NewInferenceForIDEAnalysisComponent.isEnabled(project);
 
             if (shouldInvalidateCaches) {
                 ApplicationUtilsKt.runWriteAction(
@@ -531,6 +538,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         }
 
         commonCompilerArguments.setSuppressWarnings(!reportWarningsCheckBox.isSelected());
+        NewInferenceForIDEAnalysisComponent.setEnabled(project, enableNewInferenceInIDECheckBox.isSelected());
         KotlinFacetSettingsKt.setLanguageVersionView(commonCompilerArguments, getSelectedLanguageVersionView());
         KotlinFacetSettingsKt.setApiVersionView(commonCompilerArguments, getSelectedAPIVersionView());
 
@@ -583,6 +591,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public void reset() {
         reportWarningsCheckBox.setSelected(!commonCompilerArguments.getSuppressWarnings());
+        enableNewInferenceInIDECheckBox.setSelected(NewInferenceForIDEAnalysisComponent.isEnabled(project));
         languageVersionComboBox.setSelectedItem(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments));
         onLanguageLevelChanged(getSelectedLanguageVersionView());
         apiVersionComboBox.setSelectedItem(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments));
@@ -633,6 +642,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     public ThreeStateCheckBox getReportWarningsCheckBox() {
         return reportWarningsCheckBox;
+    }
+
+    public ThreeStateCheckBox getEnableNewInferenceInIDECheckBox() {
+        return enableNewInferenceInIDECheckBox;
     }
 
     public RawCommandLineEditor getAdditionalArgsOptionsField() {

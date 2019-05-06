@@ -1,4 +1,5 @@
 // "Optimize imports" "true"
+// WITH_RUNTIME
 
 <caret>import kotlin.collections.*
 

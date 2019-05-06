@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 class Rule(val apply: () -> Unit)
 
 fun foo() {

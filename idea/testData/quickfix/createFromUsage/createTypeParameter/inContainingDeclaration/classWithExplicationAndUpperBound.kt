@@ -1,4 +1,5 @@
 // "Create type parameter 'X' in class 'Foo'" "true"
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 class A<T : List<Int>>
 
 open class Foo(x: A<<caret>X>)

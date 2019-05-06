@@ -135,7 +135,8 @@ compileTestKotlin2Js {
           "-Xir",
           "-Xir-produce-only=js",
           "-verbose",
-          "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+          "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+          "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
         ]
     }
 }

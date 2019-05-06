@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.testFramework.EditorTestUtil.*
+import com.intellij.testFramework.EditorTestUtil.performTypingAction
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase

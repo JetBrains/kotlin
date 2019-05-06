@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.keysToMap
-import java.lang.AssertionError
 import java.util.*
 
 interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {

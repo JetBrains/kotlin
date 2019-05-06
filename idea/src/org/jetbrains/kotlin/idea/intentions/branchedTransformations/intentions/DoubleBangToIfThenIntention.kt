@@ -28,7 +28,10 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.ChooseStringExpression
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver

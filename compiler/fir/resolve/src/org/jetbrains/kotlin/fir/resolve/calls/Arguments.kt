@@ -149,7 +149,7 @@ internal fun FirExpression.getExpectedType(
 //        parameter.type.unwrap()
 //    } else {
     if (parameter.isVararg) {
-        parameter.returnTypeRef.coneTypeUnsafe().varargElementType(session)
+        parameter.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().varargElementType(session)
     } else {
         parameter.returnTypeRef.coneTypeUnsafe()
     }//?.varargElementType?.unwrap() ?: parameter.type.unwrap()

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
@@ -22,10 +24,12 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker
+import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.unCapture
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DiagnosticReporterByTrackingStrategy(
@@ -86,7 +90,8 @@ class DiagnosticReporterByTrackingStrategy(
     override fun onCallReceiver(callReceiver: SimpleKotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
         when (diagnostic.javaClass) {
             UnsafeCallError::class.java -> {
-                val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isForImplicitInvoke ?: false
+                val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isForImplicitInvoke
+                    ?: callReceiver.receiver.receiverValue.type.isExtensionFunctionType
                 tracingStrategy.unsafeCall(trace, callReceiver.receiver.receiverValue.type, implicitInvokeCheck)
             }
 
@@ -170,6 +175,7 @@ class DiagnosticReporterByTrackingStrategy(
                     context.statementFilter
                 )
                 val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
+                val call = if (call.callElement is KtBinaryExpression) null else call
                 SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
                     recordExpressionType = true
@@ -209,24 +215,61 @@ class DiagnosticReporterByTrackingStrategy(
                 val constraintError = diagnostic as NewConstraintError
                 val position = constraintError.position.from
                 val argument = (position as? ArgumentConstraintPosition)?.argument
-                        ?: (position as? ReceiverConstraintPosition)?.argument
+                    ?: (position as? ReceiverConstraintPosition)?.argument
                 argument?.let {
+                    it.safeAs<LambdaKotlinCallArgument>()?.let lambda@{ lambda ->
+                        val parameterTypes = lambda.parametersTypes?.toList() ?: return@lambda
+                        val index = parameterTypes.indexOf(constraintError.upperType)
+                        val lambdaExpression = lambda.psiExpression as? KtLambdaExpression ?: return@lambda
+                        val parameter = lambdaExpression.valueParameters.getOrNull(index) ?: return@lambda
+                        trace.report(Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.on(parameter, constraintError.upperKotlinType.unCapture()))
+                        return
+                    }
+
                     val expression = it.psiExpression ?: return
                     val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
                     if (reportConstantTypeMismatch(constraintError, deparenthesized)) return
-                    trace.report(Errors.TYPE_MISMATCH.on(deparenthesized, constraintError.upperKotlinType, constraintError.lowerKotlinType))
+
+                    val compileTimeConstant = trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized] as? TypedCompileTimeConstant
+                    if (compileTimeConstant != null) {
+                        val expressionType = trace[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type
+                        if (expressionType != null &&
+                            !UnsignedTypes.isUnsignedType(compileTimeConstant.type) && UnsignedTypes.isUnsignedType(expressionType)
+                        ) {
+                            return
+                        }
+                    }
+                    trace.report(
+                        Errors.TYPE_MISMATCH.on(
+                            deparenthesized,
+                            constraintError.upperKotlinType.unCapture(),
+                            constraintError.lowerKotlinType.unCapture()
+                        )
+                    )
                 }
 
                 (position as? ExpectedTypeConstraintPosition)?.let {
                     val call = it.topLevelCall.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>()
                     reportIfNonNull(call) {
-                        trace.report(Errors.TYPE_MISMATCH.on(it, constraintError.upperKotlinType, constraintError.lowerKotlinType))
+                        trace.report(
+                            Errors.TYPE_MISMATCH.on(
+                                it,
+                                constraintError.upperKotlinType.unCapture(),
+                                constraintError.lowerKotlinType.unCapture()
+                            )
+                        )
                     }
                 }
 
                 (position as? ExplicitTypeParameterConstraintPosition)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
-                    trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, constraintError.upperKotlinType, constraintError.lowerKotlinType))
+                    trace.report(
+                        UPPER_BOUND_VIOLATED.on(
+                            typeArgumentReference,
+                            constraintError.upperKotlinType,
+                            constraintError.lowerKotlinType
+                        )
+                    )
                 }
             }
 

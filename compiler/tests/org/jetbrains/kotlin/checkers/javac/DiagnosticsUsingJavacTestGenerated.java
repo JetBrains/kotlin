@@ -526,6 +526,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             runTest("compiler/testData/diagnostics/tests/ReturnInFunctionWithoutBody.kt");
         }
 
+        @TestMetadata("safeCall.kt")
+        public void testSafeCall() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/safeCall.kt");
+        }
+
         @TestMetadata("SafeCallInvoke.kt")
         public void testSafeCallInvoke() throws Exception {
             runTest("compiler/testData/diagnostics/tests/SafeCallInvoke.kt");
@@ -1709,6 +1714,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("subtypeArgumentFromRHSForReference.kt")
             public void testSubtypeArgumentFromRHSForReference() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/subtypeArgumentFromRHSForReference.kt");
+            }
+
+            @TestMetadata("typealiases.kt")
+            public void testTypealiases() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/typealiases.kt");
             }
 
             @TestMetadata("unused.kt")

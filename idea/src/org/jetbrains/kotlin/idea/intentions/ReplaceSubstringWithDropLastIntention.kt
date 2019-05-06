@@ -20,7 +20,10 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 class ReplaceSubstringWithDropLastIntention : ReplaceSubstringIntention("Replace 'substring' call with 'dropLast' call") {
     override fun applicabilityRangeInner(element: KtDotQualifiedExpression): TextRange? {
