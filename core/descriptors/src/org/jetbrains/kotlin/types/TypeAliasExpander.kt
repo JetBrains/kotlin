@@ -1,27 +1,16 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.resolve
+package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 import org.jetbrains.kotlin.types.typeUtil.requiresTypeAliasExpansion
 
@@ -49,7 +38,10 @@ class TypeAliasExpander(
         recursionDepth: Int,
         withAbbreviatedType: Boolean
     ): SimpleType {
-        val underlyingProjection = TypeProjectionImpl(Variance.INVARIANT, typeAliasExpansion.descriptor.underlyingType)
+        val underlyingProjection = TypeProjectionImpl(
+            Variance.INVARIANT,
+            typeAliasExpansion.descriptor.underlyingType
+        )
         val expandedProjection = expandTypeProjection(underlyingProjection, typeAliasExpansion, null, recursionDepth)
         val expandedType = expandedProjection.type.asSimpleType()
 
@@ -205,7 +197,8 @@ class TypeAliasExpander(
                     expandTypeProjection(typeAliasArgument, typeAliasExpansion, typeConstructor.parameters[i], recursionDepth + 1)
                 }
 
-                val nestedExpansion = TypeAliasExpansion.create(typeAliasExpansion, typeDescriptor, expandedArguments)
+                val nestedExpansion =
+                    TypeAliasExpansion.create(typeAliasExpansion, typeDescriptor, expandedArguments)
 
                 val nestedExpandedType = expandRecursively(
                     nestedExpansion, type.annotations,
@@ -257,7 +250,7 @@ class TypeAliasExpander(
                 val unsubstitutedArgument = unsubstitutedType.arguments[i]
                 val typeParameter = unsubstitutedType.constructor.parameters[i]
                 if (shouldCheckBounds) {
-                    DescriptorResolver.checkBoundsInTypeAlias(
+                    checkBoundsInTypeAlias(
                         reportStrategy,
                         unsubstitutedArgument.type,
                         substitutedArgument.type,
@@ -272,12 +265,33 @@ class TypeAliasExpander(
     companion object {
         private const val MAX_RECURSION_DEPTH = 100
 
+        fun checkBoundsInTypeAlias(
+            reportStrategy: TypeAliasExpansionReportStrategy,
+            unsubstitutedArgument: KotlinType,
+            typeArgument: KotlinType,
+            typeParameterDescriptor: TypeParameterDescriptor,
+            substitutor: TypeSubstitutor
+        ) {
+            for (bound in typeParameterDescriptor.upperBounds) {
+                val substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT)
+                if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(typeArgument, substitutedBound)) {
+                    reportStrategy.boundsViolationInSubstitution(
+                        substitutedBound,
+                        unsubstitutedArgument,
+                        typeArgument,
+                        typeParameterDescriptor
+                    )
+                }
+            }
+        }
+
         private fun assertRecursionDepth(recursionDepth: Int, typeAliasDescriptor: TypeAliasDescriptor) {
             if (recursionDepth > MAX_RECURSION_DEPTH) {
                 throw AssertionError("Too deep recursion while expanding type alias ${typeAliasDescriptor.name}")
             }
         }
 
-        val NON_REPORTING = TypeAliasExpander(TypeAliasExpansionReportStrategy.DO_NOTHING, false)
+        val NON_REPORTING =
+            TypeAliasExpander(TypeAliasExpansionReportStrategy.DO_NOTHING, false)
     }
 }

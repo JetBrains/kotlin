@@ -693,7 +693,7 @@ class CandidateResolver(
             val typeParameter = typeParameters[i]
             val substitutedTypeArgument = substitutedTypeProjection.type
             val unsubstitutedTypeArgument = unsubstitutedType.arguments[i].type
-            DescriptorResolver.checkBoundsInTypeAlias(
+            TypeAliasExpander.checkBoundsInTypeAlias(
                 reportStrategy,
                 unsubstitutedTypeArgument,
                 substitutedTypeArgument,
