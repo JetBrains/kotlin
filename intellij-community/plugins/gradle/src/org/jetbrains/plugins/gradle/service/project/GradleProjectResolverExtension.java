@@ -27,6 +27,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.util.Consumer;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.GradleManager;
@@ -144,6 +145,7 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
    * @param initScriptConsumer consumer of init script text. Must be called to add script txt
    * @param testExecutionExpected flag that shows if tasks will be treated as tests invocation by the IDE (e.g., test events are expected)
    */
+  @ApiStatus.Experimental
   default void enhanceTaskProcessing(@NotNull List<String> taskNames,
                              @Nullable String jvmAgentSetup,
                              @NotNull Consumer<String> initScriptConsumer,
