@@ -2,9 +2,12 @@ package org.jetbrains.konan.resolve
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.model.project.ContentRootData
+import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -12,6 +15,10 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiManager
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.cpp.OCIncludeSymbol
+import gnu.trove.THashSet
+import org.jetbrains.jps.model.java.JavaResourceRootType
+import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -38,8 +45,17 @@ class KotlinFrameworkTranslator(val project: Project) {
         val vfs = LocalFileSystem.getInstance()
 
         return contentRoots.asSequence()
-            .mapNotNull { node -> vfs.findFileByPath(node.data.rootPath) }
-            //todo process only `./***Main/kotlin/`
+            .flatMap { node ->
+                val sourceRoots = node.data.sourceRoots
+                (if (sourceRoots.isNotEmpty())
+                    sourceRoots
+                else
+                    //todo[medvedev] this is a backup. get rid of it???
+                    //todo[medvedev] process only `./***Main/kotlin/`
+                    listOf(node.data.rootPath)
+                ).asSequence()
+            }
+            .mapNotNull {path -> vfs.findFileByPath(path) }
             .flatMap { dir -> findAllSources(dir).asSequence() }
             .toList()
     }
@@ -62,4 +78,35 @@ class KotlinFrameworkTranslator(val project: Project) {
     private fun include(konanFile: KonanBridgeVirtualFile, target: VirtualFile): OCIncludeSymbol {
         return OCIncludeSymbol(konanFile, 0, target, OCIncludeSymbol.IncludePath.EMPTY, true, false, 0, null, true)
     }
+
+    //todo[medvedev] copied from ContentRootData#getSourceRoots
+    private val ContentRootData.sourceRoots: Set<String>
+        get() {
+            val sourceRoots = THashSet(FileUtil.PATH_HASHING_STRATEGY)
+            for (externalSrcType in ExternalSystemSourceType.values()) {
+                if (externalSrcType.javaSourceRootType != null) {
+                    for (path in getPaths(externalSrcType)) {
+                        if (path != null) {
+                            sourceRoots += path.path
+                        }
+                    }
+                }
+            }
+            return sourceRoots
+        }
+
+    //todo[medvedev] copied from ContentRootData#getJavaSourceRootType
+    private val ExternalSystemSourceType.javaSourceRootType: JpsModuleSourceRootType<*>?
+        get() {
+            return when (this) {
+                ExternalSystemSourceType.SOURCE -> JavaSourceRootType.SOURCE
+                ExternalSystemSourceType.TEST -> JavaSourceRootType.TEST_SOURCE
+                ExternalSystemSourceType.EXCLUDED -> null
+                ExternalSystemSourceType.SOURCE_GENERATED -> JavaSourceRootType.SOURCE
+                ExternalSystemSourceType.TEST_GENERATED -> JavaSourceRootType.TEST_SOURCE
+                ExternalSystemSourceType.RESOURCE -> JavaResourceRootType.RESOURCE
+                ExternalSystemSourceType.TEST_RESOURCE -> JavaResourceRootType.TEST_RESOURCE
+                else -> null
+            }
+        }
 }
