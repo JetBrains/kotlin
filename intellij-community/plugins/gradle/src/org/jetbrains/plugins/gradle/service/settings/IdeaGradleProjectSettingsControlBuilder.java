@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.settings.LocationSettingType;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil;
 import com.intellij.openapi.externalSystem.service.settings.ExternalSystemSettingsControlCustomizer;
@@ -22,6 +23,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.ui.*;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
@@ -44,7 +46,6 @@ import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager;
-import org.jetbrains.plugins.gradle.settings.DefaultGradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.TestRunner;
@@ -74,6 +75,7 @@ import static com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil.INSE
  */
 @SuppressWarnings("FieldCanBeLocal") // Used implicitly by reflection at disposeUIResources() and showUi()
 public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSettingsControlBuilder {
+  private static final Logger LOG = Logger.getInstance("#" + IdeaGradleProjectSettingsControlBuilder.class.getPackage().getName());
 
   private static final long BALLOON_DELAY_MILLIS = TimeUnit.SECONDS.toMillis(1);
   @NotNull
@@ -493,13 +495,15 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     if (myDelegateBuildCombobox != null) {
       Object delegateBuildSelectedItem = myDelegateBuildCombobox.getSelectedItem();
       if (delegateBuildSelectedItem instanceof BuildRunItem) {
-        settings.setDelegatedBuild(ObjectUtils.notNull(((BuildRunItem)delegateBuildSelectedItem).value, ThreeState.UNSURE));
+        settings.setDelegatedBuild(ObjectUtils.notNull(((BuildRunItem)delegateBuildSelectedItem).value,
+                                                       GradleProjectSettings.DEFAULT_DELEGATE));
       }
     }
     if (myTestRunnerCombobox != null) {
       Object testRunnerSelectedItem = myTestRunnerCombobox.getSelectedItem();
       if (testRunnerSelectedItem instanceof TestRunnerItem) {
-        settings.setTestRunner(((TestRunnerItem)testRunnerSelectedItem).value);
+        settings.setTestRunner(ObjectUtils.notNull(((TestRunnerItem)testRunnerSelectedItem).value,
+                                                   GradleProjectSettings.DEFAULT_TEST_RUNNER));
       }
     }
   }
@@ -542,12 +546,12 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     }
 
     if (myDelegateBuildCombobox != null && myDelegateBuildCombobox.getSelectedItem() instanceof MyItem
-        && ((MyItem)myDelegateBuildCombobox.getSelectedItem()).value != myInitialSettings.getDelegatedBuild()) {
+        && !Objects.equals(((MyItem)myDelegateBuildCombobox.getSelectedItem()).value, myInitialSettings.getDelegatedBuild())) {
       return true;
     }
 
     if (myTestRunnerCombobox != null && myTestRunnerCombobox.getSelectedItem() instanceof MyItem
-        && ((MyItem)myTestRunnerCombobox.getSelectedItem()).value != myInitialSettings.getTestRunner()) {
+        && !Objects.equals(((MyItem)myTestRunnerCombobox.getSelectedItem()).value, myInitialSettings.getTestRunner())) {
       return true;
     }
 
@@ -778,7 +782,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     content.add(myDelegatePanel, ExternalSystemUiUtil.getFillLineConstraints(indentLevel + 1));
     int labelLevel = indentLevel + 1;
     if (!dropDelegateBuildCombobox) {
-      BuildRunItem[] states = StreamEx.of(ThreeState.values()).map(BuildRunItem::new).toArray(BuildRunItem[]::new);
+      BuildRunItem[] states = new BuildRunItem[] { new BuildRunItem(Boolean.TRUE), new BuildRunItem(Boolean.FALSE)};
       myDelegateBuildCombobox = new ComboBox<>(states);
       myDelegateBuildCombobox.setRenderer(new MyItemCellRenderer<>());
       myDelegateBuildCombobox.setSelectedItem(new BuildRunItem(myInitialSettings.getDelegatedBuild()));
@@ -788,10 +792,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       myDelegatePanel.add(myDelegateBuildCombobox);
     }
     if (!dropTestRunnerCombobox) {
-      TestRunnerItem[] testRunners = StreamEx.of(TestRunner.values())
-        .append((TestRunner)null)
-        .map(TestRunnerItem::new)
-        .toArray(TestRunnerItem[]::new);
+      TestRunnerItem[] testRunners = StreamEx.of(TestRunner.values()).map(TestRunnerItem::new).toArray(TestRunnerItem[]::new);
       myTestRunnerCombobox = new ComboBox<>(testRunners);
       myTestRunnerCombobox.setRenderer(new MyItemCellRenderer<>());
       myTestRunnerCombobox.setSelectedItem(new TestRunnerItem(myInitialSettings.getTestRunner()));
@@ -950,9 +951,9 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     }
   }
 
-  private class BuildRunItem extends MyItem<ThreeState> {
+  private class BuildRunItem extends MyItem<Boolean> {
 
-    private BuildRunItem(@Nullable ThreeState value) {
+    private BuildRunItem(@Nullable Boolean value) {
       super(value);
     }
 
@@ -963,22 +964,21 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
     @Override
     protected String getComment() {
-      if (value != ThreeState.UNSURE) return null;
-      ThreeState defaultDelegationOption =
-        myProjectRef.isNull() ? null :
-        ThreeState.fromBoolean(DefaultGradleProjectSettings.getInstance(myProjectRef.get()).isDelegatedBuild());
-      return getText(defaultDelegationOption);
+      return Comparing.equal(value, GradleProjectSettings.DEFAULT_DELEGATE)
+             ? GradleBundle.message("gradle.settings.text.default")
+             : null;
     }
 
     @NotNull
-    private String getText(@Nullable ThreeState state) {
-      if (state == ThreeState.NO) {
-        return ApplicationNamesInfo.getInstance().getFullProductName();
-      }
-      if (state == ThreeState.YES) {
+    private String getText(@Nullable Boolean state) {
+      if (state == Boolean.TRUE) {
         return "Gradle";
       }
-      return GradleBundle.message("gradle.settings.text.default");
+      if (state == Boolean.FALSE) {
+        return ApplicationNamesInfo.getInstance().getFullProductName();
+      }
+      LOG.error("Unexpected: " + state);
+      return "Unexpected: " + state;
     }
   }
 
@@ -995,24 +995,24 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
     @Override
     protected String getComment() {
-      if (value != null && !myProjectRef.isNull()) return null;
-      TestRunner defaultRunner =
-        myProjectRef.isNull() ? null : DefaultGradleProjectSettings.getInstance(myProjectRef.get()).getTestRunner();
-      return getText(defaultRunner);
+      return Comparing.equal(value, GradleProjectSettings.DEFAULT_TEST_RUNNER)
+             ? GradleBundle.message("gradle.settings.text.default")
+             : null;
     }
 
     @NotNull
     private String getText(@Nullable TestRunner runner) {
-      if (runner == TestRunner.PLATFORM) {
-        return ApplicationNamesInfo.getInstance().getFullProductName();
-      }
       if (runner == TestRunner.GRADLE) {
         return "Gradle";
+      }
+      if (runner == TestRunner.PLATFORM) {
+        return ApplicationNamesInfo.getInstance().getFullProductName();
       }
       if (runner == TestRunner.CHOOSE_PER_TEST) {
         return GradleBundle.message("gradle.preferred_test_runner.CHOOSE_PER_TEST");
       }
-      return GradleBundle.message("gradle.settings.text.default");
+      LOG.error("Unexpected: " + runner);
+      return "Unexpected: " + runner;
     }
   }
 }

@@ -22,7 +22,6 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
@@ -74,7 +73,7 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
 
   @Test
   public void testBaseJavaProject() throws Exception {
-    getCurrentExternalProjectSettings().setDelegatedBuild(ThreeState.NO);
+    getCurrentExternalProjectSettings().setDelegatedBuild(false);
     createDefaultDirs();
     importProject(
       "apply plugin: 'java'"
@@ -85,11 +84,11 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
     importProject();
     assertNotDelegatedMergedBaseJavaProject();
 
-    getCurrentExternalProjectSettings().setDelegatedBuild(ThreeState.YES);
+    getCurrentExternalProjectSettings().setDelegatedBuild(true);
     importProject();
     assertDelegatedMergedBaseJavaProject();
 
-    getCurrentExternalProjectSettings().setDelegatedBuild(ThreeState.NO);
+    getCurrentExternalProjectSettings().setDelegatedBuild(false);
     // subscribe to the GradleSettings changes topic
     ((GradleManager)getManager(GradleConstants.SYSTEM_ID)).runActivity(myProject);
     GradleSettings.getInstance(myProject).getPublisher().onBuildDelegationChange(false, getProjectPath());

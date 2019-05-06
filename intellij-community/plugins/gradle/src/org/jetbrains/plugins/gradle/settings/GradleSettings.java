@@ -65,6 +65,23 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
   @Override
   public void loadState(@NotNull MyState state) {
     super.loadState(state);
+
+    GradleSettingsMigration migration = getProject().getComponent(GradleSettingsMigration.class);
+
+    // When we are opening pre 2019.2 project, we need to import project defaults from the workspace
+    // The migration flag is saved to a separate component to preserve backward and forward compatibility.
+    if (migration.getMigrationVersion() < 1) {
+      migration.setMigrationVersion(1);
+
+      GradleSettingsMigration.LegacyDefaultGradleProjectSettings.MyState legacyProjectDefaults
+        = getProject().getComponent(GradleSettingsMigration.LegacyDefaultGradleProjectSettings.class).getState();
+      if (legacyProjectDefaults != null) {
+        for (GradleProjectSettings each : getLinkedProjectsSettings()) {
+          if (each.getDirectDelegatedBuild() == null) each.setDelegatedBuild(legacyProjectDefaults.delegatedBuild);
+          if (each.getDirectTestRunner() == null) each.setTestRunner(legacyProjectDefaults.testRunner);
+        }
+      }
+    }
   }
 
   /**

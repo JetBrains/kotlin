@@ -4,11 +4,9 @@ package org.jetbrains.plugins.gradle.settings;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.ThreeState;
-import com.intellij.util.xmlb.Converter;
 import com.intellij.util.xmlb.annotations.*;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
@@ -23,15 +21,15 @@ import java.util.Optional;
 
 /**
  * {@link GradleProjectSettings} holds settings for the linked gradle project.
- * These settings might have IDE project level defaults - {@link DefaultGradleProjectSettings}.
- * Consider to use effective settings with {@link GradleSettingsService}.
  *
  * @see GradleSettingsService
- * @see DefaultGradleProjectSettings
  *
  * @author Denis Zhdanov
  */
 public class GradleProjectSettings extends ExternalProjectSettings {
+  public static final boolean DEFAULT_DELEGATE = true;
+  public static final TestRunner DEFAULT_TEST_RUNNER = TestRunner.GRADLE;
+
   @Nullable private String myGradleHome;
   @Nullable private String myGradleJvm = ExternalSystemJdkUtil.USE_PROJECT_JDK;
   @Nullable private DistributionType distributionType;
@@ -42,8 +40,8 @@ public class GradleProjectSettings extends ExternalProjectSettings {
 
   private ThreeState storeProjectFilesExternally = ThreeState.NO;
 
-  @NotNull
-  private ThreeState delegatedBuild = ThreeState.UNSURE;
+  @Nullable
+  private Boolean delegatedBuild;
   @Nullable
   private TestRunner testRunner;
 
@@ -120,6 +118,9 @@ public class GradleProjectSettings extends ExternalProjectSettings {
     result.resolveModulePerSourceSet = resolveModulePerSourceSet;
     result.resolveExternalAnnotations = resolveExternalAnnotations;
     result.myCompositeBuild = myCompositeBuild != null ? myCompositeBuild.copy() : null;
+
+    result.delegatedBuild = delegatedBuild;
+    result.testRunner = testRunner;
     return result;
   }
 
@@ -133,37 +134,51 @@ public class GradleProjectSettings extends ExternalProjectSettings {
   }
 
   /**
-   * Build/run mode for the gradle project.
-   * Consider to use effective settings using {@link GradleSettingsService#isDelegatedBuildEnabled(Module)}
-   * @return build/run mode, {@link ThreeState#UNSURE} means using IDE project level configuration, see {@link DefaultGradleProjectSettings#isDelegatedBuild()}
+   * @return Build/run mode for the gradle project
    */
-  @OptionTag(value = "delegatedBuild", converter = ThreeStateConverter.class)
-  @NotNull
-  public ThreeState getDelegatedBuild() {
+  @Transient()
+  public boolean getDelegatedBuild() {
+    return ObjectUtils.notNull(delegatedBuild, DEFAULT_DELEGATE);
+  }
+
+  public void setDelegatedBuild(@NotNull Boolean state) {
+    this.delegatedBuild = state;
+  }
+
+  // For backward compatibility
+  @Nullable
+  @OptionTag(value = "delegatedBuild")
+  public Boolean getDirectDelegatedBuild() {
     return delegatedBuild;
   }
 
-  /**
-   * @param state {@link ThreeState#UNSURE} means using IDE project level configuration, see {@link DefaultGradleProjectSettings#isDelegatedBuild()}
-   */
-  public void setDelegatedBuild(@NotNull ThreeState state) {
+  @SuppressWarnings("unused")
+  public void setDirectDelegatedBuild(@Nullable Boolean state) {
     this.delegatedBuild = state;
   }
 
   /**
-   * Test runner option.
-   * Consider to use effective settings using {@link GradleSettingsService#getTestRunner(Module)}
-   * @return test runner option, "null" means using IDE project level configuration, see {@link DefaultGradleProjectSettings#getTestRunner()}
+   * @return test runner option.
    */
-  @Nullable
+  @NotNull
+  @Transient()
   public TestRunner getTestRunner() {
+    return ObjectUtils.notNull(testRunner, DEFAULT_TEST_RUNNER);
+  }
+
+  public void setTestRunner(@NotNull TestRunner testRunner) {
+    this.testRunner = testRunner;
+  }
+
+  // For backward compatibility
+  @Nullable
+  @OptionTag(value = "testRunner")
+  public TestRunner getDirectTestRunner() {
     return testRunner;
   }
 
-  /**
-   * @param testRunner null means using IDE project level configuration, see {@link DefaultGradleProjectSettings#getTestRunner()}
-   */
-  public void setTestRunner(@Nullable TestRunner testRunner) {
+  @SuppressWarnings("unused")
+  public void setDirectTestRunner(@Nullable TestRunner testRunner) {
     this.testRunner = testRunner;
   }
 
@@ -212,22 +227,6 @@ public class GradleProjectSettings extends ExternalProjectSettings {
       }
       result.myCompositeDefinitionSource = myCompositeDefinitionSource;
       return result;
-    }
-  }
-
-  private static final class ThreeStateConverter extends Converter<ThreeState> {
-    @Nullable
-    @Override
-    public ThreeState fromString(@NotNull String value) {
-      if (StringUtil.isEmpty(value)) return ThreeState.UNSURE;
-      return ThreeState.fromBoolean(Boolean.valueOf(value));
-    }
-
-    @Nullable
-    @Override
-    public String toString(@NotNull ThreeState value) {
-      if (value == ThreeState.UNSURE) return null;
-      return String.valueOf(value.toBoolean());
     }
   }
 }
