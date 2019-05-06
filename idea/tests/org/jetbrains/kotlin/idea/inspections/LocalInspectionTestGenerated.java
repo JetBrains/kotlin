@@ -1091,41 +1091,41 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
-        @TestMetadata("idea/testData/inspectionsLocal/collections/convertFlatMapToFlatten")
+        @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCall")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ConvertFlatMapToFlatten extends AbstractLocalInspectionTest {
+        public static class SimplifiableCall extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
             }
 
-            public void testAllFilesPresentInConvertFlatMapToFlatten() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/convertFlatMapToFlatten"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            public void testAllFilesPresentInSimplifiableCall() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/simplifiableCall"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("explicitLambdaParameter.kt")
             public void testExplicitLambdaParameter() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertFlatMapToFlatten/explicitLambdaParameter.kt");
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/explicitLambdaParameter.kt");
             }
 
             @TestMetadata("notOnlyReference.kt")
             public void testNotOnlyReference() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertFlatMapToFlatten/notOnlyReference.kt");
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/notOnlyReference.kt");
             }
 
             @TestMetadata("set.kt")
             public void testSet() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertFlatMapToFlatten/set.kt");
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/set.kt");
             }
 
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertFlatMapToFlatten/simple.kt");
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/simple.kt");
             }
 
             @TestMetadata("simple2.kt")
             public void testSimple2() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertFlatMapToFlatten/simple2.kt");
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/simple2.kt");
             }
         }
 

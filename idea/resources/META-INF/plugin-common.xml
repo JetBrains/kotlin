@@ -3144,8 +3144,8 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.ConvertFlatMapToFlattenInspection"
-                     displayName="flatMap call should be simplified to flatten()"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.SimplifiableCallInspection"
+                     displayName="Library function call could be simplified"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
