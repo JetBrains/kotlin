@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-internal val removeDeclarationsThatWouldBeInlined = makeIrFilePhase(
+internal val removeDeclarationsThatWouldBeInlined = makeIrModulePhase(
     ::RemoveDeclarationsThatWouldBeInlinedLowering,
     name = "RemoveInlinedDeclarations",
     description = "Rename declaration that should be inlined"

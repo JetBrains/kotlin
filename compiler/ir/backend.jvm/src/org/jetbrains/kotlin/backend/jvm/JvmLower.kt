@@ -17,40 +17,42 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 
-private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
-    lower = object : SameTypeCompilerPhase<CommonBackendContext, IrFile> {
-        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: CommonBackendContext, input: IrFile): IrFile {
-            input.acceptVoid(PatchDeclarationParentsVisitor())
-            return input
+private fun makePatchParentsPhase(number: Int) = makeIrModulePhase<CommonBackendContext>(
+    { _ ->
+        object : FileLoweringPass {
+            override fun lower(irFile: IrFile) {
+                irFile.acceptVoid(PatchDeclarationParentsVisitor())
+            }
         }
     },
     name = "PatchParents$number",
-    description = "Patch parent references in IrFile, pass $number",
-    nlevels = 0
+    description = "Patch parent references in IrFile, pass $number"
 )
 
-private val arrayConstructorPhase = makeIrFilePhase(
+private val arrayConstructorPhase = makeIrModulePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
     description = "Transform `Array(size) { index -> value }` into a loop"
 )
 
-private val expectDeclarationsRemovingPhase = makeIrFilePhase(
+private val expectDeclarationsRemovingPhase = makeIrModulePhase(
     ::ExpectDeclarationsRemoving,
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
 )
 
-private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
+private val propertiesPhase = makeIrModulePhase<CommonBackendContext>(
     { context ->
         PropertiesLowering(context, JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS) { propertyName ->
             JvmAbi.getSyntheticMethodNameForAnnotatedProperty(propertyName)
@@ -61,7 +63,7 @@ private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
-val jvmPhases = namedIrFilePhase<JvmBackendContext>(
+val jvmPhases = namedIrModulePhase<JvmBackendContext>(
     name = "IrLowering",
     description = "IR lowering",
     lower = expectDeclarationsRemovingPhase then
@@ -122,8 +124,8 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
 )
 
 class JvmLower(val context: JvmBackendContext) {
-    fun lower(irFile: IrFile) {
+    fun lower(irModuleFragment: IrModuleFragment) {
         // TODO run lowering passes as callbacks in bottom-up visitor
-        jvmPhases.invokeToplevel(context.phaseConfig, context, irFile)
+        jvmPhases.invokeToplevel(context.phaseConfig, context, irModuleFragment)
     }
 }

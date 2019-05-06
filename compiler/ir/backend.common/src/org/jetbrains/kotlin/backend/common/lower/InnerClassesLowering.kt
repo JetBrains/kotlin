@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irSetField
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-val innerClassesPhase = makeIrFilePhase(
+val innerClassesPhase = makeIrModulePhase(
     ::InnerClassesLowering,
     name = "InnerClasses",
     description = "Add 'outer this' fields to inner classes"
@@ -126,7 +126,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
     }
 }
 
-val innerClassConstructorCallsPhase = makeIrFilePhase(
+val innerClassConstructorCallsPhase = makeIrModulePhase(
     ::InnerClassConstructorCallsLowering,
     name = "InnerClassConstructorCalls",
     description = "Handle constructor calls for inner classes"

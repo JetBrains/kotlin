@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -33,15 +33,15 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import java.util.*
 
-internal val fileClassPhase = makeIrFilePhase(
+internal val fileClassPhase = makeIrModulePhase(
     ::FileClassLowering,
     name = "FileClass",
     description = "Put file level function and property declaration into a class",
     stickyPostconditions = setOf(::checkAllFileLevelDeclarationsAreClasses)
 )
 
-private fun checkAllFileLevelDeclarationsAreClasses(irFile: IrFile) {
-    assert(irFile.declarations.all { it is IrClass })
+private fun checkAllFileLevelDeclarationsAreClasses(irModuleFragment: IrModuleFragment) {
+    assert(irModuleFragment.files.all { irFile -> irFile.declarations.all { it is IrClass } })
 }
 
 private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {

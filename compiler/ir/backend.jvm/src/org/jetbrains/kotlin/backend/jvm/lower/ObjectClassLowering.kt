@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 
-internal val objectClassPhase = makeIrFilePhase(
+internal val objectClassPhase = makeIrModulePhase(
     ::ObjectClassLowering,
     name = "ObjectClass",
     description = "Handle object classes"
@@ -37,6 +37,7 @@ private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTra
         irFile.accept(this, null)
 
         pendingTransformations.forEach { it() }
+        pendingTransformations.clear()
     }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {

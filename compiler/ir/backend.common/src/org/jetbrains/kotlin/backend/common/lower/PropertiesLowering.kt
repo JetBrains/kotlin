@@ -91,8 +91,8 @@ class PropertiesLowering(
     }
 
     companion object {
-        fun checkNoProperties(irFile: IrFile) {
-            irFile.acceptVoid(object : IrElementVisitorVoid {
+        fun checkNoProperties(irModuleFragment: IrModuleFragment) {
+            irModuleFragment.acceptVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.*
 import java.util.*
 
-val sharedVariablesPhase = makeIrFilePhase(
+val sharedVariablesPhase = makeIrModulePhase(
     ::SharedVariablesLowering,
     name = "SharedVariables",
     description = "Transform shared variables"

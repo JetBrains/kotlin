@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.function.UnaryOperator
 
-internal val interfaceDelegationPhase = makeIrFilePhase(
+internal val interfaceDelegationPhase = makeIrModulePhase(
     ::InterfaceDelegationLowering,
     name = "InterfaceDelegation",
     description = "Delegate calls to interface members with default implementations to DefaultImpls"
@@ -49,8 +49,9 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
     val replacementMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
 
     override fun lower(irFile: IrFile) {
+        // TODO: this function runs on each file in the module in turn; instead,
+        //       all files should be scanned before any reference is replaced
         irFile.acceptChildrenVoid(this)
-        // TODO: Replacer should be run on whole module, not on a single file.
         irFile.acceptVoid(OverriddenSymbolsReplacer(replacementMap))
     }
 
@@ -179,7 +180,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
         (parent as? IrClass)?.isInterface == true
 }
 
-internal val interfaceSuperCallsPhase = makeIrFilePhase(
+internal val interfaceSuperCallsPhase = makeIrModulePhase(
     lowering = ::InterfaceSuperCallsLowering,
     name = "InterfaceSuperCalls",
     description = "Redirect super interface calls to DefaultImpls"

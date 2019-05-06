@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDesc
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.Modality
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.name.Name
 
-internal val functionNVarargInvokePhase = makeIrFilePhase(
+internal val functionNVarargInvokePhase = makeIrModulePhase(
     ::FunctionNVarargInvokeLowering,
     name = "FunctionNVarargInvoke",
     description = "Handle invoke functions with large number of arguments"

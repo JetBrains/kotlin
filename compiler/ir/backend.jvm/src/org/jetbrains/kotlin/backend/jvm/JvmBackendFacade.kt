@@ -47,14 +47,11 @@ object JvmBackendFacade {
         ).generateUnboundSymbolsAsDependencies()
 
         val jvmBackend = JvmBackend(jvmBackendContext)
-
-        for (irFile in irModuleFragment.files) {
-            try {
-                jvmBackend.generateFile(irFile)
-                state.afterIndependentPart()
-            } catch (e: Throwable) {
-                errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
-            }
+        try {
+            jvmBackend.generateModuleFragment(irModuleFragment)
+            state.afterIndependentPart()
+        } catch (e: Throwable) {
+            errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
         }
     }
 }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.deepCopyWithWrappedDescriptors
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.SetDeclarationsParentVisitor
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -32,15 +32,15 @@ import org.jetbrains.kotlin.name.Name
 
 object SYNTHESIZED_INIT_BLOCK: IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
 
-fun makeInitializersPhase(origin: IrDeclarationOrigin, clinitNeeded: Boolean)= makeIrFilePhase<CommonBackendContext>(
+fun makeInitializersPhase(origin: IrDeclarationOrigin, clinitNeeded: Boolean) = makeIrModulePhase<CommonBackendContext>(
     { context -> InitializersLowering(context, origin, clinitNeeded) },
     name = "Initializers",
     description = "Handle initializer statements",
     stickyPostconditions = setOf(::checkNonAnonymousInitializers)
 )
 
-fun checkNonAnonymousInitializers(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
+fun checkNonAnonymousInitializers(irModuleFragment: IrModuleFragment) {
+    irModuleFragment.acceptVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

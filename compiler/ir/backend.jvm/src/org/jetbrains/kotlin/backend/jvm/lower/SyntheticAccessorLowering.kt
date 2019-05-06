@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 
-internal val syntheticAccessorPhase = makeIrFilePhase(
+internal val syntheticAccessorPhase = makeIrModulePhase(
     ::SyntheticAccessorLowering,
     name = "SyntheticAccessor",
     description = "Introduce synthetic accessors",
@@ -54,6 +53,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         irFile.acceptVoid(inlinedLambdasCollector)
         irFile.transformChildrenVoid(this)
         pendingTransformations.forEach { it() }
+        pendingTransformations.clear()
     }
 
     private val functionMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()

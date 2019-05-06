@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
@@ -67,7 +67,7 @@ class CrIrType(val type: Type) : IrType {
         type.hashCode()
 }
 
-internal val callableReferencePhase = makeIrFilePhase(
+internal val callableReferencePhase = makeIrModulePhase(
     ::CallableReferenceLowering,
     name = "CallableReference",
     description = "Handle callable references"
