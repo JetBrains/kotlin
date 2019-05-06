@@ -174,11 +174,6 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
             runTest("idea/testData/editor/optimizeImports/common/TwoConstructors.kt");
         }
 
-        @TestMetadata("TypeAliasUsage.kt")
-        public void testTypeAliasUsage() throws Exception {
-            runTest("idea/testData/editor/optimizeImports/common/TypeAliasUsage.kt");
-        }
-
         @TestMetadata("idea/testData/editor/optimizeImports/common/kt21515")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
