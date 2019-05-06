@@ -26,13 +26,13 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
             val calleeExpression = callExpression.calleeExpression ?: return
             val (conversion, resolvedCall) = callExpression.findConversionAndResolvedCall() ?: return
             if (!conversion.callChecker(resolvedCall)) return
-            val conversionSuffix = conversion.analyzer(callExpression) ?: return
+            val replacement = conversion.analyzer(callExpression) ?: return
 
             holder.registerProblem(
                 calleeExpression,
-                "${conversion.fqName.shortName()} call could be simplified to ${conversion.replacement}$conversionSuffix",
+                "${conversion.fqName.shortName()} call could be simplified to $replacement",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                SimplifyCallFix(conversion, conversionSuffix)
+                SimplifyCallFix(conversion, replacement)
             )
         })
 
@@ -50,7 +50,6 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
 
     private data class Conversion(
         val callFqName: String,
-        val replacement: String,
         val analyzer: (KtCallExpression) -> String?,
         val callChecker: (ResolvedCall<*>) -> Boolean = { true }
     ) {
@@ -79,25 +78,34 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
             this is KtConstantExpression && this.node.elementType == KtNodeTypes.NULL
 
         private val conversions = listOf(
-            Conversion("kotlin.collections.flatMap", "flatten", fun(callExpression: KtCallExpression): String? {
+            Conversion("kotlin.collections.flatMap", fun(callExpression: KtCallExpression): String? {
                 val lambdaExpression = callExpression.singleLambdaExpression() ?: return null
                 val reference = lambdaExpression.singleStatement() ?: return null
                 val lambdaParameterName = lambdaExpression.singleLambdaParameterName() ?: return null
                 if (!reference.isNameReferenceTo(lambdaParameterName)) return null
-                return "()"
+                return "flatten()"
             }),
 
-            Conversion("kotlin.collections.filter", "filterNotNull", analyzer = fun(callExpression: KtCallExpression): String? {
+            Conversion("kotlin.collections.filter", analyzer = fun(callExpression: KtCallExpression): String? {
                 val lambdaExpression = callExpression.singleLambdaExpression() ?: return null
-                val statement = lambdaExpression.singleStatement() as? KtBinaryExpression ?: return null
                 val lambdaParameterName = lambdaExpression.singleLambdaParameterName() ?: return null
-                if (statement.operationToken != KtTokens.EXCLEQ && statement.operationToken != KtTokens.EXCLEQEQEQ) return null
-                val left = statement.left ?: return null
-                val right = statement.right ?: return null
-                if (left.isNameReferenceTo(lambdaParameterName) && right.isNull()) {
-                    return "()"
-                } else if (right.isNameReferenceTo(lambdaParameterName) && left.isNull()) {
-                    return "()"
+                when (val statement = lambdaExpression.singleStatement() ?: return null) {
+                    is KtBinaryExpression -> {
+                        if (statement.operationToken != KtTokens.EXCLEQ && statement.operationToken != KtTokens.EXCLEQEQEQ) return null
+                        val left = statement.left ?: return null
+                        val right = statement.right ?: return null
+                        if (left.isNameReferenceTo(lambdaParameterName) && right.isNull()) {
+                            return "filterNotNull()"
+                        } else if (right.isNameReferenceTo(lambdaParameterName) && left.isNull()) {
+                            return "filterNotNull()"
+                        }
+                    }
+                    is KtIsExpression -> {
+                        if (statement.isNegated) return null
+                        if (!statement.leftHandSide.isNameReferenceTo(lambdaParameterName)) return null
+                        val rightTypeReference = statement.typeReference ?: return null
+                        return "filterIsInstance<${rightTypeReference.text}>()"
+                    }
                 }
                 return null
             }, callChecker = fun(resolvedCall: ResolvedCall<*>): Boolean {
@@ -107,14 +115,14 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
         )
     }
 
-    private class SimplifyCallFix(val conversion: Conversion, val conversionSuffix: String) : LocalQuickFix {
-        override fun getName() = "Convert '${conversion.fqName.shortName()}' call to '${conversion.replacement}$conversionSuffix'"
+    private class SimplifyCallFix(val conversion: Conversion, val replacement: String) : LocalQuickFix {
+        override fun getName() = "Convert '${conversion.fqName.shortName()}' call to '$replacement'"
 
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val callExpression = descriptor.psiElement.parent as? KtCallExpression ?: return
-            callExpression.replace(KtPsiFactory(callExpression).createExpression("${conversion.replacement}$conversionSuffix"))
+            callExpression.replace(KtPsiFactory(callExpression).createExpression(replacement))
         }
     }
 }
