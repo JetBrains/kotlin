@@ -29,8 +29,7 @@ internal fun shouldRunLateBitcodePasses(context: Context): Boolean {
 
 internal fun runLateBitcodePasses(context: Context, llvmModule: LLVMModuleRef) {
     val passManager = LLVMCreatePassManager()!!
-    val targetLibraryInfo = LLVMGetTargetLibraryInfo(llvmModule)
-    LLVMAddTargetLibraryInfo(targetLibraryInfo, passManager)
+    LLVMKotlinAddTargetLibraryInfoWrapperPass(passManager, context.llvm.targetTriple)
     context.coverage.addLateLlvmPasses(passManager)
     LLVMRunPassManager(passManager, llvmModule)
     LLVMDisposePassManager(passManager)
@@ -46,8 +45,18 @@ private class LlvmPipelineConfiguration(context: Context) {
         KonanTarget.IOS_ARM32 -> "armv7"
         KonanTarget.IOS_ARM64 -> "arm64"
         KonanTarget.IOS_X64 -> "core2"
+        KonanTarget.LINUX_X64 -> "x86-64"
+        KonanTarget.MINGW_X86 -> "pentium4"
+        KonanTarget.MINGW_X64 -> "x86-64"
         KonanTarget.MACOS_X64 -> "core2"
-        else -> error("There is no support for ${target.name} target yet.")
+        KonanTarget.LINUX_ARM32_HFP -> "arm1136jf-s"
+        KonanTarget.LINUX_ARM64 -> "cortex-a57"
+        KonanTarget.ANDROID_ARM32 -> "armv7"
+        KonanTarget.ANDROID_ARM64 -> "arm64"
+        KonanTarget.LINUX_MIPS32 -> "mips32r2"
+        KonanTarget.LINUX_MIPSEL32 -> "mips32r2"
+        KonanTarget.WASM32,
+        is KonanTarget.ZEPHYR -> error("There is no support for ${target.name} target yet.")
     }
 
     val cpuFeatures: String = ""
@@ -119,8 +128,7 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
                 config.relocMode,
                 config.codeModel)
 
-        val targetLibraryInfo = LLVMGetTargetLibraryInfo(llvmModule)
-        LLVMAddTargetLibraryInfo(targetLibraryInfo, modulePasses)
+        LLVMKotlinAddTargetLibraryInfoWrapperPass(modulePasses, config.targetTriple)
         // TargetTransformInfo pass.
         LLVMAddAnalysisPasses(targetMachine, modulePasses)
         // Since we are in a "closed world" internalization and global dce
@@ -134,10 +142,10 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
         // Pipeline that is similar to `llvm-lto`.
         // TODO: Add ObjC optimization passes.
         LLVMPassManagerBuilderPopulateLTOPassManager(passBuilder, modulePasses, Internalize = 0, RunInliner = 1)
-        LLVMPassManagerBuilderDispose(passBuilder)
 
         LLVMRunPassManager(modulePasses, llvmModule)
 
+        LLVMPassManagerBuilderDispose(passBuilder)
         LLVMDisposeTargetMachine(targetMachine)
         LLVMDisposePassManager(modulePasses)
     }

@@ -14,16 +14,8 @@ typealias BitcodeFile = String
 typealias ObjectFile = String
 typealias ExecutableFile = String
 
-private fun mangleSymbol(target: KonanTarget,symbol: String) =
-        if (target.family == Family.IOS || target.family == Family.OSX) {
-            "_$symbol"
-        } else {
-            symbol
-        }
-
 internal class BitcodeCompiler(val context: Context) {
 
-    private val target = context.config.target
     private val platform = context.config.platform
     private val optimize = context.shouldOptimize()
     private val debug = context.config.debug
@@ -31,8 +23,6 @@ internal class BitcodeCompiler(val context: Context) {
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
         addAll(elements.filter { !it.isEmpty() })
     }
-
-    private val exportedSymbols = context.coverage.addExportedSymbols()
 
     private fun runTool(vararg command: String) =
             Command(*command)
@@ -54,25 +44,6 @@ internal class BitcodeCompiler(val context: Context) {
     private fun hostLlvmTool(tool: String, vararg arg: String) {
         val absoluteToolName = "${platform.absoluteLlvmHome}/bin/$tool"
         runTool(absoluteToolName, *arg)
-    }
-
-    private fun llvmLto(configurables: LlvmLtoFlags, file: BitcodeFile): ObjectFile {
-        val combined = temporary("combined", ".o")
-        val arguments = mutableListOf<String>().apply {
-            addNonEmpty(configurables.llvmLtoFlags)
-            addNonEmpty(llvmProfilingFlags())
-            when {
-                optimize -> addNonEmpty(configurables.llvmLtoOptFlags)
-                debug -> addNonEmpty(platform.llvmDebugOptFlags)
-                else -> addNonEmpty(configurables.llvmLtoNooptFlags)
-            }
-            addNonEmpty(configurables.llvmLtoDynamicFlags)
-            add(file)
-            // Prevent symbols from being deleted by DCE.
-            addNonEmpty(exportedSymbols.map { "-exported-symbol=${mangleSymbol(target, it)}"} )
-        }
-        hostLlvmTool("llvm-lto", "-o", combined, *arguments.toTypedArray())
-        return combined
     }
 
     private fun opt(optFlags: OptFlags, bitcodeFile: BitcodeFile): BitcodeFile {
@@ -127,7 +98,7 @@ internal class BitcodeCompiler(val context: Context) {
         return combinedO
     }
 
-    private fun clang(configurables: AppleConfigurables, file: BitcodeFile): ObjectFile {
+    private fun clang(configurables: ClangFlags, file: BitcodeFile): ObjectFile {
         val objectFile = temporary("result", ".o")
 
         val profilingFlags = llvmProfilingFlags().map { listOf("-mllvm", it) }.flatten()
@@ -146,7 +117,11 @@ internal class BitcodeCompiler(val context: Context) {
             }
             addNonEmpty(profilingFlags)
         }
-        targetTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
+        if (configurables is AppleConfigurables) {
+            targetTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
+        } else {
+            hostLlvmTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
+        }
         return objectFile
     }
 
@@ -165,14 +140,12 @@ internal class BitcodeCompiler(val context: Context) {
 
     fun makeObjectFiles(bitcodeFile: BitcodeFile): List<ObjectFile> =
             listOf(when (val configurables = platform.configurables) {
-                is AppleConfigurables ->
+                is ClangFlags ->
                     clang(configurables, bitcodeFile)
                 is WasmConfigurables ->
                     bitcodeToWasm(configurables, bitcodeFile)
                 is ZephyrConfigurables ->
                     optAndLlc(configurables, bitcodeFile)
-                is LlvmLtoFlags ->
-                    llvmLto(configurables, bitcodeFile)
                 else ->
                     error("Unsupported configurables kind: ${configurables::class.simpleName}!")
             })

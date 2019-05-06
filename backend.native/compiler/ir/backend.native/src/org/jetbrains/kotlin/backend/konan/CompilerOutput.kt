@@ -45,7 +45,7 @@ private fun linkAllDependecies(context: Context, generatedBitcodeFiles: List<Str
 }
 
 private fun shouldOptimizeWithLlvmApi(context: Context) =
-        (context.config.target.family == Family.IOS || context.config.target.family == Family.OSX)
+        (context.config.target.family != Family.ZEPHYR && context.config.target.family != Family.WASM)
 
 private fun shoudRunClosedWorldCleanUp(context: Context) =
         // GlobalDCE will kill coverage-related globals.

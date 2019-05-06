@@ -224,9 +224,9 @@ void LLVMAddInstrProfPass(LLVMPassManagerRef passManagerRef, const char* outputF
     passManager->add(createInstrProfilingLegacyPass(options));
 }
 
-LLVMTargetLibraryInfoRef LLVMGetTargetLibraryInfo(LLVMModuleRef moduleRef) {
-    auto* libraryInfo = new TargetLibraryInfoImpl(Triple(unwrap(moduleRef)->getTargetTriple()));
-    return llvm::wrap(libraryInfo);
+void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef, const char* targetTriple) {
+  legacy::PassManagerBase *passManager = unwrap(passManagerRef);
+  passManager->add(new TargetLibraryInfoWrapperPass(Triple(targetTriple)));
 }
 
 void LLVMKotlinInitializeTargets() {
@@ -241,7 +241,14 @@ void LLVMKotlinInitializeTargets() {
     INIT_LLVM_TARGET(X86)
     INIT_LLVM_TARGET(WebAssembly)
 #elif KONAN_LINUX
+    INIT_LLVM_TARGET(AArch64)
+    INIT_LLVM_TARGET(ARM)
+    INIT_LLVM_TARGET(Mips)
+    INIT_LLVM_TARGET(X86)
 #elif KONAN_WINDOWS
+    INIT_LLVM_TARGET(AArch64)
+    INIT_LLVM_TARGET(ARM)
+    INIT_LLVM_TARGET(X86)
 #endif
 
 #undef INIT_LLVM_TARGET

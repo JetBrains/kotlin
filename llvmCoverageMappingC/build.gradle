@@ -35,7 +35,7 @@ model {
           } else if (isWindows()) {
             cppCompiler.args "-DKONAN_WINDOWS=1"
           } else if (isLinux()) {
-            cppCompiler.args "-DKONAN_LINUX=1"
+            cppCompiler.args "-DKONAN_LINUX=1", "-D_GLIBCXX_USE_CXX11_ABI=0"
           } else {
             throw new Error("Unsupported host OS.")
           }

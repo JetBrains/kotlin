@@ -72,7 +72,7 @@ LLVMValueRef LLVMCreatePGOFunctionNameVar(LLVMValueRef llvmFunction, const char 
 
 void LLVMAddInstrProfPass(LLVMPassManagerRef passManagerRef, const char* outputFileName);
 
-LLVMTargetLibraryInfoRef LLVMGetTargetLibraryInfo(LLVMModuleRef moduleRef);
+void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef, const char* targetTriple);
 
 void LLVMKotlinInitializeTargets();
 
