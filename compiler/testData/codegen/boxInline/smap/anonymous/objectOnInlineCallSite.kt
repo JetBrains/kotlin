@@ -1,4 +1,5 @@
 // FILE: 1.kt
+
 package builders
 
 inline fun call(crossinline init: () -> Unit) {

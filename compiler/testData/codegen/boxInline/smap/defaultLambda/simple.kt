@@ -1,6 +1,7 @@
 // FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
 
+
 package test
 inline fun inlineFun(capturedParam: String, lambda: () -> String = { capturedParam }): String {
     return lambda()

@@ -1,4 +1,5 @@
 // FILE: 1.kt
+
 package test
 inline fun inlineFun(capturedParam: String, noinline lambda: () -> String = { capturedParam }): String {
     return lambda()
