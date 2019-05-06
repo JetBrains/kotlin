@@ -79,23 +79,31 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
 
         if (kaptModel != null && kaptModel.isEnabled) {
             for (sourceSet in kaptModel.sourceSets) {
-                val sourceSetDataNode = ideModule.findGradleSourceSet(sourceSet.sourceSetName) ?: continue
+                val parentDataNode = ideModule.findParentForSourceSetDataNode(sourceSet.sourceSetName) ?: continue
 
                 fun addSourceSet(path: String, type: ExternalSystemSourceType) {
                     val contentRootData = ContentRootData(GRADLE_SYSTEM_ID, path)
                     contentRootData.storePath(type, path)
-                    sourceSetDataNode.createChild(ProjectKeys.CONTENT_ROOT, contentRootData)
+                    parentDataNode.createChild(ProjectKeys.CONTENT_ROOT, contentRootData)
                 }
 
-                val sourceType = if (sourceSet.isTest) ExternalSystemSourceType.TEST_GENERATED else ExternalSystemSourceType.SOURCE_GENERATED
+                val sourceType =
+                    if (sourceSet.isTest) ExternalSystemSourceType.TEST_GENERATED else ExternalSystemSourceType.SOURCE_GENERATED
                 sourceSet.generatedSourcesDirFile?.let { addSourceSet(it.absolutePath, sourceType) }
                 sourceSet.generatedKotlinSourcesDirFile?.let { addSourceSet(it.absolutePath, sourceType) }
 
                 sourceSet.generatedClassesDirFile?.let { generatedClassesDir ->
                     val libraryData = LibraryData(GRADLE_SYSTEM_ID, "kaptGeneratedClasses")
-                    libraryData.addPath(LibraryPathType.BINARY, generatedClassesDir.absolutePath)
-                    val libraryDependencyData = LibraryDependencyData(sourceSetDataNode.data, libraryData, LibraryLevel.MODULE)
-                    sourceSetDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData)
+                    val existingNode =
+                        parentDataNode.children.map { (it.data as? LibraryDependencyData)?.target }
+                            .firstOrNull { it?.externalName == libraryData.externalName }
+                    if (existingNode != null) {
+                        existingNode.addPath(LibraryPathType.BINARY, generatedClassesDir.absolutePath)
+                    } else {
+                        libraryData.addPath(LibraryPathType.BINARY, generatedClassesDir.absolutePath)
+                        val libraryDependencyData = LibraryDependencyData(parentDataNode.data, libraryData, LibraryLevel.MODULE)
+                        parentDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData)
+                    }
                 }
             }
         }
@@ -103,17 +111,17 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
         super.populateModuleExtraModels(gradleModule, ideModule)
     }
 
-    private fun DataNode<ModuleData>.findGradleSourceSet(sourceSetName: String): DataNode<GradleSourceSetData>? {
+    private fun DataNode<ModuleData>.findParentForSourceSetDataNode(sourceSetName: String): DataNode<ModuleData>? {
         val moduleName = data.id
         for (child in children) {
             val gradleSourceSetData = child.data as? GradleSourceSetData ?: continue
             if (gradleSourceSetData.id == "$moduleName:$sourceSetName") {
                 @Suppress("UNCHECKED_CAST")
-                return child as DataNode<GradleSourceSetData>?
+                return child as? DataNode<ModuleData>
             }
         }
 
-        return null
+        return this
     }
 }
 
