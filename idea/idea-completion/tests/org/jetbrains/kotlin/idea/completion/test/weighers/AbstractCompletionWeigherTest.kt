@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.idea.completion.test.RELATIVE_COMPLETION_TEST_DATA_B
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
@@ -22,6 +23,8 @@ abstract class AbstractCompletionWeigherTest(val completionType: CompletionType,
         myFixture.configureWithExtraFile(relativePath, ".Data", ".Data1", ".Data2", ".Data3", ".Data4", ".Data5", ".Data6")
 
         val text = myFixture.editor.document.text
+
+        configureCompilerOptions(text, project, module)
 
         val items = InTextDirectivesUtils.findArrayWithPrefixes(text, "// ORDER:")
         Assert.assertTrue("""Some items should be defined with "// ORDER:" directive""", !items.isEmpty())

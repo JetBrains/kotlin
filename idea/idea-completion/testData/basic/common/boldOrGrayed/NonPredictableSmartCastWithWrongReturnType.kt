@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 interface A {
     fun foo(): Any
     fun bar()
