@@ -20,12 +20,13 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiBundle;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.ui.ComboboxSpeedSearch;
+import com.intellij.ui.SimpleListCellRenderer;
+import com.intellij.util.Functions;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.SwingHelper;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,12 +76,10 @@ class FindPopupScopeUIImpl implements FindPopupScopeUI {
 
     Arrays.sort(names, String.CASE_INSENSITIVE_ORDER);
     myModuleComboBox = new ComboBox<>(names);
-    new ComboboxSpeedSearch(myModuleComboBox);
+    myModuleComboBox.setSwingPopup(false);
+    myModuleComboBox.setMinimumAndPreferredWidth(JBUI.scale(300)); // as ScopeChooser
+    myModuleComboBox.setRenderer(SimpleListCellRenderer.create("", Functions.id()));
 
-    SwingHelper.setLongestAsPrototype(myModuleComboBox, Arrays.asList(names));
-    if (myModuleComboBox.getPrototypeDisplayValue() != null) {
-      myModuleComboBox.setMinLength(myModuleComboBox.getPrototypeDisplayValue().length());
-    }
     ActionListener restartSearchListener = e -> scheduleResultsUpdate();
     myModuleComboBox.addActionListener(restartSearchListener);
 
