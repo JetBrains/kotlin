@@ -1,0 +1,18 @@
+package
+
+public fun Inv<*>.foo(): kotlin.Unit
+
+@kotlin.DslMarker public final annotation class AnnMarker : kotlin.Annotation {
+    public constructor AnnMarker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@AnnMarker public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public final fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
