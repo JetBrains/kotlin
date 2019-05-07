@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.idea.conversion.copy.start
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus.SUCCESS
@@ -63,6 +65,12 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
         fun apply(element: KtValueArgument, givenResolvedCall: ResolvedCall<*>? = null): Boolean {
             val name = detectNameToAdd(element, shouldBeLastUnnamed = false, givenResolvedCall = givenResolvedCall) ?: return false
             val argumentExpression = element.getArgumentExpression() ?: return false
+
+            val prevSibling = element.getPrevSiblingIgnoringWhitespace()
+            if (prevSibling is PsiComment && """/\*\s*$name\s*=\s*\*/""".toRegex().matches(prevSibling.text)) {
+                prevSibling.delete()
+            }
+
             val newArgument = KtPsiFactory(element).createArgument(argumentExpression, name, element.getSpreadElement() != null)
             element.replace(newArgument)
             return true

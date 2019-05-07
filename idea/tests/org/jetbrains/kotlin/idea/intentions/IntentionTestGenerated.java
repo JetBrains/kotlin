@@ -1280,6 +1280,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testVararg3() throws Exception {
             runTest("idea/testData/intentions/addNameToArgument/vararg3.kt");
         }
+
+        @TestMetadata("withComment.kt")
+        public void testWithComment() throws Exception {
+            runTest("idea/testData/intentions/addNameToArgument/withComment.kt");
+        }
     }
 
     @TestMetadata("idea/testData/intentions/addNamesToCallArguments")
