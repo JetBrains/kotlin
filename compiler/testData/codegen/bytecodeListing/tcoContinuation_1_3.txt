@@ -322,7 +322,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$3 {
 public final class TcoContinuationKt {
     inner class TcoContinuationKt$collect$2
     inner class TcoContinuationKt$flow$1
-    private final static method collect(@org.jetbrains.annotations.NotNull p0: Flow, p1: kotlin.jvm.functions.Function2, p2: kotlin.coroutines.Continuation): java.lang.Object
+    private final static @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method flow(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): Flow
     public final static @org.jetbrains.annotations.Nullable method foo(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method map(@org.jetbrains.annotations.NotNull p0: Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): Flow

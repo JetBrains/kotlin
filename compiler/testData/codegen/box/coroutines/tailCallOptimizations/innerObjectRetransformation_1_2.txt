@@ -180,7 +180,8 @@ public final class flow/InnerObjectRetransformationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method check(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
-    private final static method collect(@org.jetbrains.annotations.NotNull p0: flow.Flow, p1: kotlin.jvm.functions.Function2, p2: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    private final static @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: flow.Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method flow(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): flow.Flow
     public final static @org.jetbrains.annotations.NotNull method flowWith(@org.jetbrains.annotations.NotNull p0: flow.Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): flow.Flow
 }
