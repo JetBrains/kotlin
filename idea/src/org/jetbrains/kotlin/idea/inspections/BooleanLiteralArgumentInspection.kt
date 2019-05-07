@@ -43,7 +43,7 @@ class BooleanLiteralArgumentInspection(
             if (AddNameToArgumentIntention.detectNameToAdd(argument, shouldBeLastUnnamed = false) == null) return
 
             val resolvedCall = call.resolveToCall() ?: return
-            if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return
+            if (!resolvedCall.candidateDescriptor.hasStableParameterNames()) return
             val languageVersionSettings = call.languageVersionSettings
             if (valueArguments.any {
                     !AddNameToArgumentIntention.argumentMatchedAndCouldBeNamedInCall(it, resolvedCall, languageVersionSettings)
