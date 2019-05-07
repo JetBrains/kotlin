@@ -25,7 +25,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import org.gradle.initialization.BuildLayoutParameters;
@@ -63,20 +62,12 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   private JBTextField myGradleVmOptionsField;
   private boolean dropVmOptions;
 
-  @Nullable
-  private JBCheckBox myOfflineModeBox;
-  private boolean dropOfflineModeBox;
-
   public IdeaGradleSystemSettingsControlBuilder(@NotNull GradleSettings initialSettings) {
     myInitialSettings = initialSettings;
   }
 
   @Override
   public void fillUi(@NotNull PaintAwarePanel canvas, int indentLevel) {
-    if (!dropOfflineModeBox) {
-      myOfflineModeBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.offline_work"));
-      canvas.add(myOfflineModeBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
-    }
     addServiceDirectoryControl(canvas, indentLevel);
 
     if (!dropVmOptions) {
@@ -110,9 +101,6 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     if (myGradleVmOptionsField != null) {
       myGradleVmOptionsField.setText(trimIfPossible(myInitialSettings.getGradleVmOptions()));
     }
-    if (myOfflineModeBox != null) {
-      myOfflineModeBox.setSelected(myInitialSettings.isOfflineWork());
-    }
   }
 
   @Override
@@ -128,10 +116,6 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       return true;
     }
 
-    if (myOfflineModeBox != null && myOfflineModeBox.isSelected() != myInitialSettings.isOfflineWork()) {
-      return true;
-    }
-
     return false;
   }
 
@@ -142,9 +126,6 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     }
     if (myGradleVmOptionsField != null) {
       settings.setGradleVmOptions(trimIfPossible(myGradleVmOptionsField.getText()));
-    }
-    if (myOfflineModeBox != null) {
-      settings.setOfflineWork(myOfflineModeBox.isSelected());
     }
   }
 
@@ -175,7 +156,6 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   }
 
   public IdeaGradleSystemSettingsControlBuilder dropOfflineModeBox() {
-    dropOfflineModeBox = true;
     return this;
   }
 
