@@ -61,6 +61,12 @@ private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
+private val enumWhenPhase = makeIrFilePhase(
+    ::EnumWhenLowering,
+    name = "EnumWhenLowering",
+    description = "Replace `when` subjects of enum types with their ordinals"
+)
+
 val jvmPhases = namedIrFilePhase<JvmBackendContext>(
     name = "IrLowering",
     description = "IR lowering",
@@ -88,6 +94,7 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
 
             makePatchParentsPhase(1) then
 
+            enumWhenPhase then
             singletonReferencesPhase then
             jvmLocalDeclarationsPhase then
             singleAbstractMethodPhase then
