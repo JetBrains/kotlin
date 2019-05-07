@@ -571,7 +571,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
       if (model != null) {
         String title = model.getTitle(index);
         if (title != null) {
-          myMainPanel.add(RunAnythingUtil.createTitle(" " + title, model.getIcon(index)), BorderLayout.NORTH);
+          myMainPanel.add(RunAnythingUtil.createTitle(" " + title), BorderLayout.NORTH);
         }
       }
       JPanel wrapped = new JPanel(new BorderLayout());

@@ -49,14 +49,10 @@ public class RunAnythingUtil {
     return UIUtil.getLabelFont().deriveFont(UIUtil.getFontSize(UIUtil.FontSize.SMALL));
   }
 
-  static JComponent createTitle(@NotNull String titleText, @Nullable Icon icon) {
+  static JComponent createTitle(@NotNull String titleText) {
     JLabel titleLabel = new JLabel(titleText);
     titleLabel.setFont(getTitleFont());
     titleLabel.setForeground(UIUtil.getLabelDisabledForeground());
-    if (icon != null) {
-      titleLabel.setIcon(icon);
-      titleLabel.setIconTextGap(0);
-    }
 
     SeparatorComponent separatorComponent =
       new SeparatorComponent(titleLabel.getPreferredSize().height / 2, new JBColor(Gray._220, Gray._80), null);
