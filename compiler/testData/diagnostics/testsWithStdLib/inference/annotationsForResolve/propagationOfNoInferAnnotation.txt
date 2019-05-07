@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ K> bar(/*0*/ k: K): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T> foo(): T
+public fun test(): kotlin.Unit
