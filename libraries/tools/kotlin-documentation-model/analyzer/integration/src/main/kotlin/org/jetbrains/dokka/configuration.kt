@@ -18,7 +18,7 @@ enum class Platform(val key: String) {
                 js.key -> js
                 native.key -> native
                 common.key -> common
-                else -> TODO("write normal exception")
+                else -> throw IllegalArgumentException("Unrecognized platform: $key")
             }
         }
     }
