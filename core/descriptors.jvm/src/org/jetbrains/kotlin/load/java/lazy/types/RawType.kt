@@ -102,8 +102,16 @@ internal object RawSubstitution : TypeSubstitution() {
         return when (declaration) {
             is TypeParameterDescriptor -> eraseType(declaration.getErasedUpperBound())
             is ClassDescriptor -> {
+                val declarationForUpper =
+                    type.upperIfFlexible().constructor.declarationDescriptor
+
+                check(declarationForUpper is ClassDescriptor) {
+                    "For some reason declaration for upper bound is not a class " +
+                            "but \"$declarationForUpper\" while for lower it's \"$declaration\""
+                }
+
                 val (lower, isRawL) = eraseInflexibleBasedOnClassDescriptor(type.lowerIfFlexible(), declaration, lowerTypeAttr)
-                val (upper, isRawU) = eraseInflexibleBasedOnClassDescriptor(type.upperIfFlexible(), declaration, upperTypeAttr)
+                val (upper, isRawU) = eraseInflexibleBasedOnClassDescriptor(type.upperIfFlexible(), declarationForUpper, upperTypeAttr)
 
                 if (isRawL || isRawU) {
                     RawTypeImpl(lower, upper)
@@ -135,17 +143,18 @@ internal object RawSubstitution : TypeSubstitution() {
 
         val memberScope = declaration.getMemberScope(RawSubstitution)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            type.annotations, type.constructor,
-            type.constructor.parameters.map { parameter ->
+            type.annotations, declaration.typeConstructor,
+            declaration.typeConstructor.parameters.map { parameter ->
                 computeProjection(parameter, attr)
             },
             type.isMarkedNullable, memberScope
         ) factory@{ kotlinTypeRefiner ->
-            val classId = (declaration as? ClassDescriptor)?.classId ?: return@factory memberScope
+            val classId = (declaration as? ClassDescriptor)?.classId ?: return@factory null
+            @UseExperimental(TypeRefinement::class)
+            val refinedClassDescriptor = kotlinTypeRefiner.findClassAcrossModuleDependencies(classId) ?: return@factory null
+            if (refinedClassDescriptor == declaration) return@factory null
 
-            kotlinTypeRefiner
-                .findClassAcrossModuleDependencies(classId)
-                ?.getRefinedMemberScopeIfPossible(RawSubstitution, moduleDescriptor) ?: memberScope
+            eraseInflexibleBasedOnClassDescriptor(type, refinedClassDescriptor, attr).first
         } to true
     }
 

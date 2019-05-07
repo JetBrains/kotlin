@@ -46,16 +46,30 @@ public abstract class AbstractClassDescriptor extends ModuleAwareClassDescriptor
             public SimpleType invoke() {
                 return TypeUtils.makeUnsubstitutedType(
                         AbstractClassDescriptor.this, getUnsubstitutedMemberScope(),
-                        new Function1<KotlinTypeRefiner, MemberScope>() {
+                        new Function1<KotlinTypeRefiner, SimpleType>() {
                             @Override
-                            public MemberScope invoke(KotlinTypeRefiner kotlinTypeRefiner) {
-                                ClassDescriptor descriptor = kotlinTypeRefiner.refineDescriptor(AbstractClassDescriptor.this);
-                                if (descriptor == null) return getUnsubstitutedMemberScope(kotlinTypeRefiner);
+                            public SimpleType invoke(KotlinTypeRefiner kotlinTypeRefiner) {
+                                ClassifierDescriptor descriptor = kotlinTypeRefiner.refineDescriptor(AbstractClassDescriptor.this);
+                                // If we've refined descriptor
+                                if (descriptor == null) return defaultType.invoke();
+
+                                if (descriptor instanceof TypeAliasDescriptor) {
+                                    return KotlinTypeFactory.computeExpandedType(
+                                            (TypeAliasDescriptor) descriptor,
+                                            TypeUtils.getDefaultTypeProjections(descriptor.getTypeConstructor().getParameters())
+                                    );
+                                }
 
                                 if (descriptor instanceof ModuleAwareClassDescriptor) {
-                                    return ((ModuleAwareClassDescriptor) descriptor).getUnsubstitutedMemberScope(kotlinTypeRefiner);
+                                    TypeConstructor refinedConstructor = descriptor.getTypeConstructor().refine(kotlinTypeRefiner);
+                                    return TypeUtils.makeUnsubstitutedType(
+                                            refinedConstructor,
+                                            ((ModuleAwareClassDescriptor) descriptor).getUnsubstitutedMemberScope(kotlinTypeRefiner),
+                                            this
+                                    );
                                 }
-                                return descriptor.getUnsubstitutedMemberScope();
+
+                                return descriptor.getDefaultType();
                             }
                         }
                 );

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class AbstractTypeAliasDescriptor(
     containingDeclaration: DeclarationDescriptor,
@@ -96,11 +95,7 @@ abstract class AbstractTypeAliasDescriptor(
     @UseExperimental(TypeRefinement::class)
     protected fun computeDefaultType(): SimpleType =
         TypeUtils.makeUnsubstitutedType(this, classDescriptor?.unsubstitutedMemberScope ?: MemberScope.Empty) { kotlinTypeRefiner ->
-            classDescriptor
-                ?.let { kotlinTypeRefiner.refineDescriptor(it) }
-                ?.safeAs<ClassDescriptor>()
-                ?.unsubstitutedMemberScope
-                ?: MemberScope.Empty
+            kotlinTypeRefiner.refineDescriptor(this)?.defaultType
         }
 
     private val typeConstructor = object : TypeConstructor {
@@ -127,6 +122,6 @@ abstract class AbstractTypeAliasDescriptor(
         // There must be @TypeRefinement, but there is a bug with anonymous objects and experimental annotations
         // See KT-31728
         @UseExperimental(TypeRefinement::class)
-        override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor? = this
+        override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor = this
     }
 }
