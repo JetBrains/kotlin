@@ -72,7 +72,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   protected VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, Input> extension,
                                    @NotNull IndexStorage<Key, Value> storage,
                                    @Nullable ForwardIndex forwardIndexMap,
-                                   @Nullable ForwardIndexAccessor<Key, Value, ?, Input> forwardIndexAccessor,
+                                   @Nullable ForwardIndexAccessor<Key, Value> forwardIndexAccessor,
                                    @Nullable SnapshotInputMappingIndex<Key, Value, Input> snapshotInputMappings) {
     super(extension, storage, forwardIndexMap, forwardIndexAccessor, null);
     SharedIndicesData.registerIndex((ID<Key, Value>)myIndexId, extension);
@@ -89,10 +89,10 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   @NotNull
   @Override
-  protected Map<Key, Value> mapInput(@Nullable Input content) {
-    Map<Key, Value> data;
+  protected InputData<Key, Value> mapInput(@Nullable Input content) {
+    InputData<Key, Value> data;
     boolean containsSnapshotData = true;
-    if (mySnapshotInputMappings != null && !myInMemoryMode.get() && content != null) {
+    if (mySnapshotInputMappings != null && content != null) {
       try {
         data = mySnapshotInputMappings.readData(content);
         if (data != null) {
@@ -108,7 +108,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     data = super.mapInput(content);
     if (!containsSnapshotData) {
       try {
-        ((UpdatableSnapshotInputMappingIndex)mySnapshotInputMappings).putData(content, data);
+        return ((UpdatableSnapshotInputMappingIndex)mySnapshotInputMappings).putData(content, data);
       }
       catch (IOException e) {
         throw new RuntimeException(e);
@@ -140,13 +140,13 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   }
 
   @Override
-  protected void updateForwardIndex(int inputId, @NotNull Map<Key, Value> data, @Nullable Object forwardIndexData) throws IOException {
+  protected void updateForwardIndex(int inputId, @NotNull InputData<Key, Value> data) throws IOException {
     if (myInMemoryMode.get()) {
       synchronized (myInMemoryKeysAndValues) {
-        myInMemoryKeysAndValues.put(inputId, data);
+        myInMemoryKeysAndValues.put(inputId, data.getKeyValues());
       }
     } else {
-      super.updateForwardIndex(inputId, data, forwardIndexData);
+      super.updateForwardIndex(inputId, data);
     }
   }
 
@@ -248,7 +248,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     }
     if (getForwardIndexAccessor() instanceof AbstractMapForwardIndexAccessor) {
       ByteArraySequence serializedInputData = getForwardIndexMap().get(fileId);
-      AbstractMapForwardIndexAccessor<Key, Value, ?, Input> forwardIndexAccessor = (AbstractMapForwardIndexAccessor<Key, Value, ?, Input>)getForwardIndexAccessor();
+      AbstractMapForwardIndexAccessor<Key, Value, ?> forwardIndexAccessor = (AbstractMapForwardIndexAccessor<Key, Value, ?>)getForwardIndexAccessor();
       return forwardIndexAccessor.convertToInputDataMap(serializedInputData);
     }
     // in future we will get rid of forward index for SingleEntryFileBasedIndexExtension
@@ -319,7 +319,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   }
 
   @Nullable
-  private static <Key, Value, Input> ForwardIndexAccessor<Key, Value, ?, Input> getForwardIndexAccessor(@NotNull IndexExtension<Key, Value, Input> indexExtension) {
+  private static <Key, Value> ForwardIndexAccessor<Key, Value> getForwardIndexAccessor(@NotNull IndexExtension<Key, Value, ?> indexExtension) {
     if (!shouldCreateForwardIndex(indexExtension)) return null;
     return new MapForwardIndexAccessor<>(new InputMapExternalizer<>(indexExtension));
   }
