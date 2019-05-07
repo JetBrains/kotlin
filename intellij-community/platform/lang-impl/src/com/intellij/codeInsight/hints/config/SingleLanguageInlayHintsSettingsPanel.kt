@@ -92,7 +92,8 @@ internal class SingleLanguageInlayHintsSettingsPanel(
         additionalLinesCount = 2
         isAutoCodeFoldingEnabled = false
       }
-      editor.backgroundColor = EditorFragmentComponent.getBackgroundColor(editor)
+      editor.backgroundColor = EditorFragmentComponent.getBackgroundColor(editor, false)
+      editor.setBorder(JBUI.Borders.empty())
       // If editor is created as not viewer, daemon is enabled automatically. But we want to collect hints manually with another settings.
       val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document)
       if (psiFile != null) {
@@ -186,7 +187,6 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     SwingUtilities.invokeLater {
       for ((index, providerType) in providerTypes.withIndex()) {
         val enabled = settings.hintsEnabled(providerType.key, language)
-        println("Invoked update (enabled: $enabled) for ${providerType.name}")
         providerTypesList.setItemSelected(providerType, enabled)
         providerTypesList.getItemAt(index)?.setEnabled(enabled)
       }
