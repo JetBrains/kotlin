@@ -103,6 +103,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "ctrl alt F",               "IntroduceField", "ShowFilterPopup"},
     { "PAGE_DOWN",                "EditorPageDown", "SearchEverywhere.NavigateToNextGroup"},
     { "PAGE_UP",                  "EditorPageUp", "SearchEverywhere.NavigateToPrevGroup"},
+    { "ESCAPE",                   "EditorEscape", "Terminal.SwitchFocusToEditor"},
     });
     put("Mac OS X 10.5+", new String[][] {
     { "BACK_SPACE",               "$Delete", "EditorBackSpace", "Images.Thumbnails.UpFolder"},
@@ -190,6 +191,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift control X",          SECOND_STROKE, "com.jetbrains.php.framework.FrameworkRunConsoleAction"},
     { "shift ctrl DOWN",          "EditorForwardParagraphWithSelection", "ResizeToolWindowDown"},
     { "shift ctrl UP",            "EditorBackwardParagraphWithSelection", "ResizeToolWindowUp"},
+    { "ESCAPE",                   SECOND_STROKE, "Terminal.SwitchFocusToEditor"},
     });
     put("Visual Studio", new String[][] {
     { "F5",                       "Resume", "Graph.ApplyCurrentLayout"},

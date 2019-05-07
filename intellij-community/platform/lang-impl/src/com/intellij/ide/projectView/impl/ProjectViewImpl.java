@@ -201,6 +201,13 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       protected void setAutoScrollMode(boolean state) {
         setAutoscrollToSource(state, myCurrentViewId);
       }
+
+      @Override
+      protected boolean isAutoScrollEnabledFor(@NotNull VirtualFile file) {
+        if (!super.isAutoScrollEnabledFor(file)) return false;
+        AbstractProjectViewPane pane = getCurrentProjectViewPane();
+        return pane == null || pane.isAutoScrollEnabledFor(file);
+      }
     };
 
     myConnection.subscribe(ToolWindowManagerListener.TOPIC, new ToolWindowManagerListener() {

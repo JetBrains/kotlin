@@ -16,6 +16,7 @@
 package org.jetbrains.plugins.gradle.util
 
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
+import com.intellij.openapi.fileEditor.UniqueVFilePathBuilder
 import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -30,7 +31,9 @@ class GradleEditorTabTitleProvider : EditorTabTitleProvider, DumbAware {
   override fun getEditorTabTitle(project: Project, file: VirtualFile): String? {
     if (!GradleConstants.KNOWN_GRADLE_FILES.contains(file.name)) return null
 
-    val fileParent = file.parent ?: return null;
+    val fileParent = file.parent ?: return null
+
+    if (!UniqueVFilePathBuilder.getInstance().hasFilesWithSameName(project, file)) return null
 
     val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file) ?: return null
     val manager = ExternalSystemModulePropertyManager.getInstance(module)

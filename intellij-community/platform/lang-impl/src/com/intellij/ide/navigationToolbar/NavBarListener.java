@@ -31,6 +31,7 @@ import com.intellij.problems.ProblemListener;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiTreeChangeEvent;
 import com.intellij.psi.PsiTreeChangeListener;
+import com.intellij.ui.ListActions;
 import com.intellij.ui.ScrollingUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
@@ -47,7 +48,7 @@ import java.util.List;
  * @author Konstantin Bulenkov
  */
 public class NavBarListener
-  implements ProblemListener, ActionListener, FocusListener, FileStatusListener, AnActionListener, FileEditorManagerListener,
+  implements ProblemListener, FocusListener, FileStatusListener, AnActionListener, FileEditorManagerListener,
              PsiTreeChangeListener, ModuleRootListener, NavBarModelListener, PropertyChangeListener, KeyListener, WindowFocusListener,
              LafManagerListener {
   private static final String LISTENER = "NavBarListener";
@@ -105,37 +106,9 @@ public class NavBarListener
 
   NavBarListener(NavBarPanel panel) {
     myPanel = panel;
-    for (NavBarKeyboardCommand command : NavBarKeyboardCommand.values()) {
-      registerKey(command);
-    }
     myPanel.addFocusListener(this);
     if (myPanel.allowNavItemsFocus()) {
       myPanel.addNavBarItemFocusListener(this);
-    }
-  }
-
-  private void registerKey(NavBarKeyboardCommand cmd) {
-    int whenFocused = myPanel.allowNavItemsFocus() ?
-        JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT :
-        JComponent.WHEN_FOCUSED;
-    myPanel.registerKeyboardAction(this, cmd.name(), cmd.getKeyStroke(), whenFocused);
-  }
-
-  @Override
-  public void actionPerformed(ActionEvent e) {
-    final NavBarKeyboardCommand cmd = NavBarKeyboardCommand.fromString(e.getActionCommand());
-    if (cmd != null) {
-      switch (cmd) {
-        case LEFT:     myPanel.moveLeft();  break;
-        case RIGHT:    myPanel.moveRight(); break;
-        case HOME:     myPanel.moveHome();  break;
-        case END:      myPanel.moveEnd();   break;
-        case DOWN:     myPanel.moveDown();  break;
-        case UP:       myPanel.moveDown();  break;
-        case ENTER:    myPanel.enter();     break;
-        case ESCAPE:   myPanel.escape();    break;
-        case NAVIGATE: myPanel.navigate();  break;
-      }
     }
   }
 
@@ -317,6 +290,8 @@ public class NavBarListener
     return action instanceof PopupAction
            || action instanceof CopyAction
            || action instanceof CutAction
+           || action instanceof ListActions
+           || action instanceof NavBarActions
            || action instanceof ScrollingUtil.ScrollingAction;
   }
 
