@@ -19,6 +19,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiUtilBase;
@@ -49,7 +50,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   public TemplateManagerImpl(@NotNull Project project, @NotNull MessageBus messageBus) {
     myProject = project;
     myEventPublisher = messageBus.syncPublisher(TEMPLATE_STARTED_TOPIC);
-    final EditorFactoryListener myEditorFactoryListener = new EditorFactoryListener() {
+    EditorFactoryListener myEditorFactoryListener = new EditorFactoryListener() {
       @Override
       public void editorReleased(@NotNull EditorFactoryEvent event) {
         Editor editor = event.getEditor();
@@ -92,9 +93,10 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
 
   @Nullable
   public static TemplateState getTemplateState(@NotNull Editor editor) {
-    TemplateState templateState = editor.getUserData(TEMPLATE_STATE_KEY);
+    UserDataHolder stateHolder = InjectedLanguageUtil.getTopLevelEditor(editor);
+    TemplateState templateState = stateHolder.getUserData(TEMPLATE_STATE_KEY);
     if (templateState != null && templateState.isDisposed()) {
-      editor.putUserData(TEMPLATE_STATE_KEY, null);
+      stateHolder.putUserData(TEMPLATE_STATE_KEY, null);
       return null;
     }
     return templateState;
@@ -103,17 +105,21 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   static void clearTemplateState(@NotNull Editor editor) {
     TemplateState prevState = getTemplateState(editor);
     if (prevState != null) {
+      Editor stateEditor = prevState.getEditor();
+      if (stateEditor != null) {
+        stateEditor.putUserData(TEMPLATE_STATE_KEY, null);
+      }
       Disposer.dispose(prevState);
-      editor.putUserData(TEMPLATE_STATE_KEY, null);
     }
   }
 
   @NotNull
   private TemplateState initTemplateState(@NotNull Editor editor) {
-    clearTemplateState(editor);
-    TemplateState state = new TemplateState(myProject, editor);
+    Editor topLevelEditor = InjectedLanguageUtil.getTopLevelEditor(editor);
+    clearTemplateState(topLevelEditor);
+    TemplateState state = new TemplateState(myProject, topLevelEditor);
     Disposer.register(this, state);
-    editor.putUserData(TEMPLATE_STATE_KEY, state);
+    topLevelEditor.putUserData(TEMPLATE_STATE_KEY, state);
     return state;
   }
 
