@@ -32,6 +32,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
+import org.jetbrains.plugins.gradle.settings.TestRunner;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -191,8 +192,8 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
       assertTrue(fooSettings.isResolveModulePerSourceSet());
       assertFalse(fooSettings.isResolveExternalAnnotations());
       assertEquals(ThreeState.YES, fooSettings.getStoreProjectFilesExternally());
-      assertEquals(ThreeState.UNSURE, fooSettings.getDelegatedBuild());
-      assertNull(fooSettings.getTestRunner());
+      assertTrue(fooSettings.getDelegatedBuild());
+      assertEquals(TestRunner.GRADLE, fooSettings.getTestRunner());
       assertFalse(fooSettings.isUseAutoImport());
       assertFalse(fooSettings.isCreateEmptyContentRootDirectories());
       assertTrue(fooSettings.isUseQualifiedModuleNames());
