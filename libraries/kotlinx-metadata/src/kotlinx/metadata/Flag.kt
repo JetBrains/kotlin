@@ -37,11 +37,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Class.Kind as ClassKind
  * @see Flags
  * @see flagsOf
  */
-class Flag internal constructor(
-    private val offset: Int,
-    private val bitWidth: Int,
-    private val value: Int
-) {
+class Flag(private val offset: Int, private val bitWidth: Int, private val value: Int) {
     internal constructor(field: F.FlagField<*>, value: Int) : this(field.offset, field.bitWidth, value)
 
     internal constructor(field: F.BooleanFlagField) : this(field, 1)

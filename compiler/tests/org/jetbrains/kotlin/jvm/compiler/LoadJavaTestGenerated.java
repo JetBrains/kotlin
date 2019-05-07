@@ -4618,6 +4618,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/ConstValInMultifileClass.kt");
             }
 
+            @TestMetadata("JvmFieldInInterfaceCompanion.kt")
+            public void testJvmFieldInInterfaceCompanion() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/JvmFieldInInterfaceCompanion.kt");
+            }
+
             @TestMetadata("WithUnsignedTypeParameters.kt")
             public void testWithUnsignedTypeParameters() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/WithUnsignedTypeParameters.kt");

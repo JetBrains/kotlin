@@ -95,6 +95,7 @@ private fun visitProperty(
         var jvmGetterSignature: JvmMemberSignature? = null
         var jvmSetterSignature: JvmMemberSignature? = null
         var jvmSyntheticMethodForAnnotationsSignature: JvmMemberSignature? = null
+        var isMovedFromInterfaceCompanion: Boolean = false
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
@@ -115,8 +116,12 @@ private fun visitProperty(
             if (type != JvmPropertyExtensionVisitor.TYPE) return null
             return object : JvmPropertyExtensionVisitor() {
                 override fun visit(
-                    fieldSignature: JvmFieldSignature?, getterSignature: JvmMethodSignature?, setterSignature: JvmMethodSignature?
+                    jvmFlags: Flags,
+                    fieldSignature: JvmFieldSignature?,
+                    getterSignature: JvmMethodSignature?,
+                    setterSignature: JvmMethodSignature?
                 ) {
+                    isMovedFromInterfaceCompanion = JvmFlag.Property.IS_MOVED_FROM_INTERFACE_COMPANION(jvmFlags)
                     jvmFieldSignature = fieldSignature
                     jvmGetterSignature = getterSignature
                     jvmSetterSignature = setterSignature
@@ -144,6 +149,9 @@ private fun visitProperty(
             }
             if (jvmSyntheticMethodForAnnotationsSignature != null) {
                 sb.appendln("  // synthetic method for annotations: $jvmSyntheticMethodForAnnotationsSignature")
+            }
+            if (isMovedFromInterfaceCompanion) {
+                sb.appendln("  // is moved from interface companion")
             }
             sb.append("  ")
             sb.appendFlags(flags, PROPERTY_FLAGS_MAP)

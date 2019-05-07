@@ -69,6 +69,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         val setterSignature =
             if (propertySignature != null && propertySignature.hasSetter()) propertySignature.setter else null
         ext.visit(
+            proto.getExtension(JvmProtoBuf.flags),
             fieldSignature?.wrapAsPublic(),
             getterSignature?.run { JvmMethodSignature(c[name], c[desc]) },
             setterSignature?.run { JvmMethodSignature(c[name], c[desc]) }
@@ -165,11 +166,17 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmPropertyExtensionVisitor? {
         if (type != JvmPropertyExtensionVisitor.TYPE) return null
         return object : JvmPropertyExtensionVisitor() {
+            var jvmFlags: Flags = ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)
             var signature: JvmProtoBuf.JvmPropertySignature.Builder? = null
 
             override fun visit(
-                fieldSignature: JvmFieldSignature?, getterSignature: JvmMethodSignature?, setterSignature: JvmMethodSignature?
+                jvmFlags: Flags,
+                fieldSignature: JvmFieldSignature?,
+                getterSignature: JvmMethodSignature?,
+                setterSignature: JvmMethodSignature?
             ) {
+                this.jvmFlags = jvmFlags
+
                 if (fieldSignature == null && getterSignature == null && setterSignature == null) return
 
                 if (signature == null) {
@@ -202,6 +209,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             }
 
             override fun visitEnd() {
+                if (jvmFlags != ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)) {
+                    proto.setExtension(JvmProtoBuf.flags, jvmFlags)
+                }
                 if (signature != null) {
                     proto.setExtension(JvmProtoBuf.propertySignature, signature!!.build())
                 }
