@@ -9,6 +9,7 @@ import java.awt.Rectangle
 /**
  * Building block of inlay view. Note, that you have to use [updateState] if your presentation has state to preserve it between passes.
  * It's implementations are not expected to throw exceptions.
+ * Most useful methods for presentation creation are placed in [PresentationFactory]
  */
 interface InlayPresentation : InputHandler {
   val width: Int

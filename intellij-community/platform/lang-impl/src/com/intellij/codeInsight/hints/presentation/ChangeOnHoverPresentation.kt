@@ -4,7 +4,7 @@ package com.intellij.codeInsight.hints.presentation
 import java.awt.event.MouseEvent
 
 /**
- * Changes state when hovered
+ * Changes state once hovered, not switches state back
  * Preserves hover state between passes.
  * @param onHoverPredicate predicate, that considers state is hovered (additional to fact, that it is in bounds)
  */

@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.editor.impl.FontInfo
@@ -28,12 +29,13 @@ import java.util.*
 import javax.swing.Icon
 import javax.swing.UIManager
 
-class PresentationFactory(val editor: EditorImpl) {
-  // TODO document, that this is not the same font (type, size) as in editor!
+class PresentationFactory(private val editor: EditorImpl) {
+  /**
+   * Smaller text, than editor, required to be wrapped with [roundWithBackground]
+   */
   fun smallText(text: String): InlayPresentation {
     val fontData = getFontData(editor)
-    val metrics = fontData.metrics
-    val plainFont = metrics.font
+    val plainFont = fontData.font
     val width = editor.contentComponent.getFontMetrics(plainFont).stringWidth(text)
     val ascent = editor.ascent
     val descent = editor.descent
@@ -47,6 +49,24 @@ class PresentationFactory(val editor: EditorImpl) {
     return withInlayAttributes(textWithoutBox)
   }
 
+  /**
+   * Text, that is not expected to be drawn with rounding, the same font size as in editor.
+   */
+  fun text(text: String) : InlayPresentation {
+    val font = editor.colorsScheme.getFont(EditorFontType.PLAIN)
+    val width = editor.contentComponent.getFontMetrics(font).stringWidth(text)
+    return withInlayAttributes(TextInlayPresentation(
+      width,
+      editor.lineHeight,
+      text,
+      editor.ascent
+    ) { font })
+  }
+
+  /**
+   * Adds inlay background and rounding with insets.
+   * Intended to be used with [smallText]
+   */
   fun roundWithBackground(base: InlayPresentation): InlayPresentation {
     val rounding = rounding(8, 8, withInlayAttributes(BackgroundPresentation(
       InsetPresentation(
@@ -61,47 +81,93 @@ class PresentationFactory(val editor: EditorImpl) {
     return InsetPresentation(rounding, top = offsetFromTop)
   }
 
+  fun icon(icon: Icon): IconPresentation = IconPresentation(icon, editor.component)
+
+  fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
+    tooltip.isEmpty() -> base
+    else -> onHover(base, tooltipHandler(tooltip))
+  }
+
+  fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
+    return AttributesTransformerPresentation(ChangeOnClickPresentation(placeholder, unwrapAction)) {
+      it.with(attributesOf(EditorColors.FOLDED_TEXT_ATTRIBUTES))
+    }
+  }
+
+  fun asWrongReference(presentation: InlayPresentation): InlayPresentation {
+    return AttributesTransformerPresentation(presentation) {
+      it.with(attributesOf(CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES))
+    }
+  }
+
   private fun withInlayAttributes(base: InlayPresentation): InlayPresentation {
     return AttributesTransformerPresentation(base) {
       it.withDefault(attributesOf(DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT))
     }
   }
 
-  fun singleText(text: String): InlayPresentation {
-    return roundWithBackground(smallText(text))
+  fun onHover(base: InlayPresentation, onHover: (MouseEvent?) -> Unit): InlayPresentation {
+    return OnHoverPresentation(base, onHover)
   }
 
-  fun icon(icon: Icon): IconPresentation = IconPresentation(icon, editor.component)
-
-  fun roundedText(text: String): InlayPresentation {
-    return rounding(8, 8, smallText(text))
+  fun onClick(base: InlayPresentation, button: MouseButton, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
+    return OnClickPresentation(base) { e, p ->
+      if (button == e.mouseButton) {
+        onClick(e, p)
+      }
+    }
   }
 
-  fun hyperlink(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {
-    return changeOnHover(base, {
-      val attributesTransformerPresentation = AttributesTransformerPresentation(base) {
+  fun onClick(base: InlayPresentation, buttons: EnumSet<MouseButton>, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
+    return OnClickPresentation(base) { e, p ->
+      if (e.mouseButton in buttons) {
+        onClick(e, p)
+      }
+    }
+  }
+
+  /**
+   * @see ChangeOnHoverPresentation
+   */
+  fun changeOnHover(
+    default: InlayPresentation,
+    onHover: () -> InlayPresentation,
+    onHoverPredicate: (MouseEvent) -> Boolean = { true }
+  ): InlayPresentation = ChangeOnHoverPresentation(default, onHover, onHoverPredicate)
+
+  fun reference(base: InlayPresentation, onClickAction: () -> Unit): InlayPresentation {
+    val noHighlightReference = onClick(base, MouseButton.Middle) { _, _ ->
+      onClickAction()
+    }
+    return changeOnHover(noHighlightReference, {
+      val attributesTransformerPresentation = AttributesTransformerPresentation(noHighlightReference) {
         val attributes = attributesOf(EditorColors.REFERENCE_HYPERLINK_COLOR)
         attributes.effectType = null // With underlined looks weird
         it.with(attributes)
       }
       onClick(attributesTransformerPresentation, EnumSet.of(MouseButton.Left, MouseButton.Middle)) { _, _ ->
-        navigateInternal(resolve)
+        onClickAction()
       }
     }) { isControlDown(it) }
   }
 
-  fun tooltip(e: MouseEvent, text: String) {
-    val label = HintUtil.createInformationLabel(text)
-    label.border = JBUI.Borders.empty(6, 6, 5, 6)
-    // TODO
+  fun psiSingleReference(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {
+    return reference(base) { navigateInternal(resolve) }
   }
+
+
+  fun seq(vararg presentations: InlayPresentation): InlayPresentation {
+    return when (presentations.size) {
+      0 -> SpacePresentation(0, 0)
+      1 -> presentations.first()
+      else -> SequencePresentation(presentations.toList())
+    }
+  }
+
+  fun rounding(arcWidth: Int, arcHeight: Int, presentation: InlayPresentation): InlayPresentation =
+    RoundPresentation(presentation, arcWidth, arcHeight)
 
   private fun isControlDown(e: MouseEvent): Boolean = (SystemInfo.isMac && e.isMetaDown) || e.isControlDown
-
-  fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
-    tooltip.isEmpty() -> base
-    else -> onHover(base, tooltipHandler(tooltip))
-  }
 
   private fun showTooltip(editor: Editor, e: MouseEvent, text: String): LightweightHint {
     val hint = run {
@@ -153,55 +219,7 @@ class PresentationFactory(val editor: EditorImpl) {
     return Point(e.xOnScreen - pointOnScreen.x, e.yOnScreen - pointOnScreen.y)
   }
 
-  fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
-    return AttributesTransformerPresentation(ChangeOnClickPresentation(placeholder, unwrapAction)) {
-      it.with(attributesOf(EditorColors.FOLDED_TEXT_ATTRIBUTES))
-    }
-  }
-
-  fun asWrongReference(presentation: InlayPresentation): InlayPresentation {
-    return AttributesTransformerPresentation(presentation) {
-      it.with(attributesOf(CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES))
-    }
-  }
-
   private fun attributesOf(key: TextAttributesKey?) = editor.colorsScheme.getAttributes(key) ?: TextAttributes()
-
-  fun onHover(base: InlayPresentation, onHover: (MouseEvent?) -> Unit): InlayPresentation {
-    return OnHoverPresentation(base, onHover)
-  }
-
-  fun onClick(base: InlayPresentation, button: MouseButton, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
-    return OnClickPresentation(base) { e, p ->
-      if (button == e.mouseButton) {
-        onClick(e, p)
-      }
-    }
-  }
-
-  fun onClick(base: InlayPresentation, buttons: EnumSet<MouseButton>, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
-    return OnClickPresentation(base) { e, p ->
-      if (e.mouseButton in buttons) {
-        onClick(e, p)
-      }
-    }
-  }
-
-  fun changeOnHover(
-    default: InlayPresentation,
-    onHover: () -> InlayPresentation,
-    onHoverPredicate: (MouseEvent) -> Boolean = { true }
-  ): InlayPresentation {
-    return ChangeOnHoverPresentation(default, onHover, onHoverPredicate)
-  }
-
-
-  fun navigateSingle(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {
-    val noHighlightReference = onClick(base, MouseButton.Middle) { _, _ ->
-      navigateInternal(resolve)
-    }
-    return hyperlink(noHighlightReference, resolve)
-  }
 
   private fun navigateInternal(resolve: () -> PsiElement?) {
     val target = resolve()
@@ -211,17 +229,6 @@ class PresentationFactory(val editor: EditorImpl) {
       }
     }
   }
-
-  fun seq(vararg presentations: InlayPresentation): InlayPresentation {
-    return when (presentations.size) {
-      0 -> SpacePresentation(0, 0)
-      1 -> presentations.first()
-      else -> SequencePresentation(presentations.toList())
-    }
-  }
-
-  fun rounding(arcWidth: Int, arcHeight: Int, presentation: InlayPresentation): InlayPresentation =
-    RoundPresentation(presentation, arcWidth, arcHeight)
 
   private class FontData constructor(editor: Editor, familyName: String, size: Int) {
     val metrics: FontMetrics
@@ -275,16 +282,6 @@ class PresentationFactory(val editor: EditorImpl) {
       editor.putUserData(FONT_DATA, metrics)
     }
     return metrics
-  }
-
-  private fun getCurrentContext(editor: Editor): FontRenderContext {
-    val editorContext = FontInfo.getFontRenderContext(editor.contentComponent)
-    return FontRenderContext(editorContext.transform,
-                             AntialiasingType.getKeyForCurrentScope(false),
-                             if (editor is EditorImpl)
-                               editor.myFractionalMetricsHintValue
-                             else
-                               RenderingHints.VALUE_FRACTIONALMETRICS_OFF)
   }
 
   companion object {
