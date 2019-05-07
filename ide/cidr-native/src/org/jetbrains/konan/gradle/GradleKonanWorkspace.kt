@@ -170,7 +170,7 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
         }
 
         if (testBuildTarget != null && baseBuildTarget != null) {
-            testBuildTarget.setBaseBuildTarget(baseBuildTarget)
+            testBuildTarget.baseBuildTarget = baseBuildTarget
         }
 
         buildTargets.addIfNotNull(baseBuildTarget)

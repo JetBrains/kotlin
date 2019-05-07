@@ -27,6 +27,7 @@ class GradleKonanBuildConfigurationHelper(private val myProject: Project) :
 
     override fun findRunTarget(data: BuildTargetData?) = findTarget(data, runTargets)
 
+    @Suppress("FINAL_UPPER_BOUND")
     override fun <T : GradleKonanBuildTarget> findTarget(targetData: BuildTargetData?, targets: List<T>): T? {
         if (targetData == null) return null
         return targets.firstOrNull { it.projectName == targetData.projectName && it.name == targetData.targetName }
