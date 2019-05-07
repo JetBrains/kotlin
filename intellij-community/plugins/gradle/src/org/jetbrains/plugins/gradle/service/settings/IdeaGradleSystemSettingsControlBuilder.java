@@ -155,6 +155,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     return this;
   }
 
+  @Deprecated
   public IdeaGradleSystemSettingsControlBuilder dropOfflineModeBox() {
     return this;
   }
