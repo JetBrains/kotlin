@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTest
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.kotlinp.Kotlinp
 import org.jetbrains.kotlin.kotlinp.KotlinpSettings
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -61,13 +62,12 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
 }
 
 private fun compile(file: File, disposable: Disposable, tmpdir: File, forEachOutputFile: (File) -> Unit) {
-    val environment = KotlinCoreEnvironment.createForTests(
-        disposable,
-        KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK),
-        EnvironmentConfigFiles.JVM_CONFIG_FILES
-    )
-    setupLanguageVersionSettingsForCompilerTests(file.readText(), environment)
-    val ktFile = KotlinTestUtils.createFile(file.name, file.readText(), environment.project)
+    val content = file.readText()
+    val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
+    AbstractLoadJavaTest.updateConfigurationWithDirectives(content, configuration)
+    val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    setupLanguageVersionSettingsForCompilerTests(content, environment)
+    val ktFile = KotlinTestUtils.createFile(file.name, content, environment.project)
     GenerationUtils.compileFileTo(ktFile, environment, tmpdir)
 
     for (outputFile in tmpdir.walkTopDown().sortedBy { it.nameWithoutExtension }) {

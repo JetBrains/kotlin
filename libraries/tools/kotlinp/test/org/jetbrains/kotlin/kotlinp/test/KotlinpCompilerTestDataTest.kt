@@ -37,6 +37,7 @@ class KotlinpCompilerTestDataTest(private val file: File) {
         fun computeTestDataFiles(): Collection<Array<*>> {
             val baseDirs = listOf(
                 "compiler/testData/loadJava/compiledKotlin",
+                "compiler/testData/loadJava/compiledKotlinWithStdlib",
                 "compiler/testData/serialization/builtinsSerializer"
             )
 

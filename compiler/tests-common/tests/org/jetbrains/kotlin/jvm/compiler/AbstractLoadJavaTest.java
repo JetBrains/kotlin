@@ -161,7 +161,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         }
     }
 
-    private static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
+    public static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
         Map<String, String> directives = KotlinTestUtils.parseDirectives(content);
         LanguageVersionSettings languageVersionSettings = CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings(directives);
         if (languageVersionSettings == null) {
