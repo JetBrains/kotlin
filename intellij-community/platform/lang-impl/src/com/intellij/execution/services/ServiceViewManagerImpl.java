@@ -55,7 +55,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   public ServiceViewManagerImpl(@NotNull Project project) {
     myProject = project;
-    myProject.getMessageBus().connect(myProject).subscribe(ServiceViewEventListener.TOPIC, this::updateToolWindow);
+    myProject.getMessageBus().connect(myProject).subscribe(ServiceEventListener.TOPIC, this::updateToolWindow);
   }
 
   boolean hasServices() {
@@ -67,7 +67,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   void createToolWindowContent(@NotNull ToolWindow toolWindow) {
     ServiceViewModel model = new ServiceViewModel.AllServicesModel(myProject);
-    myProject.getMessageBus().connect(model).subscribe(ServiceViewEventListener.TOPIC, model::refresh);
+    myProject.getMessageBus().connect(model).subscribe(ServiceEventListener.TOPIC, model::refresh);
     myServiceView = ServiceView.createTreeView(myProject, model, myState.viewState);
 
     Content toolWindowContent = ContentFactory.SERVICE.getInstance().createContent(myServiceView, null, false);
@@ -111,7 +111,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     return result;
   }
 
-  private void updateToolWindow(ServiceViewEventListener.ServiceEvent event) {
+  private void updateToolWindow(ServiceEventListener.ServiceEvent event) {
     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
     if (toolWindowManager == null) return;
 

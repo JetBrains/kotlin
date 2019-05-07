@@ -15,7 +15,7 @@ import java.util.*;
 interface ServiceViewModel extends Disposable, InvokerSupplier {
   List<? extends ServiceTreeNode> getRoots();
 
-  void refresh(@NotNull ServiceViewEventListener.ServiceEvent e);
+  void refresh(@NotNull ServiceEventListener.ServiceEvent e);
 
   void addModelListener(ServiceViewModelListener listener);
 
@@ -87,7 +87,7 @@ interface ServiceViewModel extends Disposable, InvokerSupplier {
     }
 
     @Override
-    public void refresh(@NotNull ServiceViewEventListener.ServiceEvent e) {
+    public void refresh(@NotNull ServiceEventListener.ServiceEvent e) {
       getInvoker().runOrInvokeLater(() -> reset(e.contributorClass));
     }
 
