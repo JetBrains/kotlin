@@ -178,7 +178,6 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
     GradleProjectSettings settings = new GradleProjectSettings();
     settings.setDistributionType(DistributionType.DEFAULT_WRAPPED);
     settings.setStoreProjectFilesExternally(ThreeState.YES);
-    settings.setUseQualifiedModuleNames(true);
     return settings;
   }
 

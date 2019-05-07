@@ -90,8 +90,6 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   private final ActionListener myActionListener;
 
   private boolean dropUseAutoImportBox;
-  private boolean dropCreateEmptyContentRootDirectoriesBox;
-  private boolean dropModulesGroupingOptionPanel;
 
   @Nullable
   private JLabel myGradleHomeLabel;
@@ -230,8 +228,8 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     return this;
   }
 
+  @Deprecated
   public IdeaGradleProjectSettingsControlBuilder dropCreateEmptyContentRootDirectoriesBox() {
-    dropCreateEmptyContentRootDirectoriesBox = true;
     return this;
   }
 
@@ -250,8 +248,8 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     return this;
   }
 
+  @Deprecated
   public IdeaGradleProjectSettingsControlBuilder dropModulesGroupingOptionPanel() {
-    dropModulesGroupingOptionPanel = true;
     return this;
   }
 
@@ -278,8 +276,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
   @Override
   public ExternalSystemSettingsControlCustomizer getExternalSystemSettingsControlCustomizer() {
-    return new ExternalSystemSettingsControlCustomizer(
-      dropUseAutoImportBox, dropCreateEmptyContentRootDirectoriesBox, dropModulesGroupingOptionPanel);
+    return new ExternalSystemSettingsControlCustomizer(dropUseAutoImportBox);
   }
 
   @Override

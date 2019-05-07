@@ -35,7 +35,6 @@ class GradleSettingsCollector : ProjectUsagesCollector() {
     // project settings
     for (setting in gradleSettings.linkedProjectsSettings) {
       val projectPath = setting.externalProjectPath
-      usages.add(getBooleanUsage("isCreateEmptyContentRootDirectories", setting.isCreateEmptyContentRootDirectories))
       usages.add(getBooleanUsage("isUseQualifiedModuleNames", setting.isUseQualifiedModuleNames))
       usages.add(getBooleanUsage("createModulePerSourceSet", setting.isResolveModulePerSourceSet))
       usages.add(getEnumUsage("storeProjectFilesExternally", setting.storeProjectFilesExternally))

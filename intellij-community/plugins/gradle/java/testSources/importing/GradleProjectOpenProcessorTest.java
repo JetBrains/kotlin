@@ -195,7 +195,6 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
       assertTrue(fooSettings.getDelegatedBuild());
       assertEquals(TestRunner.GRADLE, fooSettings.getTestRunner());
       assertFalse(fooSettings.isUseAutoImport());
-      assertFalse(fooSettings.isCreateEmptyContentRootDirectories());
       assertTrue(fooSettings.isUseQualifiedModuleNames());
     }
     finally {
