@@ -25,6 +25,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.kotlin.KotlinUastResolveProviderService
 
@@ -53,11 +54,11 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
 
         val containingFile = psiElement.containingFile
         if (containingFile is KtFile) {
-            return TargetPlatformDetector.getPlatform(containingFile).isJvm()
+            return TargetPlatformDetector.getPlatform(containingFile) is JvmPlatform
         }
 
         val module = psiElement.module
-        return module == null || TargetPlatformDetector.getPlatform(module).isJvm()
+        return module == null || TargetPlatformDetector.getPlatform(module) is JvmPlatform
     }
 
     override fun getLanguageVersionSettings(element: KtElement): LanguageVersionSettings {
@@ -69,7 +70,7 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
             .getCachedValue(project, {
                 Result.create(
                     ModuleManager.getInstance(project).modules.all { module ->
-                        TargetPlatformDetector.getPlatform(module).isJvm()
+                        TargetPlatformDetector.getPlatform(module) is JvmPlatform
                     },
                     ProjectRootModificationTracker.getInstance(project)
                 )
