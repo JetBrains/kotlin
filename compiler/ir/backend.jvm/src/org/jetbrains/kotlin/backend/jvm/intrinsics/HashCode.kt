@@ -16,24 +16,39 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
+// TODO Implement hashCode on primitive types as a lowering.
 object HashCode : IntrinsicMethod() {
-
-    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature, context, AsmTypes.OBJECT_TYPE) {
-            it.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
+        val receiver = expression.dispatchReceiver ?: error("No receiver for hashCode: ${expression.render()}")
+        val result = receiver.accept(this, data).materialized
+        val target = context.state.target
+        when {
+            irFunction.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER || irFunction.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER ->
+                AsmUtil.genHashCode(mv, mv, result.type, target)
+            target == JvmTarget.JVM_1_6 -> {
+                result.coerce(AsmUtil.boxType(result.type)).materialize()
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
+            }
+            else -> {
+                val boxedType = AsmUtil.boxType(result.type)
+                mv.visitMethodInsn(
+                    Opcodes.INVOKESTATIC,
+                    boxedType.internalName,
+                    "hashCode",
+                    Type.getMethodDescriptor(Type.INT_TYPE, result.type),
+                    false
+                )
+            }
         }
+        MaterialValue(codegen.mv, Type.INT_TYPE)
     }
 }
