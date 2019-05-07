@@ -17470,6 +17470,21 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
                 runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/insideTopLevelExtensionAnnotatedType.kt");
             }
 
+            @TestMetadata("kt29948.kt")
+            public void testKt29948() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/kt29948.kt");
+            }
+
+            @TestMetadata("kt31360.kt")
+            public void testKt31360() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/kt31360.kt");
+            }
+
+            @TestMetadata("markedReceiverWithCapturedTypeArgument.kt")
+            public void testMarkedReceiverWithCapturedTypeArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/markedReceiverWithCapturedTypeArgument.kt");
+            }
+
             @TestMetadata("markersIntersection.kt")
             public void testMarkersIntersection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/markersIntersection.kt");
