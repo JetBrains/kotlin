@@ -274,6 +274,50 @@ public final class CrossinlineKt$fold$$inlined$consumeEach$1 {
 
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
+public final class CrossinlineKt$fold$$inlined$consumeEach$2$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
+    field label: int
+    synthetic field result: java.lang.Object
+    synthetic final field this$0: CrossinlineKt$fold$$inlined$consumeEach$2
+    inner class CrossinlineKt$fold$$inlined$consumeEach$2
+    inner class CrossinlineKt$fold$$inlined$consumeEach$2$1
+    public method <init>(p0: CrossinlineKt$fold$$inlined$consumeEach$2, p1: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class CrossinlineKt$fold$$inlined$consumeEach$2 {
+    synthetic final field $acc$inlined: kotlin.jvm.internal.Ref$ObjectRef
+    synthetic final field $operation$inlined: kotlin.jvm.functions.Function3
+    inner class CrossinlineKt$fold$$inlined$consumeEach$2
+    inner class CrossinlineKt$fold$$inlined$consumeEach$2$1
+    public method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.jvm.functions.Function3): void
+    public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
+public final class CrossinlineKt$fold$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
+    field label: int
+    synthetic field result: java.lang.Object
+    inner class CrossinlineKt$fold$1
+    public method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$range$$inlined$source$1$1 {
     field I$0: int
     field I$1: int
@@ -330,12 +374,15 @@ public final class CrossinlineKt$source$1 {
 public final class CrossinlineKt {
     inner class CrossinlineKt$box$1
     inner class CrossinlineKt$consumeEach$2
+    inner class CrossinlineKt$fold$1
     inner class CrossinlineKt$source$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
-    private final static method consumeEach(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, p1: kotlin.jvm.functions.Function2, p2: kotlin.coroutines.Continuation): java.lang.Object
+    private final static @org.jetbrains.annotations.Nullable method consumeEach$$forInline(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method consumeEach(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method filter(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): SourceCrossinline
-    private final static method fold(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, p1: java.lang.Object, p2: kotlin.jvm.functions.Function3, p3: kotlin.coroutines.Continuation): java.lang.Object
+    private final static @org.jetbrains.annotations.Nullable method fold$$forInline(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, p1: java.lang.Object, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function3, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method fold(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, p1: java.lang.Object, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function3, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
     public final static method isGood(p0: int): boolean
     public final static @org.jetbrains.annotations.NotNull method range(@org.jetbrains.annotations.NotNull p0: SourceCrossinline$Factory, p1: int, p2: int): SourceCrossinline
     public final static @org.jetbrains.annotations.NotNull method source(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): SourceCrossinline

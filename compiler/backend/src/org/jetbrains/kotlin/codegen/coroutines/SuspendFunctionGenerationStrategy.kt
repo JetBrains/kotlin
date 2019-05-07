@@ -30,7 +30,7 @@ open class SuspendFunctionGenerationStrategy(
     state: GenerationState,
     protected val originalSuspendDescriptor: FunctionDescriptor,
     protected val declaration: KtFunction,
-    private val containingClassInternalName: String,
+    protected val containingClassInternalName: String,
     private val constructorCallNormalizationMode: JVMConstructorCallNormalizationMode,
     protected val functionCodegen: FunctionCodegen
 ) : FunctionGenerationStrategy.CodegenBased(state) {
@@ -53,16 +53,7 @@ open class SuspendFunctionGenerationStrategy(
     override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
         if (access and Opcodes.ACC_ABSTRACT != 0) return mv
 
-        val stateMachineBuilder = CoroutineTransformerMethodVisitor(
-            mv, access, name, desc, null, null, containingClassInternalName, this::classBuilderForCoroutineState,
-            isForNamedFunction = true,
-            element = declaration,
-            diagnostics = state.diagnostics,
-            shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
-            needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
-            internalNameForDispatchReceiver = containingClassInternalNameOrNull(),
-            languageVersionSettings = languageVersionSettings
-        )
+        val stateMachineBuilder = createStateMachineBuilder(mv, access, name, desc)
 
         val forInline = state.bindingContext[CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA, originalSuspendDescriptor] == true
         // Both capturing and inline functions share the same suffix, however, inline functions can also be capturing
@@ -93,6 +84,24 @@ open class SuspendFunctionGenerationStrategy(
                 containingClassInternalNameOrNull(),
                 languageVersionSettings
             ) else stateMachineBuilder
+    }
+
+    protected fun createStateMachineBuilder(
+        mv: MethodVisitor,
+        access: Int,
+        name: String,
+        desc: String
+    ): CoroutineTransformerMethodVisitor {
+        return CoroutineTransformerMethodVisitor(
+            mv, access, name, desc, null, null, containingClassInternalName, this::classBuilderForCoroutineState,
+            isForNamedFunction = true,
+            element = declaration,
+            diagnostics = state.diagnostics,
+            shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
+            needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
+            internalNameForDispatchReceiver = containingClassInternalNameOrNull(),
+            languageVersionSettings = languageVersionSettings
+        )
     }
 
     private fun containingClassInternalNameOrNull() =
