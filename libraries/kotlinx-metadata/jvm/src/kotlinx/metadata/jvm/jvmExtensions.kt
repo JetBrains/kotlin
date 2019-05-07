@@ -50,6 +50,9 @@ open class JvmClassExtensionVisitor @JvmOverloads constructor(
     override val delegate: JvmClassExtensionVisitor?
         get() = super.delegate as JvmClassExtensionVisitor?
 
+    final override val type: KmExtensionType
+        get() = TYPE
+
     /**
      * Visits the JVM internal name of the original class this anonymous object is copied from. This method is called for
      * anonymous objects copied from bodies of inline functions to the use site by the Kotlin compiler.
@@ -85,6 +88,9 @@ open class JvmPackageExtensionVisitor @JvmOverloads constructor(
     override val delegate: JvmPackageExtensionVisitor?
         get() = super.delegate as JvmPackageExtensionVisitor?
 
+    final override val type: KmExtensionType
+        get() = TYPE
+
     /**
      * Visits the end of JVM extensions for the package fragment.
      */
@@ -109,6 +115,9 @@ open class JvmPackageExtensionVisitor @JvmOverloads constructor(
 open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmFunctionExtensionVisitor? = null
 ) : KmFunctionExtensionVisitor {
+    final override val type: KmExtensionType
+        get() = TYPE
+
     /**
      * Visits the JVM signature of the function in the JVM-based format,
      * or null if the JVM signature of this function is unknown.
@@ -153,6 +162,9 @@ open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
 open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmPropertyExtensionVisitor? = null
 ) : KmPropertyExtensionVisitor {
+    final override val type: KmExtensionType
+        get() = TYPE
+
     /**
      * Visits JVM signatures of field and accessors generated for the property.
      *
@@ -225,6 +237,9 @@ open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
 open class JvmConstructorExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmConstructorExtensionVisitor? = null
 ) : KmConstructorExtensionVisitor {
+    final override val type: KmExtensionType
+        get() = TYPE
+
     /**
      * Visits the JVM signature of the constructor, or null if the JVM signature of this constructor is unknown.
      *
@@ -253,6 +268,9 @@ open class JvmConstructorExtensionVisitor @JvmOverloads constructor(
 open class JvmTypeParameterExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmTypeParameterExtensionVisitor? = null
 ) : KmTypeParameterExtensionVisitor {
+    final override val type: KmExtensionType
+        get() = TYPE
+
     /**
      * Visits an annotation on the type parameter.
      *
@@ -286,6 +304,9 @@ open class JvmTypeParameterExtensionVisitor @JvmOverloads constructor(
 open class JvmTypeExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmTypeExtensionVisitor? = null
 ) : KmTypeExtensionVisitor {
+    final override val type: KmExtensionType
+        get() = TYPE
+
     /**
      * Visits the JVM-specific flags of a type.
      *
