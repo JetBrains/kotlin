@@ -77,7 +77,7 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
 
             val callExpr = argumentList.parent as? KtCallElement ?: return null
             val resolvedCall = givenResolvedCall ?: callExpr.resolveToCall() ?: return null
-            if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
+            if (!resolvedCall.candidateDescriptor.hasStableParameterNames()) return null
 
             if (!argumentMatchedAndCouldBeNamedInCall(argument, resolvedCall, callExpr.languageVersionSettings)) return null
 

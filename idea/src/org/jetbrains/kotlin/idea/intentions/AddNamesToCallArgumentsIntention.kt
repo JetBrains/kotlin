@@ -33,7 +33,7 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
         if (arguments.all { it.isNamed() || it is LambdaArgument }) return null
 
         val resolvedCall = element.resolveToCall() ?: return null
-        if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
+        if (!resolvedCall.candidateDescriptor.hasStableParameterNames()) return null
 
         if (arguments.all {
                 AddNameToArgumentIntention.argumentMatchedAndCouldBeNamedInCall(it, resolvedCall, element.languageVersionSettings)
