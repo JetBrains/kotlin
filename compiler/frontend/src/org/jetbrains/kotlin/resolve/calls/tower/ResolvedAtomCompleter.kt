@@ -191,8 +191,8 @@ class ResolvedAtomCompleter(
         val substitutedFunctionalType = createFunctionType(
             builtIns,
             existingLambdaType.annotations,
-            lambda.receiver?.let { resultSubstitutor.substituteKeepAnnotations(it) },
-            lambda.parameters.map { resultSubstitutor.substituteKeepAnnotations(it) },
+            lambda.receiver?.let { resultSubstitutor.safeSubstitute(it) },
+            lambda.parameters.map { resultSubstitutor.safeSubstitute(it) },
             null, // parameter names transforms to special annotations, so they are already taken from parameter types
             returnType,
             lambda.isSuspend
@@ -208,7 +208,7 @@ class ResolvedAtomCompleter(
             }
 
             val valueType = receiver.value.type.unwrap()
-            val newValueType = resultSubstitutor.substituteKeepAnnotations(valueType)
+            val newValueType = resultSubstitutor.safeSubstitute(valueType)
 
             if (valueType !== newValueType) {
                 val newReceiverValue = receiver.value.replaceType(newValueType)

@@ -140,7 +140,7 @@ class KotlinCallCompleter(
     private fun KotlinResolutionCandidate.returnTypeWithSmartCastInfo(resolutionCallbacks: KotlinResolutionCallbacks): UnwrappedType? {
         val returnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return null
         val returnTypeWithSmartCastInfo = computeReturnTypeWithSmartCastInfo(returnType, resolutionCallbacks)
-        return resolvedCall.substitutor.substituteKeepAnnotations(returnTypeWithSmartCastInfo)
+        return resolvedCall.substitutor.safeSubstitute(returnTypeWithSmartCastInfo)
     }
 
     private fun KotlinResolutionCandidate.addExpectedTypeConstraint(

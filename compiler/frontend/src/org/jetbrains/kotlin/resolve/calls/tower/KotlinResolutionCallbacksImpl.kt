@@ -91,6 +91,7 @@ class KotlinResolutionCallbacksImpl(
         receiverType: UnwrappedType?,
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?,
+        annotations: Annotations,
         stubsForPostponedVariables: Map<NewTypeVariable, StubType>
     ): Pair<List<KotlinCallArgument>, InferenceSession?> {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
@@ -130,7 +131,7 @@ class KotlinResolutionCallbacksImpl(
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
         val expectedType = createFunctionType(
-            builtIns, Annotations.EMPTY, receiverType, parameters, null,
+            builtIns, annotations, receiverType, parameters, null,
             lambdaInfo.expectedType, isSuspend
         )
 
