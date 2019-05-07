@@ -112,6 +112,15 @@ public actual inline fun String.toUpperCase(): String = (this as java.lang.Strin
 public actual inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
 
 /**
+ * Concatenates characters in this [CharArray] into a String.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun CharArray.concatToString(): String {
+    return String(this)
+}
+
+/**
  * Concatenates characters in this [CharArray] or its subrange into a String.
  *
  * @param startIndex the beginning (inclusive) of the subrange of characters, 0 by default.
@@ -146,6 +155,17 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
 }
 
 /**
+ * Decodes a string from the bytes in UTF-8 encoding in this array.
+ *
+ * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun ByteArray.decodeToString(): String {
+    return String(this)
+}
+
+/**
  * Decodes a string from the bytes in UTF-8 encoding in this array or its subrange.
  *
  * @param startIndex the beginning (inclusive) of the subrange to decode, 0 by default.
@@ -175,6 +195,17 @@ public actual fun ByteArray.decodeToString(
         .onUnmappableCharacter(CodingErrorAction.REPORT)
 
     return decoder.decode(ByteBuffer.wrap(this, startIndex, endIndex - startIndex)).toString()
+}
+
+/**
+ * Encodes this string to an array of bytes in UTF-8 encoding.
+ *
+ * Any malformed char sequence is replaced by the replacement byte sequence.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun String.encodeToByteArray(): ByteArray {
+    return this.toByteArray(Charsets.UTF_8)
 }
 
 /**
@@ -215,10 +246,10 @@ public actual fun String.encodeToByteArray(
 }
 
 /**
- * Returns a new character array containing the characters from this string.
+ * Returns a [CharArray] containing characters of this string.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
+public actual inline fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
 
 /**
  * Copies characters from this string into the [destination] character array and returns that array.
