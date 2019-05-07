@@ -58,91 +58,55 @@ when (metadata) {
 }
 ```
 
-Let's assume we've obtained an instance of `KotlinClassMetadata.Class`; other kinds of classes are handled similarly, except some of them have metadata in a slightly different form. The main way to make sense of the underlying metadata is to invoke `accept`, passing an instance of [`KmClassVisitor`](../src/kotlinx/metadata/visitors.kt) to handle the incoming information (`Km` is a shorthand for “Kotlin metadata”):
+Let's assume we've obtained an instance of `KotlinClassMetadata.Class`; other kinds of classes are handled similarly, except some of them have metadata in a slightly different form. The main way to make sense of the underlying metadata is to invoke `toKmClass`, which returns an instance of `KmClass` (`Km` is a shorthand for “Kotlin metadata”):
 
 ```kotlin
-metadata.accept(object : KmClassVisitor() {
-    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
-        // This will be called for each function in the class. "name" is the
-        // function name, and "flags" represent modifier flags (see below)
-
-        ...
-
-        // Return an instance of KmFunctionVisitor for more details,
-        // or null if this function is of no interest
-    }
-})
+val klass = metadata.toKmClass()
+println(klass.functions.map { it.name })
+println(klass.properties.map { it.name })
 ```
 
 Please refer to [`MetadataSmokeTest.listInlineFunctions`](test/kotlinx/metadata/test/MetadataSmokeTest.kt) for an example where all inline functions are read from the class metadata along with their JVM signatures.
 
 ## Flags
 
-Numerous `visit*` methods take the parameter named `flags`. These flags represent modifiers or other boolean attributes of a declaration or a type. To check if a certain flag is present, call one of the flags in [`Flag`](../src/kotlinx/metadata/Flag.kt) on the given integer value. The set of applicable flags is documented in each `visit*` method. For example, for functions, this is common declaration flags (visibility, modality) plus `Flag.Function` flags:
+Numerous objects have a property named `flags` of type `Flags`. These flags represent modifiers or other boolean attributes of a declaration or a type. To check if a certain flag is present, call one of the flags in [`Flag`](../src/kotlinx/metadata/Flag.kt) on the given integer value. The set of applicable flags is documented on each property or the corresponding `visit*` method. For example, for functions, this is common declaration flags (visibility, modality) plus `Flag.Function` flags:
 
 ```kotlin
-override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
-    if (Flag.IS_PUBLIC(flags)) {
-        println("function $name is public")
-    }
-    if (Flag.Function.IS_SUSPEND(flags)) {
-        println("function $name has the 'suspend' modifier")
-    }
-    ...
+val function: KmFunction = ...
+if (Flag.IS_PUBLIC(function.flags)) {
+    println("function ${function.name} is public")
 }
-```
-
-## Extensions
-
-Certain information in the metadata of Kotlin `.class` files is JVM-only, just like certain information in the `.meta.js` files on Kotlin/JS is JS-only. To retain the possibility to release Kotlin/JS- (and later, Kotlin/Native-) reading metadata library, we've extracted most of the API of this library to a platform-independent [`kotlinx-metadata`](../) (here platform-independent means not that it's agnostic to the platform it's compiled to, but that it's agnostic to the platform it allows to read Kotlin metadata from), and `kotlinx-metadata-jvm` is a small addition with JVM-only data.
-
-To read platform-specific (in this case, JVM-specific) data, each visitor that has that data declares a `visitExtensions` method, taking the [*extension type*](../src/kotlinx/metadata/extensions.kt) and returning the visitor of that type, capable of reading platform-specific data. The intended way to implement `visitExtensions` for JVM is to check if the given extension type is of the needed JVM extension visitor and return a new instance of that visitor, or return null otherwise. Each JVM extension visitor has its type declared in the `TYPE` variable in the companion object. For example, to read JVM extensions on the property:
-
-```kotlin
-override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? {
-    // If these are JVM property extensions, read them by returning a visitor
-    if (type == JvmPropertyExtensionVisitor.TYPE) {
-        return object : JvmPropertyExtensionVisitor() {
-            // Read JVM property extensions
-            ...
-        }
-    }
-    
-    // If these are extensions of some other type, ignore them
-    return null
+if (Flag.Function.IS_SUSPEND(function.flags)) {
+    println("function ${function.name} has the 'suspend' modifier")
 }
 ```
 
 ## Writing metadata
 
-To create metadata of a Kotlin class file from scratch, use one of the `Writer` classes declared in `KotlinClassMetadata`'s subclasses. Writers of relevant classes inherit from the corresponding `Km*Visitor` classes. Invoke the corresponding `visit*` methods successively on the writer to add declarations (do not forget to call `visitEnd` where applicable!), and call `write` in the end to produce the metadata. Finally, use `KotlinClassMetadata.header` to obtain the raw data and write it to the `kotlin.Metadata` annotation on a class file.
+To create metadata of a Kotlin class file from scratch, construct an instance of `KmClass`/`KmPackage`/`KmLambda`, fill it with the data and call `accept` with the `Writer` class declared in the corresponding `KotlinClassMetadata` subclass. Finally, use `KotlinClassMetadata.header` to obtain the raw data and write it to the `kotlin.Metadata` annotation on a class file.
 
-When using metadata writers from Kotlin source code, it's very convenient to use Kotlin scoping functions such as `run` to reduce boilerplate:
+When using metadata writers from Kotlin source code, it's very convenient to use Kotlin scoping functions such as `apply` to reduce boilerplate:
 
 ```kotlin
 // Writing metadata of a class
-val header = KotlinClassMetadata.Class.Writer().run {
-    // Visiting the name and the modifiers on the class.
+val klass = KmClass().apply {
+    // Setting the name and the modifiers of the class.
     // Flags are constructed by invoking "flagsOf(...)"
-    visit(flagsOf(Flag.IS_PUBLIC), "MyClass")
-    
+    name = "MyClass"
+    flags = flagsOf(Flag.IS_PUBLIC)
+
     // Adding one public primary constructor
-    visitConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY))!!.run {
-        // Visiting JVM signature (for example, to be used by kotlin-reflect)
-        (visitExtensions(JvmConstructorExtensionVisitor.TYPE) as JvmConstructorExtensionVisitor).run {
-            visit(JvmMethodSignature("<init>", "()V"))
-        }
-        
-        // Not forgetting to call visitEnd at the end of visit of the declaration
-        visitEnd()
+    constructors += KmConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY)).apply {
+        // Setting the JVM signature (for example, to be used by kotlin-reflect)
+        signature = JvmMethodSignature("<init>", "()V")
     }
-    
+
     ...
-    ...
-    
-    // Finally writing everything to arrays of bytes
-    write().header
 }
+
+// Finally writing everything to arrays of bytes
+val header = KotlinClassMetadata.Class.Writer().apply(klass::accept).write().header
 
 // Use header.kind, header.data1, header.data2, etc. to write values to kotlin.Metadata
 ...
@@ -158,29 +122,24 @@ Similarly to how `KotlinClassMetadata` is used to read/write metadata of Kotlin 
 // Read the module metadata
 val bytes = File("META-INF/main.kotlin_module").readBytes()
 val metadata = KotlinModuleMetadata.read(bytes)
-metadata.accept(object : KmModuleVisitor() {
-    ...
-}
+val module = metadata.toKmModule()
+...
 
 // Write the module metadata
-val bytes = KotlinModuleMetadata.Writer().run {
-    visitPackageParts(...)
-    
-    write().bytes
-}
+val bytes = KotlinModuleMetadata.Writer().apply(module::accept).write().bytes
 File("META-INF/main.kotlin_module").writeBytes(bytes)
 ```
 
 ## Laziness
 
-Note that until you invoke `accept` on a `KotlinClassMetadata` or `KotlinModuleMetadata` instance, the data is not completely parsed and verified. If you need to check if the data is not horribly corrupted before proceeding, make sure to call `accept`, even with an empty visitor:
+Note that until you load the actual underlying data of a `KotlinClassMetadata` or `KotlinModuleMetadata` instance by invoking `accept` or one of the `toKm...` methods, the data is not completely parsed and verified. If you need to check if the data is not horribly corrupted before proceeding, ensure that either of those is called:
 
 ```kotlin
 val metadata: KotlinClassMetadata.Class = ...
 
 try {
     // Guarantees eager parsing of the underlying data
-    metadata.accept(object : KmClassVisitor() {})
+    metadata.toKmClass()
 } catch (e: Exception) {
     System.err.println("Metadata is corrupted!")
 }
