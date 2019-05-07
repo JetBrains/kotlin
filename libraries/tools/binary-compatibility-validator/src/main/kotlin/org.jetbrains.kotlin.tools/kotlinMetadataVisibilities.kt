@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.tools
 
-import kotlinx.metadata.*
+import kotlinx.metadata.Flag
+import kotlinx.metadata.Flags
+import kotlinx.metadata.KmDeclarationContainer
+import kotlinx.metadata.flagsOf
 import kotlinx.metadata.jvm.*
 import org.objectweb.asm.tree.ClassNode
 
@@ -34,149 +37,51 @@ fun KotlinClassMetadata?.isFileOrMultipartFacade() =
 
 fun KotlinClassMetadata?.isSyntheticClass() = this is KotlinClassMetadata.SyntheticClass
 
-
-private val VISIBILITY_FLAGS_MAP = mapOf(
-    Flag.IS_INTERNAL to "internal",
-    Flag.IS_PRIVATE to "private",
-    Flag.IS_PRIVATE_TO_THIS to "private",
-    Flag.IS_PROTECTED to "protected",
-    Flag.IS_PUBLIC to "public",
-    Flag.IS_LOCAL to "local"
-)
-
-private fun Flags.toVisibility() = VISIBILITY_FLAGS_MAP.entries.firstOrNull { (modifier) -> modifier(this) }?.value
-
-private fun visitFunction(flags: Flags, name: String, addMember: (MemberVisibility) -> Unit) =
-    object : KmFunctionVisitor() {
-        var desc: JvmMemberSignature? = null
-
-        override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
-            if (type != JvmFunctionExtensionVisitor.TYPE) return null
-            return object : JvmFunctionExtensionVisitor() {
-                override fun visit(signature: JvmMethodSignature?) {
-                    desc = signature
-                }
-            }
-        }
-
-        override fun visitEnd() {
-            desc?.let { jvmDesc ->
-                addMember(MemberVisibility(jvmDesc, flags))
-            }
-        }
-    }
-
-private fun visitConstructor(flags: Flags, addMember: (MemberVisibility) -> Unit) =
-    object : KmConstructorVisitor() {
-        var desc: JvmMemberSignature? = null
-
-        override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? {
-            if (type != JvmConstructorExtensionVisitor.TYPE) return null
-            return object : JvmConstructorExtensionVisitor() {
-                override fun visit(signature: JvmMethodSignature?) {
-                    desc = signature
-                }
-            }
-        }
-
-        override fun visitEnd() {
-            desc?.let { signature ->
-                addMember(MemberVisibility(signature, flags))
-            }
-        }
-    }
-
-private fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags, addMember: (MemberVisibility) -> Unit) =
-    object : KmPropertyVisitor() {
-        var fieldDesc: JvmMemberSignature? = null
-        var getterDesc: JvmMemberSignature? = null
-        var setterDesc: JvmMemberSignature? = null
-
-        override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? {
-            if (type != JvmPropertyExtensionVisitor.TYPE) return null
-            return object : JvmPropertyExtensionVisitor() {
-                override fun visit(
-                    jvmFlags: Flags,
-                    fieldSignature: JvmFieldSignature?,
-                    getterSignature: JvmMethodSignature?,
-                    setterSignature: JvmMethodSignature?
-                ) {
-                    fieldDesc = fieldSignature
-                    getterDesc = getterSignature
-                    setterDesc = setterSignature
-                }
-            }
-        }
-
-        override fun visitEnd() {
-            getterDesc?.let { addMember(MemberVisibility(it, getterFlags)) }
-            setterDesc?.let { addMember(MemberVisibility(it, setterFlags)) }
-            fieldDesc?.let {
-                val fieldVisibility = when {
-                    Flag.Property.IS_LATEINIT(flags) -> setterFlags
-                    getterDesc == null && setterDesc == null -> flags // JvmField or const case
-                    else -> flagsOf(Flag.IS_PRIVATE)
-                }
-                addMember(MemberVisibility(it, fieldVisibility))
-            }
-        }
-    }
-
-private fun visitPackage(addMember: (MemberVisibility) -> Unit) =
-    object : KmPackageVisitor() {
-        override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
-            return visitFunction(flags, name, addMember)
-        }
-
-        override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? {
-            return visitProperty(flags, name, getterFlags, setterFlags, addMember)
-        }
-
-        override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-            return super.visitTypeAlias(flags, name)
-        }
-    }
-
-private fun visitClass(flags: (Flags) -> Unit, addMember: (MemberVisibility) -> Unit) =
-    object : KmClassVisitor() {
-        override fun visit(flags: Flags, name: ClassName) {
-            flags(flags)
-        }
-
-        override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
-            return visitFunction(flags, name, addMember)
-        }
-
-        override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? {
-            return visitProperty(flags, name, getterFlags, setterFlags, addMember)
-        }
-
-        override fun visitConstructor(flags: Flags): KmConstructorVisitor? {
-            return visitConstructor(flags, addMember)
-        }
-
-        override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-            return super.visitTypeAlias(flags, name)
-        }
-    }
-
 fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility? {
     var flags: Flags? = null
     var _facadeClassName: String? = null
     val members = mutableListOf<MemberVisibility>()
-    val addMember: (MemberVisibility) -> Unit = { members.add(it) }
 
-    when (this) {
-        is KotlinClassMetadata.Class ->
-            this.accept(visitClass({ flags = it }, addMember))
-        is KotlinClassMetadata.FileFacade ->
-            this.accept(visitPackage(addMember))
-        is KotlinClassMetadata.MultiFileClassPart -> {
-            _facadeClassName = this.facadeClassName
-            this.accept(visitPackage(addMember))
+    fun addMember(signature: JvmMemberSignature?, flags: Flags) {
+        if (signature != null) {
+            members.add(MemberVisibility(signature, flags))
         }
-        else -> {}
     }
+
+    val container: KmDeclarationContainer? = when (this) {
+        is KotlinClassMetadata.Class ->
+            toKmClass().also { klass ->
+                flags = klass.flags
+
+                for (constructor in klass.constructors) {
+                    addMember(constructor.signature, constructor.flags)
+                }
+            }
+        is KotlinClassMetadata.FileFacade ->
+            toKmPackage()
+        is KotlinClassMetadata.MultiFileClassPart ->
+            toKmPackage().also { _facadeClassName = this.facadeClassName }
+        else -> null
+    }
+
+    if (container != null) {
+        for (function in container.functions) {
+            addMember(function.signature, function.flags)
+        }
+
+        for (property in container.properties) {
+            addMember(property.getterSignature, property.getterFlags)
+            addMember(property.setterSignature, property.setterFlags)
+
+            val fieldVisibility = when {
+                Flag.Property.IS_LATEINIT(property.flags) -> property.setterFlags
+                property.getterSignature == null && property.setterSignature == null -> property.flags // JvmField or const case
+                else -> flagsOf(Flag.IS_PRIVATE)
+            }
+            addMember(property.fieldSignature, fieldVisibility)
+        }
+    }
+
     return ClassVisibility(classNode.name, flags, members.associateBy { it.member }, _facadeClassName)
 }
 
