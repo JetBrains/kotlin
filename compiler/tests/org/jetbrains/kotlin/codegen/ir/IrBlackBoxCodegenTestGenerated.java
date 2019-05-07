@@ -7441,6 +7441,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testSeveralCaptures_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/severalCaptures.kt", "kotlin.coroutines");
             }
+
+            @TestMetadata("suspendInlineWithCrossinline.kt")
+            public void testSuspendInlineWithCrossinline_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/suspendInlineWithCrossinline.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("suspendInlineWithCrossinline.kt")
+            public void testSuspendInlineWithCrossinline_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/suspendInlineWithCrossinline.kt", "kotlin.coroutines");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions")

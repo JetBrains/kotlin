@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,8 +18,7 @@ fun MemberDescriptor.isInlineOnlyOrReifiable(): Boolean =
     this is CallableMemberDescriptor && (isReifiable() || DescriptorUtils.getDirectMember(this).isReifiable() || isInlineOnly())
 
 fun MemberDescriptor.isEffectivelyInlineOnly(): Boolean =
-    isInlineOnlyOrReifiable() || (this is FunctionDescriptor && isSuspend && isInline &&
-            (valueParameters.any { it.isCrossinline } || visibility == Visibilities.PRIVATE))
+    isInlineOnlyOrReifiable() || (this is FunctionDescriptor && isSuspend && isInline && visibility == Visibilities.PRIVATE)
 
 fun MemberDescriptor.isInlineOnly(): Boolean =
     this is FunctionDescriptor && isInline &&
