@@ -290,7 +290,7 @@ private fun KotlinResolutionCandidate.prepareExpectedType(
         callComponents.languageVersionSettings
     )
     val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
-    return resolvedCall.substitutor.substituteKeepAnnotations(resultType)
+    return resolvedCall.substitutor.safeSubstitute(resultType)
 }
 
 private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(

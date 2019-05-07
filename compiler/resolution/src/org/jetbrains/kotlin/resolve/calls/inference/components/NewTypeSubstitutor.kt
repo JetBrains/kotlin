@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.types.*
@@ -17,9 +18,7 @@ import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 interface NewTypeSubstitutor: TypeSubstitutorMarker {
     fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType?
 
-    fun safeSubstitute(type: UnwrappedType): UnwrappedType = substitute(type, runCapturedChecks = true, keepAnnotation = false) ?: type
-
-    fun substituteKeepAnnotations(type: UnwrappedType): UnwrappedType =
+    fun safeSubstitute(type: UnwrappedType): UnwrappedType =
         substitute(type, runCapturedChecks = true, keepAnnotation = true) ?: type
 
     private fun substitute(type: UnwrappedType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? =
@@ -114,7 +113,7 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
         // simple classifier type
         var replacement = substituteNotNullTypeWithConstructor(typeConstructor) ?: return null
         if (keepAnnotation) {
-            replacement = replacement.replaceAnnotations(type.annotations)
+            replacement = replacement.replaceAnnotations(CompositeAnnotations(replacement.annotations, type.annotations))
         }
         if (type.isMarkedNullable) {
             replacement = replacement.makeNullableAsSpecified(true)
