@@ -351,3 +351,7 @@ class GH2931 {
         }
     }
 }
+
+class GH2945(var errno: Int) {
+    fun testErrnoInSelector(p: Int, errno: Int) = p + errno
+}

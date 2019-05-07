@@ -708,7 +708,13 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     private val topLevel = mutableMapOf<SourceFile, MutableList<CallableMemberDescriptor>>()
 
     fun build(): List<String> = mutableListOf<String>().apply {
-        add("#import <Foundation/Foundation.h>")
+        add("#import <Foundation/NSArray.h>")
+        add("#import <Foundation/NSDictionary.h>")
+        add("#import <Foundation/NSError.h>")
+        add("#import <Foundation/NSObject.h>")
+        add("#import <Foundation/NSSet.h>")
+        add("#import <Foundation/NSString.h>")
+        add("#import <Foundation/NSValue.h>")
         add("")
 
         if (classForwardDeclarations.isNotEmpty()) {

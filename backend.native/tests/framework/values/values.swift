@@ -526,6 +526,16 @@ func testKotlinOverride() throws {
     try assertEquals(actual: TransformIntToLongCallingSuper().map(value: 5), expected: 5)
 }
 
+// See https://github.com/JetBrains/kotlin-native/issues/2945
+func testGH2945() throws {
+    let gh2945 = GH2945(errno: 1)
+    try assertEquals(actual: 1, expected: gh2945.errno)
+    gh2945.errno = 2
+    try assertEquals(actual: 2, expected: gh2945.errno)
+
+    try assertEquals(actual: 7, expected: gh2945.testErrnoInSelector(p: 3, errno: 4))
+}
+
 // See https://github.com/JetBrains/kotlin-native/issues/2931
 func testGH2931() throws {
     for i in 0..<50000 {
@@ -586,6 +596,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestNames", method: withAutorelease(testNames)),
             TestCase(name: "TestSwiftOverride", method: withAutorelease(testSwiftOverride)),
             TestCase(name: "TestKotlinOverride", method: withAutorelease(testKotlinOverride)),
+            TestCase(name: "TestGH2945", method: withAutorelease(testGH2945)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }
