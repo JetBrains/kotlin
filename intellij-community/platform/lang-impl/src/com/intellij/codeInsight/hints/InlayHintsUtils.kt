@@ -66,8 +66,13 @@ class CollectorWithSettings<T : Any>(
     collector.collect(element, editor, settings, isEnabled, sink)
   }
 
-  fun applyToEditor(element: PsiElement, editor: Editor, existingInlays: List<Inlay<EditorCustomElementRenderer>>) {
-    sink.applyToEditor(element, editor, existingInlays)
+  fun applyToEditor(
+    element: PsiElement,
+    editor: Editor,
+    existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
+    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>
+  ) {
+    sink.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays)
   }
 }
 

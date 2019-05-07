@@ -109,8 +109,11 @@ internal class SingleLanguageInlayHintsSettingsPanel(
       collector.collectHints(it, true, editor) // Always render hints in settings preview
     }
     val model = editor.inlayModel
-    val existingInlays = model.getInlineElementsInRange(file.textOffset, file.textRange.endOffset)
-    collector.applyToEditor(file, editor, existingInlays)
+    val startOffset = file.textOffset
+    val endOffset = file.textRange.endOffset
+    val existingHorizontalInlays = model.getInlineElementsInRange(startOffset, endOffset)
+    val existingVerticalInlays = model.getBlockElementsInRange(startOffset, endOffset)
+    collector.applyToEditor(file, editor, existingHorizontalInlays, existingVerticalInlays)
   }
 
   private fun traverse(root: PsiElement, action: (PsiElement) -> Unit) {

@@ -21,7 +21,7 @@ class NewParameterHintsInlayProvider<T: Any>(val provider: NewParameterHintsProv
         if (!canShowHintsAtOffset(offset, editor.document, file)) return
         val blackListInfo = info.blackListInfo
         if (blackListInfo != null && !filter.shouldShowHint(blackListInfo)) return
-        sink.addInlay(offset, info.presentation) // TODO use other info here!!!
+        sink.addInlineElement(offset, true, info.presentation)
       }
     }
     val collector = provider.getCollector(file, settings.providerSettings, editor)

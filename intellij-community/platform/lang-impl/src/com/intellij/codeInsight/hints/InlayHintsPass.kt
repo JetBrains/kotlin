@@ -28,9 +28,11 @@ class InlayHintsPass(
     val element = rootElement
     val startOffset = element.textOffset
     val endOffset = element.textRange.endOffset
-    val existingInlays = myEditor.inlayModel.getInlineElementsInRange(startOffset, endOffset)
+    val inlayModel = myEditor.inlayModel
+    val existingHorizontalInlays = inlayModel.getInlineElementsInRange(startOffset, endOffset)
+    val existingVerticalInlays = inlayModel.getBlockElementsInRange(startOffset, endOffset)
     for ((collector, _) in collectors) {
-      collector.applyToEditor(myFile, myEditor, existingInlays)
+      collector.applyToEditor(myFile, myEditor, existingHorizontalInlays, existingVerticalInlays)
     }
   }
 
