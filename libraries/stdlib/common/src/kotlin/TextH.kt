@@ -117,6 +117,13 @@ public expect fun String(chars: CharArray): String
 public expect fun String(chars: CharArray, offset: Int, length: Int): String
 
 /**
+ * Concatenates characters in this [CharArray] into a String.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public expect fun CharArray.concatToString(): String
+
+/**
  * Concatenates characters in this [CharArray] or its subrange into a String.
  *
  * @param startIndex the beginning (inclusive) of the subrange of characters, 0 by default.
@@ -130,6 +137,13 @@ public expect fun String(chars: CharArray, offset: Int, length: Int): String
 public expect fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String
 
 /**
+ * Returns a [CharArray] containing characters of this string.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public expect fun String.toCharArray(): CharArray
+
+/**
  * Returns a [CharArray] containing characters of this string or its substring.
  *
  * @param startIndex the beginning (inclusive) of the substring, 0 by default.
@@ -141,6 +155,15 @@ public expect fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray
+
+/**
+ * Decodes a string from the bytes in UTF-8 encoding in this array.
+ *
+ * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public expect fun ByteArray.decodeToString(): String
 
 /**
  * Decodes a string from the bytes in UTF-8 encoding in this array or its subrange.
@@ -160,6 +183,15 @@ public expect fun ByteArray.decodeToString(
     endIndex: Int = this.size,
     throwOnInvalidSequence: Boolean = false
 ): String
+
+/**
+ * Encodes this string to an array of bytes in UTF-8 encoding.
+ *
+ * Any malformed char sequence is replaced by the replacement byte sequence.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public expect fun String.encodeToByteArray(): ByteArray
 
 /**
  * Encodes this string or its substring to an array of bytes in UTF-8 encoding.

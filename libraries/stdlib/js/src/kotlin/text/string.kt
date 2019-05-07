@@ -37,6 +37,19 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
 }
 
 /**
+ * Concatenates characters in this [CharArray] into a String.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun CharArray.concatToString(): String {
+    var result = ""
+    for (char in this) {
+        result += char
+    }
+    return result
+}
+
+/**
  * Concatenates characters in this [CharArray] or its subrange into a String.
  *
  * @param startIndex the beginning (inclusive) of the subrange of characters, 0 by default.
@@ -58,6 +71,15 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
 }
 
 /**
+ * Returns a [CharArray] containing characters of this string.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun String.toCharArray(): CharArray {
+    return CharArray(length) { get(it) }
+}
+
+/**
  * Returns a [CharArray] containing characters of this string or its substring.
  *
  * @param startIndex the beginning (inclusive) of the substring, 0 by default.
@@ -72,6 +94,17 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     return CharArray(endIndex - startIndex) { get(startIndex + it) }
+}
+
+/**
+ * Decodes a string from the bytes in UTF-8 encoding in this array.
+ *
+ * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun ByteArray.decodeToString(): String {
+    return decodeUtf8(this, 0, size, false)
 }
 
 /**
@@ -95,6 +128,17 @@ public actual fun ByteArray.decodeToString(
 ): String {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
     return decodeUtf8(this, startIndex, endIndex, throwOnInvalidSequence)
+}
+
+/**
+ * Encodes this string to an array of bytes in UTF-8 encoding.
+ *
+ * Any malformed char sequence is replaced by the replacement byte sequence.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun String.encodeToByteArray(): ByteArray {
+    return encodeUtf8(this, 0, length, false)
 }
 
 /**
