@@ -185,6 +185,7 @@ class IrBuiltIns(
     val primitiveFloatingPointTypes = listOf(float, double)
     val primitiveArrays = PrimitiveType.values().map { builtIns.getPrimitiveArrayClassDescriptor(it).toIrSymbol() }
     val primitiveArrayElementTypes = primitiveArrays.zip(primitiveIrTypes).toMap()
+    val primitiveArrayForType = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
 
     val primitiveTypeToIrType = mapOf(
         PrimitiveType.BOOLEAN to booleanType,

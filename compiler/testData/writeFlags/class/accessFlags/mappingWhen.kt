@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 enum class BigEnum {
     ITEM1,
     ITEM2
