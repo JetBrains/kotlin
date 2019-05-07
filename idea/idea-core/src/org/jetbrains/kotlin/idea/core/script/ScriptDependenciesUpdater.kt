@@ -76,19 +76,22 @@ class ScriptDependenciesUpdater(
     }
 
     fun updateDependenciesIfNeeded(files: List<VirtualFile>): Boolean {
-        val definitionsManager = ScriptDefinitionsManager.getInstance(project)
-        if (definitionsManager.isReady() && areDependenciesCached(files)) {
-            return false
-        }
+        if (!ScriptDefinitionsManager.getInstance(project).isReady()) return false
 
+        var wasDependenciesUpdateStarted = false
         for (file in files) {
-            val scriptDef = file.findScriptDefinition(project) ?: continue
-            updateDependencies(file, scriptDef)
+            if (!areDependenciesCached(file)) {
+                wasDependenciesUpdateStarted = true
+                val scriptDef = file.findScriptDefinition(project) ?: continue
+                updateDependencies(file, scriptDef)
+            }
         }
 
-        makeRootsChangeIfNeeded()
+        if (wasDependenciesUpdateStarted) {
+            makeRootsChangeIfNeeded()
+        }
 
-        return true
+        return wasDependenciesUpdateStarted
     }
 
     private fun updateDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition) {
@@ -168,10 +171,6 @@ class ScriptDependenciesUpdater(
 
     private fun areDependenciesCached(file: VirtualFile): Boolean {
         return cache[file] != null || file.scriptDependencies != null
-    }
-
-    private fun areDependenciesCached(files: List<VirtualFile>): Boolean {
-        return files.all { areDependenciesCached(it) }
     }
 
     private fun isAsyncDependencyResolver(scriptDef: KotlinScriptDefinition): Boolean {
