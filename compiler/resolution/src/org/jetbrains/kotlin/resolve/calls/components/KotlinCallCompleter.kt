@@ -210,7 +210,8 @@ class KotlinCallCompleter(
         val constraints = variableWithConstraints.constraints
         return constraints.isNotEmpty() && constraints.all {
             !it.type.typeConstructor(context).isIntegerLiteralTypeConstructor(context) &&
-                    it.kind.isLower() && csBuilder.isProperType(it.type)
+                    (it.kind.isLower() || it.kind.isEqual()) &&
+                    csBuilder.isProperType(it.type)
         }
 
     }
