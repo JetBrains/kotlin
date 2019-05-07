@@ -780,7 +780,7 @@ public class AsmUtil {
         return typeMapper.mapToCallableMethod(toStringDescriptor, false, OwnerKind.ERASED_INLINE_CLASS);
     }
 
-    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
+    public static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
