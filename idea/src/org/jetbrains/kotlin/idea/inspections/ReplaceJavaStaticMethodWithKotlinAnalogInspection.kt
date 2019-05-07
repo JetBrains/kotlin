@@ -65,7 +65,9 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             val valueArguments = call.valueArguments
             val typeArguments = call.typeArgumentList?.text ?: ""
             if (replacement.toExtensionFunction) {
-                val receiverText = valueArguments.first().text
+                val receiverText = valueArguments.first().getArgumentExpression()
+                    ?.run { if (this is KtOperationExpression) "($text)" else text }
+                    ?: valueArguments.first().text
                 val argumentsText = valueArguments.drop(1).joinToString(separator = ", ") { it.text }
                 dotQualified.replaced(psiFactory.createExpression("$receiverText.${replacement.kotlinFunctionShortName}$typeArguments($argumentsText)"))
                 file.resolveImportReference(FqName(replacement.kotlinFunctionFqName)).firstOrNull()?.let {
