@@ -298,6 +298,10 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     return result;
   }
 
+  public boolean isAutoScrollEnabledFor(@NotNull VirtualFile file) {
+    return true;
+  }
+
   @Override
   public Object getData(@NotNull String dataId) {
     Object data =
