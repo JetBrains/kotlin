@@ -49,12 +49,6 @@ tasks.withType(KotlinCompile).configureEach {
     }
 }
 
-tasks.withType(KotlinCompile).all {
-    kotlinOptions {
-        freeCompilerArgs += ["-Werror"]
-    }
-}
-
 jarjar.repackage('ideVersion') {
     destinationName "compose-cli-plugin-ide.jar"
     from files(sourceSets.main.output.classesDirs)
