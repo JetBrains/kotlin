@@ -1108,6 +1108,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/explicitLambdaParameter.kt");
             }
 
+            @TestMetadata("filterIsInstanceReceiver.kt")
+            public void testFilterIsInstanceReceiver() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterIsInstanceReceiver.kt");
+            }
+
             @TestMetadata("filterIsInstanceSimple.kt")
             public void testFilterIsInstanceSimple() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterIsInstanceSimple.kt");

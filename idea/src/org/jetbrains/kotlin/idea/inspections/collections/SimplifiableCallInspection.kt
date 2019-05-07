@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class SimplifiableCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
-        qualifiedExpressionVisitor(fun(expression) {
-            val callExpression = expression.selectorExpression as? KtCallExpression ?: return
+        callExpressionVisitor(fun(callExpression) {
             val calleeExpression = callExpression.calleeExpression ?: return
             val (conversion, resolvedCall) = callExpression.findConversionAndResolvedCall() ?: return
             if (!conversion.callChecker(resolvedCall)) return
@@ -30,7 +29,7 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 calleeExpression,
-                "${conversion.fqName.shortName()} call could be simplified to $replacement",
+                "${conversion.shortName} call could be simplified to $replacement",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 SimplifyCallFix(conversion, replacement)
             )
@@ -94,9 +93,9 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
                         if (statement.operationToken != KtTokens.EXCLEQ && statement.operationToken != KtTokens.EXCLEQEQEQ) return null
                         val left = statement.left ?: return null
                         val right = statement.right ?: return null
-                        if (left.isNameReferenceTo(lambdaParameterName) && right.isNull()) {
-                            return "filterNotNull()"
-                        } else if (right.isNameReferenceTo(lambdaParameterName) && left.isNull()) {
+                        if (left.isNameReferenceTo(lambdaParameterName) && right.isNull() ||
+                            right.isNameReferenceTo(lambdaParameterName) && left.isNull()
+                        ) {
                             return "filterNotNull()"
                         }
                     }
@@ -116,7 +115,7 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
     }
 
     private class SimplifyCallFix(val conversion: Conversion, val replacement: String) : LocalQuickFix {
-        override fun getName() = "Convert '${conversion.fqName.shortName()}' call to '$replacement'"
+        override fun getName() = "Convert '${conversion.shortName}' call to '$replacement'"
 
         override fun getFamilyName() = name
 
