@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -24,17 +22,16 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * Replace branches that are comparisons with compile-time known enum entries
  * with comparisons of ordinals.
  */
-class EnumWhenLowering(private val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-
+open class EnumWhenLowering(protected val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     private val subjectWithOrdinalStack = mutableListOf<Pair<IrVariable, Lazy<IrVariable>>>()
 
-    private val areEqual = context.irBuiltIns.eqeqSymbol
+    protected open fun mapConstEnumEntry(entry: IrEnumEntry): Int =
+        entry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(this).also {
+            assert(it >= 0) { "enum entry ${entry.dump()} not in parent class" }
+        }
 
-    private fun IrEnumEntry.ordinal(): Int {
-        val result = parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(this)
-        assert(result >= 0) { "enum entry ${symbol.owner.dump()} not in parent class" }
-        return result
-    }
+    protected open fun mapRuntimeEnumEntry(builder: IrBuilderWithScope, subject: IrExpression): IrExpression =
+        builder.irCall(subject.type.getClass()!!.symbol.getPropertyGetter("ordinal")!!).apply { dispatchReceiver = subject }
 
     override fun lower(irFile: IrFile) {
         visitFile(irFile)
@@ -56,13 +53,11 @@ class EnumWhenLowering(private val context: CommonBackendContext) : IrElementTra
         // Will be initialized only when we found a branch that compares
         // subject with compile-time known enum entry.
         val subjectOrdinalProvider = lazy {
-            val ordinalPropertyGetter = subject.type.getClass()!!.symbol.getPropertyGetter("ordinal")!!
             context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, subject.startOffset, subject.endOffset).run {
-                val ordinal = irCall(ordinalPropertyGetter.owner).apply { dispatchReceiver = irGet(subject) }
                 val integer = if (subject.type.isNullable())
-                    irIfNull(ordinal.type, irGet(subject), irInt(-1), ordinal)
+                    irIfNull(context.irBuiltIns.intType, irGet(subject), irInt(-1), mapRuntimeEnumEntry(this, irGet(subject)))
                 else
-                    ordinal
+                    mapRuntimeEnumEntry(this, irGet(subject))
                 scope.createTemporaryVariable(integer).also {
                     expression.statements.add(1, it)
                 }
@@ -95,7 +90,7 @@ class EnumWhenLowering(private val context: CommonBackendContext) : IrElementTra
         }
         val entryOrdinal = when {
             other is IrGetEnumValue && topmostSubject.type.classifierOrNull?.owner == other.symbol.owner.parent ->
-                other.symbol.owner.ordinal()
+                mapConstEnumEntry(other.symbol.owner)
             other.isNullConst() ->
                 -1
             else -> return super.visitCall(expression)
