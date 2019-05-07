@@ -384,11 +384,10 @@ private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.
         }
 
         override fun visitConstantValue(value: Any?) {
-            @Suppress("UNUSED_VARIABLE") // force exhaustive when
-            val unused = when (value) {
+            when (value) {
                 true -> t.constantValue = ProtoBuf.Expression.ConstantValue.TRUE
                 false -> t.constantValue = ProtoBuf.Expression.ConstantValue.FALSE
-                null -> null
+                null -> t.constantValue = ProtoBuf.Expression.ConstantValue.NULL
                 else -> throw IllegalArgumentException("Only true, false or null constant values are allowed for effects (was=$value)")
             }
         }

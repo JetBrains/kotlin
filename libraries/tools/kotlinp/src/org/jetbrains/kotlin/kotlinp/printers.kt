@@ -21,6 +21,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         val versionRequirements = mutableListOf<String>()
         var jvmSignature: JvmMemberSignature? = null
         var lambdaClassOriginName: String? = null
+        var contract: String? = null
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
@@ -38,6 +39,9 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
             printVersionRequirement { versionRequirements.add(it) }
+
+        override fun visitContract(): KmContractVisitor? =
+            printContract { contract = it }
 
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
             if (type != JvmFunctionExtensionVisitor.TYPE) return null
@@ -79,6 +83,9 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
                 sb.append(": ").append(returnType)
             }
             sb.appendln()
+            if (contract != null) {
+                sb.appendln("    $contract")
+            }
         }
     }
 
@@ -547,6 +554,134 @@ private fun StringBuilder.appendDeclarationContainerExtensions(
         appendln("  // module name: $moduleName")
     }
 }
+
+private fun printContract(output: (String) -> Unit): KmContractVisitor =
+    object : KmContractVisitor() {
+        val effects = mutableListOf<String>()
+
+        override fun visitEffect(type: KmEffectType, invocationKind: KmEffectInvocationKind?): KmEffectVisitor =
+            printEffect(type, invocationKind) { effects.add(it) }
+
+        override fun visitEnd() {
+            output(buildString {
+                appendln("contract {")
+                for (effect in effects) {
+                    appendln("      $effect")
+                }
+                append("    }")
+            })
+        }
+    }
+
+private fun printEffect(type: KmEffectType, invocationKind: KmEffectInvocationKind?, output: (String) -> Unit): KmEffectVisitor =
+    object : KmEffectVisitor() {
+        var argument: String? = null
+        var conclusion: String? = null
+
+        override fun visitConstructorArgument(): KmEffectExpressionVisitor =
+            printEffectExpression {
+                // If there are several arguments, only the first is taken, see ContractDeserializerImpl.deserializeSimpleEffect
+                if (argument == null) {
+                    argument = it
+                }
+            }
+
+        override fun visitConclusionOfConditionalEffect(): KmEffectExpressionVisitor =
+            printEffectExpression { conclusion = it }
+
+        override fun visitEnd() {
+            output(buildString {
+                when (type) {
+                    KmEffectType.RETURNS_CONSTANT -> {
+                        append("returns(")
+                        if (argument != null) {
+                            append(argument)
+                        }
+                        append(")")
+                    }
+                    KmEffectType.CALLS -> {
+                        append("callsInPlace($argument")
+                        if (invocationKind != null) {
+                            append(", InvocationKind.${invocationKind.name}")
+                        }
+                        append(")")
+                    }
+                    KmEffectType.RETURNS_NOT_NULL -> {
+                        append("returnsNotNull()")
+                    }
+                }
+                if (conclusion != null) {
+                    append(" implies ($conclusion)")
+                }
+            })
+        }
+    }
+
+private fun printEffectExpression(output: (String) -> Unit): KmEffectExpressionVisitor =
+    object : KmEffectExpressionVisitor() {
+        var flags: Flags = 0
+        var parameterIndex: Int? = null
+        var constantValue: List<Any?>? = null // Single-element list
+        var isInstanceType: String? = null
+        var andArguments = mutableListOf<String>()
+        var orArguments = mutableListOf<String>()
+
+        override fun visit(flags: Flags, parameterIndex: Int?) {
+            this.flags = flags
+            this.parameterIndex = parameterIndex
+        }
+
+        override fun visitConstantValue(value: Any?) {
+            constantValue = listOf(value)
+        }
+
+        override fun visitIsInstanceType(flags: Flags): KmTypeVisitor =
+            printType(flags) { isInstanceType = it }
+
+        override fun visitAndArgument(): KmEffectExpressionVisitor =
+            printEffectExpression { andArguments.add(it) }
+
+        override fun visitOrArgument(): KmEffectExpressionVisitor =
+            printEffectExpression { orArguments.add(it) }
+
+        override fun visitEnd() {
+            output(buildString {
+                append(
+                    when {
+                        constantValue != null -> constantValue!!.single().toString()
+                        parameterIndex != null -> "p#$parameterIndex"
+                        else -> ""
+                    }
+                )
+                if (isInstanceType != null) {
+                    append(" ")
+                    if (Flag.EffectExpression.IS_NEGATED(flags)) append("!")
+                    append("is $isInstanceType")
+                }
+                if (Flag.EffectExpression.IS_NULL_CHECK_PREDICATE(flags)) {
+                    append(if (Flag.EffectExpression.IS_NEGATED(flags)) " != " else " == ")
+                    append("null")
+                }
+
+                if (orArguments.isEmpty()) {
+                    for (andArgument in andArguments) {
+                        if (!isEmpty()) append(" && ")
+                        append(wrapIfNeeded(andArgument))
+                    }
+                }
+                if (andArguments.isEmpty()) {
+                    for (orArgument in orArguments) {
+                        if (!isEmpty()) append(" || ")
+                        append(wrapIfNeeded(orArgument))
+                    }
+                }
+            })
+        }
+
+        private fun wrapIfNeeded(s: String): String =
+            // A simple heuristic to avoid wrapping into unnecessary parentheses
+            if ('&' in s || '|' in s) "($s)" else s
+    }
 
 interface AbstractPrinter<in T : KotlinClassMetadata> {
     fun print(klass: T): String
