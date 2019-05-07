@@ -96,7 +96,10 @@ private fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setter
             if (type != JvmPropertyExtensionVisitor.TYPE) return null
             return object : JvmPropertyExtensionVisitor() {
                 override fun visit(
-                    fieldSignature: JvmFieldSignature?, getterSignature: JvmMethodSignature?, setterSignature: JvmMethodSignature?
+                    jvmFlags: Flags,
+                    fieldSignature: JvmFieldSignature?,
+                    getterSignature: JvmMethodSignature?,
+                    setterSignature: JvmMethodSignature?
                 ) {
                     fieldDesc = fieldSignature
                     getterDesc = getterSignature
