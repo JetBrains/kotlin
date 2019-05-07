@@ -66,12 +66,6 @@ android {
     }
 }
 
-tasks.withType(KotlinCompile).all {
-    kotlinOptions {
-        freeCompilerArgs += ["-Werror"]
-    }
-}
-
 tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "1.8"
