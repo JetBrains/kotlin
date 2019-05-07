@@ -314,7 +314,7 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
             for (outFile in allClassFiles) {
                 val bytes = outFile.asByteArray()
                 val loadedClass = loadClass(
-                    this.javaClass.classLoader,
+                    this.javaClass.classLoader!!,
                     null,
                     bytes
                 )

@@ -54,7 +54,7 @@ class GenerateWrapperViewTest : AbstractCodegenTest() {
         if (wrapperClass == null) return
         TestCase.assertEquals(
             "Wrapper view subclasses LinearLayout", "android.widget.LinearLayout",
-            wrapperClass.superclass.name
+            wrapperClass.superclass?.name
         )
         val setFoo = wrapperClass.declaredMethods.find { it.name == "setFoo" }
         TestCase.assertNotNull("has a setter method for properties", setFoo)
