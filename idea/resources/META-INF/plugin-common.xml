@@ -3425,5 +3425,7 @@
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.framework.TargetRetrieveActivity"/>
 
     <stripTrailingSpacesFilterFactory implementation="org.jetbrains.kotlin.idea.editor.KotlinStripTrailingSpacesFilterFactory"/>
+
+    <navbar implementation="org.jetbrains.kotlin.idea.navigationToolbar.KotlinNavBarModelExtension"/>
   </extensions>
 </idea-plugin>
