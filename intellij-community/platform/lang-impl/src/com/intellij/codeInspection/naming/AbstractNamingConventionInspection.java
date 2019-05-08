@@ -1,6 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o.
-// Use of this source code is governed by the Apache 2.0 license that can be
-// found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection.naming;
 
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -15,9 +13,9 @@ import com.intellij.ui.CheckBoxList;
 import com.intellij.ui.CheckBoxListListener;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.serialization.SerializationException;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.util.xmlb.XmlSerializationException;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -98,7 +96,7 @@ public abstract class AbstractNamingConventionInspection<T extends PsiNameIdenti
         XmlSerializer.deserializeInto(conventionBean, extension);
         conventionBean.initPattern();
       }
-      catch (XmlSerializationException e) {
+      catch (SerializationException e) {
         throw new InvalidDataException(e);
       }
       String enabled = extension.getAttributeValue("enabled");
