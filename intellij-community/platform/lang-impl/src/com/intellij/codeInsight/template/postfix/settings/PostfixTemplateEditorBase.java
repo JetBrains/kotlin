@@ -21,8 +21,8 @@ import com.intellij.openapi.ui.panel.PanelGridBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.ui.AnActionButton;
-import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.ListUtil;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBList;
@@ -78,17 +78,7 @@ public abstract class PostfixTemplateEditorBase<Condition extends PostfixTemplat
 
     myExpressionTypesListModel = JBList.createDefaultListModel();
     myExpressionTypesList = new JBList<>(myExpressionTypesListModel);
-    myExpressionTypesList.setCellRenderer(new ColoredListCellRenderer<PostfixTemplateExpressionCondition>() {
-
-      @Override
-      protected void customizeCellRenderer(@NotNull JList<? extends PostfixTemplateExpressionCondition> list,
-                                           PostfixTemplateExpressionCondition value,
-                                           int index,
-                                           boolean selected,
-                                           boolean hasFocus) {
-        append(value.getPresentableName());
-      }
-    });
+    myExpressionTypesList.setCellRenderer(SimpleListCellRenderer.create("", PostfixTemplateExpressionCondition::getPresentableName));
 
     PanelGridBuilder grid = UI.PanelFactory.grid().resize();
     if (showExpressionTypes) {

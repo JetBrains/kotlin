@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class CompoundRunConfigurationSettingsEditor extends SettingsEditor<CompoundRunConfiguration> {
   private final Project myProject;
-  private final JBList myList;
+  private final JBList<Pair<RunConfiguration, ExecutionTarget>> myList;
   private final RunManagerImpl myRunManager;
   private final SortedListModel<Pair<RunConfiguration, ExecutionTarget>> myModel;
   private CompoundRunConfiguration mySnapshot;
@@ -38,17 +38,11 @@ public class CompoundRunConfigurationSettingsEditor extends SettingsEditor<Compo
     myProject = project;
     myRunManager = RunManagerImpl.getInstanceImpl(project);
     myModel = new SortedListModel<>((o1, o2) -> CompoundRunConfiguration.COMPARATOR.compare(o1.first, o2.first));
-    myList = new JBList(myModel);
-    myList.setCellRenderer(new ColoredListCellRenderer() {
-      @Override
-      protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        RunConfiguration configuration = myModel.get(index).first;
-        ExecutionTarget target = myModel.get(index).second;
-
-        setIcon(configuration.getType().getIcon());
-        append(ConfigurationSelectionUtil.getDisplayText(configuration, target));
-      }
-    });
+    myList = new JBList<>(myModel);
+    myList.setCellRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      label.setIcon(value.first.getType().getIcon());
+      label.setText(ConfigurationSelectionUtil.getDisplayText(value.first, value.second));
+    }));
     myList.setVisibleRowCount(15);
   }
 
