@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.model.isIntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.types.typeUtil.contains
 
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
@@ -197,8 +198,25 @@ class KotlinCallCompleter(
                 else
                     ConstraintSystemCompletionMode.PARTIAL
 
+            // Return type has proper equal constraints => there is no need in the outer call
+            containsTypeVariablesWithProperEqualConstraints(currentReturnType) -> ConstraintSystemCompletionMode.FULL
+
             else -> ConstraintSystemCompletionMode.PARTIAL
         }
+    }
+
+    private fun KotlinResolutionCandidate.containsTypeVariablesWithProperEqualConstraints(type: UnwrappedType): Boolean {
+        for ((variableConstructor, variableWithConstraints) in csBuilder.currentStorage().notFixedTypeVariables) {
+            if (!type.contains { it.constructor == variableConstructor }) continue
+
+            val constraints = variableWithConstraints.constraints
+            val onlyProperEqualConstraints =
+                constraints.isNotEmpty() && constraints.all { it.kind.isEqual() && csBuilder.isProperType(it.type) }
+
+            if (!onlyProperEqualConstraints) return false
+        }
+
+        return true
     }
 
     private fun KotlinResolutionCandidate.hasProperNonTrivialLowerConstraints(typeVariable: UnwrappedType): Boolean {
