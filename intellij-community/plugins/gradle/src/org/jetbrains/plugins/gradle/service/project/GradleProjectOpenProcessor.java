@@ -176,6 +176,7 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
   @NotNull
   private static GradleProjectSettings createDefaultProjectSettings() {
     GradleProjectSettings settings = new GradleProjectSettings();
+    settings.setupNewProjectDefault();
     settings.setDistributionType(DistributionType.DEFAULT_WRAPPED);
     settings.setStoreProjectFilesExternally(ThreeState.YES);
     return settings;
