@@ -36,6 +36,16 @@ public interface ExternalFormatProcessor {
   TextRange format(@NotNull PsiFile source, @NotNull TextRange range, boolean canChangeWhiteSpacesOnly);
 
   /**
+   * Indents the line.
+   *
+   * @param source the source file with code
+   * @param lineStartOffset the offset of the indented line
+   * @return the indentation String or null if nothing to be changed
+   */
+  @Nullable
+  String indent(@NotNull PsiFile source, int lineStartOffset);
+
+  /**
    * @return the unique id for external formatter
    */
   @NonNls
@@ -59,6 +69,29 @@ public interface ExternalFormatProcessor {
     return EP_NAME.getExtensionList().stream().filter(efp -> externalFormatterId.equals(efp.getId())).findFirst();
   }
 
+  @Nullable
+  static ExternalFormatProcessor activeExternalFormatProcessor(@NotNull PsiFile source) {
+    for (ExternalFormatProcessor efp : EP_NAME.getExtensionList()) {
+      if (efp.activeForFile(source)) {
+        return efp;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Indents the line.
+   *
+   * @param source the source file with code
+   * @param lineStartOffset the offset of the indented line
+   * @return the range after indentation or null if nothing to be changed
+   */
+  @Nullable
+  static String indentLine(@NotNull PsiFile source, int lineStartOffset) {
+    ExternalFormatProcessor efp = activeExternalFormatProcessor(source);
+    return efp != null ? efp.indent(source, lineStartOffset) : null;
+  }
+
   /**
    * @param source the source file with code
    * @param range the range for formatting
@@ -67,12 +100,8 @@ public interface ExternalFormatProcessor {
    */
   @Nullable
   static TextRange formatRangeInFile(@NotNull PsiFile source, @NotNull TextRange range, boolean canChangeWhiteSpacesOnly) {
-    for (ExternalFormatProcessor efp : EP_NAME.getExtensionList()) {
-      if (efp.activeForFile(source)) {
-        return efp.format(source, range, canChangeWhiteSpacesOnly);
-      }
-    }
-    return null;
+    ExternalFormatProcessor efp = activeExternalFormatProcessor(source);
+    return efp != null ? efp.format(source, range, canChangeWhiteSpacesOnly) : null;
   }
 
   /**
