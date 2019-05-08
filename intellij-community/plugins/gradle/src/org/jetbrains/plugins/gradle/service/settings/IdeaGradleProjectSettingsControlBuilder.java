@@ -36,7 +36,6 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBRadioButton;
 import com.intellij.util.Alarm;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.ThreeState;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -129,10 +128,6 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   @Nullable
   private JBCheckBox myResolveExternalAnnotationsCheckBox;
   private boolean dropResolveExternalAnnotationsCheckBox = !Registry.is("external.system.import.resolve.annotations", false);
-
-  @Nullable
-  private JBCheckBox myStoreExternallyCheckBox;
-  private boolean dropStoreExternallyCheckBox;
 
   @Nullable
   private JLabel myDelegateBuildLabel;
@@ -243,8 +238,12 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     return this;
   }
 
+  /**
+   *
+   * @deprecated Use {@link IdeaGradleSystemSettingsControlBuilder#dropStoreExternallyCheckBox}
+   */
+  @Deprecated
   public IdeaGradleProjectSettingsControlBuilder dropStoreExternallyCheckBox() {
-    dropStoreExternallyCheckBox = true;
     return this;
   }
 
@@ -308,11 +307,6 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     if (!dropResolveExternalAnnotationsCheckBox) {
       myResolveExternalAnnotationsCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.resolve.external.annotations"));
       content.add(myResolveExternalAnnotationsCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
-    }
-
-    if (!dropStoreExternallyCheckBox && myInitialSettings.getStoreProjectFilesExternally() != ThreeState.UNSURE) {
-      myStoreExternallyCheckBox = new JBCheckBox("Store generated project files externally");
-      content.add(myStoreExternallyCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
     }
 
     addGradleChooserComponents(content, indentLevel);
@@ -474,10 +468,6 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       settings.setResolveExternalAnnotations(myResolveExternalAnnotationsCheckBox.isSelected());
     }
 
-    if (myStoreExternallyCheckBox != null) {
-      settings.setStoreProjectFilesExternally(ThreeState.fromBoolean(myStoreExternallyCheckBox.isSelected()));
-    }
-
     if (myUseLocalDistributionButton != null && myUseLocalDistributionButton.isSelected()) {
       settings.setDistributionType(DistributionType.LOCAL);
     }
@@ -538,10 +528,6 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       return true;
     }
 
-    if (myStoreExternallyCheckBox != null && ThreeState.fromBoolean(myStoreExternallyCheckBox.isSelected()) != myInitialSettings.getStoreProjectFilesExternally()) {
-      return true;
-    }
-
     if (myDelegateBuildCombobox != null && myDelegateBuildCombobox.getSelectedItem() instanceof MyItem
         && !Objects.equals(((MyItem)myDelegateBuildCombobox.getSelectedItem()).value, myInitialSettings.getDelegatedBuild())) {
       return true;
@@ -588,9 +574,6 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     }
     if (myResolveExternalAnnotationsCheckBox != null) {
       myResolveExternalAnnotationsCheckBox.setSelected(settings.isResolveExternalAnnotations());
-    }
-    if (myStoreExternallyCheckBox != null) {
-      myStoreExternallyCheckBox.setSelected(settings.getStoreProjectFilesExternally() == ThreeState.YES);
     }
 
     resetGradleJdkComboBox(project, settings, wizardContext);

@@ -50,7 +50,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.util.ThreeState;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -276,7 +275,6 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   public ModuleWizardStep[] createWizardSteps(@NotNull WizardContext wizardContext, @NotNull ModulesProvider modulesProvider) {
     myWizardContext = wizardContext;
     GradleProjectSettings settings = getExternalProjectSettings().clone();
-    settings.setStoreProjectFilesExternally(ThreeState.UNSURE);
     return new ModuleWizardStep[]{
       new GradleModuleWizardStep(this, wizardContext),
       new ExternalModuleSettingsStep<>(

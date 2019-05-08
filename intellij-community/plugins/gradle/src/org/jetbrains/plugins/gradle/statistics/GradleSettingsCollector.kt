@@ -31,13 +31,13 @@ class GradleSettingsCollector : ProjectUsagesCollector() {
     usages.add(getBooleanUsage("hasCustomServiceDirectoryPath", !gradleSettings.serviceDirectoryPath.isNullOrBlank()))
     usages.add(getBooleanUsage("hasCustomGradleVmOptions", !gradleSettings.gradleVmOptions.isNullOrBlank()))
     usages.add(getBooleanUsage("showSelectiveImportDialogOnInitialImport", gradleSettings.showSelectiveImportDialogOnInitialImport()))
+    usages.add(getBooleanUsage("storeProjectFilesExternally", gradleSettings.storeProjectFilesExternally))
 
     // project settings
     for (setting in gradleSettings.linkedProjectsSettings) {
       val projectPath = setting.externalProjectPath
       usages.add(getBooleanUsage("isUseQualifiedModuleNames", setting.isUseQualifiedModuleNames))
       usages.add(getBooleanUsage("createModulePerSourceSet", setting.isResolveModulePerSourceSet))
-      usages.add(getEnumUsage("storeProjectFilesExternally", setting.storeProjectFilesExternally))
       usages.add(getEnumUsage("distributionType", setting.distributionType))
 
       usages.add(getYesNoUsage("isCompositeBuilds", setting.compositeBuild != null))

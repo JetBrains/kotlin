@@ -37,8 +37,6 @@ public class GradleProjectSettings extends ExternalProjectSettings {
   private boolean resolveExternalAnnotations;
   @Nullable private CompositeBuild myCompositeBuild;
 
-  private ThreeState storeProjectFilesExternally = ThreeState.NO;
-
   @Nullable
   private Boolean delegatedBuild;
   @Nullable
@@ -123,13 +121,21 @@ public class GradleProjectSettings extends ExternalProjectSettings {
     return result;
   }
 
-  @Transient
+  /**
+   * @deprecated use {@link GradleSettings#getStoreProjectFilesExternally}
+   */
+  @SuppressWarnings("unused")
+  @Deprecated
   public ThreeState getStoreProjectFilesExternally() {
-    return storeProjectFilesExternally;
+    return ThreeState.UNSURE;
   }
 
+  /**
+   * @deprecated use {@link GradleSettings#setStoreProjectFilesExternally(boolean)}
+   */
+  @SuppressWarnings("unused")
+  @Deprecated
   public void setStoreProjectFilesExternally(@NotNull ThreeState value) {
-    storeProjectFilesExternally = value;
   }
 
   /**

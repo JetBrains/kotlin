@@ -25,6 +25,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import org.gradle.initialization.BuildLayoutParameters;
@@ -62,6 +63,10 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   private JBTextField myGradleVmOptionsField;
   private boolean dropVmOptions;
 
+  @Nullable
+  private JBCheckBox myStoreExternallyCheckBox;
+  private boolean dropStoreExternallyCheckBox;
+
   public IdeaGradleSystemSettingsControlBuilder(@NotNull GradleSettings initialSettings) {
     myInitialSettings = initialSettings;
   }
@@ -75,6 +80,11 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       canvas.add(myGradleVmOptionsLabel, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
       myGradleVmOptionsField = new JBTextField();
       canvas.add(myGradleVmOptionsField, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
+    }
+
+    if (!dropStoreExternallyCheckBox) {
+      myStoreExternallyCheckBox = new JBCheckBox("Store generated project files externally");
+      canvas.add(myStoreExternallyCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
     }
   }
 
@@ -101,6 +111,10 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     if (myGradleVmOptionsField != null) {
       myGradleVmOptionsField.setText(trimIfPossible(myInitialSettings.getGradleVmOptions()));
     }
+
+    if (myStoreExternallyCheckBox != null) {
+      myStoreExternallyCheckBox.setSelected(myInitialSettings.getStoreProjectFilesExternally());
+    }
   }
 
   @Override
@@ -116,6 +130,10 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       return true;
     }
 
+    if (myStoreExternallyCheckBox != null && myStoreExternallyCheckBox.isSelected() != myInitialSettings.getStoreProjectFilesExternally()) {
+      return true;
+    }
+
     return false;
   }
 
@@ -126,6 +144,9 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     }
     if (myGradleVmOptionsField != null) {
       settings.setGradleVmOptions(trimIfPossible(myGradleVmOptionsField.getText()));
+    }
+    if (myStoreExternallyCheckBox != null) {
+      settings.setStoreProjectFilesExternally(myStoreExternallyCheckBox.isSelected());
     }
   }
 
@@ -147,6 +168,11 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
 
   public IdeaGradleSystemSettingsControlBuilder dropServiceDirectory() {
     dropServiceDirectory = true;
+    return this;
+  }
+
+  public IdeaGradleSystemSettingsControlBuilder dropStoreExternallyCheckBox() {
+    dropStoreExternallyCheckBox = true;
     return this;
   }
 
