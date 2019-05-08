@@ -33,14 +33,18 @@ import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
+import org.jetbrains.kotlin.ir.util.startOffset
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 private const val TIMEOUT_FOR_IMPORT_OPTIMIZING_MS: Long = 700L
 
@@ -54,7 +58,10 @@ class ExtractDeclarationFromCurrentFileIntention :
         if (element.containingKtFile.declarations.size == 1) return null
 
         val descriptor = element.resolveToDescriptorIfAny() ?: return null
-        if (descriptor.sealedSubclasses.isNotEmpty()) return null
+        if (descriptor.sealedSubclasses
+                .mapNotNull { it.source.getPsi() }
+                .any { !element.isAncestor(it) }
+        ) return null
         if (descriptor.getSuperClassNotAny()?.modality == Modality.SEALED) return null
 
         val keyword = when (element) {
