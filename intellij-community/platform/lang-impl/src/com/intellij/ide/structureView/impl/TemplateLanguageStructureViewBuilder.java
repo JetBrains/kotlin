@@ -25,6 +25,7 @@ import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PairFunction;
 import com.intellij.util.containers.JBIterable;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +39,8 @@ import java.util.List;
 public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStructureViewBuilder {
 
   @NotNull
-  public static TemplateLanguageStructureViewBuilder create(@NotNull PsiFile psiFile, @Nullable PairFunction<? super PsiFile, ? super Editor, ? extends StructureViewModel> modelFactory) {
+  public static TemplateLanguageStructureViewBuilder create(@NotNull PsiFile psiFile,
+                                                            @Nullable PairFunction<? super PsiFile, ? super Editor, ? extends StructureViewModel> modelFactory) {
     return new TemplateLanguageStructureViewBuilder(psiFile) {
       @Override
       protected TreeBasedStructureViewBuilder createMainBuilder(@NotNull PsiFile psi) {
@@ -93,16 +95,8 @@ public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStru
         VirtualFile file = fileEditor == null ? null : fileEditor.getFile();
         PsiFile psiFile = file == null || !file.isValid() ? null : PsiManager.getInstance(project).findFile(file);
         List<Language> newLanguages = getLanguages(psiFile).toList();
-        if (!Comparing.equal(languages, newLanguages)) return true;
-        if (psiFile == null) return true;
-        FileViewProvider viewProvider = psiFile.getViewProvider();
-        Language baseLanguage = viewProvider.getBaseLanguage();
-        StructureViewDescriptor[] views = getStructureViews();
-        boolean hasMainView = views.length > 0 && Comparing.equal(views[0].title, baseLanguage.getDisplayName());
-        JBIterable<Language> newAcceptedLanguages = JBIterable.from(newLanguages)
-          .filter(o -> o == baseLanguage && hasMainView ||
-                       o != baseLanguage && isAcceptableBaseLanguageFile(viewProvider.getPsi(o)));
-        return views.length != newAcceptedLanguages.size();
+        // think views count depends only on acceptable languages
+        return !Comparing.equal(languages, newLanguages);
       }
     };
   }
@@ -124,16 +118,21 @@ public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStru
   }
 
   @NotNull
-  private static JBIterable<Language> getLanguages(@Nullable PsiFile psiFile) {
+  private JBIterable<Language> getLanguages(@Nullable PsiFile psiFile) {
     if (psiFile == null) return JBIterable.empty();
-    FileViewProvider provider = psiFile.getViewProvider();
+    FileViewProvider viewProvider = psiFile.getViewProvider();
 
-    Language baseLanguage = provider.getBaseLanguage();
-    Language dataLanguage = provider instanceof TemplateLanguageFileViewProvider
-                            ? ((TemplateLanguageFileViewProvider)provider).getTemplateDataLanguage() : null;
+    Language baseLanguage = viewProvider.getBaseLanguage();
+    Language dataLanguage = viewProvider instanceof TemplateLanguageFileViewProvider
+                            ? ((TemplateLanguageFileViewProvider)viewProvider).getTemplateDataLanguage() : null;
     return JBIterable.of(baseLanguage)
       .append(dataLanguage)
-      .append(JBIterable.from(provider.getLanguages()).filter(o -> o != baseLanguage && o != dataLanguage));
+      .append(viewProvider.getLanguages())
+      .unique()
+      .filter(language -> {
+        PsiFile psi = viewProvider.getPsi(language);
+        return psi != null && (language == baseLanguage || isAcceptableBaseLanguageFile(psi));
+      });
   }
 
   @Nullable
@@ -143,7 +142,6 @@ public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStru
     PsiFile psi = viewProvider.getPsi(language);
     if (psi == null) return null;
     if (language == baseLanguage) return createMainBuilder(psi);
-    if (!isAcceptableBaseLanguageFile(psi)) return null;
     PsiStructureViewFactory factory = LanguageStructureViewBuilder.INSTANCE.forLanguage(language);
     return factory == null ? null : factory.getStructureViewBuilder(psi);
   }
@@ -174,6 +172,7 @@ public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStru
   }
 
   /** @deprecated override {@link #createMainBuilder(PsiFile)} instead */
+  @ApiStatus.ScheduledForRemoval
   @Deprecated
   protected StructureViewComposite.StructureViewDescriptor createMainView(FileEditor fileEditor, PsiFile mainFile) {
     throw new AssertionError();
