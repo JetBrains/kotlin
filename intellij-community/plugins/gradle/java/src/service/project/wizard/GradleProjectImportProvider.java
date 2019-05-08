@@ -22,7 +22,7 @@ public final class GradleProjectImportProvider extends AbstractExternalProjectIm
 
   @Override
   protected ProjectImportBuilder doGetBuilder() {
-    return ProjectImportBuilder.EXTENSIONS_POINT_NAME.findExtensionOrFail(GradleProjectImportBuilder.class);
+    return GradleProjectImportBuilder.getInstance();
   }
 
   @Override

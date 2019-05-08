@@ -11,9 +11,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.io.FileUtil;
@@ -22,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.config.GradleResourceCompilerConfigurationGenerator;
 import org.jetbrains.plugins.gradle.service.GradleBuildClasspathManager;
 import org.jetbrains.plugins.gradle.service.project.GradleNotification;
-import org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportBuilder;
-import org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportProvider;
+import org.jetbrains.plugins.gradle.service.project.wizard.JavaGradleProjectImportProvider;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleBundle;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
@@ -84,9 +81,7 @@ public class GradleJvmStartupActivity implements StartupActivity {
           protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
             notification.expire();
             if (IMPORT_EVENT_DESCRIPTION.equals(e.getDescription())) {
-              final ProjectDataManager projectDataManager = ServiceManager.getService(ProjectDataManager.class);
-              GradleProjectImportBuilder gradleProjectImportBuilder = new GradleProjectImportBuilder(projectDataManager);
-              final GradleProjectImportProvider gradleProjectImportProvider = new GradleProjectImportProvider(gradleProjectImportBuilder);
+              final JavaGradleProjectImportProvider gradleProjectImportProvider = new JavaGradleProjectImportProvider();
               AddModuleWizard wizard = new AddModuleWizard(project, gradleFile.getPath(), gradleProjectImportProvider);
               if ((wizard.getStepCount() <= 0 || wizard.showAndGet())) {
                 ImportModuleAction.createFromWizard(project, wizard);
