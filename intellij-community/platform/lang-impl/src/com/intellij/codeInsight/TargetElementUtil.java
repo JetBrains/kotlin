@@ -32,6 +32,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ThreeState;
 import com.intellij.util.indexing.DumbModeAccessType;
 import com.intellij.util.indexing.FileBasedIndex;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -293,9 +294,9 @@ public class TargetElementUtil  {
     return getNamedElement(element);
   }
 
-
+  @Internal
   @Nullable
-  private static PsiElement getNamedElement(@Nullable final PsiElement element) {
+  public static PsiElement getNamedElement(@Nullable final PsiElement element) {
     if (element == null) return null;
 
     TargetElementEvaluatorEx2 evaluator = getElementEvaluatorsEx2(element.getLanguage());

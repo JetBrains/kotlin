@@ -3,6 +3,7 @@
 
 package com.intellij.model.psi.impl
 
+import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.model.psi.PsiSymbolDeclaration
 import com.intellij.model.psi.PsiSymbolDeclarationProvider
 import com.intellij.openapi.extensions.ExtensionPointName
@@ -33,6 +34,16 @@ fun findDeclarationsAtOffset(file: PsiFile, offsetInFile: Int): Collection<PsiSy
   for ((element: PsiElement, offsetInElement: Int) in file.elementsAroundOffsetUp(offsetInFile)) {
     ProgressManager.checkCanceled()
     result += findDeclarationsInElement(element, offsetInElement)
+  }
+  if (result.isEmpty()) {
+    // fall back
+    val leaf = file.findElementAt(offsetInFile)
+    if (leaf != null) {
+      val namedElement = TargetElementUtil.getNamedElement(leaf)
+      if (namedElement != null) {
+        result += PsiElement2Declaration.createFromPsi(namedElement, leaf)
+      }
+    }
   }
   return result
 }
