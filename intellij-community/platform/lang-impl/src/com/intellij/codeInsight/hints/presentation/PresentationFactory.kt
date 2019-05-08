@@ -89,9 +89,11 @@ class PresentationFactory(private val editor: EditorImpl) {
   }
 
   fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
-    return AttributesTransformerPresentation(ChangeOnClickPresentation(placeholder, unwrapAction)) {
-      it.with(attributesOf(EditorColors.FOLDED_TEXT_ATTRIBUTES))
-    }
+    return ChangeOnClickPresentation(changeOnHover(placeholder, onHover = {
+      AttributesTransformerPresentation(placeholder) {
+        it.with(attributesOf(EditorColors.FOLDED_TEXT_ATTRIBUTES))
+      }
+    }), onClick = unwrapAction)
   }
 
   fun asWrongReference(presentation: InlayPresentation): InlayPresentation {
