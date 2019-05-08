@@ -11,14 +11,13 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.DimensionService;
 import com.intellij.openapi.util.MutualMap;
-import com.intellij.openapi.wm.impl.TabsHeightController;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.tabs.*;
-import com.intellij.ui.tabs.newImpl.JBEditorTabs;
+import com.intellij.ui.tabs.newImpl.SameHeightTabs;
 import com.intellij.ui.tabs.newImpl.TabLabel;
 import com.intellij.ui.tabs.newImpl.singleRow.ScrollableSingleRowLayout;
 import com.intellij.ui.tabs.newImpl.singleRow.SingleRowLayout;
@@ -449,8 +448,13 @@ public class GridCellImpl implements GridCell {
     return ActionCallback.DONE;
   }
 
-  private static class GridCellTabs extends JBEditorTabs {
+  private static class GridCellTabs extends SameHeightTabs {
     private final ViewContextEx myContext;
+
+    @Override
+    protected JBTabPainter createTabPainter() {
+      return JBTabPainter.getDEBUGGER();
+    }
 
     private GridCellTabs(ViewContextEx context, GridImpl container) {
       super(context.getProject(), context.getActionManager(), context.getFocusManager(), container);
@@ -489,19 +493,17 @@ public class GridCellImpl implements GridCell {
 
     @Override
     protected TabLabel createTabLabel(TabInfo info) {
-      return new TabLabel(this, info) {
+      return new SameHeightTabs.SingleHeightLabel(this, info) {
+
+        @NotNull
         @Override
-        public void setAlignmentToCenter(boolean toCenter) {
-          super.setAlignmentToCenter(false);
+        public Dimension getPreferredSize() {
+          return super.getPreferredSize();
         }
 
         @Override
-        public Dimension getPreferredSize() {
-          Dimension size = super.getPreferredSize();
-
-          Insets insets = getInsets();
-
-          return new Dimension(size.width, TabsHeightController.getToolWindowHeight().getValue() - insets.top - insets.bottom);
+        public void setAlignmentToCenter(boolean toCenter) {
+          super.setAlignmentToCenter(false);
         }
       };
     }

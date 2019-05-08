@@ -104,17 +104,6 @@ public abstract class RunAnythingGroup {
   }
 
   /**
-   * Finds group icon by {@code titleIndex}.
-   *
-   * @return group icon if {@code titleIndex} is equals to group {@link #myTitleIndex} and {@code null} if nothing found
-   */
-  @Nullable
-  public static Icon getIcon(@NotNull Collection<RunAnythingGroup> groups, int titleIndex) {
-    return Optional.ofNullable(findGroup(groups, titleIndex)).map(RunAnythingGroup::getIcon).orElse(null);
-  }
-
-
-  /**
    * Finds group by {@code titleIndex}.
    *
    * @return group if {@code titleIndex} is equals to group {@link #myTitleIndex} and {@code null} if nothing found

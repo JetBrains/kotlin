@@ -98,10 +98,13 @@ public abstract class KeymapsTestCaseBase extends LightPlatformTestCase {
       if (baseMap == null) continue;
 
       Keymap keymap = km.getKeymap(keymapName);
+      assertNotNull(keymap);
+
       for (String shortcut : baseMap.keySet()) {
-        List<String> actionIds = ContainerUtil.filter(
-          baseMap.get(shortcut),
-          actionId -> ActionManager.getInstance().getAction(actionId) != null || keymap.getShortcuts(actionId).length > 0);
+        List<String> actionIds = ContainerUtil.filter(baseMap.get(shortcut),
+                                                      actionId -> SECOND_STROKE.equals(actionId) ||
+                                                                  ActionManager.getInstance().getAction(actionId) != null ||
+                                                                  keymap.getShortcuts(actionId).length > 0);
 
         if (actionIds.size() >= 2) {
           map.put(shortcut, actionIds);

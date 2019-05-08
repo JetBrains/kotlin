@@ -80,7 +80,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private static final Logger LOG = Logger.getInstance(RunAnythingPopupUI.class);
   private static final Border RENDERER_BORDER = JBUI.Borders.empty(1, 0);
   private static final String HELP_PLACEHOLDER = "?";
-  private static final int LIST_REBUILD_DELAY = 200;
+  private static final int LIST_REBUILD_DELAY = 100;
   private final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, ApplicationManager.getApplication());
   private final AnActionEvent myActionEvent;
   private boolean myIsUsedTrigger;
@@ -571,7 +571,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
       if (model != null) {
         String title = model.getTitle(index);
         if (title != null) {
-          myMainPanel.add(RunAnythingUtil.createTitle(" " + title, model.getIcon(index)), BorderLayout.NORTH);
+          myMainPanel.add(RunAnythingUtil.createTitle(" " + title), BorderLayout.NORTH);
         }
       }
       JPanel wrapped = new JPanel(new BorderLayout());

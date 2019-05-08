@@ -48,11 +48,6 @@ public abstract class RunAnythingSearchListModel extends DefaultListModel<Object
   }
 
   @Nullable
-  Icon getIcon(int titleIndex) {
-    return RunAnythingGroup.getIcon(getGroups(), titleIndex);
-  }
-
-  @Nullable
   RunAnythingGroup findItemGroup(int titleIndex) {
     return RunAnythingGroup.findItemGroup(getGroups(), titleIndex);
   }

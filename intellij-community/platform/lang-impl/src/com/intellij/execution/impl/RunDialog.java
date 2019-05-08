@@ -38,7 +38,7 @@ public class RunDialog extends DialogWrapper implements RunDialogBase {
     setTitle(executor.getId());
 
     setOKButtonText(executor.getActionName());
-    setOKButtonIcon(executor.getIcon());
+    //setOKButtonIcon(executor.getIcon());
 
     myConfigurable = new ProjectRunConfigurationConfigurable(project, this);
     init();
@@ -105,7 +105,7 @@ public class RunDialog extends DialogWrapper implements RunDialogBase {
       {
         if (executor != null) {
           setOKButtonText(executor.getActionName());
-          setOKButtonIcon(executor.getIcon());
+          //setOKButtonIcon(executor.getIcon());
         }
       }
     };

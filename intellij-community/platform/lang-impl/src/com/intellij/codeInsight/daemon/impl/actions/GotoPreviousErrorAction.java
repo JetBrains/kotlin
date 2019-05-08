@@ -32,6 +32,11 @@ public class GotoPreviousErrorAction extends BaseCodeInsightAction implements Du
     super(false);
   }
 
+  @Override
+  protected boolean isValidForLookup() {
+    return true;
+  }
+
   @NotNull
   @Override
   protected CodeInsightActionHandler getHandler() {

@@ -578,28 +578,34 @@ public class GradleExecutionHelper {
                                                      @NotNull ExternalSystemTaskId taskId,
                                                      @NotNull ExternalSystemTaskNotificationListener listener,
                                                      @Nullable CancellationTokenSource cancellationTokenSource) {
-    ModelBuilder<BuildEnvironment> modelBuilder = connection.model(BuildEnvironment.class);
-    if (cancellationTokenSource != null) {
-      modelBuilder.withCancellationToken(cancellationTokenSource.token());
-    }
-    // do not use connection.getModel methods since it doesn't allow to handle progress events
-    // and we can miss gradle tooling client side events like distribution download.
-    GradleProgressListener gradleProgressListener = new GradleProgressListener(listener, taskId);
-    modelBuilder.addProgressListener((ProgressListener)gradleProgressListener);
-    modelBuilder.addProgressListener((org.gradle.tooling.events.ProgressListener)gradleProgressListener);
-    modelBuilder.setStandardOutput(new OutputWrapper(listener, taskId, true));
-    modelBuilder.setStandardError(new OutputWrapper(listener, taskId, false));
+    BuildEnvironment buildEnvironment = null;
+    try {
+      ModelBuilder<BuildEnvironment> modelBuilder = connection.model(BuildEnvironment.class);
+      if (cancellationTokenSource != null) {
+        modelBuilder.withCancellationToken(cancellationTokenSource.token());
+      }
+      // do not use connection.getModel methods since it doesn't allow to handle progress events
+      // and we can miss gradle tooling client side events like distribution download.
+      GradleProgressListener gradleProgressListener = new GradleProgressListener(listener, taskId);
+      modelBuilder.addProgressListener((ProgressListener)gradleProgressListener);
+      modelBuilder.addProgressListener((org.gradle.tooling.events.ProgressListener)gradleProgressListener);
+      modelBuilder.setStandardOutput(new OutputWrapper(listener, taskId, true));
+      modelBuilder.setStandardError(new OutputWrapper(listener, taskId, false));
 
-    final BuildEnvironment buildEnvironment = modelBuilder.get();
-    if (LOG.isDebugEnabled()) {
-      try {
-        LOG.debug("Gradle version: " + buildEnvironment.getGradle().getGradleVersion());
-        LOG.debug("Gradle java home: " + buildEnvironment.getJava().getJavaHome());
-        LOG.debug("Gradle jvm arguments: " + buildEnvironment.getJava().getJvmArguments());
+      buildEnvironment = modelBuilder.get();
+      if (LOG.isDebugEnabled()) {
+        try {
+          LOG.debug("Gradle version: " + buildEnvironment.getGradle().getGradleVersion());
+          LOG.debug("Gradle java home: " + buildEnvironment.getJava().getJavaHome());
+          LOG.debug("Gradle jvm arguments: " + buildEnvironment.getJava().getJvmArguments());
+        }
+        catch (Throwable t) {
+          LOG.debug(t);
+        }
       }
-      catch (Throwable t) {
-        LOG.debug(t);
-      }
+    }
+    catch (Throwable t) {
+      LOG.debug(t);
     }
     return buildEnvironment;
   }

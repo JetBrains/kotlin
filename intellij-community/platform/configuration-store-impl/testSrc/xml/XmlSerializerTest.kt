@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 @file:Suppress("PropertyName")
 
 package com.intellij.configurationStore.xml
@@ -12,7 +12,11 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.assertConcurrent
 import com.intellij.testFramework.assertions.Assertions.assertThat
-import com.intellij.util.xmlb.*
+import com.intellij.util.serialization.SerializationException
+import com.intellij.util.xmlb.Accessor
+import com.intellij.util.xmlb.SerializationFilter
+import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
+import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.*
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
@@ -326,7 +330,7 @@ internal class XmlSerializerTest {
     try {
       testSerializer("<BeanWithPropertyWithoutTagOnPrimitiveValue><name>hello</name></BeanWithPropertyWithoutTagOnPrimitiveValue>", bean)
     }
-    catch (e: XmlSerializationException) {
+    catch (e: SerializationException) {
       return
     }
 

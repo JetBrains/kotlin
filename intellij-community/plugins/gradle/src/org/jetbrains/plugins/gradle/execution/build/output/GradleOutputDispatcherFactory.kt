@@ -3,6 +3,7 @@ package org.jetbrains.plugins.gradle.execution.build.output
 
 import com.intellij.build.BuildProgressListener
 import com.intellij.build.events.BuildEvent
+import com.intellij.build.events.DuplicateMessageAware
 import com.intellij.build.events.StartEvent
 import com.intellij.build.events.impl.OutputBuildEventImpl
 import com.intellij.build.output.BuildOutputInstantReaderImpl
@@ -15,6 +16,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
+import java.util.function.BiConsumer
 
 class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
   override val externalSystemId: Any? = GradleConstants.SYSTEM_ID
@@ -38,7 +40,8 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
     private val tasksEventIds = mutableMapOf<String, Any>()
 
     init {
-      myRootReader = BuildOutputInstantReaderImpl(buildId, BuildProgressListener {
+      val deferredRootEvents = mutableListOf<BuildEvent>()
+      myRootReader = object : BuildOutputInstantReaderImpl(buildId, BuildProgressListener {
         var buildEvent = it
         val parentId = buildEvent.parentId
         if (parentId != buildId && parentId is String) {
@@ -47,8 +50,17 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
             buildEvent = BuildEventInvocationHandler.wrap(it, taskEventId)
           }
         }
-        myBuildProgressListener.onEvent(buildEvent)
-      }, parsers)
+        if (buildEvent is DuplicateMessageAware) {
+          deferredRootEvents += buildEvent
+        }
+        else {
+          myBuildProgressListener.onEvent(buildEvent)
+        }
+      }, parsers) {
+        override fun close() {
+          closeAndGetFuture().whenComplete { _, _ -> deferredRootEvents.forEach { myBuildProgressListener.onEvent(it) } }
+        }
+      }
       myCurrentReader = myRootReader
       lineProcessor = object : LineProcessor() {
         override fun process(line: String) {
@@ -85,7 +97,7 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
 
     override fun close() {
       lineProcessor.close()
-      tasksOutputReaders.forEach { _, reader -> reader.close() }
+      tasksOutputReaders.forEach { (_, reader) -> reader.close() }
       myRootReader.close()
       tasksOutputReaders.clear()
     }

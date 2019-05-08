@@ -3,6 +3,7 @@ package org.jetbrains.plugins.gradle.execution.build.output
 
 import com.intellij.build.FilePosition
 import com.intellij.build.events.BuildEvent
+import com.intellij.build.events.DuplicateMessageAware
 import com.intellij.build.events.MessageEvent
 import com.intellij.build.events.impl.FileMessageEventImpl
 import com.intellij.build.events.impl.MessageEventImpl
@@ -71,10 +72,14 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
 
     if (location != null && filter != null) {
       val filePosition = FilePosition(File(filter.filteredFileName), filter.filteredLineNumber - 1, 0)
-      messageConsumer.accept(FileMessageEventImpl(parentId, MessageEvent.Kind.ERROR, null, reason, description.toString(), filePosition))
+      messageConsumer.accept(object : FileMessageEventImpl(
+        parentId, MessageEvent.Kind.ERROR, null, reason, description.toString(), filePosition), DuplicateMessageAware {}
+      )
     }
     else {
-      messageConsumer.accept(MessageEventImpl(parentId, MessageEvent.Kind.ERROR, null, reason, description.toString()))
+      messageConsumer.accept(object : MessageEventImpl(
+        parentId, MessageEvent.Kind.ERROR, null, reason, description.toString()), DuplicateMessageAware {}
+      )
     }
     return true
   }

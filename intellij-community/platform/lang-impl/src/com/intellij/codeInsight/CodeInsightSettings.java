@@ -16,7 +16,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ReflectionUtil;
-import com.intellij.util.xmlb.XmlSerializationException;
+import com.intellij.util.serialization.SerializationException;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -198,7 +198,7 @@ public class CodeInsightSettings implements PersistentStateComponent<Element>, C
     try {
       XmlSerializer.deserializeInto(state, this);
     }
-    catch (XmlSerializationException e) {
+    catch (SerializationException e) {
       LOG.info(e);
     }
   }
@@ -231,7 +231,7 @@ public class CodeInsightSettings implements PersistentStateComponent<Element>, C
     try {
       XmlSerializer.serializeObjectInto(this, element);
     }
-    catch (XmlSerializationException e) {
+    catch (SerializationException e) {
       LOG.info(e);
     }
   }

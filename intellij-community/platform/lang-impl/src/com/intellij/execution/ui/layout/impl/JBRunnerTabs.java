@@ -6,17 +6,13 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.openapi.wm.impl.TabsHeightController;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.tabs.JBTabsBackgroundAndBorder;
-import com.intellij.ui.tabs.JBTabsFactory;
-import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.UiDecorator;
-import com.intellij.ui.tabs.newImpl.JBEditorTabs;
+import com.intellij.ui.tabs.*;
+import com.intellij.ui.tabs.newImpl.SameHeightTabs;
 import com.intellij.ui.tabs.newImpl.TabLabel;
-import com.intellij.util.ui.JBUI;
 import com.intellij.ui.tabs.newImpl.singleRow.ScrollableSingleRowLayout;
 import com.intellij.ui.tabs.newImpl.singleRow.SingleRowLayout;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +23,7 @@ import java.util.Map;
 /**
  * @author Dennis.Ushakov
  */
-public class JBRunnerTabs extends JBEditorTabs implements JBRunnerTabsBase {
+public class JBRunnerTabs extends SameHeightTabs implements JBRunnerTabsBase {
   public static JBRunnerTabsBase create(@Nullable Project project, @NotNull Disposable parentDisposable) {
     IdeFocusManager focusManager = project != null ? IdeFocusManager.getInstance(project) : null;
     return JBTabsFactory.getUseNewTabs()
@@ -35,6 +31,10 @@ public class JBRunnerTabs extends JBEditorTabs implements JBRunnerTabsBase {
            : new JBRunnerTabsOld(project, ActionManager.getInstance(), focusManager, parentDisposable);
   }
 
+  @Override
+  protected JBTabPainter createTabPainter() {
+    return JBTabPainter.getDEBUGGER();
+  }
 
   public JBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
     super(project, actionManager, focusManager, parent);
@@ -112,20 +112,11 @@ public class JBRunnerTabs extends JBEditorTabs implements JBRunnerTabsBase {
 
   @Override
   protected TabLabel createTabLabel(TabInfo info) {
-    return new TabLabel(this, info) {
+    return new SingleHeightLabel(this, info) {
       @Override
       public void setTabActionsAutoHide(boolean autoHide) {
         super.setTabActionsAutoHide(autoHide);
         apply(new UiDecorator.UiDecoration(null, JBUI.insets(0, 8, 0, 8)));
-      }
-
-      @Override
-      public Dimension getPreferredSize() {
-        Dimension size = super.getPreferredSize();
-
-        Insets insets = getInsets();
-
-        return new Dimension(size.width, TabsHeightController.getToolWindowHeight().getValue() - insets.top - insets.bottom);
       }
 
       @Override

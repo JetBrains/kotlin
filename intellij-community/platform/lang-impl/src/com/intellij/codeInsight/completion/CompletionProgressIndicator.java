@@ -140,9 +140,6 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     myAdvertiserChanges.offer(() -> myLookup.getAdvertiser().clearAdvertisements());
 
     myArranger = new CompletionLookupArrangerImpl(this);
-    if (handler.isTestingMode()) {
-      myArranger.setConsiderAllItemsVisible();
-    }
     myLookup.setArranger(myArranger);
 
     myLookup.addLookupListener(myLookupListener);
