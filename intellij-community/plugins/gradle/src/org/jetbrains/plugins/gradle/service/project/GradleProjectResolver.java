@@ -172,6 +172,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       gradleVersion = GradleVersion.version(buildEnvironment.getGradle().getGradleVersion());
       isGradleProjectDirSupported = gradleVersion.compareTo(GradleVersion.version("2.4")) >= 0;
       isCompositeBuildsSupported = isGradleProjectDirSupported && gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
+      resolverCtx.setBuildEnvironment(buildEnvironment);
     }
     final ProjectImportAction projectImportAction =
       new ProjectImportAction(resolverCtx.isPreviewMode(), isGradleProjectDirSupported, isCompositeBuildsSupported);
@@ -723,11 +724,8 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       }
       catch (RuntimeException e) {
         LOG.info("Gradle project resolve error", e);
-        ExternalSystemException exception = myProjectResolverChain.getUserFriendlyError(e, myResolverContext.getProjectPath(), null);
-        if (exception.getCause() == null) {
-          exception.initCause(e);
-        }
-        throw exception;
+        throw myProjectResolverChain.getUserFriendlyError(
+          myResolverContext.getBuildEnvironment(), e, myResolverContext.getProjectPath(), null);
       }
       finally {
         myCancellationMap.remove(myResolverContext.getExternalSystemTaskId(), myResolverContext.getCancellationTokenSource());
@@ -737,7 +735,6 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
   @NotNull
   public static GradleProjectResolverExtension createProjectResolverChain(@Nullable final GradleExecutionSettings settings) {
-    GradleProjectResolverExtension projectResolverChain;
     if (settings != null) {
       List<ClassHolder<? extends GradleProjectResolverExtension>> extensionClasses = settings.getResolverExtensions();
       if(extensionClasses.isEmpty()) {
@@ -762,9 +759,8 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
         }
         extensions.add(extension);
       }
-      projectResolverChain = extensions.peekFirst();
-
-      GradleProjectResolverExtension resolverExtension = projectResolverChain;
+      GradleProjectResolverExtension firstResolver = extensions.peekFirst();
+      GradleProjectResolverExtension resolverExtension = firstResolver;
       assert resolverExtension != null;
       while (resolverExtension.getNext() != null) {
         resolverExtension = resolverExtension.getNext();
@@ -772,11 +768,23 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       if (!(resolverExtension instanceof BaseGradleProjectResolverExtension)) {
         throw new AssertionError("Illegal last resolver got of class " + resolverExtension.getClass().getName());
       }
+      BaseProjectImportErrorHandler baseErrorHandler = new BaseProjectImportErrorHandler();
+      GradleProjectResolverExtension chainWrapper = new AbstractProjectResolverExtension() {
+        @NotNull
+        @Override
+        public ExternalSystemException getUserFriendlyError(@Nullable BuildEnvironment buildEnvironment,
+                                                            @NotNull Throwable error,
+                                                            @NotNull String projectPath,
+                                                            @Nullable String buildFilePath) {
+          ExternalSystemException friendlyError = super.getUserFriendlyError(buildEnvironment, error, projectPath, buildFilePath);
+          return baseErrorHandler.checkErrorsWithoutQuickFixes(buildEnvironment, error, projectPath, buildFilePath, friendlyError);
+        }
+      };
+      chainWrapper.setNext(firstResolver);
+      return chainWrapper;
     }
     else {
-      projectResolverChain = new BaseGradleProjectResolverExtension();
+      return new BaseGradleProjectResolverExtension();
     }
-
-    return projectResolverChain;
   }
 }

@@ -42,6 +42,7 @@ import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.GradleModuleVersion;
 import org.gradle.tooling.model.GradleTask;
 import org.gradle.tooling.model.UnsupportedMethodException;
+import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.gradle.GradleBuild;
 import org.gradle.tooling.model.idea.*;
 import org.gradle.util.GradleVersion;
@@ -806,10 +807,11 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
 
   @NotNull
   @Override
-  public ExternalSystemException getUserFriendlyError(@NotNull Throwable error,
+  public ExternalSystemException getUserFriendlyError(@Nullable BuildEnvironment buildEnvironment,
+                                                      @NotNull Throwable error,
                                                       @NotNull String projectPath,
                                                       @Nullable String buildFilePath) {
-    return myErrorHandler.getUserFriendlyError(error, projectPath, buildFilePath);
+    return myErrorHandler.getUserFriendlyError(buildEnvironment, error, projectPath, buildFilePath);
   }
 
   @Override

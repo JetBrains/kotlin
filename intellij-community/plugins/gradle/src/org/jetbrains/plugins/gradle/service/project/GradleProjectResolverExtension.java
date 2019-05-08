@@ -25,6 +25,7 @@ import com.intellij.openapi.externalSystem.model.task.TaskData;
 import com.intellij.openapi.externalSystem.service.ParametersEnhancer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Consumer;
+import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
 import org.jetbrains.annotations.ApiStatus;
@@ -123,7 +124,10 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
   List<String> getExtraCommandLineArgs();
 
   @NotNull
-  ExternalSystemException getUserFriendlyError(@NotNull Throwable error, @NotNull String projectPath, @Nullable String buildFilePath);
+  ExternalSystemException getUserFriendlyError(@Nullable BuildEnvironment buildEnvironment,
+                                               @NotNull Throwable error,
+                                               @NotNull String projectPath,
+                                               @Nullable String buildFilePath);
 
   /**
    * Performs project configuration and other checks before the actual project import (before invocation of gradle tooling API).

@@ -49,6 +49,7 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   private File myGradleUserHome;
   @Nullable private String myProjectGradleVersion;
   @Nullable private String myBuildSrcGroup;
+  @Nullable private BuildEnvironment myBuildEnvironment;
 
   public DefaultProjectResolverContext(@NotNull final ExternalSystemTaskId externalSystemTaskId,
                                        @NotNull final String projectPath,
@@ -192,9 +193,11 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Override
   public String getProjectGradleVersion() {
     if (myProjectGradleVersion == null) {
-      final BuildEnvironment env = getModels().getBuildEnvironment();
-      if (env != null) {
-        myProjectGradleVersion = env.getGradle().getGradleVersion();
+      if (myBuildEnvironment == null) {
+        myBuildEnvironment = getModels().getBuildEnvironment();
+      }
+      if (myBuildEnvironment != null) {
+        myProjectGradleVersion = myBuildEnvironment.getGradle().getGradleVersion();
       }
     }
     return myProjectGradleVersion;
@@ -208,5 +211,14 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Override
   public String getBuildSrcGroup() {
     return myBuildSrcGroup;
+  }
+
+  void setBuildEnvironment(@NotNull BuildEnvironment buildEnvironment) {
+    myBuildEnvironment = buildEnvironment;
+  }
+
+  @Nullable
+  public BuildEnvironment getBuildEnvironment() {
+    return myBuildEnvironment;
   }
 }

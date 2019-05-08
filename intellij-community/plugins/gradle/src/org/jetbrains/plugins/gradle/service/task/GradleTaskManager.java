@@ -19,6 +19,7 @@ import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.CancellationTokenSource;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
+import org.gradle.tooling.model.build.BuildEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
@@ -115,12 +116,9 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
       }
       catch (RuntimeException e) {
         LOG.debug("Gradle build launcher error", e);
+        BuildEnvironment buildEnvironment = GradleExecutionHelper.getBuildEnvironment(connection, id, listener, cancellationTokenSource);
         final GradleProjectResolverExtension projectResolverChain = GradleProjectResolver.createProjectResolverChain(effectiveSettings);
-        ExternalSystemException exception = projectResolverChain.getUserFriendlyError(e, projectPath, null);
-        if(exception.getCause() == null) {
-          exception.initCause(e);
-        }
-        throw exception;
+        throw projectResolverChain.getUserFriendlyError(buildEnvironment, e, projectPath, null);
       }
     };
     if (effectiveSettings.getDistributionType() == DistributionType.WRAPPED) {
