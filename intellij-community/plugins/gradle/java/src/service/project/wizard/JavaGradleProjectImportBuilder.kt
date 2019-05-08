@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.packaging.artifacts.ModifiableArtifactModel
+import com.intellij.projectImport.DeprecatedProjectBuilderForImport
 import com.intellij.projectImport.ProjectImportBuilder
 import icons.GradleIcons
 import org.jetbrains.plugins.gradle.service.project.open.attachGradleProjectAndRefresh
@@ -19,7 +20,7 @@ import org.jetbrains.plugins.gradle.util.GradleBundle
 import javax.swing.Icon
 
 
-class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>() {
+class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedProjectBuilderForImport {
 
   override fun getName(): String = GradleBundle.message("gradle.name")
 
