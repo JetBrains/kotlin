@@ -48,7 +48,7 @@ public class DaemonTooltipUtil {
                                       @NotNull Editor editor,
                                       final int defaultOffset,
                                       final int currentWidth) {
-    showInfoTooltip(info, editor, defaultOffset, currentWidth, false);
+    showInfoTooltip(info, editor, defaultOffset, currentWidth, false, false);
   }
   
 
@@ -56,7 +56,8 @@ public class DaemonTooltipUtil {
                               @NotNull Editor editor,
                               final int defaultOffset,
                               final int currentWidth,
-                              final boolean requestFocus) {
+                              final boolean requestFocus,
+                              final boolean showImmediately) {
     String text = info.getToolTip();
     if (text == null) return;
     Rectangle visibleArea = editor.getScrollingModel().getVisibleArea();
@@ -85,8 +86,8 @@ public class DaemonTooltipUtil {
       .setAwtTooltip(true)
       .setHighlighterType(true)
       .setRequestFocus(requestFocus)
-      .setCalloutShift(editor.getLineHeight() / 2 - 1);
-
+      .setCalloutShift(editor.getLineHeight() / 2 - 1)
+      .setShowImmediately(showImmediately);
 
     TooltipAction action = TooltipActionProvider.calcTooltipAction(info, editor);
     ErrorStripTooltipRendererProvider provider = ((EditorMarkupModel)editor.getMarkupModel()).getErrorStripTooltipRendererProvider();
