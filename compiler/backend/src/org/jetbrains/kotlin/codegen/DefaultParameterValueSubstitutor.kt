@@ -244,8 +244,10 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         val methodEnd = Label()
         mv.visitLabel(methodEnd)
 
+        val thisType = functionDescriptor.dispatchReceiverParameter?.type?.asmType(typeMapper)
+
         FunctionCodegen.generateLocalVariablesForParameters(
-            mv, signature, functionDescriptor, null, methodBegin, methodEnd, remainingParameters, isStatic, state
+            mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, remainingParameters, isStatic, state
         )
 
         FunctionCodegen.endVisit(mv, null, methodElement)
