@@ -30,6 +30,11 @@ public class GotoNextErrorAction extends BaseCodeInsightAction implements DumbAw
     super(false);
   }
 
+  @Override
+  protected boolean isValidForLookup() {
+    return true;
+  }
+
   @NotNull
   @Override
   protected CodeInsightActionHandler getHandler() {
