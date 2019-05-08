@@ -437,7 +437,8 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
       ScopeDescriptor selection = getSelectedScope();
       step.setDefaultOptionIndex(ContainerUtil.indexOf(items, o ->
         Comparing.equal(o.getDisplayName(), selection.getDisplayName())));
-      ListPopupImpl popup = new ListPopupImpl(step, 10);
+      ListPopupImpl popup = new ListPopupImpl(e.getProject(), step);
+      popup.setMaxRowCount(10);
       //noinspection unchecked
       popup.getList().setCellRenderer(renderer);
       popup.showUnderneathOf(button);

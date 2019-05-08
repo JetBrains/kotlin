@@ -70,7 +70,7 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
     myDefaultExecutor = defaultExecutor;
     myAlternativeExecutor = alternativeExecutor;
 
-    myPopup = new RunListPopup(new ConfigurationListPopupStep(this, myProject, this, myDefaultExecutor.getActionName()));
+    myPopup = new RunListPopup(project, null, new ConfigurationListPopupStep(this, myProject, this, myDefaultExecutor.getActionName()), null);
   }
 
   public void show() {
@@ -768,9 +768,15 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
   }
 
   private class RunListPopup extends ListPopupImpl {
-    RunListPopup(ListPopupStep step) {
-      super(step);
+
+    RunListPopup(Project project, WizardPopup aParent, ListPopupStep aStep, Object parentValue) {
+      super(project, aParent, aStep, parentValue);
       registerActions(this);
+    }
+
+    @Override
+    protected WizardPopup createPopup(WizardPopup parent, PopupStep step, Object parentValue) {
+      return new RunListPopup(getProject(), parent, (ListPopupStep)step, parentValue);
     }
 
     @Override
@@ -787,16 +793,6 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
         }
       }
       return false;
-    }
-
-    protected RunListPopup(WizardPopup aParent, ListPopupStep aStep, Object parentValue) {
-      super(aParent, aStep, parentValue);
-      registerActions(this);
-    }
-
-    @Override
-    protected WizardPopup createPopup(WizardPopup parent, PopupStep step, Object parentValue) {
-      return new RunListPopup(parent, (ListPopupStep)step, parentValue);
     }
 
     @Override
