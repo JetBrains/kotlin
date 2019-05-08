@@ -81,6 +81,8 @@ public abstract class AbstractImportFromExternalSystemControl<
     myExternalSystemId = externalSystemId;
     mySystemSettings = systemSettings;
     myProjectSettings = projectSettings;
+    myProjectSettings.setupNewProjectDefault();
+
     myProjectSettingsControl = createProjectSettingsControl(projectSettings);
     mySystemSettingsControl = createSystemSettingsControl(systemSettings);
     myShowProjectFormatPanel = showProjectFormatPanel;
