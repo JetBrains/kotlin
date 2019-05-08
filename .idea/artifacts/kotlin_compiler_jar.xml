@@ -8,7 +8,7 @@
         </element>
         <element id="file-copy" path="$PROJECT_DIR$/prepare/compiler/build/tmp/packCompiler/MANIFEST.MF" />
       </element>
-      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.40-dev-2251/27e044e9fe780181a3c27ba4c78496a4ede00ba8/builtins-1.3.40-dev-2251.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.50-dev-2/777cc2967c51bb51f83436cd2439a21611220c81/builtins-1.3.50-dev-2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/ideaIC/191.6707.61/artifacts/lib/asm-all-7.0.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/ideaIC/191.6707.61/artifacts/lib/guava-25.1-jre.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/intellij-core/191.6707.61/artifacts/intellij-core.jar" path-in-jar="/" />
