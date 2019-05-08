@@ -11,10 +11,7 @@ import com.intellij.codeInsight.template.impl.LiveTemplateLookupElement;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -54,27 +51,8 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
 
   private String myLastLookupPrefix;
 
-  /**
-   * If false, the lookup arranger will generate enough items to fill the visible area of the list and fill the rest with "Loading..."
-   * items. If true, it will produce up to {@link #myLimit} items and truncate the list afterwards.
-   */
-  private boolean myConsiderAllItemsVisible = ApplicationManager.getApplication().isUnitTestMode();
-
   public CompletionLookupArrangerImpl(CompletionProcessEx process) {
     myProcess = process;
-  }
-
-  public CompletionLookupArrangerImpl(CompletionParameters parameters) {
-    myProcess = (CompletionProcessEx) parameters.getProcess();
-  }
-
-  public CompletionLookupArrangerImpl withAllItemsVisible() {
-    myConsiderAllItemsVisible = true;
-    return this;
-  }
-
-  public void setConsiderAllItemsVisible() {
-    myConsiderAllItemsVisible = true;
   }
 
   private MultiMap<CompletionSorterImpl, LookupElement> groupItemsBySorter(Iterable<LookupElement> source) {
@@ -319,16 +297,7 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
     int toSelect = getItemToSelect(lookup, listModel, onExplicitAction, relevantSelection);
     LOG.assertTrue(toSelect >= 0);
 
-    addDummyItems(items.size() - listModel.size(), listModel);
-
     return new Pair<>(listModel, toSelect);
-  }
-
-  private static void addDummyItems(int count, List<? super LookupElement> listModel) {
-    EmptyLookupItem dummy = new EmptyLookupItem("loading...", true);
-    for (int i = count; i > 0; i--) {
-      listModel.add(dummy);
-    }
   }
 
   private List<LookupElement> fillModelByRelevance(LookupElementListPresenter lookup,
@@ -350,14 +319,9 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
 
     ensureItemAdded(items, model, byRelevance, lookup.getCurrentItem());
     ensureItemAdded(items, model, byRelevance, relevantSelection);
-    ensureEverythingVisibleAdded(lookup, model, byRelevance);
+    ContainerUtil.addAll(model, byRelevance);
 
     return new ArrayList<>(model);
-  }
-
-  private void ensureEverythingVisibleAdded(LookupElementListPresenter lookup, final LinkedHashSet<LookupElement> model, Iterator<LookupElement> byRelevance) {
-    final int limit = Math.max(lookup.getLastVisibleIndex(), model.size()) + ourUISettings.getMaxLookupListHeight() * 3;
-    addSomeItems(model, byRelevance, lastAdded -> !myConsiderAllItemsVisible && model.size() >= limit);
   }
 
   private static void ensureItemAdded(Set<LookupElement> items,

@@ -121,15 +121,6 @@ class LookupUi {
         }
       }
     });
-
-    final Alarm alarm = new Alarm(myLookup);
-    myScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-      @Override
-      public void adjustmentValueChanged(AdjustmentEvent e) {
-        if (myLookup.myUpdating || myLookup.isLookupDisposed()) return;
-        alarm.addRequest(() -> myLookup.refreshUi(false, false), 300, myModalityState);
-      }
-    });
   }
 
   private void updateScrollbarVisibility() {
