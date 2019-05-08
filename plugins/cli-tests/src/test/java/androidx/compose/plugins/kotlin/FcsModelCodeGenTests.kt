@@ -201,7 +201,9 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
               }
             }
 
-            val president = FrameManager.unframed { FcsPersonC("$PRESIDENT_NAME_1", $PRESIDENT_AGE_1) }
+            val president = FrameManager.unframed { FcsPersonC("${
+                PRESIDENT_NAME_1
+            }", $PRESIDENT_AGE_1) }
             """, { mapOf("name" to name, "age" to age) }, """
                president.name = name
                president.age = age
@@ -243,7 +245,9 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
               }
             }
 
-            val president = FrameManager.framed { FcsPersonD("$PRESIDENT_NAME_1", $PRESIDENT_AGE_1).apply { age = $PRESIDENT_AGE_1 } }
+            val president = FrameManager.framed { FcsPersonD("$PRESIDENT_NAME_1", ${
+                PRESIDENT_AGE_1
+            }).apply { age = $PRESIDENT_AGE_1 } }
             """, { mapOf("name" to name, "age" to age) }, """
                president.name = name
                president.age = age
@@ -314,7 +318,7 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
             for (outFile in allClassFiles) {
                 val bytes = outFile.asByteArray()
                 val loadedClass = loadClass(
-                    this.javaClass.classLoader,
+                    this.javaClass.classLoader!!,
                     null,
                     bytes
                 )

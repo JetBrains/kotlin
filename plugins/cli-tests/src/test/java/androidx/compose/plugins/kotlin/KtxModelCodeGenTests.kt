@@ -254,7 +254,9 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
               </Observe>
             }
 
-            val president = FrameManager.framed { PersonD("$PRESIDENT_NAME_1", $PRESIDENT_AGE_1).apply { age = $PRESIDENT_AGE_1 } }
+            val president = FrameManager.framed { PersonD("$PRESIDENT_NAME_1", ${
+                PRESIDENT_AGE_1
+            }).apply { age = $PRESIDENT_AGE_1 } }
             """, { mapOf("name" to name, "age" to age) }, """
                president.name = name
                president.age = age
@@ -325,7 +327,7 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
             for (outFile in allClassFiles) {
                 val bytes = outFile.asByteArray()
                 val loadedClass = loadClass(
-                    this.javaClass.classLoader,
+                    this.javaClass.classLoader!!,
                     null,
                     bytes
                 )
