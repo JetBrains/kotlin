@@ -173,8 +173,6 @@ class MetadataSmokeTest {
         assertEquals("kotlin/coroutines/CoroutineContext\$Key", coroutineContextKey.jvmInternalName)
     }
 
-    /*
-    // TODO: uncomment after bootstrap compiler has a fix for KT-29790
     @Test
     fun lambdaVersionRequirement() {
         val x: suspend Int.(String, String) -> Unit = { _, _ -> }
@@ -199,5 +197,4 @@ class MetadataSmokeTest {
                 }
         })
     }
-    */
 }
