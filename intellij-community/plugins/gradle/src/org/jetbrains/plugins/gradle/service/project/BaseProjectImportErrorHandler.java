@@ -96,6 +96,15 @@ public class BaseProjectImportErrorHandler extends AbstractProjectImportErrorHan
       location = String.format("Build file: '%1$s'", buildFilePath);
     }
 
+    GradleIssueData issueData = new GradleIssueData(buildEnvironment, projectPath, buildFilePath, error, rootCause, location);
+    List<BuildIssueChecker<GradleIssueData>> knownIssuesCheckList = Arrays.asList(new IncompatibleGradleJdkIssueChecker());
+    for (BuildIssueChecker<GradleIssueData> checker : knownIssuesCheckList) {
+      BuildIssue buildIssue = checker.check(issueData);
+      if (buildIssue != null) {
+        return new BuildIssueException(buildIssue);
+      }
+    }
+
     if (rootCause instanceof UnsupportedVersionException) {
       String msg = "You are using unsupported version of Gradle.";
       msg += ('\n' + FIX_GRADLE_VERSION);
