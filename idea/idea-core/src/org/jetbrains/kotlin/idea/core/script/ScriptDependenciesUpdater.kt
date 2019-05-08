@@ -110,12 +110,7 @@ class ScriptDependenciesUpdater(
             }
 
             private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
-                if (file.fileType != KotlinFileType.INSTANCE || !file.isValid) return
-                val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
-
-                if (ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true) return
-
-                if (!ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) return
+                if (!shouldStartUpdate(file)) return
 
                 updateDependencies(file)
                 makeRootsChangeIfNeeded()
@@ -124,9 +119,6 @@ class ScriptDependenciesUpdater(
 
         EditorFactory.getInstance().eventMulticaster.addDocumentListener(object : DocumentListener {
             override fun documentChanged(event: DocumentEvent) {
-                if (project.isDisposed) return
-
-                if (ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true) return
 
                 val document = event.document
                 val file = FileDocumentManager.getInstance().getFile(document)?.takeIf { it.isInLocalFileSystem } ?: return
@@ -135,14 +127,12 @@ class ScriptDependenciesUpdater(
                     return
                 }
 
+                if (!shouldStartUpdate(file)) return
+
                 // only update dependencies for scripts that were touched recently
                 if (cache[file] == null) {
                     return
                 }
-
-                val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
-
-                if (!ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) return
 
                 scriptsQueue.cancelAllRequests()
 
@@ -157,6 +147,22 @@ class ScriptDependenciesUpdater(
                 )
             }
         }, project.messageBus.connect())
+    }
+
+    private fun shouldStartUpdate(file: VirtualFile): Boolean {
+        if (project.isDisposed || !file.isValid || file.fileType != KotlinFileType.INSTANCE) {
+            return false
+        }
+
+        if (
+            ApplicationManager.getApplication().isUnitTestMode &&
+            ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true
+        ) {
+            return false
+        }
+
+        val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return false
+        return ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)
     }
 
     private fun areDependenciesCached(file: VirtualFile): Boolean {
