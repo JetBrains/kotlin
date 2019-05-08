@@ -2748,6 +2748,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesAnnotationWithPlatformTypes.kt");
             }
 
+            @TestMetadata("propagationOfNoInferAnnotation.kt")
+            public void testPropagationOfNoInferAnnotation() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/propagationOfNoInferAnnotation.kt");
+            }
+
             @TestMetadata("resolveWithOnlyInputTypesAnnotation.kt")
             public void testResolveWithOnlyInputTypesAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/resolveWithOnlyInputTypesAnnotation.kt");
