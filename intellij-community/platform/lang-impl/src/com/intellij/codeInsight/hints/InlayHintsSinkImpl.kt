@@ -105,7 +105,7 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
       if (inlayKey != key) continue
       val offset = inlay.offset
       val newHint = hints[offset]
-      if (newHint == null || newHint is InlineElement == isInline) {
+      if (newHint == null && newHint is InlineElement != isInline) {
         Disposer.dispose(inlay)
       }
       else {
