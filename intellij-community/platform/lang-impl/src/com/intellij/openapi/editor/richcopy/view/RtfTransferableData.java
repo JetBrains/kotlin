@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.editor.richcopy.view;
 
 import com.intellij.ide.MacOSApplicationProvider;
@@ -15,15 +15,15 @@ import java.awt.datatransfer.DataFlavor;
 
 public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransferableData {
   public static final int PRIORITY = 100;
-  @NotNull public static final DataFlavor FLAVOR = new DataFlavor("text/rtf;class=java.io.InputStream", "RTF text");
+  public static final DataFlavor FLAVOR = new DataFlavor("text/rtf;class=java.io.InputStream", "RTF text");
 
-  @NotNull private static final String HEADER_PREFIX = "{\\rtf1\\ansi\\deff0";
-  @NotNull private static final String HEADER_SUFFIX = "}";
-  @NotNull private static final String TAB           = "\\tab\n";
+  private static final String HEADER_PREFIX = "{\\rtf1\\ansi\\deff0";
+  private static final String HEADER_SUFFIX = "}";
+  private static final String TAB           = "\\tab\n";
   // using undocumented way to denote line break on Mac (used e.g. by TextEdit) to resolve IDEA-165337
-  @NotNull private static final String NEW_LINE      = SystemInfo.isMac ? "\\\n" : "\\line\n";
-  @NotNull private static final String BOLD          = "\\b";
-  @NotNull private static final String ITALIC        = "\\i";
+  private static final String NEW_LINE      = SystemInfo.isMac ? "\\\n" : "\\line\n";
+  private static final String BOLD          = "\\b";
+  private static final String ITALIC        = "\\i";
 
   public RtfTransferableData(@NotNull SyntaxInfo syntaxInfo) {
     super(syntaxInfo, FLAVOR);
@@ -65,7 +65,7 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
   
   private static int[] getAdjustedColorComponents(Color color) {
     if (SystemInfo.isMac) {
-      // on Mac OS color components are expected in Apple's 'Generic RGB' color space
+      // on macOS color components are expected in Apple's 'Generic RGB' color space
       ColorSpace genericRgbSpace = MacOSApplicationProvider.getInstance().getGenericRgbColorSpace();
       if (genericRgbSpace != null) {
         float[] components = genericRgbSpace.fromRGB(color.getRGBColorComponents(null));
@@ -76,7 +76,7 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
         };
       }
     }
-    return new int[] {color.getRed(), color.getGreen(), color.getBlue()};
+    return new int[]{color.getRed(), color.getGreen(), color.getBlue()};
   }
   
   private static int colorComponentFloatToInt(float component) {
@@ -99,11 +99,9 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
   }
 
   private static class MyVisitor implements MarkupHandler {
-
     @NotNull private final StringBuilder myBuffer;
     @NotNull private final String        myRawText;
     private final int myMaxLength;
-
     private final int myDefaultBackgroundId;
     private final float myFontSize;
     private int myForegroundId = -1;
@@ -120,7 +118,7 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
     }
 
     @Override
-    public void handleText(int startOffset, int endOffset) throws Exception {
+    public void handleText(int startOffset, int endOffset) {
       myBuffer.append("\n");
       for (int i = startOffset; i < endOffset; i++) {
         char c = myRawText.charAt(i);
@@ -147,7 +145,7 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
     }
 
     @Override
-    public void handleBackground(int backgroundId) throws Exception {
+    public void handleBackground(int backgroundId) {
       if (backgroundId == myDefaultBackgroundId) {
         myBuffer.append("\\plain"); // we cannot use \chcbpat with default background id, as it doesn't work in MS Word,
                                     // and we cannot use \chcbpat0 as it doesn't work in OpenOffice
@@ -171,19 +169,19 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
     }
 
     @Override
-    public void handleForeground(int foregroundId) throws Exception {
+    public void handleForeground(int foregroundId) {
       myBuffer.append("\\cf").append(foregroundId).append('\n');
       myForegroundId = foregroundId;
     }
 
     @Override
-    public void handleFont(int fontNameId) throws Exception {
+    public void handleFont(int fontNameId) {
       myBuffer.append("\\f").append(fontNameId).append('\n');
       myFontNameId = fontNameId;
     }
 
     @Override
-    public void handleStyle(int style) throws Exception {
+    public void handleStyle(int style) {
       myBuffer.append(ITALIC);
       if ((style & Font.ITALIC) == 0) {
         myBuffer.append('0');
