@@ -15,3 +15,4 @@ dependencies {
 defaultSourceSets()
 
 enableTasksIfAtLeast(appcodeVersion, 191)
+enableTasksIfOsIsNot("Windows")

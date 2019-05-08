@@ -50,3 +50,4 @@ val appcodeUpdatePluginsXml: Task by cidrUpdatePluginsXml(
 )
 
 enableTasksIfAtLeast(appcodeVersion, 191)
+enableTasksIfOsIsNot("Windows")

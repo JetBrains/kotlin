@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ultimate
 
 import org.gradle.api.Project
+import java.util.*
 
 fun Project.enableTasksIfAtLeast(productVersion: String, expectedProductBranch: Int) {
     val productBranch = productVersion.substringBefore('.').toIntOrNull()
@@ -17,9 +18,30 @@ fun Project.enableTasksIfAtLeast(productVersion: String, expectedProductBranch: 
     if (productBranch >= expectedProductBranch)
         return // OK, nothing to disable
 
-    // otherwise: disable anything but "clean" and tasks from "help" group
-    tasks.filter { it.name != "clean" && it.group != "help" }.forEach { task ->
-        task.enabled = false
-        logger.kotlinInfo { "Task ${task.path} has been disabled due to condition mismatch: $productVersion is NOT at least $expectedProductBranch" }
+    // otherwise: disable build tasks
+    disableBuildTasks { "$productVersion is NOT at least $expectedProductBranch" }
+}
+
+fun Project.enableTasksIfOsIsNot(vararg osNames: String) {
+    osNames.forEach { osName ->
+        if (osName.isBlank() || osName.trim() != osName)
+            error("Invalid OS name: $osName")
+    }
+
+    if (osNames.any { it.toLowerCase(Locale.US) in hostOsName }) {
+        disableBuildTasks { "\"$hostOsName\" is NOT one of ${osNames.joinToString { "\"$it\"" }}" }
+    }
+}
+
+// disable anything but "clean" and tasks from "help" group
+// log the appropriate message
+private fun Project.disableBuildTasks(message: () -> String) {
+    val tasksToDisable = tasks.filter {
+        it.enabled && it.name != "clean" && it.group != "help"
+    }
+
+    if (tasksToDisable.isNotEmpty()) {
+        tasksToDisable.forEach { it.enabled = false }
+        logger.warn("Build tasks in $project have been disabled due to condition mismatch: ${message()}: ${tasksToDisable.joinToString { it.name }}")
     }
 }

@@ -136,7 +136,7 @@ private val Project.kotlinBuildNumberByIdeaPlugin
 
 // inspired by com.intellij.openapi.util.SystemInfoRt
 private val mppPlatform: String
-    get() = with(System.getProperty("os.name")!!.toLowerCase(Locale.US)) {
+    get() = with(hostOsName) {
         when {
             startsWith("windows") -> "mingwX64"
             startsWith("mac") -> "macosX64"

@@ -18,6 +18,7 @@ import org.gradle.api.tasks.AbstractCopyTask
 import org.w3c.dom.Attr
 import org.w3c.dom.Element
 import java.io.File
+import java.util.*
 import java.util.regex.Pattern
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -102,3 +103,6 @@ internal var DirectoryProperty.value: File
 internal fun Logger.kotlinInfo(message: () -> String) {
     if (isInfoEnabled) { info("[KOTLIN] ${message()}") }
 }
+
+internal val hostOsName: String
+    get() = System.getProperty("os.name")!!.toLowerCase(Locale.US)
