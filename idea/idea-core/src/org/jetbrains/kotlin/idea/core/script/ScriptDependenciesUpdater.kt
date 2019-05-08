@@ -118,6 +118,7 @@ class ScriptDependenciesUpdater(
                 if (!ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) return
 
                 updateDependencies(file)
+                makeRootsChangeIfNeeded()
             }
         })
 
@@ -149,6 +150,7 @@ class ScriptDependenciesUpdater(
                     {
                         FileDocumentManager.getInstance().saveDocument(document)
                         updateDependencies(file)
+                        makeRootsChangeIfNeeded()
                     },
                     scriptChangesListenerDelay,
                     true
