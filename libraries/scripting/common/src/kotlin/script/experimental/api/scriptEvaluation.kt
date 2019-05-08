@@ -9,6 +9,7 @@ package kotlin.script.experimental.api
 
 import java.io.Serializable
 import kotlin.reflect.KClass
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptEvaluationConfigurationKeys
@@ -66,6 +67,11 @@ val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCo
  * This allows to have a single instance of the script if it is imported several times via different import paths.
  */
 val ScriptEvaluationConfigurationKeys.scriptsInstancesSharing by PropertiesCollection.key<Boolean>(false)
+
+/**
+ * Scripting host configuration
+ */
+val ScriptEvaluationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>()
 
 /**
  * The callback that will be called on the script compilation immediately before starting the compilation
