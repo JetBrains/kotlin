@@ -73,9 +73,10 @@ fun generateKLib(
     configuration: CompilerConfiguration,
     immediateDependencies: List<KlibModuleRef>,
     allDependencies: List<KlibModuleRef>,
+    friendDependencies: List<KlibModuleRef>,
     outputKlibPath: String
 ): KlibModuleRef {
-    val depsDescriptors = ModulesStructure(project, files, configuration, immediateDependencies, allDependencies)
+    val depsDescriptors = ModulesStructure(project, files, configuration, immediateDependencies, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -108,9 +109,10 @@ fun loadIr(
     files: List<KtFile>,
     configuration: CompilerConfiguration,
     immediateDependencies: List<KlibModuleRef>,
-    allDependencies: List<KlibModuleRef>
+    allDependencies: List<KlibModuleRef>,
+    friendDependencies: List<KlibModuleRef>
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, files, configuration, immediateDependencies, allDependencies)
+    val depsDescriptors = ModulesStructure(project, files, configuration, immediateDependencies, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -197,7 +199,8 @@ private class ModulesStructure(
     private val files: List<KtFile>,
     val compilerConfiguration: CompilerConfiguration,
     immediateDependencies: List<KlibModuleRef>,
-    private val allDependencies: List<KlibModuleRef>
+    private val allDependencies: List<KlibModuleRef>,
+    private val friendDependencies: List<KlibModuleRef>
 ) {
     private val deserializedModuleParts: Map<KlibModuleRef, JsKlibMetadataParts> =
         allDependencies.associateWith { loadKlibMetadataParts(it) }
@@ -223,7 +226,7 @@ private class ModulesStructure(
                 project,
                 compilerConfiguration,
                 sortedImmediateDependencies.map { getModuleDescriptor(it) },
-                friendModuleDescriptors = emptyList(),
+                friendModuleDescriptors = friendDependencies.map { getModuleDescriptor(it) },
                 thisIsBuiltInsModule = builtInModuleDescriptor == null,
                 customBuiltInsModule = builtInModuleDescriptor
             )

@@ -97,6 +97,7 @@ abstract class BasicIrBoxTest(
                 phaseConfig = config.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jsPhases),
                 immediateDependencies = dependencies,
                 allDependencies = allDependencies,
+                friendDependencies = emptyList(),
                 mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null }
             )
 
@@ -110,6 +111,7 @@ abstract class BasicIrBoxTest(
                 configuration = config.configuration,
                 immediateDependencies = dependencies,
                 allDependencies = allDependencies,
+                friendDependencies = emptyList(),
                 outputKlibPath = actualOutputFile
             )
 

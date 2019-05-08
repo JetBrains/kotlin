@@ -145,7 +145,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         )
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
-        val libraries = configureLibraries(arguments.libraries)
+        val libraries: List<String> = configureLibraries(arguments.libraries)
+        val friendLibraries: List<String> = configureLibraries(arguments.friendModules)
 
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
         configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, libraries)
@@ -201,8 +202,20 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val dependencies = libraries.flatMap { listOfNotNull(loadIrLibrary(it, messageCollector)) }
-            .distinctBy { it.moduleName }
+        val loadedLibrariesNames = mutableSetOf<String>()
+        val dependencies = mutableListOf<KlibModuleRef>()
+        val friendDependencies = mutableListOf<KlibModuleRef>()
+
+        for (library in libraries) {
+            val irLib = loadIrLibrary(library, messageCollector) ?: continue
+            if (irLib.moduleName !in loadedLibrariesNames) {
+                dependencies.add(irLib)
+                loadedLibrariesNames.add(irLib.moduleName)
+                if (library in friendLibraries) {
+                    friendDependencies.add(irLib)
+                }
+            }
+        }
 
         val produceKind = produceMap[arguments.irProduceOnly]
         if (produceKind == null) {
@@ -216,6 +229,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 configuration,
                 immediateDependencies = dependencies,
                 allDependencies = dependencies,
+                friendDependencies = friendDependencies,
                 mainArguments = mainCallArguments
             )
 
@@ -230,6 +244,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 configuration = config.configuration,
                 immediateDependencies = dependencies,
                 allDependencies = dependencies,
+                friendDependencies = friendDependencies,
                 outputKlibPath = outputKlibPath
             )
         }
@@ -274,7 +289,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val friendPaths = friendModules
                 .split(File.pathSeparator.toRegex())
                 .dropLastWhile { it.isEmpty() }
-                .toTypedArray()
                 .filterNot { it.isEmpty() }
 
             configuration.put(JSConfigurationKeys.FRIEND_PATHS, friendPaths)

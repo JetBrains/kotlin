@@ -558,8 +558,16 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         get() = friendTaskName
             ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }
             ?.outputFile?.parentFile
-            ?.let { if (LibraryUtils.isKotlinJavascriptLibrary(it)) it else null }
+            ?.let { if (libraryFilter(it)) it else null }
             ?.absolutePath
+
+    private val libraryFilter: (File) -> Boolean
+        get() = if ("-Xir" in kotlinOptions.freeCompilerArgs) {
+            // TODO: Detect IR libraries
+            { true }
+        } else {
+            LibraryUtils::isKotlinJavascriptLibrary
+        }
 
     override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.KotlinOnly
@@ -567,16 +575,9 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
 
-        val libraryFilter: (File) -> Boolean
-
         if ("-Xir" in args.freeArgs) {
             logger.kotlinDebug("Using JS IR backend")
             incremental = false
-
-            // TODO: Detect IR libraries
-            libraryFilter = { true }
-        } else {
-            libraryFilter = LibraryUtils::isKotlinJavascriptLibrary
         }
 
         val dependencies = compileClasspath

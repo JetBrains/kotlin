@@ -22,10 +22,11 @@ fun compile(
     phaseConfig: PhaseConfig = PhaseConfig(jsPhases),
     immediateDependencies: List<KlibModuleRef>,
     allDependencies: List<KlibModuleRef>,
+    friendDependencies: List<KlibModuleRef>,
     mainArguments: List<String>?
 ): String {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, files, configuration, immediateDependencies, allDependencies)
+        loadIr(project, files, configuration, immediateDependencies, allDependencies, friendDependencies)
 
     val moduleDescriptor = moduleFragment.descriptor
 

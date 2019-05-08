@@ -73,6 +73,7 @@ fun buildKLib(
         configuration = buildConfiguration(environment, moduleName),
         immediateDependencies = dependencies,
         allDependencies = dependencies,
+        friendDependencies = emptyList(),
         outputKlibPath = outputPath
     )
 }
