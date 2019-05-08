@@ -3384,7 +3384,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantEmptyClassInitializerInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantEmptyInitializerBlockInspection"
                      displayName="Redundant empty class initializer"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"

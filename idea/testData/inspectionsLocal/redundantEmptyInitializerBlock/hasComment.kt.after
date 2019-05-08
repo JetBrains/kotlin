@@ -1,0 +1,10 @@
+class Test {
+    // init comment1
+    // init comment2
+    // init comment3
+
+    // init comment4
+
+    fun foo() {
+    }
+}
