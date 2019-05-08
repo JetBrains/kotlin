@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.hints.presentation
 
-import com.intellij.codeInsight.hints.fireContentChanged
+import com.intellij.codeInsight.hints.dimension
 import com.intellij.openapi.editor.markup.TextAttributes
 import java.awt.Dimension
 import java.awt.Graphics2D
@@ -9,60 +9,26 @@ import java.awt.Point
 import java.awt.Rectangle
 import java.awt.event.MouseEvent
 
-/**
- * Allows to chain presentations into sequence. All presentations are aligned to upper border.
- */
-class SequencePresentation(private var presentations: List<InlayPresentation>) : BasePresentation() {
-  override fun updateState(previousPresentation: InlayPresentation) : Boolean {
-    if (previousPresentation !is SequencePresentation) return true
-    if (previousPresentation.presentations.size != presentations.size) return true
-    val previousPresentations = previousPresentation.presentations
-    var changed = false
-    for ((index, presentation) in presentations.withIndex()) {
-      if (presentation.updateState(previousPresentations[index])) {
-        changed = true
-      }
+class SequencePresentation(val presentations: List<InlayPresentation>) : BasePresentation() {
+  init {
+    if (presentations.isEmpty()) throw IllegalArgumentException()
+    for (presentation in presentations) {
+      presentation.addListener(InternalListener(presentation))
     }
-    return changed
   }
 
-  init {
-    assert(presentations.isNotEmpty())
-    for (presentation in presentations) {
-      presentation.addListener(object: PresentationListener {
-        override fun contentChanged(area: Rectangle) {
-          // TODO incorrect area!!!
-          this@SequencePresentation.fireContentChanged(area)
-        }
+  fun calcDimensions() {
+    width = presentations.sumBy { it.width }
+    height = presentations.maxBy { it.height }!!.height
+  }
 
-        override fun sizeChanged(previous: Dimension, current: Dimension) {
-          startOffsets = calculateOffsets()
-          // TODO incorrect area!!!
-          this@SequencePresentation.fireSizeChanged(previous, current)
-        }
-      })
-    }
+  override var width: Int = 0
+  override var height: Int = 0
+  init {
+    calcDimensions()
   }
 
   private var presentationUnderCursor: InlayPresentation? = null
-
-  var startOffsets: IntArray = calculateOffsets()
-
-  private fun calculateOffsets(): IntArray {
-    var currentOffset = 0
-    return IntArray(presentations.size) { index ->
-      val oldOffset = currentOffset
-      val width = presentations[index].width
-      currentOffset = oldOffset + width
-      oldOffset
-    }
-  }
-
-//  TODO cache?
-  override val width: Int
-    get() = presentations.sumBy { it.width }
-  override val height: Int
-    get() = presentations.maxBy { it.height }!!.height
 
   override fun paint(g: Graphics2D, attributes: TextAttributes) {
     var xOffset = 0
@@ -77,36 +43,29 @@ class SequencePresentation(private var presentations: List<InlayPresentation>) :
     }
   }
 
-  /**
-   * Note: height is not considered
-   */
+  private fun handleMouse(e: MouseEvent, action: (InlayPresentation) -> Unit) {
+    val x = e.x
+    val y = e.y
+    if (x < 0 || x >= width || y < 0 || y >= height) return
+    var xOffset = 0
+    for (presentation in presentations) {
+      val presentationWidth = presentation.width
+      if (x < xOffset + presentationWidth) {
+        e.withTranslated(-xOffset, 0) {
+          action(presentation)
+        }
+        return
+      }
+      xOffset += presentationWidth
+    }
+  }
+
   override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
     handleMouse(e) {
       it.mouseClicked(e, editorPoint)
     }
   }
-  // TODO make search simpler - consider little amount of presentations is the common case.
-  private fun handleMouse(e: MouseEvent, action: (InlayPresentation) -> Unit) {
-    val x = e.x
-    val y = e.y
-    if (x < 0 || x >= width || y < 0 || y > height) return
-    val index = startOffsets.binarySearch(x)
-    val finalIndex = if (index >= 0) {
-      index
-    } else {
-      -index - 2
-    }
-    if (finalIndex < 0 || index >= presentations.size) return
-    val presentation = presentations[finalIndex]
-    val offset = startOffsets[finalIndex]
-    e.withTranslated(-offset, 0) {
-      action(presentation)
-    }
-  }
 
-  /**
-   * Note: height is not considered
-   */
   override fun mouseMoved(e: MouseEvent) {
     handleMouse(e) {
       if (it != presentationUnderCursor) {
@@ -125,5 +84,43 @@ class SequencePresentation(private var presentations: List<InlayPresentation>) :
     }
   }
 
+  override fun updateState(previousPresentation: InlayPresentation) : Boolean {
+    if (previousPresentation !is SequencePresentation) return true
+    if (previousPresentation.presentations.size != presentations.size) return true
+    val previousPresentations = previousPresentation.presentations
+    var changed = false
+    for ((index, presentation) in presentations.withIndex()) {
+      if (presentation.updateState(previousPresentations[index])) {
+        changed = true
+      }
+    }
+    return changed
+  }
+
   override fun toString(): String = presentations.joinToString(" ", "[", "]") { "$it" }
+
+  inner class InternalListener(private val currentPresentation: InlayPresentation) : PresentationListener {
+    override fun contentChanged(area: Rectangle) {
+      area.add(shiftOfCurrent(), 0)
+      this@SequencePresentation.fireContentChanged(area)
+    }
+
+    override fun sizeChanged(previous: Dimension, current: Dimension) {
+      val old = dimension()
+      calcDimensions()
+      val new = dimension()
+      this@SequencePresentation.fireSizeChanged(old, new)
+    }
+
+    private fun shiftOfCurrent(): Int {
+      var shift = 0
+      for (presentation in presentations) {
+        if (presentation === currentPresentation) {
+          return shift
+        }
+        shift += presentation.width
+      }
+      throw IllegalStateException()
+    }
+  }
 }
