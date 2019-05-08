@@ -88,23 +88,18 @@ class PresentationFactory(private val editor: EditorImpl) {
     else -> onHover(base, tooltipHandler(tooltip))
   }
 
+  // TODO needed some hotkey to open all of them
   fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
     return ChangeOnClickPresentation(changeOnHover(placeholder, onHover = {
-      AttributesTransformerPresentation(placeholder) {
+      attributes(placeholder) {
         it.with(attributesOf(EditorColors.FOLDED_TEXT_ATTRIBUTES))
       }
     }), onClick = unwrapAction)
   }
 
   fun asWrongReference(presentation: InlayPresentation): InlayPresentation {
-    return AttributesTransformerPresentation(presentation) {
+    return attributes(presentation) {
       it.with(attributesOf(CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES))
-    }
-  }
-
-  private fun withInlayAttributes(base: InlayPresentation): InlayPresentation {
-    return AttributesTransformerPresentation(base) {
-      it.withDefault(attributesOf(DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT))
     }
   }
 
@@ -142,12 +137,12 @@ class PresentationFactory(private val editor: EditorImpl) {
       onClickAction()
     }
     return changeOnHover(noHighlightReference, {
-      val attributesTransformerPresentation = AttributesTransformerPresentation(noHighlightReference) {
+      val withRefAttributes = attributes(noHighlightReference) {
         val attributes = attributesOf(EditorColors.REFERENCE_HYPERLINK_COLOR)
         attributes.effectType = null // With underlined looks weird
         it.with(attributes)
       }
-      onClick(attributesTransformerPresentation, EnumSet.of(MouseButton.Left, MouseButton.Middle)) { _, _ ->
+      onClick(withRefAttributes, EnumSet.of(MouseButton.Left, MouseButton.Middle)) { _, _ ->
         onClickAction()
       }
     }) { isControlDown(it) }
@@ -156,7 +151,6 @@ class PresentationFactory(private val editor: EditorImpl) {
   fun psiSingleReference(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {
     return reference(base) { navigateInternal(resolve) }
   }
-
 
   fun seq(vararg presentations: InlayPresentation): InlayPresentation {
     return when (presentations.size) {
@@ -168,6 +162,16 @@ class PresentationFactory(private val editor: EditorImpl) {
 
   fun rounding(arcWidth: Int, arcHeight: Int, presentation: InlayPresentation): InlayPresentation =
     RoundPresentation(presentation, arcWidth, arcHeight)
+
+  private fun attributes(base: InlayPresentation, transformer: (TextAttributes) -> TextAttributes) : AttributesTransformerPresentation {
+    return AttributesTransformerPresentation(base, transformer)
+  }
+
+  private fun withInlayAttributes(base: InlayPresentation): InlayPresentation {
+    return AttributesTransformerPresentation(base) {
+      it.withDefault(attributesOf(DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT))
+    }
+  }
 
   private fun isControlDown(e: MouseEvent): Boolean = (SystemInfo.isMac && e.isMetaDown) || e.isControlDown
 
