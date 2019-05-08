@@ -7,10 +7,17 @@ package org.jetbrains.kotlin.idea.core.script.dependencies
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 
 class SyncScriptDependenciesLoader internal constructor(project: Project) : ScriptDependenciesLoader(project) {
-    override fun loadDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition) {
+    override fun isApplicable(file: VirtualFile): Boolean {
+        val scriptDefinition = file.findScriptDefinition(project) ?: return false
+        return !ScriptDependenciesUpdater.getInstance(project).isAsyncDependencyResolver(scriptDefinition)
+    }
+
+    override fun loadDependencies(file: VirtualFile) {
+        val scriptDef = file.findScriptDefinition(project) ?: return
         val result = contentLoader.loadContentsAndResolveDependencies(scriptDef, file)
         processResult(result, file, scriptDef)
     }

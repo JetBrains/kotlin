@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.idea.core.script.dependencies
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.scriptDependencies
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDependenciesLoader(project) {
 
-    override fun loadDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition) {
+    override fun isApplicable(file: VirtualFile): Boolean {
+        return file.scriptDependencies != null
+    }
+
+    override fun loadDependencies(file: VirtualFile) {
         val deserializedDependencies = file.scriptDependencies ?: return
         saveToCache(deserializedDependencies, file)
     }

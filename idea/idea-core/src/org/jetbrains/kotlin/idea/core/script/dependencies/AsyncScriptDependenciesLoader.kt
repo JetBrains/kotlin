@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
@@ -30,7 +31,12 @@ class AsyncScriptDependenciesLoader internal constructor(project: Project) : Scr
     private var notifyRootChange: Boolean = false
     private var backgroundTasksQueue: LoaderBackgroundTask? = null
 
-    override fun loadDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition) {
+    override fun isApplicable(file: VirtualFile): Boolean {
+        val scriptDefinition = file.findScriptDefinition(project) ?: return false
+        return ScriptDependenciesUpdater.getInstance(project).isAsyncDependencyResolver(scriptDefinition)
+    }
+
+    override fun loadDependencies(file: VirtualFile) {
         lock.write {
             if (backgroundTasksQueue == null) {
                 backgroundTasksQueue = LoaderBackgroundTask()
