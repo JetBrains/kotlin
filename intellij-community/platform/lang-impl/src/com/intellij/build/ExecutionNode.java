@@ -28,6 +28,7 @@ import com.intellij.ui.treeStructure.CachingSimpleNode;
 import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -308,6 +309,12 @@ public class ExecutionNode extends CachingSimpleNode {
     else if (kind == MessageEvent.Kind.INFO) {
       myInfos.incrementAndGet();
     }
+  }
+
+  @Nullable
+  @ApiStatus.Experimental
+  ExecutionNode findFirstChild(@NotNull Predicate<ExecutionNode> filter) {
+    return myChildrenList.stream().filter(filter).findFirst().orElse(null);
   }
 
   private String getCurrentHint() {

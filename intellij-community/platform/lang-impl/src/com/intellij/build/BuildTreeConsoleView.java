@@ -99,6 +99,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private final Project myProject;
   private final ConsoleViewHandler myConsoleViewHandler;
   private final String myWorkingDir;
+  private final AtomicBoolean myFinishedBuildEventReceived = new AtomicBoolean();
   private final AtomicBoolean myDisposed = new AtomicBoolean();
   private final AtomicBoolean myShownFirstError = new AtomicBoolean();
   private final StructureTreeModel<SimpleTreeStructure> myTreeModel;
@@ -107,6 +108,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private final ExecutionNode myBuildProgressRootNode;
   private final Set<Predicate<ExecutionNode>> myNodeFilters;
   private final ProblemOccurrenceNavigatorSupport myOccurrenceNavigatorSupport;
+  private final Set<BuildEvent> myDeferredEvents = ContainerUtil.newConcurrentSet();
 
   public BuildTreeConsoleView(Project project,
                               BuildDescriptor buildDescriptor,
@@ -243,6 +245,18 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     ExecutionNode buildProgressRootNode = getBuildProgressRootNode();
     if (event instanceof StartEvent || event instanceof MessageEvent) {
       if (currentNode == null) {
+        if (event instanceof DuplicateMessageAware) {
+          if (myFinishedBuildEventReceived.get()) {
+            if (parentNode != null &&
+                parentNode.findFirstChild(node -> event.getMessage().equals(node.getName())) != null) {
+              return;
+            }
+          }
+          else {
+            myDeferredEvents.add(event);
+            return;
+          }
+        }
         if (event instanceof StartBuildEvent) {
           currentNode = buildProgressRootNode;
           installContextMenu((StartBuildEvent)event);
@@ -329,10 +343,12 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     }
 
     if (event instanceof FinishBuildEvent) {
+      myFinishedBuildEventReceived.set(true);
       String aHint = event.getHint();
       String time = DateFormatUtil.formatDateTime(event.getEventTime());
       aHint = aHint == null ? "at " + time : aHint + " at " + time;
       currentNode.setHint(aHint);
+      myDeferredEvents.forEach(this::onEventInternal);
       if (myConsoleViewHandler.myExecutionNode == null) {
         ApplicationManager.getApplication().invokeLater(() -> myConsoleViewHandler.setNode(buildProgressRootNode));
       }
@@ -393,10 +409,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   }
 
   private void addChildFailureNode(@NotNull ExecutionNode parentNode, @NotNull Failure failure, @NotNull String defaultFailureMessage) {
-    ExecutionNode failureNode = new ExecutionNode(myProject, parentNode);
-    parentNode.add(failureNode);
-    failureNode.setNavigatable(failure.getNavigatable());
-    failureNode.setResult(new FailureResultImpl(Collections.singletonList(failure)));
     String text = chooseNotNull(failure.getDescription(), failure.getMessage());
     if (text == null && failure.getError() != null) {
       text = failure.getError().getMessage();
@@ -412,8 +424,28 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     if (sepIndex > 0) {
       text = text.substring(0, sepIndex);
     }
-    text = StringUtil.trimEnd(text, '.');
-    failureNode.setName(text);
+    String failureNodeName = StringUtil.trimEnd(text, '.');
+    ExecutionNode failureNode = parentNode.findFirstChild(executionNode -> failureNodeName.equals(executionNode.getName()));
+    if (failureNode == null) {
+      failureNode = new ExecutionNode(myProject, parentNode);
+      failureNode.setName(failureNodeName);
+      parentNode.add(failureNode);
+    }
+    if (failure.getNavigatable() == null) {
+      failureNode.setNavigatable(failure.getNavigatable());
+    }
+
+    List<Failure> failures;
+    EventResult result = failureNode.getResult();
+    if (result instanceof FailureResult) {
+      failures = ContainerUtil.newArrayList();
+      failures.addAll(((FailureResult)result).getFailures());
+      failures.add(failure);
+    }
+    else {
+      failures = Collections.singletonList(failure);
+    }
+    failureNode.setResult(new FailureResultImpl(failures));
     myConsoleViewHandler.addOutput(failureNode, failure);
     showErrorIfFirst(failureNode, failure.getNavigatable());
   }

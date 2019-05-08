@@ -12,7 +12,7 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
 import java.io.Closeable
 import java.util.*
-import java.util.concurrent.Future
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author Vladislav.Soroka
@@ -83,7 +83,7 @@ open class BuildOutputInstantReaderImpl(private val parentEventId: Any,
     closeAndGetFuture()
   }
 
-  fun closeAndGetFuture(): Future<Unit> {
+  fun closeAndGetFuture(): CompletableFuture<Unit> {
     appendedLineProcessor.close()
     outputLinesChannel.close()
     return CoroutineScope(Dispatchers.Default).future {
