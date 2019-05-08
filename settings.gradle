@@ -204,8 +204,9 @@ include ":kotlin-build-common",
         ":kotlin-serialization-unshaded"
 
 
-def includeCidr = hasProperty("cidrPluginsEnabled") && cidrPluginsEnabled != 'false'
+def includeCidr = hasProperty("cidrPluginsEnabled") && Boolean.parseBoolean(cidrPluginsEnabled)
 if (includeCidr) {
+    logger.info("Including :kotlin-ultimate in settings.gradle")
     includeBuild "kotlin-ultimate/buildSrc"
     include ":kotlin-ultimate:ide:cidr-native",
             ":kotlin-ultimate:ide:appcode-native",
@@ -213,6 +214,8 @@ if (includeCidr) {
             ":kotlin-ultimate:prepare:cidr-plugin",
             ":kotlin-ultimate:prepare:appcode-plugin",
             ":kotlin-ultimate:prepare:clion-plugin"
+} else {
+    logger.info("NOT including :kotlin-ultimate in settings.gradle")
 }
 
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
