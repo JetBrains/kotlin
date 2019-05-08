@@ -115,7 +115,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
             is IrConstructor -> {
                 val descriptor = WrappedClassConstructorDescriptor(oldFunction.descriptor.annotations)
                 IrConstructorImpl(
-                    oldFunction.startOffset, oldFunction.endOffset,
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
                     IrConstructorSymbolImpl(descriptor),
                     oldFunction.name,
@@ -131,7 +131,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
             is IrSimpleFunction -> {
                 val descriptor = WrappedSimpleFunctionDescriptor(oldFunction.descriptor.annotations)
                 IrFunctionImpl(
-                    oldFunction.startOffset, oldFunction.endOffset,
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
                     IrSimpleFunctionSymbolImpl(descriptor),
                     oldFunction.name,

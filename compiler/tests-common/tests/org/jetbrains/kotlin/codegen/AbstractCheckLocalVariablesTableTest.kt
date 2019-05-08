@@ -102,11 +102,13 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
             class Visitor : ClassVisitor(Opcodes.API_VERSION) {
                 var readVariables: MutableList<LocalVariable> = ArrayList()
+                var methodFound = false
 
                 override fun visitMethod(
                     access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?
                 ): MethodVisitor? {
                     return if (methodName == name + desc) {
+                        methodFound = true
                         object : MethodVisitor(Opcodes.API_VERSION) {
                             override fun visitLocalVariable(
                                 name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
@@ -124,7 +126,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
             cr.accept(visitor, ClassReader.SKIP_FRAMES)
 
-            TestCase.assertFalse("method not found: $methodName", visitor.readVariables.isEmpty())
+            TestCase.assertTrue("method not found: $methodName", visitor.methodFound)
 
             return visitor.readVariables
         }
