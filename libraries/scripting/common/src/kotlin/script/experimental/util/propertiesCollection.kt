@@ -13,7 +13,9 @@ import kotlin.script.experimental.api.KotlinType
 
 open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = emptyMap()) : Serializable {
 
-    class Key<T>(val name: String, @Transient val defaultValue: T? = null) : Serializable {
+    class Key<T>(val name: String, @Transient val getDefaultValue: PropertiesCollection.() -> T?) : Serializable {
+
+        constructor(name: String, defaultValue: T? = null) : this(name, { defaultValue })
 
         override fun equals(other: Any?): Boolean = if (other is Key<*>) name == other.name else false
         override fun hashCode(): Int = name.hashCode()
@@ -25,9 +27,11 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
         }
     }
 
-    class PropertyKeyDelegate<T>(private val defaultValue: T? = null) {
+    class PropertyKeyDelegate<T>(private val getDefaultValue: PropertiesCollection.() -> T?) {
+        constructor(defaultValue: T?) : this({ defaultValue })
+
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Key<T> =
-            Key(property.name, defaultValue)
+            Key(property.name, getDefaultValue)
     }
 
     class PropertyKeyCopyDelegate<T>(val source: Key<T>) {
@@ -36,8 +40,7 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
 
     @Suppress("UNCHECKED_CAST")
     operator fun <T> get(key: PropertiesCollection.Key<T>): T? =
-        if (key.defaultValue == null) properties[key] as T?
-        else properties.getOrDefault(key, key.defaultValue) as T?
+        (properties[key] ?: if (properties.containsKey(key)) null else key.getDefaultValue(this)) as? T
 
     @Suppress("UNCHECKED_CAST")
     fun <T> getNoDefault(key: PropertiesCollection.Key<T>): T? =
@@ -55,10 +58,11 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
 
     companion object {
         fun <T> key(defaultValue: T? = null) = PropertyKeyDelegate(defaultValue)
+        fun <T> key(getDefaultValue: PropertiesCollection.() -> T?) = PropertyKeyDelegate(getDefaultValue)
         fun <T> keyCopy(source: Key<T>) = PropertyKeyCopyDelegate(source)
 
         @JvmStatic
-        private val serialVersionUID = 0L
+        private val serialVersionUID = 1L
     }
 
     // properties builder base class (DSL for building properties collection)

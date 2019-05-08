@@ -39,6 +39,7 @@ fun createCompilationConfigurationFromTemplate(
     val mainAnnotation: KotlinScript = templateClass.kotlinScriptAnnotation
 
     return ScriptCompilationConfiguration(scriptConfigInstance(mainAnnotation.compilationConfiguration)) {
+        hostConfiguration(hostConfiguration)
         propertiesFromTemplate(templateClass, baseClassType, mainAnnotation)
         body()
     }
@@ -62,7 +63,10 @@ fun createEvaluationConfigurationFromTemplate(
 
     val mainAnnotation = templateClass.kotlinScriptAnnotation
 
-    return ScriptEvaluationConfiguration(scriptConfigInstance(mainAnnotation.evaluationConfiguration), body = body)
+    return ScriptEvaluationConfiguration(scriptConfigInstance(mainAnnotation.evaluationConfiguration)) {
+        hostConfiguration(hostConfiguration)
+        body()
+    }
 }
 
 private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(

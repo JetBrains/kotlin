@@ -9,6 +9,7 @@ package kotlin.script.experimental.api
 
 import java.io.Serializable
 import kotlin.reflect.KClass
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptCompilationConfigurationKeys
@@ -112,6 +113,11 @@ val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by Pro
  * (for use primary with the refinement callbacks)
  */
 val ScriptCompilationConfigurationKeys.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
+
+/**
+ * Scripting host configuration
+ */
+val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>()
 
 /**
  * The sub-builder DSL for configuring refinement callbacks
