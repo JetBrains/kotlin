@@ -49,6 +49,16 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
                                                         @NotNull PsiFile file,
                                                         @NotNull DataContext context,
                                                         @NotNull String place) {
+    if (ActionPlaces.isPopupPlace(place)) {
+      final RefactoringActionHandler handler = getHandler(context);
+      if (handler instanceof ContextAwareActionHandler) {
+        ContextAwareActionHandler contextAwareActionHandler = (ContextAwareActionHandler)handler;
+        if (!contextAwareActionHandler.isAvailableForQuickList(editor, file, context)) {
+          return false;
+        }
+      }
+    }
+
     return isAvailableOnElementInEditorAndFile(element, editor, file, context);
   }
 
