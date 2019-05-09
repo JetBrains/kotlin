@@ -165,7 +165,8 @@ fun isInlineIrExpression(argumentExpression: IrExpression) =
             (argumentExpression.origin == IrStatementOrigin.LAMBDA || argumentExpression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
-    (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && isInline
+    (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) &&
+            (isInline || isArrayConstructorWithLambda())
 
 fun IrValueParameter.isInlineParameter() =
     !isNoinline && !type.isNullable() && type.isFunctionOrKFunction()

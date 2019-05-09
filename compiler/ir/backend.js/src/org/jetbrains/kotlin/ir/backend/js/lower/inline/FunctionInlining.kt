@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.ArrayConstructorTransformer
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
@@ -42,31 +43,38 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         return irModule.accept(this, data = null)
     }
 
+    private val arrayConstructorTransformer = ArrayConstructorTransformer(context)
+
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
-        if (!(expression is IrCall || expression is IrConstructorCall) || !expression.symbol.owner.needsInlining)
-            return expression
+        val callSite = when (expression) {
+            is IrCall -> expression
+            is IrConstructorCall -> arrayConstructorTransformer.transformConstructorCall(expression)
+            else -> return expression
+        }
+        if (!callSite.symbol.owner.needsInlining)
+            return callSite
 
         val languageVersionSettings = context.configuration.languageVersionSettings
         when {
-            Symbols.isLateinitIsInitializedPropertyGetter(expression.symbol) ->
-                return expression
+            Symbols.isLateinitIsInitializedPropertyGetter(callSite.symbol) ->
+                return callSite
             // Handle coroutine intrinsics
             // TODO These should actually be inlined.
-            expression.descriptor.isBuiltInIntercepted(languageVersionSettings) ->
+            callSite.descriptor.isBuiltInIntercepted(languageVersionSettings) ->
                 error("Continuation.intercepted is not available with release coroutines")
-            expression.symbol.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
-                return irCall(expression, context.coroutineSuspendOrReturn)
-            expression.symbol == context.intrinsics.jsCoroutineContext ->
-                return irCall(expression, context.coroutineGetContextJs)
+            callSite.symbol.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
+                return irCall(callSite, context.coroutineSuspendOrReturn)
+            callSite.symbol == context.intrinsics.jsCoroutineContext ->
+                return irCall(callSite, context.coroutineGetContextJs)
         }
 
-        val callee = getFunctionDeclaration(expression.symbol)                   // Get declaration of the function to be inlined.
+        val callee = getFunctionDeclaration(callSite.symbol)                   // Get declaration of the function to be inlined.
         callee.transformChildrenVoid(this)                            // Process recursive inline.
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
-        val inliner = Inliner(expression, callee, currentScope!!, parent, context)
+        val inliner = Inliner(callSite, callee, currentScope!!, parent, context)
         return inliner.inline()
     }
 
