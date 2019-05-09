@@ -134,13 +134,12 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
             bridge.isSuspend,
             origin
         ).apply {
-
+            copyTypeParametersFrom(bridge)
             // TODO: should dispatch receiver be copied?
             dispatchReceiverParameter = bridge.dispatchReceiverParameter?.run {
                 IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also { it.parent = this@apply }
             }
             extensionReceiverParameter = bridge.extensionReceiverParameter?.copyTo(this)
-            copyTypeParametersFrom(bridge)
             valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
             annotations += bridge.annotations
             overriddenSymbols.addAll(delegateTo.overriddenSymbols)
