@@ -10,22 +10,27 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.fileTemplates.*;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.lang.IdeLanguageCustomization;
+import com.intellij.lang.Language;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.options.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,12 +104,11 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
   }
 
   private void onAdd() {
-    String ext = "java";
-    final List<FileTemplateDefaultExtension> defaultExtensions = FileTemplateDefaultExtension.EP_NAME.getExtensionList();
-    if (!defaultExtensions.isEmpty()) {
-      ext = defaultExtensions.get(0).value;
-    }
-    createTemplate(IdeBundle.message("template.unnamed"), ext, "");
+    String ext = JBIterable.from(IdeLanguageCustomization.getInstance().getPrimaryIdeLanguages())
+      .filterMap(Language::getAssociatedFileType)
+      .filterMap(FileType::getDefaultExtension)
+      .first();
+    createTemplate(IdeBundle.message("template.unnamed"), StringUtil.notNullize(ext, "txt"), "");
   }
 
   @NotNull
@@ -651,13 +655,19 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
       if (!myChangesCache.containsKey(myScheme)) {
         Map<String, FileTemplate[]> templates = new HashMap<>();
         FileTemplate[] allTemplates = myTemplatesList.getTemplates();
-        templates.put(FileTemplateManager.DEFAULT_TEMPLATES_CATEGORY, ContainerUtil.filter(allTemplates,
-                                                                       template -> !myInternalTemplateNames.contains(template.getName())).toArray(FileTemplate.EMPTY_ARRAY));
-        templates.put(FileTemplateManager.INTERNAL_TEMPLATES_CATEGORY, ContainerUtil.filter(allTemplates,
-                                                                        template -> myInternalTemplateNames.contains(template.getName())).toArray(FileTemplate.EMPTY_ARRAY));
+        templates.put(
+          FileTemplateManager.DEFAULT_TEMPLATES_CATEGORY,
+          ContainerUtil.filter(allTemplates, template -> !myInternalTemplateNames.contains(template.getName()))
+            .toArray(FileTemplate.EMPTY_ARRAY));
+        templates.put(
+          FileTemplateManager.INTERNAL_TEMPLATES_CATEGORY,
+          ContainerUtil.filter(allTemplates, template -> myInternalTemplateNames.contains(template.getName()))
+            .toArray(FileTemplate.EMPTY_ARRAY));
         templates.put(FileTemplateManager.INCLUDES_TEMPLATES_CATEGORY, myIncludesList.getTemplates());
         templates.put(FileTemplateManager.CODE_TEMPLATES_CATEGORY, myCodeTemplatesList.getTemplates());
-        templates.put(FileTemplateManager.J2EE_TEMPLATES_CATEGORY, myOtherTemplatesList == null ? FileTemplate.EMPTY_ARRAY : myOtherTemplatesList.getTemplates());
+        templates.put(
+          FileTemplateManager.J2EE_TEMPLATES_CATEGORY,
+          myOtherTemplatesList == null ? FileTemplate.EMPTY_ARRAY : myOtherTemplatesList.getTemplates());
         myChangesCache.put(myScheme, templates);
       }
     }
