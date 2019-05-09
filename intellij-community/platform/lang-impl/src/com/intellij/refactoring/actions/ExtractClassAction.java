@@ -16,8 +16,11 @@
 package com.intellij.refactoring.actions;
 
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.refactoring.RefactoringActionHandler;
 import org.jetbrains.annotations.NotNull;
+
+import static com.intellij.refactoring.actions.ExtractSuperActionBase.removeFirstWordInMainMenu;
 
 public class ExtractClassAction extends BasePlatformRefactoringAction {
   @Override
@@ -28,5 +31,11 @@ public class ExtractClassAction extends BasePlatformRefactoringAction {
   @Override
   public boolean isAvailableInEditorOnly(){
       return false;
+  }
+
+  @Override
+  public void update(@NotNull AnActionEvent e) {
+    super.update(e);
+    removeFirstWordInMainMenu(this, e);
   }
 }

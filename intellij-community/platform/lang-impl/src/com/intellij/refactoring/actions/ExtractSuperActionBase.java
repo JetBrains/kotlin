@@ -16,16 +16,30 @@
 
 package com.intellij.refactoring.actions;
 
-import com.intellij.lang.Language;
-import com.intellij.lang.LanguageRefactoringSupport;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringActionHandler;
-import com.intellij.refactoring.lang.ElementsHandler;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class ExtractSuperActionBase extends BasePlatformRefactoringAction {
 
   @Override
   public boolean isAvailableInEditorOnly() {
     return false;
+  }
+
+  @Override
+  public void update(@NotNull AnActionEvent e) {
+    super.update(e);
+    removeFirstWordInMainMenu(this, e);
+  }
+
+  public static void removeFirstWordInMainMenu(AnAction action, @NotNull AnActionEvent e) {
+    if (ActionPlaces.MAIN_MENU.equals(e.getPlace())) {
+      String templateText = action.getTemplatePresentation().getText();
+      if (templateText.startsWith("Extract") || templateText.startsWith("Introduce")) {
+        e.getPresentation().setText(templateText.substring(templateText.indexOf(' ') + 1));
+      }
+    }
   }
 }

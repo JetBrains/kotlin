@@ -21,20 +21,9 @@ import com.intellij.refactoring.RefactoringActionHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class IntroduceVariableAction extends BasePlatformRefactoringAction {
+public class IntroduceVariableAction extends IntroduceActionBase {
   public IntroduceVariableAction() {
-    setInjectedContext(true);
     setEnabledInModalContext(true);
-  }
-
-  @Override
-  protected boolean isAvailableInEditorOnly() {
-    return true;
-  }
-
-  @Override
-  protected boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
-    return false;
   }
 
   @Override

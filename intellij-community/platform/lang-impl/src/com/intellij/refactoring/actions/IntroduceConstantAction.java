@@ -16,30 +16,13 @@
 
 package com.intellij.refactoring.actions;
 
-import com.intellij.lang.Language;
-import com.intellij.lang.LanguageRefactoringSupport;
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
-import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringActionHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class IntroduceConstantAction extends BasePlatformRefactoringAction {
-  public IntroduceConstantAction() {
-    setInjectedContext(true);
-  }
-
+public class IntroduceConstantAction extends IntroduceActionBase {
   @Override
   protected RefactoringActionHandler getRefactoringHandler(@NotNull RefactoringSupportProvider provider) {
     return provider.getIntroduceConstantHandler();
-  }
-
-  @Override
-  protected boolean isAvailableInEditorOnly() {
-    return true;
-  }
-
-  @Override
-  protected boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
-    return false;
   }
 }

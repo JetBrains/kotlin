@@ -17,23 +17,12 @@
 package com.intellij.refactoring.actions;
 
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
-import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.RefactoringBundle;
 import org.jetbrains.annotations.NotNull;
 
-public class IntroduceFunctionalParameterAction extends BasePlatformRefactoringAction {
+public class IntroduceFunctionalParameterAction extends IntroduceActionBase {
   public static final String REFACTORING_NAME = RefactoringBundle.message("introduce.functional.parameter.title");
-
-  @Override
-  protected boolean isAvailableInEditorOnly() {
-    return true;
-  }
-
-  @Override
-  protected boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
-    return false;
-  }
 
   @Override
   protected RefactoringActionHandler getRefactoringHandler(@NotNull RefactoringSupportProvider provider) {
