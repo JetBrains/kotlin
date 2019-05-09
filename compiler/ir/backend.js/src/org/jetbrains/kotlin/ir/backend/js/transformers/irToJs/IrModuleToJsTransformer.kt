@@ -28,7 +28,9 @@ class IrModuleToJsTransformer(
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
 
     private fun generateModuleBody(module: IrModuleFragment, context: JsGenerationContext): List<JsStatement> {
-        val statements = mutableListOf<JsStatement>()
+        val statements = mutableListOf<JsStatement>(
+            JsStringLiteral("use strict").makeStmt()
+        )
 
         // TODO: fix it up with new name generator
         val anyName = context.getNameForClass(backendContext.irBuiltIns.anyClass.owner)
@@ -251,7 +253,7 @@ class IrModuleToJsTransformer(
                 }
         }
 
-        val importedJsModules = declarationLevelJsModules + packageLevelJsModules
+        val importedJsModules = (declarationLevelJsModules + packageLevelJsModules).distinctBy { it.key }
         return Pair(importStatements, importedJsModules)
     }
 
