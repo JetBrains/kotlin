@@ -84,12 +84,6 @@ private val lateinitLoweringPhase = makeJsModulePhase(
     description = "Insert checks for lateinit field references"
 )
 
-private val arrayConstructorPhase = makeJsModulePhase(
-    ::ArrayConstructorLowering,
-    name = "ArrayConstructor",
-    description = "Transform `Array(size) { index -> value }` into a loop"
-)
-
 private val functionInliningPhase = makeCustomJsModulePhase(
     { context, module ->
         FunctionInlining(context).inline(module)
@@ -357,7 +351,6 @@ val jsPhases = namedIrModulePhase(
     description = "IR module lowering",
     lower = testGenerationPhase then
             expectDeclarationsRemovingPhase then
-            arrayConstructorPhase then
             functionInliningPhase then
             lateinitLoweringPhase then
             tailrecLoweringPhase then

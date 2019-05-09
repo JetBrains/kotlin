@@ -38,12 +38,6 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     nlevels = 0
 )
 
-private val arrayConstructorPhase = makeIrFilePhase(
-    ::ArrayConstructorLowering,
-    name = "ArrayConstructor",
-    description = "Transform `Array(size) { index -> value }` into a loop"
-)
-
 private val expectDeclarationsRemovingPhase = makeIrFilePhase(
     ::ExpectDeclarationsRemoving,
     name = "ExpectDeclarationsRemoving",
@@ -67,7 +61,6 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
     lower = expectDeclarationsRemovingPhase then
             fileClassPhase then
             kCallableNamePropertyPhase then
-            arrayConstructorPhase then
 
             jvmLateinitPhase then
 
