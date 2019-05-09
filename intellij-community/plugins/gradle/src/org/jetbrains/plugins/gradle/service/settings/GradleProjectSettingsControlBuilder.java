@@ -23,6 +23,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 
+import javax.swing.*;
+
 /**
  * @author Vladislav.Soroka
  */
@@ -43,12 +45,12 @@ public interface GradleProjectSettingsControlBuilder {
   /**
    * Add Gradle JDK component to the panel
    */
-  GradleProjectSettingsControlBuilder addGradleJdkComponents(PaintAwarePanel content, int indentLevel);
+  GradleProjectSettingsControlBuilder addGradleJdkComponents(JPanel content, int indentLevel);
 
   /**
    * Add Gradle distribution chooser component to the panel
    */
-  GradleProjectSettingsControlBuilder addGradleChooserComponents(PaintAwarePanel content, int indentLevel);
+  GradleProjectSettingsControlBuilder addGradleChooserComponents(JPanel content, int indentLevel);
 
   boolean validate(GradleProjectSettings settings) throws ConfigurationException;
 

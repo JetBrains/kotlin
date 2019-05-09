@@ -131,7 +131,7 @@ public abstract class AbstractImportFromExternalSystemControl<
       JPanel panel = new JPanel(new BorderLayout());
       panel.add(mySystemSettingsControlPanel, BorderLayout.CENTER);
       hideableSystemSettingsPanel = new HideableTitledPanel(
-        ExternalSystemBundle.message("settings.title.system.settings", myExternalSystemId.getReadableName()), false);
+        ExternalSystemBundle.message("settings.title.system.settings"), false);
       hideableSystemSettingsPanel.setContentComponent(panel);
       hideableSystemSettingsPanel.setOn(false);
       myComponent.add(hideableSystemSettingsPanel, ExternalSystemUiUtil.getFillLineConstraints(0));

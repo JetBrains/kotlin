@@ -12,11 +12,16 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.OnePixelSplitter;
+import com.intellij.ui.SideBorder;
+import com.intellij.ui.TitledSeparator;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,18 +39,6 @@ import java.util.List;
 
 /**
  * Base class that simplifies external system settings management.
- * <p/>
- * The general idea is to provide a control which looks like below:
- * <pre>
- *    ----------------------------------------------
- *   |   linked external projects list              |
- *   |----------------------------------------------
- *   |   linked project-specific settings           |
- *   |----------------------------------------------
- *   |   external system-wide settings (optional)   |
-      ----------------------------------------------
- * </pre>
- *
  * @author Denis Zhdanov
  */
 public abstract class AbstractExternalSystemConfigurable<
@@ -90,9 +83,8 @@ public abstract class AbstractExternalSystemConfigurable<
     if (myComponent == null) {
       myComponent = new PaintAwarePanel(new GridBagLayout());
       SystemSettings settings = getSettings();
-      prepareProjectSettings(settings);
       prepareSystemSettings(settings);
-      ExternalSystemUiUtil.fillBottom(myComponent);
+      prepareProjectSettings(settings);
     }
     return myComponent;
   }
@@ -108,25 +100,41 @@ public abstract class AbstractExternalSystemConfigurable<
 
   @SuppressWarnings("unchecked")
   private void prepareProjectSettings(@NotNull SystemSettings s) {
+    List<ProjectSettings> settings = ContainerUtilRt.newArrayList(s.getLinkedProjectsSettings());
+    if (settings.isEmpty()) {
+      ExternalSystemUiUtil.fillBottom(myComponent);
+      return;
+    }
+
+    myComponent.add(new TitledSeparator(myExternalSystemId.getReadableName() + " projects"),
+                    ExternalSystemUiUtil.getFillLineConstraints(0));
+
+    OnePixelSplitter splitter = new OnePixelSplitter(false, .16f);
+
     myProjectsModel = new DefaultListModel();
     myProjectsList = new JBList(myProjectsModel);
     myProjectsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    addTitle(ExternalSystemBundle.message("settings.title.linked.projects", myExternalSystemId.getReadableName()));
-    myComponent.add(new JBScrollPane(myProjectsList),
+    JBScrollPane scrollPane = new JBScrollPane(myProjectsList);
+    scrollPane.setBorder(IdeBorderFactory.createBorder(SideBorder.LEFT | SideBorder.TOP | SideBorder.BOTTOM));
+    splitter.setFirstComponent(scrollPane);
+
+    PaintAwarePanel details = new PaintAwarePanel(new GridBagLayout());
+    splitter.setSecondComponent(details);
+
+    myComponent.add(splitter,
                     ExternalSystemUiUtil
                       .getFillLineConstraints(1)
+                      .fillCell()
+                      .weighty(1)
                       .pady(JBUI.scale(30)));
 
-    addTitle(ExternalSystemBundle.message("settings.title.project.settings"));
-    List<ProjectSettings> settings = ContainerUtilRt.newArrayList(s.getLinkedProjectsSettings());
-    myProjectsList.setVisibleRowCount(Math.max(3, Math.min(5, settings.size())));
     ContainerUtil.sort(settings, Comparator.comparing(s2 -> getProjectName(s2.getExternalProjectPath())));
 
     myProjectSettingsControls.clear();
     for (ProjectSettings setting : settings) {
       ExternalSystemSettingsControl<ProjectSettings> control = createProjectSettingsControl(setting);
-      control.fillUi(myComponent, 1);
+      control.fillUi(details, 1);
       myProjectsModel.addElement(getProjectName(setting.getExternalProjectPath()));
       myProjectSettingsControls.add(control);
       if (control instanceof AbstractExternalProjectSettingsControl<?>) {
@@ -134,6 +142,7 @@ public abstract class AbstractExternalSystemConfigurable<
       }
       control.showUi(false);
     }
+    ExternalSystemUiUtil.fillBottom(details);
 
     myProjectsList.addListSelectionListener(new ListSelectionListener() {
       @Override
@@ -163,12 +172,6 @@ public abstract class AbstractExternalSystemConfigurable<
     myProjectsList.setSelectedValue(getProjectName(linkedProjectPath), true);
   }
 
-  private void addTitle(@NotNull String title) {
-    JPanel panel = new JPanel(new GridBagLayout());
-    panel.setBorder(IdeBorderFactory.createTitledBorder(title, false, JBUI.emptyInsets()));
-    myComponent.add(panel, ExternalSystemUiUtil.getFillLineConstraints(0));
-  }
-
   /**
    * Creates a control for managing given project settings.
    *
@@ -187,8 +190,16 @@ public abstract class AbstractExternalSystemConfigurable<
   private void prepareSystemSettings(@NotNull SystemSettings s) {
     mySystemSettingsControl = createSystemSettingsControl(s);
     if (mySystemSettingsControl != null) {
-      addTitle(ExternalSystemBundle.message("settings.title.system.settings", myExternalSystemId.getReadableName()));
-      mySystemSettingsControl.fillUi(myComponent, 1);
+      PaintAwarePanel panel = new PaintAwarePanel();
+      GridBag constraints = new GridBag().weightx(1).coverLine().fillCellHorizontally().anchor(GridBagConstraints.WEST);
+      constraints.insetBottom(UIUtil.DEFAULT_VGAP);
+      myComponent.add(panel, constraints);
+
+      constraints = ExternalSystemUiUtil.getFillLineConstraints(0);
+      constraints.insets.top = 0;
+      
+      panel.add(new TitledSeparator(ExternalSystemBundle.message("settings.title.system.settings")), constraints);
+      mySystemSettingsControl.fillUi(panel, 1);
     }
   }
 

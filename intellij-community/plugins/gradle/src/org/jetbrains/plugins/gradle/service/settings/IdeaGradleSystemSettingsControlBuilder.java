@@ -28,12 +28,16 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.util.ui.GridBag;
+import com.intellij.util.ui.UIUtil;
+import com.intellij.xml.util.XmlStringUtil;
 import org.gradle.initialization.BuildLayoutParameters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleBundle;
 
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.io.File;
@@ -50,6 +54,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   @SuppressWarnings("FieldCanBeLocal")
   @Nullable
   private JBLabel myServiceDirectoryLabel;
+  private JBLabel myServiceDirectoryHint;
   @Nullable
   private TextFieldWithBrowseButton myServiceDirectoryPathField;
   private boolean myServiceDirectoryPathModifiedByUser;
@@ -64,7 +69,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   private boolean dropVmOptions;
 
   @Nullable
-  private JBCheckBox myStoreExternallyCheckBox;
+  private JBCheckBox myGenerateImlFilesCheckBox;
+  private JBLabel myGenerateImlFilesHint;
   private boolean dropStoreExternallyCheckBox;
 
   public IdeaGradleSystemSettingsControlBuilder(@NotNull GradleSettings initialSettings) {
@@ -75,16 +81,29 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   public void fillUi(@NotNull PaintAwarePanel canvas, int indentLevel) {
     addServiceDirectoryControl(canvas, indentLevel);
 
+    if (!dropStoreExternallyCheckBox) {
+      myGenerateImlFilesCheckBox = new JBCheckBox(
+        "Generate IDE-specific project files");
+      canvas.add(myGenerateImlFilesCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
+
+      myGenerateImlFilesHint = new JBLabel(
+        XmlStringUtil.wrapInHtml("By default, project files (e.g. '.iml') are not generated, as all information is imported from Gradle scripts.\n" +
+                                 "Enabled this option, if you need to manually configure the imported modules (e.g. add Facets) and to share these settings via VCS\n"),
+        UIUtil.ComponentStyle.SMALL);
+      myGenerateImlFilesHint.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
+
+      GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
+      constraints.insets.left += UIUtil.getCheckBoxTextHorizontalOffset(myGenerateImlFilesCheckBox);
+      constraints.insets.top = 0;
+      //constraints.insets.bottom = UIUtil.LARGE_VGAP;
+      canvas.add(myGenerateImlFilesHint, constraints);
+    }
+
     if (!dropVmOptions) {
       myGradleVmOptionsLabel = new JBLabel(GradleBundle.message("gradle.settings.text.vm.options"));
       canvas.add(myGradleVmOptionsLabel, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
       myGradleVmOptionsField = new JBTextField();
       canvas.add(myGradleVmOptionsField, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
-    }
-
-    if (!dropStoreExternallyCheckBox) {
-      myStoreExternallyCheckBox = new JBCheckBox("Store generated project files externally");
-      canvas.add(myStoreExternallyCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
     }
   }
 
@@ -112,8 +131,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       myGradleVmOptionsField.setText(trimIfPossible(myInitialSettings.getGradleVmOptions()));
     }
 
-    if (myStoreExternallyCheckBox != null) {
-      myStoreExternallyCheckBox.setSelected(myInitialSettings.getStoreProjectFilesExternally());
+    if (myGenerateImlFilesCheckBox != null) {
+      myGenerateImlFilesCheckBox.setSelected(!myInitialSettings.getStoreProjectFilesExternally());
     }
   }
 
@@ -130,7 +149,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       return true;
     }
 
-    if (myStoreExternallyCheckBox != null && myStoreExternallyCheckBox.isSelected() != myInitialSettings.getStoreProjectFilesExternally()) {
+    if (myGenerateImlFilesCheckBox != null && myGenerateImlFilesCheckBox.isSelected() == myInitialSettings.getStoreProjectFilesExternally()) {
       return true;
     }
 
@@ -145,8 +164,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     if (myGradleVmOptionsField != null) {
       settings.setGradleVmOptions(trimIfPossible(myGradleVmOptionsField.getText()));
     }
-    if (myStoreExternallyCheckBox != null) {
-      settings.setStoreProjectFilesExternally(myStoreExternallyCheckBox.isSelected());
+    if (myGenerateImlFilesCheckBox != null) {
+      settings.setStoreProjectFilesExternally(!myGenerateImlFilesCheckBox.isSelected());
     }
   }
 
@@ -190,9 +209,15 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   private void addServiceDirectoryControl(PaintAwarePanel canvas, int indentLevel) {
     if (dropServiceDirectory) return;
 
-    myServiceDirectoryLabel = new JBLabel(GradleBundle.message("gradle.settings.text.service.dir.path"));
+    myServiceDirectoryLabel = new JBLabel("Gradle user home:");
+    myServiceDirectoryHint = new JBLabel(
+      XmlStringUtil.wrapInHtml("You can override the location where Gradle stores downloaded files, " +
+                               "e.g. to tune anti-virus software on Windows"),
+      UIUtil.ComponentStyle.SMALL);
+    myServiceDirectoryHint.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
+
     myServiceDirectoryPathField = new TextFieldWithBrowseButton();
-    myServiceDirectoryPathField.addBrowseFolderListener("", GradleBundle.message("gradle.settings.title.service.dir.path"), null,
+    myServiceDirectoryPathField.addBrowseFolderListener("", "Select Gradle user home directory", null,
                                                         new FileChooserDescriptor(false, true, false, false, false, false),
                                                         TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
     myServiceDirectoryPathField.getTextField().getDocument().addDocumentListener(new DocumentListener() {
@@ -215,6 +240,12 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
 
     canvas.add(myServiceDirectoryLabel, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
     canvas.add(myServiceDirectoryPathField, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
+
+    canvas.add(Box.createGlue(), ExternalSystemUiUtil.getLabelConstraints(indentLevel));
+    GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
+    constraints.insets.top = 0;
+    canvas.add(myServiceDirectoryHint, constraints);
+
   }
 
   private static void deduceServiceDirectory(@NotNull TextFieldWithBrowseButton serviceDirectoryPathField) {
