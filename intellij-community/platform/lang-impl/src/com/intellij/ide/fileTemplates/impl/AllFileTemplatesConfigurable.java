@@ -25,7 +25,6 @@ import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -59,11 +58,6 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     @Override
     public Configurable createConfigurable() {
       return new AllFileTemplatesConfigurable(myProject);
-    }
-
-    @Override
-    public boolean canCreateConfigurable() {
-      return !PlatformUtils.isDataGrip();
     }
   }
 
