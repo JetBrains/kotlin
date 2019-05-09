@@ -41,11 +41,6 @@ public interface GradleProjectSettingsControlBuilder {
   GradleProjectSettings getInitialSettings();
 
   /**
-   * Add Gradle home components to the panel
-   */
-  GradleProjectSettingsControlBuilder addGradleHomeComponents(PaintAwarePanel content, int indentLevel);
-
-  /**
    * Add Gradle JDK component to the panel
    */
   GradleProjectSettingsControlBuilder addGradleJdkComponents(PaintAwarePanel content, int indentLevel);
