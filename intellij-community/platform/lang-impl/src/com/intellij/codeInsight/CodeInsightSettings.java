@@ -116,8 +116,6 @@ public class CodeInsightSettings implements PersistentStateComponent<Element>, C
 
   public boolean SHOW_FULL_SIGNATURES_IN_PARAMETER_INFO;
 
-  public boolean SHOW_SOURCE_INFERRED_ANNOTATIONS = true;
-
   @OptionTag("SMART_BACKSPACE") // explicit name makes it work also for obfuscated private field's name
   private int SMART_BACKSPACE = SmartBackspaceMode.AUTOINDENT.ordinal();
 
