@@ -23,6 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.util.ArrayUtil;
 import gnu.trove.THashSet;
@@ -35,8 +36,8 @@ import java.util.Set;
 
 public class MoveRelatedFilesHandler extends MoveFilesOrDirectoriesHandler {
   @Override
-  public boolean canMove(PsiElement[] elements, PsiElement targetContainer) {
-    if (!super.canMove(elements, targetContainer)) return false;
+  public boolean canMove(PsiElement[] elements, PsiElement targetContainer, @Nullable PsiReference reference) {
+    if (!super.canMove(elements, targetContainer, reference)) return false;
 
     for (PsiElement element : elements) {
       if (element instanceof PsiFile &&

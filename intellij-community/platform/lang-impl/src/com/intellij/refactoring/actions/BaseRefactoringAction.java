@@ -163,7 +163,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
         disableAction(e);
       }
       else {
-        updateActionText(e, elements);
+        updateActionText(e);
       }
     }
     else {
@@ -189,7 +189,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
           disableAction(e);
         }
         else {
-          updateActionText(e, new PsiElement[] { element });
+          updateActionText(e);
         }
       }
       else {
@@ -198,15 +198,15 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     }
   }
 
-  private void updateActionText(AnActionEvent e, PsiElement[] elements) {
-    String actionText = getActionName(elements);
+  private void updateActionText(AnActionEvent e) {
+    String actionText = getActionName(e.getDataContext());
     if (actionText != null) {
       e.getPresentation().setText(actionText);
     }
   }
 
   @Nullable
-  protected String getActionName(@NotNull PsiElement[] elements) {
+  protected String getActionName(@NotNull DataContext dataContext) {
     return null;
   }
 
