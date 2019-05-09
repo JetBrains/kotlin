@@ -47,9 +47,15 @@ public class InlineAction extends BasePlatformRefactoringAction {
         return true;
       }
     }
-    return InlineHandlers.getInlineHandlers(
-      editorLanguage != null ? editorLanguage :element.getLanguage()
-    ).size() > 0;
+    List<InlineHandler> handlers = InlineHandlers.getInlineHandlers(
+      editorLanguage != null ? editorLanguage : element.getLanguage()
+    );
+    for (InlineHandler handler : handlers) {
+      if (handler.canInlineElement(element)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
