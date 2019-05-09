@@ -25,8 +25,11 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.task
+import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
+import java.nio.file.Files
+import java.nio.file.Path
 
 fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
     doFirst {
@@ -99,10 +102,28 @@ fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, bo
     systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"]!!)
     systemProperty("kotlin.ni", if (rootProject.hasProperty("newInferenceTests")) "true" else "false")
 
-    //Temporary workaround for "not enough space" on Teamcity agents: should be fixed soon on Teamcity side
-    val teamcity = rootProject.findProperty("teamcity") as? Map<*, *>
-    (teamcity?.get("teamcity.build.tempDir") as? String)?.let {
-        systemProperty("java.io.tmpdir", it)
+    var subProjectTempRoot: Path? = null
+    doFirst {
+        val teamcity = rootProject.findProperty("teamcity") as? Map<*, *>
+        val systemTempRoot =
+            // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
+            // Should be fixed soon on Teamcity side
+            (teamcity?.get("teamcity.build.tempDir") as? String)
+                ?: System.getProperty("java.io.tmpdir")
+        systemTempRoot.let {
+            subProjectTempRoot = Files.createTempDirectory(File(systemTempRoot).toPath(), project.name + "Project_" + taskName + "_")
+            systemProperty("java.io.tmpdir", subProjectTempRoot.toString())
+        }
+    }
+
+    doLast {
+        subProjectTempRoot?.let {
+            try {
+                delete(it)
+            } catch (e: Exception) {
+                project.logger.warn("Can't delete test temp root folder $it", e.printStackTrace())
+            }
+        }
     }
 
     if (parallel) {
