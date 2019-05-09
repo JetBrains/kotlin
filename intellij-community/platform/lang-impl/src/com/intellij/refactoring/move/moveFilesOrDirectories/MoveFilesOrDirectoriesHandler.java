@@ -115,6 +115,11 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
   @Nullable
   @Override
   public String getActionName(@NotNull PsiElement[] elements) {
+    return getMoveOrCopyActionName(elements, "Move");
+  }
+
+  @NotNull
+  public static String getMoveOrCopyActionName(@NotNull PsiElement[] elements, final String verb) {
     int fileCount = 0, directoryCount = 0;
     for (PsiElement element : elements) {
       if (element instanceof PsiFile) {
@@ -125,11 +130,11 @@ public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
       }
     }
     if (directoryCount == 0) {
-      return fileCount == 1 ? "Move File..." : "Move Files...";
+      return fileCount == 1 ? verb + " File..." : verb + " Files...";
     }
     if (fileCount == 0) {
-      return directoryCount == 1 ? "Move Directory..." : "Move Directories...";
+      return directoryCount == 1 ? verb + " Directory..." : verb + " Directories...";
     }
-    return "Move Files and Directories...";
+    return verb + " Files and Directories...";
   }
 }
