@@ -44,6 +44,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FindSymbolParameters;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -396,7 +397,23 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
       JComponent button = e.getPresentation().getClientProperty(CustomComponentAction.COMPONENT_KEY);
       if (button == null || !button.isValid()) return;
       JList<ScopeDescriptor> fakeList = new JBList<>();
-      ListCellRenderer<ScopeDescriptor> renderer = ScopeChooserCombo.createDefaultRenderer();
+      ListCellRenderer<ScopeDescriptor> renderer = new ListCellRenderer<ScopeDescriptor>() {
+        final ListCellRenderer<ScopeDescriptor> delegate = ScopeChooserCombo.createDefaultRenderer();
+        @Override
+        public Component getListCellRendererComponent(JList<? extends ScopeDescriptor> list,
+                                                      ScopeDescriptor value,
+                                                      int index,
+                                                      boolean isSelected,
+                                                      boolean cellHasFocus) {
+          // copied from DarculaJBPopupComboPopup.customizeListRendererComponent()
+          Component component = delegate.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+          if (component instanceof JComponent &&
+              !(component instanceof JSeparator || component instanceof TitledSeparator)) {
+            ((JComponent)component).setBorder(JBUI.Borders.empty(2, 8));
+          }
+          return component;
+        }
+      };
       List<ScopeDescriptor> items = new ArrayList<>();
       ScopeChooserCombo.processScopes(e.getRequiredData(CommonDataKeys.PROJECT),
                                       e.getDataContext(),
