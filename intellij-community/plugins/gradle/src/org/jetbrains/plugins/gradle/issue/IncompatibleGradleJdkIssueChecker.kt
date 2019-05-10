@@ -2,7 +2,6 @@
 package org.jetbrains.plugins.gradle.issue
 
 import com.intellij.build.issue.BuildIssue
-import com.intellij.build.issue.BuildIssueChecker
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.util.PlatformUtils.getPlatformPrefix
 import org.gradle.util.GradleVersion
@@ -24,7 +23,7 @@ import java.util.function.BiPredicate
  * @author Vladislav.Soroka
  */
 @ApiStatus.Experimental
-class IncompatibleGradleJdkIssueChecker : BuildIssueChecker<GradleIssueData> {
+class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
 
   override fun check(issueData: GradleIssueData): BuildIssue? {
     val rootCause = issueData.rootCause

@@ -28,7 +28,9 @@ import org.gradle.tooling.model.build.BuildEnvironment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.issue.*;
+import org.jetbrains.plugins.gradle.issue.BuildIssueException;
+import org.jetbrains.plugins.gradle.issue.GradleIssueChecker;
+import org.jetbrains.plugins.gradle.issue.GradleIssueData;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionErrorHandler;
 import org.jetbrains.plugins.gradle.service.notification.GotoSourceNotificationCallback;
 import org.jetbrains.plugins.gradle.service.notification.OpenGradleSettingsCallback;
@@ -38,7 +40,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.intellij.util.ObjectUtils.notNull;
@@ -97,7 +98,7 @@ public class BaseProjectImportErrorHandler extends AbstractProjectImportErrorHan
     }
 
     GradleIssueData issueData = new GradleIssueData(buildEnvironment, projectPath, buildFilePath, error, rootCause, location);
-    List<BuildIssueChecker<GradleIssueData>> knownIssuesCheckList = Arrays.asList(new IncompatibleGradleJdkIssueChecker());
+    List<GradleIssueChecker> knownIssuesCheckList = GradleIssueChecker.getKnownIssuesCheckList();
     for (BuildIssueChecker<GradleIssueData> checker : knownIssuesCheckList) {
       BuildIssue buildIssue = checker.check(issueData);
       if (buildIssue != null) {
