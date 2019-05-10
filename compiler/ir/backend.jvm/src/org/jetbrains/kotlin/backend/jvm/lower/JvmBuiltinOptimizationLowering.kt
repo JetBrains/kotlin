@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.intrinsics.Not
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -49,8 +50,8 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
             // When used for null checks, it is safe to eliminate constants and local variable loads.
             // Even if a local variable of simple type is updated via the debugger it still cannot
             // be null.
-            return (right.isNullConst() && left.type.isPrimitiveType())
-                    || (left.isNullConst() && right.type.isPrimitiveType())
+            return (right.isNullConst() && left.type.unboxInlineClass().isPrimitiveType())
+                    || (left.isNullConst() && right.type.unboxInlineClass().isPrimitiveType())
         }
         return false
     }
