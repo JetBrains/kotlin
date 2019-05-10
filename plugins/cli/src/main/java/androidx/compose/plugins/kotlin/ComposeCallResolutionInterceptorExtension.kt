@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtLambdaArgument
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
+import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinedArgument
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.replace
@@ -66,18 +68,14 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         name: Name,
         location: LookupLocation
     ): Collection<FunctionDescriptor> {
-
-        if(candidates.isEmpty()) return candidates
+        if (candidates.isEmpty()) return candidates
         if (KtxCallResolver.resolving.get().get()) return candidates
 
         for (arg in resolutionContext.call.valueArguments) {
-            if (arg is KtLambdaArgument) continue;
+            if (arg is KtLambdaArgument) continue
             if (arg.getArgumentName() != null) continue
             return candidates
         }
-
-        val newCandidates = mutableListOf<FunctionDescriptor>();
-        newCandidates.addAll(candidates)
 
         val element = resolutionContext.call.callElement as KtExpression
         val composableAnnotationChecker =
@@ -92,26 +90,46 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
             resolutionContext.dataFlowValueFactory
         )
 
-        val temporaryTraceForKtxCall = TemporaryTraceAndCache.create(context, "trace to resolve ktx call", element)
+        val temporaryTraceForKtxCall =
+                TemporaryTraceAndCache.create(
+                        context,
+                        "trace to resolve ktx call", element
+                )
         val temporaryForKtxCall = context.replaceTraceAndCache(temporaryTraceForKtxCall)
 
         // Ensure we are in a composable context
         var walker: PsiElement? = element
-        var isComposableContext = false;
-        while(true) {
-            val descriptor = try { resolutionContext.trace[BindingContext.FUNCTION, walker] } catch(e: Exception) { null }
-            if(descriptor != null) {
-                val composability = composableAnnotationChecker.analyze(temporaryTraceForKtxCall.trace, descriptor)
-                isComposableContext = isComposableContext || (composability != ComposableAnnotationChecker.Composability.NOT_COMPOSABLE)
-                // TODO: break;  It is a bug to not break here, but we don't due to analysis bug for nested lambdas.
-            }
-            walker = try { walker?.parent } catch(e: Throwable) { null }
-            if(walker == null) break;
-        }
-        if(!isComposableContext) return candidates
-
+        var isComposableContext = false
         val facade = CallResolutionInterceptorExtension.facade.get().peek()
-        val callResolver = (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
+        while (walker != null) {
+            val descriptor = try {
+                resolutionContext.trace[BindingContext.FUNCTION, walker]
+            } catch (e: Exception) {
+                null
+            }
+            if (descriptor != null) {
+                val composability = composableAnnotationChecker.analyze(
+                    temporaryTraceForKtxCall.trace,
+                    descriptor
+                )
+                isComposableContext =
+                        composability != ComposableAnnotationChecker.Composability.NOT_COMPOSABLE
+
+                // If the descriptor is for an inlined lambda, infer composability from the
+                // outer scope
+                if (!(walker is KtFunction) ||
+                        !isInlinedArgument(
+                                walker,
+                                context.trace.bindingContext,
+                                true))
+                    break
+            }
+            walker = try { walker.parent } catch (e: Throwable) { null }
+        }
+        if (!isComposableContext) return candidates
+
+        val callResolver =
+            (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
         val ktxCallResolver = KtxCallResolver(
             callResolver,
             facade,
@@ -135,54 +153,58 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         }
 
         // Doesn't appear to be resolvable to a composable; return normal resolution candidates
-        val resolvedCall = when(resolvedKtxElementCall.emitOrCall) {
+        val resolvedCall = when (resolvedKtxElementCall.emitOrCall) {
             is MemoizedCallNode -> resolvedKtxElementCall.emitOrCall.call.resolvedCalls().first()
             is EmitCallNode -> resolvedKtxElementCall.emitOrCall.resolvedCalls().first()
             is ErrorNode -> return candidates
-            else -> throw Error("Unexpectd type: "+resolvedKtxElementCall.emitOrCall.javaClass)
+            else ->
+                throw Error("Unexpectd type: " + resolvedKtxElementCall.emitOrCall.javaClass)
         }
 
-        if (resolvedKtxElementCall.emitOrCall is MemoizedCallNode && !ComposableAnnotationChecker.get(
-                element.project
-            ).shouldInvokeAsTag(
-                temporaryForKtxCall.trace,
-                resolvedCall
-            )
-        ) return candidates
+        if (resolvedKtxElementCall.emitOrCall is MemoizedCallNode &&
+                !ComposableAnnotationChecker.get(element.project).shouldInvokeAsTag(
+                    temporaryForKtxCall.trace,
+                    resolvedCall
+                ))
+            return candidates
         val candidateDescriptor = resolvedCall.candidateDescriptor
-        if(candidateDescriptor is FunctionDescriptor && candidateDescriptor.isOperator && candidateDescriptor.name == OperatorNameConventions.INVOKE)
+        if (candidateDescriptor is FunctionDescriptor && candidateDescriptor.isOperator &&
+                candidateDescriptor.name == OperatorNameConventions.INVOKE)
             return candidates
 
         // If control flow gets here, we are intercepting this call.
 
-        val original = when(resolvedKtxElementCall.emitOrCall) {
+        val original = when (resolvedKtxElementCall.emitOrCall) {
             is MemoizedCallNode -> {
-                resolvedKtxElementCall.emitOrCall.call.resolvedCalls().first().candidateDescriptor as? SimpleFunctionDescriptor
+                resolvedKtxElementCall.emitOrCall.call.resolvedCalls().first().candidateDescriptor
+                        as? SimpleFunctionDescriptor
             }
             else -> null
         }
 
-         val descriptor =
-             ComposableInvocationDescriptor(
-                 element,
-                 resolvedKtxElementCall,
-                 resolvedKtxElementCall.infixOrCall!!.candidateDescriptor.containingDeclaration,
-                 original,
-                 Annotations.EMPTY,
-                 name,
-                 CallableMemberDescriptor.Kind.SYNTHESIZED,
-                 SourceElement.NO_SOURCE
-             )
+        val descriptor =
+            ComposableInvocationDescriptor(
+                element,
+                resolvedKtxElementCall,
+                resolvedKtxElementCall.infixOrCall!!.candidateDescriptor.containingDeclaration,
+                original,
+                Annotations.EMPTY,
+                name,
+                CallableMemberDescriptor.Kind.SYNTHESIZED,
+                SourceElement.NO_SOURCE
+            )
 
         val valueArgs = mutableListOf<ValueParameterDescriptor>()
-
 
         resolvedKtxElementCall.usedAttributes.forEachIndexed { index, attributeInfo ->
             valueArgs.add(
                 ValueParameterDescriptorImpl(
                     descriptor, null, index,
                     Annotations.EMPTY,
-                    Name.identifier(if(attributeInfo.name == CHILDREN_KEY) "children" else attributeInfo.name),
+                    Name.identifier(
+                            if (attributeInfo.name == CHILDREN_KEY) "children"
+                            else attributeInfo.name
+                    ),
                     attributeInfo.type, false,
                     false,
                     false, null,
@@ -191,7 +213,11 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
             )
         }
 
-        val unitLambdaType = scopeTower.module.builtIns.getFunction(0).defaultType.replace(listOf(scopeTower.module.builtIns.unitType.asTypeProjection())).makeComposable(scopeTower.module);
+        val unitLambdaType = scopeTower.module.builtIns.getFunction(
+                0
+        ).defaultType.replace(
+                listOf(scopeTower.module.builtIns.unitType.asTypeProjection())
+        ).makeComposable(scopeTower.module)
         (resolvedKtxElementCall.emitOrCall as? EmitCallNode)?.inlineChildren?.let {
             valueArgs.add(
                 ValueParameterDescriptorImpl(
@@ -215,7 +241,7 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
             Modality.FINAL,
             Visibilities.DEFAULT_VISIBILITY
         )
-        newCandidates.add(descriptor)
+
         return listOf(descriptor)
     }
 
@@ -227,7 +253,12 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         annotations: Annotations,
         name: Name,
         kind: CallableMemberDescriptor.Kind,
-        source: SourceElement) : SimpleFunctionDescriptorImpl(containingDeclaration, original, annotations, name, kind, source) {
-
-    }
+        source: SourceElement
+    ) : SimpleFunctionDescriptorImpl(
+        containingDeclaration,
+        original,
+        annotations,
+        name,
+        kind,
+        source)
 }
