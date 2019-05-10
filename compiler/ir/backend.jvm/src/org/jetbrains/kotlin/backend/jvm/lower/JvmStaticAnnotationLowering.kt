@@ -132,12 +132,14 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
 
         call.passTypeArgumentsFrom(proxy)
 
-        call.dispatchReceiver = IrGetFieldImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            companionInstanceFieldSymbol,
-            companion.defaultType
-        )
+        target.dispatchReceiverParameter?.let { _ ->
+            call.dispatchReceiver = IrGetFieldImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                companionInstanceFieldSymbol,
+                companion.defaultType
+            )
+        }
         proxy.extensionReceiverParameter?.let { extensionReceiver ->
             call.extensionReceiver = IrGetValueImpl(
                 UNDEFINED_OFFSET,
