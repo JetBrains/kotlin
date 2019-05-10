@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -64,6 +65,28 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         return if (nameHint != null) "tmp${index}_$nameHint" else "tmp$index"
     }
 
+    fun createTemporaryVariableDeclaration(
+        irType: IrType,
+        nameHint: String? = null,
+        isMutable: Boolean = false,
+        type: KotlinType? = null,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
+    ): IrVariable {
+        val originalKotlinType = type ?: irType.toKotlinType()
+        return IrVariableImpl(
+            startOffset, endOffset, origin,
+            createDescriptorForTemporaryVariable(
+                originalKotlinType,
+                nameHint, isMutable
+            ),
+            irType
+        ).apply {
+            parent = getLocalDeclarationParent()
+        }
+    }
+
     fun createTemporaryVariable(
         irExpression: IrExpression,
         nameHint: String? = null,
@@ -73,16 +96,12 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         irType: IrType? = null
     ): IrVariable {
         val originalKotlinType = type ?: (irExpression.type.originalKotlinType ?: irExpression.type.toKotlinType())
-        return IrVariableImpl(
-            irExpression.startOffset, irExpression.endOffset, origin,
-            createDescriptorForTemporaryVariable(
-                originalKotlinType,
-                nameHint, isMutable
-            ),
+        return createTemporaryVariableDeclaration(
             irType ?: irExpression.type,
-            irExpression
+            nameHint, isMutable, originalKotlinType,
+            origin, irExpression.startOffset, irExpression.endOffset
         ).apply {
-            parent = getLocalDeclarationParent()
+            initializer = irExpression
         }
     }
 
