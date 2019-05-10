@@ -54,25 +54,20 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
       issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 10 or newer.")
     }
     issueDescription.append("\nYou can:\n")
-    if (isToolingClientIssue || gradleVersionUsed != null && gradleVersionUsed.baseVersion < gradleMinimumVersionRequired) {
+    val wrapperPropertiesFile = GradleUtil.findDefaultWrapperPropertiesFile(issueData.projectPath)
+    if (wrapperPropertiesFile == null || isToolingClientIssue || gradleVersionUsed != null && gradleVersionUsed.baseVersion < gradleMinimumVersionRequired) {
       val gradleVersionFix = GradleVersionQuickFix(issueData.projectPath, gradleMinimumVersionRequired, true)
-      issueDescription.append(" - <a href=\"${gradleVersionFix.id}\">Upgrade Gradle to ${gradleMinimumVersionRequired.version} version " +
+      issueDescription.append(" - <a href=\"${gradleVersionFix.id}\">Upgrade Gradle wrapper to ${gradleMinimumVersionRequired.version} version " +
                               "and re-import the project</a>\n")
       myQuickFixes.add(gradleVersionFix)
     }
     else {
-      val wrapperPropertiesFile = GradleUtil.findDefaultWrapperPropertiesFile(issueData.projectPath)
-      if (wrapperPropertiesFile != null) {
-        val wrapperSettingsOpenQuickFix = GradleWrapperSettingsOpenQuickFix(issueData.projectPath, "distributionUrl")
-        val reimportQuickFix = ReimportQuickFix(issueData.projectPath)
-        issueDescription.append(" - <a href=\"${wrapperSettingsOpenQuickFix.id}\">Open Gradle wrapper settings</a>, " +
-                                "upgrade version to 4.8.1 or newer and <a href=\"${reimportQuickFix.id}\">reimport the project</a>\n")
-        myQuickFixes.add(wrapperSettingsOpenQuickFix)
-        myQuickFixes.add(reimportQuickFix)
-      }
-      else {
-        issueDescription.append(" - Try upgrade Gradle\n")
-      }
+      val wrapperSettingsOpenQuickFix = GradleWrapperSettingsOpenQuickFix(issueData.projectPath, "distributionUrl")
+      val reimportQuickFix = ReimportQuickFix(issueData.projectPath)
+      issueDescription.append(" - <a href=\"${wrapperSettingsOpenQuickFix.id}\">Open Gradle wrapper settings</a>, " +
+                              "upgrade version to 4.8.1 or newer and <a href=\"${reimportQuickFix.id}\">reimport the project</a>\n")
+      myQuickFixes.add(wrapperSettingsOpenQuickFix)
+      myQuickFixes.add(reimportQuickFix)
     }
     if (!isToolingClientIssue && "AndroidStudio" != getPlatformPrefix()) { // Android Studio doesn't have Gradle JVM setting
       val gradleSettingsFix = GradleSettingsQuickFix(
