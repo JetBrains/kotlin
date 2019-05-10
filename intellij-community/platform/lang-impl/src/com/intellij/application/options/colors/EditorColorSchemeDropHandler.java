@@ -19,6 +19,7 @@ import com.intellij.openapi.editor.colors.impl.EmptyColorScheme;
 import com.intellij.openapi.options.SchemeImportException;
 import com.intellij.openapi.project.DefaultProjectFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,38 +53,46 @@ public class EditorColorSchemeDropHandler extends CustomFileDropHandler {
   public boolean handleDrop(@NotNull Transferable t, @Nullable Editor editor, Project project) {
     VirtualFile file = getColorSchemeFile(t);
     assert file != null;
-    try {
-      ColorSchemeImporter importer = new ColorSchemeImporter();
-      EditorColorsManager colorsManager = EditorColorsManager.getInstance();
-      List<String> names = ContainerUtil.map(colorsManager.getAllSchemes(), EditorColorsScheme::getName);
-      EditorColorsScheme imported = importer
-        .importScheme(DefaultProjectFactory.getInstance().getDefaultProject(), file, colorsManager.getGlobalScheme(),
-                      name -> {
-                        String preferredName = name != null ? name : "Unnamed";
-                        String newName = SchemeNameGenerator.getUniqueName(preferredName, candidate -> names.contains(candidate));
-                        AbstractColorsScheme newScheme = new EditorColorsSchemeImpl(EmptyColorScheme.INSTANCE);
-                        newScheme.setName(newName);
-                        newScheme.setDefaultMetaInfo(EmptyColorScheme.INSTANCE);
-                        return newScheme;
-                      });
-      if (imported != null) {
-        colorsManager.addColorsScheme(imported);
-        String message = importer.getAdditionalImportInfo(imported);
-        if (message == null) {
-          message = ApplicationBundle.message("settings.editor.scheme.import.success", file.getPresentableUrl(), imported.getName());
+
+    if (Messages.YES == Messages.showYesNoDialog("Would you like to install and apply '" + file.getName() + "' editor color scheme?",
+                                                 "Install Color Scheme?",
+                                                 "Install",
+                                                 "Open in Editor",
+                                                 null)) {
+      try {
+        ColorSchemeImporter importer = new ColorSchemeImporter();
+        EditorColorsManager colorsManager = EditorColorsManager.getInstance();
+        List<String> names = ContainerUtil.map(colorsManager.getAllSchemes(), EditorColorsScheme::getName);
+        EditorColorsScheme imported = importer
+          .importScheme(DefaultProjectFactory.getInstance().getDefaultProject(), file, colorsManager.getGlobalScheme(),
+                        name -> {
+                          String preferredName = name != null ? name : "Unnamed";
+                          String newName = SchemeNameGenerator.getUniqueName(preferredName, candidate -> names.contains(candidate));
+                          AbstractColorsScheme newScheme = new EditorColorsSchemeImpl(EmptyColorScheme.INSTANCE);
+                          newScheme.setName(newName);
+                          newScheme.setDefaultMetaInfo(EmptyColorScheme.INSTANCE);
+                          return newScheme;
+                        });
+        if (imported != null) {
+          colorsManager.addColorsScheme(imported);
+          String message = importer.getAdditionalImportInfo(imported);
+          if (message == null) {
+            message = ApplicationBundle.message("settings.editor.scheme.import.success", file.getPresentableUrl(), imported.getName());
+          }
+
+          colorsManager.setGlobalScheme(imported);
+          Notification notification = new Notification("", "Color scheme added", message, NotificationType.INFORMATION);
+          QuickChangeColorSchemeAction.changeLafIfNecessary(imported,
+                                                            () -> new Alarm().addRequest(
+                                                              () -> Notifications.Bus.notify(notification, project), 300));
         }
-
-        colorsManager.setGlobalScheme(imported);
-        Notification notification = new Notification("", "Color scheme added", message, NotificationType.INFORMATION);
-        QuickChangeColorSchemeAction.changeLafIfNecessary(imported,
-                                                          () -> new Alarm().addRequest(
-                                                            () -> Notifications.Bus.notify(notification, project), 300));
       }
-    }
-    catch (SchemeImportException e) {
-      Logger.getInstance(getClass()).error(e);
+      catch (SchemeImportException e) {
+        Logger.getInstance(getClass()).error(e);
+      }
+      return true;
     }
 
-    return true;
+    return false;
   }
 }
