@@ -19,9 +19,9 @@ package com.intellij.ide.fileTemplates.impl;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ui.ListSpeedSearch;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.Function;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -39,44 +39,17 @@ abstract class FileTemplateTabAsList extends FileTemplateTab {
   FileTemplateTabAsList(String title) {
     super(title);
     myList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    myList.setCellRenderer(new MyListCellRenderer());
+    myList.setCellRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      boolean internalTemplate = AllFileTemplatesConfigurable.isInternalTemplate(value.getName(), getTitle());
+      label.setIcon(FileTemplateUtil.getIcon(value));
+      label.setText(value.getName());
+      label.setFont(label.getFont().deriveFont(internalTemplate ? Font.BOLD : Font.PLAIN));
+      if (!value.isDefault() && myList.getSelectedIndex() != index) {
+        label.setForeground(MODIFIED_FOREGROUND);
+      }
+    }));
     myList.addListSelectionListener(__ -> onTemplateSelected());
-    new ListSpeedSearch(myList, (Function<Object, String>)o -> {
-      if (o instanceof FileTemplate) {
-        return ((FileTemplate)o).getName();
-      }
-      return null;
-    });
-  }
-
-  private class MyListCellRenderer extends DefaultListCellRenderer {
-    @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-      super.getListCellRendererComponent(list, value, index, isSelected, false);
-      Icon icon = null;
-      if (value instanceof FileTemplate) {
-        FileTemplate template = (FileTemplate) value;
-        icon = FileTemplateUtil.getIcon(template);
-        final boolean internalTemplate = AllFileTemplatesConfigurable.isInternalTemplate(template.getName(), getTitle());
-        if (internalTemplate) {
-          setFont(getFont().deriveFont(Font.BOLD));
-          setText(template.getName());
-        }
-        else {
-          setFont(getFont().deriveFont(Font.PLAIN));
-          setText(template.getName());
-        }
-
-        if (!template.isDefault()) {
-          if (!isSelected) {
-            setForeground(MODIFIED_FOREGROUND);
-          }
-        }
-      }
-      setIcon(icon);
-      if (isSelected) setBackground(UIUtil.getListSelectionBackground(cellHasFocus));
-      return this;
-    }
+    new ListSpeedSearch<>(myList, (Function<FileTemplate, String>)FileTemplate::getName);
   }
 
   @Override

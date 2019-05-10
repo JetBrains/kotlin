@@ -968,6 +968,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private String decorate(String text) {
     text = StringUtil.replaceIgnoreCase(text, "</html>", "");
     text = StringUtil.replaceIgnoreCase(text, "</body>", "");
+    text = StringUtil.replaceIgnoreCase(text, DocumentationMarkup.SECTIONS_START + DocumentationMarkup.SECTIONS_END, "");
+    text = StringUtil.replaceIgnoreCase(text, DocumentationMarkup.SECTIONS_START + "<p>" + DocumentationMarkup.SECTIONS_END, "");
     boolean hasContent = text.contains(DocumentationMarkup.CONTENT_START);
     if (!hasContent) {
       if (!text.contains(DocumentationMarkup.DEFINITION_START)) {

@@ -14,14 +14,13 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.Stack;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.gradle.GradleScript;
+import org.gradle.util.GUtil;
 import org.gradle.wrapper.WrapperConfiguration;
 import org.gradle.wrapper.WrapperExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -84,11 +83,8 @@ public class GradleUtil {
     if (wrapperPropertiesFile == null) return null;
 
     final WrapperConfiguration wrapperConfiguration = new WrapperConfiguration();
-    final Properties props = new Properties();
-    BufferedReader reader = null;
     try {
-      reader = new BufferedReader(new FileReader(wrapperPropertiesFile));
-      props.load(reader);
+      final Properties props = GUtil.loadProperties(wrapperPropertiesFile);
       String distributionUrl = props.getProperty(WrapperExecutor.DISTRIBUTION_URL_PROPERTY);
       if(isEmpty(distributionUrl)) {
         throw new ExternalSystemException("Wrapper 'distributionUrl' property does not exist!");
@@ -116,16 +112,6 @@ public class GradleUtil {
     catch (Exception e) {
       GradleLog.LOG.warn(
         String.format("I/O exception on reading gradle wrapper properties file at '%s'", wrapperPropertiesFile.getAbsolutePath()), e);
-    }
-    finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        }
-        catch (IOException e) {
-          // Ignore
-        }
-      }
     }
     return null;
   }

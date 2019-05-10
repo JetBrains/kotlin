@@ -63,7 +63,7 @@ public class MoveAction extends BaseRefactoringAction {
 
   @Nullable
   @Override
-  protected String getActionName(@NotNull PsiElement[] elements) {
-    return MoveHandler.getActionName(elements);
+  protected String getActionName(@NotNull DataContext dataContext) {
+    return MoveHandler.getActionName(dataContext);
   }
 }

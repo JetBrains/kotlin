@@ -43,10 +43,12 @@
     <extensionPoint name="executionEnvironmentProvider" interface="org.jetbrains.plugins.gradle.execution.build.GradleExecutionEnvironmentProvider"/>
     <extensionPoint name="orderEnumerationHandlerFactory"
                     interface="org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler$FactoryImpl"/>
+    <extensionPoint name="issueChecker" interface="org.jetbrains.plugins.gradle.issue.GradleIssueChecker"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <projectResolve implementation="org.jetbrains.plugins.gradle.service.project.BaseGradleProjectResolverExtension"/>
+    <issueChecker implementation="org.jetbrains.plugins.gradle.issue.IncompatibleGradleJdkIssueChecker"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">

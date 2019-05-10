@@ -11,6 +11,7 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,6 +44,10 @@ public class GotoNextErrorHandler implements CodeInsightActionHandler {
       HighlightInfo infoToGo = findInfo(project, editor, caretOffset, minSeverity);
       if (infoToGo != null) {
         navigateToError(project, editor, infoToGo);
+        if (Registry.is("error.navigation.show.tooltip")) {
+          DaemonTooltipUtil.showInfoTooltip(infoToGo, editor, editor.getCaretModel().getOffset(), 0, false, true);
+        }
+
         return;
       }
     }

@@ -23,6 +23,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.RefactoringBundle;
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler;
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -371,5 +372,11 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
       return MoveFilesOrDirectoriesUtil.resolveToDirectory(project, directoryContainer);
     }
     return defaultTargetDirectory;
+  }
+
+  @Nullable
+  @Override
+  public String getActionName(PsiElement[] elements) {
+    return MoveFilesOrDirectoriesHandler.getMoveOrCopyActionName(elements, "Copy");
   }
 }

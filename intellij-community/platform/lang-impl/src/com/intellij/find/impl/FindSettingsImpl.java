@@ -4,10 +4,15 @@ package com.intellij.find.impl;
 import com.intellij.find.FindBundle;
 import com.intellij.find.FindModel;
 import com.intellij.find.FindSettings;
+import com.intellij.lang.IdeLanguageCustomization;
+import com.intellij.lang.Language;
 import com.intellij.openapi.components.*;
+import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.PlatformUtils;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.JBIterable;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -16,7 +21,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @State(name = "FindSettings", storages = @Storage("find.xml"))
 public class FindSettingsImpl extends FindSettings implements PersistentStateComponent<FindSettingsImpl> {
@@ -29,26 +36,24 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
   private static final String DEFAULT_SEARCH_SCOPE = FindBundle.message("find.scope.all.project.classes");
 
   public FindSettingsImpl() {
-    recentFileMasks.add("*.properties");
-    recentFileMasks.add("*.html");
-    recentFileMasks.add("*.jsp");
-    recentFileMasks.add("*.xml");
-    recentFileMasks.add("*.java");
-    recentFileMasks.add("*.js");
-    recentFileMasks.add("*.as");
-    recentFileMasks.add("*.css");
-    recentFileMasks.add("*.mxml");
-    if (PlatformUtils.isPyCharm()) {
-      recentFileMasks.add("*.py");
+    Set<String> extensions = JBIterable.from(IdeLanguageCustomization.getInstance().getPrimaryIdeLanguages())
+      .filterMap(Language::getAssociatedFileType)
+      .flatten(o -> JBIterable.of(o.getDefaultExtension())
+        .append(JBIterable.from(FileTypeManager.getInstance().getAssociations(o))
+                  .filter(ExtensionFileNameMatcher.class)
+                  .filterMap(ExtensionFileNameMatcher::getExtension)))
+      .addAllTo(new LinkedHashSet<>());
+    if (extensions.contains("java")) {
+      extensions.add("properties");
+      extensions.add("jsp");
     }
-    else if (PlatformUtils.isRubyMine()) {
-      recentFileMasks.add("*.rb");
+    if (!extensions.contains("sql")) {
+      extensions.add("xml");
+      extensions.add("html");
+      extensions.add("css");
     }
-    else if (PlatformUtils.isPhpStorm()) {
-      recentFileMasks.add("*.php");
-    }
-    else if (PlatformUtils.isDataGrip()) {
-      recentFileMasks.add("*.sql");
+    for (String ext : ContainerUtil.reverse(new ArrayList<>(extensions))) {
+      recentFileMasks.add("*." + ext);
     }
   }
 

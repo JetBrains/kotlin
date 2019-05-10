@@ -7,6 +7,7 @@ import com.intellij.lang.refactoring.InlineActionHandler;
 import com.intellij.lang.refactoring.InlineHandler;
 import com.intellij.lang.refactoring.InlineHandlers;
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
@@ -46,9 +47,15 @@ public class InlineAction extends BasePlatformRefactoringAction {
         return true;
       }
     }
-    return InlineHandlers.getInlineHandlers(
-      editorLanguage != null ? editorLanguage :element.getLanguage()
-    ).size() > 0;
+    List<InlineHandler> handlers = InlineHandlers.getInlineHandlers(
+      editorLanguage != null ? editorLanguage : element.getLanguage()
+    );
+    for (InlineHandler handler : handlers) {
+      if (handler.canInlineElement(element)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
@@ -72,5 +79,21 @@ public class InlineAction extends BasePlatformRefactoringAction {
       }
     }
     return InlineHandlers.getInlineHandlers(language).size() > 0;
+  }
+
+  @Nullable
+  @Override
+  protected String getActionName(@NotNull DataContext dataContext) {
+    Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
+    PsiElement element = findRefactoringTargetInEditor(dataContext);
+    if (element != null && editor != null) {
+      for (InlineActionHandler handler: InlineActionHandler.EP_NAME.getExtensionList()) {
+        if (handler.isEnabledOnElement(element, editor)) {
+          return handler.getActionName(element);
+        }
+      }
+    }
+
+    return super.getActionName(dataContext);
   }
 }

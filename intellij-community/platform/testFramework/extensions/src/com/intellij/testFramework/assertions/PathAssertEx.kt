@@ -2,14 +2,9 @@
 package com.intellij.testFramework.assertions
 
 import com.intellij.openapi.util.text.StringUtilRt
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.SystemProperties
-import com.intellij.util.io.exists
 import com.intellij.util.io.readText
 import com.intellij.util.io.size
-import com.intellij.util.io.write
 import junit.framework.ComparisonFailure
-import org.assertj.core.api.AbstractStringAssert
 import org.assertj.core.api.PathAssert
 import org.assertj.core.internal.ComparatorBasedComparisonStrategy
 import org.assertj.core.internal.Iterables
@@ -69,22 +64,3 @@ class PathAssertEx(actual: Path?) : PathAssert(actual) {
   }
 }
 
-class StringAssertEx(actual: String?) : AbstractStringAssert<StringAssertEx>(actual, StringAssertEx::class.java) {
-  fun isEqualTo(expected: Path) {
-    isNotNull
-
-    compareFileContent(actual, expected)
-  }
-
-  fun toMatchSnapshot(snapshotFile: Path) {
-    isNotNull
-
-    if (!snapshotFile.exists()) {
-      System.out.println("Write a new snapshot ${snapshotFile.fileName}")
-      snapshotFile.write(actual)
-      return
-    }
-
-    compareFileContent(actual, snapshotFile, !UsefulTestCase.IS_UNDER_TEAMCITY && SystemProperties.getBooleanProperty("test.update.snapshots", false))
-  }
-}

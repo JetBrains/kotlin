@@ -49,6 +49,16 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
                                                         @NotNull PsiFile file,
                                                         @NotNull DataContext context,
                                                         @NotNull String place) {
+    if (ActionPlaces.isPopupPlace(place)) {
+      final RefactoringActionHandler handler = getHandler(context);
+      if (handler instanceof ContextAwareActionHandler) {
+        ContextAwareActionHandler contextAwareActionHandler = (ContextAwareActionHandler)handler;
+        if (!contextAwareActionHandler.isAvailableForQuickList(editor, file, context)) {
+          return false;
+        }
+      }
+    }
+
     return isAvailableOnElementInEditorAndFile(element, editor, file, context);
   }
 
@@ -163,33 +173,18 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
         disableAction(e);
       }
       else {
-        updateActionText(e, elements);
+        updateActionText(e);
       }
     }
     else {
-      PsiElement element = e.getData(CommonDataKeys.PSI_ELEMENT);
-      Language[] languages = e.getData(LangDataKeys.CONTEXT_LANGUAGES);
-      if (element == null || !isAvailableForLanguage(element.getLanguage())) {
-        if (file == null) {
-          hideAction(e);
-          return;
-        }
-        element = getElementAtCaret(editor, file);
-      }
-
-      if (element == null || element instanceof SyntheticElement || languages == null) {
-        hideAction(e);
-        return;
-      }
-
-      boolean isVisible = ContainerUtil.find(languages, myLanguageCondition) != null;
-      if (isVisible) {
+      PsiElement element = findRefactoringTargetInEditor(dataContext);
+      if (element != null) {
         boolean isEnabled = file != null && isAvailableOnElementInEditorAndFile(element, editor, file, dataContext, e.getPlace());
         if (!isEnabled) {
           disableAction(e);
         }
         else {
-          updateActionText(e, new PsiElement[] { element });
+          updateActionText(e);
         }
       }
       else {
@@ -198,15 +193,37 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     }
   }
 
-  private void updateActionText(AnActionEvent e, PsiElement[] elements) {
-    String actionText = getActionName(elements);
+  protected PsiElement findRefactoringTargetInEditor(DataContext dataContext) {
+    Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
+    PsiFile file = dataContext.getData(CommonDataKeys.PSI_FILE);
+    PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
+    Language[] languages = dataContext.getData(LangDataKeys.CONTEXT_LANGUAGES);
+    if (element == null || !isAvailableForLanguage(element.getLanguage())) {
+      if (file == null || editor == null) {
+        return null;
+      }
+      element = getElementAtCaret(editor, file);
+    }
+
+    if (element == null || element instanceof SyntheticElement || languages == null) {
+      return null;
+    }
+
+    if (ContainerUtil.find(languages, myLanguageCondition) == null) {
+      return null;
+    }
+    return element;
+  }
+
+  private void updateActionText(AnActionEvent e) {
+    String actionText = getActionName(e.getDataContext());
     if (actionText != null) {
       e.getPresentation().setText(actionText);
     }
   }
 
   @Nullable
-  protected String getActionName(@NotNull PsiElement[] elements) {
+  protected String getActionName(@NotNull DataContext dataContext) {
     return null;
   }
 
@@ -223,7 +240,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     return false;
   }
 
-  public static PsiElement getElementAtCaret(final Editor editor, final PsiFile file) {
+  public static PsiElement getElementAtCaret(@NotNull final Editor editor, final PsiFile file) {
     final int offset = fixCaretOffset(editor);
     PsiElement element = file.findElementAt(offset);
     if (element == null && offset == file.getTextLength()) {
@@ -236,7 +253,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     return element;
   }
 
-  private static int fixCaretOffset(final Editor editor) {
+  private static int fixCaretOffset(@NotNull final Editor editor) {
     final int caret = editor.getCaretModel().getOffset();
     if (editor.getSelectionModel().hasSelection()) {
       if (caret == editor.getSelectionModel().getSelectionEnd()) {

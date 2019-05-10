@@ -159,7 +159,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
       if (lastWasOsDefault && !isOsDefault) model.addElement(null);
       lastWasOsDefault = isOsDefault;
 
-      final int insertionIndex = item.getOsDefault().isCurrentOsDefault() ? 0 : model.getSize();
+      final int insertionIndex = item.getOsDefault().isIdeDefault() ? 0 : model.getSize();
       model.insertElementAt(item, insertionIndex);
     }
 
