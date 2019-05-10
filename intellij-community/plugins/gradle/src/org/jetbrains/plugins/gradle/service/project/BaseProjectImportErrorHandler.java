@@ -97,7 +97,7 @@ public class BaseProjectImportErrorHandler extends AbstractProjectImportErrorHan
       location = String.format("Build file: '%1$s'", buildFilePath);
     }
 
-    GradleIssueData issueData = new GradleIssueData(buildEnvironment, projectPath, buildFilePath, error, rootCause, location);
+    GradleIssueData issueData = new GradleIssueData(projectPath, error, buildEnvironment, null);
     List<GradleIssueChecker> knownIssuesCheckList = GradleIssueChecker.getKnownIssuesCheckList();
     for (BuildIssueChecker<GradleIssueData> checker : knownIssuesCheckList) {
       BuildIssue buildIssue = checker.check(issueData);

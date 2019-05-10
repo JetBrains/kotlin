@@ -9,6 +9,7 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleSettingsQuickFix
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleVersionQuickFix
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleWrapperSettingsOpenQuickFix
+import org.jetbrains.plugins.gradle.service.execution.GradleExecutionErrorHandler.getRootCauseAndLocation
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import java.util.*
@@ -26,7 +27,7 @@ import java.util.function.BiPredicate
 class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
 
   override fun check(issueData: GradleIssueData): BuildIssue? {
-    val rootCause = issueData.rootCause
+    val rootCause = getRootCauseAndLocation(issueData.error).first
     val rootCauseText = rootCause.toString()
     val isToolingClientIssue = rootCauseText.startsWith("java.lang.IllegalArgumentException: Could not determine java version from")
     if (!isToolingClientIssue && !rootCauseText.startsWith(
