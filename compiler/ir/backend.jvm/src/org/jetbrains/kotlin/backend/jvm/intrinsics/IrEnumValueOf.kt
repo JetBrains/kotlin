@@ -39,7 +39,7 @@ object IrEnumValueOf : IntrinsicMethod() {
         return object : IrIntrinsicFunction(expression, newSignature, context, listOf(stringType)) {
             override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
                 v.tconst(enumType)
-                codegen.gen(expression.getValueArgument(0)!!, stringType, data)
+                codegen.gen(expression.getValueArgument(0)!!, stringType, codegen.context.irBuiltIns.stringType, data)
                 v.invokestatic("java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;", false)
                 v.checkcast(enumType)
                 return StackValue.onStack(enumType)

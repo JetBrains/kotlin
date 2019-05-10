@@ -28,7 +28,7 @@ abstract class IntrinsicMethod {
         with(codegen) {
             val descriptor = typeMapper.mapSignatureSkipGeneric(expression.symbol.owner)
             val stackValue = toCallable(expression, descriptor, context).invoke(mv, codegen, data)
-            return object : PromisedValue(mv, stackValue.type) {
+            return object : PromisedValue(this, stackValue.type, expression.type) {
                 override fun materialize() = stackValue.put(mv)
             }
         }

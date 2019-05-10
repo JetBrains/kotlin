@@ -35,7 +35,7 @@ object HashCode : IntrinsicMethod() {
             irFunction.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER || irFunction.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER ->
                 AsmUtil.genHashCode(mv, mv, result.type, target)
             target == JvmTarget.JVM_1_6 -> {
-                result.coerce(AsmUtil.boxType(result.type)).materialize()
+                result.coerceToBoxed(receiver.type).materialize()
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
             }
             else -> {
@@ -49,6 +49,6 @@ object HashCode : IntrinsicMethod() {
                 )
             }
         }
-        MaterialValue(codegen.mv, Type.INT_TYPE)
+        MaterialValue(codegen, Type.INT_TYPE, codegen.context.irBuiltIns.intType)
     }
 }

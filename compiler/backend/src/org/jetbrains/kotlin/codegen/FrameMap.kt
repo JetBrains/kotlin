@@ -31,7 +31,7 @@ open class FrameMapBase<T : Any> {
     var currentSize = 0
         private set
 
-    fun enter(descriptor: T, type: Type): Int {
+    open fun enter(descriptor: T, type: Type): Int {
         val index = currentSize
         myVarIndex.put(descriptor, index)
         currentSize += type.size
@@ -39,7 +39,7 @@ open class FrameMapBase<T : Any> {
         return index
     }
 
-    fun leave(descriptor: T): Int {
+    open fun leave(descriptor: T): Int {
         val size = myVarSizes.get(descriptor)
         currentSize -= size
         myVarSizes.remove(descriptor)

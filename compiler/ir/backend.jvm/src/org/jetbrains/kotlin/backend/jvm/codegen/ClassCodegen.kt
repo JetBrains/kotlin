@@ -66,7 +66,7 @@ open class ClassCodegen protected constructor(
 
     val type: Type = if (isAnonymous)
         state.bindingContext.get(ASM_TYPE, descriptor)!!
-    else typeMapper.mapType(irClass)
+    else typeMapper.mapClass(irClass)
 
     private val sourceManager = context.psiSourceManager
 

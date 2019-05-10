@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -45,14 +47,13 @@ class IrInlineCodegen(
     }
 
     override fun genValueAndPut(
-        irValueParameter: IrValueParameter?,
+        irValueParameter: IrValueParameter,
         argumentExpression: IrExpression,
         parameterType: Type,
-        parameterIndex: Int,
         codegen: ExpressionCodegen,
         blockInfo: BlockInfo
     ) {
-        if (irValueParameter?.isInlineParameter() == true && isInlineIrExpression(argumentExpression)) {
+        if (irValueParameter.isInlineParameter() && isInlineIrExpression(argumentExpression)) {
             val irReference: IrFunctionReference =
                 (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
             val boundReceiver = argumentExpression.statements.filterIsInstance<IrVariable>().singleOrNull()
@@ -65,7 +66,7 @@ class IrInlineCodegen(
                 activeLambda = null
             }
         } else {
-            putValueOnStack(argumentExpression, parameterType, irValueParameter?.index ?: -1, blockInfo)
+            putValueOnStack(argumentExpression, parameterType, irValueParameter.index, blockInfo, irValueParameter.type)
         }
     }
 
@@ -82,14 +83,14 @@ class IrInlineCodegen(
     }
 
     private fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamIndex: Int) {
-        val onStack = codegen.gen(argumentExpression, valueType, BlockInfo())
+        val onStack = codegen.gen(argumentExpression, valueType, argumentExpression.type, BlockInfo())
         putArgumentOrCapturedToLocalVal(
             JvmKotlinType(onStack.type, onStack.kotlinType), onStack, capturedParamIndex, capturedParamIndex, ValueKind.CAPTURED
         )
     }
 
-    private fun putValueOnStack(argumentExpression: IrExpression, valueType: Type, paramIndex: Int, blockInfo: BlockInfo) {
-        val onStack = codegen.gen(argumentExpression, valueType, blockInfo)
+    private fun putValueOnStack(argumentExpression: IrExpression, valueType: Type, paramIndex: Int, blockInfo: BlockInfo, irType: IrType) {
+        val onStack = codegen.gen(argumentExpression, valueType, irType, blockInfo)
         putArgumentOrCapturedToLocalVal(JvmKotlinType(onStack.type, onStack.kotlinType), onStack, -1, paramIndex, ValueKind.CAPTURED)
     }
 

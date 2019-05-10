@@ -29,6 +29,6 @@ object Clone : IntrinsicMethod() {
         assert(!AsmUtil.isPrimitive(result.type)) { "clone() of primitive type" }
         val opcode = if (expression is IrCall && expression.superQualifier != null) Opcodes.INVOKESPECIAL else Opcodes.INVOKEVIRTUAL
         mv.visitMethodInsn(opcode, "java/lang/Object", "clone", "()Ljava/lang/Object;", false)
-        MaterialValue(codegen.mv, AsmTypes.OBJECT_TYPE)
+        MaterialValue(codegen, AsmTypes.OBJECT_TYPE, context.irBuiltIns.anyNType)
     }
 }

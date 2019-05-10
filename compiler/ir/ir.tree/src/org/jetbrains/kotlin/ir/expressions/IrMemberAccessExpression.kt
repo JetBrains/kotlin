@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrMemberAccessExpression : IrExpression {
@@ -102,3 +106,12 @@ inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform:
         }
     }
 
+fun IrMemberAccessExpression.putArgument(callee: IrFunction, parameter: IrValueParameter, argument: IrExpression) =
+    when (parameter) {
+        callee.dispatchReceiverParameter -> dispatchReceiver = argument
+        callee.extensionReceiverParameter -> extensionReceiver = argument
+        else -> putValueArgument(parameter.index, argument)
+    }
+
+fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression) =
+    putArgument(symbol.owner, parameter, argument)

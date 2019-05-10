@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.org.objectweb.asm.Type
 
 interface IrCallGenerator {
@@ -40,14 +41,13 @@ interface IrCallGenerator {
     }
 
     fun genValueAndPut(
-        irValueParameter: IrValueParameter?,
+        irValueParameter: IrValueParameter,
         argumentExpression: IrExpression,
         parameterType: Type,
-        parameterIndex: Int,
         codegen: ExpressionCodegen,
         blockInfo: BlockInfo
     ) {
-        codegen.gen(argumentExpression, parameterType, blockInfo)
+        codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
     }
 
     fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind, parameterIndex: Int, codegen: ExpressionCodegen) {

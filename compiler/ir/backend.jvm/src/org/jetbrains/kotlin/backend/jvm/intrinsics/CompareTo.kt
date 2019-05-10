@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import java.lang.UnsupportedOperationException
 
 object CompareTo : IntrinsicMethod() {
     private fun genInvoke(type: Type?, v: InstructionAdapter) {
@@ -64,7 +63,7 @@ object CompareTo : IntrinsicMethod() {
     }
 }
 
-class BooleanComparison(val op: IElementType, val a: MaterialValue, val b: MaterialValue) : BooleanValue(a.mv) {
+class BooleanComparison(val op: IElementType, val a: MaterialValue, val b: MaterialValue) : BooleanValue(a.codegen) {
     override fun jumpIfFalse(target: Label) {
         // TODO 1. get rid of the dependency; 2. take `b.type` into account.
         val opcode = if (a.type.sort == Type.OBJECT)
@@ -90,8 +89,8 @@ class PrimitiveComparison(
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val parameterType = codegen.typeMapper.kotlinTypeMapper.mapType(primitiveNumberType)
         val (left, right) = expression.receiverAndArgs()
-        val a = left.accept(codegen, data).coerce(parameterType).materialized
-        val b = right.accept(codegen, data).coerce(parameterType).materialized
+        val a = left.accept(codegen, data).coerce(parameterType, left.type).materialized
+        val b = right.accept(codegen, data).coerce(parameterType, right.type).materialized
         return BooleanComparison(operatorToken, a, b)
     }
 }

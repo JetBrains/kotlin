@@ -49,7 +49,7 @@ private fun getSignatureElementForMangling(type: KotlinType): String = buildStri
     }
 }
 
-private fun md5base64(signatureForMangling: String): String {
+fun md5base64(signatureForMangling: String): String {
     val d = MessageDigest.getInstance("MD5").digest(signatureForMangling.toByteArray()).copyOfRange(0, 5)
     // base64 URL encoder without padding uses exactly the characters allowed in both JVM bytecode and Dalvik bytecode names
     return Base64.getUrlEncoder().withoutPadding().encodeToString(d)

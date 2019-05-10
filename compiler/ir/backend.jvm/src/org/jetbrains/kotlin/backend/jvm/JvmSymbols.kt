@@ -257,4 +257,17 @@ class JvmSymbols(
 
     val getOrCreateKotlinClasses: IrSimpleFunctionSymbol =
         reflection.functions.single { it.owner.name.asString() == "getOrCreateKotlinClasses" }
+
+    val unsafeCoerceIntrinsic =
+        buildFun {
+            name = Name.special("<unsafe-coerce>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val src = addTypeParameter("T", irBuiltIns.anyNType)
+            val dst = addTypeParameter("R", irBuiltIns.anyNType)
+            addValueParameter("v", src.defaultType)
+            returnType = dst.defaultType
+        }
+    val unsafeCoerceIntrinsicSymbol = unsafeCoerceIntrinsic.symbol
 }

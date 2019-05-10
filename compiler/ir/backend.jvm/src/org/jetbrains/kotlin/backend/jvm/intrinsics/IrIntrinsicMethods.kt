@@ -102,7 +102,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.illegalArgumentExceptionSymbol.toKey()!! to IrIllegalArgumentException,
                 irBuiltIns.throwNpeSymbol.toKey()!! to ThrowNPE,
                 irBuiltIns.andandSymbol.toKey()!! to AndAnd,
-                irBuiltIns.ororSymbol.toKey()!! to OrOr
+                irBuiltIns.ororSymbol.toKey()!! to OrOr,
+                symbols.unsafeCoerceIntrinsicSymbol.toKey()!! to UnsafeCoerce
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +
