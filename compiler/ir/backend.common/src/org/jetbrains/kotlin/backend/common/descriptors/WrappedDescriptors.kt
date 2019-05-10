@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -445,7 +442,9 @@ open class WrappedClassConstructorDescriptor(
         (containingDeclaration.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
     }
 
-    override fun getTypeParameters() = owner.typeParameters.map { it.descriptor }
+    override fun getTypeParameters() =
+        (owner.constructedClass.typeParameters + owner.typeParameters).map { it.descriptor }
+
     override fun getValueParameters() = owner.valueParameters.asSequence()
         .mapNotNull { it.descriptor as? ValueParameterDescriptor }
         .toMutableList()

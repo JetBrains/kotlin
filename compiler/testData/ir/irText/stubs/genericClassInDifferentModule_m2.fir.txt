@@ -6,6 +6,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
       VALUE_PARAMETER name:x index:0 type:T of <uninitialized parent> 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: T of <uninitialized parent>) [primary] declared in <root>.Base'
+          <T>: <none>
           x: GET_VAR 'x: T of <uninitialized parent> declared in <root>.Derived1.<init>' type=T of <uninitialized parent> origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base<T of <root>.Derived1>]'
     FUN name:foo visibility:public modality:FINAL <Y> ($this:<root>.Derived1, y:Y of <root>.Derived1.foo) returnType:T of <root>.Derived1 
@@ -59,4 +60,3 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-

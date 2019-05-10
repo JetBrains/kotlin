@@ -65,6 +65,7 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.CFoo'
+          <T>: <none>
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.CFoo<kotlin.String>; <root>.IFooStr; <root>.IBar]'
     PROPERTY name:bar visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public [final] 
@@ -95,4 +96,3 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-
