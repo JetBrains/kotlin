@@ -15,16 +15,26 @@
  */
 package org.jetbrains.plugins.gradle.service.settings;
 
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.externalSystem.model.settings.LocationSettingType;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil;
 import com.intellij.openapi.externalSystem.util.PaintAwarePanel;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.ReadonlyStatusHandler;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.HyperlinkAdapter;
+import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
@@ -34,13 +44,23 @@ import com.intellij.xml.util.XmlStringUtil;
 import org.gradle.initialization.BuildLayoutParameters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleBundle;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.intellij.openapi.ui.Messages.getQuestionIcon;
 
 /**
  * @author Vladislav.Soroka
@@ -60,12 +80,9 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   private boolean myServiceDirectoryPathModifiedByUser;
   private boolean dropServiceDirectory;
 
-  // Used by reflection at showUi() and disposeUiResources()
-  @SuppressWarnings("FieldCanBeLocal")
-  @Nullable
-  private JBLabel myGradleVmOptionsLabel;
   @Nullable
   private JBTextField myGradleVmOptionsField;
+  List<Component> myGradleVmOptionsComponents = new ArrayList<>();
   private boolean dropVmOptions;
 
   @Nullable
@@ -80,6 +97,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   @Override
   public void fillUi(@NotNull PaintAwarePanel canvas, int indentLevel) {
     addServiceDirectoryControl(canvas, indentLevel);
+    addVMOptionsControl(canvas, indentLevel);
 
     if (!dropStoreExternallyCheckBox) {
       myGenerateImlFilesCheckBox = new JBCheckBox(
@@ -95,15 +113,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
       constraints.insets.left += UIUtil.getCheckBoxTextHorizontalOffset(myGenerateImlFilesCheckBox);
       constraints.insets.top = 0;
-      //constraints.insets.bottom = UIUtil.LARGE_VGAP;
       canvas.add(myGenerateImlFilesHint, constraints);
-    }
-
-    if (!dropVmOptions) {
-      myGradleVmOptionsLabel = new JBLabel(GradleBundle.message("gradle.settings.text.vm.options"));
-      canvas.add(myGradleVmOptionsLabel, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
-      myGradleVmOptionsField = new JBTextField();
-      canvas.add(myGradleVmOptionsField, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
     }
   }
 
@@ -128,7 +138,9 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     }
 
     if (myGradleVmOptionsField != null) {
-      myGradleVmOptionsField.setText(trimIfPossible(myInitialSettings.getGradleVmOptions()));
+      String vmOptions = trimIfPossible(myInitialSettings.getGradleVmOptions());
+      myGradleVmOptionsField.setText(vmOptions);
+      myGradleVmOptionsComponents.forEach(it -> it.setVisible(vmOptions != null));
     }
 
     if (myGenerateImlFilesCheckBox != null) {
@@ -254,8 +266,147 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     serviceDirectoryPathField.getTextField().setForeground(LocationSettingType.DEDUCED.getColor());
   }
 
+  private void addVMOptionsControl(@NotNull PaintAwarePanel canvas, int indentLevel) {
+    if (!dropVmOptions) {
+      JBLabel label = new JBLabel(GradleBundle.message("gradle.settings.text.vm.options"));
+      canvas.add(label, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
+      myGradleVmOptionsComponents.add(label);
+
+      myGradleVmOptionsField = new JBTextField();
+      canvas.add(myGradleVmOptionsField, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
+      myGradleVmOptionsComponents.add(myGradleVmOptionsField);
+
+      Component glue = Box.createGlue();
+      canvas.add(glue, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
+      myGradleVmOptionsComponents.add(glue);
+
+      HyperlinkLabel fixLabel = new HyperlinkLabel();
+      fixLabel.setFontSize(UIUtil.FontSize.SMALL);
+      fixLabel.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
+      fixLabel.setIcon(AllIcons.General.BalloonWarning12);
+      GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
+      constraints.insets.top = 0;
+      canvas.add(fixLabel, constraints);
+      myGradleVmOptionsComponents.add(fixLabel);
+
+      myGradleVmOptionsField.getDocument().addDocumentListener(new DocumentAdapter() {
+        @Override
+        protected void textChanged(@NotNull DocumentEvent e) {
+          boolean showMigration = e.getDocument().getLength() > 0 && !myInitialSettings.getLinkedProjectsSettings().isEmpty();
+          fixLabel.setHyperlinkText(
+            "This setting is deprecated, please use 'gradle.properties' and 'org.gradle.jvmargs' property ",
+            showMigration ? "Migrate" : "  ", "");
+        }
+      });
+      myGradleVmOptionsField.setText(" "); // trigger listener
+
+      fixLabel.addHyperlinkListener(new HyperlinkAdapter() {
+        @Override
+        protected void hyperlinkActivated(HyperlinkEvent e) {
+          String jvmArgs = myGradleVmOptionsField.getText().trim();
+          if (jvmArgs.isEmpty()) return;
+
+          if (moveVMOptionsToGradleProperties(jvmArgs, myInitialSettings)) {
+            myGradleVmOptionsField.setText(null);
+            myGradleVmOptionsField.getEmptyText().setText("VM options have been moved to gradle.properties");
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();
+          }
+        }
+      });
+    }
+  }
+
   @Nullable
   private static String trimIfPossible(@Nullable String s) {
     return StringUtil.nullize(StringUtil.trim(s));
+  }
+
+  private static boolean moveVMOptionsToGradleProperties(@NotNull String vmOptions, @NotNull GradleSettings settings) {
+    int result = Messages.showYesNoDialog(
+      settings.getProject(),
+      "Would you like to move VM options to the project's 'gradle.properties' file?\n" +
+      "Note that the existing 'org.gradle.jvmargs' property will be overwritten.\n\n" +
+      "You can do it manually any time later", "Gradle Settings",
+      getQuestionIcon());
+    if (result != Messages.YES) return false;
+
+    List<String> errors = new ArrayList<>();
+
+    List<VirtualFile> filesToUpdate = new ArrayList<>();
+    WriteAction.run(() -> {
+      for (GradleProjectSettings each : settings.getLinkedProjectsSettings()) {
+        try {
+          String path = each.getExternalProjectPath();
+          if (path == null) continue;
+          // get or create project dir
+          VirtualFile dir = VfsUtil.findFileByIoFile(new File(path), true);
+          if (dir == null) {
+            dir = VfsUtil.createDirectories(path);
+          }
+
+          // get or create project's gradle.properties
+          VirtualFile props = VfsUtil.refreshAndFindChild(dir, "gradle.properties");
+          if (props == null) {
+            props = dir.createChildData(IdeaGradleSystemSettingsControlBuilder.class, "gradle.properties");
+          }
+          if (props.isDirectory()) throw new IOException(props.getPath() + " is a directory");
+
+          filesToUpdate.add(props);
+        }
+        catch (IOException e) {
+          errors.add(e.getMessage());
+        }
+      }
+    });
+
+    ReadonlyStatusHandler.ensureFilesWritable(settings.getProject(), filesToUpdate.toArray(VirtualFile.EMPTY_ARRAY));
+
+    WriteAction.run(() -> {
+      for (VirtualFile each : filesToUpdate) {
+        try {
+          String original = VfsUtilCore.loadText(each);
+          String updated = updateVMOptions(original, vmOptions);
+          if (!original.equals(updated)) {
+            VfsUtil.saveText(each, updated);
+          }
+        }
+        catch (IOException e) {
+          errors.add(e.getMessage());
+        }
+      }
+    });
+
+    if (!errors.isEmpty()) {
+      Messages.showErrorDialog(settings.getProject(),
+                               "The following problems were encountered:\n" +
+                               StringUtil.join(errors, it -> "-" + it, "\n") +
+                               "\n\nPlease migrate settings manually",
+                               "Gradle Settings");
+      return false;
+    }
+
+    return true;
+  }
+
+  private static final Pattern VM_OPTIONS_REGEX = Pattern.compile("^(\\s*\"?org\\.gradle\\.jvmargs\"?\\s*[=:]).*?(?<!\\\\)($)",
+                                                                  Pattern.MULTILINE | Pattern.DOTALL);
+
+  @NotNull
+  public static String updateVMOptions(@NotNull String originalText, @NotNull String vmOptions) {
+    Matcher matcher = VM_OPTIONS_REGEX.matcher(originalText);
+
+    StringBuffer result = new StringBuffer(originalText.length() + vmOptions.length());
+
+    String escapedValue = StringUtil.escapeProperty(vmOptions, false);
+    if (matcher.find()) {
+      matcher.appendReplacement(result, "$1" + Matcher.quoteReplacement(escapedValue) + "$2");
+      matcher.appendTail(result);
+    }
+    else {
+      result.append(originalText);
+      if (!originalText.isEmpty() && !originalText.endsWith("\n")) result.append("\n");
+      result.append("org.gradle.jvmargs=").append(escapedValue).append("\n");
+    }
+    return result.toString();
   }
 }

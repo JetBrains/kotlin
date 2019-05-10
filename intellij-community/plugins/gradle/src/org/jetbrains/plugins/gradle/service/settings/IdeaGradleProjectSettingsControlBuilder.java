@@ -300,7 +300,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
         JBLabel label = new JBLabel(
           XmlStringUtil.wrapInHtml(getIDEName() + " generates module per source set to correctly model Gradle dependency rules.<br>" +
-                                   "In case of ???? consider disabling it."),
+                                   "In case of ???? consider disabling it"),
           UIUtil.ComponentStyle.SMALL);
         label.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
 
