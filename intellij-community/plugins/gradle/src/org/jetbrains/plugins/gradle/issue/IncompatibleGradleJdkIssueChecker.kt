@@ -63,7 +63,7 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
       val wrapperPropertiesFile = GradleUtil.findDefaultWrapperPropertiesFile(issueData.projectPath)
       if (wrapperPropertiesFile != null) {
         val wrapperSettingsOpenQuickFix = GradleWrapperSettingsOpenQuickFix(issueData.projectPath, "distributionUrl")
-        issueDescription.append(" - <a href=\"${wrapperSettingsOpenQuickFix.id}\">Open Gradle wrapper settings and upgrade version>\n")
+        issueDescription.append(" - <a href=\"${wrapperSettingsOpenQuickFix.id}\">Open Gradle wrapper settings and upgrade version</a>\n")
         myQuickFixes.add(wrapperSettingsOpenQuickFix)
       }
       else {
