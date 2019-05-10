@@ -25,7 +25,7 @@ abstract class AbstractIrLineNumberTest : AbstractLineNumberTest() {
     override fun compareCustom(psiFile: KtFile, wholeFile: File) {
         val fileText = psiFile.text
         val expectedLineNumbers = normalize(
-            fileText.substring(fileText.indexOf("//") + 2)
+            fileText.substring(Regex("// \\d+").find(fileText)!!.range.start + 2)
                 .trim().split(" ").map { it.trim() }.toMutableList()
         )
         val actualLineNumbers = normalize(extractActualLineNumbersFromBytecode(classFileFactory, false))
