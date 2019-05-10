@@ -110,8 +110,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     });
 
     myContentManager = toolWindow.getContentManager();
-    myContentManager.addContent(allServicesContent);
     myContentManager.addContentManagerListener(new MyContentMangerListener(allServicesContent));
+    myContentManager.addContent(allServicesContent);
 
     ToolWindowEx toolWindowEx = (ToolWindowEx)toolWindow;
     toolWindowEx.setAdditionalGearActions(new DefaultActionGroup(ToggleAutoScrollAction.toSource(), ToggleAutoScrollAction.fromSource()));

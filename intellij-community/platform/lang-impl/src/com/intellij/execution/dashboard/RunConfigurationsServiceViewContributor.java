@@ -20,6 +20,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
@@ -139,8 +140,9 @@ public class RunConfigurationsServiceViewContributor
   }
 
   private static class RunConfigurationServiceViewDescriptor implements ServiceViewDescriptor {
+    private static final Key<Boolean> SELECTION_QUERIED = Key.create("ServiceViewContentSelectionQueried");
+
     private final RunConfigurationNode node;
-    private boolean selected;
 
     private RunConfigurationServiceViewDescriptor(RunConfigurationNode node) {
       this.node = node;
@@ -195,15 +197,21 @@ public class RunConfigurationsServiceViewContributor
 
     @Override
     public void onNodeSelected() {
-      selected = true;
       Content content = node.getContent();
-      ContentManager contentManager = content == null ? null : content.getManager();
+      if (content == null) return;
+
+      content.putUserData(SELECTION_QUERIED, Boolean.TRUE);
+      ContentManager contentManager = content.getManager();
       if (contentManager == null || content == contentManager.getSelectedContent()) return;
 
       // Invoke content selection change later after currently selected content lost a focus.
       SwingUtilities.invokeLater(() -> {
         // Selected node may changed, we do not need to select content if it doesn't correspond currently selected node.
-        if (contentManager.isDisposed() || contentManager.getIndexOfContent(content) == -1 || !selected) return;
+        if (contentManager.isDisposed() ||
+            contentManager.getIndexOfContent(content) == -1 ||
+            Boolean.TRUE != content.getUserData(SELECTION_QUERIED)) {
+          return;
+        }
 
         contentManager.setSelectedContent(content);
       });
@@ -211,16 +219,22 @@ public class RunConfigurationsServiceViewContributor
 
     @Override
     public void onNodeUnselected() {
-      selected = false;
       Content content = node.getContent();
-      ContentManager contentManager = content == null ? null : content.getManager();
+      if (content == null) return;
+
+      content.putUserData(SELECTION_QUERIED, Boolean.FALSE);
+      ContentManager contentManager = content.getManager();
       if (contentManager == null || content != contentManager.getSelectedContent()) return;
 
       // Invoke content selection change later after currently selected content correctly restores its state,
       // since RunnerContentUi performs restoring later after addNotify call chain.
       SwingUtilities.invokeLater(() -> {
         // Selected node may changed, we do not need to remove content from selection if it corresponds currently selected node.
-        if (contentManager.isDisposed() || !contentManager.isSelected(content) || selected) return;
+        if (contentManager.isDisposed() ||
+            !contentManager.isSelected(content) ||
+            Boolean.TRUE == content.getUserData(SELECTION_QUERIED)) {
+          return;
+        }
 
         contentManager.removeFromSelection(content);
       });
