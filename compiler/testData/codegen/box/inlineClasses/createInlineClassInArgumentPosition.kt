@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 inline class AsInt(val value: Int) {
     override fun toString(): String {

@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 inline class Props(val intArray: IntArray) {
     val size get() = intArray.size

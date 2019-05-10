@@ -1,7 +1,6 @@
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 import kotlin.test.*
 

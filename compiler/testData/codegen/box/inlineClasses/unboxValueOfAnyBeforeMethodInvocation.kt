@@ -1,6 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 inline class NullableInt(private val holder: Any?) {
     val intValue: Int get() = holder as Int

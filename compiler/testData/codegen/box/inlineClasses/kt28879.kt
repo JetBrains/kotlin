@@ -1,6 +1,5 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 
 import java.util.concurrent.atomic.AtomicReference
 import java.util.Arrays

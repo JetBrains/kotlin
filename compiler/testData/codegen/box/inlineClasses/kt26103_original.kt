@@ -1,6 +1,5 @@
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 inline class Foo<T>(val x: Int)
 

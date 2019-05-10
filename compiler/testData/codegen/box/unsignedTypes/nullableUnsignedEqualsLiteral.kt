@@ -1,6 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 fun isZeroUInt(n: UInt?) = n == 0U
 fun isZeroUInt2(n: UInt?): Boolean = n != null && n == 0u
