@@ -394,8 +394,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private void updateContentTab(ServiceViewItem item, Content content) {
     if (item != null) {
-      ItemPresentation itemPresentation = item.getViewDescriptor().getContentPresentation();
       AppUIUtil.invokeOnEdt(() -> {
+        ItemPresentation itemPresentation = item.getViewDescriptor().getContentPresentation();
         content.setDisplayName(ServiceViewDragHelper.getDisplayName(itemPresentation));
         content.setIcon(itemPresentation.getIcon(false));
       }, myProject.getDisposed());
