@@ -103,7 +103,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   @Nullable protected FixedSizeButton myGradleJdkSetUpButton;
   private boolean dropGradleJdkComponents;
 
-  @Nullable ComboBox<DistributionTypeItem> myGradleDistributionComboBox;
+  @Nullable JComboBox<DistributionTypeItem> myGradleDistributionComboBox;
   @Nullable JBLabel myGradleDistributionHint;
 
   private boolean dropUseWrapperButton;
@@ -232,6 +232,12 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   @Override
   public void showUi(boolean show) {
     ExternalSystemUiUtil.showUi(this, show);
+
+    if (show) {
+      // some controls need to remain hidden depending on the selection
+      // also error notifications should be shown
+      updateDistributionComponents();
+    }
   }
 
   @Override
@@ -391,7 +397,6 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     if (!dropUseBundledDistributionButton) availableDistributions.add(new DistributionTypeItem(DistributionType.BUNDLED));
 
     myGradleDistributionComboBox = new ComboBox<>();
-    myGradleDistributionComboBox.setPrototypeDisplayValue(new DistributionTypeItem(DistributionType.DEFAULT_WRAPPED));
     myGradleDistributionComboBox.setRenderer(new MyItemCellRenderer<>());
 
     myGradleDistributionHint = new JBLabel();
@@ -420,33 +425,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     myGradleDistributionComboBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        boolean localEnabled = getSelectedGradleDistribution() == DistributionType.LOCAL;
-        boolean wrapperSelected = getSelectedGradleDistribution() == DistributionType.DEFAULT_WRAPPED;
-
-        myGradleHomePathField.setEnabled(localEnabled);
-        myGradleHomePathField.setVisible(localEnabled);
-
-        myGradleDistributionHint.setEnabled(wrapperSelected);
-        myGradleDistributionHint.setVisible(wrapperSelected);
-
-        if (localEnabled) {
-          if (myGradleHomePathField.getText().isEmpty()) {
-            deduceGradleHomeIfPossible();
-          }
-          else {
-            if (myInstallationManager.isGradleSdkHome(myGradleHomePathField.getText())) {
-              myGradleHomeSettingType = LocationSettingType.EXPLICIT_CORRECT;
-            }
-            else {
-              myGradleHomeSettingType = LocationSettingType.EXPLICIT_INCORRECT;
-              myShowBalloonIfNecessary = true;
-            }
-          }
-          showBalloonIfNecessary();
-        }
-        else {
-          myAlarm.cancelAllRequests();
-        }
+        updateDistributionComponents();
       }
     });
 
@@ -455,13 +434,55 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       content.add(new JBLabel("Use Gradle from:"), ExternalSystemUiUtil.getLabelConstraints(indentLevel));
       content.add(myGradleDistributionComboBox, ExternalSystemUiUtil.getLabelConstraints(0));
 
-      JPanel additionalControlsPanel = new JPanel(new BorderLayout());
-      additionalControlsPanel.add(myGradleDistributionHint, BorderLayout.WEST);
-      additionalControlsPanel.add(myGradleHomePathField, BorderLayout.CENTER);
-      content.add(additionalControlsPanel, ExternalSystemUiUtil.getFillLineConstraints(0));
+      JPanel additionalControlsPanel = new JPanel(new GridBagLayout());
+      additionalControlsPanel.add(myGradleDistributionHint);
+      additionalControlsPanel.add(myGradleHomePathField, ExternalSystemUiUtil.getFillLineConstraints(0));
+      content.add(additionalControlsPanel, ExternalSystemUiUtil.getFillLineConstraints(0).insets(0, 0, 0, 0));
+
+      // adjust the combobox height to match the height of the editor and Gradle GDK combobox.
+      // - without setting the prefered size, it's resized when path component is shown/hidden
+      // - without adjusting the height the combobox is a little smaller then the next combobox (Gradle JVM)
+      boolean macTheme = UIUtil.isUnderDefaultMacTheme();
+      myGradleDistributionComboBox.setPreferredSize(new Dimension(myGradleDistributionComboBox.getPreferredSize().width,
+                                                                  myGradleHomePathField.getPreferredSize().height + (macTheme ? 3 : 0)));
     }
 
     return this;
+  }
+
+  private void updateDistributionComponents() {
+    if (myGradleDistributionComboBox == null) return;
+    if (myGradleHomePathField == null) return;
+
+    boolean localEnabled = getSelectedGradleDistribution() == DistributionType.LOCAL;
+    boolean wrapperSelected = getSelectedGradleDistribution() == DistributionType.DEFAULT_WRAPPED;
+
+    myGradleHomePathField.setEnabled(localEnabled);
+    myGradleHomePathField.setVisible(localEnabled);
+
+    if (myGradleDistributionHint != null) {
+      myGradleDistributionHint.setEnabled(wrapperSelected);
+      myGradleDistributionHint.setVisible(wrapperSelected);
+    }
+
+    if (localEnabled) {
+      if (myGradleHomePathField.getText().isEmpty()) {
+        deduceGradleHomeIfPossible();
+      }
+      else {
+        if (myInstallationManager.isGradleSdkHome(myGradleHomePathField.getText())) {
+          myGradleHomeSettingType = LocationSettingType.EXPLICIT_CORRECT;
+        }
+        else {
+          myGradleHomeSettingType = LocationSettingType.EXPLICIT_INCORRECT;
+          myShowBalloonIfNecessary = true;
+        }
+      }
+      showBalloonIfNecessary();
+    }
+    else {
+      myAlarm.cancelAllRequests();
+    }
   }
 
   @Nullable
