@@ -9,12 +9,18 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleSettingsQuickFix
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleVersionQuickFix
+import org.jetbrains.plugins.gradle.issue.quickfix.GradleWrapperSettingsOpenQuickFix
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import java.util.*
 import java.util.function.BiPredicate
 
 /**
+ * This issue checker provides quick fixes for known compatibility issues with Gradle and Java:
+ * 1. Gradle versions less than 4.7 do not support JEP-322 (Java starting with JDK 10-ea build 36), see https://github.com/gradle/gradle/issues/4503
+ * 2. Gradle versions less than 4.8 fails on JDK 11+ (due to dependency on Unsafe::defineClass which is removed in JDK 11), see https://github.com/gradle/gradle/issues/4860
+ * 3. Gradle versions less than 4.7 can not be used by the IDE running on Java 9+, see https://github.com/gradle/gradle/issues/8431, https://github.com/gradle/gradle/issues/3355
+ *
  * @author Vladislav.Soroka
  */
 @ApiStatus.Experimental
@@ -22,7 +28,10 @@ class IncompatibleGradleJdkIssueChecker : BuildIssueChecker<GradleIssueData> {
 
   override fun check(issueData: GradleIssueData): BuildIssue? {
     val rootCause = issueData.rootCause
-    if (!rootCause.toString().startsWith("org.gradle.api.GradleException: Could not determine Java version using executable")) {
+    val rootCauseText = rootCause.toString()
+    val isToolingClientIssue = rootCauseText.startsWith("java.lang.IllegalArgumentException: Could not determine java version from")
+    if (!isToolingClientIssue && !rootCauseText.startsWith(
+        "org.gradle.api.GradleException: Could not determine Java version using executable")) {
       return null
     }
 
@@ -30,31 +39,38 @@ class IncompatibleGradleJdkIssueChecker : BuildIssueChecker<GradleIssueData> {
     myQuickFixes = ArrayList()
     val issueDescription = StringBuilder(rootCause.message)
     var gradleVersionUsed: GradleVersion? = null
-    val gradleMinimumVersionRequired = GradleVersion.version("4.7")
+    val gradleMinimumVersionRequired = GradleVersion.version("4.8.1")
     if (issueData.buildEnvironment != null) {
       gradleVersionUsed = GradleVersion.version(issueData.buildEnvironment.gradle.gradleVersion)
     }
 
     val gradleVersionString = if (gradleVersionUsed != null) gradleVersionUsed.version else "version"
-    issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 10 or newer." +
-                            "\nYou can:\n")
-    if (gradleVersionUsed != null && gradleVersionUsed.baseVersion < gradleMinimumVersionRequired) {
+    if (isToolingClientIssue) {
+      issueDescription.append(
+        "\n\nThe project uses Gradle $gradleVersionString which is incompatible with IDE running under Java 10 or newer.")
+    }
+    else {
+      issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 10 or newer.")
+    }
+    issueDescription.append("\nYou can:\n")
+    if (isToolingClientIssue || gradleVersionUsed != null && gradleVersionUsed.baseVersion < gradleMinimumVersionRequired) {
       val gradleVersionFix = GradleVersionQuickFix(issueData.projectPath, gradleMinimumVersionRequired, true)
-      issueDescription.append(" - <a href=\"${gradleVersionFix.id}\">Upgrade Gradle to 4.7 version and re-import the project</a>\n")
+      issueDescription.append(" - <a href=\"${gradleVersionFix.id}\">Upgrade Gradle to ${gradleMinimumVersionRequired.version} version " +
+                              "and re-import the project</a>\n")
       myQuickFixes.add(gradleVersionFix)
     }
     else {
       val wrapperPropertiesFile = GradleUtil.findDefaultWrapperPropertiesFile(issueData.projectPath)
       if (wrapperPropertiesFile != null) {
-        val gradleVersionFix = GradleVersionQuickFix(issueData.projectPath, gradleMinimumVersionRequired, false)
-        issueDescription.append(" - <a href=\"${gradleVersionFix.id}\">Open Gradle wrapper settings and upgrade version>\n")
-        myQuickFixes.add(gradleVersionFix)
+        val wrapperSettingsOpenQuickFix = GradleWrapperSettingsOpenQuickFix(issueData.projectPath, "distributionUrl")
+        issueDescription.append(" - <a href=\"${wrapperSettingsOpenQuickFix.id}\">Open Gradle wrapper settings and upgrade version>\n")
+        myQuickFixes.add(wrapperSettingsOpenQuickFix)
       }
       else {
         issueDescription.append(" - Try upgrade Gradle\n")
       }
     }
-    if ("AndroidStudio" != getPlatformPrefix()) { // Android Studio doesn't have Gradle JVM setting
+    if (!isToolingClientIssue && "AndroidStudio" != getPlatformPrefix()) { // Android Studio doesn't have Gradle JVM setting
       val gradleSettingsFix = GradleSettingsQuickFix(
         issueData.projectPath, true,
         BiPredicate { oldSettings, currentSettings ->

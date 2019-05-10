@@ -43,7 +43,7 @@ class GradleSettingsQuickFix(private val myProjectPath: String, private val myRe
       if (isSettingsChanged!! && myRequestImport)
         requestImport(project, myProjectPath)
       else
-        CompletableFuture.completedFuture(false)
+        CompletableFuture.completedFuture(null)
     }
   }
 }
