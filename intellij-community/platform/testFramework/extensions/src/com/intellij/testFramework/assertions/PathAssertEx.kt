@@ -2,20 +2,14 @@
 package com.intellij.testFramework.assertions
 
 import com.intellij.openapi.util.text.StringUtilRt
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.SystemProperties
-import com.intellij.util.containers.ContainerUtil
-import com.intellij.util.io.*
-import gnu.trove.THashSet
+import com.intellij.util.io.readText
+import com.intellij.util.io.size
 import junit.framework.ComparisonFailure
-import org.assertj.core.api.AbstractStringAssert
 import org.assertj.core.api.PathAssert
 import org.assertj.core.internal.ComparatorBasedComparisonStrategy
 import org.assertj.core.internal.Iterables
-import org.junit.rules.ExternalResource
 import java.nio.file.Files
 import java.nio.file.LinkOption
-import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import java.util.*
 
@@ -70,65 +64,3 @@ class PathAssertEx(actual: Path?) : PathAssert(actual) {
   }
 }
 
-private interface SnapshotFileUsageListener {
-  fun active(file: Path)
-}
-
-private val snapshotFileUsageListeners = ContainerUtil.newConcurrentSet<SnapshotFileUsageListener>()
-
-class StringAssertEx(actual: String?) : AbstractStringAssert<StringAssertEx>(actual, StringAssertEx::class.java) {
-  fun isEqualTo(expected: Path) {
-    isNotNull
-
-    compareFileContent(actual, expected)
-  }
-
-  fun toMatchSnapshot(snapshotFile: Path) {
-    snapshotFileUsageListeners.forEach { it.active(snapshotFile) }
-
-    isNotNull
-
-    try {
-      compareFileContent(actual, snapshotFile,
-                         updateIfMismatch = !UsefulTestCase.IS_UNDER_TEAMCITY && SystemProperties.getBooleanProperty("test.update.snapshots", false))
-    }
-    catch (e: NoSuchFileException) {
-      if (UsefulTestCase.IS_UNDER_TEAMCITY) {
-        throw e
-      }
-
-      println("Write a new snapshot ${snapshotFile.fileName}")
-      snapshotFile.write(actual)
-    }
-  }
-}
-
-class CleanupSnapshots(private val dir: Path) : ExternalResource() {
-  private val usedPaths: MutableSet<Path> = THashSet<Path>()
-
-  private val listener = object : SnapshotFileUsageListener {
-    override fun active(file: Path) {
-      if (file.startsWith(dir)) {
-        usedPaths.add(file)
-      }
-    }
-  }
-
-  override fun before() {
-    if (!UsefulTestCase.IS_UNDER_TEAMCITY) {
-      snapshotFileUsageListeners.add(listener)
-    }
-  }
-
-  override fun after() {
-    dir.directoryStreamIfExists {
-      for (file in it) {
-        if (!usedPaths.contains(file) && !file.isHidden() && file.isFile()) {
-          file.delete(false)
-          println("Remove outdated snapshot ${dir.relativize(file)}")
-        }
-      }
-    }
-    snapshotFileUsageListeners.remove(listener)
-  }
-}
