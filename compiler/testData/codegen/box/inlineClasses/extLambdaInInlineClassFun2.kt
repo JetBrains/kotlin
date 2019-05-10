@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 fun <T> T.runExt(fn: T.() -> String) = fn()
 

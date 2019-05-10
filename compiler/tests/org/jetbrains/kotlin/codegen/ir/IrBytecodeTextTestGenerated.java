@@ -2405,6 +2405,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/callMemberMethodsInsideInlineClass.kt");
         }
 
+        @TestMetadata("checkBoxingInInlineClass.kt")
+        public void testCheckBoxingInInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/checkBoxingInInlineClass.kt");
+        }
+
         @TestMetadata("checkOuterInlineFunctionCall.kt")
         public void testCheckOuterInlineFunctionCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/checkOuterInlineFunctionCall.kt");

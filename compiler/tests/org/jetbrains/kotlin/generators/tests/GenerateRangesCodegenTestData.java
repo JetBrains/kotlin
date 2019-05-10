@@ -130,8 +130,6 @@ public class GenerateRangesCodegenTestData {
                 .replace("\n", LineSeparator.getSystemLineSeparator().getSeparatorString());
     }
 
-    private static final List<String> WHITELISTED_FOR_JVM_IR_BACKEND = Collections.singletonList("overflowZeroDownToMaxValue.kt");
-
     private static void writeIgnoreBackendDirective(PrintWriter out, String backendName) {
         out.printf("// TODO: muted automatically, investigate should it be ran for %s or not%n", backendName);
         out.printf("// IGNORE_BACKEND: %s%n%n", backendName);
@@ -149,8 +147,10 @@ public class GenerateRangesCodegenTestData {
 
         out.println("// KJS_WITH_FULL_RUNTIME");
 
-        // Most test cases for unsigned ranges/progressions are broken for JVM_IR, due to inlining.
-        if (isForUnsigned && !WHITELISTED_FOR_JVM_IR_BACKEND.contains(file.getName())) {
+        // All test cases for unsigned ranges/progressions are broken for JVM_IR, due to the combination
+        // of inline classes and inlining. The inline class lowering replaces function declarations due
+        // to name mangling, which produces WrappedDescriptors which the inliner currently cannot handle.
+        if (isForUnsigned) {
             writeIgnoreBackendDirective(out, "JVM_IR");
         }
 

@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 inline class Rgba(val value: Int) {
     inline val r: Int get() = (value shr 0) and 0xFF
