@@ -60,7 +60,7 @@ public class CodeCompletionHandlerBase {
 
   /**
    * If this key is set for a lookup element, the framework will only call handleInsert() on the lookup element when it is selected,
-   * and will not perform any additional processing such as multicaret handling or insertion of completion character.
+   * and will not perform any additional processing such as multi-caret handling or insertion of completion character.
    */
   public static final Key<Boolean> DIRECT_INSERTION = Key.create("CodeCompletionHandlerBase.directInsertion");
 
@@ -108,12 +108,6 @@ public class CodeCompletionHandlerBase {
 
   public final void invokeCompletion(@NotNull final Project project, @NotNull final Editor editor, int time) {
     invokeCompletion(project, editor, time, false);
-  }
-
-  /** todo remove once there's no plugins using this */
-  @Deprecated
-  public final void invokeCompletion(@NotNull Project project, @NotNull Editor editor, int time, boolean hasModifiers, boolean restarted) {
-    invokeCompletion(project, editor, time, hasModifiers);
   }
 
   public final void invokeCompletion(@NotNull Project project, @NotNull Editor editor, int time, boolean hasModifiers) {
@@ -417,22 +411,6 @@ public class CodeCompletionHandlerBase {
     }
   }
 
-  public void handleCompletionElementSelected(CompletionParameters parameters,
-                                              @NotNull LookupElement item,
-                                              char completionChar) {
-    WatchingInsertionContext context = null;
-    try {
-      StatisticsUpdate update = StatisticsUpdate.collectStatisticChanges(item);
-      context = insertItemHonorBlockSelection((CompletionProcessEx) parameters.getProcess(), item, completionChar, update);
-      update.trackStatistics(context);
-    }
-    finally {
-      if (context != null && context.getLaterRunnable() != null) {
-        context.getLaterRunnable().run();
-      }
-    }
-  }
-
   private static WatchingInsertionContext insertItemHonorBlockSelection(CompletionProcessEx indicator,
                                                                         LookupElement item,
                                                                         char completionChar,
@@ -474,7 +452,7 @@ public class CodeCompletionHandlerBase {
     if (context.shouldAddCompletionChar()) {
       WriteAction.run(() -> addCompletionChar(context, item));
     }
-    checkPsiTextConcistency(indicator);
+    checkPsiTextConsistency(indicator);
 
     return context;
   }
@@ -495,7 +473,7 @@ public class CodeCompletionHandlerBase {
         CompletionInitializationContext.calcDefaultIdentifierEnd(indicator.getEditor(), indicator.getCaret().getOffset());
   }
 
-  private static void checkPsiTextConcistency(CompletionProcessEx indicator) {
+  private static void checkPsiTextConsistency(CompletionProcessEx indicator) {
     PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(InjectedLanguageUtil.getTopLevelEditor(indicator.getEditor()), indicator.getProject());
     if (psiFile != null) {
       if (Registry.is("ide.check.stub.text.consistency") ||
