@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -342,7 +344,9 @@ private val IrClass.flags: Int
 private val IrField.flags: Int
     get() = origin.flags or visibility.flags or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
-            (if (isStatic) Opcodes.ACC_STATIC else 0)
+            (if (isStatic) Opcodes.ACC_STATIC else 0) or
+            (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
+            (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0)
 
 private val IrDeclarationOrigin.flags: Int
     get() = (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
