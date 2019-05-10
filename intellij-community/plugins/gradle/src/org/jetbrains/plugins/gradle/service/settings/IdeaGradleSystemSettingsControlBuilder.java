@@ -16,8 +16,6 @@
 package org.jetbrains.plugins.gradle.service.settings;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.externalSystem.model.settings.LocationSettingType;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil;
 import com.intellij.openapi.externalSystem.util.PaintAwarePanel;
@@ -28,10 +26,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.ReadonlyStatusHandler;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
@@ -44,13 +38,11 @@ import com.intellij.xml.util.XmlStringUtil;
 import org.gradle.initialization.BuildLayoutParameters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleBundle;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.io.File;
@@ -77,7 +69,6 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   private JBLabel myServiceDirectoryHint;
   @Nullable
   private TextFieldWithBrowseButton myServiceDirectoryPathField;
-  private boolean myServiceDirectoryPathModifiedByUser;
   private boolean dropServiceDirectory;
 
   @Nullable
@@ -125,16 +116,10 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   @Override
   public void reset() {
     if (myServiceDirectoryPathField != null) {
-      myServiceDirectoryPathField.getTextField().setForeground(LocationSettingType.EXPLICIT_CORRECT.getColor());
-      myServiceDirectoryPathField.setText("");
-      String path = myInitialSettings.getServiceDirectoryPath();
-      if (StringUtil.isEmpty(path)) {
-        deduceServiceDirectory(myServiceDirectoryPathField);
-        myServiceDirectoryPathModifiedByUser = false;
-      }
-      else {
-        myServiceDirectoryPathField.setText(path);
-      }
+      File gradleUserHomeDir = new BuildLayoutParameters().getGradleUserHomeDir();
+      ((JBTextField)myServiceDirectoryPathField.getTextField()).getEmptyText().setText(gradleUserHomeDir.getPath());
+
+      myServiceDirectoryPathField.setText(myInitialSettings.getServiceDirectoryPath());
     }
 
     if (myGradleVmOptionsField != null) {
@@ -150,7 +135,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
 
   @Override
   public boolean isModified() {
-    if (myServiceDirectoryPathModifiedByUser && myServiceDirectoryPathField != null &&
+    if (myServiceDirectoryPathField != null &&
         !Comparing.equal(ExternalSystemApiUtil.normalizePath(myServiceDirectoryPathField.getText()),
                          ExternalSystemApiUtil.normalizePath(myInitialSettings.getServiceDirectoryPath()))) {
       return true;
@@ -170,7 +155,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
 
   @Override
   public void apply(@NotNull GradleSettings settings) {
-    if (myServiceDirectoryPathField != null && myServiceDirectoryPathModifiedByUser) {
+    if (myServiceDirectoryPathField != null) {
       settings.setServiceDirectoryPath(ExternalSystemApiUtil.normalizePath(myServiceDirectoryPathField.getText()));
     }
     if (myGradleVmOptionsField != null) {
@@ -228,27 +213,10 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       UIUtil.ComponentStyle.SMALL);
     myServiceDirectoryHint.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
 
-    myServiceDirectoryPathField = new TextFieldWithBrowseButton();
+    myServiceDirectoryPathField = new TextFieldWithBrowseButton(new JBTextField());
     myServiceDirectoryPathField.addBrowseFolderListener("", "Select Gradle user home directory", null,
                                                         new FileChooserDescriptor(false, true, false, false, false, false),
                                                         TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
-    myServiceDirectoryPathField.getTextField().getDocument().addDocumentListener(new DocumentListener() {
-      @Override
-      public void insertUpdate(DocumentEvent e) {
-        myServiceDirectoryPathModifiedByUser = true;
-        myServiceDirectoryPathField.getTextField().setForeground(LocationSettingType.EXPLICIT_CORRECT.getColor());
-      }
-
-      @Override
-      public void removeUpdate(DocumentEvent e) {
-        myServiceDirectoryPathModifiedByUser = true;
-        myServiceDirectoryPathField.getTextField().setForeground(LocationSettingType.EXPLICIT_CORRECT.getColor());
-      }
-
-      @Override
-      public void changedUpdate(DocumentEvent e) {
-      }
-    });
 
     canvas.add(myServiceDirectoryLabel, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
     canvas.add(myServiceDirectoryPathField, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
@@ -258,12 +226,6 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     constraints.insets.top = 0;
     canvas.add(myServiceDirectoryHint, constraints);
 
-  }
-
-  private static void deduceServiceDirectory(@NotNull TextFieldWithBrowseButton serviceDirectoryPathField) {
-    File gradleUserHomeDir = new BuildLayoutParameters().getGradleUserHomeDir();
-    serviceDirectoryPathField.setText(FileUtil.toSystemIndependentName(gradleUserHomeDir.getPath()));
-    serviceDirectoryPathField.getTextField().setForeground(LocationSettingType.DEDUCED.getColor());
   }
 
   private void addVMOptionsControl(@NotNull PaintAwarePanel canvas, int indentLevel) {
@@ -292,7 +254,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       myGradleVmOptionsField.getDocument().addDocumentListener(new DocumentAdapter() {
         @Override
         protected void textChanged(@NotNull DocumentEvent e) {
-          boolean showMigration = e.getDocument().getLength() > 0 && !myInitialSettings.getLinkedProjectsSettings().isEmpty();
+          boolean showMigration = e.getDocument().getLength() > 0;
           fixLabel.setHyperlinkText(
             "This setting is deprecated, please use 'gradle.properties' and 'org.gradle.jvmargs' property ",
             showMigration ? "Migrate" : "  ", "");
@@ -309,7 +271,6 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
           if (moveVMOptionsToGradleProperties(jvmArgs, myInitialSettings)) {
             myGradleVmOptionsField.setText(null);
             myGradleVmOptionsField.getEmptyText().setText("VM options have been moved to gradle.properties");
-            KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();
           }
         }
       });
@@ -321,67 +282,43 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     return StringUtil.nullize(StringUtil.trim(s));
   }
 
-  private static boolean moveVMOptionsToGradleProperties(@NotNull String vmOptions, @NotNull GradleSettings settings) {
+  private boolean moveVMOptionsToGradleProperties(@NotNull String vmOptions, @NotNull GradleSettings settings) {
+    File gradleUserHomeDir = new BuildLayoutParameters().getGradleUserHomeDir();
+    if (myServiceDirectoryPathField != null) {
+      String fieldText = trimIfPossible(myServiceDirectoryPathField.getText());
+      if (fieldText != null) gradleUserHomeDir = new File(fieldText);
+    }
+
     int result = Messages.showYesNoDialog(
       settings.getProject(),
-      "Would you like to move VM options to the project's 'gradle.properties' file?\n" +
+      "Would you like to move VM options to the '" + new File(gradleUserHomeDir, "gradle.properties") + "' file?\n" +
       "Note that the existing 'org.gradle.jvmargs' property will be overwritten.\n\n" +
       "You can do it manually any time later", "Gradle Settings",
       getQuestionIcon());
     if (result != Messages.YES) return false;
 
-    List<String> errors = new ArrayList<>();
-
-    List<VirtualFile> filesToUpdate = new ArrayList<>();
-    WriteAction.run(() -> {
-      for (GradleProjectSettings each : settings.getLinkedProjectsSettings()) {
-        try {
-          String path = each.getExternalProjectPath();
-          if (path == null) continue;
-          // get or create project dir
-          VirtualFile dir = VfsUtil.findFileByIoFile(new File(path), true);
-          if (dir == null) {
-            dir = VfsUtil.createDirectories(path);
-          }
-
-          // get or create project's gradle.properties
-          VirtualFile props = VfsUtil.refreshAndFindChild(dir, "gradle.properties");
-          if (props == null) {
-            props = dir.createChildData(IdeaGradleSystemSettingsControlBuilder.class, "gradle.properties");
-          }
-          if (props.isDirectory()) throw new IOException(props.getPath() + " is a directory");
-
-          filesToUpdate.add(props);
-        }
-        catch (IOException e) {
-          errors.add(e.getMessage());
+    try {
+      // get or create project dir
+      if (!gradleUserHomeDir.exists()) {
+        if (!FileUtil.createDirectory(gradleUserHomeDir)) {
+          throw new IOException("Cannot create " + gradleUserHomeDir);
         }
       }
-    });
 
-    ReadonlyStatusHandler.ensureFilesWritable(settings.getProject(), filesToUpdate.toArray(VirtualFile.EMPTY_ARRAY));
+      // get or create project's gradle.properties
+      File props = new File(gradleUserHomeDir, "gradle.properties");
+      if (props.isDirectory()) throw new IOException(props.getPath() + " is a directory");
 
-    WriteAction.run(() -> {
-      for (VirtualFile each : filesToUpdate) {
-        try {
-          String original = VfsUtilCore.loadText(each);
-          String updated = updateVMOptions(original, vmOptions);
-          if (!original.equals(updated)) {
-            VfsUtil.saveText(each, updated);
-          }
-        }
-        catch (IOException e) {
-          errors.add(e.getMessage());
-        }
+      String original = props.exists() ? FileUtil.loadFile(props) : "";
+      String updated = updateVMOptions(original, vmOptions);
+      if (!original.equals(updated)) {
+        FileUtil.writeToFile(props, updated);
       }
-    });
-
-    if (!errors.isEmpty()) {
+    }
+    catch (IOException e) {
       Messages.showErrorDialog(settings.getProject(),
-                               "The following problems were encountered:\n" +
-                               StringUtil.join(errors, it -> "-" + it, "\n") +
-                               "\n\nPlease migrate settings manually",
-                               "Gradle Settings");
+                               e.getMessage() + "\n\nPlease migrate settings manually",
+                               "Migration Error");
       return false;
     }
 
