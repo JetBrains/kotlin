@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -83,7 +82,6 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
             typeParameter.parent = irFunction
             irFunction.typeParameters.add(typeParameter)
 
-
             val dispatchReceiverParameterDescriptor = WrappedValueParameterDescriptor()
             irFunction.dispatchReceiverParameter = IrValueParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -141,7 +139,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 toArrayName,
                 Visibilities.PUBLIC,
                 Modality.OPEN,
-                returnType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyType),
+                returnType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType),
                 isInline = false,
                 isExternal = false,
                 isTailrec = false,
