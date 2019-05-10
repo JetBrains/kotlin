@@ -13,7 +13,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object NewArray : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
-        codegen.gen(expression.getValueArgument(0)!!, Type.INT_TYPE, data)
+        codegen.gen(expression.getValueArgument(0)!!, Type.INT_TYPE, codegen.context.irBuiltIns.intType, data)
         codegen.newArrayInstruction(expression.type)
         return with(codegen) { expression.onStack }
     }

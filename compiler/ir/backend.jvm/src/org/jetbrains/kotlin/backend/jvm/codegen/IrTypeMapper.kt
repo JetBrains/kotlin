@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -57,9 +58,15 @@ class IrTypeMapper(val kotlinTypeMapper: KotlinTypeMapper) {
     fun mapType(irType: IrType, sw: JvmSignatureWriter, mode: TypeMappingMode) =
         kotlinTypeMapper.mapType(irType.toKotlinType(), sw, mode)
 
+    fun mapTypeAsDeclaration(irType: IrType) =
+        kotlinTypeMapper.mapTypeAsDeclaration(irType.toKotlinType())
+
     fun mapTypeParameter(irType: IrType, signatureWriter: JvmSignatureWriter) =
         kotlinTypeMapper.mapTypeParameter(irType.toKotlinType(), signatureWriter)
 
     fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) =
         kotlinTypeMapper.writeFormalTypeParameters(irParameters.map { it.descriptor }, sw)
+
+    fun boxType(irType: IrType) =
+        AsmUtil.boxType(mapType(irType), irType.toKotlinType(), kotlinTypeMapper)
 }

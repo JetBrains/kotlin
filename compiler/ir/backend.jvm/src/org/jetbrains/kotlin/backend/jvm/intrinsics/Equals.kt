@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
 import org.jetbrains.kotlin.types.typeUtil.upperBoundedByPrimitiveNumberOrNullableType
 import org.jetbrains.org.objectweb.asm.Label
@@ -27,7 +29,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class Equals(val operator: IElementType) : IntrinsicMethod() {
-    private class BooleanNullCheck(val value: PromisedValue) : BooleanValue(value.mv) {
+    private class BooleanNullCheck(val value: PromisedValue) : BooleanValue(value.codegen) {
         override fun jumpIfFalse(target: Label) = value.materialize().also { mv.ifnonnull(target) }
         override fun jumpIfTrue(target: Label) = value.materialize().also { mv.ifnull(target) }
     }
@@ -42,15 +44,16 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         val rightType = with(codegen) { b.asmType }
         val opToken = expression.origin
         val useEquals = opToken !== IrStatementOrigin.EQEQEQ && opToken !== IrStatementOrigin.EXCLEQEQ &&
+                (a.type.isInlined() || b.type.isInlined() ||
                 // `==` is `equals` for objects and floating-point numbers. In the latter case, the difference
                 // is that `equals` is a total order (-0 < +0 and NaN == NaN) and `===` is IEEE754-compliant.
-                (!isPrimitive(leftType) || leftType != rightType || leftType == Type.FLOAT_TYPE || leftType == Type.DOUBLE_TYPE)
+                !isPrimitive(leftType) || leftType != rightType || leftType == Type.FLOAT_TYPE || leftType == Type.DOUBLE_TYPE)
         val operandType = if (!isPrimitive(leftType) || useEquals) AsmTypes.OBJECT_TYPE else leftType
-        val aValue = a.accept(codegen, data).coerce(operandType).materialized
-        val bValue = b.accept(codegen, data).coerce(operandType).materialized
+        val aValue = a.accept(codegen, data).coerce(operandType, a.type).materialized
+        val bValue = b.accept(codegen, data).coerce(operandType, b.type).materialized
         if (useEquals) {
             AsmUtil.genAreEqualCall(codegen.mv)
-            return MaterialValue(codegen.mv, Type.BOOLEAN_TYPE)
+            return MaterialValue(codegen, Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType)
         }
         return BooleanComparison(operator, aValue, bValue)
     }
@@ -86,8 +89,8 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         if (!arg1Type.isPrimitiveNumberOrNullableType() && !arg1Type.upperBoundedByPrimitiveNumberOrNullableType())
             throw AssertionError("Should be primitive or nullable primitive type: $arg1Type")
 
-        val arg0isNullable = arg0Type.isMarkedNullable
-        val arg1isNullable = arg1Type.isMarkedNullable
+        val arg0isNullable = arg0Type.isNullable()
+        val arg1isNullable = arg1Type.isNullable()
 
         return when {
             !arg0isNullable && !arg1isNullable ->

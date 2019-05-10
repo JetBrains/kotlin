@@ -12,7 +12,7 @@ import org.jetbrains.org.objectweb.asm.Label
 
 object AndAnd : IntrinsicMethod() {
 
-    private class BooleanConjunction(val arg0: IrExpression, val arg1: IrExpression, val codegen: ExpressionCodegen, val data: BlockInfo) : BooleanValue(codegen.mv) {
+    private class BooleanConjunction(val arg0: IrExpression, val arg1: IrExpression, codegen: ExpressionCodegen, val data: BlockInfo) : BooleanValue(codegen) {
 
         override fun jumpIfFalse(target: Label) {
             arg0.accept(codegen, data).coerceToBoolean().jumpIfFalse(target)

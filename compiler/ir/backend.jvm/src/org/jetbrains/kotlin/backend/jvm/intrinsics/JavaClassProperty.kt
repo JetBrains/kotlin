@@ -20,22 +20,29 @@ import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.boxType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 
 object JavaClassProperty : IntrinsicMethod() {
-    fun invokeWith(value: PromisedValue) {
-        if (value.type == Type.VOID_TYPE) {
-            return invokeWith(value.coerce(AsmTypes.UNIT_TYPE))
-        }
-        if (isPrimitive(value.type)) {
-            value.discard()
-            value.mv.getstatic(boxType(value.type).internalName, "TYPE", "Ljava/lang/Class;")
-        } else {
-            value.materialize()
-            value.mv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
-        }
+    private fun invokeGetClass(value: PromisedValue) {
+        value.materialize()
+        value.mv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
     }
+
+    fun invokeWith(value: PromisedValue) =
+        when {
+            value.type == Type.VOID_TYPE ->
+                invokeGetClass(value.coerce(AsmTypes.UNIT_TYPE))
+            value.irType?.isInlined() == true ->
+                invokeGetClass(value.coerceToBoxed(value.irType))
+            isPrimitive(value.type) -> {
+                value.discard()
+                value.mv.getstatic(boxType(value.type).internalName, "TYPE", "Ljava/lang/Class;")
+            }
+            else ->
+                invokeGetClass(value)
+        }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         invokeWith(expression.extensionReceiver!!.accept(codegen, data))

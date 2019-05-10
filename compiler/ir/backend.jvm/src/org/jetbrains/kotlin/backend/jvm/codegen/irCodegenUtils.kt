@@ -43,7 +43,21 @@ import org.jetbrains.org.objectweb.asm.Type
 import java.util.ArrayList
 import java.util.LinkedHashSet
 
-class IrFrameMap : FrameMapBase<IrSymbol>()
+class IrFrameMap : FrameMapBase<IrSymbol>() {
+    private val typeMap = mutableMapOf<IrSymbol,Type>()
+
+    override fun enter(descriptor: IrSymbol, type: Type): Int {
+        typeMap[descriptor] = type
+        return super.enter(descriptor, type)
+    }
+
+    override fun leave(descriptor: IrSymbol): Int {
+        typeMap.remove(descriptor)
+        return super.leave(descriptor)
+    }
+
+    fun typeOf(descriptor: IrSymbol): Type = typeMap.getValue(descriptor)
+}
 
 internal val IrFunction.isStatic
     get() = (this.dispatchReceiverParameter == null && this !is IrConstructor)

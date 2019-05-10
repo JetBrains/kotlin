@@ -222,12 +222,12 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                 val endLabel = Label()
                 for ((thenExpression, label) in expressionToLabels) {
                     mv.visitLabel(label)
-                    thenExpression.accept(codegen, data).coerce(expression.asmType).materialized
+                    thenExpression.accept(codegen, data).coerce(expression.type).materialized
                     mv.goTo(endLabel)
                 }
                 mv.visitLabel(defaultLabel)
                 val stackValue = elseExpression?.accept(codegen, data) ?: voidValue
-                val result = stackValue.coerce(expression.asmType).materialized
+                val result = stackValue.coerce(expression.type).materialized
                 mv.mark(endLabel)
                 return result
             }

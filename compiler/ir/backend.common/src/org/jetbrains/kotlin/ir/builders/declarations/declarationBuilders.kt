@@ -101,7 +101,7 @@ inline fun IrProperty.addSetter(b: IrFunctionBuilder.() -> Unit = {}): IrSimpleF
         }
     }
 
-fun IrFunctionBuilder.buildFun(): IrSimpleFunction {
+fun IrFunctionBuilder.buildFun(): IrFunctionImpl {
     val wrappedDescriptor = WrappedSimpleFunctionDescriptor()
     return IrFunctionImpl(
         startOffset, endOffset, origin,
@@ -126,7 +126,7 @@ fun IrFunctionBuilder.buildConstructor(): IrConstructor {
     }
 }
 
-inline fun buildFun(b: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
+inline fun buildFun(b: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
     IrFunctionBuilder().run {
         b()
         buildFun()
