@@ -500,6 +500,9 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 }
             }
 
+        private val IrFunction.originalName: Name
+            get() = (metadata as? MetadataSource.Function)?.descriptor?.name ?: name
+
         private fun createGetNameMethod(superFunction: IrSimpleFunction): IrSimpleFunction =
             buildFun {
                 setSourceRange(irFunctionReference)
@@ -517,7 +520,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
                 body = irBuilder.irBlockBody(startOffset, endOffset) {
                     +irReturn(
-                        IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, callee.name.asString())
+                        IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, callee.originalName.asString())
                     )
                 }
             }
