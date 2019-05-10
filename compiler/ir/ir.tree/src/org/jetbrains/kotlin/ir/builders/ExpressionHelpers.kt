@@ -66,6 +66,16 @@ fun <T : IrElement> IrStatementsBuilder<T>.defineTemporary(value: IrExpression, 
     return temporary.descriptor
 }
 
+fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVarDeclaration(
+    type: IrType,
+    nameHint: String? = null,
+    isMutable: Boolean = true
+): IrVariable {
+    val temporary = scope.createTemporaryVariableDeclaration(type, nameHint, isMutable = isMutable)
+    +temporary
+    return temporary
+}
+
 fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVar(
     value: IrExpression,
     nameHint: String? = null,
