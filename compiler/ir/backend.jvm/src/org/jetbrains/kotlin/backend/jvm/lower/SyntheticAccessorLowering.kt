@@ -268,7 +268,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
                 resolvedTargetField.symbol,
                 maybeDispatchReceiver,
                 value,
-                resolvedTargetField.type
+                context.irBuiltIns.unitType
             )
         )
     }
