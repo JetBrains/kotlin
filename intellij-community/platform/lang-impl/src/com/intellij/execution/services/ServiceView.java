@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
@@ -16,12 +17,23 @@ import java.awt.*;
 import java.util.List;
 
 abstract class ServiceView extends JPanel implements Disposable {
-  ServiceView(LayoutManager layout) {
+  protected final Project myProject;
+  private final ServiceViewModel myModel;
+  protected final ServiceViewUi myUi;
+
+  ServiceView(LayoutManager layout, @NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewUi ui) {
     super(layout);
+    myProject = project;
+    myModel = model;
+    myUi = ui;
   }
 
   @Override
   public void dispose() {
+  }
+
+  ServiceViewModel getModel() {
+    return myModel;
   }
 
   abstract void saveState(@NotNull ServiceViewState state);
@@ -31,9 +43,20 @@ abstract class ServiceView extends JPanel implements Disposable {
 
   abstract Promise<Void> select(@NotNull Object service, @NotNull Class<?> contributorClass);
 
+  abstract void onViewSelected();
+
+  abstract void onViewUnselected();
+
   static ServiceView createTreeView(@NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewState state) {
-    ServiceViewTreeUi ui = new ServiceViewTreeUi(state);
+    ServiceViewUi ui = new ServiceViewTreeUi(state);
     ServiceView serviceView = new ServiceTreeView(project, model, ui, state);
+    setDataProvider(serviceView);
+    return serviceView;
+  }
+
+  static ServiceView createSingleView(@NotNull Project project, @NotNull ServiceViewModel model) {
+    ServiceViewUi ui = new ServiceViewSingleUi();
+    ServiceView serviceView = new ServiceSingleView(project, model, ui);
     setDataProvider(serviceView);
     return serviceView;
   }

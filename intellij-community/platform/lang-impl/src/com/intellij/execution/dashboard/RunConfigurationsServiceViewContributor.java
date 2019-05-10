@@ -3,6 +3,7 @@ package com.intellij.execution.dashboard;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.actions.StopAction;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.dashboard.tree.ConfigurationTypeDashboardGroupingRule;
 import com.intellij.execution.dashboard.tree.RunConfigurationNode;
 import com.intellij.execution.runners.FakeRerunAction;
@@ -148,7 +149,23 @@ public class RunConfigurationsServiceViewContributor
     @Override
     public JComponent getContentComponent() {
       Content content = node.getContent();
-      return content == null ? createEmptyContent() : content.getManager().getComponent();
+      if (content == null) return createEmptyContent();
+
+      ContentManager contentManager = content.getManager();
+      return contentManager == null ? null : contentManager.getComponent();
+    }
+
+    @NotNull
+    @Override
+    public ItemPresentation getContentPresentation() {
+      Content content = node.getContent();
+      if (content != null) {
+        return new PresentationData(content.getDisplayName(), null, content.getIcon(), null);
+      }
+      else {
+        RunConfiguration configuration = node.getConfigurationSettings().getConfiguration();
+        return new PresentationData(configuration.getName(), null, configuration.getIcon(), null);
+      }
     }
 
     @Override

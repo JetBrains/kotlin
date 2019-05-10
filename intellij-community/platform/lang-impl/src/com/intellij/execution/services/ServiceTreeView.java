@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.execution.services.ServiceModel.ServiceViewItem;
+import com.intellij.ide.dnd.DnDManager;
 import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -18,25 +20,24 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.List;
 import java.util.Queue;
+import java.util.*;
 
 class ServiceTreeView extends ServiceView {
-  private final Project myProject;
   private final ServiceViewTree myTree;
   private final ServiceViewTreeModel myTreeModel;
-  private final ServiceViewUi myUi;
 
   private ServiceViewItem myLastSelection;
+  private boolean mySelected;
 
   ServiceTreeView(@NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewUi ui, @NotNull ServiceViewState state) {
-    super(new BorderLayout());
-    myProject = project;
-    myUi = ui;
+    super(new BorderLayout(), project, model, ui);
 
     myTreeModel = new ServiceViewTreeModel(model);
     myTree = new ServiceViewTree(myTreeModel, this);
     ServiceViewActionProvider actionProvider = ServiceViewActionProvider.getInstance();
     ui.setServiceToolbar(actionProvider);
     ui.setMasterPanel(myTree, actionProvider);
+    DnDManager.getInstance().registerSource(ServiceViewDragHelper.createSource(this), myTree);
     add(myUi.getComponent(), BorderLayout.CENTER);
 
     myTree.addTreeSelectionListener(e -> onSelectionChanged());
@@ -53,7 +54,19 @@ class ServiceTreeView extends ServiceView {
   @NotNull
   @Override
   List<ServiceViewItem> getSelectedItems() {
-    return ContainerUtil.mapNotNull(TreeUtil.collectSelectedUserObjects(myTree), o -> ObjectUtils.tryCast(o, ServiceViewItem.class));
+    int[] rows = myTree.getSelectionRows();
+    if (rows == null || rows.length == 0) return Collections.emptyList();
+
+    List<ServiceViewItem> result = new ArrayList<>();
+    Arrays.sort(rows);
+    for (int row : rows) {
+      TreePath path = myTree.getPathForRow(row);
+      ServiceViewItem item = path == null ? null : ObjectUtils.tryCast(path.getLastPathComponent(), ServiceViewItem.class);
+      if (item != null) {
+        result.add(item);
+      }
+    }
+    return result;
   }
 
   @Override
@@ -70,13 +83,31 @@ class ServiceTreeView extends ServiceView {
     return Promises.resolvedPromise();
   }
 
+  @Override
+  void onViewSelected() {
+    mySelected = true;
+    if (myLastSelection != null) {
+      ServiceViewDescriptor descriptor = myLastSelection.getViewDescriptor();
+      descriptor.onNodeSelected();
+      myUi.setDetailsComponent(descriptor.getContentComponent());
+    }
+  }
+
+  @Override
+  void onViewUnselected() {
+    mySelected = false;
+    if (myLastSelection != null) {
+      myLastSelection.getViewDescriptor().onNodeUnselected();
+    }
+  }
+
   private void onSelectionChanged() {
     List<ServiceViewItem> selected = getSelectedItems();
     ServiceViewItem newSelection = ContainerUtil.getOnlyItem(selected);
     if (Comparing.equal(newSelection, myLastSelection)) return;
 
     ServiceViewDescriptor oldDescriptor = myLastSelection == null ? null : myLastSelection.getViewDescriptor();
-    if (oldDescriptor != null) {
+    if (oldDescriptor != null && mySelected) {
       oldDescriptor.onNodeUnselected();
     }
 
