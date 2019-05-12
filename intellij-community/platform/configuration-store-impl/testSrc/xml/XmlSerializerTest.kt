@@ -9,10 +9,10 @@ import com.intellij.configurationStore.deserialize
 import com.intellij.configurationStore.serialize
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.serialization.SerializationException
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.assertConcurrent
 import com.intellij.testFramework.assertions.Assertions.assertThat
-import com.intellij.util.serialization.SerializationException
 import com.intellij.util.xmlb.Accessor
 import com.intellij.util.xmlb.SerializationFilter
 import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
