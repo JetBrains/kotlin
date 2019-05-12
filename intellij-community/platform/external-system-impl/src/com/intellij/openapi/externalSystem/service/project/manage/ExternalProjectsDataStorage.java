@@ -403,7 +403,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
 
   @NotNull
   private static Path getProjectConfigurationFile(@NotNull Project project) {
-    return getProjectConfigurationDir(project).resolve("project.smile");
+    return getProjectConfigurationDir(project).resolve("project.dat");
   }
 
   @NotNull
