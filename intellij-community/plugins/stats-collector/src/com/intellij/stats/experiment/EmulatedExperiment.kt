@@ -15,7 +15,7 @@ class EmulatedExperiment {
         const val IS_ENABLED = false
 
         fun shouldRank(experimentVersion: Int): Boolean {
-            return experimentVersion == GROUP_B_EXPERIMENT_VERSION && !Registry.`is`("java.completion.ml.exit.experiment")
+            return experimentVersion == GROUP_B_EXPERIMENT_VERSION && !Registry.`is`("completion.stats.exit.experiment")
         }
     }
 

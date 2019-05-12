@@ -55,10 +55,10 @@
     <applicationService serviceInterface="com.intellij.completion.tracker.LookupElementPositionTracker"
                         serviceImplementation="com.intellij.completion.tracker.UserDataLookupElementPositionTracker"/>
 
-    <registryKey key="java.completion.ml.exit.experiment" defaultValue="false"
+    <registryKey key="completion.stats.exit.experiment" defaultValue="false"
                  description="Do not perform A/B experiment for code completion on this installation"/>
 
-    <registryKey key="java.completion.show.ml.ranking.diff" defaultValue="false"
+    <registryKey key="completion.stats.show.ml.ranking.diff" defaultValue="false"
                  description="Show how element position changed after ml ranking performed, if ml completion ranking is enabled, "/>
   </extensions>
 

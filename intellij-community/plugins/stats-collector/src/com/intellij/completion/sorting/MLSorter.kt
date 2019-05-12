@@ -141,7 +141,7 @@ class MLSorter : CompletionFinalSorter() {
   }
 
   private fun Iterable<LookupElement>.addDiagnosticsIfNeeded(positionsBefore: Map<LookupElement, Int>): Iterable<LookupElement> {
-    if (Registry.`is`("java.completion.show.ml.ranking.diff")) {
+    if (Registry.`is`("completion.stats.show.ml.ranking.diff")) {
       return this.mapIndexed { position, element -> MyMovedLookupElement(element, positionsBefore.getValue(element), position) }
     }
 
