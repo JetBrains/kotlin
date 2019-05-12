@@ -52,8 +52,6 @@
 
     <codeCompletionConfigurable provider="com.intellij.completion.settings.CompletionStatsCollectorConfigurableProvider"/>
 
-    <postStartupActivity implementation="com.intellij.completion.NotificationManager"/>
-
     <applicationService serviceInterface="com.intellij.completion.tracker.LookupElementPositionTracker"
                         serviceImplementation="com.intellij.completion.tracker.UserDataLookupElementPositionTracker"/>
 
