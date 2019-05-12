@@ -13,6 +13,7 @@ import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.util.ArrayUtilRt
 import java.util.concurrent.TimeUnit
 
@@ -39,7 +40,9 @@ class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracker {
     }
 
     logInitializedComponents(ApplicationManager.getApplication())
-    logInitializedComponents(ProjectManager.getInstance().defaultProject)
+    if (ProjectManagerEx.getInstanceEx().isDefaultProjectInitialized) {
+      logInitializedComponents(ProjectManager.getInstance().defaultProject)
+    }
     ProjectManager.getInstance().openProjects.filter { project -> !project.isDefault }.forEach { project ->
       logInitializedComponents(project)
     }
