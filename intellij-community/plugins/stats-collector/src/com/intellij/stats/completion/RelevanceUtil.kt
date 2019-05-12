@@ -9,11 +9,10 @@ object RelevanceUtil {
       val name = pair.first.normalized()
       val value = pair.second
       if (name in IGNORED_FACTORS || value == null) continue
-      if (name == "proximity") {
-        relevanceMap.addProximityValues("prox", value.toString())
-      }
-      else {
-        relevanceMap[name] = value
+      when (name) {
+        "proximity" -> relevanceMap.addProximityValues("prox", value.toString())
+        "kotlin.proximity" -> relevanceMap.addProximityValues("kt_prox", value.toString())
+        else -> relevanceMap[name] = value
       }
     }
 
