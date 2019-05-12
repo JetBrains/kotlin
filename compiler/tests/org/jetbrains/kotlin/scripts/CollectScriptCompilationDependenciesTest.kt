@@ -12,16 +12,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinitionAdapterFromNewAPI
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
-import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private const val testDataPath = "compiler/testData/script/collectDependencies"
@@ -58,15 +55,14 @@ class CollectScriptCompilationDependenciesTest : KtUsefulTestCase() {
 
     private fun runTest(scriptFile: String, expectedDependencies: List<String>, classPath: List<File> = emptyList()) {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.MOCK_JDK).apply {
-            val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
-            val scriptDefinition = KotlinScriptDefinitionAdapterFromNewAPI(
-                createCompilationConfigurationFromTemplate(
-                    KotlinType(TestScriptWithRequire::class),
-                    hostConfiguration, KotlinScriptDefinition::class
-                ),
-                hostConfiguration
+            add(
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+                ScriptDefinition.FromTemplate(
+                    ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration),
+                    TestScriptWithRequire::class,
+                    ScriptDefinition::class
+                )
             )
-            add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
 
             addKotlinSourceRoot(File(testDataPath, scriptFile).path)
 

@@ -22,6 +22,7 @@ import com.intellij.psi.ResolveScopeProvider
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 
@@ -36,11 +37,13 @@ class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
         // TODO: this should get this particular scripts dependencies
         return when {
             scriptDefinition == null -> null
-        // This is a workaround for completion in scripts and REPL to provide module dependencies
-            scriptDefinition.template == Any::class -> null
-            scriptDefinition is StandardIdeScriptDefinition -> null
-            scriptDefinition is KotlinScriptDefinitionFromAnnotatedTemplate -> // TODO: should include the file itself
+            // This is a workaround for completion in scripts and REPL to provide module dependencies
+            scriptDefinition.baseClassType.fromClass == Any::class -> null
+            scriptDefinition.asLegacyOrNull<StandardIdeScriptDefinition>() != null -> null
+            scriptDefinition is ScriptDefinition.FromConfigurations || scriptDefinition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>() != null -> {
+                // TODO: should include the file itself
                 ScriptDependenciesManager.getInstance(project).getAllScriptsDependenciesClassFilesScope()
+            }
             else -> null
         }
     }

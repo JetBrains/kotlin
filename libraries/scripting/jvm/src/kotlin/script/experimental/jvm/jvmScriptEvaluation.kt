@@ -9,6 +9,7 @@ package kotlin.script.experimental.jvm
 
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface JvmScriptEvaluationConfigurationKeys
@@ -21,7 +22,10 @@ open class JvmScriptEvaluationConfigurationBuilder : PropertiesCollection.Builde
 /**
  * The base classloader to use for script classes loading
  */
-val JvmScriptEvaluationConfigurationKeys.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
+val JvmScriptEvaluationConfigurationKeys.baseClassLoader by PropertiesCollection.key<ClassLoader?> {
+    get(ScriptEvaluationConfiguration.hostConfiguration)?.get(ScriptingHostConfiguration.jvm.baseClassLoader)
+        ?: Thread.currentThread().contextClassLoader
+}
 
 /**
  * Load script dependencies before evaluation, true by default

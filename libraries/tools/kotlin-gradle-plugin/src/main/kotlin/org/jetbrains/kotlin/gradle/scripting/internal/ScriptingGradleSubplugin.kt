@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import org.jetbrains.kotlin.scripting.definitions.reporter
 import java.io.File
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private const val MIN_SUPPORTED_GRADLE_MAJOR_VERSION = 5
 private const val MIN_SUPPORTED_GRADLE_MINOR_VERSION = 0
@@ -166,7 +167,8 @@ internal class DiscoverScriptExtensionsTransform : ArtifactTransform() {
     override fun transform(input: File): List<File> {
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(
-                listOf(input), emptyMap(),
+                listOf(input),
+                defaultJvmScriptingHostConfiguration,
                 PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false).reporter
             ).definitions
         val extensions = definitions.mapTo(arrayListOf()) { it.fileExtension }

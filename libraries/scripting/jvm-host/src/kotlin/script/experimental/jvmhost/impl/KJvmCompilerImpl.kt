@@ -33,7 +33,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
 
             val mainKtFile =
                 getScriptKtFile(script, context.baseScriptCompilationConfiguration, context.environment.project, messageCollector)
-                    .resultOr { return it }
+                    .valueOr { return it }
 
             context.scriptCompilationState.configureFor(script, context.baseScriptCompilationConfiguration)
 

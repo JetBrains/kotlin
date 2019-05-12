@@ -71,7 +71,8 @@ object ProjectRootsUtil {
     ): Boolean {
         val scriptDefinition = file.findScriptDefinition(project)
         if (scriptDefinition != null) {
-            val scriptScope = scriptDefinition.scriptExpectedLocations
+            // TODO: rewrite to ScriptAcceptedLocation and without legacyDefinition
+            val scriptScope = scriptDefinition.legacyDefinition.scriptExpectedLocations
             val includeAll = scriptScope.contains(ScriptExpectedLocation.Everywhere)
                     || scriptScope.contains(ScriptExpectedLocation.Project)
                     || ScratchUtil.isScratch(file)
@@ -115,7 +116,8 @@ object ProjectRootsUtil {
             if (ProjectRootManager.getInstance(project).fileIndex.isInContent(file) || ScratchUtil.isScratch(file)) {
                 return true
             }
-            return file.findScriptDefinition(project)?.scriptExpectedLocations?.contains(ScriptExpectedLocation.Everywhere) == true
+            // TODO: rewrite to ScriptAcceptedLocation and without legacyDefinition
+            return file.findScriptDefinition(project)?.legacyDefinition?.scriptExpectedLocations?.contains(ScriptExpectedLocation.Everywhere) == true
         }
 
         if (!includeLibraryClasses && !includeLibrarySource) return false

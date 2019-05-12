@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
+import kotlin.script.experimental.api.valueOrNull
 
 class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
 
@@ -64,8 +65,9 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         val allDefaultImports = platform.findAnalyzerServices.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
 
         val scriptExtraImports = contextFile.takeIf { it.isScript() }?.let { ktFile ->
-            val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project)?.getScriptDependencies(ktFile.originalFile)
-            scriptDependencies?.imports?.map { ImportPath.fromString(it) }
+            val scriptDependencies =
+                ScriptDependenciesProvider.getInstance(ktFile.project)?.getScriptConfigurationResult(ktFile.originalFile)?.valueOrNull()
+            scriptDependencies?.defaultImports?.map { ImportPath.fromString(it) }
         }.orEmpty()
 
         return importPath.isImported(allDefaultImports + scriptExtraImports, platform.findAnalyzerServices.excludedImports)

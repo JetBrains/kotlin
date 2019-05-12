@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.maven;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import kotlin.script.experimental.jvm.JvmScriptingHostConfigurationKt;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -188,7 +189,8 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmProtoBufUtil.DEFAULT_MODULE_NAME);
 
             ConfigurationKt.configureScriptDefinitions(
-                    scriptTemplates, configuration, this.getClass().getClassLoader(), messageCollector, new HashMap<>()
+                    scriptTemplates, configuration, this.getClass().getClassLoader(), messageCollector,
+                    JvmScriptingHostConfigurationKt.getDefaultJvmScriptingHostConfiguration()
             );
 
             KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);

@@ -7,8 +7,13 @@ package org.jetbrains.kotlin.idea.core.script.dependencies
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.scriptCompilationConfiguration
 import org.jetbrains.kotlin.idea.core.script.scriptDependencies
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
+import kotlin.script.experimental.api.asSuccess
 
+// TODO: rename and provide alias for compatibility - this is not only about dependencies anymore
 class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDependenciesLoader(project) {
 
     override fun isApplicable(file: VirtualFile): Boolean {
@@ -16,9 +21,17 @@ class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDepend
     }
 
     override fun loadDependencies(file: VirtualFile) {
-        val deserializedDependencies = file.scriptDependencies ?: return
-        debug(file) { "dependencies from fileAttributes = $deserializedDependencies" }
-        saveToCache(file, deserializedDependencies)
+        file.scriptCompilationConfiguration?.let {
+            ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(VirtualFileScriptSource(file), it).apply {
+                debug(file) { "refined configuration from fileAttributes = $it" }
+            }
+        } ?: file.scriptDependencies?.let {
+            ScriptCompilationConfigurationWrapper.FromLegacy(VirtualFileScriptSource(file), it).apply {
+                debug(file) { "dependencies from fileAttributes = $it" }
+            }
+        }?.let {
+            saveToCache(file, it.asSuccess(), skipSaveToAttributes = true)
+        }
     }
 
     override fun shouldShowNotification(): Boolean = false

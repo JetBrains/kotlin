@@ -6,17 +6,25 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.getEnvironment
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
-class ScriptTemplatesProviderAdapter(private val templatesProvider: ScriptTemplatesProvider) :
-    ScriptDefinitionContributor {
+class ScriptTemplatesProviderAdapter(private val templatesProvider: ScriptTemplatesProvider) : ScriptDefinitionSourceAsContributor {
+
     override val id: String
         get() = templatesProvider.id
 
-    override fun getDefinitions(): List<KotlinScriptDefinition> {
-        return loadDefinitionsFromTemplates(
-            templatesProvider.templateClassNames.toList(), templatesProvider.templateClasspath,
-            templatesProvider.environment.orEmpty(), templatesProvider.additionalResolverClasspath
-        )
-    }
+    override val definitions: Sequence<ScriptDefinition>
+        get() =
+            loadDefinitionsFromTemplates(
+                templatesProvider.templateClassNames.toList(), templatesProvider.templateClasspath,
+                ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                    getEnvironment {
+                        templatesProvider.environment
+                    }
+                },
+                templatesProvider.additionalResolverClasspath
+            ).asSequence()
 }

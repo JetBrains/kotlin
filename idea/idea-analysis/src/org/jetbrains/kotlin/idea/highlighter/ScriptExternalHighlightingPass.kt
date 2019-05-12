@@ -39,9 +39,8 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater
+import org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationUpdater
 import org.jetbrains.kotlin.psi.KtFile
-import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 
 class ScriptExternalHighlightingPass(
@@ -62,9 +61,10 @@ class ScriptExternalHighlightingPass(
             )
         }
 
-        if (!ScriptDependenciesUpdater.areDependenciesCached(file)) {
-            val scriptDependencies = ScriptDependenciesManager.getInstance(file.project).getScriptDependencies(file.virtualFile)
-            if (scriptDependencies == ScriptDependencies.Empty) {
+        if (!ScriptsCompilationConfigurationUpdater.areDependenciesCached(file)) {
+            // initiate configuration refinement, if needed
+            ScriptDependenciesManager.getInstance(file.project).getRefinedCompilationConfiguration(file.virtualFile)
+            if (!ScriptsCompilationConfigurationUpdater.areDependenciesCached(file)) {
                 showNotification(
                     file,
                     "Highlighting in scripts is not available until all Script Dependencies are loaded"

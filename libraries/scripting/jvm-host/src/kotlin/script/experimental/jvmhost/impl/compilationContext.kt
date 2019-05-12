@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.dependencies.collectScriptsCompilationDependencies
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -88,10 +89,13 @@ internal fun createInitialConfigurations(
 
     kotlinCompilerConfiguration.add(
         ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-        BridgeScriptDefinition(
-            scriptCompilationConfiguration,
+        ScriptDefinition.FromLegacy(
             hostConfiguration,
-            scriptCompilationState
+            BridgeScriptDefinition(
+                scriptCompilationConfiguration,
+                hostConfiguration,
+                scriptCompilationState
+            )
         )
     )
 

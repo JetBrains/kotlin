@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.subplatformOfType
 import org.jetbrains.kotlin.utils.Jsr305State
@@ -92,8 +92,8 @@ private data class ScriptLanguageSettings(
 
 private val SCRIPT_LANGUAGE_SETTINGS = Key.create<CachedValue<ScriptLanguageSettings>>("SCRIPT_LANGUAGE_SETTINGS")
 
-private fun getLanguageSettingsForScripts(project: Project, scriptDefinition: KotlinScriptDefinition): ScriptLanguageSettings {
-    val args = scriptDefinition.additionalCompilerArguments
+private fun getLanguageSettingsForScripts(project: Project, scriptDefinition: ScriptDefinition): ScriptLanguageSettings {
+    val args = scriptDefinition.compilerOptions
     return if (args == null || args.none()) {
         ScriptLanguageSettings(project.getLanguageVersionSettings(), TargetPlatformVersion.NoVersion)
     } else {

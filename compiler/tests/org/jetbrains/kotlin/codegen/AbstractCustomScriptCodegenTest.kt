@@ -24,6 +24,7 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.implicitReceivers
 import kotlin.script.experimental.api.providedProperties
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
 
 abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
@@ -37,7 +38,9 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         if (scriptDefinitions.isNotEmpty()) {
-            configureScriptDefinitions(scriptDefinitions, configuration, this::class.java.classLoader, MessageCollector.NONE, emptyMap())
+            configureScriptDefinitions(
+                scriptDefinitions, configuration, this::class.java.classLoader, MessageCollector.NONE, defaultJvmScriptingHostConfiguration
+            )
         }
 
         configuration.addJvmClasspathRoots(additionalDependencies.orEmpty())

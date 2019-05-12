@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.samWithReceiver
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import java.io.File
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.extensions.SamWithReceiverAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 
@@ -31,7 +33,10 @@ abstract class AbstractSamWithReceiverScriptTest : AbstractDiagnosticsTest() {
 
     override fun createEnvironment(file: File) = super.createEnvironment(file).apply {
         StorageComponentContainerContributor.registerExtension(project, CliSamWithReceiverComponentContributor(TEST_ANNOTATIONS))
-        val def = KotlinScriptDefinitionFromAnnotatedTemplate(ScriptForSamWithReceivers::class, emptyMap())
+        val def = ScriptDefinition.FromLegacy(
+            defaultJvmScriptingHostConfiguration,
+            KotlinScriptDefinitionFromAnnotatedTemplate(ScriptForSamWithReceivers::class, emptyMap())
+        )
         configuration.add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, def)
     }
 }

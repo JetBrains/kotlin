@@ -14,6 +14,7 @@ import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
@@ -59,7 +60,7 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
         val annotations = context.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
             ?: return context.compilationConfiguration.asSuccess()
 
-        val scriptBaseDir = (context.script as? FileScriptSource)?.file?.parentFile
+        val scriptBaseDir = (context.script as? FileBasedScriptSource)?.file?.parentFile
         val importedSources = annotations.flatMap {
             (it as? Import)?.paths?.map { sourceName ->
                 FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))

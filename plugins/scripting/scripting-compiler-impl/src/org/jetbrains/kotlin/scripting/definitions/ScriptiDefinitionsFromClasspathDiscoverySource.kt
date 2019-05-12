@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotate
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.io.IOException
-import java.lang.IllegalArgumentException
 import java.net.URLClassLoader
 import java.util.jar.JarFile
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.KotlinType
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
 import kotlin.script.templates.ScriptTemplateDefinition
 
 const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
@@ -32,15 +32,15 @@ val MessageCollector.reporter: MessageReporter
 
 class ScriptDefinitionsFromClasspathDiscoverySource(
     private val classpath: List<File>,
-    private val scriptResolverEnv: Map<String, Any?>,
+    private val hostConfiguration: ScriptingHostConfiguration,
     private val messageReporter: MessageReporter
 ) : ScriptDefinitionsSource {
 
-    override val definitions: Sequence<KotlinScriptDefinition> = run {
+    override val definitions: Sequence<ScriptDefinition> = run {
         discoverScriptTemplatesInClasspath(
             classpath,
             this::class.java.classLoader,
-            scriptResolverEnv,
+            hostConfiguration,
             messageReporter
         )
     }
@@ -50,9 +50,9 @@ private const val MANIFEST_RESOURCE_NAME = "/META-INF/MANIFEST.MF"
 
 fun discoverScriptTemplatesInClassLoader(
     classLoader: ClassLoader,
-    scriptResolverEnv: Map<String, Any?>,
+    hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
-): Sequence<KotlinScriptDefinition> {
+): Sequence<ScriptDefinition> {
     val classpath = classLoader.getResources(MANIFEST_RESOURCE_NAME).asSequence().mapNotNull {
         try {
             File(it.toURI()).takeIf(File::exists)
@@ -61,26 +61,26 @@ fun discoverScriptTemplatesInClassLoader(
         }
     }
     val classpathWithLoader = SimpleClasspathWithClassLoader(classpath.toList(), classLoader)
-    return scriptTemplatesDiscoverySequence(classpathWithLoader, scriptResolverEnv, messageReporter)
+    return scriptTemplatesDiscoverySequence(classpathWithLoader, hostConfiguration, messageReporter)
 }
 
 fun discoverScriptTemplatesInClasspath(
     classpath: List<File>,
     baseClassLoader: ClassLoader?,
-    scriptResolverEnv: Map<String, Any?>,
+    hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
-): Sequence<KotlinScriptDefinition> {
+): Sequence<ScriptDefinition> {
     // TODO: try to find a way to reduce classpath (and classloader) to minimal one needed to load script definition and its dependencies
     val classpathWithLoader = LazyClasspathWithClassLoader(baseClassLoader) { classpath }
 
-    return scriptTemplatesDiscoverySequence(classpathWithLoader, scriptResolverEnv, messageReporter)
+    return scriptTemplatesDiscoverySequence(classpathWithLoader, hostConfiguration, messageReporter)
 }
 
 private fun scriptTemplatesDiscoverySequence(
     classpathWithLoader: ClasspathWithClassLoader,
-    scriptResolverEnv: Map<String, Any?>,
+    hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
-): Sequence<KotlinScriptDefinition> {
+): Sequence<ScriptDefinition> {
     return sequence {
         // for jar files the definition class is expected in the same jar as the discovery file
         // in case of directories, the class output may come separate from the resources, so some candidates should be deffered and processed later
@@ -102,7 +102,7 @@ private fun scriptTemplatesDiscoverySequence(
                                     definitionNames.partitionLoadJarDefinitions(
                                         jar,
                                         classpathWithLoader,
-                                        scriptResolverEnv,
+                                        hostConfiguration,
                                         messageReporter
                                     )
                                 if (notFoundClasses.isNotEmpty()) {
@@ -122,7 +122,7 @@ private fun scriptTemplatesDiscoverySequence(
                         val discoveryMarkers = File(dep, SCRIPT_DEFINITION_MARKERS_PATH).listFiles()
                         if (discoveryMarkers?.isEmpty() == false) {
                             val (foundDefinitionClasses, notFoundDefinitions) = discoveryMarkers.map { it.name }
-                                .partitionLoadDirDefinitions(dep, classpathWithLoader, scriptResolverEnv, messageReporter)
+                                .partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
                             foundDefinitionClasses.forEach {
                                 yield(it)
                             }
@@ -145,7 +145,7 @@ private fun scriptTemplatesDiscoverySequence(
             if (remainingDefinitionCandidates.isEmpty()) break
             try {
                 val (foundDefinitionClasses, notFoundDefinitions) =
-                    remainingDefinitionCandidates.partitionLoadDirDefinitions(dep, classpathWithLoader, scriptResolverEnv, messageReporter)
+                    remainingDefinitionCandidates.partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
                 foundDefinitionClasses.forEach {
                     yield(it)
                 }
@@ -170,9 +170,9 @@ fun loadScriptTemplatesFromClasspath(
     classpath: List<File>,
     dependenciesClasspath: List<File>,
     baseClassLoader: ClassLoader,
-    scriptResolverEnv: Map<String, Any?>,
+    hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
-): Sequence<KotlinScriptDefinition> =
+): Sequence<ScriptDefinition> =
     if (scriptTemplates.isEmpty()) emptySequence()
     else sequence {
         // trying the direct classloading from baseClassloader first, since this is the most performant variant
@@ -180,7 +180,7 @@ fun loadScriptTemplatesFromClasspath(
             loadScriptDefinition(
                 baseClassLoader,
                 it,
-                scriptResolverEnv,
+                hostConfiguration,
                 messageReporter
             )
         }
@@ -199,11 +199,11 @@ fun loadScriptTemplatesFromClasspath(
                 val (loadedDefinitions, notFoundTemplates) = when {
                     dep.isFile && dep.extension == "jar" -> { // checking for extension is the compiler current behaviour, so the same logic is implemented here
                         JarFile(dep).use { jar ->
-                            remainingTemplates.partitionLoadJarDefinitions(jar, classpathWithLoader, scriptResolverEnv, messageReporter)
+                            remainingTemplates.partitionLoadJarDefinitions(jar, classpathWithLoader, hostConfiguration, messageReporter)
                         }
                     }
                     dep.isDirectory -> {
-                        remainingTemplates.partitionLoadDirDefinitions(dep, classpathWithLoader, scriptResolverEnv, messageReporter)
+                        remainingTemplates.partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
                     }
                     else -> {
                         // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
@@ -237,17 +237,17 @@ fun loadScriptTemplatesFromClasspath(
     }
 
 private data class DefinitionsLoadPartitionResult(
-    val loaded: List<KotlinScriptDefinition>,
+    val loaded: List<ScriptDefinition>,
     val notFound: List<String>
 )
 
 private inline fun List<String>.partitionLoadDefinitions(
     classpathWithLoader: ClasspathWithClassLoader,
-    scriptResolverEnv: Map<String, Any?>,
+    hostConfiguration: ScriptingHostConfiguration,
     noinline messageReporter: MessageReporter,
     getBytes: (String) -> ByteArray?
 ): DefinitionsLoadPartitionResult {
-    val loaded = ArrayList<KotlinScriptDefinition>()
+    val loaded = ArrayList<ScriptDefinition>()
     val notFound = ArrayList<String>()
     for (definitionName in this) {
         val classBytes = getBytes(definitionName)
@@ -256,7 +256,7 @@ private inline fun List<String>.partitionLoadDefinitions(
                 it,
                 definitionName,
                 classpathWithLoader,
-                scriptResolverEnv,
+                hostConfiguration,
                 messageReporter
             )
         }
@@ -273,18 +273,18 @@ private inline fun List<String>.partitionLoadDefinitions(
 private fun List<String>.partitionLoadJarDefinitions(
     jar: JarFile,
     classpathWithLoader: ClasspathWithClassLoader,
-    scriptResolverEnv: Map<String, Any?>,
+    hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
-): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, scriptResolverEnv, messageReporter) { definitionName ->
+): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, hostConfiguration, messageReporter) { definitionName ->
     jar.getJarEntry("${definitionName.replace('.', '/')}.class")?.let { jar.getInputStream(it).readBytes() }
 }
 
 private fun List<String>.partitionLoadDirDefinitions(
     dir: File,
     classpathWithLoader: ClasspathWithClassLoader,
-    scriptResolverEnv: Map<String, Any?>,
+    hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
-): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, scriptResolverEnv, messageReporter) { definitionName ->
+): DefinitionsLoadPartitionResult = partitionLoadDefinitions(classpathWithLoader, hostConfiguration, messageReporter) { definitionName ->
     File(dir, "${definitionName.replace('.', '/')}.class").takeIf { it.exists() && it.isFile }?.readBytes()
 }
 
@@ -292,14 +292,15 @@ private fun loadScriptDefinition(
     templateClassBytes: ByteArray,
     templateClassName: String,
     classpathWithLoader: ClasspathWithClassLoader,
-    scriptResolverEnv: Map<String, Any?>,
+    hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
-): KotlinScriptDefinition? {
+): ScriptDefinition? {
     val anns = loadAnnotationsFromClass(templateClassBytes)
     for (ann in anns) {
-        var def: KotlinScriptDefinition? = null
+        var def: ScriptDefinition? = null
         if (ann.name == KotlinScript::class.simpleName) {
             def = LazyScriptDefinitionFromDiscoveredClass(
+                hostConfiguration,
                 anns,
                 templateClassName,
                 classpathWithLoader.classpath,
@@ -307,7 +308,14 @@ private fun loadScriptDefinition(
             )
         } else if (ann.name == ScriptTemplateDefinition::class.simpleName) {
             val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
-            def = KotlinScriptDefinitionFromAnnotatedTemplate(templateClass, scriptResolverEnv, classpathWithLoader.classpath)
+            def = ScriptDefinition.FromLegacy(
+                hostConfiguration,
+                KotlinScriptDefinitionFromAnnotatedTemplate(
+                    templateClass,
+                    hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty(),
+                    classpathWithLoader.classpath
+                )
+            )
         }
         if (def != null) {
             messageReporter(
@@ -327,29 +335,20 @@ private fun loadScriptDefinition(
 private fun loadScriptDefinition(
     classLoader: ClassLoader,
     template: String,
-    scriptResolverEnv: Map<String, Any?>,
+    hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
-): KotlinScriptDefinition? {
+): ScriptDefinition? {
     try {
         val cls = classLoader.loadClass(template)
         val def =
             if (cls.annotations.firstIsInstanceOrNull<KotlinScript>() != null) {
-                val environment = defaultJvmScriptingHostConfiguration
-                KotlinScriptDefinitionAdapterFromNewAPI(
-                    createCompilationConfigurationFromTemplate(
-                        KotlinType(cls.kotlin),
-                        environment,
-                        KotlinScriptDefinition::class
-                    ),
-                    environment
-                )
+                ScriptDefinition.FromTemplate(hostConfiguration, cls.kotlin, ScriptDefinition::class)
             } else {
-                KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)
+                ScriptDefinition.FromLegacyTemplate(hostConfiguration, cls.kotlin)
             }
         messageReporter(
             CompilerMessageSeverity.INFO,
-            "Added script definition $template to configuration: name = ${def.name}, " +
-                    "resolver = ${def.dependencyResolver.javaClass.name}"
+            "Added script definition $template to configuration: name = ${def.name}"
         )
         return def
     } catch (ex: ClassNotFoundException) {

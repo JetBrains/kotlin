@@ -43,7 +43,7 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
         val scriptFile = File(sourcePath)
         if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
             val extensionHint =
-                if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS) == listOf(StandardScriptDefinition)) " (.kts)"
+                if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)?.let { it.size == 1 && it.first().isDefault } == true) " (.kts)"
                 else ""
             messageCollector.report(ERROR, "Specify path to the script file$extensionHint as the first argument")
             return COMPILATION_ERROR

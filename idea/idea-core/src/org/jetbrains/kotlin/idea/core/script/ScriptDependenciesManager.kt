@@ -30,8 +30,10 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.dependencies.SyncScriptDependenciesLoader
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.io.File
-import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.api.valueOrNull
 
 
 // NOTE: this service exists exclusively because ScriptDependencyManager
@@ -39,18 +41,21 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 class IdeScriptDependenciesProvider(
     private val scriptDependenciesManager: ScriptDependenciesManager
 ) : ScriptDependenciesProvider {
-    override fun getScriptDependencies(file: VirtualFile): ScriptDependencies? {
-        return scriptDependenciesManager.getScriptDependencies(file)
-    }
+    override fun getScriptConfigurationResult(file: VirtualFile): ScriptCompilationConfigurationResult? = scriptDependenciesManager.getRefinedCompilationConfiguration(file)
 }
 
+// TODO: rename and provide alias for compatibility - this is not only about dependencies anymore
 class ScriptDependenciesManager internal constructor(
-    private val cacheUpdater: ScriptDependenciesUpdater,
-    private val cache: ScriptDependenciesCache
+    private val cacheUpdater: ScriptsCompilationConfigurationUpdater,
+    private val cache: ScriptsCompilationConfigurationCache
 ) {
-    fun getScriptClasspath(file: VirtualFile): List<VirtualFile> = toVfsRoots(cacheUpdater.getCurrentDependencies(file).classpath)
-    fun getScriptDependencies(file: VirtualFile): ScriptDependencies = cacheUpdater.getCurrentDependencies(file)
-    fun getScriptSdk(file: VirtualFile): Sdk? = getScriptSdk(getScriptDependencies(file))
+    fun getScriptClasspath(file: VirtualFile): List<VirtualFile> =
+        toVfsRoots(cacheUpdater.getCurrentCompilationConfiguration(file)?.valueOrNull()?.dependenciesClassPath.orEmpty())
+
+    fun getRefinedCompilationConfiguration(file: VirtualFile): ScriptCompilationConfigurationResult? =
+        cacheUpdater.getCurrentCompilationConfiguration(file)
+
+    fun getScriptSdk(file: VirtualFile): Sdk? = Companion.getScriptSdk(getRefinedCompilationConfiguration(file)?.valueOrNull())
 
     fun getScriptDependenciesClassFilesScope(file: VirtualFile) = cache.scriptDependenciesClassFilesScope(file)
 
@@ -67,35 +72,29 @@ class ScriptDependenciesManager internal constructor(
         fun getInstance(project: Project): ScriptDependenciesManager =
             ServiceManager.getService(project, ScriptDependenciesManager::class.java)
 
-        fun getScriptSdk(dependencies: ScriptDependencies): Sdk? {
+        fun getScriptSdk(compilationConfiguration: ScriptCompilationConfigurationWrapper?): Sdk? {
             // workaround for mismatched gradle wrapper and plugin version
-            try {
-                val javaHome = dependencies.javaHome
-                    ?.let { VfsUtil.findFileByIoFile(it, true) }
-                    ?: return null
-
-                return getAllProjectSdks().find { it.homeDirectory == javaHome }
+            val javaHome = try {
+                compilationConfiguration?.javaHome?.let { VfsUtil.findFileByIoFile(it, true) }
             } catch (e: Throwable) {
-                return null
-            }
+                null
+            } ?: return null
+
+            return getAllProjectSdks().find { it.homeDirectory == javaHome }
         }
 
-        fun getScriptDefaultSdk(project: Project): Sdk? {
-            val projectSdk = getProjectSdk(project)
-            if (projectSdk != null) return projectSdk
 
-            val anyJavaSdk = getAllProjectSdks().find { it.canBeUsedForScript() }
-            if (anyJavaSdk != null) {
-                return anyJavaSdk
-            }
-
-            log.warn(
-                "Default Script SDK is null: " +
-                        "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
-                        "all sdks = ${getAllProjectSdks().joinToString("\n")}"
-            )
-            return null
-        }
+        fun getScriptDefaultSdk(project: Project): Sdk? =
+            getProjectSdk(project)
+                ?: getAllProjectSdks().find { it.canBeUsedForScript() }
+                ?: run {
+                    log.warn(
+                        "Default Script SDK is null: " +
+                                "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
+                                "all sdks = ${getAllProjectSdks().joinToString("; ")}"
+                    )
+                    null
+                }
 
         fun getProjectSdk(project: Project) = ProjectRootManager.getInstance(project).projectSdk?.takeIf { it.canBeUsedForScript() }
 

@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ScriptProviderTest : KtUsefulTestCase() {
@@ -64,11 +66,16 @@ class ScriptProviderTest : KtUsefulTestCase() {
     }
 }
 
-private open class FakeScriptDefinition(val suffix: String = ".kts") : KotlinScriptDefinition(ScriptTemplateWithArgs::class) {
+private open class FakeScriptDefinition(val suffix: String = ".kts") :
+    ScriptDefinition.FromLegacy(defaultJvmScriptingHostConfiguration, KotlinScriptDefinition(ScriptTemplateWithArgs::class))
+{
     val matchCounter = AtomicInteger()
     override fun isScript(fileName: String): Boolean = fileName.endsWith(suffix).also {
         if (it) matchCounter.incrementAndGet()
     }
+
+    override val isDefault: Boolean
+        get() = suffix == ".kts"
 }
 
 private class TestScriptDefinitionSource(val counter: AtomicInteger, val defGens: Iterable<() -> FakeScriptDefinition>) :
@@ -80,7 +87,7 @@ private class TestScriptDefinitionSource(val counter: AtomicInteger, val defGens
         )
     } })
 
-    override val definitions: Sequence<KotlinScriptDefinition> = sequence {
+    override val definitions: Sequence<ScriptDefinition> = sequence {
         for (gen in defGens) {
             counter.incrementAndGet()
             yield(gen())
@@ -88,6 +95,6 @@ private class TestScriptDefinitionSource(val counter: AtomicInteger, val defGens
     }
 }
 
-private class TestCliScriptDefinitionProvider(private val standardDef: KotlinScriptDefinition) : CliScriptDefinitionProvider() {
-    override fun getDefaultScriptDefinition(): KotlinScriptDefinition = standardDef
+private class TestCliScriptDefinitionProvider(private val standardDef: ScriptDefinition) : CliScriptDefinitionProvider() {
+    override fun getDefaultScriptDefinition(): KotlinScriptDefinition = standardDef.legacyDefinition
 }

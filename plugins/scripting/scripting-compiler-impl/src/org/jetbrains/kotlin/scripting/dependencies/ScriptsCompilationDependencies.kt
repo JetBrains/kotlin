@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import java.io.File
+import kotlin.script.experimental.api.valueOrNull
 
 data class ScriptsCompilationDependencies(
     val classpath: List<File>,
@@ -41,11 +42,11 @@ fun collectScriptsCompilationDependencies(
         while (true) {
             val newRemainingSources = ArrayList<KtFile>()
             for (source in remainingSources) {
-                val dependencies = importsProvider.getScriptDependencies(source)
-                if (dependencies != null) {
-                    collectedClassPath.addAll(dependencies.classpath)
+                val refinedConfiguration = importsProvider.getScriptConfigurationResult(source)?.valueOrNull()
+                if (refinedConfiguration != null) {
+                    collectedClassPath.addAll(refinedConfiguration.dependenciesClassPath)
 
-                    val sourceDependenciesRoots = dependencies.scripts.map {
+                    val sourceDependenciesRoots = refinedConfiguration.importedScripts.map {
                         KotlinSourceRoot(it.path, false)
                     }
                     val sourceDependencies =

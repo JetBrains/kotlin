@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
 
@@ -116,7 +117,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
 
         loadScriptTemplatesFromClasspath(
             listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars"),
-            listOf(defsOut), emptyList(), this::class.java.classLoader, emptyMap(), messageCollector.reporter
+            listOf(defsOut), emptyList(), this::class.java.classLoader, defaultJvmScriptingHostConfiguration, messageCollector.reporter
         ).toList()
 
         for (def in defClasses) {
@@ -141,7 +142,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
             discoverScriptTemplatesInClasspath(
                 listOf(defsOut),
                 this::class.java.classLoader,
-                emptyMap(),
+                defaultJvmScriptingHostConfiguration,
                 messageCollector.reporter
             )
 
@@ -212,7 +213,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
         discoverScriptTemplatesInClasspath(
             listOf(defsOut),
             this::class.java.classLoader,
-            emptyMap(),
+            defaultJvmScriptingHostConfiguration,
             messageCollector.reporter
         ).toList()
 

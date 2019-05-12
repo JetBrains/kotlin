@@ -12,11 +12,10 @@ import com.intellij.util.ui.ListTableModel
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinitionAdapterFromNewAPIBase
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 
-class KotlinScriptDefinitionsModelDescriptor(val definition: KotlinScriptDefinition, var isEnabled: Boolean)
+class KotlinScriptDefinitionsModelDescriptor(val definition: ScriptDefinition, var isEnabled: Boolean)
 
 class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<KotlinScriptDefinitionsModelDescriptor>) :
     ListTableModel<KotlinScriptDefinitionsModelDescriptor>(
@@ -30,7 +29,7 @@ class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<
     ) {
 
     fun getDefinitions() = items.map { it.definition }
-    fun setDefinitions(definitions: List<KotlinScriptDefinition>, settings: KotlinScriptingSettings) {
+    fun setDefinitions(definitions: List<ScriptDefinition>, settings: KotlinScriptingSettings) {
         items = definitions.mapTo(arrayListOf()) { KotlinScriptDefinitionsModelDescriptor(it, settings.isScriptDefinitionEnabled(it)) }
     }
 
@@ -41,12 +40,9 @@ class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<
     private class ScriptDefinitionPattern : ColumnInfo<KotlinScriptDefinitionsModelDescriptor, String>("Pattern/Extension") {
         override fun valueOf(item: KotlinScriptDefinitionsModelDescriptor): String {
             val definition = item.definition
-            return when (definition) {
-                is KotlinScriptDefinitionFromAnnotatedTemplate -> definition.scriptFilePattern.pattern
-                is KotlinScriptDefinitionAdapterFromNewAPIBase -> definition.fileExtension
-                is StandardIdeScriptDefinition -> KotlinParserDefinition.STD_SCRIPT_EXT
-                else -> ""
-            }
+            return definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern?.pattern
+                ?: definition.asLegacyOrNull<StandardIdeScriptDefinition>()?.let { KotlinParserDefinition.STD_SCRIPT_EXT }
+                ?: definition.fileExtension
         }
     }
 
@@ -58,11 +54,12 @@ class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<
 
         override fun getEditor(item: KotlinScriptDefinitionsModelDescriptor?) = BooleanTableCellEditor()
         override fun getRenderer(item: KotlinScriptDefinitionsModelDescriptor?) = BooleanTableCellRenderer()
-        override fun isCellEditable(item: KotlinScriptDefinitionsModelDescriptor) = item.definition !is StandardIdeScriptDefinition
+        override fun isCellEditable(item: KotlinScriptDefinitionsModelDescriptor) =
+            item.definition.asLegacyOrNull<StandardIdeScriptDefinition>() == null
     }
 
     companion object {
-        fun createModel(definitions: List<KotlinScriptDefinition>, settings: KotlinScriptingSettings): KotlinScriptDefinitionsModel {
+        fun createModel(definitions: List<ScriptDefinition>, settings: KotlinScriptingSettings): KotlinScriptDefinitionsModel {
             return KotlinScriptDefinitionsModel(definitions.mapTo(arrayListOf()) {
                 KotlinScriptDefinitionsModelDescriptor(
                     it,

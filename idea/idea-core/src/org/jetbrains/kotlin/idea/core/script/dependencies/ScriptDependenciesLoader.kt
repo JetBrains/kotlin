@@ -15,13 +15,14 @@ import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.ScriptContentLoader
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
-import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
-import kotlin.script.experimental.dependencies.DependenciesResolver
-import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.valueOrNull
+import kotlin.script.experimental.jvm.compat.mapToLegacyReports
 
+// TODO: rename and provide alias for compatibility - this is not only about dependencies anymore
 abstract class ScriptDependenciesLoader(protected val project: Project) {
 
     abstract fun isApplicable(file: VirtualFile): Boolean
@@ -31,40 +32,40 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
 
     protected var shouldNotifyRootsChanged = false
 
-    protected val contentLoader = ScriptContentLoader(project)
-    protected val cache: ScriptDependenciesCache = ServiceManager.getService(project, ScriptDependenciesCache::class.java)
+    protected val cache: ScriptsCompilationConfigurationCache = ServiceManager.getService(project, ScriptsCompilationConfigurationCache::class.java)
 
     private val reporter: ScriptReportSink = ServiceManager.getService(project, ScriptReportSink::class.java)
 
-    protected fun processResult(result: DependenciesResolver.ResolveResult, file: VirtualFile, scriptDef: KotlinScriptDefinition) {
-        debug(file) { "dependencies from ${this.javaClass} received = $result" }
+    protected fun processRefinedConfiguration(result: ScriptCompilationConfigurationResult, file: VirtualFile) {
+        debug(file) { "refined script compilation configuration from ${this.javaClass} received = $result" }
 
-        if (cache[file] == null) {
-            saveDependencies(result, file, scriptDef)
-            attachReportsIfChanged(result, file, scriptDef)
+        val oldResult = cache[file]
+
+        if (oldResult == null) {
+            save(result, file)
+            attachReportsIfChanged(result, file)
             return
         }
 
-        val newDependencies = result.dependencies?.adjustByDefinition(scriptDef)
-        if (cache[file] != newDependencies) {
+        if (oldResult != result) {
             if (shouldShowNotification() && !ApplicationManager.getApplication().isUnitTestMode) {
                 debug(file) {
-                    "dependencies changed, notification was shown: old = ${cache[file]}, new = $newDependencies"
+                    "dependencies changed, notification is shown: old = $oldResult, new = $result"
                 }
                 file.addScriptDependenciesNotificationPanel(result, project) {
-                    saveDependencies(it, file, scriptDef)
-                    attachReportsIfChanged(it, file, scriptDef)
+                    save(it, file)
+                    attachReportsIfChanged(result, file)
                     submitMakeRootsChange()
                 }
             } else {
                 debug(file) {
-                    "dependencies changed, new dependencies were applied automatically: old = ${cache[file]}, new = $newDependencies"
+                    "dependencies changed, new dependencies are applied automatically: old = $oldResult, new = $result"
                 }
-                saveDependencies(result, file, scriptDef)
-                attachReportsIfChanged(result, file, scriptDef)
+                save(result, file)
+                attachReportsIfChanged(result, file)
             }
         } else {
-            attachReportsIfChanged(result, file, scriptDef)
+            attachReportsIfChanged(result, file)
 
             if (shouldShowNotification()) {
                 file.removeScriptDependenciesNotificationPanel(project)
@@ -72,34 +73,43 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         }
     }
 
-    private fun attachReportsIfChanged(result: DependenciesResolver.ResolveResult, file: VirtualFile, scriptDef: KotlinScriptDefinition) {
+    private fun attachReportsIfChanged(result: ResultWithDiagnostics<*>, file: VirtualFile) {
         if (file.getUserData(IdeScriptReportSink.Reports) != result.reports.takeIf { it.isNotEmpty() }) {
-            reporter.attachReports(file, result.reports)
+            reporter.attachReports(file, result.reports.mapToLegacyReports())
         }
     }
 
-    private fun saveDependencies(result: DependenciesResolver.ResolveResult, file: VirtualFile, scriptDef: KotlinScriptDefinition) {
+    private fun save(compilationConfigurationResult: ScriptCompilationConfigurationResult?, file: VirtualFile) {
         if (shouldShowNotification()) {
             file.removeScriptDependenciesNotificationPanel(project)
         }
-
-        val dependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
-        saveToCache(file, dependencies)
+        if (compilationConfigurationResult != null) {
+            saveToCache(file, compilationConfigurationResult)
+        }
     }
 
-    protected fun saveToCache(file: VirtualFile, dependencies: ScriptDependencies) {
-        val rootsChanged = cache.hasNotCachedRoots(dependencies)
-        if (cache.save(file, dependencies)) {
+    protected fun saveToCache(
+        file: VirtualFile, compilationConfigurationResult: ScriptCompilationConfigurationResult, skipSaveToAttributes: Boolean = false
+    ) {
+        val rootsChanged = compilationConfigurationResult.valueOrNull()?.let { cache.hasNotCachedRoots(it) } ?: false
+        if (cache.save(file, compilationConfigurationResult)
+            && !skipSaveToAttributes
+            && compilationConfigurationResult is ResultWithDiagnostics.Success
+        ) {
             debug(file) {
-                "dependencies were saved to file attributes: dependencies = $dependencies"
+                "refined configuration is saved to file attributes: $compilationConfigurationResult"
             }
-            file.scriptDependencies = dependencies
+            if (compilationConfigurationResult.value is ScriptCompilationConfigurationWrapper.FromLegacy)
+                file.scriptDependencies = compilationConfigurationResult.value.legacyDependencies
+            else
+                file.scriptCompilationConfiguration = compilationConfigurationResult.value.configuration
         }
 
         if (rootsChanged) {
             shouldNotifyRootsChanged = true
         }
     }
+
 
     open fun notifyRootsChanged(): Boolean = submitMakeRootsChange()
 

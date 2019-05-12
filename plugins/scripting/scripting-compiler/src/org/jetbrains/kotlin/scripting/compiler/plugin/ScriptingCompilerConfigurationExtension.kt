@@ -18,13 +18,14 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.configuration.configureScriptDefinitions
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
-import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.reporter
+import org.jetbrains.kotlin.scripting.definitions.*
 import java.io.File
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 
-class ScriptingCompilerConfigurationExtension(val project: MockProject) : CompilerConfigurationExtension {
+class ScriptingCompilerConfigurationExtension(
+    val project: MockProject,
+    val baseHostConfiguration: ScriptingHostConfiguration
+) : CompilerConfigurationExtension {
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
 
@@ -39,7 +40,11 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
                     projectRoot
                 )
             }
-            val scriptResolverEnv = configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
+            val hostConfiguration = ScriptingHostConfiguration(baseHostConfiguration) {
+                getEnvironment {
+                    configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
+                }
+            }
 
             val explicitScriptDefinitions = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSES)
 
@@ -49,16 +54,16 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
                     configuration,
                     this::class.java.classLoader,
                     messageCollector,
-                    scriptResolverEnv
+                    hostConfiguration
                 )
             }
             // If not disabled explicitly, we should always support at least the standard script definition
             if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
-                !configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS).contains(StandardScriptDefinition)
+                configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS).none { it.isDefault }
             ) {
                 configuration.add(
                     ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                    StandardScriptDefinition
+                    ScriptDefinition.getDefault(hostConfiguration)
                 )
             }
 
@@ -66,37 +71,26 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES,
                 ScriptDefinitionsFromClasspathDiscoverySource(
                     configuration.jvmClasspathRoots,
-                    configuration.get(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION) ?: emptyMap(),
+                    hostConfiguration,
                     messageCollector.reporter
                 )
             )
-        }
 
-        // If not disabled explicitly, we should always support at least the standard script definition
-        if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
-            StandardScriptDefinition !in configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
-        ) {
-            configuration.add(
-                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                StandardScriptDefinition
-            )
-        }
+            val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
+            if (scriptDefinitionProvider != null) {
+                scriptDefinitionProvider.setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
+                scriptDefinitionProvider.setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
 
-        val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
-        if (scriptDefinitionProvider != null) {
-            scriptDefinitionProvider.setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
-            scriptDefinitionProvider.setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
+                // Register new file extensions
+                val fileTypeRegistry = FileTypeRegistry.getInstance() as CoreFileTypeRegistry
 
-            // Register new file extensions
-            val fileTypeRegistry = FileTypeRegistry.getInstance() as CoreFileTypeRegistry
-
-            scriptDefinitionProvider.getKnownFilenameExtensions().filter {
-                fileTypeRegistry.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
-            }.forEach {
-                fileTypeRegistry.registerFileType(KotlinFileType.INSTANCE, it)
+                scriptDefinitionProvider.getKnownFilenameExtensions().filter {
+                    fileTypeRegistry.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
+                }.forEach {
+                    fileTypeRegistry.registerFileType(KotlinFileType.INSTANCE, it)
+                }
             }
         }
-
     }
 }
 

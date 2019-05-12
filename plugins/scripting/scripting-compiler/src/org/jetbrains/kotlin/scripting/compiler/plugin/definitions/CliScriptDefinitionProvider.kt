@@ -5,33 +5,29 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.LazyScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
-import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import kotlin.concurrent.write
 
 open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
-    private val definitionsFromSources: MutableList<Sequence<KotlinScriptDefinition>> = arrayListOf()
-    private val definitions: MutableList<KotlinScriptDefinition> = arrayListOf()
-    private var hasStandardDefinition = true
+    private val definitionsFromSources: MutableList<Sequence<ScriptDefinition>> = arrayListOf()
+    private val definitions: MutableList<ScriptDefinition> = arrayListOf()
+    private var defaultDefinition: ScriptDefinition? = null
 
-    override val currentDefinitions: Sequence<KotlinScriptDefinition>
+    override val currentDefinitions: Sequence<ScriptDefinition>
         get() {
             val base = definitions.asSequence() + definitionsFromSources.asSequence().flatMap { it }
-            return if (hasStandardDefinition) base + getDefaultScriptDefinition() else base
+            return base + getDefaultDefinition()
         }
 
-    override fun getDefaultScriptDefinition(): KotlinScriptDefinition {
-        return StandardScriptDefinition
-    }
-
-    fun setScriptDefinitions(newDefinitions: List<KotlinScriptDefinition>) {
+    fun setScriptDefinitions(newDefinitions: List<ScriptDefinition>) {
         lock.write {
             definitions.clear()
-            val (withoutStdDef, stdDef) = newDefinitions.partition { it != getDefaultScriptDefinition() }
+            val (withoutStdDef, stdDef) = newDefinitions.partition { !it.isDefault }
             definitions.addAll(withoutStdDef)
-            hasStandardDefinition = stdDef.isNotEmpty()
+            // TODO: consider reporting an error when several default definitions are supplied
+            defaultDefinition = stdDef.firstOrNull()
         }
     }
 
@@ -43,4 +39,6 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
             }
         }
     }
+
+    override fun getDefaultDefinition(): ScriptDefinition = defaultDefinition ?: super.getDefaultDefinition()
 }

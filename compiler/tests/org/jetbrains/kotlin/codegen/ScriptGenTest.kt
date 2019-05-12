@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -33,14 +34,21 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.ScriptTemplateDefinition
 
 class ScriptGenTest : CodegenTestCase() {
     companion object {
         private val FIB_SCRIPT_DEFINITION =
-            KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class)
+            ScriptDefinition.FromLegacy(
+                defaultJvmScriptingHostConfiguration,
+                KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class)
+            )
         private val NO_PARAM_SCRIPT_DEFINITION =
-            KotlinScriptDefinitionFromAnnotatedTemplate(Any::class)
+            ScriptDefinition.FromLegacy(
+                defaultJvmScriptingHostConfiguration,
+                KotlinScriptDefinitionFromAnnotatedTemplate(Any::class)
+            )
     }
 
     override fun setUp() {

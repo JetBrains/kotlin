@@ -41,14 +41,15 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
-import kotlin.script.experimental.dependencies.ScriptDependencies
 
-class ScriptDependenciesUpdater(
+class ScriptsCompilationConfigurationUpdater(
     private val project: Project,
-    private val cache: ScriptDependenciesCache
+    private val cache: ScriptsCompilationConfigurationCache
 ) {
     private val scriptsQueue = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
     private val scriptChangesListenerDelay = 1400
@@ -64,13 +65,13 @@ class ScriptDependenciesUpdater(
         listenForChangesInScripts()
     }
 
-    fun getCurrentDependencies(file: VirtualFile): ScriptDependencies {
+    fun getCurrentCompilationConfiguration(file: VirtualFile): ScriptCompilationConfigurationResult? {
         cache[file]?.let { return it }
 
         updateDependencies(file)
         makeRootsChangeIfNeeded()
 
-        return cache[file] ?: ScriptDependencies.Empty
+        return cache[file]
     }
 
     fun updateDependenciesIfNeeded(files: List<VirtualFile>): Boolean {
@@ -174,15 +175,15 @@ class ScriptDependenciesUpdater(
         return cache[file] != null || file.scriptDependencies != null
     }
 
-    fun isAsyncDependencyResolver(scriptDef: KotlinScriptDefinition): Boolean {
-        val dependencyResolver = scriptDef.dependencyResolver
-        return dependencyResolver is AsyncDependenciesResolver || dependencyResolver is LegacyResolverWrapper
-    }
+    fun isAsyncDependencyResolver(scriptDef: ScriptDefinition): Boolean =
+        scriptDef.asLegacyOrNull<KotlinScriptDefinition>()?.dependencyResolver?.let {
+            it is AsyncDependenciesResolver || it is LegacyResolverWrapper
+        } ?: false
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): ScriptDependenciesUpdater =
-            ServiceManager.getService(project, ScriptDependenciesUpdater::class.java)
+        fun getInstance(project: Project): ScriptsCompilationConfigurationUpdater =
+            ServiceManager.getService(project, ScriptsCompilationConfigurationUpdater::class.java)
 
         fun areDependenciesCached(file: KtFile): Boolean {
             return getInstance(file.project).areDependenciesCached(file.virtualFile)

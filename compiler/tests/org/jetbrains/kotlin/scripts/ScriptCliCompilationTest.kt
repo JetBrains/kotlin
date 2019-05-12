@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.daemon.TestMessageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinitionAdapterFromNewAPI
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -27,10 +26,10 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
-import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.*
 
 private const val testDataPath = "compiler/testData/script/cliCompilation"
@@ -75,14 +74,10 @@ class ScriptCliCompilationTest : KtUsefulTestCase() {
                 val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
                     configurationDependencies(JvmDependency(classpath))
                 }
-                val scriptDefinition = KotlinScriptDefinitionAdapterFromNewAPI(
-                    createCompilationConfigurationFromTemplate(
-                        KotlinType(scriptDef),
-                        hostConfiguration, KotlinScriptDefinition::class
-                    ),
-                    hostConfiguration
+                add(
+                    ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+                    ScriptDefinition.FromTemplate(hostConfiguration, scriptDef, ScriptDefinition::class)
                 )
-                add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             }
             loadScriptingPlugin(this)
         }
@@ -122,7 +117,7 @@ object TestScriptWithRequireConfiguration : ScriptCompilationConfiguration(
         }
         refineConfiguration {
             onAnnotations(Import::class, DependsOn::class) { context: ScriptConfigurationRefinementContext ->
-                val scriptBaseDir = (context.script as? FileScriptSource)?.file?.parentFile
+                val scriptBaseDir = (context.script as? FileBasedScriptSource)?.file?.parentFile
                 val sources = context.collectedData?.get(ScriptCollectedData.foundAnnotations)
                     ?.flatMap {
                         (it as? Import)?.sources?.map { sourceName ->

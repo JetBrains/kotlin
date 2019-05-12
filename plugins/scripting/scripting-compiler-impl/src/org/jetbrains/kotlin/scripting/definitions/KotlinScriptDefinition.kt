@@ -17,6 +17,8 @@ import kotlin.reflect.KType
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
+// Legacy definition, will be obsolete soon
+// TODO: make deprecated and drop usages where possible
 open class KotlinScriptDefinition(open val template: KClass<out Any>) : UserDataHolderBase() {
 
     open val name: String = "Kotlin Script"

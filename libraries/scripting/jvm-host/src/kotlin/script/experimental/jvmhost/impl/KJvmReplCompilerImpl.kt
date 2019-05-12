@@ -31,7 +31,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
     override fun createReplCompilationState(scriptCompilationConfiguration: ScriptCompilationConfiguration): JvmReplCompilerState.Compilation {
         val context = withMessageCollectorAndDisposable(disposeOnSuccess = false) { messageCollector, disposable ->
             createSharedCompilationContext(scriptCompilationConfiguration, hostConfiguration, messageCollector, disposable).asSuccess()
-        }.resultOr { throw IllegalStateException("Unable to initialize repl compiler:\n  ${it.reports.joinToString("\n  ")}") }
+        }.valueOr { throw IllegalStateException("Unable to initialize repl compiler:\n  ${it.reports.joinToString("\n  ")}") }
         return ReplCompilationState(context)
     }
 
@@ -42,7 +42,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
     ): ResultWithDiagnostics<Boolean> =
         withMessageCollector(script) { messageCollector ->
             val ktFile = getScriptKtFile(script, scriptCompilationConfiguration, project, messageCollector)
-                .resultOr { return it }
+                .valueOr { return it }
             val errorHolder = object : MessageCollectorBasedReporter {
                 override val messageCollector = messageCollector
             }
@@ -80,7 +80,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
 
             val snippetKtFile =
                 getScriptKtFile(snippet, context.baseScriptCompilationConfiguration, context.environment.project, messageCollector)
-                    .resultOr { return it }
+                    .valueOr { return it }
 
             val (sourceFiles, sourceDependencies) = collectRefinedSourcesAndUpdateEnvironment(context, snippetKtFile, messageCollector)
 

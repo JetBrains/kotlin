@@ -27,8 +27,9 @@ import com.intellij.util.EnvironmentUtil
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinitionAdapterFromNewAPIBase
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.getEnvironment
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
@@ -38,10 +39,8 @@ import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettingsListener
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
-import java.lang.IllegalStateException
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -54,7 +53,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-class GradleScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionContributor {
+class GradleScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionSourceAsContributor {
 
     override val id: String = "Gradle Kotlin DSL"
     private val failedToLoad = AtomicBoolean(false)
@@ -86,55 +85,52 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         initializeScriptModificationListener(project)
     }
 
-    override fun getDefinitions(): List<KotlinScriptDefinition> {
-        return loadDefinitions()
-    }
-
     // NOTE: control flow here depends on suppressing exceptions from loadGradleTemplates calls
     // TODO: possibly combine exceptions from every loadGradleTemplates call, be mindful of KT-19276
-    private fun loadDefinitions(): List<KotlinScriptDefinition> {
-        val kotlinDslDependencySelector = Regex("^gradle-(?:kotlin-dsl|core).*\\.jar\$")
-        val kotlinDslAdditionalResolverCp = ::kotlinStdlibAndCompiler
+    override val definitions: Sequence<ScriptDefinition>
+        get() {
+            val kotlinDslDependencySelector = Regex("^gradle-(?:kotlin-dsl|core).*\\.jar\$")
+            val kotlinDslAdditionalResolverCp = ::kotlinStdlibAndCompiler
 
-        failedToLoad.set(false)
+            failedToLoad.set(false)
 
-        val kotlinDslTemplates = LinkedHashSet<KotlinScriptDefinition>()
+            val kotlinDslTemplates = LinkedHashSet<ScriptDefinition>()
 
-        loadGradleTemplates(
-            templateClass = "org.gradle.kotlin.dsl.KotlinInitScript",
-            dependencySelector = kotlinDslDependencySelector,
-            additionalResolverClasspath = kotlinDslAdditionalResolverCp
+            loadGradleTemplates(
+                templateClass = "org.gradle.kotlin.dsl.KotlinInitScript",
+                dependencySelector = kotlinDslDependencySelector,
+                additionalResolverClasspath = kotlinDslAdditionalResolverCp
 
-        ).let { kotlinDslTemplates.addAll(it) }
+            ).let { kotlinDslTemplates.addAll(it) }
 
-        loadGradleTemplates(
-            templateClass = "org.gradle.kotlin.dsl.KotlinSettingsScript",
-            dependencySelector = kotlinDslDependencySelector,
-            additionalResolverClasspath = kotlinDslAdditionalResolverCp
+            loadGradleTemplates(
+                templateClass = "org.gradle.kotlin.dsl.KotlinSettingsScript",
+                dependencySelector = kotlinDslDependencySelector,
+                additionalResolverClasspath = kotlinDslAdditionalResolverCp
 
-        ).let { kotlinDslTemplates.addAll(it) }
+            ).let { kotlinDslTemplates.addAll(it) }
 
-        // KotlinBuildScript should be last because it has wide scriptFilePattern
-        loadGradleTemplates(
-            templateClass = "org.gradle.kotlin.dsl.KotlinBuildScript",
-            dependencySelector = kotlinDslDependencySelector,
-            additionalResolverClasspath = kotlinDslAdditionalResolverCp
-        ).let { kotlinDslTemplates.addAll(it) }
+            // KotlinBuildScript should be last because it has wide scriptFilePattern
+            loadGradleTemplates(
+                templateClass = "org.gradle.kotlin.dsl.KotlinBuildScript",
+                dependencySelector = kotlinDslDependencySelector,
+                additionalResolverClasspath = kotlinDslAdditionalResolverCp
+            ).let { kotlinDslTemplates.addAll(it) }
 
 
-        if (kotlinDslTemplates.isNotEmpty()) {
-            return kotlinDslTemplates.toList()
+            if (kotlinDslTemplates.isNotEmpty()) {
+                return kotlinDslTemplates.asSequence()
+            }
+
+            val default = tryToLoadOldBuildScriptDefinition()
+            if (default.isNotEmpty()) {
+                return default.asSequence()
+            }
+
+            return sequenceOf(ErrorGradleScriptDefinition())
         }
 
-        val default = tryToLoadOldBuildScriptDefinition()
-        if (default.isNotEmpty()) {
-            return default
-        }
-
-        return listOf(ErrorGradleScriptDefinition())
-    }
-
-    private fun tryToLoadOldBuildScriptDefinition(): List<KotlinScriptDefinition> {
+    private fun tryToLoadOldBuildScriptDefinition(): List<ScriptDefinition> {
         failedToLoad.set(false)
 
         return loadGradleTemplates(
@@ -154,7 +150,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     private fun loadGradleTemplates(
         templateClass: String, dependencySelector: Regex,
         additionalResolverClasspath: (gradleLibDir: File) -> List<File>
-    ): List<KotlinScriptDefinition> = try {
+    ): List<ScriptDefinition> = try {
         doLoadGradleTemplates(templateClass, dependencySelector, additionalResolverClasspath)
     } catch (t: Throwable) {
         // TODO: review exception handling
@@ -170,11 +166,11 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     private fun doLoadGradleTemplates(
         templateClass: String, dependencySelector: Regex,
         additionalResolverClasspath: (gradleLibDir: File) -> List<File>
-    ): List<KotlinScriptDefinition> {
-        fun createEnvironment(
+    ): List<ScriptDefinition> {
+        fun createHostConfiguration(
             gradleExeSettings: GradleExecutionSettings,
             projectSettings: GradleProjectSettings
-        ): Environment {
+        ): ScriptingHostConfiguration {
             val gradleJvmOptions = gradleExeSettings.daemonVmOptions?.let { vmOptions ->
                 CommandLineTokenizer(vmOptions).toList()
                     .mapNotNull { it?.let { it as? String } }
@@ -182,7 +178,8 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                     .distinct()
             } ?: emptyList()
 
-            return mapOf(
+
+            val environment = mapOf(
                 "gradleHome" to gradleExeSettings.gradleHome?.let(::File),
                 "gradleJavaHome" to gradleExeSettings.javaHome,
 
@@ -194,6 +191,9 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
                 "getScriptSectionTokens" to ::topLevelSectionCodeTextTokens
             )
+            return ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                getEnvironment { environment }
+            }
         }
 
         val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
@@ -221,14 +221,17 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         return loadDefinitionsFromTemplates(
             listOf(templateClass),
             templateClasspath,
-            createEnvironment(gradleExeSettings, projectSettings),
+            createHostConfiguration(gradleExeSettings, projectSettings),
             additionalResolverClasspath(gradleLibDir)
         ).map {
-            // Expand scope for old gradle script definition
-            if (it is KotlinScriptDefinitionFromAnnotatedTemplate && !it.scriptExpectedLocations.contains(ScriptExpectedLocation.Project))
-                GradleKotlinScriptDefinitionFromAnnotatedTemplate(it)
-            else
-                it
+            it.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.let { legacyDef ->
+                @Suppress("DEPRECATION")
+                if (legacyDef.scriptExpectedLocations.contains(ScriptExpectedLocation.Project)) null
+                else {
+                    // Expand scope for old gradle script definition
+                    ScriptDefinition.FromLegacy(it.hostConfiguration, GradleKotlinScriptDefinitionFromAnnotatedTemplate(legacyDef))
+                }
+            } ?: it
         }
     }
 
@@ -242,23 +245,28 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this)
     }
 
-    private class ErrorGradleScriptDefinition(message: String? = null) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
-        companion object {
-            private const val KOTLIN_DSL_SCRIPT_EXTENSION = "gradle.kts"
+    // TODO: refactor - minimize
+    private class ErrorGradleScriptDefinition(message: String? = null) :
+        ScriptDefinition.FromLegacy(ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration), LegacyDefinition(message)) {
+
+        private class LegacyDefinition(message: String?) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
+            companion object {
+                private const val KOTLIN_DSL_SCRIPT_EXTENSION = "gradle.kts"
+            }
+
+            override val name: String = "Default Kotlin Gradle Script"
+            override val fileExtension: String = KOTLIN_DSL_SCRIPT_EXTENSION
+
+            override val scriptCompilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration.Default
+            override val hostConfiguration: ScriptingHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
+            override val baseClass: KClass<*> = ScriptTemplateWithArgs::class
+
+            override val dependencyResolver: DependenciesResolver = ErrorScriptDependenciesResolver(message)
+
+            override fun toString(): String = "ErrorGradleScriptDefinition"
+            override fun equals(other: Any?): Boolean = other is ErrorGradleScriptDefinition
+            override fun hashCode(): Int = name.hashCode()
         }
-
-        override val name: String = "Default Kotlin Gradle Script"
-        override val fileExtension: String = KOTLIN_DSL_SCRIPT_EXTENSION
-
-        override val scriptCompilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration.Default
-        override val hostConfiguration: ScriptingHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
-        override val baseClass: KClass<*> = ScriptTemplateWithArgs::class
-
-        override val dependencyResolver: DependenciesResolver = ErrorScriptDependenciesResolver(message)
-
-        override fun toString(): String = "ErrorGradleScriptDefinition"
-        override fun equals(other: Any?): Boolean = other is ErrorGradleScriptDefinition
-        override fun hashCode(): Int = name.hashCode()
     }
 
     private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {
@@ -280,6 +288,7 @@ internal class GradleSyncState {
 class GradleKotlinScriptDefinitionFromAnnotatedTemplate(
     base: KotlinScriptDefinitionFromAnnotatedTemplate
 ) : KotlinScriptDefinitionFromAnnotatedTemplate(base.template, base.environment, base.templateClasspath) {
+    @Suppress("DEPRECATION")
     override val scriptExpectedLocations: List<ScriptExpectedLocation>
         get() = listOf(ScriptExpectedLocation.Project)
 }

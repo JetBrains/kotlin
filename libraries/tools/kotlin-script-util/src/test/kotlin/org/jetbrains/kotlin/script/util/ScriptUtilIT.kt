@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWith
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
@@ -44,6 +45,7 @@ import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.io.PrintStream
 import kotlin.reflect.KClass
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 const val KOTLIN_JAVA_RUNTIME_JAR = "kotlin-stdlib.jar"
 
@@ -155,7 +157,12 @@ done
                     }
                 }
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script-util-test")
-                add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
+                add(
+                    ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+                    ScriptDefinition.FromLegacy(
+                        defaultJvmScriptingHostConfiguration, scriptDefinition
+                    )
+                )
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())

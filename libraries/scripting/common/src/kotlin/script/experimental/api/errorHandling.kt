@@ -76,6 +76,10 @@ sealed class ResultWithDiagnostics<out R> {
     ) : ResultWithDiagnostics<Nothing>() {
         constructor(vararg reports: ScriptDiagnostic) : this(reports.asList())
     }
+
+    override fun equals(other: Any?): Boolean = this === other || (other is ResultWithDiagnostics<*> && this.reports == other.reports)
+
+    override fun hashCode(): Int = reports.hashCode()
 }
 
 /**
@@ -162,9 +166,10 @@ fun makeFailureResult(message: String, path: String? = null, location: SourceCod
 fun Throwable.asDiagnostics(
     customMessage: String? = null,
     path: String? = null,
-    location: SourceCode.Location? = null
+    location: SourceCode.Location? = null,
+    severity: ScriptDiagnostic.Severity = ScriptDiagnostic.Severity.ERROR
 ): ScriptDiagnostic =
-    ScriptDiagnostic(customMessage ?: message ?: "$this", ScriptDiagnostic.Severity.ERROR, path, location, this)
+    ScriptDiagnostic(customMessage ?: message ?: "$this", severity, path, location, this)
 
 /**
  * Converts the receiver String to error diagnostic report with optional [path] and [location]
@@ -175,7 +180,7 @@ fun String.asErrorDiagnostics(path: String? = null, location: SourceCode.Locatio
 /**
  * Extracts the result value from the receiver wrapper or null if receiver represents a Failure
  */
-fun <R> ResultWithDiagnostics<R>.resultOrNull(): R? = when (this) {
+fun <R> ResultWithDiagnostics<R>.valueOrNull(): R? = when (this) {
     is ResultWithDiagnostics.Success<R> -> value
     else -> null
 }
@@ -183,7 +188,7 @@ fun <R> ResultWithDiagnostics<R>.resultOrNull(): R? = when (this) {
 /**
  * Extracts the result value from the receiver wrapper or run non-returning lambda if receiver represents a Failure
  */
-inline fun <R> ResultWithDiagnostics<R>.resultOr(body: (ResultWithDiagnostics.Failure) -> Nothing): R = when (this) {
+inline fun <R> ResultWithDiagnostics<R>.valueOr(body: (ResultWithDiagnostics.Failure) -> Nothing): R = when (this) {
     is ResultWithDiagnostics.Success<R> -> value
     is ResultWithDiagnostics.Failure -> body(this)
 }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 data class ScriptModuleInfo(
     val project: Project,
     val scriptFile: VirtualFile,
-    val scriptDefinition: KotlinScriptDefinition
+    val scriptDefinition: ScriptDefinition
 ) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
@@ -85,7 +85,7 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
     class ForFile(
         project: Project,
         val scriptFile: VirtualFile,
-        val scriptDefinition: KotlinScriptDefinition
+        val scriptDefinition: ScriptDefinition
     ) : ScriptDependenciesInfo(project) {
         override val sdk: Sdk?
             get() {

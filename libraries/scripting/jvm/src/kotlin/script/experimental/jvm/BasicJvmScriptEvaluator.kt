@@ -40,7 +40,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                             ?.onFailure {
                                 return@invoke ResultWithDiagnostics.Failure(it.reports)
                             }
-                            ?.resultOrNull()
+                            ?.valueOrNull()
                             ?: configuration
 
                     val instance =

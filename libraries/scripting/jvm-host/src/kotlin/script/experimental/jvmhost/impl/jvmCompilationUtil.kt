@@ -8,11 +8,8 @@ package kotlin.script.experimental.jvmhost.impl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -20,23 +17,14 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.scripting.dependencies.ScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-
-internal class ScriptLightVirtualFile(name: String, private val _path: String?, text: String) :
-    LightVirtualFile(name, KotlinLanguage.INSTANCE, StringUtil.convertLineSeparators(text)) {
-
-    init {
-        charset = CharsetToolkit.UTF8_CHARSET
-    }
-
-    override fun getPath(): String = _path ?: super.getPath()
-    override fun getCanonicalPath(): String? = path
-}
 
 internal fun makeCompiledModule(generationState: GenerationState) =
     KJvmCompiledModuleInMemory(
@@ -98,7 +86,7 @@ internal fun getScriptKtFile(
     val scriptText = getMergedScriptText(script, scriptCompilationConfiguration)
     val virtualFile = ScriptLightVirtualFile(
         script.scriptFileName(script, scriptCompilationConfiguration),
-        (script as? FileScriptSource)?.file?.path,
+        (script as? FileBasedScriptSource)?.file?.path,
         scriptText
     )
     val ktFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?

@@ -9,29 +9,30 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-abstract class AsyncScriptDefinitionsContributor(protected val project: Project) : ScriptDefinitionContributor {
+abstract class AsyncScriptDefinitionsContributor(protected val project: Project) : ScriptDefinitionSourceAsContributor {
     abstract val progressMessage: String
 
-    override fun isReady(): Boolean = definitions != null
+    override fun isReady(): Boolean = _definitions != null
 
-    override fun getDefinitions(): List<KotlinScriptDefinition> {
-        definitionsLock.read {
-            if (definitions != null) {
-                return definitions!!
+    override val definitions: Sequence<ScriptDefinition>
+        get() {
+            definitionsLock.read {
+                if (_definitions != null) {
+                    return _definitions!!.asSequence()
+                }
             }
-        }
 
-        forceStartUpdate = false
-        asyncRunUpdateScriptTemplates()
-        return emptyList()
-    }
+            forceStartUpdate = false
+            asyncRunUpdateScriptTemplates()
+            return emptySequence()
+        }
 
     protected fun asyncRunUpdateScriptTemplates() {
         val backgroundTask = inProgressLock.write {
@@ -50,9 +51,9 @@ abstract class AsyncScriptDefinitionsContributor(protected val project: Project)
         }
     }
 
-    protected abstract fun loadScriptDefinitions(previous: List<KotlinScriptDefinition>?): List<KotlinScriptDefinition>
+    protected abstract fun loadScriptDefinitions(previous: List<ScriptDefinition>?): List<ScriptDefinition>
 
-    private var definitions: List<KotlinScriptDefinition>? = null
+    private var _definitions: List<ScriptDefinition>? = null
     private val definitionsLock = ReentrantReadWriteLock()
 
     protected var forceStartUpdate = false
@@ -77,10 +78,10 @@ abstract class AsyncScriptDefinitionsContributor(protected val project: Project)
 
                 val wasRunning = definitionsLock.isWriteLocked
                 val needReload = definitionsLock.write {
-                    if (wasRunning && !forceStartUpdate && definitions != null) return@write false
-                    val newDefinitions = loadScriptDefinitions(definitions)
-                    if (newDefinitions != definitions) {
-                        definitions = newDefinitions
+                    if (wasRunning && !forceStartUpdate && _definitions != null) return@write false
+                    val newDefinitions = loadScriptDefinitions(_definitions)
+                    if (newDefinitions != _definitions) {
+                        _definitions = newDefinitions
                         return@write true
                     }
                     return@write false

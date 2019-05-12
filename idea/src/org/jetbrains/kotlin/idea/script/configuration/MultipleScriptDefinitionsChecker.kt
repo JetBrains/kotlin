@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinitionAdapterFromNewAPIBase
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 
 class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
@@ -42,8 +41,7 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
         val allApplicableDefinitions = ScriptDefinitionsManager.getInstance(project)
             .getAllDefinitions()
             .filter {
-                it !is StandardIdeScriptDefinition &&
-                        it.isScript(ktFile.name) &&
+                it.asLegacyOrNull<StandardIdeScriptDefinition>() == null && it.isScript(ktFile.name) &&
                         KotlinScriptingSettings.getInstance(project).isScriptDefinitionEnabled(it)
             }
             .toList()
@@ -56,10 +54,10 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
         )
     }
 
-    private fun areDefinitionsForGradleKts(allApplicableDefinitions: List<KotlinScriptDefinition>): Boolean {
+    private fun areDefinitionsForGradleKts(allApplicableDefinitions: List<ScriptDefinition>): Boolean {
         if (allApplicableDefinitions.size == 2) {
-            return (allApplicableDefinitions[0] as? KotlinScriptDefinitionFromAnnotatedTemplate)?.scriptFilePattern?.pattern == "^(settings|.+\\.settings)\\.gradle\\.kts\$"
-                    && (allApplicableDefinitions[1] as? KotlinScriptDefinitionFromAnnotatedTemplate)?.scriptFilePattern?.pattern == ".*\\.gradle\\.kts"
+            return allApplicableDefinitions[0].asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern?.pattern == "^(settings|.+\\.settings)\\.gradle\\.kts\$"
+                    && allApplicableDefinitions[1].asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern?.pattern == ".*\\.gradle\\.kts"
         }
         return false
     }
@@ -67,25 +65,18 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
     companion object {
         private val KEY = Key.create<EditorNotificationPanel>("MultipleScriptDefinitionsChecker")
 
-        private fun createNotification(psiFile: KtFile, defs: List<KotlinScriptDefinition>): EditorNotificationPanel {
+        private fun createNotification(psiFile: KtFile, defs: List<ScriptDefinition>): EditorNotificationPanel {
             return EditorNotificationPanel().apply {
                 setText("Multiple script definitions are applicable for this script. ${defs.first().name} is used")
                 createComponentActionLabel("Show all") {
                     val list = JBPopupFactory.getInstance().createListPopup(
-                        object : BaseListPopupStep<KotlinScriptDefinition>(null, defs) {
-                            override fun getTextFor(value: KotlinScriptDefinition): String {
-                                return when (value) {
-                                    is KotlinScriptDefinitionFromAnnotatedTemplate -> {
-                                        value.name + " (${value.scriptFilePattern})"
-                                    }
-                                    is KotlinScriptDefinitionAdapterFromNewAPIBase -> {
-                                        value.name + " (${value.fileExtension})"
-                                    }
-                                    is StandardIdeScriptDefinition -> {
-                                        value.name + " (${KotlinParserDefinition.STD_SCRIPT_EXT})"
-                                    }
-                                    else -> value.name
-                                }
+                        object : BaseListPopupStep<ScriptDefinition>(null, defs) {
+                            override fun getTextFor(value: ScriptDefinition): String {
+                                return value.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.let {
+                                    it.name + " (${it.scriptFilePattern})"
+                                } ?: value.asLegacyOrNull<StandardIdeScriptDefinition>()?.let {
+                                    it.name + " (${KotlinParserDefinition.STD_SCRIPT_EXT})"
+                                } ?: value.name + " (${value.fileExtension})"
                             }
                         }
                     )

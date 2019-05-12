@@ -59,7 +59,7 @@ val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key
 /**
  * The superclass for target script class
  */
-val ScriptCompilationConfigurationKeys.baseClass by PropertiesCollection.key<KotlinType>() // script base class
+val ScriptCompilationConfigurationKeys.baseClass by PropertiesCollection.key<KotlinType>(KotlinType(Any::class)) // script base class
 
 /**
  * The list of classes that will be used as implicit receivers in the script body, as if the whole body is wrapped with "with" calls:

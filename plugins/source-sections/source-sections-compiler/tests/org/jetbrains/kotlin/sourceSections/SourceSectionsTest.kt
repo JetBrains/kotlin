@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase.getKotlinPaths
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -46,6 +47,7 @@ import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class SourceSectionsTest : TestCaseWithTmpdir() {
 
@@ -73,7 +75,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
                 CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
                 PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
         )
-        configuration.add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+        configuration.add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, ScriptDefinition.getDefault(defaultJvmScriptingHostConfiguration))
         if (withSourceSectionsPlugin) {
             configuration.addAll(SourceSectionsConfigurationKeys.SECTIONS_OPTION, TEST_ALLOWED_SECTIONS)
             configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, SourceSectionsComponentRegistrar())

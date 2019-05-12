@@ -9,9 +9,16 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 
 interface ScriptDefinitionProvider {
+    @Deprecated("Migrating to configuration refinement", level = DeprecationLevel.ERROR)
     fun findScriptDefinition(fileName: String): KotlinScriptDefinition?
-    fun isScript(fileName: String): Boolean
+
+    @Deprecated("Migrating to configuration refinement", level = DeprecationLevel.ERROR)
     fun getDefaultScriptDefinition(): KotlinScriptDefinition
+
+    fun isScript(fileName: String): Boolean
+
+    fun findDefinition(fileName: String): ScriptDefinition?
+    fun getDefaultDefinition(): ScriptDefinition
 
     fun getKnownFilenameExtensions(): Sequence<String>
 
@@ -20,5 +27,4 @@ interface ScriptDefinitionProvider {
             ServiceManager.getService(project, ScriptDefinitionProvider::class.java)
     }
 }
-
 

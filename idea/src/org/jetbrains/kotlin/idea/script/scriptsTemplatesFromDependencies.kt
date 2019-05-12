@@ -14,12 +14,12 @@ import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
-import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_PATH
+import org.jetbrains.kotlin.scripting.definitions.*
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class ScriptTemplatesFromDependenciesProvider(project: Project) : AsyncScriptDefinitionsContributor(project) {
 
@@ -41,7 +41,7 @@ class ScriptTemplatesFromDependenciesProvider(project: Project) : AsyncScriptDef
     override val id = "ScriptTemplatesFromDependenciesProvider"
     override val progressMessage = "Kotlin: scanning dependencies for script definitions..."
 
-    override fun loadScriptDefinitions(previous: List<KotlinScriptDefinition>?): List<KotlinScriptDefinition> {
+    override fun loadScriptDefinitions(previous: List<ScriptDefinition>?): List<ScriptDefinition> {
         val templatesCopy = templatesLock.write {
             val newTemplates = scriptDefinitionsFromDependencies(project)
             if (newTemplates != templates) {
@@ -51,12 +51,17 @@ class ScriptTemplatesFromDependenciesProvider(project: Project) : AsyncScriptDef
             return@write null
         }
         if (templatesCopy != null) {
+            val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                getEnvironment {
+                    mapOf(
+                        "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File)
+                    )
+                }
+            }
             return loadDefinitionsFromTemplates(
                 templateClassNames = templatesCopy.templates,
                 templateClasspath = templatesCopy.classpath,
-                environment = mapOf(
-                    "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File)
-                )
+                baseHostConfiguration = hostConfiguration
             )
         }
         return previous ?: emptyList()

@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.scripting.configuration
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.definitions.loadScriptTemplatesFromClasspath
 import org.jetbrains.kotlin.scripting.definitions.reporter
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 const val KOTLIN_SCRIPTING_PLUGIN_ID = "kotlin.scripting"
 
@@ -18,12 +21,16 @@ fun configureScriptDefinitions(
     configuration: CompilerConfiguration,
     baseClassloader: ClassLoader,
     messageCollector: MessageCollector,
-    scriptResolverEnv: Map<String, Any?>
+    hostConfiguration: ScriptingHostConfiguration
 ) {
     // TODO: consider using escaping to allow kotlin escaped names in class names
     val templatesFromClasspath = loadScriptTemplatesFromClasspath(
-        scriptTemplates, configuration.jvmClasspathRoots, emptyList(), baseClassloader, scriptResolverEnv, messageCollector.reporter
+        scriptTemplates, configuration.jvmClasspathRoots, emptyList(), baseClassloader, hostConfiguration, messageCollector.reporter
     )
     configuration.addAll(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, templatesFromClasspath.toList())
 }
 
+fun makeHostConfiguration(project: Project, configuration: CompilerConfiguration): ScriptingHostConfiguration =
+    ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+        // TODO: add jdk path and other params if needed
+    }

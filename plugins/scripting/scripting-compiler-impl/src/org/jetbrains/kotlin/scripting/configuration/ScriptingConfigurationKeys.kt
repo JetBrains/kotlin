@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.scripting.configuration
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
 import java.io.File
 
 object ScriptingConfigurationKeys {
 
-    val SCRIPT_DEFINITIONS = CompilerConfigurationKey.create<List<KotlinScriptDefinition>>("script definitions")
+    val SCRIPT_DEFINITIONS = CompilerConfigurationKey.create<List<ScriptDefinition>>("script definitions")
 
     val SCRIPT_DEFINITIONS_SOURCES =
         CompilerConfigurationKey.create<List<ScriptDefinitionsSource>>("script definitions sources")
