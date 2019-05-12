@@ -21,8 +21,10 @@ import com.intellij.build.events.StartBuildEvent;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.ui.ThreeComponentsSplitter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindow;
@@ -273,8 +275,10 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
           final JComponent consoleComponent = new JPanel(new BorderLayout());
           consoleComponent.add(myThreeComponentsSplitter, BorderLayout.CENTER);
           myToolbarActions = new DefaultActionGroup();
-          consoleComponent.add(ActionManager.getInstance().createActionToolbar(
-            "BuildView", myToolbarActions, false).getComponent(), BorderLayout.WEST);
+          ActionToolbar tb = ActionManager.getInstance().createActionToolbar("BuildView", myToolbarActions, false);
+          tb.setTargetComponent(consoleComponent);
+          tb.getComponent().setBorder(JBUI.Borders.merge(tb.getComponent().getBorder(), JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 0, 0, 0, 1), true));
+          consoleComponent.add(tb.getComponent(), BorderLayout.WEST);
 
           myContent = new ContentImpl(consoleComponent, myViewManager.getViewName(), true);
           Disposer.register(myContent, this);
