@@ -24,7 +24,7 @@ import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.util.SmartList;
+import com.intellij.serialization.ObjectSerializer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.PathKt;
@@ -38,10 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.openapi.externalSystem.model.ProjectKeys.MODULE;
@@ -77,12 +74,13 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     myExternalRootProjects.clear();
     long startTs = System.currentTimeMillis();
     try {
-      final Collection<InternalExternalProjectInfo> projectInfos = load(myProject);
+      List<InternalExternalProjectInfo> projectInfos = load(myProject);
       if (projectInfos.isEmpty() &&
           myProject.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) != Boolean.TRUE &&
           hasLinkedExternalProjects()) {
         markDirtyAllExternalProjects();
       }
+
       for (InternalExternalProjectInfo projectInfo : projectInfos) {
         if (validate(projectInfo)) {
           myExternalRootProjects.put(
@@ -99,8 +97,11 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
         }
       }
     }
-    catch (IOException e) {
-      LOG.debug(e);
+    catch (ProcessCanceledException e) {
+      throw e;
+    }
+    catch (Throwable e) {
+      LOG.warn(e);
       markDirtyAllExternalProjects();
     }
 
@@ -263,7 +264,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     for (ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemApiUtil.getAllManagers()) {
       final ProjectSystemId systemId = manager.getSystemId();
 
-      AbstractExternalSystemLocalSettings settings = manager.getLocalSettingsProvider().fun(myProject);
+      AbstractExternalSystemLocalSettings<?> settings = manager.getLocalSettingsProvider().fun(myProject);
       final Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> availableProjects = settings.getAvailableProjects();
 
       for (Map.Entry<ExternalProjectPojo, Collection<ExternalProjectPojo>> entry : availableProjects.entrySet()) {
@@ -322,9 +323,10 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
 
       ExternalSystemApiUtil.visit(externalProject.getExternalProjectStructure(), dataNode -> {
         try {
-          dataNode.checkIsSerializable();
+          dataNode.serializeData();
         }
-        catch (IOException e) {
+        catch (Exception e) {
+          LOG.warn(e);
           dataNode.clear(true);
         }
       });
@@ -333,11 +335,11 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(PathKt.outputStream(getProjectConfigurationFile(project))))) {
       out.writeUTF(STORAGE_VERSION);
       out.writeInt(externalProjects.size());
-      try (ObjectOutputStream os = new ObjectOutputStream(out)) {
-        for (InternalExternalProjectInfo externalProject : externalProjects) {
-          os.writeObject(externalProject);
-        }
+      if (externalProjects.isEmpty()) {
+        return;
       }
+
+      ObjectSerializer.getInstance().writeList(externalProjects, InternalExternalProjectInfo.class, out);
     }
   }
 
@@ -355,12 +357,11 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   }
 
   @NotNull
-  private static Collection<InternalExternalProjectInfo> load(@NotNull Project project) throws IOException {
-    SmartList<InternalExternalProjectInfo> projects = new SmartList<>();
+  private static List<InternalExternalProjectInfo> load(@NotNull Project project) throws IOException {
     final Path configurationFile = getProjectConfigurationFile(project);
     //noinspection SSBasedInspection
     if (!Files.isRegularFile(configurationFile)) {
-      return projects;
+      return Collections.emptyList();
     }
 
     if (isInvalidated(configurationFile)) {
@@ -368,21 +369,17 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     }
 
     try (DataInputStream in = new DataInputStream(new BufferedInputStream(Files.newInputStream(configurationFile)))) {
-      final String storage_version = in.readUTF();
-      if (!STORAGE_VERSION.equals(storage_version)) return projects;
-      final int size = in.readInt();
+      String storage_version = in.readUTF();
+      if (!STORAGE_VERSION.equals(storage_version)) {
+        return Collections.emptyList();
+      }
 
-      try (ObjectInputStream os = new ObjectInputStream(in)) {
-        for (int i = 0; i < size; i++) {
-          InternalExternalProjectInfo projectDataDataNode = (InternalExternalProjectInfo)os.readObject();
-          projects.add(projectDataDataNode);
-        }
+      int size = in.readInt();
+      if (size == 0) {
+        return Collections.emptyList();
       }
-      catch (Exception e) {
-        throw new IOException(e);
-      }
+      return ObjectSerializer.getInstance().readList(InternalExternalProjectInfo.class, in, SerializationKt.getExternalSystemBeanConstructed());
     }
-    return projects;
   }
 
   private static boolean isInvalidated(@NotNull Path configurationFile) throws IOException {

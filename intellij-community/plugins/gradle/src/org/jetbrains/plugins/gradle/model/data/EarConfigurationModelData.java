@@ -1,56 +1,64 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.model.data;
 
 import com.intellij.openapi.externalSystem.model.Key;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.AbstractExternalEntityData;
 import com.intellij.openapi.externalSystem.model.project.DependencyData;
+import com.intellij.serialization.PropertyMapping;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Vladislav.Soroka
- */
-public class EarConfigurationModelData extends AbstractExternalEntityData implements ArtifactConfiguration {
-  private static final long serialVersionUID = 1L;
-
+public final class EarConfigurationModelData extends AbstractExternalEntityData implements ArtifactConfiguration {
   @NotNull
   public static final Key<EarConfigurationModelData> KEY =
     Key.create(EarConfigurationModelData.class, WebConfigurationModelData.KEY.getProcessingWeight() + 1);
 
   @NotNull
-  private final List<Ear> myEars;
+  private final List<Ear> ears;
   @NotNull
-  private final Collection<DependencyData> myDeployDependencies;
+  private final Collection<DependencyData> deployDependencies;
   @NotNull
-  private final Collection<DependencyData> myEarlibDependencies;
+  private final Collection<DependencyData> earlibDependencies;
 
+  @PropertyMapping({"owner", "ears", "deployDependencies", "earlibDependencies"})
   public EarConfigurationModelData(@NotNull ProjectSystemId owner,
                                    @NotNull List<Ear> ears,
                                    @NotNull Collection<DependencyData> deployDependencies,
                                    @NotNull Collection<DependencyData> earlibDependencies) {
     super(owner);
-    myEars = ears;
-    myDeployDependencies = deployDependencies;
-    myEarlibDependencies = earlibDependencies;
+
+    this.ears = ears;
+    this.deployDependencies = deployDependencies;
+    this.earlibDependencies = earlibDependencies;
+  }
+
+  @SuppressWarnings("unused")
+  private EarConfigurationModelData() {
+    super(ProjectSystemId.IDE);
+
+    ears = new ArrayList<>();
+    deployDependencies = new ArrayList<>();
+    earlibDependencies = new ArrayList<>();
   }
 
   @Override
   @NotNull
   public List<Ear> getArtifacts() {
-    return myEars;
+    return ears;
   }
 
   @NotNull
   public Collection<DependencyData> getDeployDependencies() {
-    return myDeployDependencies;
+    return deployDependencies;
   }
 
   @NotNull
   public Collection<DependencyData> getEarlibDependencies() {
-    return myEarlibDependencies;
+    return earlibDependencies;
   }
 
   @Override
@@ -61,7 +69,7 @@ public class EarConfigurationModelData extends AbstractExternalEntityData implem
 
     EarConfigurationModelData data = (EarConfigurationModelData)o;
 
-    if (!myEars.equals(data.myEars)) return false;
+    if (!ears.equals(data.ears)) return false;
 
     return true;
   }
@@ -69,12 +77,12 @@ public class EarConfigurationModelData extends AbstractExternalEntityData implem
   @Override
   public int hashCode() {
     int result = super.hashCode();
-    result = 31 * result + myEars.hashCode();
+    result = 31 * result + ears.hashCode();
     return result;
   }
 
   @Override
   public String toString() {
-    return "ears='" + myEars + '\'';
+    return "ears='" + ears + '\'';
   }
 }

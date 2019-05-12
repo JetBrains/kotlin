@@ -433,7 +433,7 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
         for (ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemApiUtil.getAllManagers()) {
           classLoaders.add(manager.getClass().getClassLoader());
         }
-        dataNode.prepareData(ContainerUtil.toArray(classLoaders, ClassLoader[]::new));
+        dataNode.deserializeData(classLoaders);
       }
       catch (Exception e) {
         LOG.debug(e);
