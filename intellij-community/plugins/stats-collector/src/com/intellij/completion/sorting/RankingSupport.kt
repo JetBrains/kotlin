@@ -4,6 +4,7 @@ package com.intellij.completion.sorting
 import com.intellij.lang.Language
 import com.jetbrains.completion.feature.impl.FeatureTransformer
 import com.jetbrains.completion.ranker.JavaCompletionRanker
+import com.jetbrains.completion.ranker.KotlinCompletionRanker
 import com.jetbrains.completion.ranker.LanguageCompletionRanker
 import com.jetbrains.completion.ranker.PythonCompletionRanker
 
@@ -11,6 +12,7 @@ import com.jetbrains.completion.ranker.PythonCompletionRanker
 object RankingSupport {
   private val rankers: Map<String, LanguageRanker> = mapOf(
     "java" to LanguageRanker(JavaCompletionRanker()),
+    "kotlin" to LanguageRanker(KotlinCompletionRanker()),
     "python" to LanguageRanker(PythonCompletionRanker())
   )
 
