@@ -58,13 +58,13 @@ public class BuildTextConsoleView extends ConsoleViewImpl implements BuildConsol
         StringBuilder fileLink = new StringBuilder();
         fileLink.append(position.getFile().getName());
         if (position.getStartLine() > 0) {
-          fileLink.append(":").append(position.getStartLine() + 1);
+          fileLink.append(":").append(position.getStartLine());
         }
         if (position.getStartColumn() > 0) {
-          fileLink.append(":").append(position.getStartColumn() + 1);
+          fileLink.append(":").append(position.getStartColumn());
         }
         print(fileLink.toString(), ConsoleViewContentType.NORMAL_OUTPUT,
-              new LazyFileHyperlinkInfo(getProject(), position.getFile().getPath(), position.getStartLine(), position.getStartColumn()));
+              new LazyFileHyperlinkInfo(getProject(), position.getFile().getPath(), position.getStartLine() - 1, position.getStartColumn() - 1));
         print(": ", ConsoleViewContentType.NORMAL_OUTPUT);
         append(event.getMessage(), isStdOut);
       }
