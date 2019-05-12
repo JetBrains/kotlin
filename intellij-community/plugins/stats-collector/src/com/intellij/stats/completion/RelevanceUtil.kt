@@ -10,8 +10,7 @@ object RelevanceUtil {
       val value = pair.second
       if (name in IGNORED_FACTORS || value == null) continue
       if (name == "proximity") {
-        val proximityMap = value.toString().asProximityMap("prox")
-        relevanceMap.putAll(proximityMap)
+        relevanceMap.addProximityValues("prox", value.toString())
       }
       else {
         relevanceMap[name] = value
@@ -28,12 +27,13 @@ object RelevanceUtil {
   /**
    * Proximity features now came like [samePsiFile=true, openedInEditor=false], need to convert to proper map
    */
-  private fun String.asProximityMap(prefix: String): Map<String, Any> {
-    val items = this.replace("[", "").replace("]", "").split(",")
+  private fun MutableMap<String, Any>.addProximityValues(prefix: String, proximity: String) {
+    val items = proximity.replace("[", "").replace("]", "").split(",")
 
-    return items.map {
-      val (key, value) = it.trim().split("=")
-      "${prefix}_$key" to value
-    }.toMap()
+    items.forEach {
+      val key = "${prefix}_${it.substringBefore('=').trim()}"
+      val value = it.substringAfter('=').trim()
+      this[key] = value
+    }
   }
 }
