@@ -83,6 +83,31 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
             data[this] = v
         }
 
+        fun <T> PropertiesCollection.Key<T>.putIfNotNull(v: T?) {
+            if (v != null) {
+                data[this] = v
+            }
+        }
+
+        fun <T> PropertiesCollection.Key<in List<T>>.putIfAny(vals: Iterable<T>?) {
+            if (vals?.any() == true) {
+                data[this] = if (vals is List) vals else vals.toList()
+            }
+        }
+
+        @JvmName("putIfAny_map")
+        fun <K, V> PropertiesCollection.Key<in Map<K, V>>.putIfAny(vals: Iterable<Pair<K, V>>?) {
+            if (vals?.any() == true) {
+                data[this] = vals.toMap()
+            }
+        }
+
+        fun <K, V> PropertiesCollection.Key<in Map<K, V>>.putIfAny(vals: Map<K, V>?) {
+            if (vals?.isNotEmpty() == true) {
+                data[this] = vals
+            }
+        }
+
         // generic for lists
 
         operator fun <T> PropertiesCollection.Key<in List<T>>.invoke(vararg vals: T) {

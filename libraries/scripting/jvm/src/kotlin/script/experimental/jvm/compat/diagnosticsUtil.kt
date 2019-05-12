@@ -20,6 +20,14 @@ fun mapLegacyDiagnosticSeverity(severity: ScriptDependenciesResolver.ReportSever
     ScriptDependenciesResolver.ReportSeverity.DEBUG -> ScriptDiagnostic.Severity.DEBUG
 }
 
+fun mapLegacyDiagnosticSeverity(severity: ScriptReport.Severity): ScriptDiagnostic.Severity = when (severity) {
+    ScriptReport.Severity.FATAL -> ScriptDiagnostic.Severity.FATAL
+    ScriptReport.Severity.ERROR -> ScriptDiagnostic.Severity.ERROR
+    ScriptReport.Severity.WARNING -> ScriptDiagnostic.Severity.WARNING
+    ScriptReport.Severity.INFO -> ScriptDiagnostic.Severity.INFO
+    ScriptReport.Severity.DEBUG -> ScriptDiagnostic.Severity.DEBUG
+}
+
 fun mapToLegacyScriptReportSeverity(severity: ScriptDiagnostic.Severity): ScriptReport.Severity = when (severity) {
     ScriptDiagnostic.Severity.FATAL -> ScriptReport.Severity.FATAL
     ScriptDiagnostic.Severity.ERROR -> ScriptReport.Severity.ERROR
