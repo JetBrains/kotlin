@@ -12,6 +12,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.List;
 
@@ -75,5 +76,11 @@ public class ModuleRootManagerComponent extends ModuleRootManagerImpl implements
       return true;
     });
     return result[0] + myRootModel.getStateModificationCount();
+  }
+
+  @Override
+  @TestOnly
+  public long getModificationCountForTests() {
+    return getStateModificationCount();
   }
 }
