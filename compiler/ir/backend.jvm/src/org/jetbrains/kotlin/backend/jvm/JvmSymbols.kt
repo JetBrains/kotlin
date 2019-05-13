@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
@@ -41,25 +42,39 @@ class JvmSymbols(
     firMode: Boolean
 ) : Symbols<JvmBackendContext>(context, symbolTable) {
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
-
-    private val irBuiltIns = context.irBuiltIns
-
-    override val ThrowNullPointerException: IrSimpleFunctionSymbol
-        get() = error("Unused in JVM IR")
-
-    override val ThrowNoWhenBranchMatchedException: IrSimpleFunctionSymbol
-        get() = error("Unused in JVM IR")
-
-    override val ThrowTypeCastException: IrSimpleFunctionSymbol
-        get() = error("Unused in JVM IR")
-
-    private fun createPackage(fqName: FqName): IrPackageFragment =
-        IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(context.state.module, fqName)))
-
+    private val kotlinPackage: IrPackageFragment = createPackage(FqName("kotlin"))
     private val kotlinJvmPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm"))
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
+
+    private val irBuiltIns = context.irBuiltIns
+
+    private val nullPointerExceptionClass: IrClassSymbol =
+        createClass(FqName("java.lang.NullPointerException")) { klass ->
+            klass.addConstructor().apply {
+                addValueParameter("message", irBuiltIns.stringType)
+            }
+        }.symbol
+
+    override val ThrowNullPointerException: IrFunctionSymbol =
+        nullPointerExceptionClass.constructors.single()
+
+    override val ThrowNoWhenBranchMatchedException: IrSimpleFunctionSymbol
+        get() = error("Unused in JVM IR")
+
+    private val typeCastExceptionClass: IrClassSymbol =
+        createClass(FqName("kotlin.TypeCastException")) { klass ->
+            klass.addConstructor().apply {
+                addValueParameter("message", irBuiltIns.stringType)
+            }
+        }.symbol
+
+    override val ThrowTypeCastException: IrFunctionSymbol =
+        typeCastExceptionClass.constructors.single()
+
+    private fun createPackage(fqName: FqName): IrPackageFragment =
+        IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(context.state.module, fqName)))
 
     private fun createClass(fqName: FqName, classKind: ClassKind = ClassKind.CLASS, block: (IrClass) -> Unit): IrClass =
         buildClass {
@@ -67,6 +82,7 @@ class JvmSymbols(
             kind = classKind
         }.apply {
             parent = when (fqName.parent().asString()) {
+                "kotlin" -> kotlinPackage
                 "kotlin.jvm.internal" -> kotlinJvmInternalPackage
                 "kotlin.jvm.functions" -> kotlinJvmFunctionsPackage
                 "java.lang" -> javaLangPackage
@@ -82,7 +98,21 @@ class JvmSymbols(
         klass.addFunction("throwUninitializedPropertyAccessException", irBuiltIns.unitType, isStatic = true).apply {
             addValueParameter("propertyName", irBuiltIns.stringType)
         }
+        klass.addFunction("checkExpressionValueIsNotNull", irBuiltIns.unitType, isStatic = true).apply {
+            addValueParameter("value", irBuiltIns.anyNType)
+            addValueParameter("expression", irBuiltIns.stringType)
+        }
+        klass.addFunction("checkNotNullExpressionValue", irBuiltIns.unitType, isStatic = true).apply {
+            addValueParameter("value", irBuiltIns.anyNType)
+            addValueParameter("expression", irBuiltIns.stringType)
+        }
     }.symbol
+
+    val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "checkExpressionValueIsNotNull" }
+
+    val checkNotNullExpressionValue: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "checkNotNullExpressionValue" }
 
     override val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwUninitializedPropertyAccessException" }
