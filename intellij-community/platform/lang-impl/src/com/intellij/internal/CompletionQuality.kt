@@ -44,17 +44,16 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.ScrollingUtil
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.UIUtil
+import java.io.File
 import java.util.*
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComboBox
@@ -86,6 +85,12 @@ private const val CAN_NOT_COMPLETE_WORD = 1000000000
 private val interestingRanks : IntArray = intArrayOf(0, 1, 3)
 private val interestingCharsToFirsts: IntArray = intArrayOf(1, 3)
 
+private const val saveWordsToFile = true
+private val wordsFileName = "${System.getProperty("user.dir")}/completionQualityAllWords.txt"
+private val saveResultToFile = "${System.getProperty("user.dir")}/result.json"
+private const val doProcessingWords = true
+private const val checkAfterDotOnly = true
+
 class CompletionQualityStatsAction : AnAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val editor = e.getData(CommonDataKeys.EDITOR) as? EditorImpl
@@ -114,6 +119,8 @@ class CompletionQualityStatsAction : AnAction() {
         // we don't want to complete the same words more than twice
         val wordsFrequencyMap = HashMap<String, Int>()
 
+        val fileWithAllWords = File(wordsFileName)
+        fileWithAllWords.writeText("")
         for (file in files) {
           if (indicator.isCanceled) {
             stats.finished = false
@@ -130,10 +137,26 @@ class CompletionQualityStatsAction : AnAction() {
             completionAttempts = getCompletionAttempts(psiFile, wordsFrequencyMap)
           }
 
+          if (saveWordsToFile) {
+            fileWithAllWords.appendText("${file.path}\n")
+            fileWithAllWords.appendText("${completionAttempts.toList().size}\n")
+            for ((offset, word) in completionAttempts) {
+              val start = StringUtil.offsetToLineColumn(document.text, offset + 1)
+              val line = start.line
+              val startCol = start.column
+              val endCol = startCol + word.length
+              fileWithAllWords.appendText("$word ${line + 1} ${startCol + 1} ${line + 1} ${endCol + 1}\n")
+            }
+          }
+
+          if (!doProcessingWords) {
+            continue
+          }
+
           if (completionAttempts.isNotEmpty()) {
             val application = ApplicationManager.getApplication()
             lateinit var newEditor: Editor
-            application.invokeAndWait(Runnable {
+            application.invokeAndWait({
               val descriptor = OpenFileDescriptor(project, file)
               newEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true) ?:
                           throw Exception("Can't open text editor for file: ${file.name}")
@@ -145,17 +168,19 @@ class CompletionQualityStatsAction : AnAction() {
                 if (indicator.isCanceled) {
                   break
                 }
-                val line = StringUtil.offsetToLineNumber(text, offset)
-                evalCompletionAt(CompletionQualityParameters(project, "${file.path}:$line", newEditor, text, offset, word, stats, indicator))
+                val lineAndCol = StringUtil.offsetToLineColumn(text, offset + 1)
+                val line = lineAndCol.line + 1
+                val col = lineAndCol.column + 1
+                evalCompletionAt(CompletionQualityParameters(project, "${file.path}:$line:$col", newEditor, text, offset, word, stats, indicator))
               }
             }
             finally {
-              application.invokeAndWait(Runnable {
+              application.invokeAndWait {
                 runWriteAction {
                   document.setText(text)
                   FileDocumentManager.getInstance().saveDocument(document)
                 }
-              })
+              }
             }
 
             stats.totalFiles += 1
@@ -178,11 +203,17 @@ class CompletionQualityStatsAction : AnAction() {
     val descriptor = RunContentDescriptor(console, null, console.component, "Completion Quality Statistics")
     ExecutionManager.getInstance(project).contentManager.showRunContent(DefaultRunExecutor.getRunExecutorInstance(), descriptor)
     console.print(text, ConsoleViewContentType.NORMAL_OUTPUT)
+    File(saveResultToFile).writeText(text)
+  }
+
+  private fun isAfterDot(el: PsiElement) : Boolean {
+    val prev = PsiTreeUtil.prevVisibleLeaf(el)
+    return prev != null && prev.text == "."
   }
 
   // Find offsets to words and words on which we want to try completion
   private fun getCompletionAttempts(file: PsiFile, wordSet: HashMap<String, Int>): List<Pair<Int, String>> {
-    val max_word_frequency = 2
+    val maxWordFrequency = 2
     val res = Lists.newArrayList<Pair<Int, String>>()
     val text = file.text
 
@@ -190,10 +221,12 @@ class CompletionQualityStatsAction : AnAction() {
       val startIndex = range.startOffset
       if (startIndex != -1) {
         val el = file.findElementAt(startIndex)
-
         if (el != null && el !is PsiComment) {
+          if (checkAfterDotOnly && !isAfterDot(el)) {
+            continue
+          }
           val word = range.substring(text)
-          if (!word.isEmpty() && wordSet.getOrDefault(word, 0) < max_word_frequency) {
+          if (!word.isEmpty() && wordSet.getOrDefault(word, 0) < maxWordFrequency) {
             res.add(Pair(startIndex - 1, word))
             wordSet[word] = wordSet.getOrDefault(word, 0) + 1
           }
@@ -275,7 +308,7 @@ class CompletionQualityStatsAction : AnAction() {
 
       var result = RANK_NOT_FOUND
       var total = 0
-      ApplicationManager.getApplication().invokeAndWait(Runnable {
+      ApplicationManager.getApplication().invokeAndWait({
         try {
           fun getLookupItems() : List<LookupElement>? {
             var lookupItems: List<LookupElement>? = null
@@ -292,10 +325,10 @@ class CompletionQualityStatsAction : AnAction() {
                 @Suppress("DEPRECATION")
                 override fun completionFinished(indicator: CompletionProgressIndicator, hasModifiers: Boolean) {
                   super.completionFinished(indicator, hasModifiers)
-                  lookupItems = indicator.lookup!!.items
+                  lookupItems = indicator.lookup.items
                 }
 
-                override fun isTestingMode() = true
+                override fun isTestingCompletionQualityMode() = true
               }
               handler.invokeCompletion(project, editor, 1)
 
@@ -414,7 +447,7 @@ private fun getHashMapCompletionInfo(path: String,
                                      charsToFirsts: ArrayList<Pair<Int, Int>>,
                                      callsCount: Int,
                                      totalTime: Long) : HashMap<String, Any> {
-  val id = "${path}:${offset}".hashCode()
+  val id = path.hashCode()
 
   val result = hashMapOf<String, Any>()
   result["id"] = id
@@ -422,11 +455,11 @@ private fun getHashMapCompletionInfo(path: String,
   result["offset"] = offset
   result["word"] = word
   for ((chars, rank, total) in ranks) {
-    result["rank${chars}"] = rank
-    result["total${chars}"] = total
+    result["rank$chars"] = rank
+    result["total$chars"] = total
   }
   for ((n, chars) in charsToFirsts) {
-    result["charsToFirst${n}"] = chars
+    result["charsToFirst$n"] = chars
   }
   result["callsCount"] = callsCount
   result["totalTime"] = totalTime
