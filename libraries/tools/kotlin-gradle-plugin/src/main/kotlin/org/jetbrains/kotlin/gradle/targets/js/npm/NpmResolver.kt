@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.file.CopySpec
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
@@ -46,7 +48,23 @@ internal class NpmResolver private constructor(val rootProject: Project) {
             else {
                 val resolver = NpmResolver(rootProject)
                 check(resolver.resolve(rootProject, null))
-                ResolvedNow(ResolvedProject(resolver.npmPackages))
+                ResolvedNow(ResolvedProject(resolver.npmPackages, resolver.requiredByTasks))
+            }
+        }
+
+        fun checkRequiredDependencies(project: Project, target: RequiresNpmDependencies) {
+            val required = ProjectData[project.rootProject]?.resolved?.requiredByTasks
+            check(required != null) {
+                "NPM dependencies should be resolved before $target execution"
+            }
+
+            val targetRequired = required!![target]?.toSet() ?: setOf()
+
+            target.requiredNpmDependencies.forEach {
+                check(it in targetRequired) {
+                    "$it required by $target after npm dependencies was resolved. " +
+                            "This may be caused by changing $target configuration after npm dependencies resolution."
+                }
             }
         }
     }
@@ -62,9 +80,17 @@ internal class NpmResolver private constructor(val rootProject: Project) {
     private val packageManager = nodeJs.packageManager
     private val hoistGradleNodeModules = npmProject.hoistGradleNodeModules
     private val npmPackages = mutableListOf<NpmPackage>()
+    private val requiredByTasks = mutableMapOf<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>()
     private val gson = GsonBuilder()
         .setPrettyPrinting()
         .create()
+    private val readyTaskGraph: TaskExecutionGraph?
+
+    init {
+        var readyTaskGraph: TaskExecutionGraph? = null
+        rootProject.gradle.taskGraph.whenReady { readyTaskGraph = it }
+        this.readyTaskGraph = readyTaskGraph
+    }
 
     class ProjectData(var resolved: ResolvedProject? = null) {
         companion object {
@@ -74,7 +100,10 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         }
     }
 
-    class ResolvedProject(val npmPackages: Collection<NpmPackage>) {
+    class ResolvedProject(
+        val npmPackages: Collection<NpmPackage>,
+        val requiredByTasks: Map<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>
+    ) {
         val dependencies by lazy {
             npmPackages.flatMapTo(mutableSetOf()) { it.npmDependencies }
         }
@@ -157,6 +186,8 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         val packageJson = PackageJson(project.name, project.version.toString())
         val npmDependencies = mutableSetOf<NpmDependency>()
 
+        visitTasksRequiredDependencies(project, npmDependencies, gradleComponents)
+
         visitNpmDependencies(project, npmDependencies, gradleComponents, packageJson)
 
         if (!hoistGradleNodeModules || project == project.rootProject) {
@@ -176,6 +207,36 @@ internal class NpmResolver private constructor(val rootProject: Project) {
 
         return if (!packageJsonRequired && packageJson.empty) null
         else NpmPackage(project, packageJson, npmDependencies)
+    }
+
+    private fun visitTasksRequiredDependencies(
+        project: Project,
+        npmDependencies: MutableSet<NpmDependency>,
+        gradleComponents: GradleNodeModulesBuilder
+    ) {
+        var toolsDependenciesConfiguration: Configuration? = project.configurations.create("jsTools")
+
+        project.tasks.toList().forEach { task ->
+            if (task is RequiresNpmDependencies) {
+                if (readyTaskGraph?.hasTask(task) ?: task.enabled) {
+                    val list = task.requiredNpmDependencies.toList()
+
+                    requiredByTasks[task] = list
+                    list.forEach { requiredDependency ->
+                        val configuration: Configuration = toolsDependenciesConfiguration
+                            ?: project.configurations.create("jsTools").also { new ->
+                                toolsDependenciesConfiguration = new
+                            }
+
+                        configuration.dependencies.add(requiredDependency.createDependency(project))
+                    }
+                }
+            }
+        }
+
+        if (toolsDependenciesConfiguration != null) {
+            visitConfiguration(toolsDependenciesConfiguration!!, npmDependencies, gradleComponents)
+        }
     }
 
     private fun visitNpmDependencies(
@@ -213,14 +274,9 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         if (target.platformType == KotlinPlatformType.js) {
             target.compilations.toList().forEach { compilation ->
                 compilation.relatedConfigurationNames.forEach {
-                    project.configurations.getByName(it).allDependencies.forEach { dependency ->
-                        when (dependency) {
-                            is NpmDependency -> npmDependencies.add(dependency)
-                        }
-                    }
+                    val configuration = project.configurations.getByName(it)
+                    visitConfiguration(configuration, npmDependencies, gradleComponents)
                 }
-
-                gradleComponents.visitCompilation(compilation)
 
                 if (compilation is KotlinJsCompilation) {
                     visitKotlinJsCompilation(project, compilation)
@@ -229,6 +285,20 @@ internal class NpmResolver private constructor(val rootProject: Project) {
                         packageJson.main = compilation.compileKotlinTask.outputFile.name
                     }
                 }
+            }
+        }
+    }
+
+    private fun visitConfiguration(
+        configuration: Configuration,
+        npmDependencies: MutableSet<NpmDependency>,
+        gradleComponents: GradleNodeModulesBuilder
+    ) {
+        gradleComponents.visitConfiguration(configuration)
+
+        configuration.allDependencies.forEach { dependency ->
+            when (dependency) {
+                is NpmDependency -> npmDependencies.add(dependency)
             }
         }
     }

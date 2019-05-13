@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ExternalModuleDependency
 
 class NpmPackages {
     val webpack = NpmPackageVersion("webpack", "4.29.6")
@@ -17,6 +19,7 @@ class NpmPackages {
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.12")
 
     val mocha = NpmPackageVersion("mocha", "6.1.2")
+    val mochaTeamCityReporter = NpmPackageVersion("mocha-teamcity-reporter", ">=2.0.0")
 
     val karma = NpmPackageVersion("karma", "4.0.1")
     val karmaTeamcityReporter = NpmPackageVersion("karma-teamcity-reporter", "1.1.0")
@@ -32,8 +35,19 @@ class NpmPackages {
     val karmaWebpack = NpmPackageVersion("karma-webpack", "*")
 
     val karmaSourceMapSupport = NpmPackageVersion("karma-source-map-support", "1.4.0")
+
+    val kotlinNodeJsTestRunner = KotlinGradleNpmPackage("test-nodejs-runner")
 }
 
-data class NpmPackageVersion(val name: String, var version: String) {
-    fun npm(project: Project) = NpmDependency(project, null, name, version)
+interface RequiredKotlinJsDependency {
+    fun createDependency(project: Project): Dependency
+}
+
+data class NpmPackageVersion(val name: String, var version: String) : RequiredKotlinJsDependency {
+    override fun createDependency(project: Project) = NpmDependency(project, null, name, version)
+}
+
+data class KotlinGradleNpmPackage(val simpleModuleName: String): RequiredKotlinJsDependency {
+    override fun createDependency(project: Project): Dependency =
+        project.dependencies.create("org.jetbrains.kotlin:kotlin-$simpleModuleName")
 }

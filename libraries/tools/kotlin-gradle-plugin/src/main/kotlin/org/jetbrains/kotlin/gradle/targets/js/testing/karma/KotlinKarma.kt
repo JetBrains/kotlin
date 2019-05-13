@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
@@ -23,6 +24,9 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
     private val requiredDependencies = mutableSetOf<NpmPackageVersion>()
 
     private val versions = project.nodeJs.versions
+
+    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
+        get() = requiredDependencies.toList()
 
     init {
         requiredDependencies.add(versions.karma)
@@ -49,7 +53,7 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
 
     fun useIe() = useBrowser("Ie", versions.karmaIeLauncher)
 
-    fun useBrowser(id: String, dependency: NpmPackageVersion) {
+    private fun useBrowser(id: String, dependency: NpmPackageVersion) {
         config.browsers.add(id)
         requiredDependencies.add(dependency)
     }
@@ -66,14 +70,6 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
     fun useSourceMapSupport() {
         config.frameworks.add("source-map-support")
         requiredDependencies.add(versions.karmaSourceMapSupport)
-    }
-
-    override fun configure(dependenciesHolder: HasKotlinDependencies) {
-        dependenciesHolder.dependencies {
-            requiredDependencies.forEach {
-                npm(it.name, it.version)
-            }
-        }
     }
 
     override fun createTestExecutionSpec(

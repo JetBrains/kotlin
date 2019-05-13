@@ -13,16 +13,19 @@ import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
 import java.io.File
 import javax.inject.Inject
 
-open class KotlinWebpack : DefaultTask() {
+open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
+    private val versions by lazy { project.nodeJs.versions }
+
     @get:Inject
     open val fileResolver: FileResolver
         get() = injected
@@ -66,7 +69,26 @@ open class KotlinWebpack : DefaultTask() {
     @Optional
     var devServer: KotlinWebpackConfig.DevServer? = null
 
-    internal fun createRunner() = KotlinWebpackRunner(
+    override val requiredNpmDependencies: Collection<NpmPackageVersion>
+        get() = mutableListOf<NpmPackageVersion>().also {
+            it.add(versions.webpack)
+            it.add(versions.webpackCli)
+
+            if (report) {
+                it.add(versions.webpackBundleAnalyzer)
+            }
+
+            if (sourceMaps) {
+                it.add(versions.sourceMapLoader)
+                it.add(versions.sourceMapSupport)
+            }
+
+            if (devServer != null) {
+                it.add(versions.webpackDevServer)
+            }
+        }
+
+    private fun createRunner() = KotlinWebpackRunner(
         project,
         configFile,
         execHandleFactory,
@@ -84,6 +106,9 @@ open class KotlinWebpack : DefaultTask() {
 
     @TaskAction
     fun execute() {
+        NpmResolver.resolve(project)
+        NpmResolver.checkRequiredDependencies(project, this)
+
         val runner = createRunner()
 
         if (project.gradle.startParameter.isContinuous) {

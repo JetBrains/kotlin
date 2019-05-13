@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -27,30 +28,21 @@ internal class GradleNodeModulesBuilder(val project: Project) : AutoCloseable {
             GradleNodeModule(it, dir.resolve(it))
         }
 
-    fun visitCompilation(compilation: KotlinCompilation<KotlinCommonOptions>) {
-        val project = compilation.target.project
-        
-        // classpath
-        compilation.relatedConfigurationNames.forEach { configurationName ->
-            val configuration = project.configurations.getByName(configurationName)
-            if (configuration.isCanBeResolved) {
-                configuration.resolvedConfiguration.firstLevelModuleDependencies.forEach {
-                    visitDependency(compilation, it)
-                }
+    fun visitConfiguration(configuration: Configuration) {
+        if (configuration.isCanBeResolved) {
+            configuration.resolvedConfiguration.firstLevelModuleDependencies.forEach {
+                visitDependency(it)
             }
         }
     }
 
-    private fun visitDependency(
-        compilation: KotlinCompilation<KotlinCommonOptions>,
-        dependency: ResolvedDependency
-    ) {
+    private fun visitDependency(dependency: ResolvedDependency) {
         if (!visited.add(dependency)) return
 
         visitArtifacts(dependency, dependency.moduleArtifacts)
 
         dependency.children.forEach {
-            visitDependency(compilation, it)
+            visitDependency(it)
         }
     }
 

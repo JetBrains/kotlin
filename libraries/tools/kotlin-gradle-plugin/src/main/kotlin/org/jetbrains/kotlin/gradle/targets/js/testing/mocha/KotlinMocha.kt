@@ -5,23 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.mocha
 
+import org.gradle.api.Project
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinGradleNpmPackage
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 
-class KotlinMocha : KotlinJsTestFramework {
-    override fun configure(dependenciesHolder: HasKotlinDependencies) {
-        dependenciesHolder.dependencies {
-            runtimeOnly(kotlin("test-nodejs-runner"))
-            runtimeOnly(npm("mocha", "6.1.2"))
-            runtimeOnly(npm("mocha-teamcity-reporter", ">=2.0.0"))
-        }
-    }
+class KotlinMocha(val project: Project) : KotlinJsTestFramework {
+    private val versions = project.nodeJs.versions
+
+    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
+        get() = listOf(
+            KotlinGradleNpmPackage("test-nodejs-runner"),
+            versions.mocha,
+            versions.mochaTeamCityReporter
+        )
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -31,7 +36,7 @@ class KotlinMocha : KotlinJsTestFramework {
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
             testNameSuffix = task.targetName,
-            prepandSuiteName = true,
+            prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true
         )
@@ -41,7 +46,7 @@ class KotlinMocha : KotlinJsTestFramework {
             task.nodeModulesToLoad.single()
         )
 
-        val npmProjectLayout = NpmProjectLayout[task.project]
+        val npmProjectLayout = NpmProject[task.project]
 
         val args = nodeJsArgs +
                 nodeModules.map {
