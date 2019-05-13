@@ -338,7 +338,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         )
 
         TestCase.assertEquals(
-            "UltraLightMethodForSourceDeclaration -> org.jetbrains.annotations.NotNull," +
+            "KtUltraLightMethodForSourceDeclaration -> org.jetbrains.annotations.NotNull," +
                     " KtUltraLightField -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
             annotationsString(myFixture.findElementByText("bar", KtModifierListOwner::class.java))
         )
