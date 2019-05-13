@@ -89,6 +89,9 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     @Override
     public void dispose() {
       myAsyncTreeModel = null;
+      if (myStructureTreeModel != null) {
+        Disposer.dispose(myStructureTreeModel);
+      }
       myStructureTreeModel = null;
     }
   }
