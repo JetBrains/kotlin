@@ -220,6 +220,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
     companion object {
         const val testTaskNameSuffix = "test"
+        const val runTaskNameSuffix = "run"
 
         fun defineConfigurationsForCompilation(
             compilation: KotlinCompilation<*>

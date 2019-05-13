@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
@@ -15,9 +16,32 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
     KotlinTargetConfigurator<KotlinJsCompilation>(true, true, kotlinPluginVersion) {
+
+    override fun configureTarget(target: KotlinOnlyTarget<KotlinJsCompilation>) {
+        target as KotlinJsTarget
+
+        target.configureDefaults()
+        super.configureTarget(target)
+
+        target.project.tasks.maybeCreate(runTaskNameSuffix).dependsOn(target.runTask)
+    }
+
+    override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
+        // tests configured in KotlinJsSubTarget.configure
+
+        target as KotlinJsTarget
+        val tasks = target.project.tasks
+        val check = tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)
+
+        @Suppress("IfThenToSafeAccess")
+        if (check != null) {
+            check.dependsOn(target.testTask)
+        }
+    }
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
