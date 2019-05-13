@@ -76,7 +76,7 @@ public class DetectedFrameworksData {
     }
   }
 
-  public Collection<VirtualFile> retainNewFiles(@NotNull Integer detectorId, @NotNull Collection<VirtualFile> files) {
+  public Collection<VirtualFile> retainNewFiles(@NotNull Integer detectorId, @NotNull Collection<? extends VirtualFile> files) {
     TIntHashSet oldSet = myNewFiles.get(detectorId);
     if (oldSet == null) {
       oldSet = new TIntHashSet();

@@ -298,7 +298,7 @@ public class ArrangementEngine {
   }
 
   @Nullable
-  private static <E extends ArrangementEntry> Collection<E> arrangeByRule(@NotNull List<E> arranged,
+  private static <E extends ArrangementEntry> Collection<E> arrangeByRule(@NotNull List<? super E> arranged,
                                                                           @NotNull MultiMap<ArrangementMatchRule, E> elementsByRule,
                                                                           @NotNull ArrangementMatchRule rule) {
     if (elementsByRule.containsKey(rule)) {
@@ -347,7 +347,7 @@ public class ArrangementEngine {
   }
 
   @SuppressWarnings("unchecked")
-  private <E extends ArrangementEntry> void doArrange(@NotNull List<ArrangementEntryWrapper<E>> wrappers,
+  private <E extends ArrangementEntry> void doArrange(@NotNull List<? extends ArrangementEntryWrapper<E>> wrappers,
                                                       @NotNull Context<E> context) {
     if (wrappers.isEmpty()) {
       return;
@@ -410,7 +410,7 @@ public class ArrangementEngine {
     private final Map<E, String> mySectionStarts = new HashMap<>();
     private final Map<E, String> mySectionEnds = new HashMap<>();
 
-    private static <E extends ArrangementEntry> NewSectionInfo create(@NotNull List<E> arranged,
+    private static <E extends ArrangementEntry> NewSectionInfo create(@NotNull List<? extends E> arranged,
                                                                       @NotNull Map<E, ArrangementSectionRule> entryToSection) {
       final NewSectionInfo<E> info = new NewSectionInfo<>();
 
@@ -561,7 +561,7 @@ public class ArrangementEngine {
   }
 
   private abstract static class Changer<E extends ArrangementEntry> {
-    public abstract void prepare(@NotNull List<ArrangementEntryWrapper<E>> toArrange, @NotNull Context<E> context);
+    public abstract void prepare(@NotNull List<? extends ArrangementEntryWrapper<E>> toArrange, @NotNull Context<E> context);
 
     /**
      * Replaces given 'old entry' by the given 'new entry'.
@@ -623,7 +623,7 @@ public class ArrangementEngine {
     private          int    myParentShift;
 
     @Override
-    public void prepare(@NotNull List<ArrangementEntryWrapper<E>> toArrange, @NotNull Context<E> context) {
+    public void prepare(@NotNull List<? extends ArrangementEntryWrapper<E>> toArrange, @NotNull Context<E> context) {
       ArrangementEntryWrapper<E> parent = toArrange.get(0).getParent();
       if (parent == null) {
         myParentText = context.document.getText();
@@ -762,7 +762,7 @@ public class ArrangementEngine {
     }
 
     @Override
-    public void prepare(@NotNull List<ArrangementEntryWrapper<E>> toArrange, @NotNull Context<E> context) {
+    public void prepare(@NotNull List<? extends ArrangementEntryWrapper<E>> toArrange, @NotNull Context<E> context) {
       myWrappers.clear();
       myWrappers.addAll(toArrange);
       for (ArrangementEntryWrapper<E> wrapper : toArrange) {

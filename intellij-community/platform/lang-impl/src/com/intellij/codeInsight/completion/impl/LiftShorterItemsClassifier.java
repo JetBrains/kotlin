@@ -90,7 +90,7 @@ public class LiftShorterItemsClassifier extends Classifier<LookupElement> {
   }
 
   private Iterable<LookupElement> liftShorterElements(final Iterable<LookupElement> source,
-                                                      @Nullable final THashSet<LookupElement> lifted, final ProcessingContext context) {
+                                                      @Nullable final THashSet<? super LookupElement> lifted, final ProcessingContext context) {
     final Set<LookupElement> srcSet = newIdentityTroveSet(source instanceof Collection ? ((Collection)source).size() : myCount);
     ContainerUtil.addAll(srcSet, source);
 

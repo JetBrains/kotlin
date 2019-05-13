@@ -153,7 +153,7 @@ public class NestingTreeStructureProvider implements TreeStructureProvider, Dumb
    * or only those rules where given {@code fileName} can potentially be a child (if {@code parentNotChild} is {@code false})
    */
   @NotNull
-  private static Collection<NestingRule> filterRules(@NotNull final Collection<NestingRule> rules,
+  private static Collection<NestingRule> filterRules(@NotNull final Collection<? extends NestingRule> rules,
                                                      @NotNull final String fileName,
                                                      final boolean parentNotChild) {
     final SmartList<NestingRule> result = new SmartList<>();

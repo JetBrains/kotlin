@@ -69,7 +69,7 @@ public class IconDeferrerImpl extends IconDeferrer {
   }
 
   @Override
-  public <T> Icon defer(final Icon base, final T param, @NotNull final Function<T, Icon> evaluator) {
+  public <T> Icon defer(final Icon base, final T param, @NotNull final Function<? super T, ? extends Icon> evaluator) {
     return deferImpl(base, param, evaluator, false);
   }
 

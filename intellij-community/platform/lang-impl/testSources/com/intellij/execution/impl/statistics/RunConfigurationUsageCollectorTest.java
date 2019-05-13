@@ -18,8 +18,8 @@ import static java.lang.String.valueOf;
 
 public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
 
-  private static void doTest(@NotNull List<RunnerAndConfigurationSettings> configurations,
-                             @NotNull Set<TestUsageDescriptor> expected, boolean withTemporary) {
+  private static void doTest(@NotNull List<? extends RunnerAndConfigurationSettings> configurations,
+                             @NotNull Set<? extends TestUsageDescriptor> expected, boolean withTemporary) {
     final Project project = getProject();
     final RunManager manager = RunManager.getInstance(project);
     try {

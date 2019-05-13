@@ -493,7 +493,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     myList.setVisibleRowCount(Math.min(model.getSize(), UISettings.getInstance().getMaxLookupListHeight()));
   }
 
-  private void addEmptyItem(CollectionListModel<LookupElement> model) {
+  private void addEmptyItem(CollectionListModel<? super LookupElement> model) {
     LookupElement item = new EmptyLookupItem(myCalculating ? " " : LangBundle.message("completion.no.suggestions"), false);
     model.add(item);
 
@@ -806,7 +806,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     }
   }
 
-  private void delegateActionToEditor(@NotNull String actionID, @Nullable Supplier<AnAction> delegateActionSupplier, @NotNull AnActionEvent actionEvent) {
+  private void delegateActionToEditor(@NotNull String actionID, @Nullable Supplier<? extends AnAction> delegateActionSupplier, @NotNull AnActionEvent actionEvent) {
     AnAction action = ActionManager.getInstance().getAction(actionID);
     DumbAwareAction.create(
       e -> ActionUtil.performActionDumbAware(delegateActionSupplier == null ? action : delegateActionSupplier.get(), actionEvent)

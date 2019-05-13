@@ -35,7 +35,7 @@ import java.util.function.Function;
 public class RenameHandlerRegistry {
   public static final Key<Boolean> SELECT_ALL = Key.create("rename.selectAll");
   private final PsiElementRenameHandler myDefaultElementRenameHandler;
-  private Function<Collection<RenameHandler>, RenameHandler> myRenameHandlerSelectorInTests = ContainerUtil::getFirstItem;
+  private Function<? super Collection<RenameHandler>, ? extends RenameHandler> myRenameHandlerSelectorInTests = ContainerUtil::getFirstItem;
 
   public static RenameHandlerRegistry getInstance() {
     return ServiceManager.getService(RenameHandlerRegistry.class);
@@ -89,7 +89,7 @@ public class RenameHandlerRegistry {
   }
 
   @TestOnly
-  public void setRenameHandlerSelectorInTests(Function<Collection<RenameHandler>, RenameHandler> selector, Disposable parentDisposable) {
+  public void setRenameHandlerSelectorInTests(Function<? super Collection<RenameHandler>, ? extends RenameHandler> selector, Disposable parentDisposable) {
     myRenameHandlerSelectorInTests = selector;
     Disposer.register(parentDisposable, new Disposable() {
       @Override

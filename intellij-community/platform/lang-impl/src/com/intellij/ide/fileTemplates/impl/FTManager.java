@@ -180,7 +180,7 @@ public class FTManager {
     }
   }
 
-  void setDefaultTemplates(@NotNull Collection<DefaultTemplate> templates) {
+  void setDefaultTemplates(@NotNull Collection<? extends DefaultTemplate> templates) {
     myDefaultTemplates.clear();
     myDefaultTemplates.addAll(templates);
     for (DefaultTemplate template : templates) {

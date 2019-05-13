@@ -103,7 +103,7 @@ public class ArrangementMatchingRulesPanel extends JPanel implements DataProvide
     return myControl.getSections();
   }
 
-  public void setSections(@Nullable List<ArrangementSectionRule> rules) {
+  public void setSections(@Nullable List<? extends ArrangementSectionRule> rules) {
     myControl.setSections(rules);
   }
 

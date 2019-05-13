@@ -199,7 +199,7 @@ public class StopAction extends DumbAwareAction implements AnAction.TransparentU
   }
 
   @Nullable
-  private static Pair<List<HandlerItem>, HandlerItem> getItemsList(List<RunContentDescriptor> descriptors, RunContentDescriptor toSelect) {
+  private static Pair<List<HandlerItem>, HandlerItem> getItemsList(List<? extends RunContentDescriptor> descriptors, RunContentDescriptor toSelect) {
     if (descriptors.isEmpty()) {
       return null;
     }
@@ -263,7 +263,7 @@ public class StopAction extends DumbAwareAction implements AnAction.TransparentU
                || processHandler instanceof KillableProcess && ((KillableProcess)processHandler).canKillProcess());
   }
 
-  private static void _showStopRunningBar(@NotNull List<RunContentDescriptor> stoppableDescriptors) {
+  private static void _showStopRunningBar(@NotNull List<? extends RunContentDescriptor> stoppableDescriptors) {
     if (!TouchBarsManager.isTouchBarAvailable())
       return;
 

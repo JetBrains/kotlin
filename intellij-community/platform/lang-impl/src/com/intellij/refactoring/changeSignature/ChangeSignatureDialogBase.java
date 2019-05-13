@@ -137,7 +137,7 @@ public abstract class ChangeSignatureDialogBase<ParamInfo extends ParameterInfo,
     });
   }
 
-  public void setParameterInfos(List<ParamInfo> parameterInfos) {
+  public void setParameterInfos(List<? extends ParamInfo> parameterInfos) {
     myParametersTableModel.setParameterInfos(parameterInfos);
     updateSignature();
   }

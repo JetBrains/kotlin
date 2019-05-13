@@ -177,7 +177,7 @@ public class ProjectTreeBuilder extends BaseProjectTreeBuilder {
     }
   }
 
-  private void updateNodesContaining(@NotNull Collection<VirtualFile> filesToRefresh, @NotNull DefaultMutableTreeNode rootNode) {
+  private void updateNodesContaining(@NotNull Collection<? extends VirtualFile> filesToRefresh, @NotNull DefaultMutableTreeNode rootNode) {
     if (!(rootNode.getUserObject() instanceof ProjectViewNode)) return;
     ProjectViewNode node = (ProjectViewNode)rootNode.getUserObject();
     Collection<VirtualFile> containingFiles = null;

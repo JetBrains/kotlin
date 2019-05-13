@@ -199,7 +199,7 @@ public class GradleProjectSettings extends ExternalProjectSettings {
       return myCompositeParticipants;
     }
 
-    public void setCompositeParticipants(List<BuildParticipant> compositeParticipants) {
+    public void setCompositeParticipants(List<? extends BuildParticipant> compositeParticipants) {
       myCompositeParticipants = compositeParticipants == null ? new SmartList<>() : new ArrayList<>(compositeParticipants);
     }
 

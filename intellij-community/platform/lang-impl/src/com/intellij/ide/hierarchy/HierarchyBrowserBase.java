@@ -150,7 +150,7 @@ public abstract class HierarchyBrowserBase extends SimpleToolWindowPanel impleme
     return result.toArray(PsiElement.EMPTY_ARRAY);
   }
 
-  private void collectElements(HierarchyNodeDescriptor descriptor, Set<PsiElement> out) {
+  private void collectElements(HierarchyNodeDescriptor descriptor, Set<? super PsiElement> out) {
     if (descriptor == null) {
       return;
     }

@@ -196,7 +196,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     return Pair.create(url, className);
   }
 
-  public boolean addRoots(final String name, final Collection<AbstractTreeNode> nodes) {
+  public boolean addRoots(final String name, final Collection<? extends AbstractTreeNode> nodes) {
     final Collection<TreeItem<Pair<AbstractUrl, String>>> list = getFavoritesListRootUrls(name);
 
     final HashSet<AbstractUrl> set =
@@ -215,7 +215,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     return true;
   }
 
-  public boolean canAddRoots(@NotNull String name, @NotNull Collection<AbstractTreeNode> nodes) {
+  public boolean canAddRoots(@NotNull String name, @NotNull Collection<? extends AbstractTreeNode> nodes) {
     final Collection<TreeItem<Pair<AbstractUrl, String>>> list = getFavoritesListRootUrls(name);
 
     final HashSet<AbstractUrl> set =
@@ -237,7 +237,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
   }
 
   private <T> boolean findListToRemoveFrom(@NotNull String name, @NotNull final List<T> elements,
-                                           final Convertor<T, AbstractUrl> convertor) {
+                                           final Convertor<? super T, ? extends AbstractUrl> convertor) {
     Collection<TreeItem<Pair<AbstractUrl, String>>> list = getFavoritesListRootUrls(name);
     if (elements.size() > 1) {
       final List<T> sublist = elements.subList(0, elements.size() - 1);
@@ -267,7 +267,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     return false;
   }
 
-  public synchronized boolean removeRoot(@NotNull String name, @NotNull List<AbstractTreeNode> elements) {
+  public synchronized boolean removeRoot(@NotNull String name, @NotNull List<? extends AbstractTreeNode> elements) {
     final Convertor<AbstractTreeNode, AbstractUrl> convertor = obj -> createUrlByElement(obj.getValue(), myProject);
     boolean result = true;
     for (AbstractTreeNode element : elements) {

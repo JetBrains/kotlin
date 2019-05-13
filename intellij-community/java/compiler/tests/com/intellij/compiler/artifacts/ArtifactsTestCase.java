@@ -147,8 +147,8 @@ public abstract class ArtifactsTestCase extends IdeaTestCase {
     }
 
     @Override
-    public List<Module> chooseModules(List<Module> modules, String title) {
-      return modules;
+    public List<Module> chooseModules(List<? extends Module> modules, String title) {
+      return new ArrayList<>(modules);
     }
 
     @Override

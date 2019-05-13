@@ -110,8 +110,8 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     return set;
   }
 
-  private static <T> void addBoolIfDiffers(Set<UsageDescriptor> set, T settingsBean, T defaultSettingsBean,
-                                           Function1<T, Boolean> valueFunction, String featureId) {
+  private static <T> void addBoolIfDiffers(Set<? super UsageDescriptor> set, T settingsBean, T defaultSettingsBean,
+                                           Function1<? super T, Boolean> valueFunction, String featureId) {
     addIfDiffers(set, settingsBean, defaultSettingsBean, valueFunction, (it) -> it ? featureId : "no" + StringUtil.capitalize(featureId));
   }
 

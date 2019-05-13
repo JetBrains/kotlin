@@ -660,7 +660,7 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
     return JBIterable.of(size > 0 ? myModel.getElement(size - 1) : null);
   }
 
-  Object getDataImpl(String dataId, @NotNull JComponent source, @NotNull Getter<JBIterable<?>> selection) {
+  Object getDataImpl(String dataId, @NotNull JComponent source, @NotNull Getter<? extends JBIterable<?>> selection) {
     if (CommonDataKeys.PROJECT.is(dataId)) {
       return !myProject.isDisposed() ? myProject : null;
     }

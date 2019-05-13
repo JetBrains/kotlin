@@ -147,7 +147,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   public void startTemplate(@NotNull Editor editor,
                             @NotNull Template template,
                             TemplateEditingListener listener,
-                            final PairProcessor<String, String> processor) {
+                            final PairProcessor<? super String, ? super String> processor) {
     startTemplate(editor, null, template, true, listener, processor, null);
   }
 
@@ -156,7 +156,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
                              final Template template,
                              boolean inSeparateCommand,
                              TemplateEditingListener listener,
-                             final PairProcessor<String, String> processor,
+                             final PairProcessor<? super String, ? super String> processor,
                              final Map<String, String> predefinedVarValues) {
     final TemplateState templateState = initTemplateState(editor);
 
@@ -242,7 +242,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   }
 
   @Nullable
-  public Runnable prepareTemplate(final Editor editor, char shortcutChar, @Nullable final PairProcessor<String, String> processor) {
+  public Runnable prepareTemplate(final Editor editor, char shortcutChar, @Nullable final PairProcessor<? super String, ? super String> processor) {
     if (editor.getSelectionModel().hasSelection()) {
       return null;
     }
@@ -349,7 +349,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   @Nullable
   public Runnable startNonCustomTemplates(final Map<TemplateImpl, String> template2argument,
                                           final Editor editor,
-                                          @Nullable final PairProcessor<String, String> processor) {
+                                          @Nullable final PairProcessor<? super String, ? super String> processor) {
     final int caretOffset = editor.getCaretModel().getOffset();
     final Document document = editor.getDocument();
     final CharSequence text = document.getCharsSequence();
@@ -397,7 +397,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
 
   public void startTemplateWithPrefix(final Editor editor,
                                       final TemplateImpl template,
-                                      @Nullable final PairProcessor<String, String> processor,
+                                      @Nullable final PairProcessor<? super String, ? super String> processor,
                                       @Nullable String argument) {
     final int caretOffset = editor.getCaretModel().getOffset();
     String key = template.getKey();
@@ -415,7 +415,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   public void startTemplateWithPrefix(final Editor editor,
                                       final TemplateImpl template,
                                       final int templateStart,
-                                      @Nullable final PairProcessor<String, String> processor,
+                                      @Nullable final PairProcessor<? super String, ? super String> processor,
                                       @Nullable final String argument) {
     final int caretOffset = editor.getCaretModel().getOffset();
     final TemplateState templateState = initTemplateState(editor);

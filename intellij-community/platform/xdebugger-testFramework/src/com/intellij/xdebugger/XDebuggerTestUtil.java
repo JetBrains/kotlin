@@ -137,7 +137,7 @@ public class XDebuggerTestUtil {
     return collectThreadsWithErrors(session, XDebuggerTestUtil::waitFor);
   }
 
-  public static Pair<List<XExecutionStack>, String> collectThreadsWithErrors(@NotNull XDebugSession session, @NotNull BiFunction<Semaphore, Long, Boolean> waitFunction) {
+  public static Pair<List<XExecutionStack>, String> collectThreadsWithErrors(@NotNull XDebugSession session, @NotNull BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     XTestExecutionStackContainer container = new XTestExecutionStackContainer();
     session.getSuspendContext().computeExecutionStacks(container);
     return container.waitFor(TIMEOUT_MS, waitFunction);
@@ -239,7 +239,7 @@ public class XDebuggerTestUtil {
     return evaluate(session, expression, timeout, XDebuggerTestUtil::waitFor);
   }
 
-  private static Pair<XValue, String> evaluate(XDebugSession session, XExpression expression, long timeout, BiFunction<Semaphore, Long, Boolean> waitFunction) {
+  private static Pair<XValue, String> evaluate(XDebugSession session, XExpression expression, long timeout, BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     XStackFrame frame = session.getCurrentStackFrame();
     assertNotNull(frame);
     XDebuggerEvaluator evaluator = frame.getEvaluator();
@@ -258,7 +258,7 @@ public class XDebuggerTestUtil {
   }
 
   @NotNull
-  public static XValue findVar(Collection<XValue> vars, String name) {
+  public static XValue findVar(Collection<? extends XValue> vars, String name) {
     StringBuilder names = new StringBuilder();
     for (XValue each : vars) {
       if (each instanceof XNamedValue) {
@@ -275,14 +275,14 @@ public class XDebuggerTestUtil {
   public static XTestValueNode computePresentation(@NotNull XValue value) {
     return computePresentation(value, XDebuggerTestUtil::waitFor);
   }
-  public static XTestValueNode computePresentation(@NotNull XValue value, BiFunction<Semaphore, Long, Boolean> waitFunction) {
+  public static XTestValueNode computePresentation(@NotNull XValue value, BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     return computePresentation(value, TIMEOUT_MS, waitFunction);
   }
 
   public static XTestValueNode computePresentation(XValue value, long timeout) {
     return computePresentation(value, timeout, XDebuggerTestUtil::waitFor);
   }
-  public static XTestValueNode computePresentation(XValue value, long timeout, BiFunction<Semaphore, Long, Boolean> waitFunction) {
+  public static XTestValueNode computePresentation(XValue value, long timeout, BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     XTestValueNode node = new XTestValueNode();
     if (value instanceof XNamedValue) {
       node.myName = ((XNamedValue)value).getName();
@@ -305,7 +305,7 @@ public class XDebuggerTestUtil {
                                     @Nullable String type,
                                     @Nullable String value,
                                     @Nullable Boolean hasChildren,
-                                    BiFunction<Semaphore, Long, Boolean> waitFunction) {
+                                    BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     XTestValueNode node = computePresentation(var, waitFunction);
 
     if (name != null) assertEquals(name, node.myName);
@@ -318,24 +318,24 @@ public class XDebuggerTestUtil {
     assertVariable(var, name, null, value, null);
   }
 
-  public static void assertVariableValue(Collection<XValue> vars, @Nullable String name, @Nullable String value) {
+  public static void assertVariableValue(Collection<? extends XValue> vars, @Nullable String name, @Nullable String value) {
     assertVariableValue(findVar(vars, name), name, value);
   }
 
-  public static void assertVariableValueMatches(@NotNull Collection<XValue> vars,
+  public static void assertVariableValueMatches(@NotNull Collection<? extends XValue> vars,
                                                 @Nullable String name,
                                                 @Nullable @Language("RegExp") String valuePattern) {
     assertVariableValueMatches(findVar(vars, name), name, valuePattern);
   }
 
-  public static void assertVariableValueMatches(@NotNull Collection<XValue> vars,
+  public static void assertVariableValueMatches(@NotNull Collection<? extends XValue> vars,
                                                 @Nullable String name,
                                                 @Nullable String type,
                                                 @Nullable @Language("RegExp") String valuePattern) {
     assertVariableValueMatches(findVar(vars, name), name, type, valuePattern);
   }
 
-  public static void assertVariableValueMatches(@NotNull Collection<XValue> vars,
+  public static void assertVariableValueMatches(@NotNull Collection<? extends XValue> vars,
                                                 @Nullable String name,
                                                 @Nullable String type,
                                                 @Nullable @Language("RegExp") String valuePattern,
@@ -379,7 +379,7 @@ public class XDebuggerTestUtil {
     if (hasChildren != null) assertEquals(hasChildren, node.myHasChildren);
   }
 
-  public static void assertVariableTypeMatches(@NotNull Collection<XValue> vars,
+  public static void assertVariableTypeMatches(@NotNull Collection<? extends XValue> vars,
                                                @Nullable String name,
                                                @Nullable @Language("RegExp") String typePattern) {
     assertVariableTypeMatches(findVar(vars, name), name, typePattern);
@@ -441,12 +441,12 @@ public class XDebuggerTestUtil {
     }
   }
 
-  public static void assertVariableFullValue(Collection<XValue> vars, @Nullable String name, @Nullable String value)
+  public static void assertVariableFullValue(Collection<? extends XValue> vars, @Nullable String name, @Nullable String value)
     throws Exception {
     assertVariableFullValue(findVar(vars, name), value);
   }
 
-  public static void assertVariables(List<XValue> vars, String... names) {
+  public static void assertVariables(List<? extends XValue> vars, String... names) {
     List<String> expectedNames = new ArrayList<>(Arrays.asList(names));
 
     List<String> actualNames = new ArrayList<>();
@@ -459,7 +459,7 @@ public class XDebuggerTestUtil {
     UsefulTestCase.assertOrderedEquals(actualNames, expectedNames);
   }
 
-  public static void assertVariablesContain(List<XValue> vars, String... names) {
+  public static void assertVariablesContain(List<? extends XValue> vars, String... names) {
     List<String> expectedNames = new ArrayList<>(Arrays.asList(names));
 
     List<String> actualNames = new ArrayList<>();
@@ -503,7 +503,7 @@ public class XDebuggerTestUtil {
     return false;
   }
 
-  public static void assertVariable(Collection<XValue> vars,
+  public static void assertVariable(Collection<? extends XValue> vars,
                                     @Nullable String name,
                                     @Nullable String type,
                                     @Nullable String value,

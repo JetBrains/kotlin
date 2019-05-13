@@ -936,7 +936,7 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
       }
     }
 
-    private void collectFiles(Collection<Change> changes, Set<? super VirtualFile> files) {
+    private void collectFiles(Collection<? extends Change> changes, Set<? super VirtualFile> files) {
       ChangesUtil.getAfterRevisionsFiles(changes.stream()).forEach(files::add);
     }
   }

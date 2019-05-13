@@ -856,7 +856,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
     return "";
   }
 
-  public void setupDebugForAllJvmForkedTasks(@NotNull Consumer<String> initScriptConsumer, int debugPort) {
+  public void setupDebugForAllJvmForkedTasks(@NotNull Consumer<? super String> initScriptConsumer, int debugPort) {
     // external-system-rt.jar
     String esRtJarPath = PathUtil.getCanonicalPath(PathManager.getJarPathForClass(ExternalSystemSourceType.class));
     final String[] lines = {

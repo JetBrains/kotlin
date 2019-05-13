@@ -98,7 +98,7 @@ public abstract class JpsDependenciesEnumeratorBase<Self extends JpsDependencies
   }
 
   @Override
-  public void processModules(@NotNull final Consumer<JpsModule> consumer) {
+  public void processModules(@NotNull final Consumer<? super JpsModule> consumer) {
     //noinspection unchecked
     processModuleAndLibraries(consumer, Consumer.EMPTY_CONSUMER);
   }

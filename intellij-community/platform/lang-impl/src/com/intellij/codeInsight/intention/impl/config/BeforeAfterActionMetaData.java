@@ -108,7 +108,7 @@ public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
     return urls.toArray(new TextDescriptor[0]);
   }
 
-  private static boolean checkUrl(URL url, List<TextDescriptor> urls) {
+  private static boolean checkUrl(URL url, List<? super TextDescriptor> urls) {
     try (InputStream ignored = url.openStream()) {
       urls.add(new ResourceTextDescriptor(url));
       return true;

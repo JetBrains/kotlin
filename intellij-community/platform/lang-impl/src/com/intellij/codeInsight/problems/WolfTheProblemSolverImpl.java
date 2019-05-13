@@ -302,13 +302,13 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
   }
 
   @Override
-  public boolean hasProblemFilesBeneath(@NotNull Condition<VirtualFile> condition) {
+  public boolean hasProblemFilesBeneath(@NotNull Condition<? super VirtualFile> condition) {
     if (!myProject.isOpen()) return false;
     return checkProblemFilesInMap(condition, myProblems) ||
            checkProblemFilesInMap(condition, myProblemsFromExternalSources);
   }
 
-  private static boolean checkProblemFilesInMap(@NotNull Condition<VirtualFile> condition,
+  private static boolean checkProblemFilesInMap(@NotNull Condition<? super VirtualFile> condition,
                                                 Map<VirtualFile, ?> map) {
     synchronized (map) {
       if (!map.isEmpty()) {
@@ -381,14 +381,14 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
   }
 
   @Override
-  public void weHaveGotProblems(@NotNull final VirtualFile virtualFile, @NotNull List<Problem> problems) {
+  public void weHaveGotProblems(@NotNull final VirtualFile virtualFile, @NotNull List<? extends Problem> problems) {
     if (problems.isEmpty()) return;
     if (!isToBeHighlighted(virtualFile)) return;
     weHaveGotNonIgnorableProblems(virtualFile, problems);
   }
 
   @Override
-  public void weHaveGotNonIgnorableProblems(@NotNull VirtualFile virtualFile, @NotNull List<Problem> problems) {
+  public void weHaveGotNonIgnorableProblems(@NotNull VirtualFile virtualFile, @NotNull List<? extends Problem> problems) {
     if (problems.isEmpty()) return;
     boolean fireListener = false;
     synchronized (myProblems) {
@@ -445,7 +445,7 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
   }
 
   @Override
-  public void reportProblems(@NotNull final VirtualFile file, @NotNull Collection<Problem> problems) {
+  public void reportProblems(@NotNull final VirtualFile file, @NotNull Collection<? extends Problem> problems) {
     if (problems.isEmpty()) {
       clearProblems(file);
       return;

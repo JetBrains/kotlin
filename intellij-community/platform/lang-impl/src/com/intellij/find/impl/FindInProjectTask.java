@@ -170,7 +170,7 @@ class FindInProjectTask {
              "Most frequent non-indexed file extensions: " + topExtensions);
   }
 
-  private void searchInFiles(@NotNull Collection<VirtualFile> virtualFiles,
+  private void searchInFiles(@NotNull Collection<? extends VirtualFile> virtualFiles,
                              @NotNull FindUsagesProcessPresentation processPresentation,
                              @NotNull final Processor<? super UsageInfo> consumer) {
     AtomicInteger occurrenceCount = new AtomicInteger();

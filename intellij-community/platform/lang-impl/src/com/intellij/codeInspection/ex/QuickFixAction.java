@@ -137,7 +137,7 @@ public class QuickFixAction extends AnAction implements CustomComponentAction {
 
   private void doApplyFix(@NotNull Project project,
                           @NotNull List<CommonProblemDescriptor[]> descriptors,
-                          @NotNull Set<VirtualFile> readOnlyFiles,
+                          @NotNull Set<? extends VirtualFile> readOnlyFiles,
                           @NotNull GlobalInspectionContextImpl context) {
     if (!FileModificationService.getInstance().prepareVirtualFilesForWrite(project, readOnlyFiles)) return;
 

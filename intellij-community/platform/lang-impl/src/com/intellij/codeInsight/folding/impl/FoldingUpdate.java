@@ -253,7 +253,7 @@ public class FoldingUpdate {
     }
   }
 
-  private static boolean addNonConflictingRegion(DocumentEx document, TextRange range, List<RangeMarker> hardRefToRangeMarkers) {
+  private static boolean addNonConflictingRegion(DocumentEx document, TextRange range, List<? super RangeMarker> hardRefToRangeMarkers) {
     int start = range.getStartOffset();
     int end = range.getEndOffset();
     if (!document.processRangeMarkersOverlappingWith(start, end, rm -> !areConflicting(range, TextRange.create(rm)))) {

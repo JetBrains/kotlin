@@ -70,7 +70,7 @@ public abstract class DependencyMemberInfoModel<T extends PsiElement, M extends 
     memberInfoChanged(event.getChangedMembers());
   }
 
-  public void memberInfoChanged(final Collection<M> changedMembers) {
+  public void memberInfoChanged(final Collection<? extends M> changedMembers) {
     if (myTooltipManager != null) myTooltipManager.invalidate();
     for (M changedMember : changedMembers) {
       myMemberDependencyGraph.memberChanged(changedMember);

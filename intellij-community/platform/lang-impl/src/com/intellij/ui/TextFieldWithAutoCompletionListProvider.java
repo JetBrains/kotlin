@@ -105,7 +105,7 @@ public abstract class TextFieldWithAutoCompletionListProvider<T> extends Default
 
   private static <T> void addCompletionElements(final CompletionResultSet result,
                                                 final TextCompletionValueDescriptor<T> descriptor,
-                                                final Collection<T> items,
+                                                final Collection<? extends T> items,
                                                 final int index) {
     final AutoCompletionPolicy completionPolicy = ApplicationManager.getApplication().isUnitTestMode()
                                                   ? AutoCompletionPolicy.ALWAYS_AUTOCOMPLETE

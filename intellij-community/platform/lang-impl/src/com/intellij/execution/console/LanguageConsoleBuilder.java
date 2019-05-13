@@ -49,7 +49,7 @@ public final class LanguageConsoleBuilder {
   private Condition<LanguageConsoleView> executionEnabled = Conditions.alwaysTrue();
 
   @Nullable
-  private PairFunction<VirtualFile, Project, PsiFile> psiFileFactory;
+  private PairFunction<? super VirtualFile, ? super Project, ? extends PsiFile> psiFileFactory;
   @Nullable
   private BaseConsoleExecuteActionHandler executeActionHandler;
   @Nullable
@@ -83,7 +83,7 @@ public final class LanguageConsoleBuilder {
   /**
    * @see com.intellij.psi.PsiCodeFragment
    */
-  public LanguageConsoleBuilder psiFileFactory(@NotNull PairFunction<VirtualFile, Project, PsiFile> value) {
+  public LanguageConsoleBuilder psiFileFactory(@NotNull PairFunction<? super VirtualFile, ? super Project, ? extends PsiFile> value) {
     psiFileFactory = value;
     return this;
   }

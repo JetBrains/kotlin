@@ -213,7 +213,7 @@ public class GradleExecutionHelper {
     operation.setEnvironmentVariables(effectiveEnvironment);
   }
 
-  public <T> T execute(@NotNull String projectPath, @Nullable GradleExecutionSettings settings, @NotNull Function<ProjectConnection, T> f) {
+  public <T> T execute(@NotNull String projectPath, @Nullable GradleExecutionSettings settings, @NotNull Function<? super ProjectConnection, ? extends T> f) {
 
     final String projectDir;
     final File projectPathFile = new File(projectPath);

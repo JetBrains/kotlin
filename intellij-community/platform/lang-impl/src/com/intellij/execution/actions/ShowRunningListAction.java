@@ -119,7 +119,7 @@ public class ShowRunningListAction extends AnAction {
 
   private static final Object KEY = new Object();
 
-  private static Pair<? extends JComponent, String> getCurrentState(@NotNull List<Project> projects) {
+  private static Pair<? extends JComponent, String> getCurrentState(@NotNull List<? extends Project> projects) {
     NonOpaquePanel panel = new NonOpaquePanel(new GridLayout(0, 1, 10, 10));
     StringBuilder state = new StringBuilder();
     for (int i = 0; i < projects.size(); i++) {

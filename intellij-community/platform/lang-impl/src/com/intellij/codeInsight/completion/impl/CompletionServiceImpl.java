@@ -95,8 +95,8 @@ public final class CompletionServiceImpl extends CompletionService {
   }
 
   @Override
-  protected CompletionResultSet createResultSet(CompletionParameters parameters, Consumer<CompletionResult> consumer,
-                                             @NotNull CompletionContributor contributor, PrefixMatcher matcher) {
+  protected CompletionResultSet createResultSet(CompletionParameters parameters, Consumer<? super CompletionResult> consumer,
+                                                @NotNull CompletionContributor contributor, PrefixMatcher matcher) {
     return new CompletionResultSetImpl(consumer, matcher, contributor, parameters, defaultSorter(parameters, matcher), null);
   }
 
@@ -120,7 +120,7 @@ public final class CompletionServiceImpl extends CompletionService {
     @Nullable
     private final CompletionResultSetImpl myOriginal;
 
-    CompletionResultSetImpl(Consumer<CompletionResult> consumer, PrefixMatcher prefixMatcher,
+    CompletionResultSetImpl(Consumer<? super CompletionResult> consumer, PrefixMatcher prefixMatcher,
                             CompletionContributor contributor, CompletionParameters parameters,
                             @NotNull CompletionSorterImpl sorter, @Nullable CompletionResultSetImpl original) {
       super(prefixMatcher, consumer, contributor);

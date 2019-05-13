@@ -189,7 +189,7 @@ public class FileNestingInProjectViewDialog extends DialogWrapper {
     resetTable(ProjectViewFileNestingService.getInstance().getRules());
   }
 
-  private void resetTable(@NotNull final List<NestingRule> rules) {
+  private void resetTable(@NotNull final List<? extends NestingRule> rules) {
     final SortedMap<String, CombinedNestingRule> result = new TreeMap<>();
     for (NestingRule rule : ContainerUtil.sorted(rules, RULE_COMPARATOR)) {
       final CombinedNestingRule r = result.get(rule.getParentFileSuffix());
@@ -204,7 +204,7 @@ public class FileNestingInProjectViewDialog extends DialogWrapper {
     myTable.getListTableModel().setItems(new ArrayList<>(result.values()));
   }
 
-  public void apply(@NotNull final Consumer<Boolean> useNestingRulesOptionConsumer) {
+  public void apply(@NotNull final Consumer<? super Boolean> useNestingRulesOptionConsumer) {
     useNestingRulesOptionConsumer.consume(myUseNestingRulesCheckBox.isSelected());
 
     if (myUseNestingRulesCheckBox.isSelected()) {

@@ -54,7 +54,7 @@ public class ProjectPatternProvider extends PatternDialectProvider {
   }
 
   @Override
-  public TreeModel createTreeModel(final Project project, final Set<PsiFile> deps, final Marker marker,
+  public TreeModel createTreeModel(final Project project, final Set<? extends PsiFile> deps, final Marker marker,
                                    final DependenciesPanel.DependencyPanelSettings settings) {
     return FileTreeModelBuilder.createTreeModel(project, false, deps, marker, settings);
   }

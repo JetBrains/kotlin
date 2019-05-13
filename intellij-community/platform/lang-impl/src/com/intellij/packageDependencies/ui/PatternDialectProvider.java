@@ -28,7 +28,7 @@ public abstract class PatternDialectProvider {
 
   public abstract TreeModel createTreeModel(Project project, Marker marker);
 
-  public abstract TreeModel createTreeModel(Project project, Set<PsiFile> deps, Marker marker,
+  public abstract TreeModel createTreeModel(Project project, Set<? extends PsiFile> deps, Marker marker,
                                             final DependenciesPanel.DependencyPanelSettings settings);
 
   public abstract String getDisplayName();

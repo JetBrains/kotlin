@@ -148,8 +148,8 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
   }
 
   @NotNull
-  private Set<PsiFile> getInjectedPsiFiles(@NotNull final List<PsiElement> elements1,
-                                           @NotNull final List<PsiElement> elements2,
+  private Set<PsiFile> getInjectedPsiFiles(@NotNull final List<? extends PsiElement> elements1,
+                                           @NotNull final List<? extends PsiElement> elements2,
                                            @NotNull final ProgressIndicator progress) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
 

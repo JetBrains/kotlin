@@ -334,7 +334,7 @@ public abstract class OptionTableWithPreviewPanel extends CustomizableLanguageCo
                            int minValue,
                            int maxValue,
                            int defaultValue,
-                           @Nullable Function<Integer,String> defaultValueRenderer) {
+                           @Nullable Function<? super Integer, String> defaultValueRenderer) {
     myOptions.add(new IntOption(null, fieldName, title, groupName, null, null, minValue, maxValue, defaultValue, defaultValueRenderer));
   }
 

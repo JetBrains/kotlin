@@ -45,7 +45,7 @@ public class XTestContainer<T> {
     return waitFor(timeoutMs, (semaphore, timeout) -> XDebuggerTestUtil.waitFor(myFinished, timeout));
   }
 
-  public Pair<List<T>, String> waitFor(long timeoutMs, BiFunction<Semaphore, Long, Boolean> waitFunction) {
+  public Pair<List<T>, String> waitFor(long timeoutMs, BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     if (!waitFunction.apply(myFinished, timeoutMs)) {
       throw new AssertionError("Waiting timed out");
     }

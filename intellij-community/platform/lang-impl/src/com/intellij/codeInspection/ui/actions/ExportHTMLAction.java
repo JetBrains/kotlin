@@ -159,7 +159,7 @@ public class ExportHTMLAction extends AnAction implements DumbAware {
   }
 
   private void writeInspectionResult(@NotNull String shortName,
-                                     @NotNull Collection<InspectionToolWrapper> wrappers, String outputDirectoryName,
+                                     @NotNull Collection<? extends InspectionToolWrapper> wrappers, String outputDirectoryName,
                                      @NotNull Format format,
                                      @NotNull XMLOutputFactory xmlOutputFactory) {
     //dummy entry points tool

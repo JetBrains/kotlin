@@ -192,7 +192,7 @@ public class InspectionTreeModel extends BaseTreeModel<InspectionTreeNode> imple
              parent);
   }
 
-  private synchronized <T extends InspectionTreeNode> T getOrAdd(Object userObject, Supplier<T> supplier, InspectionTreeNode parent) {
+  private synchronized <T extends InspectionTreeNode> T getOrAdd(Object userObject, Supplier<? extends T> supplier, InspectionTreeNode parent) {
     LOG.assertTrue(ApplicationManager.getApplication().isUnitTestMode() || !ApplicationManager.getApplication().isDispatchThread());
     if (userObject == null) {
       userObject = ObjectUtils.NULL;

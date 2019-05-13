@@ -88,7 +88,7 @@ public class SummaryNode extends BaseToDoNode<ToDoSummary> {
 
   }
 
-  protected void createModuleTodoNodeForFile(ArrayList<AbstractTreeNode> children, ProjectFileIndex projectFileIndex, VirtualFile virtualFile) {
+  protected void createModuleTodoNodeForFile(ArrayList<? super AbstractTreeNode> children, ProjectFileIndex projectFileIndex, VirtualFile virtualFile) {
     Module module = projectFileIndex.getModuleForFile(virtualFile);
     if (module != null) {
       ModuleToDoNode moduleToDoNode = new ModuleToDoNode(getProject(), module, myBuilder);

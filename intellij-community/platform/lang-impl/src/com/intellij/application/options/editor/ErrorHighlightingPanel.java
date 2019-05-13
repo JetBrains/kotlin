@@ -18,7 +18,7 @@ public class ErrorHighlightingPanel {
   private JPanel myErrorsPanel;
   private JCheckBox myNextErrorGoesToErrorsFirst;
 
-  public ErrorHighlightingPanel(@NotNull final List<ErrorOptionsProvider> configurables) {
+  public ErrorHighlightingPanel(@NotNull final List<? extends ErrorOptionsProvider> configurables) {
     for (ErrorOptionsProvider optionsProvider : configurables) {
       myErrorsPanel.add(optionsProvider.createComponent());
     }

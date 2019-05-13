@@ -149,8 +149,8 @@ public class CachedIntentions {
     return changed;
   }
 
-  private boolean addActionsTo(@NotNull List<HighlightInfo.IntentionActionDescriptor> newDescriptors,
-                               @NotNull Set<IntentionActionWithTextCaching> cachedActions) {
+  private boolean addActionsTo(@NotNull List<? extends HighlightInfo.IntentionActionDescriptor> newDescriptors,
+                               @NotNull Set<? super IntentionActionWithTextCaching> cachedActions) {
     boolean changed = false;
     for (HighlightInfo.IntentionActionDescriptor descriptor : newDescriptors) {
       changed |= cachedActions.add(wrapAction(descriptor, myFile, myFile, myEditor));
@@ -158,7 +158,7 @@ public class CachedIntentions {
     return changed;
   }
 
-  private boolean wrapActionsTo(@NotNull List<HighlightInfo.IntentionActionDescriptor> newDescriptors,
+  private boolean wrapActionsTo(@NotNull List<? extends HighlightInfo.IntentionActionDescriptor> newDescriptors,
                                 @NotNull Set<IntentionActionWithTextCaching> cachedActions,
                                 boolean callUpdate) {
     boolean changed = false;

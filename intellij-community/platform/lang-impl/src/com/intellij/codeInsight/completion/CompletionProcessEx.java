@@ -36,7 +36,7 @@ interface CompletionProcessEx extends CompletionProcess {
   @Nullable
   Lookup getLookup();
 
-  void registerChildDisposable(@NotNull Supplier<Disposable> child);
+  void registerChildDisposable(@NotNull Supplier<? extends Disposable> child);
 
   void itemSelected(LookupElement item, char aChar);
 

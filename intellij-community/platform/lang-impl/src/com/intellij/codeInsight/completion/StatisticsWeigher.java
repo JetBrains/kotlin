@@ -66,7 +66,7 @@ public class StatisticsWeigher extends CompletionWeigher {
       return JBIterable.from(initialList).append(JBIterable.from(byWeight).flatten(group -> myNext.classify(group, context)));
     }
 
-    private static Iterable<LookupElement> withoutInitial(Iterable<LookupElement> allItems, List<LookupElement> initial) {
+    private static Iterable<LookupElement> withoutInitial(Iterable<LookupElement> allItems, List<? extends LookupElement> initial) {
       Set<LookupElement> initialSet = ContainerUtil.newIdentityTroveSet(initial);
       return JBIterable.from(allItems).filter(element -> !initialSet.contains(element));
     }
@@ -84,7 +84,7 @@ public class StatisticsWeigher extends CompletionWeigher {
       return initialList;
     }
 
-    private TreeMap<Integer, List<LookupElement>> buildMapByWeight(Iterable<LookupElement> source) {
+    private TreeMap<Integer, List<LookupElement>> buildMapByWeight(Iterable<? extends LookupElement> source) {
       MultiMap<String, LookupElement> byName = MultiMap.create();
       List<LookupElement> noStats = new ArrayList<>();
       for (LookupElement element : source) {
@@ -106,7 +106,7 @@ public class StatisticsWeigher extends CompletionWeigher {
       return map;
     }
 
-    private int getMaxWeight(List<LookupElement> group) {
+    private int getMaxWeight(List<? extends LookupElement> group) {
       int max = 0;
       //noinspection ForLoopReplaceableByForEach
       for (int i = 0; i < group.size(); i++) {

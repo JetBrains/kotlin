@@ -80,7 +80,7 @@ public class FileIncludeManagerImpl extends FileIncludeManager {
   };
 
   @Override
-  public void processIncludingFiles(PsiFile context, Processor<Pair<VirtualFile, FileIncludeInfo>> processor) {
+  public void processIncludingFiles(PsiFile context, Processor<? super Pair<VirtualFile, FileIncludeInfo>> processor) {
     context = context.getOriginalFile();
     VirtualFile contextFile = context.getVirtualFile();
     if (contextFile == null) return;

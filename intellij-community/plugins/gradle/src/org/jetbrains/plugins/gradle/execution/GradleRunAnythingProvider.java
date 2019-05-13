@@ -103,7 +103,7 @@ public class GradleRunAnythingProvider extends RunAnythingProviderBase<String> {
     return new CommandLineInfo(prefix, toComplete, externalProjectName, commands.subList(1, commands.size()));
   }
 
-  private void appendProjectsVariants(@NotNull List<String> result,
+  private void appendProjectsVariants(@NotNull List<? super String> result,
                                       @NotNull DataContext dataContext,
                                       @NotNull String prefix) {
     if (!prefix.trim().equals(getHelpCommand())) return;
@@ -121,7 +121,7 @@ public class GradleRunAnythingProvider extends RunAnythingProviderBase<String> {
       .forEach(data -> result.add(prefix + data.getExternalName()));
   }
 
-  private void appendTasksVariants(@NotNull List<String> result, @NotNull String prefix, @NotNull DataContext dataContext) {
+  private void appendTasksVariants(@NotNull List<? super String> result, @NotNull String prefix, @NotNull DataContext dataContext) {
     Project project = fetchProject(dataContext);
     String commandLine = trimStart(prefix, getHelpCommand()).trim();
     ProjectData projectData = getProjectData(project, commandLine);
@@ -139,7 +139,7 @@ public class GradleRunAnythingProvider extends RunAnythingProviderBase<String> {
     }
   }
 
-  private static void appendArgumentsVariants(@NotNull List<String> result, @NotNull String prefix, @NotNull String toComplete) {
+  private static void appendArgumentsVariants(@NotNull List<? super String> result, @NotNull String prefix, @NotNull String toComplete) {
     if (!toComplete.startsWith("-")) return;
 
     boolean isLongOpt = toComplete.startsWith("--");

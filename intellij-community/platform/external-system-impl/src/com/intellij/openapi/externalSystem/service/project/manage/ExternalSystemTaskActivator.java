@@ -255,7 +255,7 @@ public class ExternalSystemTaskActivator {
     return taskActivationState.getTasks(phase).contains(taskData.getName());
   }
 
-  public void addTasks(@NotNull Collection<TaskData> tasks, @NotNull final Phase phase) {
+  public void addTasks(@NotNull Collection<? extends TaskData> tasks, @NotNull final Phase phase) {
     if (tasks.isEmpty()) {
       return;
     }
@@ -264,7 +264,7 @@ public class ExternalSystemTaskActivator {
     fireTasksChanged();
   }
 
-  public void addTasks(@NotNull Collection<TaskActivationEntry> entries) {
+  public void addTasks(@NotNull Collection<? extends TaskActivationEntry> entries) {
     if (entries.isEmpty()) {
       return;
     }
@@ -278,14 +278,14 @@ public class ExternalSystemTaskActivator {
     fireTasksChanged();
   }
 
-  public void removeTasks(@NotNull Collection<TaskData> tasks, @NotNull final Phase phase) {
+  public void removeTasks(@NotNull Collection<? extends TaskData> tasks, @NotNull final Phase phase) {
     if (tasks.isEmpty()) {
       return;
     }
     removeTasks(ContainerUtil.map(tasks, data -> new TaskActivationEntry(data.getOwner(), phase, data.getLinkedExternalProjectPath(), data.getName())));
   }
 
-  public void removeTasks(@NotNull Collection<TaskActivationEntry> entries) {
+  public void removeTasks(@NotNull Collection<? extends TaskActivationEntry> entries) {
     if (entries.isEmpty()) {
       return;
     }
@@ -307,7 +307,7 @@ public class ExternalSystemTaskActivator {
   }
 
 
-  public void moveTasks(@NotNull Collection<TaskActivationEntry> entries, int increment) {
+  public void moveTasks(@NotNull Collection<? extends TaskActivationEntry> entries, int increment) {
     LOG.assertTrue(increment == -1 || increment == 1);
 
     final ExternalProjectsStateProvider stateProvider = ExternalProjectsManagerImpl.getInstance(myProject).getStateProvider();

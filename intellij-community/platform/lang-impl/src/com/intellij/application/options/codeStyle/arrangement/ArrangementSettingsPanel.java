@@ -156,7 +156,7 @@ public class ArrangementSettingsPanel extends CodeStyleAbstractPanel {
   }
 
   @NotNull
-  private static List<ArrangementSectionRule> copy(@NotNull List<ArrangementSectionRule> rules) {
+  private static List<ArrangementSectionRule> copy(@NotNull List<? extends ArrangementSectionRule> rules) {
     List<ArrangementSectionRule> result = new ArrayList<>();
     for (ArrangementSectionRule rule : rules) {
       result.add(rule.clone());

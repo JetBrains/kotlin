@@ -114,7 +114,7 @@ public class ExternalSystemTasksTreeModel extends DefaultTreeModel {
   }
 
   public void ensureSubProjectsStructure(@NotNull ExternalProjectPojo topLevelProject,
-                                         @NotNull Collection<ExternalProjectPojo> subProjects) {
+                                         @NotNull Collection<? extends ExternalProjectPojo> subProjects) {
     ExternalSystemNode<ExternalProjectPojo> topLevelProjectNode = ensureProjectNodeExists(topLevelProject);
     Map<String/*config path*/, ExternalProjectPojo> toAdd = new HashMap<>();
     for (ExternalProjectPojo subProject : subProjects) {
@@ -146,7 +146,7 @@ public class ExternalSystemTasksTreeModel extends DefaultTreeModel {
     }
   }
 
-  public void ensureTasks(@NotNull String externalProjectConfigPath, @NotNull Collection<ExternalTaskPojo> tasks) {
+  public void ensureTasks(@NotNull String externalProjectConfigPath, @NotNull Collection<? extends ExternalTaskPojo> tasks) {
     if (tasks.isEmpty()) {
       return;
     }

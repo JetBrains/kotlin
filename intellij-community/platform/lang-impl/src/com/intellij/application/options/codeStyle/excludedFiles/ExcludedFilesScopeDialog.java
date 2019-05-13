@@ -19,10 +19,10 @@ public class ExcludedFilesScopeDialog extends ExcludedFilesDialogBase {
   public final static int EDIT_SCOPES = NEXT_USER_EXIT_CODE;
 
   private final Action myEditAction;
-  private final List<NamedScope> myAvailableScopes;
+  private final List<? extends NamedScope> myAvailableScopes;
 
   protected ExcludedFilesScopeDialog(@NotNull Project project,
-                                     @NotNull List<NamedScope> availableScopes) {
+                                     @NotNull List<? extends NamedScope> availableScopes) {
     super(project);
     myAvailableScopes = availableScopes;
     setTitle("Add Scope");
@@ -38,7 +38,7 @@ public class ExcludedFilesScopeDialog extends ExcludedFilesDialogBase {
   }
 
 
-  private void fillScopesList(@NotNull List<NamedScope> availableScopes) {
+  private void fillScopesList(@NotNull List<? extends NamedScope> availableScopes) {
     myScopeListModel = new DefaultComboBoxModel<>();
     for (NamedScope scope : availableScopes) {
       myScopeListModel.addElement(scope.getName());

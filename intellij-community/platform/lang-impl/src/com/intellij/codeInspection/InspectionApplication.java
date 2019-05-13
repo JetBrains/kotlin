@@ -247,7 +247,7 @@ public class InspectionApplication {
                                 @NotNull GlobalInspectionContextImpl context,
                                 @NotNull AnalysisScope scope,
                                 @NotNull Path resultsDataPath,
-                                @NotNull List<Path> inspectionsResults) {
+                                @NotNull List<? super Path> inspectionsResults) {
     ProgressManager.getInstance().runProcess(() -> {
       if (!GlobalInspectionContextUtil.canRunInspections(project, false)) {
         gracefulExit();

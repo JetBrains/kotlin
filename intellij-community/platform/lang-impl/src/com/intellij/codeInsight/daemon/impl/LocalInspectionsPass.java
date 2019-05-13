@@ -210,8 +210,8 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
 
   private void highlightRedundantSuppressions(@NotNull List<? extends LocalInspectionToolWrapper> toolWrappers,
                                               @NotNull InspectionManager iManager,
-                                              List<PsiElement> inside, 
-                                              List<PsiElement> outside, 
+                                              List<? extends PsiElement> inside,
+                                              List<? extends PsiElement> outside,
                                               Set<String> elementDialectIds) {
     HighlightDisplayKey key = HighlightDisplayKey.find(RedundantSuppressInspection.SHORT_NAME);
     final InspectionProfileImpl inspectionProfile = myProfileWrapper.getInspectionProfile();

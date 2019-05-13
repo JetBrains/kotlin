@@ -172,12 +172,12 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
     final boolean isIncrementalBuild;
     final boolean includeDependentModules;
     final boolean includeRuntimeDependencies;
-    final Collection<Module> modules;
+    final Collection<? extends Module> modules;
 
     ModulesBuildSettings(boolean isIncrementalBuild,
-                                boolean includeDependentModules,
-                                boolean includeRuntimeDependencies,
-                                Collection<Module> modules) {
+                         boolean includeDependentModules,
+                         boolean includeRuntimeDependencies,
+                         Collection<? extends Module> modules) {
       this.isIncrementalBuild = isIncrementalBuild;
       this.includeDependentModules = includeDependentModules;
       this.includeRuntimeDependencies = includeRuntimeDependencies;
@@ -231,14 +231,14 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
     return new ModulesBuildSettings(isIncrementalBuild, includeDependentModules, includeRuntimeDependencies, modules);
   }
 
-  private static void assertModuleBuildSettingsConsistent(Collection<ModuleBuildTask> moduleBuildTasks, String warnMsg) {
+  private static void assertModuleBuildSettingsConsistent(Collection<? extends ModuleBuildTask> moduleBuildTasks, String warnMsg) {
     String moduleNames = StringUtil.join(moduleBuildTasks, task -> task.getModule().getName(), ", ");
     LOG.warn("Module" + (moduleBuildTasks.size() > 1 ? "s": "") + " : '" + moduleNames + "' " + warnMsg);
   }
 
   private static CompileScope createScope(CompilerManager compilerManager,
                                           ProjectTaskContext context,
-                                          Collection<Module> modules,
+                                          Collection<? extends Module> modules,
                                           boolean includeDependentModules,
                                           boolean includeRuntimeDependencies) {
     CompileScope scope = !modules.isEmpty()?
@@ -298,7 +298,7 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
   }
 
   private static void buildArtifacts(@NotNull Project project,
-                                     @NotNull List<Artifact> artifacts,
+                                     @NotNull List<? extends Artifact> artifacts,
                                      @Nullable Object sessionId,
                                      @Nullable CompileStatusNotification compileNotification,
                                      boolean forceArtifactBuild) {

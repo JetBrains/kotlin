@@ -63,7 +63,7 @@ public class JpsRemoteRepositoriesConfigurationImpl extends JpsElementBase<JpsRe
   }
 
   @Override
-  public void setRepositories(List<JpsRemoteRepositoryDescription> repositories) {
+  public void setRepositories(List<? extends JpsRemoteRepositoryDescription> repositories) {
     myRepositories.clear();
     myRepositories.addAll(repositories);
   }

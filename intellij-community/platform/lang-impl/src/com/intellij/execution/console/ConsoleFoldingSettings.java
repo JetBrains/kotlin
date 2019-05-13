@@ -59,7 +59,7 @@ public class ConsoleFoldingSettings implements PersistentStateComponent<ConsoleF
     return result;
   }
 
-  private void writeDiff(List<String> added, List<String> removed, boolean negated) {
+  private void writeDiff(List<? super String> added, List<? super String> removed, boolean negated) {
     Set<String> baseline = new THashSet<>();
     for (CustomizableConsoleFoldingBean regexp : CustomizableConsoleFoldingBean.EP_NAME.getExtensions()) {
       if (regexp.negate == negated) {

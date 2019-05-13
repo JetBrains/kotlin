@@ -151,7 +151,7 @@ public class TemplateContext {
 
   @VisibleForTesting
   @Nullable
-  public Element writeTemplateContext(@Nullable TemplateContext defaultContext, @NotNull Lazy<Map<String, TemplateContextType>> idToType) {
+  public Element writeTemplateContext(@Nullable TemplateContext defaultContext, @NotNull Lazy<? extends Map<String, TemplateContextType>> idToType) {
     if (myContextStates.isEmpty()) {
       return null;
     }

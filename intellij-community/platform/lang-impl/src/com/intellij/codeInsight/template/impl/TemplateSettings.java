@@ -689,7 +689,7 @@ public class TemplateSettings implements PersistentStateComponent<TemplateSettin
     return element;
   }
 
-  public void setTemplates(@NotNull List<TemplateGroup> newGroups) {
+  public void setTemplates(@NotNull List<? extends TemplateGroup> newGroups) {
     myTemplates.clear();
     myState.deletedKeys.clear();
     for (TemplateImpl template : myDefaultTemplates.values()) {

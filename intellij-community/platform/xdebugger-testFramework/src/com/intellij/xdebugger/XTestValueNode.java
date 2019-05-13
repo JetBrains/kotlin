@@ -45,7 +45,7 @@ public class XTestValueNode extends XValueNodePresentationConfigurator.Configura
   public void waitFor(long timeoutInMillis) {
     waitFor(timeoutInMillis, XDebuggerTestUtil::waitFor);
   }
-  public void waitFor(long timeoutInMillis, BiFunction<Semaphore, Long, Boolean> waitFunction) {
+  public void waitFor(long timeoutInMillis, BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     if (!waitFunction.apply(myFinished, timeoutInMillis)) {
       throw new AssertionError("Waiting timed out");
     }

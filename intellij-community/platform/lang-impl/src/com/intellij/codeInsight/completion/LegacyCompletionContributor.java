@@ -91,7 +91,7 @@ public class LegacyCompletionContributor extends CompletionContributor {
 
   public static void processReferences(final CompletionParameters parameters,
                                        final CompletionResultSet result,
-                                       final PairConsumer<PsiReference, CompletionResultSet> consumer) {
+                                       final PairConsumer<? super PsiReference, ? super CompletionResultSet> consumer) {
     final int startOffset = parameters.getOffset();
     final PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(startOffset);
     if (ref instanceof PsiMultiReference) {
@@ -111,7 +111,7 @@ public class LegacyCompletionContributor extends CompletionContributor {
 
   private static void processReference(final CompletionResultSet result,
                                        final int startOffset,
-                                       final PairConsumer<PsiReference, CompletionResultSet> consumer,
+                                       final PairConsumer<? super PsiReference, ? super CompletionResultSet> consumer,
                                        final PsiReference reference) {
     PsiElement element = reference.getElement();
     final int offsetInElement = startOffset - element.getTextRange().getStartOffset();

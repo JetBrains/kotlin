@@ -43,7 +43,7 @@ public class ProjectStartupConfigurationBase implements PersistentStateComponent
     return myList;
   }
 
-  public void setList(@NotNull final List<ConfigurationDescriptor> list) {
+  public void setList(@NotNull final List<? extends ConfigurationDescriptor> list) {
     myList.clear();
     Collections.sort(list, new ConfigurationDescriptorComparator());
     myList.addAll(list);
@@ -53,7 +53,7 @@ public class ProjectStartupConfigurationBase implements PersistentStateComponent
     return myList.isEmpty();
   }
 
-  public void setConfigurations(@NotNull Collection<RunnerAndConfigurationSettings> collection) {
+  public void setConfigurations(@NotNull Collection<? extends RunnerAndConfigurationSettings> collection) {
     final List<ConfigurationDescriptor> names =
       ContainerUtil.map(collection, settings -> new ConfigurationDescriptor(settings.getUniqueID(), settings.getName()));
     setList(names);

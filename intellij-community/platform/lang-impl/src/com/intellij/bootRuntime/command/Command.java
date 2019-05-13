@@ -26,7 +26,7 @@ public abstract class Command extends AbstractAction {
     myController.updateRuntime();
   }
 
-  protected void runWithProgress(String title, final Consumer<ProgressIndicator> progressIndicatorConsumer) {
+  protected void runWithProgress(String title, final Consumer<? super ProgressIndicator> progressIndicatorConsumer) {
     ProgressManager.getInstance().run(new Task.Modal(myProject, title, false) {
       @Override
       public void run(@NotNull ProgressIndicator progressIndicator) {

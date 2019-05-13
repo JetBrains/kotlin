@@ -267,7 +267,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
   }
   
   @NotNull
-  private List<AnAction> mergeConsoleActions(@NotNull List<AnAction> actions1, @NotNull Collection<AnAction> actions2) {
+  private List<AnAction> mergeConsoleActions(@NotNull List<? extends AnAction> actions1, @NotNull Collection<? extends AnAction> actions2) {
     return ContainerUtil.map(actions1, action1 -> {
       final AnAction action2 = ContainerUtil.find(actions2, action -> action1.getClass() == action.getClass()
                                                                       && StringUtil.equals(action1.getTemplatePresentation().getText(),

@@ -685,7 +685,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
 
   private void runGlobalTools(@NotNull final AnalysisScope scope,
                               @NotNull final InspectionManager inspectionManager,
-                              @NotNull List<Tools> globalTools,
+                              @NotNull List<? extends Tools> globalTools,
                               boolean isOfflineInspections) {
     LOG.assertTrue(!ApplicationManager.getApplication().isReadAccessAllowed() || isOfflineInspections, "Must not run under read action, too unresponsive");
     final List<InspectionToolWrapper> needRepeatSearchRequest = new ArrayList<>();
@@ -760,9 +760,9 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     }, x -> getCurrentScope() == null);
   }
 
-  private void appendPairedInspectionsForUnfairTools(@NotNull List<Tools> globalTools,
-                                                     @NotNull List<Tools> globalSimpleTools,
-                                                     @NotNull List<Tools> localTools) {
+  private void appendPairedInspectionsForUnfairTools(@NotNull List<? super Tools> globalTools,
+                                                     @NotNull List<? super Tools> globalSimpleTools,
+                                                     @NotNull List<? super Tools> localTools) {
     Tools[] larray = localTools.toArray(new Tools[0]);
     for (Tools tool : larray) {
       LocalInspectionToolWrapper toolWrapper = (LocalInspectionToolWrapper)tool.getTool();
@@ -1074,7 +1074,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     return myViewClosed;
   }
 
-  private void addProblemsToView(List<Tools> tools) {
+  private void addProblemsToView(List<? extends Tools> tools) {
     //noinspection TestOnlyProblems
     if (ApplicationManager.getApplication().isHeadlessEnvironment() && !TESTING_VIEW) {
       return;

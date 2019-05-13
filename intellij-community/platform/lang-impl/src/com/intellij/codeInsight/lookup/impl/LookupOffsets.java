@@ -78,7 +78,7 @@ public class LookupOffsets implements DocumentListener {
     myStableStart = false;
   }
 
-  void checkMinPrefixLengthChanges(Collection<LookupElement> items, LookupImpl lookup) {
+  void checkMinPrefixLengthChanges(Collection<? extends LookupElement> items, LookupImpl lookup) {
     if (myStableStart) return;
     if (!lookup.isCalculating() && !items.isEmpty()) {
       myStableStart = true;

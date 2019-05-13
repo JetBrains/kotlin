@@ -147,7 +147,7 @@ public class GradleOrderEnumeratorHandler extends OrderEnumerationHandler {
   }
 
   private static void addOutputModuleRoots(@Nullable ExternalSourceDirectorySet directorySet,
-                                           @NotNull Collection<String> result, boolean isGradleAwareMake) {
+                                           @NotNull Collection<? super String> result, boolean isGradleAwareMake) {
     if (directorySet == null) return;
     if (isGradleAwareMake) {
       for (File outputDir : directorySet.getGradleOutputDirs()) {

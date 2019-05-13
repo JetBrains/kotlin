@@ -68,7 +68,7 @@ public class ModulesComboBox extends ComboBox<Module> {
     setRenderer(new ModuleListCellRenderer(emptySelectionText));
   }
 
-  public void setModules(@NotNull Collection<Module> modules) {
+  public void setModules(@NotNull Collection<? extends Module> modules) {
     myModel.setAll(modules);
     if (myAllowEmptySelection) {
       myModel.add(null);

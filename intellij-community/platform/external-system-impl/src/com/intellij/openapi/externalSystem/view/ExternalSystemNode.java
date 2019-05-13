@@ -244,11 +244,11 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
     return addAll(Collections.singletonList(externalSystemNode));
   }
 
-  public boolean removeAll(Collection<ExternalSystemNode> externalSystemNodes) {
+  public boolean removeAll(Collection<? extends ExternalSystemNode> externalSystemNodes) {
     return removeAll(externalSystemNodes, false);
   }
 
-  private boolean removeAll(Collection<ExternalSystemNode> externalSystemNodes, boolean silently) {
+  private boolean removeAll(Collection<? extends ExternalSystemNode> externalSystemNodes, boolean silently) {
     if (externalSystemNodes.isEmpty()) return false;
 
     for (ExternalSystemNode externalSystemNode : externalSystemNodes) {

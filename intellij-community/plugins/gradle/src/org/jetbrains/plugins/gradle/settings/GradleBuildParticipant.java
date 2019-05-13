@@ -59,7 +59,7 @@ public class GradleBuildParticipant implements Serializable {
   }
 
   @Nullable
-  public ModuleData findModuleDataByArtifacts(Collection<File> artifacts) {
+  public ModuleData findModuleDataByArtifacts(Collection<? extends File> artifacts) {
     ModuleData moduleData = null;
     for (File artifact : artifacts) {
       moduleData = moduleArtifactMap.get(artifact);

@@ -51,7 +51,7 @@ public class DaemonsUi implements Disposable {
   private final JPanel myContent = new JPanel();
   private MyDialogWrapper myDialog;
   private boolean myShowStopped;
-  private List<DaemonState> myDaemonStateList;
+  private List<? extends DaemonState> myDaemonStateList;
 
   public DaemonsUi(Project project) {
     myProject = project;
@@ -107,13 +107,13 @@ public class DaemonsUi implements Disposable {
   @Override
   public void dispose() { }
 
-  public void show(List<DaemonState> daemonStateList) {
+  public void show(List<? extends DaemonState> daemonStateList) {
     updateDaemonsList(daemonStateList);
     myDialog = new MyDialogWrapper();
     myDialog.show();
   }
 
-  private void updateDaemonsList(List<DaemonState> daemonStateList) {
+  private void updateDaemonsList(List<? extends DaemonState> daemonStateList) {
     myDaemonStateList = daemonStateList;
     if (!myShowStopped) {
       daemonStateList = ContainerUtil.filter(daemonStateList, state -> state.getToken() != null);

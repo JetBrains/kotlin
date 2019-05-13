@@ -101,14 +101,14 @@ public class BuildScriptDataBuilder {
     return StringUtil.join(lines, "\n");
   }
 
-  protected void addPluginsLines(@NotNull List<String> lines, @NotNull Function<String, String> padding) {
+  protected void addPluginsLines(@NotNull List<? super String> lines, @NotNull Function<? super String, String> padding) {
     if (!plugins.isEmpty()) {
       lines.addAll(plugins);
       lines.add("");
     }
   }
 
-  private void addBuildscriptLines(@NotNull List<String> lines, @NotNull Function<String, String> padding) {
+  private void addBuildscriptLines(@NotNull List<? super String> lines, @NotNull Function<? super String, String> padding) {
     if (!buildScriptRepositories.isEmpty() || !buildScriptDependencies.isEmpty() || !buildScriptProperties.isEmpty()) {
       lines.add("buildscript {");
       final List<String> buildScriptLines = ContainerUtil.newSmartList();

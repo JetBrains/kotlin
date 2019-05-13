@@ -239,7 +239,7 @@ public class FileTypeAssocTable<T> {
     return false;
   }
 
-  Map<FileNameMatcher, T> getRemovedMappings(FileTypeAssocTable<T> newTable, Collection<T> keys) {
+  Map<FileNameMatcher, T> getRemovedMappings(FileTypeAssocTable<T> newTable, Collection<? extends T> keys) {
     Map<FileNameMatcher, T> map = new HashMap<>();
     for (T key : keys) {
       List<FileNameMatcher> associations = getAssociations(key);

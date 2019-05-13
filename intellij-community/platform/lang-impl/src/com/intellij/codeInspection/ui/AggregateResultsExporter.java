@@ -12,5 +12,5 @@ import java.util.function.Consumer;
  * @author Pavel.Dolgov
  */
 public interface AggregateResultsExporter {
-  void exportAggregateResults(@NotNull Consumer<Element> resultConsumer);
+  void exportAggregateResults(@NotNull Consumer<? super Element> resultConsumer);
 }

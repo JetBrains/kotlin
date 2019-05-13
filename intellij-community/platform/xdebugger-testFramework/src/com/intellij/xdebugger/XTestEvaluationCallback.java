@@ -46,7 +46,7 @@ public class XTestEvaluationCallback extends XEvaluationCallbackBase {
     return waitFor(timeoutInMilliseconds, XDebuggerTestUtil::waitFor);
   }
 
-  public Pair<XValue, String> waitFor(long timeoutInMilliseconds, BiFunction<Semaphore, Long, Boolean> waitFunction) {
+  public Pair<XValue, String> waitFor(long timeoutInMilliseconds, BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     assertTrue("timed out", waitFunction.apply(myFinished, timeoutInMilliseconds));
     return Pair.create(myResult, myErrorMessage);
   }

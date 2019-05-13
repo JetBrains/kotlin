@@ -117,7 +117,7 @@ public class InjectedLanguageBlockWrapper implements BlockEx {
     return result;
   }
 
-  private void collectBlocksIntersectingRange(final List<Block> list, final List<Block> result, @NotNull final TextRange range) {
+  private void collectBlocksIntersectingRange(final List<? extends Block> list, final List<? super Block> result, @NotNull final TextRange range) {
     for (Block block : list) {
       final TextRange textRange = block.getTextRange();
       if (block instanceof InjectedLanguageBlockWrapper && block.getTextRange().equals(range)) {

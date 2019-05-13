@@ -111,7 +111,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     return result.toArray(UsageInfo.EMPTY_ARRAY);
   }
 
-  private void findElementUsages(ArrayList<UsageInfo> result, PsiElement element) {
+  private void findElementUsages(ArrayList<? super UsageInfo> result, PsiElement element) {
     if (!mySearchForReferences) {
       return;
     }

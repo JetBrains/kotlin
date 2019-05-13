@@ -47,7 +47,7 @@ public class TreeModelWrapper implements StructureViewModel, ProvidingTreeModel 
   }
 
   @NotNull
-  private List<NodeProvider> filterProviders(@NotNull Collection<NodeProvider> actions) {
+  private List<NodeProvider> filterProviders(@NotNull Collection<? extends NodeProvider> actions) {
     List<NodeProvider> filtered = new ArrayList<>();
     for (NodeProvider action : actions) {
       if (isFiltered(action)) filtered.add(action);

@@ -195,7 +195,7 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
   @NotNull
   @Override
   public List<ImplementationViewElement> searchImplementationsInBackground(@NotNull ProgressIndicator indicator,
-                                                                           @NotNull final Processor<PsiElement> processor) {
+                                                                           @NotNull final Processor<? super PsiElement> processor) {
     final ImplementationSearcher.BackgroundableImplementationSearcher implementationSearcher =
       new ImplementationSearcher.BackgroundableImplementationSearcher() {
         @Override

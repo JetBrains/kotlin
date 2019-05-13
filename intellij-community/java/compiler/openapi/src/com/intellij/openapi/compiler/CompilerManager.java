@@ -279,12 +279,12 @@ public abstract class CompilerManager {
   public abstract boolean isValidationEnabled(Module moduleType);
 
   public abstract Collection<ClassObject> compileJavaCode(List<String> options,
-                                                          Collection<File> platformCp,
-                                                          Collection<File> classpath,
-                                                          Collection<File> upgradeModulePath,
-                                                          Collection<File> modulePath,
-                                                          Collection<File> sourcePath,
-                                                          Collection<File> files,
+                                                          Collection<? extends File> platformCp,
+                                                          Collection<? extends File> classpath,
+                                                          Collection<? extends File> upgradeModulePath,
+                                                          Collection<? extends File> modulePath,
+                                                          Collection<? extends File> sourcePath,
+                                                          Collection<? extends File> files,
                                                           File outputDir) throws IOException, CompilationException;
 
   @Nullable

@@ -280,7 +280,7 @@ public class ScopeChooserConfigurable extends MasterDetailsComponent implements 
     }
   }
 
-  private void obtainCurrentScopes(final HashSet<String> scopes) {
+  private void obtainCurrentScopes(final HashSet<? super String> scopes) {
     for (int i = 0; i < myRoot.getChildCount(); i++) {
       final MyNode node = (MyNode)myRoot.getChildAt(i);
       final NamedScope scope = (NamedScope)node.getConfigurable().getEditableObject();

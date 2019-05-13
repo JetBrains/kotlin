@@ -148,7 +148,7 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
                                               PsiFile file,
                                               Surrounder surrounder,
                                               int startOffset,
-                                              int endOffset, List<SurroundDescriptor> surroundDescriptors) {
+                                              int endOffset, List<? extends SurroundDescriptor> surroundDescriptors) {
     assert ApplicationManager.getApplication().isUnitTestMode();
     for (SurroundDescriptor descriptor : surroundDescriptors) {
       final PsiElement[] elements = descriptor.getElementsToSurround(file, startOffset, endOffset);

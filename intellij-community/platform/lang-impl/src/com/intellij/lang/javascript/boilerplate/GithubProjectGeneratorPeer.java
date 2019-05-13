@@ -139,7 +139,7 @@ public class GithubProjectGeneratorPeer implements WebProjectGenerator.Generator
   }
 
   @NotNull
-  private static List<GithubTagInfo> createSortedTagList(@NotNull Collection<GithubTagInfo> tags) {
+  private static List<GithubTagInfo> createSortedTagList(@NotNull Collection<? extends GithubTagInfo> tags) {
     List<GithubTagInfo> sortedTags = new ArrayList<>(tags);
     Collections.sort(sortedTags, (tag1, tag2) -> {
       GithubTagInfo.Version v1 = tag1.getVersion();

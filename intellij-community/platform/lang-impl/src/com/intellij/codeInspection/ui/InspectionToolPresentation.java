@@ -93,11 +93,11 @@ public interface InspectionToolPresentation extends ProblemDescriptionsProcessor
   @NotNull
   GlobalInspectionContextImpl getContext();
 
-  void exportResults(@NotNull Consumer<Element> resultConsumer,
+  void exportResults(@NotNull Consumer<? super Element> resultConsumer,
                      @NotNull RefEntity refEntity,
                      @NotNull Predicate<? super CommonProblemDescriptor> isDescriptorExcluded);
 
-  void exportResults(@NotNull Consumer<Element> resultConsumer,
+  void exportResults(@NotNull Consumer<? super Element> resultConsumer,
                      @NotNull Predicate<? super RefEntity> isEntityExcluded,
                      @NotNull Predicate<? super CommonProblemDescriptor> isProblemExcluded);
 

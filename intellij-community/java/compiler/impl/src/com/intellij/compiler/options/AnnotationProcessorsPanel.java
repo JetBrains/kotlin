@@ -253,7 +253,7 @@ public class AnnotationProcessorsPanel extends JPanel {
     }
 
     @Override
-    public void removeNodes(Collection<TreePath> paths) {
+    public void removeNodes(Collection<? extends TreePath> paths) {
       final List<ProcessorConfigProfile> toRemove = new SmartList<>();
       for (TreePath path : paths) {
         Object node = path.getLastPathComponent();

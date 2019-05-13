@@ -206,7 +206,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
   }
 
   private SearchEverywhereUI createView(Project project,
-                                        List<SearchEverywhereContributor<?>> contributors) {
+                                        List<? extends SearchEverywhereContributor<?>> contributors) {
     SearchEverywhereUI view = new SearchEverywhereUI(project, contributors);
 
     view.setSearchFinishedHandler(() -> {
@@ -357,7 +357,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     }
 
     @NotNull
-    private List<String> filteredHistory(Predicate<HistoryItem> predicate) {
+    private List<String> filteredHistory(Predicate<? super HistoryItem> predicate) {
       return historyList.stream()
         .filter(predicate)
         .map(item -> item.getSearchText())

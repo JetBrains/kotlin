@@ -132,12 +132,12 @@ public class CompoundScheme<E extends SchemeElement> implements ExternalizableSc
     }
 
     @NotNull
-    public List<T> apply(@NotNull final List<T> copiedSchemes) {
+    public List<T> apply(@NotNull final List<? extends T> copiedSchemes) {
       return apply(copiedSchemes, null);
     }
 
     @NotNull
-    public List<T> apply(@NotNull final List<T> copiedSchemes, @Nullable BiConsumer<? super T, ? super T> changedConsumer) {
+    public List<T> apply(@NotNull final List<? extends T> copiedSchemes, @Nullable BiConsumer<? super T, ? super T> changedConsumer) {
       copiedToOriginal.retainEntries(new TObjectObjectProcedure<T, T>() {
         @Override
         public boolean execute(T copied, T original) {

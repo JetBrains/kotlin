@@ -85,8 +85,8 @@ public class FileNestingBuilder {
     One child still may have more than one parent. For real use cases it is not expected to happen, but anyway it's not a big problem, it will be shown as a subnode more than once.
    */
   @NotNull
-  public <T> MultiMap<T, T> mapParentToChildren(@NotNull final Collection<T> nodes,
-                                                @NotNull final Function<T, String> fileNameFunc) {
+  public <T> MultiMap<T, T> mapParentToChildren(@NotNull final Collection<? extends T> nodes,
+                                                @NotNull final Function<? super T, String> fileNameFunc) {
 
     final Collection<ProjectViewFileNestingService.NestingRule> rules = getNestingRules();
     if (rules.isEmpty()) return MultiMap.empty();
