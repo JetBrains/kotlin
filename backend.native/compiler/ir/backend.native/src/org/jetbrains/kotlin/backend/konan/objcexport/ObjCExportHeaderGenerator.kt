@@ -715,6 +715,9 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         add("#import <Foundation/NSSet.h>")
         add("#import <Foundation/NSString.h>")
         add("#import <Foundation/NSValue.h>")
+        getAdditionalImports().forEach {
+            add("#import <$it>")
+        }
         add("")
 
         if (classForwardDeclarations.isNotEmpty()) {
@@ -746,6 +749,8 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     protected abstract fun reportWarning(text: String)
 
     protected abstract fun reportWarning(method: FunctionDescriptor, text: String)
+
+    protected open fun getAdditionalImports(): List<String> = emptyList()
 
 
     fun translateModule(): List<Stub<*>> {

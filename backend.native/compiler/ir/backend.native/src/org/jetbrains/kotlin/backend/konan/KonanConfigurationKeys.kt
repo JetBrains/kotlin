@@ -30,6 +30,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("fully qualified main() name")
         val EXPORTED_LIBRARIES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("libraries included into produced framework API")
+        val FRAMEWORK_IMPORT_HEADERS: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create<List<String>>("headers imported to framework header")
         val FRIEND_MODULES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("friend module paths")
         val GENERATE_TEST_RUNNER: CompilerConfigurationKey<TestRunnerKind>
