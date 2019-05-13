@@ -24,7 +24,8 @@ import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.serialization.ObjectSerializer;
+import com.intellij.serialization.SerializationException;
+import com.intellij.serialization.VersionedFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.PathKt;
@@ -35,9 +36,11 @@ import com.intellij.util.xmlb.annotations.XMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -51,7 +54,7 @@ import static com.intellij.openapi.externalSystem.model.ProjectKeys.PROJECT;
 public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaAdapter, PersistentStateComponent<ExternalProjectsDataStorage.State> {
   private static final Logger LOG = Logger.getInstance(ExternalProjectsDataStorage.class);
 
-  private static final String STORAGE_VERSION = ExternalProjectsDataStorage.class.getSimpleName() + ".2";
+  private static final int STORAGE_VERSION = 3;
 
   @NotNull
   private final Project myProject;
@@ -141,15 +144,19 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   }
 
   @Override
-  public synchronized void doSave() {
+  public void doSave() {
     if (!changed.compareAndSet(true, false)) {
       return;
     }
+
     try {
-      doSave(myProject, myExternalRootProjects.values());
+      //noinspection SynchronizeOnThis
+      synchronized (this) {
+        doSave(myProject, myExternalRootProjects.values());
+      }
     }
-    catch (IOException e) {
-      LOG.debug(e);
+    catch (IOException | SerializationException e) {
+      LOG.error(e);
     }
   }
 
@@ -311,9 +318,8 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     return projectDataNode;
   }
 
-  private static void doSave(@NotNull final Project project, @NotNull Collection<InternalExternalProjectInfo> externalProjects)
+  private static void doSave(@NotNull Project project, @NotNull Collection<InternalExternalProjectInfo> externalProjects)
     throws IOException {
-
     for (Iterator<InternalExternalProjectInfo> iterator = externalProjects.iterator(); iterator.hasNext(); ) {
       InternalExternalProjectInfo externalProject = iterator.next();
       if (!validate(externalProject)) {
@@ -332,15 +338,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
       });
     }
 
-    try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(PathKt.outputStream(getProjectConfigurationFile(project))))) {
-      out.writeUTF(STORAGE_VERSION);
-      out.writeInt(externalProjects.size());
-      if (externalProjects.isEmpty()) {
-        return;
-      }
-
-      ObjectSerializer.getInstance().writeList(externalProjects, InternalExternalProjectInfo.class, out);
-    }
+    getCacheFile(project).writeList(externalProjects, InternalExternalProjectInfo.class);
   }
 
   @SuppressWarnings("unchecked")
@@ -358,34 +356,22 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
 
   @NotNull
   private static List<InternalExternalProjectInfo> load(@NotNull Project project) throws IOException {
-    final Path configurationFile = getProjectConfigurationFile(project);
-    //noinspection SSBasedInspection
-    if (!Files.isRegularFile(configurationFile)) {
+    VersionedFile cacheFile = getCacheFile(project);
+    BasicFileAttributes fileAttributes = PathKt.basicAttributesIfExists(cacheFile.getFile());
+    if (fileAttributes == null || !fileAttributes.isRegularFile()) {
       return Collections.emptyList();
     }
 
-    if (isInvalidated(configurationFile)) {
+    if (isInvalidated(cacheFile.getFile(), fileAttributes)) {
       throw new IOException("External projects data storage was invalidated");
     }
-
-    try (DataInputStream in = new DataInputStream(new BufferedInputStream(Files.newInputStream(configurationFile)))) {
-      String storage_version = in.readUTF();
-      if (!STORAGE_VERSION.equals(storage_version)) {
-        return Collections.emptyList();
-      }
-
-      int size = in.readInt();
-      if (size == 0) {
-        return Collections.emptyList();
-      }
-      return ObjectSerializer.getInstance().readList(InternalExternalProjectInfo.class, in, SerializationKt.getExternalSystemBeanConstructed());
-    }
+    return ContainerUtil.notNullize(cacheFile.readList(InternalExternalProjectInfo.class));
   }
 
-  private static boolean isInvalidated(@NotNull Path configurationFile) throws IOException {
+  private static boolean isInvalidated(@NotNull Path configurationFile, @NotNull BasicFileAttributes fileAttributes) throws IOException {
     if (!Registry.is("external.system.invalidate.storage", true)) return false;
 
-    long lastModified = Files.getLastModifiedTime(configurationFile).toMillis();
+    long lastModified = fileAttributes.lastModifiedTime().toMillis();
     if (lastModified == 0) {
       return true;
     }
@@ -399,8 +385,8 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   }
 
   @NotNull
-  private static Path getProjectConfigurationFile(@NotNull Project project) {
-    return getProjectConfigurationDir(project).resolve("project.dat");
+  private static VersionedFile getCacheFile(@NotNull Project project) {
+    return new VersionedFile(getProjectConfigurationDir(project).resolve("project.dat"), STORAGE_VERSION);
   }
 
   @NotNull
