@@ -7,6 +7,7 @@ import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.pom.Navigatable;
+import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -41,6 +42,12 @@ class ServiceTreeView extends ServiceView {
     add(myUi.getComponent(), BorderLayout.CENTER);
 
     myTree.addTreeSelectionListener(e -> onSelectionChanged());
+    model.addModelListener(() -> AppUIUtil.invokeOnEdt(() -> {
+      if (mySelected && myLastSelection != null) {
+        ServiceViewDescriptor descriptor = myLastSelection.getViewDescriptor();
+        myUi.setDetailsComponent(descriptor.getContentComponent());
+      }
+    }, myProject.getDisposed()));
 
     state.treeState.applyTo(myTree, myTreeModel.getRoot());
   }
