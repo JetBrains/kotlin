@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import java.util.*
 
 class KotlinMemberInfoStorage(
-        classOrObject: KtClassOrObject,
-        filter: (KtNamedDeclaration) -> Boolean = { true }
-): AbstractMemberInfoStorage<KtNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(classOrObject, filter) {
+    classOrObject: KtClassOrObject,
+    filter: (KtNamedDeclaration) -> Boolean = { true }
+) : AbstractMemberInfoStorage<KtNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(classOrObject, filter) {
     override fun memberConflict(member1: KtNamedDeclaration, member: KtNamedDeclaration): Boolean {
         val descriptor1 = member1.resolveToDescriptorWrapperAware()
         val descriptor = member.resolveToDescriptorWrapperAware()
@@ -50,7 +50,7 @@ class KotlinMemberInfoStorage(
                 !overloadUtil.isOverloadable(descriptor1, descriptor)
             }
             descriptor1 is PropertyDescriptor && descriptor is PropertyDescriptor ||
-            descriptor1 is ClassDescriptor && descriptor is ClassDescriptor -> true
+                    descriptor1 is ClassDescriptor && descriptor is ClassDescriptor -> true
             else -> false
         }
     }
@@ -81,14 +81,14 @@ class KotlinMemberInfoStorage(
 }
 
 fun extractClassMembers(
-        aClass: KtClassOrObject,
-        collectSuperTypeEntries: Boolean = true,
-        filter: ((KtNamedDeclaration) -> Boolean)? = null
+    aClass: KtClassOrObject,
+    collectSuperTypeEntries: Boolean = true,
+    filter: ((KtNamedDeclaration) -> Boolean)? = null
 ): List<KotlinMemberInfo> {
     fun KtClassOrObject.extractFromClassBody(
-            filter: ((KtNamedDeclaration) -> Boolean)?,
-            isCompanion: Boolean,
-            result: MutableCollection<KotlinMemberInfo>
+        filter: ((KtNamedDeclaration) -> Boolean)?,
+        isCompanion: Boolean,
+        result: MutableCollection<KotlinMemberInfo>
     ) {
         declarations
             .asSequence()
@@ -98,7 +98,7 @@ fun extractClassMembers(
                         && !(it is KtObjectDeclaration && it.isCompanion())
                         && (filter == null || filter(it))
             }
-                .mapTo(result) { KotlinMemberInfo(it as KtNamedDeclaration, isCompanionMember = isCompanion) }
+            .mapTo(result) { KotlinMemberInfo(it as KtNamedDeclaration, isCompanionMember = isCompanion) }
     }
 
     val result = ArrayList<KotlinMemberInfo>()
@@ -107,26 +107,25 @@ fun extractClassMembers(
         aClass.superTypeListEntries
             .asSequence()
             .filterIsInstance<KtSuperTypeEntry>()
-                .mapNotNull {
-                    val typeReference = it.typeReference ?: return@mapNotNull null
-                    val type = typeReference.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
-                    val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
-                    val classPsi = classDescriptor?.source?.getPsi()
-                    when (classPsi) {
-                        is KtClass -> classPsi
-                        is PsiClass -> KtPsiClassWrapper(classPsi)
-                        else -> null
-                    }
+            .mapNotNull {
+                val typeReference = it.typeReference ?: return@mapNotNull null
+                val type = typeReference.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
+                val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
+                when (val classPsi = classDescriptor?.source?.getPsi()) {
+                    is KtClass -> classPsi
+                    is PsiClass -> KtPsiClassWrapper(classPsi)
+                    else -> null
                 }
-        .filter { it.isInterfaceClass() }
-        .mapTo(result) { KotlinMemberInfo(it, true) }
+            }
+            .filter { it.isInterfaceClass() }
+            .mapTo(result) { KotlinMemberInfo(it, true) }
     }
 
     aClass.primaryConstructor
         ?.valueParameters
         ?.asSequence()
         ?.filter { it.hasValOrVar() }
-            ?.mapTo(result) { KotlinMemberInfo(it) }
+        ?.mapTo(result) { KotlinMemberInfo(it) }
 
     aClass.extractFromClassBody(filter, false, result)
     (aClass as? KtClass)?.companionObjects?.firstOrNull()?.extractFromClassBody(filter, true, result)

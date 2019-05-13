@@ -36,13 +36,20 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 class KotlinExtractInterfaceDialog(
-        originalClass: KtClassOrObject,
-        targetParent: PsiElement,
-        conflictChecker: (KotlinExtractSuperDialogBase) -> Boolean,
-        refactoring: (ExtractSuperInfo) -> Unit
-) : KotlinExtractSuperDialogBase(originalClass, targetParent, conflictChecker, true, KotlinExtractInterfaceHandler.REFACTORING_NAME, refactoring) {
+    originalClass: KtClassOrObject,
+    targetParent: PsiElement,
+    conflictChecker: (KotlinExtractSuperDialogBase) -> Boolean,
+    refactoring: (ExtractSuperInfo) -> Unit
+) : KotlinExtractSuperDialogBase(
+    originalClass,
+    targetParent,
+    conflictChecker,
+    true,
+    KotlinExtractInterfaceHandler.REFACTORING_NAME,
+    refactoring
+) {
     companion object {
-        private val DESTINATION_PACKAGE_RECENT_KEY = "KotlinExtractInterfaceDialog.RECENT_KEYS"
+        private const val DESTINATION_PACKAGE_RECENT_KEY = "KotlinExtractInterfaceDialog.RECENT_KEYS"
     }
 
     init {

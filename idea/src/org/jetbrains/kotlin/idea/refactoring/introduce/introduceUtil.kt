@@ -42,19 +42,19 @@ fun showErrorHintByKey(project: Project, editor: Editor, messageKey: String, tit
 }
 
 fun selectElementsWithTargetSibling(
-        operationName: String,
-        editor: Editor,
-        file: KtFile,
-        title: String,
-        elementKinds: Collection<CodeInsightUtils.ElementKind>,
-        elementValidator: (List<PsiElement>) -> String?,
-        getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
-        continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
+    operationName: String,
+    editor: Editor,
+    file: KtFile,
+    title: String,
+    elementKinds: Collection<CodeInsightUtils.ElementKind>,
+    elementValidator: (List<PsiElement>) -> String?,
+    getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
+    continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
     fun onSelectionComplete(elements: List<PsiElement>, targetContainer: PsiElement) {
         val physicalElements = elements.map { it.substringContextOrThis }
         val parent = PsiTreeUtil.findCommonParent(physicalElements)
-                     ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
+            ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
 
         if (parent == targetContainer) {
             continuation(elements, physicalElements.first())
@@ -74,14 +74,14 @@ fun selectElementsWithTargetSibling(
 }
 
 fun selectElementsWithTargetParent(
-        operationName: String,
-        editor: Editor,
-        file: KtFile,
-        title: String,
-        elementKinds: Collection<CodeInsightUtils.ElementKind>,
-        elementValidator: (List<PsiElement>) -> String?,
-        getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
-        continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
+    operationName: String,
+    editor: Editor,
+    file: KtFile,
+    title: String,
+    elementKinds: Collection<CodeInsightUtils.ElementKind>,
+    elementValidator: (List<PsiElement>) -> String?,
+    getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
+    continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
 ) {
     fun showErrorHintByKey(key: String) {
         showErrorHintByKey(file.project, editor, key, operationName)
@@ -95,7 +95,7 @@ fun selectElementsWithTargetParent(
 
         val physicalElements = elements.map { it.substringContextOrThis }
         val parent = PsiTreeUtil.findCommonParent(physicalElements)
-                     ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
+            ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
 
         val containers = getContainers(physicalElements, parent)
         if (containers.isEmpty()) {
@@ -104,12 +104,12 @@ fun selectElementsWithTargetParent(
         }
 
         chooseContainerElementIfNecessary(
-                containers,
-                editor,
-                title,
-                true,
-                { it },
-                { continuation(elements, it) }
+            containers,
+            editor,
+            title,
+            true,
+            { it },
+            { continuation(elements, it) }
         )
     }
 
@@ -133,8 +133,7 @@ fun selectElementsWithTargetParent(
         selectElement(editor, file, false, elementKinds) { expr ->
             if (expr != null) {
                 selectTargetContainer(listOf(expr))
-            }
-            else {
+            } else {
                 if (!editor.selectionModel.hasSelection()) {
                     if (elementKinds.singleOrNull() == CodeInsightUtils.ElementKind.EXPRESSION) {
                         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
@@ -221,7 +220,7 @@ fun ExtractableSubstringInfo.replaceWith(replacement: KtExpression): KtExpressio
 fun KtExpression.mustBeParenthesizedInInitializerPosition(): Boolean {
     if (this !is KtBinaryExpression) return false
 
-    if (left?.mustBeParenthesizedInInitializerPosition() ?: false) return true
+    if (left?.mustBeParenthesizedInInitializerPosition() == true) return true
     return PsiChildRange(left, operationReference).any { (it is PsiWhiteSpace) && it.textContains('\n') }
 }
 
