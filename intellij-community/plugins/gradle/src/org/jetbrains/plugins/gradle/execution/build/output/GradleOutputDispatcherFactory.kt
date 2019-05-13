@@ -16,7 +16,6 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
-import java.util.function.BiConsumer
 
 class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
   override val externalSystemId: Any? = GradleConstants.SYSTEM_ID
@@ -61,11 +60,13 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
           closeAndGetFuture().whenComplete { _, _ -> deferredRootEvents.forEach { myBuildProgressListener.onEvent(it) } }
         }
       }
+      var isBuildException = false
       myCurrentReader = myRootReader
       lineProcessor = object : LineProcessor() {
         override fun process(line: String) {
           val cleanLine = removeLoggerPrefix(line)
           if (cleanLine.startsWith("> Task :")) {
+            isBuildException = false
             val taskName = cleanLine.removePrefix("> Task ").substringBefore(' ')
             myCurrentReader = tasksOutputReaders[taskName] ?: myRootReader
           }
@@ -73,8 +74,12 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
                    cleanLine.startsWith("FAILURE: Build failed") ||
                    cleanLine.startsWith("CONFIGURE SUCCESSFUL") ||
                    cleanLine.startsWith("BUILD SUCCESSFUL")) {
+            isBuildException = false
             myCurrentReader = myRootReader
           }
+          if (cleanLine == "* Exception is:") isBuildException = true
+          if (isBuildException && myCurrentReader == myRootReader) return
+
           myCurrentReader.appendln(cleanLine)
           if (myCurrentReader != myRootReader) {
             val parentEventId = myCurrentReader.parentEventId
