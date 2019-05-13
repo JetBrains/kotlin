@@ -60,7 +60,8 @@ class GradleDaemonStartupIssueChecker : GradleIssueChecker {
 
     val issueDescription = StringBuilder(rootCause.message)
     if (quickFixDescription.isNotEmpty()) {
-      issueDescription.append("Check the JVM arguments defined for the gradle process at:\n")
+      issueDescription.append("\n-----------------------\n")
+      issueDescription.append("Check the JVM arguments defined for the gradle process in:\n")
       issueDescription.append(quickFixDescription)
     }
 
