@@ -1,10 +1,9 @@
 // WITH_RUNTIME
 fun test() {
-    <caret>run {
-        val a = 42
-        use(a, a)
-        use(a, a)
+    val x = <caret>when (val a = 42) {
+        else -> use(a, a)
     }
+
     val a = 33
 }
 

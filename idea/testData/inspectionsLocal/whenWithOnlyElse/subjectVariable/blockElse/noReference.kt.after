@@ -1,5 +1,6 @@
 fun test() {
-    <caret>use("")
+    <caret>val a = create()
+    use("")
     foo()
 }
 

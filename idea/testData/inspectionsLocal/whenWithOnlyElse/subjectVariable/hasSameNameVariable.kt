@@ -1,4 +1,4 @@
-// PROBLEM: none
+// WITH_RUNTIME
 fun test() {
     <caret>when (val a = 42) {
         else -> use(a, a)

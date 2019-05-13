@@ -10347,6 +10347,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/hasSameNameVariable3.kt");
             }
 
+            @TestMetadata("hasSameNameVariable4.kt")
+            public void testHasSameNameVariable4() throws Exception {
+                runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/hasSameNameVariable4.kt");
+            }
+
             @TestMetadata("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/blockElse")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -10367,6 +10372,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 @TestMetadata("noReference.kt")
                 public void testNoReference() throws Exception {
                     runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/blockElse/noReference.kt");
+                }
+
+                @TestMetadata("noReference2.kt")
+                public void testNoReference2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/blockElse/noReference2.kt");
                 }
 
                 @TestMetadata("singleReference.kt")
@@ -10395,6 +10405,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 @TestMetadata("noReference.kt")
                 public void testNoReference() throws Exception {
                     runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/blockElseUsedAsExpression/noReference.kt");
+                }
+
+                @TestMetadata("noReference2.kt")
+                public void testNoReference2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/blockElseUsedAsExpression/noReference2.kt");
                 }
 
                 @TestMetadata("singleReference.kt")
@@ -10430,9 +10445,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                     runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/singleElse/noReference.kt");
                 }
 
+                @TestMetadata("noReference2.kt")
+                public void testNoReference2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/singleElse/noReference2.kt");
+                }
+
                 @TestMetadata("noReferenceUsedAsExpression.kt")
                 public void testNoReferenceUsedAsExpression() throws Exception {
                     runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/singleElse/noReferenceUsedAsExpression.kt");
+                }
+
+                @TestMetadata("noReferenceUsedAsExpression2.kt")
+                public void testNoReferenceUsedAsExpression2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/singleElse/noReferenceUsedAsExpression2.kt");
                 }
 
                 @TestMetadata("singleReference.kt")
