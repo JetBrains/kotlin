@@ -9,7 +9,7 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import org.jdom.Element
 
-@State(name = "InlayHintsSettings", storages = [Storage("inla.xml")])
+@State(name = "InlayHintsSettings", storages = [Storage("inlayHints.xml")])
 class InlayHintsSettings : PersistentStateComponent<InlayHintsSettings.State> {
   private var myState = State()
   private val lock = Any()
