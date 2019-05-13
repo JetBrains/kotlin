@@ -536,6 +536,16 @@ func testGH2945() throws {
     try assertEquals(actual: 7, expected: gh2945.testErrnoInSelector(p: 3, errno: 4))
 }
 
+// See https://github.com/JetBrains/kotlin-native/issues/2830
+func testGH2830() throws {
+  try assertTrue(GH2830().getI() is GH2830I)
+}
+
+// See https://github.com/JetBrains/kotlin-native/issues/2959
+func testGH2959() throws {
+  try assertEquals(actual: GH2959().getI(id: 2959)[0].id, expected: 2959)
+}
+
 // See https://github.com/JetBrains/kotlin-native/issues/2931
 func testGH2931() throws {
     for i in 0..<50000 {
@@ -597,6 +607,8 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestSwiftOverride", method: withAutorelease(testSwiftOverride)),
             TestCase(name: "TestKotlinOverride", method: withAutorelease(testKotlinOverride)),
             TestCase(name: "TestGH2945", method: withAutorelease(testGH2945)),
+            TestCase(name: "TestGH2830", method: withAutorelease(testGH2830)),
+            TestCase(name: "TestGH2959", method: withAutorelease(testGH2959)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }

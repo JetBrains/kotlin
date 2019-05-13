@@ -326,18 +326,21 @@ static const ObjCTypeAdapter* getTypeAdapter(const TypeInfo* typeInfo) {
   return typeInfo->writableInfo_->objCExport.typeAdapter;
 }
 
-static Protocol* getProtocolForInterface(const TypeInfo* interfaceInfo) {
+static void addProtocolForAdapter(Class clazz, const ObjCTypeAdapter* protocolAdapter) {
+  Protocol* protocol = objc_getProtocol(protocolAdapter->objCName);
+  if (protocol != nullptr) {
+    class_addProtocol(clazz, protocol);
+    class_addProtocol(object_getClass(clazz), protocol);
+  } else {
+    // TODO: construct the protocol in compiler instead, because this case can't be handled easily.
+  }
+}
+
+static void addProtocolForInterface(Class clazz, const TypeInfo* interfaceInfo) {
   const ObjCTypeAdapter* protocolAdapter = getTypeAdapter(interfaceInfo);
   if (protocolAdapter != nullptr) {
-    Protocol* protocol = objc_getProtocol(protocolAdapter->objCName);
-    if (protocol != nullptr) {
-      return protocol;
-    } else {
-      // TODO: construct the protocol in compiler instead, because this case can't be handled easily.
-    }
+    addProtocolForAdapter(clazz, protocolAdapter);
   }
-
-  return nullptr;
 }
 
 static const TypeInfo* getOrCreateTypeInfo(Class clazz);
@@ -372,11 +375,7 @@ static void initializeClass(Class clazz) {
   if (isClassForPackage) return;
 
   for (int i = 0; i < typeInfo->implementedInterfacesCount_; ++i) {
-    Protocol* protocol = getProtocolForInterface(typeInfo->implementedInterfaces_[i]);
-    if (protocol != nullptr) {
-      class_addProtocol(clazz, protocol);
-      class_addProtocol(object_getClass(clazz), protocol);
-    }
+    addProtocolForInterface(clazz, typeInfo->implementedInterfaces_[i]);
   }
 
 }
@@ -1013,6 +1012,7 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
       const ObjCTypeAdapter* typeAdapter = getTypeAdapter(interface);
       if (typeAdapter != nullptr) {
         addVirtualAdapters(result, typeAdapter);
+        addProtocolForAdapter(result, typeAdapter);
       }
     }
   }
