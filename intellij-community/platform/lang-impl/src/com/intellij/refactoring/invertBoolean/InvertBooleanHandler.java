@@ -27,6 +27,9 @@ public class InvertBooleanHandler implements RefactoringActionHandler {
   public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
     editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+    if (element == null) {
+      element = file.findElementAt(editor.getCaretModel().getOffset());
+    }
     final InvertBooleanDelegate delegate = findDelegate(element, project, editor);
     if (delegate == null) {
       CommonRefactoringUtil.showErrorHint(project, editor, RefactoringBundle.getCannotRefactorMessage(
