@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiType
@@ -30,6 +31,21 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals(2, classes.size)
         assertEquals("C", classes[0].qualifiedName)
         assertEquals("O", classes[1].qualifiedName)
+    }
+
+    fun testLightClassImplementation() {
+        myFixture.configureByText("Dummy.kt", "") as KtFile
+        val classes = classesFromText("import something\nclass C;")
+
+        assertEquals(1, classes.size)
+
+        val classC = classes[0]
+        assertEquals("C", classC.qualifiedName)
+        assertEquals("class C", classC.text)
+        assertEquals(TextRange(17, 24), classC.textRange)
+        assertEquals(23, classC.textOffset)
+        assertEquals(17, classC.startOffsetInParent)
+        assertTrue(classC.isWritable)
     }
 
     fun testFileClass() {
