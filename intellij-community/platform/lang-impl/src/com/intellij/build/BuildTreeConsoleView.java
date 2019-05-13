@@ -461,8 +461,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     List<Failure> failures;
     EventResult result = failureNode.getResult();
     if (result instanceof FailureResult) {
-      failures = ContainerUtil.newArrayList();
-      failures.addAll(((FailureResult)result).getFailures());
+      failures = new ArrayList<>(((FailureResult)result).getFailures());
       failures.add(failure);
     }
     else {
