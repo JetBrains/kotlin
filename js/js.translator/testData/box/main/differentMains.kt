@@ -20,4 +20,8 @@ fun main(args: Array<String>): Unit? {
     return Unit
 }
 
+fun Any.main(args: Array<String>) {
+    ok += "Fail Any.main(...)"
+}
+
 fun box() = ok

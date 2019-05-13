@@ -26,6 +26,7 @@ object JsMainFunctionDetector {
         if (!isSuitableForMainParametersSize(allowEmptyParameters)) return false
         if (!returnType.isUnit()) return false
         if (name.asString() != "main") return false
+        if (extensionReceiverParameter != null) return false
 
         if (valueParameters.size == 1) {
             val parameter = valueParameters.single()
