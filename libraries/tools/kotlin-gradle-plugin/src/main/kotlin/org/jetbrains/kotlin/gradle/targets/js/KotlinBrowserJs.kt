@@ -8,17 +8,23 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
-class KotlinJsBrowser(
+class KotlinBrowserJs(
     target: KotlinOnlyTarget<KotlinJsCompilation>
 ) : KotlinJsInnerTargetConfigurator(target) {
+    private val versions = project.nodeJs.versions
+
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
-        it.useNodeJs { }
+        it.useKarma {
+            useWebpack()
+            useChromeHeadless()
+        }
     }
 
     override fun configureRun(compilation: KotlinJsCompilation) {
@@ -27,13 +33,13 @@ class KotlinJsBrowser(
         val compileKotlinTask = compilation.compileKotlinTask
 
         compilation.dependencies {
-            runtimeOnly(npm("webpack", "4.29.6"))
-            runtimeOnly(npm("webpack-cli", "3.3.0"))
-            runtimeOnly(npm("webpack-bundle-analyzer", "3.3.2"))
+            runtimeOnly(versions.webpack)
+            runtimeOnly(versions.webpackCli)
+            runtimeOnly(versions.webpackBundleAnalyzer)
 
-            // for source map support only
-            runtimeOnly(npm("source-map-loader", "0.2.4"))
-            runtimeOnly(npm("source-map-support", "0.5.12"))
+            // for source map support
+            runtimeOnly(versions.sourceMapLoader.npm(project))
+            runtimeOnly(versions.sourceMapSupport.npm(project))
         }
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
