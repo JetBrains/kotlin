@@ -34,6 +34,7 @@ kotlin {
                 stdio {
                     packageName 'example.cinterop.project.stdio'
                     extraOpts '-nodefaultlibs'
+                    compilerOpts '-DEVEN_NUMBER'
                 }
             }
         }
