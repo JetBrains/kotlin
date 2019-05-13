@@ -30,10 +30,7 @@ internal val jvmPresetEntry = KotlinPresetEntry(
 internal val jsPresetEntry = KotlinPresetEntry(
     "js",
     typeName("$MPP_PACKAGE.KotlinJsTargetPreset"),
-    typeName(
-        "$MPP_PACKAGE.KotlinOnlyTarget",
-        "$MPP_PACKAGE.KotlinJsCompilation"
-    )
+    typeName("org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget")
 )
 
 internal val androidPresetEntry = KotlinPresetEntry(

@@ -3,22 +3,27 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch")
+
+// Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsSingleTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 
 open class KotlinJsTargetPreset(
     project: Project,
     kotlinPluginVersion: String
-) : KotlinOnlyTargetPreset<KotlinOnlyTarget<KotlinJsCompilation>, KotlinJsCompilation>(
+) : KotlinOnlyTargetPreset<KotlinJsCompilation>(
     project,
     kotlinPluginVersion
 ) {
-    override fun instantiateTarget() = KotlinOnlyTarget<KotlinJsCompilation>(project, KotlinPlatformType.js)
+    override val platformType: KotlinPlatformType
+        get() = KotlinPlatformType.js
+
+    override fun createKotlinOnlyTarget() = KotlinJsTarget(project, platformType)
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
 
@@ -26,9 +31,6 @@ open class KotlinJsTargetPreset(
 
     override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>) =
         KotlinJsCompilationFactory(project, forTarget)
-
-    override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.js
 
     companion object {
         const val PRESET_NAME = "js"
@@ -44,5 +46,5 @@ class KotlinJsSingleTargetPreset(
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? = null
 
-    override fun createKotlinTargetConfigurator() = KotlinJsSingleTargetConfigurator(kotlinPluginVersion)
+    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
 }

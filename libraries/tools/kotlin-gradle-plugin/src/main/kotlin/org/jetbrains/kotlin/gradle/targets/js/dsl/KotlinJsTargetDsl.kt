@@ -10,21 +10,22 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 interface KotlinJsTargetDsl {
-    fun browser()
+    fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
 
-    fun nodejs()
+    fun nodejs() = nodejs { }
     fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
 }
 
-interface KotlinJsInnerTargetDsl {
+interface KotlinJsSubTargetDsl {
     fun testTask(body: KotlinJsTest.() -> Unit)
 }
 
-interface KotlinJsBrowserDsl : KotlinJsInnerTargetDsl {
+interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     fun runTask(body: KotlinWebpack.() -> Unit)
+    fun webpackTask(body: KotlinWebpack.() -> Unit)
 }
 
-interface KotlinJsNodeDsl : KotlinJsInnerTargetDsl {
+interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
     fun runTask(body: NodeJsExec.() -> Unit)
 }
