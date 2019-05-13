@@ -723,7 +723,13 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       myProject = project;
       myPanel = new JPanel(new BorderLayout());
       myViewSettingsProvider = buildViewSettingsProvider;
-      myView = new CompositeView<>(null);
+      myView = new CompositeView<ExecutionConsole>(null) {
+        @Override
+        public void addView(@NotNull ExecutionConsole view, @NotNull String viewName, boolean enable) {
+          super.addView(view, viewName, enable);
+          UIUtil.removeScrollBorder(view.getComponent());
+        }
+      };
       if (executionConsole != null && buildViewSettingsProvider.isSideBySideView()) {
         String nodeConsoleViewName = getNodeConsoleViewName(buildProgressRootNode);
         myView.addView(executionConsole, nodeConsoleViewName, true);
@@ -736,9 +742,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       }
       JComponent consoleComponent = emptyConsole.getComponent();
       consoleComponent.setFocusable(true);
-      final Color editorBackground = EditorColorsManager.getInstance().getGlobalScheme().getDefaultBackground();
-      consoleComponent.setBorder(new CompoundBorder(IdeBorderFactory.createBorder(SideBorder.RIGHT),
-                                                    new SideBorder(editorBackground, SideBorder.LEFT)));
       myPanel.add(myView.getComponent(), BorderLayout.CENTER);
       DefaultActionGroup consoleActionsGroup = new DefaultActionGroup();
       consoleActionsGroup.add(new ToggleUseSoftWrapsToolbarAction(SoftWrapAppliancePlaces.CONSOLE) {
