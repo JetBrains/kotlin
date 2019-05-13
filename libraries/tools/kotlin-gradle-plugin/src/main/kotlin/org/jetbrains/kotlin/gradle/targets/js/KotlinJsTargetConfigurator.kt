@@ -27,19 +27,28 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         target.configureDefaults()
         super.configureTarget(target)
 
-        target.project.tasks.maybeCreate(runTaskNameSuffix).dependsOn(target.runTask)
+        target.compilations.forEach {
+            it.compileKotlinTask.dependsOn(target.npmResolveTask)
+        }
+
+        if (target.disambiguationClassifier != null) {
+            target.project.tasks.maybeCreate(runTaskNameSuffix).dependsOn(target.runTask)
+        }
     }
 
     override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
         // tests configured in KotlinJsSubTarget.configure
 
         target as KotlinJsTarget
-        val tasks = target.project.tasks
-        val check = tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)
 
-        @Suppress("IfThenToSafeAccess")
-        if (check != null) {
-            check.dependsOn(target.testTask)
+        if (target.disambiguationClassifier != null) {
+            val tasks = target.project.tasks
+            val check = tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)
+
+            @Suppress("IfThenToSafeAccess")
+            if (check != null) {
+                check.dependsOn(target.testTask)
+            }
         }
     }
 
