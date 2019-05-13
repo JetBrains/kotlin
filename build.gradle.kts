@@ -211,6 +211,7 @@ extra["compilerModules"] = arrayOf(
         ":compiler:plugin-api",
         ":compiler:light-classes",
         ":compiler:cli",
+        ":compiler:cli-js",
         ":compiler:incremental-compilation-impl",
         ":js:js.ast",
         ":js:js.serializer",

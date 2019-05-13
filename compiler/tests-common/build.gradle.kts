@@ -22,6 +22,7 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli-common"))
     testCompile(project(":compiler:cli"))
+    testCompile(project(":compiler:cli-js"))
     testCompile(project(":compiler:light-classes"))
     testCompile(project(":compiler:serialization"))
     testCompile(project(":kotlin-preloader"))

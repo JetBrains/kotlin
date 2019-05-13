@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     compile(project(":compiler:cli"))
+    compile(project(":compiler:cli-js"))
     compile(project(":compiler:daemon-common"))
     compile(project(":compiler:incremental-compilation-impl"))
     compile(project(":kotlin-build-common"))

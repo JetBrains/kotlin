@@ -10,10 +10,9 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompileOnly(project(":compiler:frontend"))
-    testCompileOnly(project(":compiler:cli"))
-    testCompileOnly(project(":compiler:util"))
+    testCompile(project(":compiler:frontend"))
+    testCompile(project(":compiler:cli"))
+    testCompile(project(":compiler:util"))
 }
 
 sourceSets {
