@@ -1,112 +1,93 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
  * @author Vladislav.Soroka
  */
 public class DefaultExternalTask implements ExternalTask {
-  private static final long serialVersionUID = 1L;
-
   @NotNull
-  private String myName;
+  private String name;
   @NotNull
-  private String myQName;
+  private String qName;
   @Nullable
-  private String myDescription;
+  private String description;
   @Nullable
-  private String myGroup;
+  private String group;
   @Nullable
-  private String myType;
-  private boolean myIsTest;
+  private String type;
+  private boolean isTest;
 
   public DefaultExternalTask() {
   }
 
   public DefaultExternalTask(ExternalTask externalTask) {
-    myName = externalTask.getName();
-    myQName = externalTask.getQName();
-    myDescription = externalTask.getDescription();
-    myGroup = externalTask.getGroup();
-    myType = externalTask.getType();
-    myIsTest = externalTask.isTest();
+    name = externalTask.getName();
+    qName = externalTask.getQName();
+    description = externalTask.getDescription();
+    group = externalTask.getGroup();
+    type = externalTask.getType();
+    isTest = externalTask.isTest();
   }
 
   @NotNull
   @Override
   public String getName() {
-    return myName;
+    return name;
   }
 
   public void setName(@NotNull String name) {
-    myName = name;
+    this.name = name;
   }
 
   @NotNull
   @Override
   public String getQName() {
-    return myQName;
+    return qName;
   }
 
   public void setQName(@NotNull String QName) {
-    myQName = QName;
+    qName = QName;
   }
 
   @Nullable
   @Override
   public String getDescription() {
-    return myDescription;
+    return description;
   }
 
   public void setDescription(@Nullable String description) {
-    myDescription = description;
+    this.description = description;
   }
 
   @Nullable
   @Override
   public String getGroup() {
-    return myGroup;
+    return group;
   }
 
   public void setGroup(@Nullable String group) {
-    myGroup = group;
+    this.group = group;
   }
 
   @Nullable
   @Override
   public String getType() {
-    return myType;
+    return type;
   }
 
   public void setType(@Nullable String type) {
-    myType = type;
+    this.type = type;
   }
 
   @Override
   public boolean isTest() {
-    return myIsTest;
+    return isTest;
   }
 
   public void setTest(boolean test) {
-    myIsTest = test;
+    isTest = test;
   }
 }

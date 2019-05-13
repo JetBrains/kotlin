@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.nativeplatform.tooling.model.impl;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,172 +16,167 @@ import java.util.*;
  * @author Vladislav.Soroka
  */
 public class CompilationDetailsImpl implements CompilationDetails {
+  private File compilerExecutable;
 
-  private File myCompilerExecutable;
-  private ExternalTask myCompileTask;
-  private File myCompileWorkingDir;
+  private ExternalTask compileTask;
+
+  private File compileWorkingDir;
   @NotNull
-  private List<File> myFrameworkSearchPaths;
+  private List<File> frameworkSearchPaths;
   @NotNull
-  private List<File> mySystemHeaderSearchPaths;
+  private List<File> systemHeaderSearchPaths;
   @NotNull
-  private List<File> myUserHeaderSearchPaths;
+  private List<File> userHeaderSearchPaths;
   @NotNull
-  private Set<SourceFile> mySources;
+  private Set<SourceFile> sources;
   @NotNull
-  private Set<File> myHeaderDirs;
+  private Set<File> headerDirs;
   @NotNull
-  private Set<MacroDirective> myMacroDefines;
+  private Set<MacroDirective> macroDefines;
   @NotNull
-  private Set<String> myMacroUndefines;
+  private Set<String> macroUndefines;
   @NotNull
-  private List<String> myAdditionalArgs;
+  private List<String> additionalArgs;
 
   public CompilationDetailsImpl() {
-    myFrameworkSearchPaths = Collections.emptyList();
-    mySystemHeaderSearchPaths = Collections.emptyList();
-    myUserHeaderSearchPaths = Collections.emptyList();
-    mySources = Collections.emptySet();
-    myHeaderDirs = Collections.emptySet();
-    myMacroDefines = Collections.emptySet();
-    myMacroUndefines = Collections.emptySet();
-    myAdditionalArgs = Collections.emptyList();
+    frameworkSearchPaths = Collections.emptyList();
+    systemHeaderSearchPaths = Collections.emptyList();
+    userHeaderSearchPaths = Collections.emptyList();
+    sources = Collections.emptySet();
+    headerDirs = Collections.emptySet();
+    macroDefines = Collections.emptySet();
+    macroUndefines = Collections.emptySet();
+    additionalArgs = Collections.emptyList();
   }
 
   public CompilationDetailsImpl(CompilationDetails compilationDetails) {
-    myCompilerExecutable = compilationDetails.getCompilerExecutable();
-    myCompileTask = new DefaultExternalTask(compilationDetails.getCompileTask());
-    myCompileWorkingDir = compilationDetails.getCompileWorkingDir();
-    myFrameworkSearchPaths = new ArrayList<File>(compilationDetails.getFrameworkSearchPaths());
-    mySystemHeaderSearchPaths = new ArrayList<File>(compilationDetails.getSystemHeaderSearchPaths());
-    myUserHeaderSearchPaths = new ArrayList<File>(compilationDetails.getUserHeaderSearchPaths());
-    mySources = new LinkedHashSet<SourceFile>(compilationDetails.getSources().size());
+    compilerExecutable = compilationDetails.getCompilerExecutable();
+    compileTask = new DefaultExternalTask(compilationDetails.getCompileTask());
+    compileWorkingDir = compilationDetails.getCompileWorkingDir();
+    frameworkSearchPaths = new ArrayList<File>(compilationDetails.getFrameworkSearchPaths());
+    systemHeaderSearchPaths = new ArrayList<File>(compilationDetails.getSystemHeaderSearchPaths());
+    userHeaderSearchPaths = new ArrayList<File>(compilationDetails.getUserHeaderSearchPaths());
+    sources = new LinkedHashSet<SourceFile>(compilationDetails.getSources().size());
     for (SourceFile source : compilationDetails.getSources()) {
-      mySources.add(new SourceFileImpl(source));
+      sources.add(new SourceFileImpl(source));
     }
-    myHeaderDirs = new LinkedHashSet<File>(compilationDetails.getHeaderDirs());
+    headerDirs = new LinkedHashSet<File>(compilationDetails.getHeaderDirs());
 
-    myMacroDefines = new LinkedHashSet<MacroDirective>(compilationDetails.getMacroDefines().size());
+    macroDefines = new LinkedHashSet<MacroDirective>(compilationDetails.getMacroDefines().size());
     for (MacroDirective macroDirective : compilationDetails.getMacroDefines()) {
-      myMacroDefines.add(new MacroDirectiveImpl(macroDirective));
+      macroDefines.add(new MacroDirectiveImpl(macroDirective));
     }
-    myMacroUndefines = new LinkedHashSet<String>(compilationDetails.getMacroUndefines());
-    myAdditionalArgs = new ArrayList<String>(compilationDetails.getAdditionalArgs());
+    macroUndefines = new LinkedHashSet<String>(compilationDetails.getMacroUndefines());
+    additionalArgs = new ArrayList<String>(compilationDetails.getAdditionalArgs());
   }
 
   @Override
   public ExternalTask getCompileTask() {
-    return myCompileTask;
+    return compileTask;
   }
 
   public void setCompileTask(ExternalTask compileTask) {
-    myCompileTask = compileTask;
+    this.compileTask = compileTask;
   }
 
   @Nullable
   @Override
   public File getCompilerExecutable() {
-    return myCompilerExecutable;
+    return compilerExecutable;
   }
 
   public void setCompilerExecutable(File compilerExecutable) {
-    myCompilerExecutable = compilerExecutable;
+    this.compilerExecutable = compilerExecutable;
   }
 
   @Override
   public File getCompileWorkingDir() {
-    return myCompileWorkingDir;
+    return compileWorkingDir;
   }
 
   public void setCompileWorkingDir(File compileWorkingDir) {
-    myCompileWorkingDir = compileWorkingDir;
+    this.compileWorkingDir = compileWorkingDir;
   }
 
   @NotNull
   @Override
   public List<File> getFrameworkSearchPaths() {
-    return myFrameworkSearchPaths;
+    return frameworkSearchPaths;
   }
 
   public void setFrameworkSearchPaths(@NotNull List<File> frameworkSearchPaths) {
-    myFrameworkSearchPaths = frameworkSearchPaths;
+    this.frameworkSearchPaths = frameworkSearchPaths;
   }
-
 
   @NotNull
   @Override
   public List<File> getSystemHeaderSearchPaths() {
-    return mySystemHeaderSearchPaths;
+    return systemHeaderSearchPaths;
   }
 
   public void setSystemHeaderSearchPaths(@NotNull List<File> systemHeaderSearchPaths) {
-    mySystemHeaderSearchPaths = systemHeaderSearchPaths;
+    this.systemHeaderSearchPaths = systemHeaderSearchPaths;
   }
-
 
   @NotNull
   @Override
   public List<File> getUserHeaderSearchPaths() {
-    return myUserHeaderSearchPaths;
+    return userHeaderSearchPaths;
   }
 
   public void setUserHeaderSearchPaths(@NotNull List<File> userHeaderSearchPaths) {
-    myUserHeaderSearchPaths = userHeaderSearchPaths;
+    this.userHeaderSearchPaths = userHeaderSearchPaths;
   }
-
 
   @NotNull
   @Override
   public Set<? extends SourceFile> getSources() {
-    return mySources;
+    return sources;
   }
 
   public void setSources(@NotNull Set<SourceFile> sources) {
-    mySources = sources;
+    this.sources = sources;
   }
-
 
   @NotNull
   @Override
   public Set<File> getHeaderDirs() {
-    return myHeaderDirs;
+    return headerDirs;
   }
 
   public void setHeaderDirs(@NotNull Set<File> headerDirs) {
-    myHeaderDirs = headerDirs;
+    this.headerDirs = headerDirs;
   }
 
 
   @NotNull
   @Override
   public Set<? extends MacroDirective> getMacroDefines() {
-    return myMacroDefines;
+    return macroDefines;
   }
 
   public void setMacroDefines(@NotNull Set<MacroDirective> macroDefines) {
-    myMacroDefines = macroDefines;
+    this.macroDefines = macroDefines;
   }
-
 
   @NotNull
   @Override
   public Set<String> getMacroUndefines() {
-    return myMacroUndefines;
+    return macroUndefines;
   }
 
   public void setMacroUndefines(@NotNull Set<String> macroUndefines) {
-    myMacroUndefines = macroUndefines;
+    this.macroUndefines = macroUndefines;
   }
 
 
   @NotNull
   @Override
   public List<String> getAdditionalArgs() {
-    return myAdditionalArgs;
+    return additionalArgs;
   }
 
   public void setAdditionalArgs(@NotNull List<String> additionalArgs) {
-    myAdditionalArgs = additionalArgs;
+    this.additionalArgs = additionalArgs;
   }
-
 }
