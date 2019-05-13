@@ -286,8 +286,8 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         )
 
         TestCase.assertEquals(
-            "KtLightMethodImpl -> org.jetbrains.annotations.NotNull," +
-                    " KtLightFieldForDeclaration -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
+            "KtUltraLightMethodForSourceDeclaration -> org.jetbrains.annotations.NotNull," +
+                    " KtUltraLightField -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
             annotationsString(myFixture.findElementByText("bar", KtModifierListOwner::class.java))
         )
     }
@@ -338,8 +338,8 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         )
 
         TestCase.assertEquals(
-            "KtLightMethodImpl -> org.jetbrains.annotations.NotNull," +
-                    " KtLightFieldForDeclaration -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
+            "UltraLightMethodForSourceDeclaration -> org.jetbrains.annotations.NotNull," +
+                    " KtUltraLightField -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
             annotationsString(myFixture.findElementByText("bar", KtModifierListOwner::class.java))
         )
     }
