@@ -210,7 +210,8 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       caretKeeper.restoreCaretPosition();
     }
     if (editor instanceof EditorEx && isFullReformat) {
-      CodeStyleSettingsManager.getInstance(myProject).fireCodeStyleSettingsChanged(file);
+      //TODO<rv> Move to another place
+      //CodeStyleSettingsManager.getInstance(myProject).fireCodeStyleSettingsChanged(file);
     }
   }
 
