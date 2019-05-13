@@ -25,9 +25,9 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.OnePixelDivider;
-import com.intellij.openapi.ui.ThreeComponentsSplitter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBList;
@@ -38,11 +38,11 @@ import com.intellij.util.Alarm;
 import com.intellij.util.SmartList;
 import com.intellij.util.concurrency.EdtExecutorService;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.EdtInvocationManager;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -60,13 +60,14 @@ import java.util.function.Supplier;
  */
 @ApiStatus.Experimental
 public class MultipleBuildsView implements BuildProgressListener, Disposable {
+  @NonNls private static final String SPLITTER_PROPERTY = "MultipleBuildsView.Splitter.Proportion";
 
   protected final Project myProject;
   protected final BuildContentManager myBuildContentManager;
   private final AtomicBoolean isInitializeStarted;
   private final List<Runnable> myPostponedRunnables;
   private final ProgressWatcher myProgressWatcher;
-  private final ThreeComponentsSplitter myThreeComponentsSplitter;
+  private final OnePixelSplitter myThreeComponentsSplitter;
   private final JBList<AbstractViewManager.BuildInfo> myBuildsList;
   private final Map<Object, AbstractViewManager.BuildInfo> myBuildsMap;
   private final Map<AbstractViewManager.BuildInfo, BuildView> myViewMap;
@@ -83,8 +84,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
     myViewManager = viewManager;
     isInitializeStarted = new AtomicBoolean();
     myPostponedRunnables = ContainerUtil.createConcurrentList();
-    myThreeComponentsSplitter = new ThreeComponentsSplitter();
-    Disposer.register(this, myThreeComponentsSplitter);
+    myThreeComponentsSplitter = new OnePixelSplitter(SPLITTER_PROPERTY, 0.25f);
     myBuildsList = new JBList<>();
     myBuildsList.setModel(new DefaultListModel<>());
     myBuildsList.setFixedCellHeight(UIUtil.LIST_FIXED_CELL_HEIGHT * 2);
@@ -162,7 +162,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
             startBuildEvent.getId(), startBuildEvent.getBuildTitle(), startBuildEvent.getWorkingDir(), startBuildEvent.getEventTime());
           String selectionStateKey = "build.toolwindow." + myViewManager.getViewName() + ".selection.state";
           final BuildView buildView = new BuildView(myProject, buildDescriptor, selectionStateKey, myViewManager);
-          Disposer.register(myThreeComponentsSplitter, buildView);
+          Disposer.register(this, buildView);
           return buildView;
         });
         view.onEvent(startBuildEvent);
@@ -188,8 +188,8 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
         }
         buildInfo.content = myContent;
 
-        if (myThreeComponentsSplitter.getLastComponent() == null) {
-          myThreeComponentsSplitter.setLastComponent(view);
+        if (myThreeComponentsSplitter.getSecondComponent() == null) {
+          myThreeComponentsSplitter.setSecondComponent(view);
           myViewManager.configureToolbar(myToolbarActions, this, view);
         }
         if (myBuildsList.getModel().getSize() > 1) {
@@ -199,7 +199,6 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
           myThreeComponentsSplitter.setFirstComponent(scrollPane);
           myBuildsList.setVisible(true);
           myBuildsList.setSelectedIndex(0);
-          myThreeComponentsSplitter.repaint();
 
           for (BuildView consoleView : myViewMap.values()) {
             BuildTreeConsoleView buildConsoleView = consoleView.getView(BuildTreeConsoleView.class.getName(), BuildTreeConsoleView.class);
@@ -245,29 +244,15 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
               if (selectedBuild == null) return;
 
               BuildView view = myViewMap.get(selectedBuild);
-              JComponent lastComponent = myThreeComponentsSplitter.getLastComponent();
+              JComponent lastComponent = myThreeComponentsSplitter.getSecondComponent();
               if (view != null && lastComponent != view.getComponent()) {
-                myThreeComponentsSplitter.setLastComponent(view.getComponent());
+                myThreeComponentsSplitter.setSecondComponent(view.getComponent());
                 view.getComponent().setVisible(true);
                 if (lastComponent != null) {
                   lastComponent.setVisible(false);
                 }
                 myViewManager.configureToolbar(myToolbarActions, MultipleBuildsView.this, view);
                 view.getComponent().repaint();
-              }
-
-              int firstSize = myThreeComponentsSplitter.getFirstSize();
-              int lastSize = myThreeComponentsSplitter.getLastSize();
-              if (firstSize == 0 && lastSize == 0) {
-                EdtInvocationManager.getInstance().invokeLater(() -> {
-                  Container container = myThreeComponentsSplitter;
-                  int containerWidth = 0;
-                  while (container != null && (containerWidth = container.getWidth()) == 0) {
-                    container = container.getParent();
-                  }
-                  int width = Math.round(containerWidth / 4f);
-                  myThreeComponentsSplitter.setFirstSize(width);
-                });
               }
             }
           });
@@ -339,7 +324,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
       runOnEdt.add(() -> {
         myBuildsList.setVisible(false);
         myThreeComponentsSplitter.setFirstComponent(null);
-        myThreeComponentsSplitter.setLastComponent(null);
+        myThreeComponentsSplitter.setSecondComponent(null);
       });
       myToolbarActions.removeAll();
     }
