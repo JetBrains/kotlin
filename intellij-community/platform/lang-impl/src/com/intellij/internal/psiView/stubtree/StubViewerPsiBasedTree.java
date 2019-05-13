@@ -135,7 +135,7 @@ public class StubViewerPsiBasedTree implements ViewerPsiBasedTree {
     if (stub instanceof PsiFileStub) {
       PsiFileWithStubSupport file = (PsiFileWithStubSupport)rootElement;
       final StubTreeNode rootNode = new StubTreeNode((StubElement)stub, null);
-      StructureTreeModel treeModel = new StructureTreeModel(new StubTreeStructure(rootNode));
+      StructureTreeModel treeModel = new StructureTreeModel<>(new StubTreeStructure(rootNode), myTreeModelDisposable);
       myTreeModel = new AsyncTreeModel(treeModel, myTreeModelDisposable);
       myStubTree.setModel(myTreeModel);
       fillPsiToStubCache(file, (PsiFileStub)stub);

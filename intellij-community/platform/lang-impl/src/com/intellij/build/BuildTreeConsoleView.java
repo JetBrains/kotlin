@@ -125,7 +125,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     myRootNode.add(myBuildProgressRootNode);
 
     SimpleTreeStructure treeStructure = new SimpleTreeStructure.Impl(myRootNode);
-    myTreeModel = new StructureTreeModel<>(treeStructure);
+    myTreeModel = new StructureTreeModel<>(treeStructure, this);
     myTree = initTree(new AsyncTreeModel(myTreeModel, this));
 
     JPanel myContentPanel = new JPanel();
