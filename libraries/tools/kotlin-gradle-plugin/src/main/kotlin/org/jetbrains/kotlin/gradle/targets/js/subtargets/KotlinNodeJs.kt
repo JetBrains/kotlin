@@ -33,9 +33,13 @@ class KotlinNodeJs(target: KotlinJsTarget) :
         }
 
         val project = target.project
+
         project.createOrRegisterTask<NodeJsExec>(disambiguateCamelCased("run")) {
+            val compileKotlinTask = compilation.compileKotlinTask
+            it.dependsOn(target.npmResolveTask, compileKotlinTask)
+
             val npmProject = project.npmProject
-            it.args(npmProject.compileOutput(compilation.compileKotlinTask))
+            it.args(npmProject.compileOutput(compileKotlinTask))
 
             // source maps support
             it.args("--require", npmProject.getModuleEntryPath("kotlin-test-nodejs-runner"))
