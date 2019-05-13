@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -1394,6 +1395,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
 
         @TestMetadata("kotlinInheritor.before.Main.java")
+        @Ignore("UltraLight classes does not support modification yet")
         public void testKotlinInheritor() throws Exception {
             runTest("idea/testData/quickfix/convertJavaInterfaceToClass/kotlinInheritor.before.Main.java");
         }
