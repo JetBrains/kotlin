@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -68,7 +69,12 @@ private class RemoveRequireNotNullCallFix(private val functionName: String) : Lo
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val callExpression = descriptor.psiElement.getStrictParentOfType<KtCallExpression>() ?: return
-        val qualifiedExpression = callExpression.getQualifiedExpressionForSelector()
-        (qualifiedExpression ?: callExpression).delete()
+        val argument = callExpression.valueArguments.firstOrNull()?.getArgumentExpression() ?: return
+        val target = callExpression.getQualifiedExpressionForSelector() ?: callExpression
+        if (callExpression.isUsedAsExpression(callExpression.analyze(BodyResolveMode.PARTIAL))) {
+            target.replace(argument)            
+        } else {
+            target.delete()
+        }
     }
 }
