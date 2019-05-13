@@ -37,6 +37,7 @@ import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
@@ -50,6 +51,7 @@ import com.intellij.util.CollectConsumer;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.storage.HeavyProcessLatch;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
 import com.intellij.util.ui.accessibility.ScreenReader;
 import com.intellij.util.ui.update.Activatable;
@@ -62,6 +64,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -931,15 +934,13 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     if (index < 0) {
       LOG.error("No selected element, size=" + getListModel().getSize() + "; items" + getItems());
     }
-    Rectangle itmBounds = myList.getCellBounds(index, index);
-    if (itmBounds == null){
+    Rectangle itemBounds = myList.getCellBounds(index, index);
+    if (itemBounds == null){
       LOG.error("No bounds for " + index + "; size=" + getListModel().getSize());
       return null;
     }
-    Point layeredPanePoint=SwingUtilities.convertPoint(myList,itmBounds.x,itmBounds.y,getComponent());
-    itmBounds.x = layeredPanePoint.x;
-    itmBounds.y = layeredPanePoint.y;
-    return itmBounds;
+
+    return SwingUtilities.convertRectangle(myList, itemBounds, getComponent());
   }
 
   private boolean fireBeforeItemSelected(@Nullable final LookupElement item, char completionChar) {
@@ -1227,25 +1228,29 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   }
 
   @Override
-  public boolean showElementActions() {
-    if (!isVisible()) return false;
+  public void showElementActions(@Nullable InputEvent event) {
+    if (!isVisible()) return;
 
-    final LookupElement element = getCurrentItem();
+    LookupElement element = getCurrentItem();
     if (element == null) {
-      return false;
+      return;
     }
 
-    final Collection<LookupElementAction> actions = getActionsFor(element);
+    Collection<LookupElementAction> actions = getActionsFor(element);
     if (actions.isEmpty()) {
-      return false;
+      return;
     }
 
     UIEventLogger.logUIEvent(UIEventId.LookupShowElementActions);
 
-    final Rectangle bounds = getCurrentItemBounds();
-    JBPopupFactory.getInstance().createListPopup(new LookupActionsStep(actions, this, element)).
-      show(new RelativePoint(getComponent(), new Point(bounds.x + bounds.width, bounds.y)));
-    return true;
+    Rectangle itemBounds = getCurrentItemBounds();
+    Rectangle visibleRect = SwingUtilities.convertRectangle(myList, myList.getVisibleRect(), getComponent());
+    ListPopup listPopup = JBPopupFactory.getInstance().createListPopup(new LookupActionsStep(actions, this, element));
+    Point p = (itemBounds.intersects(visibleRect) || event == null) ?
+              new Point(itemBounds.x + itemBounds.width, itemBounds.y):
+              SwingUtilities.convertPoint(event.getComponent(), new Point(0, event.getComponent().getHeight() + JBUI.scale(2)), getComponent());
+
+    listPopup.show(new RelativePoint(getComponent(), p));
   }
 
   @NotNull

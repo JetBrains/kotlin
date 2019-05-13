@@ -15,7 +15,10 @@
  */
 package com.intellij.codeInsight.lookup;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
+import java.awt.event.InputEvent;
 
 /**
  * @author peter
@@ -25,7 +28,5 @@ public interface LookupEx extends Lookup {
 
   Component getComponent();
 
-  boolean showElementActions();
-
-
+  void showElementActions(@Nullable InputEvent event);
 }

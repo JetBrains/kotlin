@@ -63,7 +63,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
 
     final LookupEx lookup = LookupManager.getActiveLookup(editor);
     if (lookup != null) {
-      lookup.showElementActions();
+      lookup.showElementActions(null);
       return;
     }
 

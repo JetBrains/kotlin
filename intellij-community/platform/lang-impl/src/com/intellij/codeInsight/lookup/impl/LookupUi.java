@@ -13,19 +13,17 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
+import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.ScreenUtil;
 import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLayeredPane;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.panels.NonOpaquePanel;
@@ -319,7 +317,7 @@ class LookupUi {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      myLookup.showElementActions();
+      myLookup.showElementActions(e.getInputEvent());
     }
   }
 
@@ -334,9 +332,11 @@ class LookupUi {
       group.add(new ChangeSortingAction());
       group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC));
 
-      JBPopupFactory.getInstance().createActionGroupPopup(null, group, ((EditorImpl)myLookup.getEditor()).getDataContext(),
-                                                          JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false, ActionPlaces.EDITOR_POPUP).
-        show(new RelativePoint(e.getInputEvent().getComponent(), new Point(0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2))));
+      ActionManagerImpl am = (ActionManagerImpl) ActionManager.getInstance();
+      ActionPopupMenu popupMenu = am.createActionPopupMenu(SORTING_MENU, group);
+
+      popupMenu.setTargetComponent(myLookup.getEditor().getContentComponent());
+      popupMenu.getComponent().show(e.getInputEvent().getComponent(), 0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2));
     }
   }
 

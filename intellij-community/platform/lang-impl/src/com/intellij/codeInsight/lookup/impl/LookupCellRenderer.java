@@ -85,7 +85,8 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
     myLookup = lookup;
     myNameComponent = new MySimpleColoredComponent();
-    myNameComponent.setIpad(JBUI.insetsLeft(2));
+    myNameComponent.setIconTextGap(JBUI.scale(4));
+    myNameComponent.setIpad(JBUI.insetsLeft(6));
     myNameComponent.setMyBorder(null);
 
     myTailComponent = new MySimpleColoredComponent();
