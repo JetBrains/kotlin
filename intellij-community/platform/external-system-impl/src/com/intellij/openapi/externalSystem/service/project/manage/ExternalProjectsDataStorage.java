@@ -54,7 +54,7 @@ import static com.intellij.openapi.externalSystem.model.ProjectKeys.PROJECT;
 public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaAdapter, PersistentStateComponent<ExternalProjectsDataStorage.State> {
   private static final Logger LOG = Logger.getInstance(ExternalProjectsDataStorage.class);
 
-  private static final int STORAGE_VERSION = 3;
+  private static final int STORAGE_VERSION = 4;
 
   @NotNull
   private final Project myProject;
@@ -365,7 +365,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     if (isInvalidated(cacheFile.getFile(), fileAttributes)) {
       throw new IOException("External projects data storage was invalidated");
     }
-    return ContainerUtil.notNullize(cacheFile.readList(InternalExternalProjectInfo.class));
+    return ContainerUtil.notNullize(cacheFile.readList(InternalExternalProjectInfo.class, SerializationKt.getExternalSystemBeanConstructed()));
   }
 
   private static boolean isInvalidated(@NotNull Path configurationFile, @NotNull BasicFileAttributes fileAttributes) throws IOException {

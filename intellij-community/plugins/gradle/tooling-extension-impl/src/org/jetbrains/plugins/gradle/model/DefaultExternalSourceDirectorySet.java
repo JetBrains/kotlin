@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.model;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,130 +13,130 @@ public class DefaultExternalSourceDirectorySet implements ExternalSourceDirector
   private static final long serialVersionUID = 1L;
 
   @NotNull
-  private String myName;
+  private String name;
   @NotNull
-  private Set<File> mySrcDirs;
-  private File myOutputDir;
-  private final List<File> myGradleOutputDirs;
-  private final FilePatternSet myPatterns;
+  private Set<File> srcDirs;
+  private File outputDir;
+  private final List<File> gradleOutputDirs;
+  private final FilePatternSet patterns;
   @NotNull
-  private List<ExternalFilter> myFilters;
+  private List<ExternalFilter> filters;
 
-  private boolean myInheritedCompilerOutput;
+  private boolean inheritedCompilerOutput;
 
   public DefaultExternalSourceDirectorySet() {
-    mySrcDirs = new HashSet<File>();
-    myFilters = new ArrayList<ExternalFilter>();
-    myGradleOutputDirs = new ArrayList<File>();
-    myPatterns = new FilePatternSetImpl(new LinkedHashSet<String>(), new LinkedHashSet<String>());
+    srcDirs = new HashSet<File>();
+    filters = new ArrayList<ExternalFilter>();
+    gradleOutputDirs = new ArrayList<File>();
+    patterns = new FilePatternSetImpl(new LinkedHashSet<String>(), new LinkedHashSet<String>());
   }
 
   public DefaultExternalSourceDirectorySet(ExternalSourceDirectorySet sourceDirectorySet) {
     this();
-    myName = sourceDirectorySet.getName();
-    mySrcDirs = new HashSet<File>(sourceDirectorySet.getSrcDirs());
-    myOutputDir = sourceDirectorySet.getOutputDir();
-    myGradleOutputDirs.addAll(sourceDirectorySet.getGradleOutputDirs());
+    name = sourceDirectorySet.getName();
+    srcDirs = new HashSet<File>(sourceDirectorySet.getSrcDirs());
+    outputDir = sourceDirectorySet.getOutputDir();
+    gradleOutputDirs.addAll(sourceDirectorySet.getGradleOutputDirs());
 
-    myPatterns.getIncludes().addAll(sourceDirectorySet.getPatterns().getIncludes());
-    myPatterns.getExcludes().addAll(sourceDirectorySet.getPatterns().getExcludes());
+    patterns.getIncludes().addAll(sourceDirectorySet.getPatterns().getIncludes());
+    patterns.getExcludes().addAll(sourceDirectorySet.getPatterns().getExcludes());
     for (ExternalFilter filter : sourceDirectorySet.getFilters()) {
-      myFilters.add(new DefaultExternalFilter(filter));
+      filters.add(new DefaultExternalFilter(filter));
     }
-    myInheritedCompilerOutput = sourceDirectorySet.isCompilerOutputPathInherited();
+    inheritedCompilerOutput = sourceDirectorySet.isCompilerOutputPathInherited();
   }
 
   @NotNull
   @Override
   public String getName() {
-    return myName;
+    return name;
   }
 
   public void setName(@NotNull String name) {
-    myName = name;
+    this.name = name;
   }
 
   @NotNull
   @Override
   public Set<File> getSrcDirs() {
-    return mySrcDirs;
+    return srcDirs;
   }
 
   public void setSrcDirs(@NotNull Set<File> srcDirs) {
-    mySrcDirs = srcDirs;
+    this.srcDirs = srcDirs;
   }
 
   @NotNull
   @Override
   public File getOutputDir() {
-    return myOutputDir;
+    return outputDir;
   }
 
   public void setOutputDir(@NotNull File outputDir) {
-    myOutputDir = outputDir;
+    this.outputDir = outputDir;
   }
 
   @NotNull
   @Override
   public File getGradleOutputDir() {
-    assert myGradleOutputDirs.size() > 0;
-    return myGradleOutputDirs.get(0);
+    assert gradleOutputDirs.size() > 0;
+    return gradleOutputDirs.get(0);
   }
 
   @NotNull
   @Override
   public Collection<File> getGradleOutputDirs() {
-    return myGradleOutputDirs;
+    return gradleOutputDirs;
   }
 
   public void addGradleOutputDir(@NotNull File outputDir) {
-    myGradleOutputDirs.add(outputDir);
+    gradleOutputDirs.add(outputDir);
   }
 
   @Override
   public boolean isCompilerOutputPathInherited() {
-    return myInheritedCompilerOutput;
+    return inheritedCompilerOutput;
   }
 
   @NotNull
   @Override
   public Set<String> getExcludes() {
-    return myPatterns.getExcludes();
+    return patterns.getExcludes();
   }
 
   public void setExcludes(Set<String> excludes) {
-    myPatterns.getExcludes().clear();
-    myPatterns.getExcludes().addAll(excludes);
+    patterns.getExcludes().clear();
+    patterns.getExcludes().addAll(excludes);
   }
 
   @NotNull
   @Override
   public Set<String> getIncludes() {
-    return myPatterns.getIncludes();
+    return patterns.getIncludes();
   }
 
   public void setIncludes(Set<String> includes) {
-    myPatterns.getIncludes().clear();
-    myPatterns.getIncludes().addAll(includes);
+    patterns.getIncludes().clear();
+    patterns.getIncludes().addAll(includes);
   }
 
   @NotNull
   @Override
   public FilePatternSet getPatterns() {
-    return myPatterns;
+    return patterns;
   }
 
   public void setInheritedCompilerOutput(boolean inheritedCompilerOutput) {
-    myInheritedCompilerOutput = inheritedCompilerOutput;
+    this.inheritedCompilerOutput = inheritedCompilerOutput;
   }
 
   @NotNull
   @Override
   public List<ExternalFilter> getFilters() {
-    return myFilters;
+    return filters;
   }
 
   public void setFilters(@NotNull List<ExternalFilter> filters) {
-    myFilters = filters;
+    this.filters = filters;
   }
 }
