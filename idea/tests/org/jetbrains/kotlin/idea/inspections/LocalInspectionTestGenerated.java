@@ -5779,6 +5779,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testRequire() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/require.kt");
         }
+
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/usedAsExpression.kt");
+        }
+
+        @TestMetadata("usedAsExpression2.kt")
+        public void testUsedAsExpression2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/usedAsExpression2.kt");
+        }
+
+        @TestMetadata("usedAsExpression3.kt")
+        public void testUsedAsExpression3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantRequireNotNullCall/usedAsExpression3.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantReturnLabel")
