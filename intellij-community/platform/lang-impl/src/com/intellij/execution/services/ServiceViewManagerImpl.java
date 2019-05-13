@@ -113,6 +113,22 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     myContentManager.addContentManagerListener(new MyContentMangerListener(allServicesContent));
     myContentManager.addContent(allServicesContent);
 
+    serviceView.getModel().addModelListener(() -> {
+      boolean isEmpty = serviceView.getModel().getRoots().isEmpty();
+      AppUIUtil.invokeOnEdt(() -> {
+        if (isEmpty) {
+          if (myContentManager.getIndexOfContent(allServicesContent) >= 0) {
+            myContentManager.removeContent(allServicesContent, false);
+          }
+        }
+        else {
+          if (myContentManager.getIndexOfContent(allServicesContent) < 0) {
+            myContentManager.addContent(allServicesContent, 0);
+          }
+        }
+      }, myProject.getDisposed());
+    });
+
     ToolWindowEx toolWindowEx = (ToolWindowEx)toolWindow;
     toolWindowEx.setAdditionalGearActions(new DefaultActionGroup(ToggleAutoScrollAction.toSource(), ToggleAutoScrollAction.fromSource()));
     toolWindowEx.setTitleActions(ServiceViewAutoScrollFromSourceHandler.install(myProject, toolWindow));
@@ -460,7 +476,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
     @Override
     public void contentRemoved(@NotNull ContentManagerEvent event) {
-      if (event.getContent() != myDropTargetContent) {
+      if (event.getContent() != myDropTargetContent && event.getContent() != myAllServiceContent) {
         ServiceView removedView = (ServiceView)event.getContent().getComponent();
         myModelFilter.removeFilter(removedView.getModel().getFilter());
         myServiceViews.remove(removedView);
