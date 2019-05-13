@@ -18,7 +18,7 @@ class KotlinWebpackConfig(
     val entry: File,
     val reportEvaluatedConfigFile: File?,
     val outputPath: File,
-    val configDirectory: File,
+    val configDirectory: File?,
     val reportDir: File?,
     var devServer: DevServer? = null,
     val showProgress: Boolean = false,
@@ -116,8 +116,11 @@ config.plugins.push(new BundleAnalyzerPlugin(${json(config)}));
             )
         }
 
-        appendln()
-        loadConfigs(configDirectory)
+        if (configDirectory != null) {
+            appendln()
+            loadConfigs(configDirectory)
+        }
+
         appendln()
 
         if (reportEvaluatedConfigFile != null) {

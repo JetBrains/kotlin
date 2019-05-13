@@ -48,7 +48,10 @@ internal class NpmResolver private constructor(val rootProject: Project) {
             else {
                 val resolver = NpmResolver(rootProject)
                 check(resolver.resolve(rootProject, null))
-                ResolvedNow(ResolvedProject(resolver.npmPackages, resolver.requiredByTasks))
+                val resolution = ResolvedProject(resolver.npmPackages, resolver.requiredByTasks)
+                ProjectData[rootProject]!!.resolved = resolution
+
+                ResolvedNow(resolution)
             }
         }
 
