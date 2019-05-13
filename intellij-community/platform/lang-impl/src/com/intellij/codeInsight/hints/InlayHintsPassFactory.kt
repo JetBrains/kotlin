@@ -5,6 +5,7 @@ import com.intellij.codeHighlighting.TextEditorHighlightingPass
 import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory
 import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -50,7 +51,7 @@ class InlayHintsPassFactory(registrar: TextEditorHighlightingPassRegistrar) : Te
       val currentStamp = file.manager.modificationTracker.modificationCount
       val savedStamp = editor.getUserData<Long>(INLAY_PSI_MODIFICATION_STAMP)
       if (!forceRefresh && savedStamp != null && savedStamp == currentStamp) return null
-      val settings = file.project.service<InlayHintsSettings>()
+      val settings = ServiceManager.getService(InlayHintsSettings::class.java)
       val language = file.language
       val collectors = HintUtils.getHintProvidersForLanguage(language, file.project)
         .mapNotNull { it.getCollectorWrapperFor(file, editor, language) }

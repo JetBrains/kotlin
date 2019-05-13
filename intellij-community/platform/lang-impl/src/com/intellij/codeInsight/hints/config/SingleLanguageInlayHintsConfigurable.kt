@@ -5,6 +5,7 @@ import com.intellij.codeInsight.hints.HintUtils
 import com.intellij.codeInsight.hints.InlayHintsPassFactory
 import com.intellij.codeInsight.hints.InlayHintsSettings
 import com.intellij.lang.Language
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
@@ -14,7 +15,7 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
   private val panel: SingleLanguageInlayHintsSettingsPanel
 
   init {
-    val settings = project.service<InlayHintsSettings>()
+    val settings = ServiceManager.getService(InlayHintsSettings::class.java)
     // All configurables operate with copy of settings, that is why we can do live preview
     val providers = HintUtils.getHintProvidersForLanguage(language, project).map { it.withSettingsCopy() }
     val options = providers.map {

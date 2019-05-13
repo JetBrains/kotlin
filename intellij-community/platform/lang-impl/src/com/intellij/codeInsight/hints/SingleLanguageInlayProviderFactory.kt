@@ -3,6 +3,7 @@ package com.intellij.codeInsight.hints
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
@@ -12,7 +13,7 @@ private val inlayProviderName = ExtensionPointName<LanguageExtensionPoint<InlayH
 class SingleLanguageInlayProviderFactory : InlayHintsProviderFactory {
   override fun getProvidersInfo(project: Project): List<HintsProviderInfo<*>> {
     val languages = findLanguagesWithHintsSupport()
-    val config = project.service<InlayHintsSettings>()
+    val config = ServiceManager.getService(InlayHintsSettings::class.java)
     return languages.mapNotNull { Language.findLanguageByID(it) }
       .flatMap { language ->
         InlayHintsProviderExtension.allForLanguage(language).map { HintsProviderInfo(it.withSettings(language, config), language) }

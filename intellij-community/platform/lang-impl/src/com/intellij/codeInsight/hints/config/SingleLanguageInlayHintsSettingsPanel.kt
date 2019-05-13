@@ -6,6 +6,7 @@ import com.intellij.codeInsight.hint.EditorFragmentComponent
 import com.intellij.codeInsight.hints.*
 import com.intellij.lang.Language
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileTypes.FileType
@@ -39,7 +40,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   private var selectedProvider = defaultProvider
   private val providerTypesList = CheckBoxList<HintProviderOption<out Any>>()
   private val bottomPanel = JPanel()
-  private val settings = project.service<InlayHintsSettings>()
+  private val settings = ServiceManager.getService(InlayHintsSettings::class.java)
   private val immediateConfigurableListener = object : ChangeListener {
     override fun settingsChanged() {
       updateEditor(editorField.text)

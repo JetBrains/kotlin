@@ -6,9 +6,10 @@ import com.intellij.configurationStore.serialize
 import com.intellij.lang.Language
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import org.jdom.Element
 
-@State(name = "InlayHintsSettings")
+@State(name = "InlayHintsSettings", storages = [Storage("inlayHints.xml")])
 class InlayHintsSettings : PersistentStateComponent<InlayHintsSettings.State> {
   private var myState = State()
   private val lock = Any()
