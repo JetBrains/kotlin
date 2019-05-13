@@ -32,12 +32,12 @@ class GradleDaemonStartupIssueChecker : GradleIssueChecker {
     }
 
     val quickFixDescription = StringBuilder()
-    val myQuickFixes = ArrayList<BuildIssueQuickFix>()
+    val quickFixes = ArrayList<BuildIssueQuickFix>()
     val projectGradleProperties = Paths.get(issueData.projectPath, "gradle.properties")
     if (projectGradleProperties.isFile()) {
       val openFileQuickFix = OpenFileQuickFix(projectGradleProperties, "org.gradle.jvmargs")
       quickFixDescription.append(" - <a href=\"${openFileQuickFix.id}\">gradle.properties</a> in project root directory\n")
-      myQuickFixes.add(openFileQuickFix)
+      quickFixes.add(openFileQuickFix)
     }
 
     val gradleUserHomeDir = BuildLayoutParameters().gradleUserHomeDir
@@ -45,7 +45,7 @@ class GradleDaemonStartupIssueChecker : GradleIssueChecker {
     if (commonGradleProperties.isFile()) {
       val openFileQuickFix = OpenFileQuickFix(commonGradleProperties, "org.gradle.jvmargs")
       quickFixDescription.append(" - <a href=\"${openFileQuickFix.id}\">gradle.properties</a> in in GRADLE_USER_HOME directory.\n")
-      myQuickFixes.add(openFileQuickFix)
+      quickFixes.add(openFileQuickFix)
     }
     if ("AndroidStudio" != PlatformUtils.getPlatformPrefix()) { // Android Studio doesn't have Gradle VM options setting
       val gradleVmOptions = GradleSystemSettings.getInstance().gradleVmOptions
@@ -54,7 +54,7 @@ class GradleDaemonStartupIssueChecker : GradleIssueChecker {
         BiPredicate { _, _ -> gradleVmOptions != GradleSystemSettings.getInstance().gradleVmOptions },
         GradleBundle.message("gradle.settings.text.vm.options")
       )
-      myQuickFixes.add(gradleSettingsFix)
+      quickFixes.add(gradleSettingsFix)
       quickFixDescription.append(" - <a href=\"${gradleSettingsFix.id}\">IDE Gradle VM options</a> \n")
     }
 
@@ -66,7 +66,7 @@ class GradleDaemonStartupIssueChecker : GradleIssueChecker {
 
     return object : BuildIssue {
       override val description: String = issueDescription.toString()
-      override val quickFixes = myQuickFixes
+      override val quickFixes = quickFixes
     }
   }
 }
