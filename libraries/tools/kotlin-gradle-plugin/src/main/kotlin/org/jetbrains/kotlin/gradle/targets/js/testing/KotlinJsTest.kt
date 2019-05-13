@@ -12,14 +12,14 @@ import org.gradle.process.internal.DefaultProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunner
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
-open class KotlinJsTest : KotlinTest() {
+open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     @Internal
     @SkipWhenEmpty
     internal var testFramework: KotlinJsTestFramework? = null
@@ -27,17 +27,17 @@ open class KotlinJsTest : KotlinTest() {
     @Input
     var debug: Boolean = false
 
-    @Internal
-    var runtimeDependencyHandler: HasKotlinDependencies? = null
-
     @Input
     var nodeModulesToLoad: MutableList<String> = mutableListOf()
 
+    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
+        get() = testFramework!!.requiredNpmDependencies
+
     fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(), body)
 
-    fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(), body)
+    fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(project), body)
 
-    fun useKarma(body: KotlinKarma.() -> Unit) = use(KotlinKarma(), body)
+    fun useKarma(body: KotlinKarma.() -> Unit) = use(KotlinKarma(project), body)
 
     private inline fun <T : KotlinJsTestFramework> use(runner: T, body: T.() -> Unit): T {
         check(testFramework == null) {
@@ -47,16 +47,12 @@ open class KotlinJsTest : KotlinTest() {
         val testFramework = runner.also(body)
         this.testFramework = testFramework
 
-        val dependenciesHolder = runtimeDependencyHandler
-        if (dependenciesHolder != null) {
-            testFramework.configure(dependenciesHolder)
-        }
-
         return testFramework
     }
 
     override fun executeTests() {
         NpmResolver.resolve(project)
+        NpmResolver.checkRequiredDependencies(project, this)
         super.executeTests()
     }
 
@@ -65,7 +61,7 @@ open class KotlinJsTest : KotlinTest() {
 
         NpmResolver.resolve(project)
 
-        forkOptions.workingDir = NpmProjectLayout[project].nodeWorkDir
+        forkOptions.workingDir = NpmProject[project].nodeWorkDir
         forkOptions.executable = NodeJsPlugin.apply(project).root.environment.nodeExecutable
 
         val nodeJsArgs = mutableListOf<String>()

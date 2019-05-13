@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-abstract class KotlinJsInnerTargetConfigurator(val target: KotlinOnlyTarget<KotlinJsCompilation>) {
+abstract class KotlinJsInnerTargetConfigurator(
+    val target: KotlinOnlyTarget<KotlinJsCompilation>,
+    private val disambiguationClassifier: String
+) {
     val project get() = target.project
-    private val disambiguationClassifier get() = "browser"
 
     fun configure() {
         configureTests()
@@ -64,7 +66,6 @@ abstract class KotlinJsInnerTargetConfigurator(val target: KotlinOnlyTarget<Kotl
                 compileTask.outputFile.exists()
             }
 
-            testJs.runtimeDependencyHandler = compilation
             testJs.targetName = disambiguationClassifier
             testJs.nodeModulesToLoad.add(compileTask.outputFile.name)
 
@@ -85,6 +86,7 @@ abstract class KotlinJsInnerTargetConfigurator(val target: KotlinOnlyTarget<Kotl
     }
 
     protected abstract fun configureDefaultTestFramework(it: KotlinJsTest)
+
     fun configureRun() {
         target.compilations.all { compilation ->
             if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {

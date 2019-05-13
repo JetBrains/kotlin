@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
-class KotlinBrowserJs(
-    target: KotlinOnlyTarget<KotlinJsCompilation>
-) : KotlinJsInnerTargetConfigurator(target) {
+class KotlinBrowserJs(target: KotlinOnlyTarget<KotlinJsCompilation>) : KotlinJsInnerTargetConfigurator(target, "browser") {
     private val versions = project.nodeJs.versions
 
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
@@ -32,26 +30,12 @@ class KotlinBrowserJs(
         val npmProject = project.npmProject
         val compileKotlinTask = compilation.compileKotlinTask
 
-        compilation.dependencies {
-            runtimeOnly(versions.webpack)
-            runtimeOnly(versions.webpackCli)
-            runtimeOnly(versions.webpackBundleAnalyzer)
-
-            // for source map support
-            runtimeOnly(versions.sourceMapLoader.npm(project))
-            runtimeOnly(versions.sourceMapSupport.npm(project))
-        }
-
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
             it.dependsOn(compileKotlinTask)
 
             it.entry = npmProject.compileOutput(compileKotlinTask)
 
             project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
-        }
-
-        compilation.dependencies {
-            runtimeOnly(npm("webpack-dev-server", "3.3.1"))
         }
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("run")) {
