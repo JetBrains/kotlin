@@ -1,13 +1,15 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js
+package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -15,8 +17,12 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
-class KotlinBrowserJs(target: KotlinOnlyTarget<KotlinJsCompilation>) : KotlinJsInnerTargetConfigurator(target, "browser") {
+class KotlinBrowserJs(target: KotlinJsTarget) :
+    KotlinJsSubTarget(target, "browser"),
+    KotlinJsBrowserDsl {
+
     private val versions = project.nodeJs.versions
+    private val webpackTaskName = disambiguateCamelCased("webpack")
 
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
         it.useKarma {
@@ -25,13 +31,21 @@ class KotlinBrowserJs(target: KotlinOnlyTarget<KotlinJsCompilation>) : KotlinJsI
         }
     }
 
+    override fun runTask(body: KotlinWebpack.() -> Unit) {
+        (project.tasks.getByName(runTaskName) as KotlinWebpack).body()
+    }
+
+    override fun webpackTask(body: KotlinWebpack.() -> Unit) {
+        (project.tasks.getByName(webpackTaskName) as KotlinWebpack).body()
+    }
+
     override fun configureRun(compilation: KotlinJsCompilation) {
         val project = compilation.target.project
         val npmProject = project.npmProject
         val compileKotlinTask = compilation.compileKotlinTask
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
-            it.dependsOn(compileKotlinTask)
+            it.dependsOn(npmResolveTask, compileKotlinTask)
 
             it.entry = npmProject.compileOutput(compileKotlinTask)
 
@@ -39,7 +53,7 @@ class KotlinBrowserJs(target: KotlinOnlyTarget<KotlinJsCompilation>) : KotlinJsI
         }
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("run")) {
-            it.dependsOn(compileKotlinTask)
+            it.dependsOn(npmResolveTask, compileKotlinTask)
 
             it.bin = "webpack-dev-server"
             it.entry = npmProject.compileOutput(compileKotlinTask)
@@ -50,7 +64,7 @@ class KotlinBrowserJs(target: KotlinOnlyTarget<KotlinJsCompilation>) : KotlinJsI
             )
 
             it.outputs.upToDateWhen { false }
-            project.tasks.maybeCreate("run").dependsOn(it)
+            target.runTask.dependsOn(it)
         }
     }
 }
