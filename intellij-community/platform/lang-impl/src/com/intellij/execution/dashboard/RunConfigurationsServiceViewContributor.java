@@ -43,7 +43,17 @@ import static com.intellij.openapi.actionSystem.ActionPlaces.RUN_DASHBOARD_POPUP
 public class RunConfigurationsServiceViewContributor
   implements ServiceViewGroupingContributor<RunConfigurationsServiceViewContributor.RunConfigurationContributor, RunDashboardGroup> {
   private static final ServiceViewDescriptor CONTRIBUTOR_DESCRIPTOR =
-    new SimpleServiceViewDescriptor("Run Configurations", AllIcons.RunConfigurations.Application);
+    new SimpleServiceViewDescriptor("Run Configurations", AllIcons.RunConfigurations.Application) {
+      @Override
+      public ActionGroup getToolbarActions() {
+        return RunConfigurationsServiceViewContributor.getToolbarActions(null);
+      }
+
+      @Override
+      public ActionGroup getPopupActions() {
+        return RunConfigurationsServiceViewContributor.getPopupActions();
+      }
+    };
   private static final RunDashboardGroupingRule TYPE_GROUPING_RULE = new ConfigurationTypeDashboardGroupingRule();
 
   @NotNull
@@ -145,7 +155,7 @@ public class RunConfigurationsServiceViewContributor
 
     private final RunConfigurationNode node;
 
-    private RunConfigurationServiceViewDescriptor(RunConfigurationNode node) {
+    RunConfigurationServiceViewDescriptor(RunConfigurationNode node) {
       this.node = node;
     }
 
@@ -295,9 +305,7 @@ public class RunConfigurationsServiceViewContributor
 
         @Override
         public ActionGroup getToolbarActions() {
-          DefaultActionGroup actionGroup = new DefaultActionGroup();
-          actionGroup.add(ActionManager.getInstance().getAction(RUN_DASHBOARD_CONTENT_TOOLBAR));
-          return actionGroup;
+          return RunConfigurationsServiceViewContributor.getToolbarActions(null);
         }
 
         @Override
