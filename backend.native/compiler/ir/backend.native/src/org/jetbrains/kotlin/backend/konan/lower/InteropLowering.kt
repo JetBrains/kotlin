@@ -639,6 +639,11 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
             call: IrFunctionAccessExpression,
             method: IrSimpleFunction
     ): IrExpression = generateWithStubs(call) {
+        if (method.parent !is IrClass) {
+            // Category-provided.
+            this@InteropLoweringPart1.context.llvmImports.add(method.llvmSymbolOrigin)
+        }
+
         this.generateObjCCall(
                 this@genLoweredObjCMethodCall,
                 method,
