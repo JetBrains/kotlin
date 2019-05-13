@@ -33,12 +33,14 @@ private fun validationCallback(context: JsIrBackendContext, module: IrModuleFrag
     module.accept(CheckDeclarationParentsVisitor, null)
 }
 
+val validationAction = makeVerifyAction(::validationCallback)
+
 private fun makeJsModulePhase(
     lowering: (JsIrBackendContext) -> FileLoweringPass,
     name: String,
     description: String,
     prerequisite: Set<AnyNamedPhase> = emptySet()
-) = makeIrModulePhase<JsIrBackendContext>(lowering, name, description, prerequisite, verify = ::validationCallback)
+) = makeIrModulePhase<JsIrBackendContext>(lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper))
 
 private fun makeCustomJsModulePhase(
     op: (JsIrBackendContext, IrModuleFragment) -> Unit,
@@ -49,7 +51,7 @@ private fun makeCustomJsModulePhase(
     name,
     description,
     prerequisite,
-    verify = ::validationCallback,
+    actions = setOf(defaultDumper, validationAction),
     nlevels = 0,
     lower = object : SameTypeCompilerPhase<JsIrBackendContext, IrModuleFragment> {
         override fun invoke(

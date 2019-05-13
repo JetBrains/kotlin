@@ -5,48 +5,115 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.FqName
+import java.io.File
 
-abstract class IrPhaseDumperVerifier<in Context : CommonBackendContext, Data : IrElement>(
-    val verifier: (Context, Data) -> Unit
-) : PhaseDumperVerifier<Context, Data> {
-    abstract fun Data.getElementName(): String
+private val IrElement.elementName: String
+    get() = when (this) {
+        is IrModuleFragment ->
+            this.name.asString()
 
-    // TODO: use a proper logger.
-    override fun dump(phase: AnyNamedPhase, phaseConfig: PhaseConfig, data: Data, beforeOrAfter: BeforeOrAfter) {
-        fun separator(title: String) = println("\n\n--- $title ----------------------\n")
+        is IrFile ->
+            this.name
 
-        if (!shouldBeDumped(phaseConfig, data)) return
-
-        val beforeOrAfterStr = beforeOrAfter.name.toLowerCase()
-        val title = "IR for ${data.getElementName()} $beforeOrAfterStr ${phase.description}"
-        separator(title)
-        println(data.dump())
+        else ->
+            this.toString()
     }
 
-    override fun verify(context: Context, data: Data) = verifier(context, data)
+private fun ActionState.isDumpNeeded() =
+    phase in when (beforeOrAfter) {
+        BeforeOrAfter.BEFORE -> config.toDumpStateBefore
+        BeforeOrAfter.AFTER -> config.toDumpStateAfter
+    }
 
-    private fun shouldBeDumped(phaseConfig: PhaseConfig, input: Data) =
-        input.getElementName() !in phaseConfig.namesOfElementsExcludedFromDumping
+private fun ActionState.isValidationNeeded() =
+    phase in when (beforeOrAfter) {
+        BeforeOrAfter.BEFORE -> config.toValidateStateBefore
+        BeforeOrAfter.AFTER -> config.toValidateStateAfter
+    }
+
+fun <Data, Context> makeDumpAction(dumper: Action<Data, Context>): Action<Data, Context> =
+    { phaseState, data, context ->
+        if (phaseState.isDumpNeeded())
+            dumper(phaseState, data, context)
+    }
+
+fun <Data, Context> makeVerifyAction(verifier: (Context, Data) -> Unit): Action<Data, Context> =
+    { phaseState, data, context ->
+        if (phaseState.isValidationNeeded())
+            verifier(context, data)
+    }
+
+fun dumpIrElement(actionState: ActionState, data: IrElement, context: Any?): String {
+    val beforeOrAfterStr = actionState.beforeOrAfter.name.toLowerCase()
+
+    var dumpText: String = ""
+    val elementName: String
+
+    val dumpOnlyFqName = actionState.config.dumpOnlyFqName
+    if (dumpOnlyFqName != null) {
+        elementName = dumpOnlyFqName
+        data.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitDeclaration(declaration: IrDeclaration) {
+                if (declaration is IrDeclarationWithName && FqName(dumpOnlyFqName) == declaration.fqNameWhenAvailable) {
+                    dumpText += declaration.dump()
+                } else {
+                    super.visitDeclaration(declaration)
+                }
+            }
+        })
+    } else {
+        elementName = data.elementName
+        dumpText = data.dump()
+    }
+
+    val title = "-- IR for $elementName $beforeOrAfterStr ${actionState.phase.description}\n"
+    return title + dumpText
 }
 
-class IrFileDumperVerifier<in Context : CommonBackendContext>(verifier: (Context, IrFile) -> Unit) :
-    IrPhaseDumperVerifier<Context, IrFile>(verifier) {
-    override fun IrFile.getElementName() = name
-}
+typealias Dumper<Data, Context> = (ActionState, Data, Context) -> String?
 
-class IrModuleDumperVerifier<in Context : CommonBackendContext>(verifier: (Context, IrModuleFragment) -> Unit) :
-    IrPhaseDumperVerifier<Context, IrModuleFragment>(verifier) {
-    override fun IrModuleFragment.getElementName() = name.asString()
-}
+fun <Data, Context> dumpToFile(
+    fileExtension: String,
+    dumper: Dumper<Data, Context>
+): Action<Data, Context> =
+    fun(actionState: ActionState, data: Data, context: Context) {
+        val directoryPath = actionState.config.dumpToDirectory ?: return
+        val dumpContent = dumper(actionState, data, context) ?: return
 
-class EmptyDumperVerifier<in Context : CommonBackendContext, Data> : PhaseDumperVerifier<Context, Data> {
-    override fun dump(phase: AnyNamedPhase, phaseConfig: PhaseConfig, data: Data, beforeOrAfter: BeforeOrAfter) {}
-    override fun verify(context: Context, data: Data) {}
-}
+        val directoryFile = File(directoryPath)
+        if (!directoryFile.isDirectory)
+            if (!directoryFile.mkdirs())
+                error("Can't create directory for IR dumps at $directoryPath")
 
+        // Make dump files in a directory sorted by ID
+        val phaseIdFormatted = "%02d".format(actionState.phaseCount)
+
+        val fileName = "${phaseIdFormatted}_${actionState.phase.name}.$fileExtension"
+
+        File(directoryFile, fileName).writeText(dumpContent)
+    }
+
+fun <Data, Context> dumpToStdout(
+    dumper: Dumper<Data, Context>
+): Action<Data, Context> =
+    fun(actionState: ActionState, data: Data, context: Context) {
+        if (actionState.config.dumpToDirectory != null) return
+        val dumpContent = dumper(actionState, data, context) ?: return
+        println("\n\n----------------------------------------------")
+        println(dumpContent)
+        println()
+    }
+
+val defaultDumper = makeDumpAction(dumpToStdout(::dumpIrElement) + dumpToFile("ir", ::dumpIrElement))

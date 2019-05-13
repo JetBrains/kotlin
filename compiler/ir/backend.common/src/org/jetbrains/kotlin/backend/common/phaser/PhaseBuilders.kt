@@ -54,7 +54,7 @@ fun <Context : CommonBackendContext> namedIrModulePhase(
     preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     stickyPostconditions: Set<Checker<IrModuleFragment>> = lower.stickyPostconditions,
-    verify: (Context, IrModuleFragment) -> Unit = { _, _ -> },
+    actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper),
     nlevels: Int = 1
 ) = SameTypeNamedPhaseWrapper(
     name,
@@ -64,8 +64,8 @@ fun <Context : CommonBackendContext> namedIrModulePhase(
     preconditions,
     postconditions,
     stickyPostconditions,
-    nlevels,
-    IrModuleDumperVerifier(verify)
+    actions,
+    nlevels
 )
 
 fun <Context : CommonBackendContext> namedIrFilePhase(
@@ -76,7 +76,7 @@ fun <Context : CommonBackendContext> namedIrFilePhase(
     preconditions: Set<Checker<IrFile>> = emptySet(),
     postconditions: Set<Checker<IrFile>> = emptySet(),
     stickyPostconditions: Set<Checker<IrFile>> = lower.stickyPostconditions,
-    verify: (Context, IrFile) -> Unit = { _, _ -> },
+    actions: Set<Action<IrFile, Context>> = setOf(defaultDumper),
     nlevels: Int = 1
 ) = SameTypeNamedPhaseWrapper(
     name,
@@ -86,8 +86,8 @@ fun <Context : CommonBackendContext> namedIrFilePhase(
     preconditions,
     postconditions,
     stickyPostconditions,
-    nlevels,
-    IrFileDumperVerifier(verify)
+    actions,
+    nlevels
 )
 
 fun <Context : CommonBackendContext> namedUnitPhase(
@@ -99,8 +99,7 @@ fun <Context : CommonBackendContext> namedUnitPhase(
 ) = SameTypeNamedPhaseWrapper(
     name, description, prerequisite,
     lower = lower,
-    nlevels = nlevels,
-    dumperVerifier = EmptyDumperVerifier()
+    nlevels = nlevels
 )
 
 fun <Context : CommonBackendContext> namedOpUnitPhase(
@@ -125,14 +124,14 @@ fun <Context : CommonBackendContext> performByIrFile(
     preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     stickyPostconditions: Set<Checker<IrModuleFragment>> = emptySet(),
-    verify: (Context, IrModuleFragment) -> Unit = { _, _ -> },
+    actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper),
     lower: CompilerPhase<Context, IrFile, IrFile>
 ) = namedIrModulePhase(
     name, description, prerequisite,
     preconditions = preconditions,
     postconditions = postconditions,
     stickyPostconditions = stickyPostconditions,
-    verify = verify,
+    actions = actions,
     nlevels = 1,
     lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
         override fun invoke(
@@ -161,13 +160,13 @@ fun <Context : CommonBackendContext> makeIrFilePhase(
     preconditions: Set<Checker<IrFile>> = emptySet(),
     postconditions: Set<Checker<IrFile>> = emptySet(),
     stickyPostconditions: Set<Checker<IrFile>> = emptySet(),
-    verify: (Context, IrFile) -> Unit = { _, _ -> }
+    actions: Set<Action<IrFile, Context>> = setOf(defaultDumper)
 ) = namedIrFilePhase(
     name, description, prerequisite,
     preconditions = preconditions,
     postconditions = postconditions,
     stickyPostconditions = stickyPostconditions,
-    verify = verify,
+    actions = actions,
     nlevels = 0,
     lower = object : SameTypeCompilerPhase<Context, IrFile> {
         override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
@@ -185,13 +184,13 @@ fun <Context : CommonBackendContext> makeIrModulePhase(
     preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     stickyPostconditions: Set<Checker<IrModuleFragment>> = emptySet(),
-    verify: (Context, IrModuleFragment) -> Unit = { _, _ -> }
+    actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper)
 ) = namedIrModulePhase(
     name, description, prerequisite,
     preconditions=preconditions,
     postconditions = postconditions,
     stickyPostconditions = stickyPostconditions,
-    verify = verify,
+    actions = actions,
     nlevels = 0,
     lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
         override fun invoke(
@@ -222,10 +221,7 @@ fun <Context : CommonBackendContext, Input> unitPhase(
                 context.op()
             }
         }
-    ) {
-        override val inputDumperVerifier = EmptyDumperVerifier<Context, Input>()
-        override val outputDumperVerifier = EmptyDumperVerifier<Context, Unit>()
-    }
+    ) {}
 
 fun <Context : CommonBackendContext, Input> unitSink() = object : CompilerPhase<Context, Input, Unit> {
     override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {}

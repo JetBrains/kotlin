@@ -239,6 +239,18 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var namesExcludedFromDumping: Array<String>? by FreezableVar(null)
 
     @Argument(
+        value = "-Xdump-directory",
+        description = "Dump backend state into directory"
+    )
+    var dumpDirectory: String? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xdump-fqname",
+        description = "FqName of declaration that should be dumped"
+    )
+    var dumpOnlyFqName: String? by FreezableVar(null)
+
+    @Argument(
         value = "-Xphases-to-validate-before",
         description = "Validate backend state before these phases"
     )

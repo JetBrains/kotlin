@@ -29,8 +29,9 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.KlibModuleRef
-import org.jetbrains.kotlin.ir.backend.js.generateKLib
 import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.ir.backend.js.generateKLib
+import org.jetbrains.kotlin.ir.backend.js.jsPhases
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -223,10 +224,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (produceKind == ProduceKind.JS || produceKind == ProduceKind.DEFAULT) {
+            val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
+
             val compiledModule = compile(
                 project,
                 sourcesFiles,
                 configuration,
+                phaseConfig,
                 immediateDependencies = dependencies,
                 allDependencies = dependencies,
                 friendDependencies = friendDependencies,

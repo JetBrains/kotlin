@@ -19,7 +19,7 @@ fun compile(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
-    phaseConfig: PhaseConfig = PhaseConfig(jsPhases),
+    phaseConfig: PhaseConfig,
     immediateDependencies: List<KlibModuleRef>,
     allDependencies: List<KlibModuleRef>,
     friendDependencies: List<KlibModuleRef>,

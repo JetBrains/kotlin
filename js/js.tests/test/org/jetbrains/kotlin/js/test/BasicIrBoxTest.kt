@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.test
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.ir.backend.js.KlibModuleRef
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.ir.backend.js.generateKLib
@@ -90,11 +90,28 @@ abstract class BasicIrBoxTest(
         }
 
         if (isMainModule) {
+            val debugMode = false
+
+            val phaseConfig = if (debugMode) {
+                val allPhasesSet = jsPhases.toPhaseMap().values.toSet()
+                val dumpOutputDir = File(outputFile.parent, outputFile.nameWithoutExtension + "-irdump")
+                println("\n ------ Dumping phases to file://$dumpOutputDir")
+                PhaseConfig(
+                    jsPhases,
+                    dumpToDirectory = dumpOutputDir.path,
+                    toDumpStateAfter = allPhasesSet,
+                    toValidateStateAfter = allPhasesSet,
+                    dumpOnlyFqName = null
+                )
+            } else {
+                PhaseConfig(jsPhases)
+            }
+
             val jsCode = compile(
                 project = config.project,
                 files = filesToCompile,
                 configuration = config.configuration,
-                phaseConfig = config.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jsPhases),
+                phaseConfig = phaseConfig,
                 immediateDependencies = dependencies,
                 allDependencies = allDependencies,
                 friendDependencies = emptyList(),

@@ -29,6 +29,8 @@ fun createPhaseConfig(
     val bothDumpSet = phaseSetFromArguments(phases, arguments.phasesToDump, ::report)
     val toDumpStateBefore = beforeDumpSet + bothDumpSet
     val toDumpStateAfter = afterDumpSet + bothDumpSet
+    val dumpDirectory = arguments.dumpDirectory
+    val dumpOnlyFqName = arguments.dumpOnlyFqName
     val beforeValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateBefore, ::report)
     val afterValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateAfter, ::report)
     val bothValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidate, ::report)
@@ -42,9 +44,20 @@ fun createPhaseConfig(
     val checkStickyConditions = arguments.checkStickyPhaseConditions
 
     return PhaseConfig(
-        compoundPhase, phases, enabled, verbose, toDumpStateBefore, toDumpStateAfter, toValidateStateBefore, toValidateStateAfter,
+        compoundPhase,
+        phases,
+        enabled,
+        verbose,
+        toDumpStateBefore,
+        toDumpStateAfter,
+        dumpDirectory,
+        dumpOnlyFqName,
+        toValidateStateBefore,
+        toValidateStateAfter,
         namesOfElementsExcludedFromDumping,
-        needProfiling, checkConditions, checkStickyConditions
+        needProfiling,
+        checkConditions,
+        checkStickyConditions
     ).also {
         if (arguments.listPhases) {
             it.list()
