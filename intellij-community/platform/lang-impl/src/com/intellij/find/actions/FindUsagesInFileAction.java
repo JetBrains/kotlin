@@ -1,19 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.actions;
 
 import com.intellij.CommonBundle;
@@ -26,8 +11,10 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorGutter;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilBase;
@@ -35,18 +22,30 @@ import com.intellij.usages.UsageTarget;
 import com.intellij.usages.UsageView;
 import org.jetbrains.annotations.NotNull;
 
-public class FindUsagesInFileAction extends AnAction {
+import static com.intellij.openapi.actionSystem.IdeActions.ACTION_HIGHLIGHT_USAGES_IN_FILE;
+
+public class FindUsagesInFileAction extends AnAction implements PossiblyDumbAware {
+
   public FindUsagesInFileAction() {
     setInjectedContext(true);
   }
 
   @Override
+  public boolean isDumbAware() {
+    return Registry.is("ide.find.in.file.highlight.usages");
+  }
+
+  @Override
   public boolean startInTransaction() {
-    return true;
+    return !Registry.is("ide.find.in.file.highlight.usages");
   }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
+    if (Registry.is("ide.find.in.file.highlight.usages")) {
+      ActionManager.getInstance().getAction(ACTION_HIGHLIGHT_USAGES_IN_FILE).actionPerformed(e);
+      return;
+    }
     DataContext dataContext = e.getDataContext();
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     if (project == null) return;
@@ -74,7 +73,11 @@ public class FindUsagesInFileAction extends AnAction {
   }
 
   @Override
-  public void update(@NotNull AnActionEvent event){
+  public void update(@NotNull AnActionEvent event) {
+    if (Registry.is("ide.find.in.file.highlight.usages")) {
+      ActionManager.getInstance().getAction(ACTION_HIGHLIGHT_USAGES_IN_FILE).update(event);
+      return;
+    }
     updateFindUsagesAction(event);
   }
 
