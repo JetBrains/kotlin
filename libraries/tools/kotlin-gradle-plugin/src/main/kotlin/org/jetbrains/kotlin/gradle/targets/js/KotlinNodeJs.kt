@@ -5,47 +5,32 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilationTestsConfigurator
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
-class KotlinNodeJs(kotlinPluginVersion: String) :
-    KotlinJsTargetConfigurator(kotlinPluginVersion) {
+class KotlinNodeJs(target: KotlinOnlyTarget<KotlinJsCompilation>) :
+    KotlinJsInnerTargetConfigurator(target) {
 
-    override fun configureTarget(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        super.configureTarget(target)
-        configureApplication(target)
+    override fun configureDefaultTestFramework(it: KotlinJsTest) {
+        it.useNodeJs { }
     }
 
-    private fun configureApplication(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        target.compilations.all { compilation ->
-            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
-                // source maps support
-                compilation.dependencies {
-                    runtimeOnly(kotlin("test-nodejs-runner"))
-                }
+    override fun configureRun(compilation: KotlinJsCompilation) {
+        // source maps support
+        compilation.dependencies {
+            runtimeOnly(kotlin("test-nodejs-runner"))
+        }
 
-                val project = target.project
-                project.createOrRegisterTask<NodeJsExec>("run") {
-                    it.args(
-                        project.npmProject.compileOutput(compilation.compileKotlinTask),
-                        "--require", "kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support.js"
-                    )
-                }
-            }
+        val project = target.project
+        project.createOrRegisterTask<NodeJsExec>("run") {
+            it.args(project.npmProject.compileOutput(compilation.compileKotlinTask))
+
+            // source maps support
+            it.args("--require", "kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support.js")
         }
     }
-
-    override fun newTestsConfigurator(compilation: KotlinJsCompilation) =
-        object : KotlinJsCompilationTestsConfigurator(compilation) {
-            override fun configureDefaultTestFramework(it: KotlinJsTest) {
-                it.useNodeJs { }
-            }
-        }
 }
