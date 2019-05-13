@@ -57,9 +57,9 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
     override fun hashCode(): Int = properties.hashCode()
 
     companion object {
-        fun <T> key(defaultValue: T? = null) = PropertyKeyDelegate(defaultValue)
-        fun <T> key(getDefaultValue: PropertiesCollection.() -> T?) = PropertyKeyDelegate(getDefaultValue)
-        fun <T> keyCopy(source: Key<T>) = PropertyKeyCopyDelegate(source)
+        fun <T> key(defaultValue: T? = null): PropertyKeyDelegate<T> = PropertyKeyDelegate(defaultValue)
+        fun <T> key(getDefaultValue: PropertiesCollection.() -> T?): PropertyKeyDelegate<T> = PropertyKeyDelegate(getDefaultValue)
+        fun <T> keyCopy(source: Key<T>): PropertyKeyCopyDelegate<T> = PropertyKeyCopyDelegate(source)
 
         @JvmStatic
         private val serialVersionUID = 1L
