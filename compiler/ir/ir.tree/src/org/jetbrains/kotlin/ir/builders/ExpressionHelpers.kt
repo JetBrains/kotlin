@@ -19,20 +19,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 val IrBuilderWithScope.parent get() = scope.getLocalDeclarationParent()
 
-inline fun IrBuilderWithScope.irLet(
-    value: IrExpression,
-    origin: IrStatementOrigin? = null,
-    nameHint: String? = null,
-    body: (VariableDescriptor) -> IrExpression
-): IrExpression {
-    val irTemporary = scope.createTemporaryVariable(value, nameHint)
-    val irResult = body(irTemporary.descriptor)
-    val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
-    irBlock.statements.add(irTemporary)
-    irBlock.statements.add(irResult)
-    return irBlock
-}
-
 inline fun IrBuilderWithScope.irLetS(
     value: IrExpression,
     origin: IrStatementOrigin? = null,
@@ -185,13 +171,13 @@ fun IrBuilderWithScope.irEqeqeq(arg1: IrExpression, arg2: IrExpression) =
     context.eqeqeq(startOffset, endOffset, arg1, arg2)
 
 fun IrBuilderWithScope.irNull() =
-    IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
+    irNull(context.irBuiltIns.nothingNType)
+
+fun IrBuilderWithScope.irNull(irType: IrType) =
+    IrConstImpl.constNull(startOffset, endOffset, irType)
 
 fun IrBuilderWithScope.irEqualsNull(argument: IrExpression) =
-    primitiveOp2(
-        startOffset, endOffset, context.irBuiltIns.eqeqSymbol, context.irBuiltIns.booleanType, IrStatementOrigin.EQEQ,
-        argument, irNull()
-    )
+    irEquals(argument, irNull())
 
 fun IrBuilderWithScope.irEquals(arg1: IrExpression, arg2: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.EQEQ) =
     primitiveOp2(
