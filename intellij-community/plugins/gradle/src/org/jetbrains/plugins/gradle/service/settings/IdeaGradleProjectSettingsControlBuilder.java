@@ -354,6 +354,8 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
         myGradleJdkComboBox.withoutJre();
       }
 
+      myGradleJdkLabel.setLabelFor(myGradleJdkComboBox);
+
       content.add(myGradleJdkLabel, ExternalSystemUiUtil.getLabelConstraints(indentLevel + 1));
       myGradleJdkPanel = new JPanel(new BorderLayout(SystemInfo.isMac ? 0 : 2, 0));
       myGradleJdkPanel.setFocusable(false);
@@ -656,6 +658,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
     content.add(myGradleHomeLabel, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
     content.add(myGradleHomePathField, ExternalSystemUiUtil.getFillLineConstraints(0));
+    myGradleHomeLabel.setLabelFor(myGradleHomePathField);
 
     return this;
   }
@@ -786,6 +789,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       myDelegateBuildLabel = new JBLabel(GradleBundle.message("gradle.settings.text.delegate.buildRun"));
       myDelegatePanel.add(myDelegateBuildLabel, getLabelConstraints(labelLevel));
       myDelegatePanel.add(myDelegateBuildCombobox);
+      myDelegateBuildLabel.setLabelFor(myDelegateBuildCombobox);
     }
     if (!dropTestRunnerCombobox) {
       TestRunnerItem[] testRunners = StreamEx.of(TestRunner.values())
@@ -800,6 +804,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       myDelegatePanel.add(myTestRunnerLabel, getLabelConstraints(labelLevel));
       myDelegatePanel.add(myTestRunnerCombobox);
       myDelegatePanel.add(Box.createGlue(), ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
+      myTestRunnerLabel.setLabelFor(myTestRunnerCombobox);
     }
   }
 
