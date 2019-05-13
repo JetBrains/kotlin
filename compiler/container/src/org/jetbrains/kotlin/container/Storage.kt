@@ -33,7 +33,7 @@ enum class ComponentStorageState {
     Disposed
 }
 
-internal class InvalidCardinalityException(message: String, val descriptors: Collection<ComponentDescriptor>) : Exception(message)
+internal class InvalidCardinalityException(message: String) : Exception(message)
 
 class ComponentStorage(private val myId: String, parent: ComponentStorage?) : ValueResolver {
     var state = ComponentStorageState.Initial
@@ -46,6 +46,9 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
     private val dependencies = MultiMap.createLinkedSet<ComponentDescriptor, Type>()
 
     override fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor? {
+        fun ComponentDescriptor.isDefaultComponent(): Boolean =
+            this is DefaultInstanceComponentDescriptor || this is DefaultSingletonTypeComponentDescriptor
+
         if (state == ComponentStorageState.Initial)
             throw ContainerConsistencyException("Container was not composed before resolving")
 
@@ -53,9 +56,16 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
         if (entry.isNotEmpty()) {
             registerDependency(request, context)
 
-            if (entry.size > 1)
-                throw InvalidCardinalityException("Request $request cannot be satisfied because there is more than one type registered", entry)
-            return entry.singleOrNull()
+            if (entry.size == 1) return entry.single()
+
+            val nonDefault = entry.filterNot { it.isDefaultComponent() }
+            if (nonDefault.isEmpty()) return entry.first()
+
+            return nonDefault.singleOrNull()
+                ?: throw InvalidCardinalityException(
+                    "Request $request cannot be satisfied because there is more than one type registered\n" +
+                            "Clashed registrations: ${entry.joinToString()}"
+                )
         }
         return null
     }
