@@ -14,7 +14,7 @@ internal fun <T> Array<out T>.contentDeepHashCodeImpl(): Int {
     for (element in this) {
         val elementHash = when {
             element == null -> 0
-            js("Kotlin").isArrayish(element) -> (element.unsafeCast<Array<*>>()).contentDeepHashCodeImpl()
+            isArrayish(element) -> (element.unsafeCast<Array<*>>()).contentDeepHashCodeImpl()
 
             element is UByteArray   -> element.contentHashCode()
             element is UShortArray  -> element.contentHashCode()

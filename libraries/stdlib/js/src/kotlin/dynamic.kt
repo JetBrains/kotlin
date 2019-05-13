@@ -38,7 +38,7 @@ public operator fun dynamic.iterator(): Iterator<dynamic> {
     return when {
         this["iterator"] != null ->
             this["iterator"]()
-        js("Kotlin").isArrayish(r) ->
+        isArrayish(r) ->
             r.unsafeCast<Array<*>>().iterator()
 
         else ->

@@ -10,3 +10,5 @@ package kotlin.js
 @library
 @JsName("imulEmulated")
 internal fun imul(x: Int, y: Int): Int = definedExternally
+
+internal inline fun isArrayish(o: dynamic) = js("Kotlin").isArrayish(o)
