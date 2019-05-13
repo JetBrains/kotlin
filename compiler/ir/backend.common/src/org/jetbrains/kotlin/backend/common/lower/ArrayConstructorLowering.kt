@@ -62,7 +62,8 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
         // (and similar for primitive arrays)
         val size = expression.getValueArgument(0)!!.transform(this, null)
         val invokable = expression.getValueArgument(1)!!.transform(this, null)
-        return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).irBlock(expression.startOffset, expression.endOffset) {
+        val scope = currentScope!!.scope
+        return context.createIrBuilder(scope.scopeOwnerSymbol).irBlock(expression.startOffset, expression.endOffset) {
             val index = irTemporaryVar(irInt(0))
             val sizeVar = irTemporary(size)
             val result = irTemporary(irCall(sizeConstructor, expression.type).apply {
@@ -91,6 +92,10 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
                 }
             }
             +irGet(result)
+        }.also {
+            // Some parents of local declarations are not updated during ad-hoc inlining
+            // TODO: Remove when generic inliner is used
+            it.patchDeclarationParents(scope.getLocalDeclarationParent())
         }
     }
 
