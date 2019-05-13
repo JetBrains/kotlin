@@ -116,18 +116,10 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     }
   };
 
-  private final boolean myShowSettingsDialogBefore;
   private Runnable mySearchEverywhereRunnable;
 
-  // used from plugin.xml
-  @SuppressWarnings("UnusedDeclaration")
   public ShowUsagesAction() {
-    this(false);
-  }
-
-  private ShowUsagesAction(boolean showDialogBefore) {
     setInjectedContext(true);
-    myShowSettingsDialogBefore = showDialogBefore;
   }
 
   @Override
@@ -190,10 +182,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     FindUsagesManager findUsagesManager = ((FindManagerImpl)FindManager.getInstance(project)).getFindUsagesManager();
     FindUsagesHandler handler = findUsagesManager.getFindUsagesHandler(element, OperationMode.USAGES_WITH_DEFAULT_OPTIONS);
     if (handler == null) return;
-    if (myShowSettingsDialogBefore) {
-      showDialogAndFindUsages(handler, popupPosition, editor, maxUsages);
-      return;
-    }
     showElementUsages(editor, popupPosition, handler, maxUsages, handler.getFindUsagesOptions(DataManager.getInstance().getDataContext()));
   }
 
@@ -611,9 +599,9 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
                                      boolean hadMoreSeparator,
                                      int visibleNodesCount,
                                      boolean findUsagesInProgress) {
-    String s;
     String soFarSuffix = findUsagesInProgress ? " so far" : "";
     title = StringUtil.escapeXmlEntities(title);
+    String s;
     if (hadMoreSeparator) {
       s = "<b>Some</b> " + title + " " + "<b>(Only " + visibleNodesCount + " usages shown" + soFarSuffix + ")</b>";
     }
@@ -865,10 +853,10 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   }
 
   void appendMoreUsages(Editor editor,
-                                @NotNull RelativePoint popupPosition,
-                                @NotNull FindUsagesHandler handler,
-                                int maxUsages,
-                                @NotNull FindUsagesOptions options) {
+                        @NotNull RelativePoint popupPosition,
+                        @NotNull FindUsagesHandler handler,
+                        int maxUsages,
+                        @NotNull FindUsagesOptions options) {
     TransactionGuard.submitTransaction(handler.getProject(), () ->
       showElementUsages(editor, popupPosition, handler, maxUsages + getUsagesPageSize(), options));
   }
