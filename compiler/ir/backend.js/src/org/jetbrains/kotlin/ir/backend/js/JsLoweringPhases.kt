@@ -133,13 +133,6 @@ private val tailrecLoweringPhase = makeJsModulePhase(
     description = "Replace `tailrec` callsites with equivalent loop"
 )
 
-private val unitMaterializationLoweringPhase = makeJsModulePhase(
-    ::UnitMaterializationLowering,
-    name = "UnitMaterializationLowering",
-    description = "Insert Unit object where it is supposed to be",
-    prerequisite = setOf(tailrecLoweringPhase)
-)
-
 private val enumClassConstructorLoweringPhase = makeJsModulePhase(
     ::EnumClassConstructorLowering,
     name = "EnumClassConstructorLowering",
@@ -201,8 +194,7 @@ private val innerClassConstructorCallsLoweringPhase = makeJsModulePhase(
 private val suspendFunctionsLoweringPhase = makeJsModulePhase(
     ::JsSuspendFunctionsLowering,
     name = "SuspendFunctionsLowering",
-    description = "Transform suspend functions into CoroutineImpl instance and build state machine",
-    prerequisite = setOf(unitMaterializationLoweringPhase)
+    description = "Transform suspend functions into CoroutineImpl instance and build state machine"
 )
 
 private val privateMembersLoweringPhase = makeJsModulePhase(
@@ -389,7 +381,6 @@ val jsPhases = namedIrModulePhase(
             enumClassLoweringPhase then
             enumUsageLoweringPhase then
             returnableBlockLoweringPhase then
-            unitMaterializationLoweringPhase then
             suspendFunctionsLoweringPhase then
             privateMembersLoweringPhase then
             callableReferenceLoweringPhase then

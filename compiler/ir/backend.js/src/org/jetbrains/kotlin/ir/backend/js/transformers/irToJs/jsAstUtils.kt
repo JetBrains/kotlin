@@ -23,9 +23,10 @@ fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext
 fun <T : JsNode> IrWhen.toJsNode(
     tr: BaseIrElementToJsNodeTransformer<T, JsGenerationContext>,
     data: JsGenerationContext,
-    node: (JsExpression, T, T?) -> T
+    node: (JsExpression, T, T?) -> T,
+    implicitElse: T? = null
 ): T? =
-    branches.foldRight(null) { br, n ->
+    branches.foldRight(implicitElse) { br, n ->
         val body = br.result.accept(tr, data)
         if (isElseBranch(br)) body
         else {

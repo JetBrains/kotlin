@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -309,8 +311,16 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsExpression {
-        // TODO check when w/o else branch and empty when
-        return expression.toJsNode(this, context, ::JsConditional)!!
+        val lastBranch = expression.branches.lastOrNull()
+        val implicitElse =
+            if (lastBranch == null || !isElseBranch(lastBranch))
+                JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(0))
+            else
+                null
+
+        assert(implicitElse == null || expression.type.isUnit()) { "Non unit when-expression must have else branch" }
+
+        return expression.toJsNode(this, context, ::JsConditional, implicitElse)!!
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: JsGenerationContext): JsExpression {
