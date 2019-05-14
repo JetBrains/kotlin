@@ -32,6 +32,7 @@ class ImportProjectFromScriptAction: ExternalSystemAction() {
                                     *ProjectImportProvider.PROJECT_IMPORT_PROVIDER.extensions)
     if (wizard != null && (wizard.stepCount <= 0 || wizard.showAndGet())) {
       createFromWizard(project, wizard)
+      wizard.disposeIfNeeded()
     }
   }
 }

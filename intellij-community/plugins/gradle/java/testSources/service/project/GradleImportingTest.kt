@@ -90,6 +90,7 @@ class GradleImportingTest : GradleImportingTestCase() {
       val providers = ImportModuleAction.getProviders(project).toTypedArray()
       val wizard = ImportModuleAction.createImportWizard(project, null, projectFile, *providers)!!
       ImportModuleAction.createFromWizard(project, wizard)
+      wizard.disposeIfNeeded()
       projectManager.openProjects.find { it.name !in openProjects }
     }
   }

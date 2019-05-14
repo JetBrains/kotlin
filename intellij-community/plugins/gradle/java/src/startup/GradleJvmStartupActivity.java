@@ -85,6 +85,7 @@ public class GradleJvmStartupActivity implements StartupActivity {
               AddModuleWizard wizard = new AddModuleWizard(project, gradleFile.getPath(), gradleProjectImportProvider);
               if ((wizard.getStepCount() <= 0 || wizard.showAndGet())) {
                 ImportModuleAction.createFromWizard(project, wizard);
+                wizard.disposeIfNeeded();
               }
             }
             else if (DO_NOT_SHOW_EVENT_DESCRIPTION.equals(e.getDescription())) {
