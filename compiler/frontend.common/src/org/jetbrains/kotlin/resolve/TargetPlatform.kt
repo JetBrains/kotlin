@@ -62,18 +62,7 @@ abstract class PlatformDependentCompilerServices {
     protected abstract fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>)
 
     open val excludedImports: List<FqName> get() = emptyList()
-
-    // This function is used in "cat.helm.clean:0.1.1-SNAPSHOT": https://plugins.jetbrains.com/plugin/index?xmlId=cat.helm.clean
-    @Suppress("DeprecatedCallableAddReplaceWith", "unused")
-    @Deprecated("Use getDefaultImports(LanguageVersionSettings, Boolean) instead.", level = DeprecationLevel.ERROR)
-    fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> {
-        return getDefaultImports(
-            if (includeKotlinComparisons) LanguageVersionSettingsImpl.DEFAULT
-            else LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_0, ApiVersion.KOTLIN_1_0),
-            true
-        )
-    }
-
+    
     open fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.LAST
 }
 
