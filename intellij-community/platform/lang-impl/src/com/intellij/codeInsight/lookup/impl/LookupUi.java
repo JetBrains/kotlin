@@ -1,8 +1,10 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.lookup.impl;
 
+import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CodeCompletionFeatures;
 import com.intellij.codeInsight.completion.ShowHideIntentionIconLookupAction;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementAction;
@@ -20,6 +22,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.ScreenUtil;
@@ -40,8 +43,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 
@@ -311,7 +312,7 @@ class LookupUi {
       AnAction showIntentionAction = ActionManager.getInstance().getAction(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
       if (showIntentionAction != null) {
         copyShortcutFrom(showIntentionAction);
-        getTemplatePresentation().setText("Click or press");
+        getTemplatePresentation().setText("Click or Press");
       }
     }
 
@@ -330,7 +331,7 @@ class LookupUi {
     public void actionPerformed(@NotNull AnActionEvent e) {
       DefaultActionGroup group = new DefaultActionGroup();
       group.add(new ChangeSortingAction());
-      group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC));
+      group.add(new ChangeQuickDocAction());
 
       ActionManagerImpl am = (ActionManagerImpl) ActionManager.getInstance();
       ActionPopupMenu popupMenu = am.createActionPopupMenu(SORTING_MENU, group);
@@ -354,6 +355,27 @@ class LookupUi {
         FeatureUsageTracker.getInstance().triggerFeatureUsed(CodeCompletionFeatures.EDITING_COMPLETION_CHANGE_SORTING);
         UISettings.getInstance().setSortLookupElementsLexicographically(!sortByName);
         myLookup.resort(false);
+      }
+    }
+  }
+
+  private static class ChangeQuickDocAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
+    private final boolean showQuickDoc = CodeInsightSettings.getInstance().AUTO_POPUP_JAVADOC_INFO;
+    private ChangeQuickDocAction() {
+      Presentation presentation = getTemplatePresentation();
+      presentation.setText("Show the Documentation Popup");
+      presentation.setIcon(showQuickDoc ? PlatformIcons.CHECK_ICON : null);
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      if (e.getPlace() == SORTING_MENU) {
+        CodeInsightSettings.getInstance().AUTO_POPUP_JAVADOC_INFO = !showQuickDoc;
+
+        Project project = e.getProject();
+        if (project != null) {
+          DaemonCodeAnalyzer.getInstance(project).settingsChanged();
+        }
       }
     }
   }

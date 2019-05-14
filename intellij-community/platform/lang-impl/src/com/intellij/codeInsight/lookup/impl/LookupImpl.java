@@ -1209,12 +1209,10 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   }
 
   public void addAdvertisement(@NotNull String text, @Nullable Icon icon) {
-    if (containsDummyIdentifier(text)) {
-      return;
+    if (!containsDummyIdentifier(text)) {
+      myAdComponent.addAdvertisement(text, icon);
+      requestResize();
     }
-
-    myAdComponent.addAdvertisement(text, icon);
-    requestResize();
   }
 
   public boolean isLookupDisposed() {

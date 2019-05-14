@@ -16,7 +16,6 @@
 package com.intellij.codeInsight.lookup.impl;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Pair;
 import com.intellij.ui.ClickListener;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBInsets;
@@ -36,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author peter
  */
 public class Advertiser {
-  private final List<Pair<String, Icon>> myTexts = ContainerUtil.createLockFreeCopyOnWriteList();
+  private final List<Item> myTexts = ContainerUtil.createLockFreeCopyOnWriteList();
   private final JPanel myComponent = new JPanel(new AdvertiserLayout());
 
   private final AtomicInteger myCurrentItem = new AtomicInteger(0);
@@ -68,14 +67,13 @@ public class Advertiser {
   private void updateAdvertisements() {
     myNextLabel.setVisible(myTexts.size() > 1);
     if (!myTexts.isEmpty()) {
-      Pair<String, Icon> pair = myTexts.get(myCurrentItem.get() % myTexts.size());
-      String text = pair.first;
-      myTextPanel.setText(prepareText(text));
-      myTextPanel.setIcon(pair.second);
+      Item item = myTexts.get(myCurrentItem.get() % myTexts.size());
+      item.setForLabel(myTextPanel);
     }
     else {
       myTextPanel.setText("");
       myTextPanel.setIcon(null);
+      myTextPanel.setForeground(JBUI.CurrentTheme.Advertiser.foreground());
     }
     myComponent.revalidate();
     myComponent.repaint();
@@ -86,10 +84,6 @@ public class Advertiser {
     label.setFont(adFont());
     label.setForeground(JBUI.CurrentTheme.Advertiser.foreground());
     return label;
-  }
-
-  private static String prepareText(String text) {
-    return text + "  ";
   }
 
   public void showRandomText() {
@@ -112,7 +106,7 @@ public class Advertiser {
 
   public void addAdvertisement(@NotNull String text, @Nullable Icon icon) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    myTexts.add(Pair.create(text, icon));
+    myTexts.add(new Item(text, icon));
     updateAdvertisements();
   }
 
@@ -125,7 +119,7 @@ public class Advertiser {
   }
 
   public List<String> getAdvertisements() {
-    return ContainerUtil.map(myTexts, pair -> pair.first);
+    return ContainerUtil.map(myTexts, item -> item.text);
   }
 
   // ------------------------------------------------------
@@ -145,17 +139,16 @@ public class Advertiser {
 
       FontMetrics fm = myTextPanel.getFontMetrics(myTextPanel.getFont());
 
-      for (Pair<String, Icon> label : myTexts) {
-        int width = SwingUtilities.computeStringWidth(fm, prepareText(label.first));
+      for (Item item : myTexts) {
+        int width = SwingUtilities.computeStringWidth(fm, item.toString());
 
-        if (label.second != null) {
-          width += myTextPanel.getIconTextGap() + label.second.getIconWidth();
+        if (item.icon != null) {
+          width += myTextPanel.getIconTextGap() + item.icon.getIconWidth();
         }
 
         width += nextButtonSize.width + i.left + i.right;
 
-        int height = Math.max(fm.getHeight(), label.second != null ? label.second.getIconHeight() : 0) + i.top + i.bottom;
-
+        int height = Math.max(fm.getHeight(), item.icon != null ? item.icon.getIconHeight() : 0) + i.top + i.bottom;
         size.width = Math.max(size.width, width);
         size.height = Math.max(size.height, Math.max(height, nextButtonSize.height));
       }
@@ -182,6 +175,27 @@ public class Advertiser {
 
       myTextPanel.setBounds(i.left, (size.height-textPrefSize.height) / 2, textWidth, textPrefSize.height);
       myNextLabel.setBounds(i.left + textWidth, (size.height-nextPrefSize.height) / 2, nextPrefSize.width, nextPrefSize.height);
+    }
+  }
+
+  private static class Item {
+    private final String text;
+    private final Icon   icon;
+
+    private Item(@NotNull String text, @Nullable Icon icon) {
+      this.text = text;
+      this.icon = icon;
+    }
+
+    private void setForLabel(JLabel label) {
+      label.setText(toString());
+      label.setIcon(icon);
+      label.setForeground(icon != null ? UIManager.getColor("Label.foreground") : JBUI.CurrentTheme.Advertiser.foreground());
+    }
+
+    @Override
+    public String toString() {
+      return text + "  ";
     }
   }
 }
