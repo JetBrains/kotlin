@@ -281,7 +281,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         }
 
     private fun IrFunction.addCompletionValueParameter(): IrValueParameter =
-        addValueParameter(SUSPEND_FUNCTION_CONTINUATION_PARAMETER, continuationType())
+        addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType())
 
     private fun IrFunction.continuationType(): IrSimpleType =
         continuation.createType(true, listOf(makeTypeProjection(returnType, Variance.INVARIANT)))

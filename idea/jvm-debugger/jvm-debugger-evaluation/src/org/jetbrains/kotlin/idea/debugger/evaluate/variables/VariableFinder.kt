@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.getCapturedFieldName
 import org.jetbrains.kotlin.codegen.AsmUtil.getLabeledThisName
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
-import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.INLINE_TRANSFORMATION_SUFFIX
 import org.jetbrains.kotlin.idea.core.util.mergeAttachments
@@ -372,7 +372,7 @@ class VariableFinder(val context: ExecutionContext) {
         }
 
         val continuationVariable = frameProxy.safeVisibleVariableByName(CONTINUATION_VARIABLE_NAME)
-            ?: frameProxy.safeVisibleVariableByName(SUSPEND_FUNCTION_CONTINUATION_PARAMETER)
+            ?: frameProxy.safeVisibleVariableByName(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME)
             ?: return null
 
         val continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
