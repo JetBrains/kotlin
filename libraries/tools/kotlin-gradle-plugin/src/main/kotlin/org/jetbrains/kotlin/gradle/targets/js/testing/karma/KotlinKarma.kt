@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmPackageVersion
@@ -88,14 +87,18 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
         val npmProject = task.project.npmProject
 
         config.files.addAll(task.nodeModulesToLoad.map {
-            npmProject.getModuleEntryPath(it)
+            npmProject.require(it)
         })
 
         config.basePath = npmProject.nodeModulesDir.absolutePath
 
         val karmaConfJs = npmProject.nodeWorkDir.resolve("karma.conf.js")
         karmaConfJs.printWriter().use {
+            it.println("module.exports = function(config) {")
+            it.print("    config.set(")
             GsonBuilder().setPrettyPrinting().create().toJson(config, it)
+            it.println(");")
+            it.println("}")
         }
 
         val nodeModules = listOf("karma/bin/karma")
