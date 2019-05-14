@@ -7,16 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
     KotlinTargetConfigurator<KotlinJsCompilation>(true, true, kotlinPluginVersion) {
@@ -62,7 +57,7 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
 
         platformTarget.compilations.all {
             it.compileKotlinTask.kotlinOptions {
-                moduleKind = "commonjs"
+                moduleKind = "umd"
                 sourceMap = true
                 sourceMapEmbedSources = null
             }
