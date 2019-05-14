@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import org.gradle.api.Project
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
@@ -28,13 +26,12 @@ open class NpmProject(
     open val compileOutputCopyDest: File?
         get() = nodeModulesDir
 
-    fun useTool(exec: ExecSpec, tool: String, vararg args: String) {
-        NpmResolver.resolve(project)
-
-        exec.workingDir = nodeWorkDir
-        exec.executable = project.nodeJs.root.environment.nodeExecutable
-        exec.args = listOf(require(tool)) + args
+    private val modules = object : NpmProjectModules(nodeWorkDir, nodeModulesDir) {
+        override val parent get() = if (searchInParents) parentModules else null
     }
+
+    private val parentModules: NpmProjectModules?
+        get() = project.parent?.npmProject?.modules
 
     val hoistGradleNodeModules: Boolean
         get() = project.nodeJs.root.packageManager.shouldHoistGradleNodeModules(project)
@@ -48,68 +45,25 @@ open class NpmProject(
         return compileOutputCopyDest?.resolve(compilationTask.outputFile.name) ?: compilationTask.outputFile
     }
 
+    fun useTool(exec: ExecSpec, tool: String, vararg args: String) {
+        exec.workingDir = nodeWorkDir
+        exec.executable = project.nodeJs.root.environment.nodeExecutable
+        exec.args = listOf(require(tool)) + args
+    }
+
     /**
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
     fun require(request: String): String {
         NpmResolver.requireResolved(project)
-        return resolve(request)?.canonicalPath ?: error("Cannot find node module \"$request\" in \"$this\"")
+        return modules.require(request)
     }
 
     /**
      * Find node module according to https://nodejs.org/api/modules.html#modules_all_together,
      * with exception that instead of traversing parent folders, we are traversing parent projects
      */
-    internal fun resolve(name: String, context: File = nodeWorkDir): File? =
-        if (name.startsWith("/")) resolve(name.removePrefix("/"), File("/"))
-        else resolveAsRelative("./", name, context)
-            ?: resolveAsRelative("/", name, context)
-            ?: resolveAsRelative("../", name, context)
-            ?: resolveInNodeModulesDir(name, nodeModulesDir)
-            ?: if (searchInParents) project.parent?.let { NpmProject[it].resolve(name) } else null
-
-    private fun resolveAsRelative(prefix: String, name: String, context: File): File? {
-        if (!name.startsWith(prefix)) return null
-
-        val relative = context.resolve(name.removePrefix(prefix))
-        return resolveAsFile(relative)
-            ?: resolveAsDirectory(relative)
-    }
-
-    private fun resolveInNodeModulesDir(name: String, nodeModulesDir: File): File? {
-        return resolveAsFile(nodeModulesDir.resolve(name))
-            ?: resolveAsDirectory(nodeModulesDir.resolve(name))
-    }
-
-    private fun resolveAsDirectory(dir: File): File? {
-        val packageJsonFile = dir.resolve("package.json")
-        val main: String? = if (packageJsonFile.isFile) {
-            val packageJson = packageJsonFile.reader().use {
-                Gson().fromJson(it, JsonObject::class.java)
-            }
-
-            packageJson["main"] as? String?
-                ?: packageJson["module"] as? String?
-                ?: packageJson["browser"] as? String?
-        } else null
-
-        return if (main != null) {
-            val mainFile = dir.resolve(main)
-            resolveAsFile(mainFile)
-                ?: resolveIndex(mainFile)
-        } else resolveIndex(dir)
-    }
-
-    private fun resolveIndex(dir: File): File? = resolveAsFile(dir.resolve("index"))
-
-    private fun resolveAsFile(file: File): File? {
-        if (file.isFile) return file
-
-        val js = File(file.path + ".js")
-        if (js.isFile) return js
-
-        return null
-    }
+    internal fun resolve(name: String): File? = modules.resolve(name)
 
     override fun toString() = "NpmProject($nodeWorkDir)"
 
