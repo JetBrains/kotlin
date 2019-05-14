@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.nodejs
 
+import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
@@ -13,11 +14,12 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinGradleNpmPackage
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
 
-class KotlinNodeJsTestRunner : KotlinJsTestFramework {
+class KotlinNodeJsTestRunner(val project: Project) : KotlinJsTestFramework {
     @Input
     var ignoredTestSuites: IgnoredTestSuites = IgnoredTestSuites.showWithContents
 
@@ -29,8 +31,10 @@ class KotlinNodeJsTestRunner : KotlinJsTestFramework {
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>
     ): TCServiceMessagesTestExecutionSpec {
+        val npmProject = project.npmProject
+
         val cliArgs = KotlinNodeJsTestRunnerCliArgs(
-            task.nodeModulesToLoad.toList(),
+            task.nodeModulesToLoad.map { npmProject.require(it) },
             task.includePatterns,
             task.excludePatterns,
             ignoredTestSuites.cli
