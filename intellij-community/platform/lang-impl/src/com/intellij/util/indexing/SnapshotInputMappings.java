@@ -43,7 +43,7 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
 
   SnapshotInputMappings(IndexExtension<Key, Value, Input> indexExtension) throws IOException {
     myIndexId = (ID<Key, Value>)indexExtension.getName();
-    myIsPsiBackedIndex = indexExtension instanceof PsiDependentIndex;
+    myIsPsiBackedIndex = FileBasedIndexImpl.isPsiDependentIndex(indexExtension);
     myMapExternalizer = new InputMapExternalizer<>(indexExtension);
     myIndexer = indexExtension.getIndexer();
     myContents = createContentsIndex();

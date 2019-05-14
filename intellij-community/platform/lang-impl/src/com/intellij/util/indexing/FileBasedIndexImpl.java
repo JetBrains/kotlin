@@ -2258,11 +2258,12 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
       int fileId = ((VirtualFileWithId)virtualFile).getId();
       boolean wasIndexed = false;
       List<ID<?, ?>> candidates = getAffectedIndexCandidates(virtualFile);
-      for (ID<?, ?> psiBackedIndex : myPsiDependentIndices) {
-        if (!candidates.contains(psiBackedIndex)) continue;
-        if(getInputFilter(psiBackedIndex).acceptInput(virtualFile)) {
-          getIndex(psiBackedIndex).resetIndexedStateForFile(fileId);
-          wasIndexed = true;
+      for (ID<?, ?> candidate : candidates) {
+        if (myPsiDependentIndices.contains(candidate)) {
+          if(getInputFilter(candidate).acceptInput(virtualFile)) {
+            getIndex(candidate).resetIndexedStateForFile(fileId);
+            wasIndexed = true;
+          }
         }
       }
       if (wasIndexed) {
@@ -2385,7 +2386,7 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
           myRequiringContentIndices.add(name);
         }
 
-        if (extension instanceof PsiDependentIndex) myPsiDependentIndices.add(name);
+        if (isPsiDependentIndex(extension)) myPsiDependentIndices.add(name);
         myNoLimitCheckTypes.addAll(extension.getFileTypesWithSizeLimitNotApplicable());
 
         addNestedInitializationTask(() -> {
@@ -2520,6 +2521,17 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
       catch (TimeoutException e) {
         UIUtil.dispatchAllInvocationEvents();
       }
+    }
+  }
+
+  private static final boolean INDICES_ARE_PSI_DEPENDENT_BY_DEFAULT = SystemProperties.getBooleanProperty("idea.indices.psi.dependent.default", true);
+  public static boolean isPsiDependentIndex(@NotNull IndexExtension<?, ?, ?> extension) {
+    if (INDICES_ARE_PSI_DEPENDENT_BY_DEFAULT) {
+      return extension instanceof FileBasedIndexExtension &&
+             ((FileBasedIndexExtension<?, ?>)extension).dependsOnFileContent() &&
+             !(extension instanceof DocumentChangesDependentIndex);
+    } else {
+      return extension instanceof PsiDependentIndex;
     }
   }
 }
