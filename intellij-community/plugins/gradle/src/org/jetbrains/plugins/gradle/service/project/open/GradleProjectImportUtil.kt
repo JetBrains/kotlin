@@ -35,9 +35,11 @@ import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.DistributionType.DEFAULT_WRAPPED
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.startup.GradleUnlinkedProjectProcessor
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
 import org.jetbrains.plugins.gradle.util.GradleEnvironment.Headless.*
+import org.jetbrains.plugins.gradle.util.GradleLog.LOG
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
@@ -59,12 +61,20 @@ fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInN
     return openPlatformProject(projectDirectory, projectToClose, forceOpenInNewFrame)
   }
   val project = createProject(projectDirectory) ?: return null
-  val gradleProjectSettings = GradleProjectSettings()
-  setupGradleSettings(gradleProjectSettings, projectDirectory.path, project)
-  attachGradleProjectAndRefresh(gradleProjectSettings, project)
+  importProject(projectDirectory.path, project)
   if (!forceOpenInNewFrame) closePreviousProject(projectToClose)
-  saveAndOpenProject(projectDirectory.path, project)
+  ProjectManagerEx.getInstanceEx().openProject(project)
   return project
+}
+
+fun importProject(projectDirectory: String, project: Project) {
+  LOG.info("Import project at $projectDirectory")
+  val projectSdk = ProjectRootManager.getInstance(project).projectSdk
+  val gradleProjectSettings = GradleProjectSettings()
+  setupGradleSettings(gradleProjectSettings, projectDirectory, project, projectSdk)
+  attachGradleProjectAndRefresh(gradleProjectSettings, project)
+  ProjectUtil.updateLastProjectLocation(projectDirectory)
+  project.save()
 }
 
 private fun canOpenPlatformProject(projectDirectory: VirtualFile): Boolean {
@@ -94,13 +104,10 @@ private fun focusOnOpenedSameProject(projectDirectory: String): Boolean {
 }
 
 private fun openPlatformProject(projectDirectory: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
-  return PlatformProjectOpenProcessor.getInstance().doOpenProject(projectDirectory, projectToClose, forceOpenInNewFrame)
-}
-
-private fun saveAndOpenProject(projectDirectory: String, project: Project) {
-  ProjectUtil.updateLastProjectLocation(projectDirectory)
-  project.save()
-  ProjectManagerEx.getInstanceEx().openProject(project)
+  val openProcessor = PlatformProjectOpenProcessor.getInstance()
+  return openProcessor.doOpenProject(projectDirectory, projectToClose, forceOpenInNewFrame)?.also {
+    GradleUnlinkedProjectProcessor.enableNotifications(it)
+  }
 }
 
 fun attachGradleProjectAndRefresh(settings: ExternalProjectSettings, project: Project) {

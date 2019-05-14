@@ -1,21 +1,17 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project.wizard
 
-import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.packaging.artifacts.ModifiableArtifactModel
 import com.intellij.projectImport.DeprecatedProjectBuilderForImport
 import com.intellij.projectImport.ProjectImportBuilder
 import icons.GradleIcons
-import org.jetbrains.plugins.gradle.service.project.open.attachGradleProjectAndRefresh
-import org.jetbrains.plugins.gradle.service.project.open.setupGradleSettings
-import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
+import org.jetbrains.plugins.gradle.service.project.open.importProject
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import javax.swing.Icon
 
@@ -44,12 +40,7 @@ class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedPr
                       model: ModifiableModuleModel?,
                       modulesProvider: ModulesProvider?,
                       artifactModel: ModifiableArtifactModel?): List<Module> {
-    val projectSdk = ProjectRootManager.getInstance(project).projectSdk
-    val gradleProjectSettings = GradleProjectSettings()
-    setupGradleSettings(gradleProjectSettings, fileToImport, project, projectSdk)
-    attachGradleProjectAndRefresh(gradleProjectSettings, project)
-    ProjectUtil.updateLastProjectLocation(fileToImport)
-    project.save()
+    importProject(fileToImport, project)
     return emptyList()
   }
 }
