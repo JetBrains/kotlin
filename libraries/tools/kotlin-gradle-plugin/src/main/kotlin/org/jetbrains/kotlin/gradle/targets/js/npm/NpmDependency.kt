@@ -40,7 +40,7 @@ data class NpmDependency(
         fun visit(item: NpmDependency) {
             if (item in visited) return
             visited.add(item)
-            item.project.npmProject.findModuleEntry(item.key)?.let {
+            item.project.npmProject.resolve(item.key)?.let {
                 all.add(it)
             }
         }

@@ -55,13 +55,13 @@ internal class NpmResolver private constructor(val rootProject: Project) {
             }
         }
 
-        fun checkRequiredDependencies(project: Project, target: RequiresNpmDependencies) {
-            val required = ProjectData[project.rootProject]?.resolved?.requiredByTasks
-            check(required != null) {
-                "NPM dependencies should be resolved before $target execution"
-            }
+        fun requireResolved(project: Project, reason: String = ""): ResolvedProject =
+            ProjectData[project.rootProject]?.resolved
+                ?: error("NPM dependencies should be resolved$reason")
 
-            val targetRequired = required!![target]?.toSet() ?: setOf()
+        fun checkRequiredDependencies(project: Project, target: RequiresNpmDependencies) {
+            val required = requireResolved(project, "before $target execution").requiredByTasks
+            val targetRequired = required[target]?.toSet() ?: setOf()
 
             target.requiredNpmDependencies.forEach {
                 check(it in targetRequired) {
