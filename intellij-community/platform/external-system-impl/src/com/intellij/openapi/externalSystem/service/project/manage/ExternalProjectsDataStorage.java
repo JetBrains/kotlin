@@ -78,8 +78,12 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   public synchronized void load() {
     myExternalRootProjects.clear();
     long startTs = System.currentTimeMillis();
+    long readEnd = startTs;
     try {
-      List<InternalExternalProjectInfo> projectInfos = load(myProject);
+      List<InternalExternalProjectInfo> projectInfos;
+      projectInfos = load(myProject);
+      readEnd = System.currentTimeMillis();
+
       if (projectInfos.isEmpty() &&
           myProject.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) != Boolean.TRUE &&
           hasLinkedExternalProjects()) {
@@ -112,7 +116,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
 
     mergeLocalSettings();
     long finishTs = System.currentTimeMillis();
-    LOG.info("Loaded external projects data in " + (finishTs - startTs) + " millis");
+    LOG.info("Load external projects data in " + (finishTs - startTs) + " millis (read time: " + (readEnd - startTs) + ")");
   }
 
   private boolean hasLinkedExternalProjects() {
@@ -154,7 +158,10 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     try {
       //noinspection SynchronizeOnThis
       synchronized (this) {
+        long start = System.currentTimeMillis();
         doSave(myProject, myExternalRootProjects.values());
+        long duration = System.currentTimeMillis() - start;
+        LOG.info("Save external projects data in " + duration + " ms");
       }
     }
     catch (IOException | SerializationException e) {
