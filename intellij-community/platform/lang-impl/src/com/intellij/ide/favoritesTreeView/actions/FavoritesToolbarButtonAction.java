@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2014 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.AnActionButton;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -36,7 +37,8 @@ public abstract class FavoritesToolbarButtonAction extends AnActionButton implem
   private FavoritesViewTreeBuilder myBuilder;
   private FavoritesViewSettings mySettings;
 
-  public FavoritesToolbarButtonAction(Project project, FavoritesViewTreeBuilder builder, String name, Icon icon) {
+  public FavoritesToolbarButtonAction(Project project, FavoritesViewTreeBuilder builder,
+                                      @Nls(capitalization = Nls.Capitalization.Title) String name, Icon icon) {
     super(name, icon);
     myBuilder = builder;
     mySettings = FavoritesManager.getInstance(project).getViewSettings();
