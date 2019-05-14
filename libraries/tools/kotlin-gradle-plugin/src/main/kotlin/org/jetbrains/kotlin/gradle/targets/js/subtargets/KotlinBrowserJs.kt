@@ -53,14 +53,18 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("run")) {
             val compileKotlinTask = compilation.compileKotlinTask
-            it.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider(), compileKotlinTask)
+            it.dependsOn(
+                target.npmResolveTaskHolder.getTaskOrProvider(),
+                compileKotlinTask,
+                project.getTasksByName(compilation.processResourcesTaskName, false)
+            )
 
             it.bin = "webpack-dev-server"
             it.entry = npmProject.compileOutput(compileKotlinTask)
 
-            val projectDir = target.project.projectDir.canonicalPath
             it.devServer = KotlinWebpackConfig.DevServer(
-                contentBase = listOf("$projectDir/src/main/resources")
+                open = true,
+                contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
             )
 
             it.outputs.upToDateWhen { false }
