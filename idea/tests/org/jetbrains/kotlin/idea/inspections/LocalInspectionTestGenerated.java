@@ -460,6 +460,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/lineBreaksAndComments.kt");
             }
 
+            @TestMetadata("this.kt")
+            public void testThis() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/this.kt");
+            }
+
             @TestMetadata("whenWithEqualityTests.kt")
             public void testWhenWithEqualityTests() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/whenWithEqualityTests.kt");
