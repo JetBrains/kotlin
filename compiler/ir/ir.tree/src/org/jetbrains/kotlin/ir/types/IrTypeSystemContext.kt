@@ -6,22 +6,30 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.ir.types.isPrimitiveType as irTypePredicates_isPrimitiveType
 
-interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesContext {
+interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesContext, TypeSystemCommonBackendContext {
 
     val irBuiltIns: IrBuiltIns
 
@@ -247,6 +255,67 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker =
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
+
+    override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
+        val symbol = this as IrClassifierSymbol
+        return symbol is IrClassSymbol && symbol.owner.let {
+            it.modality == Modality.FINAL && !it.isEnumClass
+        }
+    }
+
+    override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean =
+        // TODO: don't fall back to KotlinType to check annotations. Currently testIdentityEquals fails on JVM without it
+        (this as IrAnnotationContainer).hasAnnotation(fqName) ||
+                (this as IrType).toKotlinType().annotations.hasAnnotation(fqName)
+
+    override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
+        (this as? IrType)?.annotations?.firstOrNull { annotation ->
+            annotation.symbol.owner.parentAsClass.descriptor.fqNameSafe == fqName
+        }?.run {
+            if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value else null
+        }
+
+    override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? =
+        this as? IrTypeParameterSymbol
+
+    override fun TypeConstructorMarker.isInlineClass(): Boolean =
+        (this as? IrClassSymbol)?.owner?.isInline == true
+
+    override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker =
+        (this as IrTypeParameterSymbol).owner.superTypes.firstOrNull {
+            val irClass = it.classOrNull?.owner ?: return@firstOrNull false
+            irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
+        } ?: owner.superTypes.first()
+
+    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
+        // Code in inlineClassesUtils.kt loads the property with the same name and takes its type. This should have the same effect.
+        val irClass = (this as? IrType)?.classOrNull?.owner ?: return null
+        return irClass.primaryConstructor?.valueParameters?.singleOrNull()?.type
+    }
+
+    override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
+        // TODO: get rid of descriptor
+        return KotlinBuiltIns.getPrimitiveType((this as IrClassifierSymbol).descriptor as ClassDescriptor)
+    }
+
+    override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
+        // TODO: get rid of descriptor
+        return KotlinBuiltIns.getPrimitiveArrayType((this as IrClassifierSymbol).descriptor as ClassDescriptor)
+    }
+
+    override fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean {
+        var declaration: IrDeclaration = (this as? IrClassifierSymbol)?.owner as? IrClass ?: return false
+        while (true) {
+            val parent = declaration.parent
+            if (parent is IrPackageFragment) {
+                return parent.fqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)
+            }
+            declaration = parent as? IrDeclaration ?: return false
+        }
+    }
+
+    override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? =
+        (this as IrClassSymbol).owner.fqNameWhenAvailable?.toUnsafe()
 }
 
 fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {

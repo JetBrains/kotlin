@@ -6,40 +6,65 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.computeExpandedTypeForInlineClass
+import org.jetbrains.kotlin.load.kotlin.mapBuiltInType
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.Method
 
 class IrTypeMapper(private val context: JvmBackendContext) {
     val kotlinTypeMapper: KotlinTypeMapper = context.state.typeMapper
+    private val typeSystem = IrTypeCheckerContext(context.irBuiltIns)
 
-    val classBuilderMode get() = kotlinTypeMapper.classBuilderMode
+    val classBuilderMode: ClassBuilderMode
+        get() = kotlinTypeMapper.classBuilderMode
 
-    fun classInternalName(irClass: IrClass) = kotlinTypeMapper.classInternalName(irClass.descriptor)
+    fun classInternalName(irClass: IrClass): String =
+        context.getLocalClassInfo(irClass)?.internalName
+            ?: JvmCodegenUtil.sanitizeNameIfNeeded(computeInternalName(irClass), context.state.languageVersionSettings)
 
-    fun mapAsmMethod(irFunction: IrFunction) = kotlinTypeMapper.mapAsmMethod(irFunction.descriptor)
+    fun mapAsmMethod(irFunction: IrFunction): Method =
+        kotlinTypeMapper.mapAsmMethod(irFunction.descriptor)
 
     fun mapFieldSignature(irField: IrField) =
         kotlinTypeMapper.mapFieldSignature(irField.type.toKotlinType(), irField.descriptor)
 
-    fun mapFunctionName(irReturnTarget: IrReturnTarget, ownerKind: OwnerKind) =
+    fun mapFunctionName(irReturnTarget: IrReturnTarget, ownerKind: OwnerKind): String =
         kotlinTypeMapper.mapFunctionName(irReturnTarget.descriptor, ownerKind)
 
-    fun mapImplementationOwner(irDeclaration: IrDeclaration) = kotlinTypeMapper.mapImplementationOwner(irDeclaration.descriptor)
+    fun mapImplementationOwner(irDeclaration: IrDeclaration): Type =
+        kotlinTypeMapper.mapImplementationOwner(irDeclaration.descriptor)
 
-    fun mapReturnType(irReturnTarget: IrReturnTarget) = kotlinTypeMapper.mapReturnType(irReturnTarget.descriptor)
+    fun mapReturnType(irReturnTarget: IrReturnTarget): Type =
+        kotlinTypeMapper.mapReturnType(irReturnTarget.descriptor)
 
-    fun mapSignatureSkipGeneric(f: IrFunction, kind: OwnerKind = OwnerKind.IMPLEMENTATION) =
+    fun mapSignatureSkipGeneric(f: IrFunction, kind: OwnerKind = OwnerKind.IMPLEMENTATION): JvmMethodSignature =
         kotlinTypeMapper.mapSignatureSkipGeneric(f.descriptor, kind)
 
-    fun mapSignatureWithGeneric(f: IrFunction, kind: OwnerKind) = kotlinTypeMapper.mapSignatureWithGeneric(f.descriptor, kind)
+    fun mapSignatureWithGeneric(f: IrFunction, kind: OwnerKind): JvmMethodGenericSignature =
+        kotlinTypeMapper.mapSignatureWithGeneric(f.descriptor, kind)
 
     fun mapToCallableMethod(f: IrFunction, superCall: Boolean, kind: OwnerKind? = null, resolvedCall: ResolvedCall<*>? = null) =
         kotlinTypeMapper.mapToCallableMethod(f.descriptor, superCall, kind, resolvedCall)
@@ -47,13 +72,188 @@ class IrTypeMapper(private val context: JvmBackendContext) {
     fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) =
         kotlinTypeMapper.writeFormalTypeParameters(irParameters.map { it.descriptor }, sw)
 
-    fun boxType(irType: IrType) =
+    fun boxType(irType: IrType): Type =
         AsmUtil.boxType(mapType(irType), irType.toKotlinType(), kotlinTypeMapper)
 
     fun mapType(
         type: IrType,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
         sw: JvmSignatureWriter? = null
-    ): Type =
-        kotlinTypeMapper.mapType(type.toKotlinType(), sw, mode)
+    ): Type {
+        if (type !is IrSimpleType) {
+            val kotlinType = type.originalKotlinType
+            error("Unexpected type: $type (original Kotlin type=$kotlinType of ${kotlinType?.let { it::class }})")
+        }
+
+        // TODO: rewrite this part to produce the correct Type without the fake descriptor
+        if (type.toKotlinType().isSuspendFunctionType) {
+            return kotlinTypeMapper.mapType(
+                transformSuspendFunctionToRuntimeFunctionType(type.toKotlinType(), isReleaseCoroutines = true), sw, mode
+            )
+        }
+
+        with(typeSystem) {
+            mapBuiltInType(type, AsmTypeFactory, mode)
+        }?.let { builtInType ->
+            return boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing).also { asmType ->
+                sw?.writeGenericType(type, asmType, mode)
+            }
+        }
+
+        val classifier = type.classifierOrNull?.owner
+
+        when {
+            type.isArray() || type.isNullableArray() -> {
+                val typeArgument = type.arguments.single()
+                val (variance, memberType) = when (typeArgument) {
+                    is IrTypeProjection -> Pair(typeArgument.variance, typeArgument.type)
+                    is IrStarProjection -> Pair(Variance.OUT_VARIANCE, context.irBuiltIns.anyNType)
+                    else -> error("Unsupported type argument: $typeArgument")
+                }
+
+                val arrayElementType: Type
+                sw?.writeArrayType()
+                if (variance == Variance.IN_VARIANCE) {
+                    arrayElementType = AsmTypes.OBJECT_TYPE
+                    sw?.writeClass(arrayElementType)
+                } else {
+                    arrayElementType = mapType(memberType, mode.toGenericArgumentMode(variance), sw)
+                }
+                sw?.writeArrayEnd()
+
+                return AsmUtil.getArrayType(arrayElementType)
+            }
+
+            classifier is IrClass -> {
+                if (classifier.isInline && !mode.needInlineClassWrapping) {
+                    val expandedType = typeSystem.computeExpandedTypeForInlineClass(type) as IrType?
+                    if (expandedType != null) {
+                        return mapType(expandedType, mode.wrapInlineClassesMode(), sw)
+                    }
+                }
+
+                val asmType =
+                    if (mode.isForAnnotationParameter && type.isKClass()) AsmTypes.JAVA_CLASS_TYPE
+                    else Type.getObjectType(classInternalName(classifier))
+
+                sw?.writeGenericType(type, asmType, mode)
+
+                return asmType
+            }
+
+            classifier is IrTypeParameter -> {
+                return mapType(classifier.representativeUpperBound, mode, null).also { asmType ->
+                    sw?.writeTypeVariable(classifier.name, asmType)
+                }
+            }
+
+            else -> throw UnsupportedOperationException("Unknown type $type")
+        }
+    }
+
+    private fun computeInternalName(klass: IrClass): String {
+        val className = SpecialNames.safeIdentifier(klass.name).identifier
+        return when (val parent = klass.parent) {
+            is IrPackageFragment -> {
+                val fqName = parent.fqName
+                val prefix = if (fqName.isRoot) "" else fqName.asString().replace('.', '/') + "/"
+                prefix + className
+            }
+            is IrClass -> {
+                computeInternalName(parent) + "$" + className
+            }
+            else -> error(
+                "Local class should have its name computed in InventNamesForLocalClasses: ${klass.fqNameWhenAvailable}\n" +
+                        "Ensure that any lowering that transforms elements with local class info (classes, function references, " +
+                        "IrTypeOperatorCall for SAM conversions) invokes `copyAttributes` on the transformed element."
+            )
+        }
+    }
+
+    // Copied from KotlinTypeMapper.writeGenericType.
+    private fun JvmSignatureWriter.writeGenericType(type: IrSimpleType, asmType: Type, mode: TypeMappingMode) {
+        if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.arguments.isEmpty()) {
+            writeAsmType(asmType)
+            return
+        }
+
+        val possiblyInnerType = type.buildPossiblyInnerType() ?: error("possiblyInnerType with arguments should not be null")
+
+        val innerTypesAsList = possiblyInnerType.segments()
+
+        val indexOfParameterizedType = innerTypesAsList.indexOfFirst { innerPart -> innerPart.arguments.isNotEmpty() }
+        if (indexOfParameterizedType < 0 || innerTypesAsList.size == 1) {
+            writeClassBegin(asmType)
+            writeGenericArguments(this, possiblyInnerType, mode)
+        } else {
+            val outerType = innerTypesAsList[indexOfParameterizedType]
+
+            writeOuterClassBegin(asmType, mapType(outerType.classifier.defaultType).internalName)
+            writeGenericArguments(this, outerType, mode)
+
+            writeInnerParts(
+                innerTypesAsList,
+                this,
+                mode,
+                indexOfParameterizedType + 1
+            ) // inner parts separated by `.`
+        }
+
+        writeClassEnd()
+    }
+
+    private fun hasNothingInNonContravariantPosition(irType: IrType): Boolean = with(KotlinTypeMapper) {
+        typeSystem.hasNothingInNonContravariantPosition(irType)
+    }
+
+    private fun writeInnerParts(
+        innerTypesAsList: List<PossiblyInnerIrType>,
+        sw: JvmSignatureWriter,
+        mode: TypeMappingMode,
+        index: Int
+    ) {
+        for (innerPart in innerTypesAsList.subList(index, innerTypesAsList.size)) {
+            sw.writeInnerClass(getJvmShortName(innerPart.classifier))
+            writeGenericArguments(sw, innerPart, mode)
+        }
+    }
+
+    // Copied from KotlinTypeMapper.writeGenericArguments.
+    private fun writeGenericArguments(
+        sw: JvmSignatureWriter,
+        type: PossiblyInnerIrType,
+        mode: TypeMappingMode
+    ) {
+        val classifier = type.classifier
+        val parameters = classifier.typeParameters.map(IrTypeParameter::symbol)
+        val arguments = type.arguments
+
+        // TODO: get rid of descriptor here
+        val classDescriptor = classifier.descriptor
+        if (classDescriptor is FunctionClassDescriptor) {
+            if (classDescriptor.hasBigArity ||
+                classDescriptor.functionKind == FunctionClassDescriptor.Kind.KFunction ||
+                classDescriptor.functionKind == FunctionClassDescriptor.Kind.KSuspendFunction
+            ) {
+                writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
+                return
+            }
+        }
+
+        writeGenericArguments(sw, arguments, parameters, mode)
+    }
+
+    private fun writeGenericArguments(
+        sw: JvmSignatureWriter,
+        arguments: List<IrTypeArgument>,
+        parameters: List<IrTypeParameterSymbol>,
+        mode: TypeMappingMode
+    ) = with(KotlinTypeMapper) {
+        typeSystem.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->
+            mapType(type as IrType, mode, sw)
+        }
+    }
+
+    private fun boxTypeIfNeeded(possiblyPrimitiveType: Type, needBoxedType: Boolean): Type =
+        if (needBoxedType) AsmUtil.boxType(possiblyPrimitiveType) else possiblyPrimitiveType
 }

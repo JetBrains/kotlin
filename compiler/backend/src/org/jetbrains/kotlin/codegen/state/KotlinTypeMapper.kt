@@ -1433,7 +1433,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         private fun hasNothingInNonContravariantPosition(kotlinType: KotlinType): Boolean =
             SimpleClassicTypeSystemContext.hasNothingInNonContravariantPosition(kotlinType)
 
-        private fun TypeSystemContext.hasNothingInNonContravariantPosition(type: KotlinTypeMarker): Boolean {
+        fun TypeSystemContext.hasNothingInNonContravariantPosition(type: KotlinTypeMarker): Boolean {
             val typeConstructor = type.typeConstructor()
 
             for (i in 0 until type.argumentsCount()) {
