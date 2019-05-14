@@ -25,16 +25,19 @@ int main(void) {
     const char* string1 = __ kotlin.root.getString();
     const char* string2 = __ kotlin.root.Singleton.toString(singleton);
     const char* string3 = __ kotlin.root.Data.get_string(data);
+    const char* string4 = __ kotlin.root.getNullableString(0);
+    const char* string5 = __ kotlin.root.getNullableString(1);
 
     __ kotlin.root.hello();
     __ kotlin.root.Base.foo(base);
-    __ kotlin.root.Base.fooParam(base, "a", 1);
-    __ kotlin.root.Child.fooParam(child, "b", 2);
-    __ kotlin.root.Base.fooParam(casted_child, "c", 3);
+    __ kotlin.root.Base.fooParam(base, "a", 1, "q");
+    __ kotlin.root.Child.fooParam(child, "b", 2, (char*)0);
+    __ kotlin.root.Base.fooParam(casted_child, "c", 3, (char*)0);
     __ kotlin.root.I.foo(casted_impl1, "d", 4, casted_impl1);
     __ kotlin.root.I.foo(casted_impl2, "e", 5, casted_impl2);
 
-    printf("String is %s\n", string1);
+    printf("String is %s nullable is %s null is %s\n", string1, string4,
+        string5 ? "BAD" : "OK");
 
     printf("RO property is %d\n", __ kotlin.root.Child.get_roProperty(child));
      __ kotlin.root.Child.set_rwProperty(child, 238);
@@ -58,6 +61,8 @@ int main(void) {
     __ DisposeString(string1);
     __ DisposeString(string2);
     __ DisposeString(string3);
+    __ DisposeString(string4);
+    __ DisposeString(string5);
     __ DisposeStablePointer(base.pinned);
     __ DisposeStablePointer(child.pinned);
     __ DisposeStablePointer(impl1.pinned);
