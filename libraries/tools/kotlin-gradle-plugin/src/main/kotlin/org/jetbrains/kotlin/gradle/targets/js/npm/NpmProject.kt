@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import groovy.transform.TailRecursive
 import org.gradle.api.Project
 import org.gradle.process.ExecSpec
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -35,7 +33,7 @@ open class NpmProject(
 
         exec.workingDir = nodeWorkDir
         exec.executable = project.nodeJs.root.environment.nodeExecutable
-        exec.args = listOf(getModuleEntryPath(tool)) + args
+        exec.args = listOf(require(tool)) + args
     }
 
     val hoistGradleNodeModules: Boolean
@@ -50,33 +48,67 @@ open class NpmProject(
         return compileOutputCopyDest?.resolve(compilationTask.outputFile.name) ?: compilationTask.outputFile
     }
 
-    fun getModuleEntryPath(name: String): String {
-        return findModuleEntry(name)?.canonicalPath ?: error("Cannot find node module $name in $this")
+    /**
+     * Require [request] nodejs module and return canonical path to it's main js file.
+     */
+    fun require(request: String): String {
+        NpmResolver.requireResolved(project)
+        return resolve(request)?.canonicalPath ?: error("Cannot find node module \"$request\" in \"$this\"")
     }
 
-    @TailRecursive
-    fun findModuleEntry(name: String): File? {
-        val file = nodeModulesDir.resolve(name)
+    /**
+     * Find node module according to https://nodejs.org/api/modules.html#modules_all_together,
+     * with exception that instead of traversing parent folders, we are traversing parent projects
+     */
+    internal fun resolve(name: String, context: File = nodeWorkDir): File? =
+        if (name.startsWith("/")) resolve(name.removePrefix("/"), File("/"))
+        else resolveAsRelative("./", name, context)
+            ?: resolveAsRelative("/", name, context)
+            ?: resolveAsRelative("../", name, context)
+            ?: resolveInNodeModulesDir(name, nodeModulesDir)
+            ?: if (searchInParents) project.parent?.let { NpmProject[it].resolve(name) } else null
+
+    private fun resolveAsRelative(prefix: String, name: String, context: File): File? {
+        if (!name.startsWith(prefix)) return null
+
+        val relative = context.resolve(name.removePrefix(prefix))
+        return resolveAsFile(relative)
+            ?: resolveAsDirectory(relative)
+    }
+
+    private fun resolveInNodeModulesDir(name: String, nodeModulesDir: File): File? {
+        return resolveAsFile(nodeModulesDir.resolve(name))
+            ?: resolveAsDirectory(nodeModulesDir.resolve(name))
+    }
+
+    private fun resolveAsDirectory(dir: File): File? {
+        val packageJsonFile = dir.resolve("package.json")
+        val main: String? = if (packageJsonFile.isFile) {
+            val packageJson = packageJsonFile.reader().use {
+                Gson().fromJson(it, JsonObject::class.java)
+            }
+
+            packageJson["main"] as? String?
+                ?: packageJson["module"] as? String?
+                ?: packageJson["browser"] as? String?
+        } else null
+
+        return if (main != null) {
+            val mainFile = dir.resolve(main)
+            resolveAsFile(mainFile)
+                ?: resolveIndex(mainFile)
+        } else resolveIndex(dir)
+    }
+
+    private fun resolveIndex(dir: File): File? = resolveAsFile(dir.resolve("index"))
+
+    private fun resolveAsFile(file: File): File? {
         if (file.isFile) return file
-        if (file.isDirectory) {
-            val packageJsonFile = file.resolve("package.json")
-            val main: String = (if (packageJsonFile.isFile) {
-                val packageJson = packageJsonFile.reader().use {
-                    Gson().fromJson(it, JsonObject::class.java)
-                }
 
-                packageJson["main"] as? String?
-                    ?: packageJson["module"] as? String?
-                    ?: packageJson["browser"] as? String?
-            } else null) ?: "index.js"
+        val js = File(file.path + ".js")
+        if (js.isFile) return js
 
-            val mainFile = file.resolve(main)
-            if (mainFile.isFile) return mainFile
-        }
-
-        val parent = project.parent
-        return if (!searchInParents || parent == null) null
-        else NpmProject[parent].findModuleEntry(name)
+        return null
     }
 
     override fun toString() = "NpmProject($nodeWorkDir)"
