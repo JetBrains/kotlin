@@ -42,6 +42,7 @@ private fun processSingleClasspathEntry(rootFile: File): Map<String, DeclaredPro
             }
         }
         rootFile.extension == "jar" && rootFile.exists() -> ZipFile(rootFile).use { zipFile ->
+
             val content: InputStream? = zipFile.getInputStream(ZipEntry(INCREMENTAL_ANNOTATION_FLAG))
 
             content?.bufferedReader()?.readLines() ?: emptyList()
