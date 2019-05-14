@@ -60,7 +60,8 @@ class OptimizedImportsBuilder(
     }
 
     data class InputData(
-        val descriptorsToImport: Map<DeclarationDescriptor, Set<Name>>,
+        val descriptorsToImport: Set<DeclarationDescriptor>,
+        val namesToImport: Map<FqName, Set<Name>>,
         val references: Collection<AbstractReference>
     )
 
@@ -119,9 +120,9 @@ class OptimizedImportsBuilder(
             .mapTo(importsToGenerate) { it.importPath }
 
         val descriptorsByParentFqName = HashMap<FqName, MutableSet<DeclarationDescriptor>>()
-        for ((descriptor, names) in data.descriptorsToImport) {
-            for (name in names) {
-                val fqName = descriptor.importableFqName!!
+        for (descriptor in data.descriptorsToImport) {
+            val fqName = descriptor.importableFqName!!
+            for (name in data.namesToImport.getValue(fqName)) {
                 val alias = if (name != fqName.shortName()) name else null
 
                 val explicitImportPath = ImportPath(fqName, false, alias)
@@ -149,16 +150,16 @@ class OptimizedImportsBuilder(
                     || !starImportPath.isAllowedByRules()
             if (useExplicitImports) {
                 fqNames
-                    .filter { !isImportedByDefault(it) }
+                    .filter(this::needExplicitImport)
                     .mapTo(importsToGenerate) { ImportPath(it, false) }
             } else {
                 descriptors
                     .asSequence()
                     .filterIsInstance<ClassDescriptor>()
                     .map { it.importableFqName!! }
-                    .filterTo(classNamesToCheck) { !isImportedByDefault(it) }
+                    .filterTo(classNamesToCheck, this::needExplicitImport)
 
-                if (!fqNames.all(this::isImportedByDefault)) {
+                if (fqNames.all(this::needExplicitImport)) {
                     importsToGenerate.add(starImportPath)
                 }
             }
@@ -205,7 +206,7 @@ class OptimizedImportsBuilder(
                         (oldTargets + newTargets).forEach {
                             lockImportForDescriptor(
                                 it,
-                                data.descriptorsToImport.getOrElse(it) { listOf(it.name) }.intersect(names)
+                                data.namesToImport.getOrElse(it.importableFqName!!) { listOf(it.name) }.intersect(names)
                             )
                         }
                     }
@@ -320,6 +321,12 @@ class OptimizedImportsBuilder(
             else -> true
         }
     }
+
+    private fun needExplicitImport(fqName: FqName): Boolean = hasAlias(fqName) || !isImportedByDefault(fqName)
+
+    private fun hasAlias(fqName: FqName) = data.namesToImport[fqName]?.let {
+        it.singleOrNull() == null
+    } ?: false
 
     private fun isImportedByDefault(fqName: FqName) = importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file)
 

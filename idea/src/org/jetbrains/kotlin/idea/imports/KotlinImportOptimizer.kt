@@ -79,11 +79,12 @@ class KotlinImportOptimizer : ImportOptimizer {
             .mapNotNull { it.importPath }
             .groupBy(keySelector = { it.fqName }, valueTransform = { it.importedName as Name })
 
-        private val descriptorsToImport = LinkedHashMap<DeclarationDescriptor, HashSet<Name>>()
+        private val descriptorsToImport = LinkedHashSet<DeclarationDescriptor>()
+        private val namesToImport = LinkedHashMap<FqName, HashSet<Name>>()
         private val abstractRefs = ArrayList<OptimizedImportsBuilder.AbstractReference>()
 
         val data: OptimizedImportsBuilder.InputData
-            get() = OptimizedImportsBuilder.InputData(descriptorsToImport, abstractRefs)
+            get() = OptimizedImportsBuilder.InputData(descriptorsToImport, namesToImport, abstractRefs)
 
         override fun visitElement(element: PsiElement) {
             ProgressIndicatorProvider.checkCanceled()
@@ -119,7 +120,8 @@ class KotlinImportOptimizer : ImportOptimizer {
                     if (isAccessibleAsMember(importableDescriptor, element, bindingContext)) continue
 
                     val descriptorNames = (aliases[importableFqName].orEmpty() + importableFqName.shortName()).intersect(names)
-                    descriptorsToImport.getOrPut(importableDescriptor) { LinkedHashSet() } += descriptorNames
+                    namesToImport.getOrPut(importableFqName) { LinkedHashSet() } += descriptorNames
+                    descriptorsToImport += importableDescriptor
                 }
             }
 

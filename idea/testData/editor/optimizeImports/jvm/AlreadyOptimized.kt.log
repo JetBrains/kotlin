@@ -2,3 +2,8 @@ Additional checking of reference Getter: JavaFile
 Additional checking of reference KtSimpleNameReference: JavaFile
 Changed resolve of KtSimpleNameReference: JavaFile
 Additional checking of reference KtInvokeFunctionReference: JavaFile(StringBuilder().append("Hello").toString())
+Trying to build import list again with import rules: +java.io.File as JavaFile
+Additional checking of reference Getter: JavaFile
+Additional checking of reference KtSimpleNameReference: JavaFile
+Changed resolve of KtSimpleNameReference: JavaFile
+Additional checking of reference KtInvokeFunctionReference: JavaFile(StringBuilder().append("Hello").toString())
