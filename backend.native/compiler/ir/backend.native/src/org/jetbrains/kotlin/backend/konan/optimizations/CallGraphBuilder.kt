@@ -98,12 +98,13 @@ internal class CallGraphBuilder(val context: Context,
                     is DataFlowIR.Node.Call -> block(node)
 
                     is DataFlowIR.Node.Singleton ->
-                        node.constructor?.let { block(DataFlowIR.Node.Call(it, emptyList(), null)) }
+                        node.constructor?.let { block(DataFlowIR.Node.Call(it, emptyList(), node.type, null)) }
 
                     is DataFlowIR.Node.ArrayRead ->
                         block(DataFlowIR.Node.Call(
                                 callee = moduleDFG.symbolTable.mapFunction(arrayGet),
                                 arguments = listOf(node.array, node.index),
+                                returnType = node.type,
                                 irCallSite = null)
                         )
 
@@ -111,6 +112,7 @@ internal class CallGraphBuilder(val context: Context,
                         block(DataFlowIR.Node.Call(
                                 callee = moduleDFG.symbolTable.mapFunction(arraySet),
                                 arguments = listOf(node.array, node.index, node.value),
+                                returnType = moduleDFG.symbolTable.mapType(context.irBuiltIns.unitType),
                                 irCallSite = null)
                         )
 
@@ -118,6 +120,7 @@ internal class CallGraphBuilder(val context: Context,
                         block(DataFlowIR.Node.Call(
                                 callee = node.symbol,
                                 arguments = emptyList(),
+                                returnType = node.symbol.returnParameter.type,
                                 irCallSite = null
                         ))
                 }

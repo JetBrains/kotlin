@@ -223,43 +223,43 @@ internal object DataFlowIR {
 
         object Null : Node()
 
-        open class Call(val callee: FunctionSymbol, val arguments: List<Edge>,
+        open class Call(val callee: FunctionSymbol, val arguments: List<Edge>, val returnType: Type,
                         open val irCallSite: IrFunctionAccessExpression?) : Node()
 
         class StaticCall(callee: FunctionSymbol, arguments: List<Edge>,
-                         val receiverType: Type?, irCallSite: IrFunctionAccessExpression?)
-            : Call(callee, arguments, irCallSite)
+                         val receiverType: Type?, returnType: Type, irCallSite: IrFunctionAccessExpression?)
+            : Call(callee, arguments, returnType, irCallSite)
 
         // TODO: It can be replaced with a pair(AllocInstance, constructor Call), remove.
-        class NewObject(constructor: FunctionSymbol, arguments: List<Edge>, val constructedType: Type,
-                        override val irCallSite: IrConstructorCall?)
-            : Call(constructor, arguments, irCallSite)
+        class NewObject(constructor: FunctionSymbol, arguments: List<Edge>, val constructedType: Type, override val irCallSite: IrConstructorCall?)
+            : Call(constructor, arguments, constructedType, irCallSite)
 
         open class VirtualCall(callee: FunctionSymbol, arguments: List<Edge>,
-                                   val receiverType: Type, override val irCallSite: IrCall?)
-            : Call(callee, arguments, irCallSite)
+                                   val receiverType: Type, returnType: Type, override val irCallSite: IrCall?)
+            : Call(callee, arguments, returnType, irCallSite)
 
         class VtableCall(callee: FunctionSymbol, receiverType: Type, val calleeVtableIndex: Int,
-                         arguments: List<Edge>, irCallSite: IrCall?)
-            : VirtualCall(callee, arguments, receiverType, irCallSite)
+                         arguments: List<Edge>, returnType: Type, irCallSite: IrCall?)
+            : VirtualCall(callee, arguments, receiverType, returnType, irCallSite)
 
         class ItableCall(callee: FunctionSymbol, receiverType: Type, val calleeHash: Long,
-                         arguments: List<Edge>, irCallSite: IrCall?)
-            : VirtualCall(callee, arguments, receiverType, irCallSite)
+                         arguments: List<Edge>, returnType: Type, irCallSite: IrCall?)
+            : VirtualCall(callee, arguments, receiverType, returnType, irCallSite)
 
         class Singleton(val type: Type, val constructor: FunctionSymbol?) : Node()
 
         class AllocInstance(val type: Type) : Node()
 
-        class FunctionReference(val symbol: FunctionSymbol, val type: Type) : Node()
+        class FunctionReference(val symbol: FunctionSymbol, val type: Type, val returnType: Type) : Node()
 
-        class FieldRead(val receiver: Edge?, val field: Field, val ir: IrGetField?) : Node()
+        // TODO: Add type (similar to arrays)?
+        class FieldRead(val receiver: Edge?, val field: Field, val type: Type, val ir: IrGetField?) : Node()
 
-        class FieldWrite(val receiver: Edge?, val field: Field, val value: Edge) : Node()
+        class FieldWrite(val receiver: Edge?, val field: Field, val value: Edge, val type: Type) : Node()
 
-        class ArrayRead(val array: Edge, val index: Edge, val irCallSite: IrCall?) : Node()
+        class ArrayRead(val array: Edge, val index: Edge, val type: Type, val irCallSite: IrCall?) : Node()
 
-        class ArrayWrite(val array: Edge, val index: Edge, val value: Edge) : Node()
+        class ArrayWrite(val array: Edge, val index: Edge, val value: Edge, val type: Type) : Node()
 
         class Variable(values: List<Edge>, val type: Type, val kind: VariableKind) : Node() {
             val values = mutableListOf<Edge>().also { it += values }
@@ -551,7 +551,8 @@ internal object DataFlowIR {
                             primitiveBinaryType,
                             module,
                             -1,
-                            null
+                            null,
+                            takeName { primitiveBinaryType.name }
                     )
                 }
 
