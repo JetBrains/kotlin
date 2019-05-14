@@ -32,14 +32,7 @@ enum class NpmProjectLayout {
                     nodeJsWorldDir.resolve("packages").resolve(projectPackage)
                 }
 
-            return object : NpmProject(
-                project,
-                workDir,
-                searchInParents = true
-            ) {
-                override val compileOutputCopyDest: File?
-                    get() = nodeWorkDir
-            }
+            return NpmProject(project, workDir, searchInParents = true)
         }
     },
     BUILD_DIR {
