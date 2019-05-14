@@ -72,11 +72,13 @@ public class SurroundWithTemplateHandler implements CodeInsightActionHandler {
     List<AnAction> group = new ArrayList<>();
 
     for (TemplateImpl template : templates) {
-      group.add(new InvokeTemplateAction(template, editor, file.getProject(), usedMnemonicsSet));
+      group.add(new InvokeTemplateAction(template, editor, file.getProject(), usedMnemonicsSet,
+                                 () -> SurroundWithLogger.logTemplate(template, file.getLanguage(), file.getProject())));
     }
 
     for (CustomLiveTemplate customTemplate : customTemplates) {
-      group.add(new WrapWithCustomTemplateAction(customTemplate, editor, file, usedMnemonicsSet));
+      group.add(new WrapWithCustomTemplateAction(customTemplate, editor, file, usedMnemonicsSet, () -> SurroundWithLogger.
+        logCustomTemplate(customTemplate, file.getLanguage(), file.getProject())));
     }
     return group;
   }
