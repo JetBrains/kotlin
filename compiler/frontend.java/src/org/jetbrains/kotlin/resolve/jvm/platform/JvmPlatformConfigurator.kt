@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings
 import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport
 
 object JvmPlatformConfigurator : PlatformConfiguratorBase(
-    DynamicTypesSettings(),
     additionalDeclarationCheckers = listOf(
         JvmNameAnnotationChecker(),
         VolatileAnnotationChecker(),

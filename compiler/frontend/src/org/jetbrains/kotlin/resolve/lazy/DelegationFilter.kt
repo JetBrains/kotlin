@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
-import org.jetbrains.kotlin.container.PlatformSpecificExtension
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 
-interface DelegationFilter : PlatformSpecificExtension<DelegationFilter> {
+@DefaultImplementation(impl = DelegationFilter.Default::class)
+interface DelegationFilter {
 
     fun filter(interfaceMember: CallableMemberDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean
 
@@ -29,6 +29,3 @@ interface DelegationFilter : PlatformSpecificExtension<DelegationFilter> {
         override fun filter(interfaceMember: CallableMemberDescriptor, languageVersionSettings: LanguageVersionSettings) = true
     }
 }
-
-class DelegationFiltersClashResolver :
-    PlatformExtensionsClashResolver.UseAnyOf<DelegationFilter>(DelegationFilter.Default, DelegationFilter::class.java)

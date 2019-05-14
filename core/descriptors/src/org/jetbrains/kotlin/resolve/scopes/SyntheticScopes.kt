@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
-import org.jetbrains.kotlin.container.PlatformSpecificExtension
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -97,18 +96,14 @@ interface SyntheticScope {
     }
 }
 
-interface SyntheticScopes : PlatformSpecificExtension<SyntheticScopes> {
+@DefaultImplementation(impl = SyntheticScopes.Empty::class)
+interface SyntheticScopes {
     val scopes: Collection<SyntheticScope>
 
     object Empty : SyntheticScopes {
         override val scopes: Collection<SyntheticScope> = emptyList()
     }
 }
-
-class SyntheticScopesClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<SyntheticScopes>(
-    SyntheticScopes.Empty,
-    SyntheticScopes::class.java
-)
 
 
 fun SyntheticScopes.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)

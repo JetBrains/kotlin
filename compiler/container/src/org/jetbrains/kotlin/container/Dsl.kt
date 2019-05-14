@@ -46,6 +46,10 @@ fun StorageComponentContainer.useInstance(instance: Any) {
     registerInstance(instance)
 }
 
+fun StorageComponentContainer.useInstanceIfNotNull(instance: Any?) {
+    if (instance != null) registerInstance(instance)
+}
+
 fun StorageComponentContainer.useClashResolver(clashResolver: PlatformExtensionsClashResolver<*>) {
     registerClashResolvers(listOf(clashResolver))
 }

@@ -20,8 +20,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
-import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -47,20 +45,14 @@ import java.io.File
 open class ExpectedActualDeclarationChecker(
     val moduleStructureOracle: ModuleStructureOracle,
     val argumentExtractor: ActualAnnotationArgumentExtractor
-) : DeclarationChecker, PlatformSpecificExtension<ExpectedActualDeclarationChecker> {
-    interface ActualAnnotationArgumentExtractor : PlatformSpecificExtension<ActualAnnotationArgumentExtractor> {
+) : DeclarationChecker {
+    interface ActualAnnotationArgumentExtractor {
         fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>?
 
-        object DEFAULT : ActualAnnotationArgumentExtractor {
+        object Default : ActualAnnotationArgumentExtractor {
             override fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>? = null
         }
     }
-
-    class ActualAnnotationArgumentExtractorClashResolver :
-        PlatformExtensionsClashResolver.PreferNonDefault<ActualAnnotationArgumentExtractor>(
-            ActualAnnotationArgumentExtractor.DEFAULT,
-            ActualAnnotationArgumentExtractor::class.java
-        )
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
@@ -378,9 +370,7 @@ open class ExpectedActualDeclarationChecker(
             return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, declaration.defaultValue)?.toConstantValue(expectedType)
         }
 
-        argumentExtractor.extractDefaultValue(actualParameter, expectedType)?.let { return it }
-
-        return null
+        return argumentExtractor.extractDefaultValue(actualParameter, expectedType)
     }
 
     companion object {

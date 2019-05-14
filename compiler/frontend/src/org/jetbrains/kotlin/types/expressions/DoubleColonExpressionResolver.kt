@@ -834,7 +834,12 @@ class FunctionWithBigAritySupport private constructor(val shouldCheckLanguageVer
     }
 }
 
-class FunctionWithBigAritySupportClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<FunctionWithBigAritySupport>(
-    FunctionWithBigAritySupport.LANGUAGE_VERSION_DEPENDENT,
-    FunctionWithBigAritySupport::class.java
-)
+class FunctionWithBigAritySupportClashesResolver :
+    PlatformExtensionsClashResolver<FunctionWithBigAritySupport>(FunctionWithBigAritySupport::class.java) {
+
+    override fun resolveExtensionsClash(extensions: List<FunctionWithBigAritySupport>): FunctionWithBigAritySupport =
+        if (extensions.any { it.shouldCheckLanguageVersionSettings })
+            FunctionWithBigAritySupport.LANGUAGE_VERSION_DEPENDENT
+        else
+            FunctionWithBigAritySupport()
+}

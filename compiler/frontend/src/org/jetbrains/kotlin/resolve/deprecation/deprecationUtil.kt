@@ -74,11 +74,6 @@ class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) : 
     }
 }
 
-class CoroutineCompatibilitySupportClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<CoroutineCompatibilitySupport>(
-    CoroutineCompatibilitySupport.DISABLED,
-    CoroutineCompatibilitySupport::class.java
-)
-
 @DefaultImplementation(DeprecationSettings.Default::class)
 interface DeprecationSettings {
     fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor): Boolean

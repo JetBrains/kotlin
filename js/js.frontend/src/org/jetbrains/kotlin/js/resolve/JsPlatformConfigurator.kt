@@ -16,22 +16,15 @@
 
 package org.jetbrains.kotlin.js.resolve
 
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.js.analyze.JsNativeDiagnosticSuppressor
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
-import org.jetbrains.kotlin.resolve.DeclarationReturnTypeSanitizer
-import org.jetbrains.kotlin.resolve.OverloadFilter
-import org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
-import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
-import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
-import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 object JsPlatformConfigurator : PlatformConfiguratorBase(
@@ -48,22 +41,11 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
                 JsDynamicCallChecker,
                 JsDefinedExternallyCallChecker
         ),
-        additionalTypeCheckers = listOf(),
-        additionalClassifierUsageCheckers = listOf(),
-        additionalAnnotationCheckers = listOf(),
-        additionalClashResolvers = listOf(),
-        identifierChecker = JsIdentifierChecker,
-        overloadFilter = OverloadFilter.Default,
-        platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY,
-        delegationFilter = DelegationFilter.Default,
-        overridesBackwardCompatibilityHelper = OverridesBackwardCompatibilityHelper.Default,
-        declarationReturnTypeSanitizer = DeclarationReturnTypeSanitizer.Default
+        identifierChecker = JsIdentifierChecker
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NameSuggestion())
         container.useImpl<JsCallChecker>()
-        container.useInstance(SyntheticScopes.Empty)
-        container.useInstance(SamConversionTransformer.Empty)
         container.useInstance(JsTypeSpecificityComparator)
         container.useImpl<JsNameClashChecker>()
         container.useImpl<JsNameCharsChecker>()
@@ -76,7 +58,6 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(JsQualifierChecker)
         container.useInstance(JsNativeDiagnosticSuppressor)
         container.useInstance(CoroutineCompatibilitySupport.DISABLED)
-        container.useInstance(ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractor.DEFAULT)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

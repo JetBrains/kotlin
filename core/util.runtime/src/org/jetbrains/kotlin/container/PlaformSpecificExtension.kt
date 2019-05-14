@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.container
 
-import java.lang.IllegalStateException
-
 /**
  * This is a marker-interface for components which are needed for common resolve
  * facilities (like resolve, or deserialization), but are platform-specific.
@@ -31,34 +29,12 @@ interface PlatformSpecificExtension<S : PlatformSpecificExtension<S>>
 abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>>(val applicableTo: Class<E>) {
     abstract fun resolveExtensionsClash(extensions: List<E>): E
 
-    abstract class PreferNonDefault<E : PlatformSpecificExtension<E>>(
+    abstract class FallbackToDefault<E : PlatformSpecificExtension<E>>(
         private val defaultValue: E,
         applicableTo: Class<E>
     ) : PlatformExtensionsClashResolver<E>(applicableTo) {
 
-        override fun resolveExtensionsClash(extensions: List<E>): E {
-            val nonDefaultExtensions = extensions.filter { it != defaultValue }
-
-            return when (nonDefaultExtensions.size) {
-                0 -> defaultValue
-                1 -> nonDefaultExtensions.single()
-                else -> throw IllegalStateException("Can't resolve clash, several non-default extensions provided: ${extensions.joinToString()}")
-            }
-        }
-    }
-
-    abstract class UseAnyOf<E : PlatformSpecificExtension<E>>(
-        private val value: E,
-        applicableTo: Class<E>
-    ) : PlatformExtensionsClashResolver<E>(applicableTo) {
-
-        override fun resolveExtensionsClash(extensions: List<E>): E {
-            return when {
-                extensions.any { it == value } -> value
-                extensions.size == 1 -> extensions.single()
-                else -> throw IllegalStateException("Can't resolve clash, several non-default extensions provided: ${extensions.joinToString()}")
-            }
-        }
+        override fun resolveExtensionsClash(extensions: List<E>): E = defaultValue
     }
 }
 

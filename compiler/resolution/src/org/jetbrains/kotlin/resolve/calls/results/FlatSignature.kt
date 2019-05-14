@@ -40,7 +40,8 @@ interface TypeSpecificityComparator : PlatformSpecificExtension<TypeSpecificityC
     }
 }
 
-class TypeSpecificityComparatorClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<TypeSpecificityComparator>(
+// TODO(dsavvinov): check that it's correct indeed
+class TypeSpecificityComparatorClashesResolver : PlatformExtensionsClashResolver.FallbackToDefault<TypeSpecificityComparator>(
     TypeSpecificityComparator.NONE,
     TypeSpecificityComparator::class.java
 )

@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
-import org.jetbrains.kotlin.container.PlatformSpecificExtension
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
 
-
-interface OverloadFilter : PlatformSpecificExtension<OverloadFilter> {
+@DefaultImplementation(impl = OverloadFilter.Default::class)
+interface OverloadFilter {
     fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot>
 
     object Default : OverloadFilter {
@@ -29,6 +28,3 @@ interface OverloadFilter : PlatformSpecificExtension<OverloadFilter> {
             overloads
     }
 }
-
-class OverloadFilterClashesResolver :
-    PlatformExtensionsClashResolver.UseAnyOf<OverloadFilter>(OverloadFilter.Default, OverloadFilter::class.java)
