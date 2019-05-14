@@ -225,6 +225,9 @@ internal class NpmResolver private constructor(val rootProject: Project) {
 
         if (requiredDependencies.isNotEmpty()) {
             val configuration = project.configurations.create("jsTools")
+            requiredDependencies.forEach {
+                configuration.dependencies.add(it)
+            }
             configuration.resolve()
             visitConfiguration(configuration, npmDependencies, gradleComponents)
         }
