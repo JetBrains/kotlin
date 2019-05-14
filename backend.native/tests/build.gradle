@@ -3353,6 +3353,24 @@ if (isAppleTarget(project)) {
         swiftSources = ['framework/values/values.swift']
     }
 
+    task testValuesGenericsFramework(type: FrameworkTest) {
+        frameworkName = 'ValuesGenerics'
+        konanArtifacts {
+            framework(frameworkName, targets: [ target ]) {
+                srcDir 'framework/values'
+                srcDir 'framework/values_generics'
+                baseDir "$testOutputFramework/$frameworkName"
+
+                if (!useCustomDist) {
+                    dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                }
+
+                extraOpts "-Xembed-bitcode-marker", "-Xobjc-generics"
+            }
+        }
+        swiftSources = ['framework/values_generics/values.swift']
+    }
+
     task testStdlibFramework(type: FrameworkTest) {
         frameworkName = 'Stdlib'
         fullBitcode = true

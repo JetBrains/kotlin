@@ -494,6 +494,7 @@ func testPureSwiftClasses() throws {
 func testNames() throws {
     try assertEquals(actual: ValuesKt.PROPERTY_NAME_MUST_NOT_BE_ALTERED_BY_SWIFT, expected: 111)
     try assertEquals(actual: Deeply.NestedType().thirtyTwo, expected: 32)
+    try assertEquals(actual: WithGenericDeeply.NestedType().thirtyThree, expected: 33)
     try assertEquals(actual: CKeywords(float: 1.0, enum : 42, goto: true).goto_, expected: true)
 }
 

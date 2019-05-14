@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
@@ -16,7 +15,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
@@ -31,6 +30,7 @@ interface ObjCExportNamer {
     fun getPropertyName(property: PropertyDescriptor): String
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySelector(descriptor: ClassDescriptor): String
+    fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String
 
     fun numberBoxName(classId: ClassId): ClassOrProtocolName
 
@@ -61,9 +61,9 @@ internal class ObjCExportNamerImpl(
         builtIns: KotlinBuiltIns,
         private val mapper: ObjCExportMapper,
         private val topLevelNamePrefix: String,
-        private val local: Boolean
+        private val local: Boolean,
+        private val objcGenerics: Boolean = false
 ) : ObjCExportNamer {
-
     private fun String.toUnmangledClassOrProtocolName(): ObjCExportNamer.ClassOrProtocolName =
             ObjCExportNamer.ClassOrProtocolName(swiftName = this, objCName = this)
 
@@ -121,6 +121,8 @@ internal class ObjCExportNamerImpl(
 
     // Classes and protocols share the same namespace in Swift.
     private val swiftClassAndProtocolNames = GlobalNameMapping<Any, String>()
+
+    private val genericTypeParameterNameMapping = GenericTypeParameterNameMapping()
 
     private abstract inner class ClassPropertyNameMapping<T : Any> : Mapping<T, String>() {
 
@@ -194,6 +196,8 @@ internal class ObjCExportNamerImpl(
                 append(getClassOrProtocolSwiftName(containingDeclaration))
 
                 val importAsMember = when {
+                    objcGenerics && descriptor.hasGenericsInHierarchy() -> false
+
                     descriptor.isInterface || containingDeclaration.isInterface -> {
                         // Swift doesn't support neither nested nor outer protocols.
                         false
@@ -219,6 +223,22 @@ internal class ObjCExportNamerImpl(
                 error("unexpected class parent: $containingDeclaration")
             }
         }.mangledBySuffixUnderscores()
+    }
+
+    private fun ClassDescriptor.hasGenericsInHierarchy(): Boolean {
+        fun ClassDescriptor.hasGenericsChildren(): Boolean =
+                unsubstitutedMemberScope.getContributedDescriptors()
+                        .asSequence()
+                        .filterIsInstance<ClassDescriptor>()
+                        .any {
+                            it.typeConstructor.parameters.isNotEmpty() ||
+                                    it.hasGenericsChildren()
+                        }
+
+        val upGenerics = generateSequence(this) { it.containingDeclaration as? ClassDescriptor }
+                .any { it.typeConstructor.parameters.isNotEmpty() }
+
+        return upGenerics || hasGenericsChildren()
     }
 
     private fun getClassOrProtocolObjCName(descriptor: ClassDescriptor): String {
@@ -364,6 +384,16 @@ internal class ObjCExportNamerImpl(
         }
     }
 
+    override fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String {
+        return genericTypeParameterNameMapping.getOrPut(typeParameterDescriptor) {
+            StringBuilder().apply {
+                append(typeParameterDescriptor.name.asString())
+            }.mangledSequence {
+                append('_')
+            }
+        }
+    }
+
     init {
         val any = builtIns.any
 
@@ -424,13 +454,71 @@ internal class ObjCExportNamerImpl(
     private fun String.startsWithWords(words: String) = this.startsWith(words) &&
             (this.length == words.length || !this[words.length].isLowerCase())
 
+    private inner class GenericTypeParameterNameMapping {
+        private val elementToName = mutableMapOf<TypeParameterDescriptor, String>()
+        private val typeParameterNameClassOverrides = mutableMapOf<ClassDescriptor, MutableSet<String>>()
+
+        fun reserved(name: String): Boolean {
+            return name in reservedNames
+        }
+
+        fun getOrPut(element: TypeParameterDescriptor, nameCandidates: () -> Sequence<String>): String {
+            getIfAssigned(element)?.let { return it }
+
+            nameCandidates().forEach {
+                if (tryAssign(element, it)) {
+                    return it
+                }
+            }
+
+            error("name candidates run out")
+        }
+
+        private fun tryAssign(element: TypeParameterDescriptor, name: String): Boolean {
+            if (element in elementToName) error(element)
+
+            if (reserved(name)) return false
+
+            if (!validName(element, name)) return false
+
+            assignName(element, name)
+
+            return true
+        }
+
+        private fun assignName(element: TypeParameterDescriptor, name: String) {
+            if (!local) {
+                elementToName[element] = name
+            }
+            classNameSet(element).add(name)
+        }
+
+        private fun validName(element: TypeParameterDescriptor, name: String): Boolean {
+            assert(element.containingDeclaration is ClassDescriptor)
+
+            val nameSet = classNameSet(element)
+            return !objCClassNames.nameExists(name) && !objCProtocolNames.nameExists(name) && name !in nameSet
+        }
+
+        private fun classNameSet(element: TypeParameterDescriptor): MutableSet<String> {
+            return typeParameterNameClassOverrides.getOrPut(element.containingDeclaration as ClassDescriptor) {
+                mutableSetOf()
+            }
+        }
+
+        private fun getIfAssigned(element: TypeParameterDescriptor): String? = elementToName[element]
+
+        private val reservedNames = setOf("id", "NSObject", "NSArray", "NSCopying", "NSNumber", "NSInteger",
+                "NSUInteger", "NSString", "NSSet", "NSDictionary", "NSMutableArray", "int", "unsigned", "short",
+                "char", "long", "float", "double", "int32_t", "int64_t", "int16_t", "int8_t", "unichar")
+    }
+
     private abstract inner class Mapping<in T : Any, N>() {
         private val elementToName = mutableMapOf<T, N>()
         private val nameToElements = mutableMapOf<N, MutableList<T>>()
 
         abstract fun conflict(first: T, second: T): Boolean
         open fun reserved(name: N) = false
-
         fun getOrPut(element: T, nameCandidates: () -> Sequence<N>): N {
             getIfAssigned(element)?.let { return it }
 
@@ -442,6 +530,8 @@ internal class ObjCExportNamerImpl(
 
             error("name candidates run out")
         }
+
+        fun nameExists(name: N) = nameToElements.containsKey(name)
 
         private fun getIfAssigned(element: T): N? = elementToName[element]
 

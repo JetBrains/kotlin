@@ -137,13 +137,11 @@ object StubRenderer {
     private fun ObjCInterface.renderInterfaceHeader() = buildString {
         fun appendSuperClass() {
             if (superClass != null) append(" : $superClass")
+            formatGenerics(this, superClassGenerics.map { it.render() })
         }
 
         fun appendGenerics() {
-            val generics = generics
-            if (generics.isNotEmpty()) {
-                generics.joinTo(this, separator = ", ", prefix = "<", postfix = ">")
-            }
+            formatGenerics(this, generics)
         }
 
         fun appendCategoryName() {
@@ -187,6 +185,12 @@ object StubRenderer {
         operator fun List<String>.unaryPlus() {
             collection += this
         }
+    }
+}
+
+internal fun formatGenerics(buffer: Appendable, generics:List<String>) {
+    if (generics.isNotEmpty()) {
+        generics.joinTo(buffer, separator = ", ", prefix = "<", postfix = ">")
     }
 }
 

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+
 sealed class ObjCType {
     final override fun toString(): String = this.render()
 
@@ -46,6 +48,15 @@ class ObjCClassType(
         }
         append(" *")
         append(attrsAndName)
+    }
+}
+
+class ObjCGenericTypeDeclaration(
+        val typeParameterDescriptor: TypeParameterDescriptor,
+        val namer: ObjCExportNamer
+) : ObjCNonNullReferenceType() {
+    override fun render(attrsAndName: String): String {
+        return namer.getTypeParameterName(typeParameterDescriptor).withAttrsAndName(attrsAndName)
     }
 }
 

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 internal interface CustomTypeMapper {
     val mappedClassId: ClassId
-    fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl): ObjCNonNullReferenceType
+    fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType
 }
 
 internal object CustomTypeMappers {
@@ -81,7 +81,7 @@ internal object CustomTypeMappers {
                 objCClassName: String
         ) : this(mappedClassId, { objCClassName })
 
-        override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl): ObjCNonNullReferenceType =
+        override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType =
                 ObjCClassType(translator.getObjCClassName())
     }
 
@@ -97,14 +97,14 @@ internal object CustomTypeMappers {
 
         override val mappedClassId = ClassId.topLevel(mappedClassFqName)
 
-        override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl): ObjCNonNullReferenceType {
+        override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType {
             val typeArguments = mappedSuperType.arguments.map {
                 val argument = it.type
                 if (TypeUtils.isNullableType(argument)) {
                     // Kotlin `null` keys and values are represented as `NSNull` singleton.
                     ObjCIdType
                 } else {
-                    translator.mapReferenceTypeIgnoringNullability(argument)
+                    translator.mapReferenceTypeIgnoringNullability(argument, objCExportScope)
                 }
             }
 
@@ -115,7 +115,7 @@ internal object CustomTypeMappers {
     private class Function(parameterCount: Int) : CustomTypeMapper {
         override val mappedClassId: ClassId = KotlinBuiltIns.getFunctionClassId(parameterCount)
 
-        override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl): ObjCNonNullReferenceType {
+        override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType {
             val functionType = mappedSuperType
 
             val returnType = functionType.getReturnTypeFromFunctionType()
@@ -123,8 +123,8 @@ internal object CustomTypeMappers {
                     functionType.getValueParameterTypesFromFunctionType().map { it.type }
 
             return ObjCBlockPointerType(
-                    translator.mapReferenceType(returnType),
-                    parameterTypes.map { translator.mapReferenceType(it) }
+                    translator.mapReferenceType(returnType, objCExportScope),
+                    parameterTypes.map { translator.mapReferenceType(it, objCExportScope) }
             )
         }
     }

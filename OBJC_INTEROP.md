@@ -217,6 +217,86 @@ foo {
 
 </div>
 
+### Generics
+
+Objective-C supports "lightweight generics" defined on classes, with a relatively limited feature set. Swift can import 
+generics defined on classes to help provide additional type information to the compiler.
+
+Generic feature support for Objc and Swift differ from Kotlin, so the translation will inevitably lose some information,
+but the features supported retain meaningful information.
+
+### To Use
+
+Generics are currently not enabled by default. To have the framework header written with generics, add an experimental
+flag to the compiler config:
+
+```
+compilations.main {
+    outputKinds("framework")
+    extraOpts "-Xobjc-generics"
+}
+```
+
+#### Limitations
+
+Objective-C generics do not support all features of either Kotlin or Swift, so there will be some information lost
+in the translation.
+
+Generics can only be defined on classes, not on interfaces (protocols in Objc and Swift) or functions.
+
+#### Nullability
+
+Kotlin and Swift both define nullability as part of the type specification, while Objc defines nullability on methods
+and properties of a type. As such, the following:
+
+```kotlin
+class Sample<T>(){
+  fun myVal():T
+}
+```
+
+will (logically) look like this:
+
+```swift
+class Sample<T>(){
+  fun myVal():T?
+}
+```
+
+In order to support a potentially nullable type, the Objc header needs to define `myVal` with a nullable return value.
+
+To mitigate this, when defining your generic classes, if the generic type should *never* be null, provide a non-null 
+type constraint:
+
+```kotlin
+class Sample<T:Any>(){
+  fun myVal():T
+}
+```
+
+That will force the Objc header to mark `myVal` as non-null.
+
+#### Variance
+
+Objective-C allows generics to be declared covariant or contravariant. Swift has no support for variance. Generic classes coming
+from Objective-C can be force-cast as needed.
+
+```kotlin
+data class SomeData(val num:Int = 42):BaseData()
+class GenVarOut<out T:Any>(val arg:T)
+```
+
+```swift
+let variOut = GenVarOut<SomeData>(arg: sd)
+let variOutAny : GenVarOut<BaseData> = variOut as! GenVarOut<BaseData>
+```
+
+#### Constraints
+
+In Kotlin you can provide upper bounds for a generic type. Objective-C also supports this, but that support is unavailable 
+in more complex cases, and is currently not supported in the Kotlin - Objective-C interop. The exception here being a non-null
+upper bound will make Objective-C methods/properties non-null.
+
 ## Casting between mapped types
 
 When writing Kotlin code, an object may need to be converted from a Kotlin type

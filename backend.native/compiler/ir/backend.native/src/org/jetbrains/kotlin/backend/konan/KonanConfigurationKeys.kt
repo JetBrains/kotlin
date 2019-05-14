@@ -114,6 +114,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create<List<String>>("libraries that should be covered")
         val PROFRAW_PATH: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("path to *.profraw coverage output")
+        val OBJC_GENERICS: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("write objc header with generics support")
     }
 }
 

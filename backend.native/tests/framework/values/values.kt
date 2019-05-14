@@ -280,6 +280,14 @@ class Deeply {
     }
 }
 
+class WithGenericDeeply() {
+    class Nested {
+        class Type<T> {
+            val thirtyThree = 33
+        }
+    }
+}
+
 data class CKeywords(val float: Float, val `enum`: Int, var goto: Boolean)
 
 interface Base1 {

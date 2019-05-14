@@ -20,8 +20,9 @@ internal class ObjCExportHeaderGeneratorImpl(
         val context: Context,
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
-        namer: ObjCExportNamer
-) : ObjCExportHeaderGenerator(moduleDescriptors, context.builtIns, mapper, namer) {
+        namer: ObjCExportNamer,
+        objcGenerics: Boolean
+) : ObjCExportHeaderGenerator(moduleDescriptors, context.builtIns, mapper, namer, objcGenerics) {
 
     override fun reportWarning(text: String) {
         context.reportCompilationWarning(text)
