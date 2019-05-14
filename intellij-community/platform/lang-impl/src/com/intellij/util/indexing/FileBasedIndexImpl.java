@@ -1355,6 +1355,9 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
           }
           else {
             newFc = new FileContentImpl(vFile, contentText, currentDocStamp);
+            if (IdIndex.ourSnapshotMappingsEnabled) {
+              newFc.putUserData(UpdatableSnapshotInputMappingIndex.FORCE_IGNORE_MAPPING_INDEX_UPDATE, Boolean.TRUE);
+            }
             document.putUserData(ourFileContentKey, new WeakReference<>(newFc));
           }
 

@@ -106,7 +106,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
       }
     }
     data = super.mapInput(content);
-    if (!containsSnapshotData) {
+    if (!containsSnapshotData && !UpdatableSnapshotInputMappingIndex.ignoreMappingIndexUpdate(content)) {
       try {
         return ((UpdatableSnapshotInputMappingIndex)mySnapshotInputMappings).putData(content, data);
       }
