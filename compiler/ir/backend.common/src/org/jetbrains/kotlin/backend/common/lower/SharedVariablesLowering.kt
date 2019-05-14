@@ -100,7 +100,8 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
                 override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent?) {
                     declaration.acceptChildren(this, data)
 
-                    if (declaration.isVar) {
+                    // `val` locals can be initialized in a lambda inlined into `run` or similar.
+                    if (declaration.isVar || declaration.initializer == null) {
                         relevantVars.add(declaration)
                     }
                 }
@@ -109,7 +110,7 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
                     expression.acceptChildren(this, data)
 
                     val value = expression.symbol.owner
-                    if (value in relevantVars && (value as IrVariable).parent != data) {
+                    if (value in relevantVars && value is IrVariable && (value.isVar || expression is IrSetVariable) && value.parent != data) {
                         sharedVariables.add(value)
                     }
                 }

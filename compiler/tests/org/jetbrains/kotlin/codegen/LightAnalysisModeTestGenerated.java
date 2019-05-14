@@ -18613,6 +18613,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/properties/lateinit/local/capturedLocalLateinit.kt");
                 }
 
+                @TestMetadata("implicitLocalLateinit.kt")
+                public void testImplicitLocalLateinit() throws Exception {
+                    runTest("compiler/testData/codegen/box/properties/lateinit/local/implicitLocalLateinit.kt");
+                }
+
                 @TestMetadata("kt23260.kt")
                 public void testKt23260() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/lateinit/local/kt23260.kt");
