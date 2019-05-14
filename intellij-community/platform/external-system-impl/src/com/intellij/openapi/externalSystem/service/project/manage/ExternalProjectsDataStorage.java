@@ -33,6 +33,8 @@ import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.XCollection;
 import com.intellij.util.xmlb.annotations.XMap;
+import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -216,8 +218,8 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   synchronized void saveInclusionSettings(@Nullable DataNode<ProjectData> projectDataNode) {
     if (projectDataNode == null) return;
 
-    final MultiMap<String, String> inclusionMap = MultiMap.create();
-    final MultiMap<String, String> exclusionMap = MultiMap.create();
+    final MultiMap<String, String> inclusionMap = MultiMap.createSmart();
+    final MultiMap<String, String> exclusionMap = MultiMap.createSmart();
     ExternalSystemApiUtil.visit(projectDataNode, dataNode -> {
       DataNode<ExternalConfigPathAware> projectNode = resolveProjectNode(dataNode);
       if (projectNode != null) {
@@ -447,31 +449,31 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     return PathManagerEx.getAppSystemDir().resolve("external_build_system").resolve(".broken").toFile();
   }
 
-  static class State {
+  static final class State {
     @Property(surroundWithTag = false)
-    @MapAnnotation(surroundWithTag = false, surroundValueWithTag = false, surroundKeyWithTag = false,
-      keyAttributeName = "path", entryTagName = "projectState")
-    public final Map<String, ProjectState> map = ContainerUtil.newConcurrentMap();
+    @MapAnnotation(surroundWithTag = false, surroundValueWithTag = false, surroundKeyWithTag = false, keyAttributeName = "path", entryTagName = "projectState")
+    public final Map<String, ProjectState> map = new THashMap<>();
   }
 
   static class ProjectState {
     @Property(surroundWithTag = false)
     @XMap(keyAttributeName = "path", entryTagName = "dataType")
-    public final Map<String, ModuleState> map = ContainerUtil.newConcurrentMap();
+    public final Map<String, ModuleState> map = new THashMap<>();
     public boolean isInclusion;
   }
 
   static class ModuleState {
     @Property(surroundWithTag = false)
     @XCollection(elementName = "id")
-    public final Set<String> set = ContainerUtil.newConcurrentSet();
+    public final Set<String> set;
 
     @SuppressWarnings("unused")
     ModuleState() {
+      set = new THashSet<>();
     }
 
-    ModuleState(Collection<String> values) {
-      set.addAll(values);
+    ModuleState(@NotNull Collection<String> values) {
+      set = new THashSet<>(values);
     }
   }
 }
