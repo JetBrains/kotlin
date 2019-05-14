@@ -9,7 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.file.CopySpec
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
@@ -87,13 +87,6 @@ internal class NpmResolver private constructor(val rootProject: Project) {
     private val gson = GsonBuilder()
         .setPrettyPrinting()
         .create()
-    private val readyTaskGraph: TaskExecutionGraph?
-
-    init {
-        var readyTaskGraph: TaskExecutionGraph? = null
-        rootProject.gradle.taskGraph.whenReady { readyTaskGraph = it }
-        this.readyTaskGraph = readyTaskGraph
-    }
 
     class ProjectData(var resolved: ResolvedProject? = null) {
         companion object {
@@ -217,28 +210,23 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         npmDependencies: MutableSet<NpmDependency>,
         gradleComponents: GradleNodeModulesBuilder
     ) {
-        var toolsDependenciesConfiguration: Configuration? = project.configurations.create("jsTools")
+        val requiredDependencies = mutableListOf<Dependency>()
 
         project.tasks.toList().forEach { task ->
-            if (task is RequiresNpmDependencies) {
-                if (readyTaskGraph?.hasTask(task) ?: task.enabled) {
-                    val list = task.requiredNpmDependencies.toList()
+            if (task.enabled && task is RequiresNpmDependencies) {
+                val list = task.requiredNpmDependencies.toList()
 
-                    requiredByTasks[task] = list
-                    list.forEach { requiredDependency ->
-                        val configuration: Configuration = toolsDependenciesConfiguration
-                            ?: project.configurations.create("jsTools").also { new ->
-                                toolsDependenciesConfiguration = new
-                            }
-
-                        configuration.dependencies.add(requiredDependency.createDependency(project))
-                    }
+                requiredByTasks[task] = list
+                list.forEach { requiredDependency ->
+                    requiredDependencies.add(requiredDependency.createDependency(project))
                 }
             }
         }
 
-        if (toolsDependenciesConfiguration != null) {
-            visitConfiguration(toolsDependenciesConfiguration!!, npmDependencies, gradleComponents)
+        if (requiredDependencies.isNotEmpty()) {
+            val configuration = project.configurations.create("jsTools")
+            configuration.resolve()
+            visitConfiguration(configuration, npmDependencies, gradleComponents)
         }
     }
 
