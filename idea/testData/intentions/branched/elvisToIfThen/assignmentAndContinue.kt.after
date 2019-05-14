@@ -1,0 +1,6 @@
+fun foo(s: String?) {
+    while (true) {
+        val t = s?.hashCode()
+        if (t == null) continue
+    }
+}
