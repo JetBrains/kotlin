@@ -55,6 +55,10 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
     }
 
     private fun wrapInIncrementalProcessor(processors: List<Processor>, classpath: Iterable<File>): List<IncrementalProcessor> {
+        if (!options[KaptFlag.INCREMENTAL_APT]) {
+            return processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL) }
+        }
+
         val processorNames = processors.map {it.javaClass.name}.toSet()
 
         val processorsInfo: Map<String, DeclaredProcType> = getIncrementalProcessorsFromClasspath(processorNames, classpath)
