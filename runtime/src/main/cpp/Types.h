@@ -26,6 +26,7 @@
 
 #include <deque>
 #include <string>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -69,6 +70,8 @@ template<class Value>
 using KStdUnorderedSet = std::unordered_set<Value,
   std::hash<Value>, std::equal_to<Value>,
   KonanAllocator<Value>>;
+template<class Value, class Compare>
+using KStdOrderedSet = std::set<Value, Compare, KonanAllocator<Value>>;
 template<class Value>
 using KStdVector = std::vector<Value, KonanAllocator<Value>>;
 

@@ -42,6 +42,9 @@ external internal fun requestTerminationInternal(id: Int, processScheduledJobs: 
 external internal fun executeInternal(
         id: Int, mode: Int, producer: () -> Any?, job: CPointer<CFunction<*>>): Int
 
+@SymbolName("Kotlin_Worker_executeAfterInternal")
+external internal fun executeAfterInternal(id: Int, operation: () -> Unit, afterMicroseconds: Long): Unit
+
 @ExportForCppRuntime
 internal fun ThrowWorkerUnsupported(): Unit =
         throw UnsupportedOperationException("Workers are not supported")
