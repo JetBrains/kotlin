@@ -16,11 +16,26 @@ abstract class JvmPlatform : SimplePlatform("JVM") {
         get() = "JVM "
 }
 
+@Suppress("DEPRECATION_ERROR")
 object JvmPlatforms {
+    private object UnspecifiedSimpleJvmPlatform : JvmPlatform() {
+        override val targetPlatformVersion: TargetPlatformVersion
+            get() = JvmTarget.JVM_1_6
+    }
+
+    @Deprecated(
+        message = "Should be accessed only by compatibility layer, other clients should use 'defaultJvmPlatform'",
+        level = DeprecationLevel.ERROR
+    )
+    object CompatJvmPlatform : TargetPlatform(setOf(UnspecifiedSimpleJvmPlatform)),
+        // Needed for backward compatibility, because old code uses INSTANCEOF checks instead of calling extensions
+        org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform {}
+
     private val jvmTargetToJdkPlatform: Map<JvmTarget, TargetPlatform> =
         JvmTarget.values().map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
 
-    val defaultJvmPlatform: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.DEFAULT]!!
+    val defaultJvmPlatform: TargetPlatform
+        get() = CompatJvmPlatform
 
     val jvm16: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_6]!!
     val jvm18: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_8]!!

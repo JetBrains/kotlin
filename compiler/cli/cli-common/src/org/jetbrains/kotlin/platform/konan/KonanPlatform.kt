@@ -14,8 +14,20 @@ abstract class KonanPlatform : SimplePlatform("Native") {
         get() = "Kotlin/Native "
 }
 
+@Suppress("DEPRECATION_ERROR")
 object KonanPlatforms {
-    val defaultKonanPlatform: TargetPlatform = object : KonanPlatform() {}.toTargetPlatform()
+    private object DefaultSimpleKonanPlatform : KonanPlatform()
+
+    @Deprecated(
+        message = "Should be accessed only by compatibility layer, other clients should use 'defaultKonanPlatform'",
+        level = DeprecationLevel.ERROR
+    )
+    object CompatKonanPlatform : TargetPlatform(setOf(DefaultSimpleKonanPlatform)),
+        // Needed for backward compatibility, because old code uses INSTANCEOF checks instead of calling extensions
+        org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform {}
+
+    val defaultKonanPlatform: TargetPlatform
+        get() = CompatKonanPlatform
 
     val allKonanPlatforms: List<TargetPlatform> = listOf(defaultKonanPlatform)
 }

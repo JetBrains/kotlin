@@ -14,8 +14,20 @@ abstract class JsPlatform : SimplePlatform("JS") {
         get() = "JavaScript "
 }
 
+@Suppress("DEPRECATION_ERROR")
 object JsPlatforms {
-    val defaultJsPlatform: TargetPlatform = object : JsPlatform() {}.toTargetPlatform()
+    private object DefaultSimpleJsPlatform : JsPlatform()
+
+    @Deprecated(
+        message = "Should be accessed only by compatibility layer, other clients should use 'defaultJsPlatform'",
+        level = DeprecationLevel.ERROR
+    )
+    object CompatJsPlatform : TargetPlatform(setOf(DefaultSimpleJsPlatform)),
+        // Needed for backward compatibility, because old code uses INSTANCEOF checks instead of calling extensions
+        org.jetbrains.kotlin.js.resolve.JsPlatform {}
+
+    val defaultJsPlatform: TargetPlatform
+        get() = CompatJsPlatform
 
     val allJsPlatforms: List<TargetPlatform> = listOf(defaultJsPlatform)
 }

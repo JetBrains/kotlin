@@ -18,12 +18,26 @@ package org.jetbrains.kotlin.platform
  * it still can be applicable for [TargetPlatform]s with [componentPlatforms] > 1, e.g. when it consists
  * of two version of JDK, JDK and Android, several versions of Android API, etc.
  */
-data class TargetPlatform(val componentPlatforms: Set<SimplePlatform>) : Collection<SimplePlatform> by componentPlatforms {
+open class TargetPlatform(val componentPlatforms: Set<SimplePlatform>) : Collection<SimplePlatform> by componentPlatforms {
     init {
         if (componentPlatforms.isEmpty()) throw IllegalArgumentException("Don't instantiate TargetPlatform with empty set of platforms")
     }
 
     override fun toString(): String = presentableDescription
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+
+        if (other !is TargetPlatform) return false
+
+        if (componentPlatforms != other.componentPlatforms) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return componentPlatforms.hashCode()
+    }
 }
 
 /**

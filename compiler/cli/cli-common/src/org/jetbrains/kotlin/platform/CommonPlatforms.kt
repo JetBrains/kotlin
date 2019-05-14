@@ -13,15 +13,23 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms.jvm18
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms.defaultKonanPlatform
 
+@Suppress("DEPRECATION_ERROR")
 object CommonPlatforms {
 
-    val defaultCommonPlatform: TargetPlatform = TargetPlatform(
+    @Deprecated(
+        message = "Should be accessed only by compatibility layer, other clients should use 'defaultJvmPlatform'",
+        level = DeprecationLevel.ERROR
+    )
+    object CompatCommonPlatform : TargetPlatform(
         setOf(
             defaultJvmPlatform.single(),
             defaultJsPlatform.single(),
             defaultKonanPlatform.single()
         )
-    )
+    ), org.jetbrains.kotlin.analyzer.common.CommonPlatform
+
+    val defaultCommonPlatform: TargetPlatform
+        get() = CompatCommonPlatform
 
     val allSimplePlatforms: List<TargetPlatform>
         get() = sequence {
