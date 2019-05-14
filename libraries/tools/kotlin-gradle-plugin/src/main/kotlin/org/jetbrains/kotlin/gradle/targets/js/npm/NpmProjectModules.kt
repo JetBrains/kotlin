@@ -80,6 +80,8 @@ internal open class NpmProjectModules(
         return null
     }
 
+    override fun toString(): String = "$dir"
+
     companion object {
         const val JS_SUFFIX = ".js"
         const val INDEX_FILE_NAME = "index"
