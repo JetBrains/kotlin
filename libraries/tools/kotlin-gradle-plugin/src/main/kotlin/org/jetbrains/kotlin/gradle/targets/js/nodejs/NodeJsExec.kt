@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import java.io.File
 
-class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java) {
+open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java) {
     private val npmProject by lazy { project.npmProject }
 
     init {
