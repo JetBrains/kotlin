@@ -21,7 +21,7 @@ interface KotlinMangler {
     val IrDeclaration.hashedMangle: Long
     fun IrDeclaration.isExported(): Boolean
     val IrFunction.functionName: String
-
+    val IrType.isInlined: Boolean
 }
 
 abstract class KotlinManglerImpl: KotlinMangler {
@@ -155,7 +155,7 @@ abstract class KotlinManglerImpl: KotlinMangler {
             val signatureSuffix =
                 when {
                     this.typeParameters.isNotEmpty() -> "Generic"
-                    returnType.isInlined() -> "ValueType"
+                    returnType.isInlined -> "ValueType"
                     !returnType.isUnitOrNullableUnit() -> typeToHashString(returnType)
                     else -> ""
                 }

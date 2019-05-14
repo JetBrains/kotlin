@@ -6,9 +6,14 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.serialization.KotlinManglerImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isInlined
 
 object JsMangler: KotlinManglerImpl() {
     // TODO: think about this
     override val String.hashMangle: Long get() = this.hashCode().toLong()
+
+    override val IrType.isInlined: Boolean
+        get() = this.isInlined()
 }
 
