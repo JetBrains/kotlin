@@ -78,6 +78,22 @@ class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(K
         val right = KtPsiUtil.safeDeparenthesize(element.right!!)
 
         val leftSafeCastReceiver = left.findSafeCastReceiver(context)
+        if (leftSafeCastReceiver == null) {
+            val property = (KtPsiUtil.safeDeparenthesize(element).parent as? KtProperty)
+            val propertyName = property?.name
+            if ((right is KtReturnExpression || right is KtBreakExpression || right is KtContinueExpression || right is KtThrowExpression)
+                && propertyName != null
+            ) {
+                val parent = property.parent
+                val factory = KtPsiFactory(element)
+                factory.createExpressionByPattern("if ($0 == null) $1", propertyName, right)
+                parent.addAfter(factory.createExpressionByPattern("if ($0 == null) $1", propertyName, right), property)
+                parent.addAfter(factory.createNewLine(), property)
+                element.replace(left)
+                return
+            }
+        }
+
         val (leftIsStable, ifStatement) = if (leftSafeCastReceiver != null) {
             val newReceiver = leftSafeCastReceiver.left
             val typeReference = leftSafeCastReceiver.right!!
