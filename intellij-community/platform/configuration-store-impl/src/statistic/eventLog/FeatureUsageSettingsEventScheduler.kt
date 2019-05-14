@@ -12,10 +12,11 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ex.ProjectManagerEx
-import com.intellij.openapi.project.processOpenedProjects
 import com.intellij.util.ArrayUtilRt
+import java.util.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
 private val LOG = logger<FeatureUsageSettingsEventScheduler>()
@@ -23,7 +24,7 @@ private val LOG = logger<FeatureUsageSettingsEventScheduler>()
 private const val PERIOD_DELAY = 24 * 60
 private const val INITIAL_DELAY = PERIOD_DELAY
 
-class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracker {
+internal class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracker {
   override fun initialize() {
     if (!FeatureUsageLogger.isEnabled()) {
       return
@@ -41,17 +42,31 @@ class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracker {
     }
 
     logInitializedComponents(ApplicationManager.getApplication())
-    if (ProjectManagerEx.getInstanceEx().isDefaultProjectInitialized) {
-      logInitializedComponents(ProjectManager.getInstance().defaultProject)
+
+    val projectManager = ProjectManagerEx.getInstanceEx()
+    val projects = ArrayDeque(projectManager.openProjects.toList())
+    if (projectManager.isDefaultProjectInitialized) {
+      projects.addFirst(projectManager.defaultProject)
     }
-    processOpenedProjects { project ->
-      logInitializedComponents(project)
+    logProjectInitializedComponentsAndContinue(projects)
+  }
+
+  private fun logProjectInitializedComponentsAndContinue(projects: ArrayDeque<Project>): CompletableFuture<Void?> {
+    val project = projects.peekFirst()
+    if (project == null || !project.isInitialized || project.isDisposed) {
+      return CompletableFuture.completedFuture(null)
+    }
+    else {
+      return logInitializedComponents(project)
+        .thenCompose {
+          logProjectInitializedComponentsAndContinue(projects)
+        }
     }
   }
 
-  private fun logInitializedComponents(componentManager: ComponentManager) {
-    val stateStore = (componentManager.stateStore as? ComponentStoreImpl) ?: return
-    ApplicationManager.getApplication().invokeLater {
+  private fun logInitializedComponents(componentManager: ComponentManager): CompletableFuture<Void?> {
+    val stateStore = (componentManager.stateStore as? ComponentStoreImpl) ?: return CompletableFuture.completedFuture(null)
+    return CompletableFuture.runAsync(Runnable {
       val components = stateStore.getComponents()
       for (name in ArrayUtilRt.toStringArray(components.keys)) {
         val info = components[name]
@@ -67,7 +82,7 @@ class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracker {
           LOG.warn("Error during configuration recording", e)
         }
       }
-    }
+    }, Executor { ApplicationManager.getApplication().invokeLater(it) })
   }
 }
 
