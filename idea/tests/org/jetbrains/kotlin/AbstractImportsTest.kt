@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin
 
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import com.intellij.application.options.CodeStyle
 import com.intellij.psi.codeStyle.PackageEntry
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
@@ -23,10 +23,7 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected fun doTest(testPath: String) {
-        val settingManager = CodeStyleSettingsManager.getInstance(project)
-        val tempSettings = settingManager.currentSettings.clone()
-        settingManager.setTemporarySettings(tempSettings)
-
+        CodeStyle.setTemporarySettings(project, CodeStyle.getSettings(project).clone())
         val codeStyleSettings = KotlinCodeStyleSettings.getInstance(project)
 
         try {
@@ -45,9 +42,13 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
 
             val fileText = file.text
 
-            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
-            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS:") ?: nameCountToUseStarImportForMembersDefault
-            codeStyleSettings.IMPORT_NESTED_CLASSES = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// IMPORT_NESTED_CLASSES:") ?: false
+            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT =
+                InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
+            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS =
+                InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS:")
+                    ?: nameCountToUseStarImportForMembersDefault
+            codeStyleSettings.IMPORT_NESTED_CLASSES =
+                InTextDirectivesUtils.getPrefixedBoolean(fileText, "// IMPORT_NESTED_CLASSES:") ?: false
 
             InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PACKAGE_TO_USE_STAR_IMPORTS:").forEach {
                 codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(PackageEntry(false, it.trim(), false))
@@ -58,19 +59,17 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
 
             val log = project.executeWriteCommand<String?>("") { doTest(file) }
 
-            KotlinTestUtils.assertEqualsToFile(File(testPath + ".after"), myFixture.file.text)
+            KotlinTestUtils.assertEqualsToFile(File("$testPath.after"), myFixture.file.text)
             if (log != null) {
-                val logFile = File(testPath + ".log")
+                val logFile = File("$testPath.log")
                 if (log.isNotEmpty()) {
                     KotlinTestUtils.assertEqualsToFile(logFile, log)
-                }
-                else {
+                } else {
                     TestCase.assertFalse(logFile.exists())
                 }
             }
-        }
-        finally {
-            settingManager.dropTemporarySettings()
+        } finally {
+            CodeStyle.dropTemporarySettings(project)
         }
     }
 
