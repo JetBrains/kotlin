@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
@@ -244,7 +246,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val primitiveArrayConcat = getInternalWithoutPackage("primitiveArrayConcat")
 
-    val jsArraySlice = unOp("slice")
+    val jsArraySlice = defineJsSliceIntrinsic().symbol
 
     val jsBind = defineJsBindIntrinsic()
 
@@ -321,6 +323,27 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
             }
             externalPackageFragment.declarations += it
         }
+
+    private fun defineJsSliceIntrinsic(): IrSimpleFunction {
+        val typeParameter = JsIrBuilder.buildTypeParameter(Name.identifier("A"), 0, true).apply {
+            superTypes += irBuiltIns.anyType
+        }
+        val type = IrSimpleTypeBuilder().run {
+            classifier = typeParameter.symbol
+            buildSimpleType()
+        }
+
+        return JsIrBuilder.buildFunction(
+            "slice",
+            returnType = type,
+            parent = externalPackageFragment,
+            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+        ).also {
+            it.typeParameters += typeParameter.also { t -> t.parent = it }
+            it.valueParameters += JsIrBuilder.buildValueParameter("a", 0, type).also { v -> v.parent = it }
+            externalPackageFragment.declarations += it
+        }
+    }
 
     private fun defineSetJSPropertyIntrinsic() =
         JsIrBuilder.buildFunction(

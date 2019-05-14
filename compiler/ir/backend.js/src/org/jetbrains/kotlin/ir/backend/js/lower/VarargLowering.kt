@@ -58,7 +58,7 @@ private class VarargTransformer(
     fun IrExpression.unboxInlineClassIfNeeded(): IrExpression {
         val inlinedClass = type.getInlinedClass() ?: return this
         val field = getInlineClassBackingField(inlinedClass)
-        return IrGetFieldImpl(startOffset, endOffset, field.symbol, inlinedClass.defaultType, this)
+        return IrGetFieldImpl(startOffset, endOffset, field.symbol, field.type, this)
     }
 
     fun IrExpression.boxInlineClassIfNeeded(inlineClass: IrClass?) =
@@ -121,28 +121,25 @@ private class VarargTransformer(
 
         // vararg with a single segment => no need to concatenate
         if (segments.size == 1) {
-            return if (expression.elements.any { it is IrSpreadElement }) {
-                // Single spread operator => need to copy the array
+            val segment = segments.first()
+            val argument = if (expression.elements.any { it is IrSpreadElement }) {
                 IrCallImpl(
                     expression.startOffset,
                     expression.endOffset,
                     expression.type,
                     context.intrinsics.jsArraySlice
                 ).apply {
-                    putValueArgument(0, segments.first())
+                    putTypeArgument(0, expression.type)
+                    putValueArgument(0, segment)
                 }
-            } else {
-                val res = segments.first()
-                return if (needUnboxing)
-                    res.boxInlineClassIfNeeded(arrayInlineClass!!)
-                else
-                    res
-            }
+            } else segment
+
+            return if (needUnboxing) argument.boxInlineClassIfNeeded(arrayInlineClass!!) else argument
         }
 
         val arrayLiteral =
             segments.toArrayLiteral(
-                IrSimpleTypeImpl(context.intrinsics.array, false, emptyList(), emptyList()),
+                IrSimpleTypeImpl(context.intrinsics.array, false, emptyList(), emptyList()), // TODO: Substitution
                 context.irBuiltIns.anyType
             )
 
