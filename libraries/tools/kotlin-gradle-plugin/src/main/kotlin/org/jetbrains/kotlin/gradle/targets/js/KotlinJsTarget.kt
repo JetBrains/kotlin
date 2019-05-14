@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
     KotlinOnlyTarget<KotlinJsCompilation>(project, platformType), KotlinJsTargetDsl {
     val npmResolveTaskHolder = project.locateOrRegisterTask<NpmResolveTask>("npmResolve") {}
-    val npmResolveTask
-        get() = npmResolveTaskHolder.getTaskOrProvider()
 
     val testTaskName get() = lowerCamelCaseName(disambiguationClassifier, testTaskNameSuffix)
     val testTask get() = project.tasks.maybeCreate(testTaskName)
