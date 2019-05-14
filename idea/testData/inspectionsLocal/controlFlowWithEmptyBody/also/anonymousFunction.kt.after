@@ -1,0 +1,6 @@
+// PROBLEM: 'also' has empty body
+// WITH_RUNTIME
+
+fun test() {
+    42
+}

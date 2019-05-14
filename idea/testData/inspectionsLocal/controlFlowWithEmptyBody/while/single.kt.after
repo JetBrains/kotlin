@@ -1,4 +1,0 @@
-// PROBLEM: 'while' has empty body
-
-fun test(i: Int) {
-}

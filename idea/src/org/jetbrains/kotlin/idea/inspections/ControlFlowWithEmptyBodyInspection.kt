@@ -24,7 +24,17 @@ class ControlFlowWithEmptyBodyInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : KtVisitorVoid() {
         override fun visitIfExpression(expression: KtIfExpression) {
             if (expression.then.isEmptyBody()) {
-                val fix = if (expression.hasEmptyBranches()) RemoveElementFix() else null
+                val branch = expression.`else`
+                val hasEmptyBranches = (branch as? KtIfExpression)?.hasEmptyBranches() ?: branch.isEmptyBody()
+                val fix = when {
+                    !hasEmptyBranches -> null
+                    !expression.condition.hasNoSideEffect() -> when {
+                        expression.parentIf() != null -> null
+                        expression.condition.sideEffects().isEmpty() -> null
+                        else -> RemoveElementFix(extractSideEffects = true)
+                    }
+                    else -> RemoveElementFix()
+                }
                 holder.registerProblem(expression, expression.ifKeyword, fix)
             }
             val elseKeyword = expression.elseKeyword
@@ -35,7 +45,13 @@ class ControlFlowWithEmptyBodyInspection : AbstractKotlinInspection() {
 
         override fun visitWhenExpression(expression: KtWhenExpression) {
             if (expression.entries.isNotEmpty() || expression.hasComment()) return
-            holder.registerProblem(expression, expression.whenKeyword)
+            val subjectExpression = expression.subjectExpression
+            val fix = when {
+                subjectExpression.hasNoSideEffect() -> RemoveElementFix()
+                subjectExpression.sideEffects().isNotEmpty() -> RemoveElementFix(extractSideEffects = true)
+                else -> null
+            }
+            holder.registerProblem(expression, expression.whenKeyword, fix)
         }
 
         override fun visitForExpression(expression: KtForExpression) {
@@ -61,14 +77,27 @@ class ControlFlowWithEmptyBodyInspection : AbstractKotlinInspection() {
         override fun visitCallExpression(expression: KtCallExpression) {
             val callee = expression.calleeExpression ?: return
             if (!expression.isCalling(controlFlowFunctions)) return
-            val body = expression.lambdaArguments.singleOrNull()?.getLambdaExpression()?.bodyExpression
+            val body = when (val argument = expression.valueArguments.singleOrNull()?.getArgumentExpression()) {
+                is KtLambdaExpression -> argument.bodyExpression
+                is KtNamedFunction -> argument.bodyBlockExpression
+                else -> return
+            }
             if (body.isEmptyBody()) {
-                holder.registerProblem(expression, callee)
+                holder.registerProblem(expression, callee, RemoveElementFix())
             }
         }
     }
     
+    private fun KtExpression?.hasNoSideEffect(): Boolean {
+        if (this == null) return true
+        return this is KtSimpleNameExpression 
+                || this is KtConstantExpression 
+                || (this is KtBinaryExpression && this.left.hasNoSideEffect() && this.right.hasNoSideEffect())
+                || (this is KtProperty && this.initializer.hasNoSideEffect())
+    }
+
     private fun KtIfExpression.hasEmptyBranches(): Boolean {
+        if (!condition.hasNoSideEffect()) return false
         if (!then.isEmptyBody()) return false
         val elseExpression = this.`else` ?: return true
         return if (elseExpression is KtIfExpression) {
@@ -88,7 +117,7 @@ class ControlFlowWithEmptyBodyInspection : AbstractKotlinInspection() {
         return this.allChildren.any { it is PsiComment }
     }
 
-    private fun ProblemsHolder.registerProblem(expression: KtExpression, keyword: PsiElement, fix: LocalQuickFix? = RemoveElementFix()) {
+    private fun ProblemsHolder.registerProblem(expression: KtExpression, keyword: PsiElement, fix: LocalQuickFix? = null) {
         val keywordText = if (expression is KtDoWhileExpression) "do while" else keyword.text
         registerProblem(
             expression,
@@ -98,22 +127,47 @@ class ControlFlowWithEmptyBodyInspection : AbstractKotlinInspection() {
         )
     }
 
-    private class RemoveElementFix(private val isIfElseBranch: Boolean = false) : LocalQuickFix {
-        override fun getName() = "Remove empty construction"
+    private class RemoveElementFix(
+        private val extractSideEffects: Boolean = false,
+        private val isIfElseBranch: Boolean = false
+    ) : LocalQuickFix {
+        override fun getName() = if (extractSideEffects) "Extract side effects" else "Remove empty construction"
 
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            when (val expression = descriptor.psiElement) {
+            val expression = descriptor.psiElement
+
+            if (extractSideEffects) {
+                val sideEffects = when (expression) {
+                    is KtIfExpression -> expression.condition.sideEffects()
+                    is KtWhenExpression -> expression.subjectExpression.sideEffects()
+                    else -> emptyList()
+                }
+                val parent = expression.parent
+                val psiFactory = KtPsiFactory(expression)
+                sideEffects.forEachIndexed { index, sideEffect ->
+                    if (index > 0) {
+                        parent.addBefore(psiFactory.createNewLine(), expression)
+                    }
+                    parent.addBefore(sideEffect, expression)
+                }
+            }
+            
+            when (expression) {
                 is KtCallExpression -> {
-                    val qualifiedExpression = expression.getQualifiedExpressionForSelector() ?: return
-                    qualifiedExpression.replace(qualifiedExpression.receiverExpression)
+                    val qualifiedExpression = expression.getQualifiedExpressionForSelector()
+                    if (qualifiedExpression != null) {
+                        qualifiedExpression.replace(qualifiedExpression.receiverExpression)
+                    } else {
+                        expression.delete()
+                    }
                 }
                 is KtIfExpression -> {
                     if (isIfElseBranch) {
                         expression.deleteElseBranch()                        
                     } else {
-                        val parentIf = expression.getStrictParentOfType<KtIfExpression>()
+                        val parentIf = expression.parentIf()
                         if (parentIf != null) {
                             parentIf.deleteElseBranch()
                         } else {
@@ -133,5 +187,18 @@ class ControlFlowWithEmptyBodyInspection : AbstractKotlinInspection() {
 
     companion object {
         private val controlFlowFunctions = listOf("kotlin.also").map { FqName(it) }
+    }
+}
+
+private fun KtIfExpression.parentIf(): KtIfExpression? {
+    return getStrictParentOfType<KtIfExpression>()?.takeIf { it.`else` == this }
+}
+
+private fun KtExpression?.sideEffects(): List<KtExpression> {
+    return when (this) {
+        is KtCallExpression, is KtQualifiedExpression -> listOf(this)
+        is KtBinaryExpression -> listOfNotNull(left, right)
+        is KtProperty -> listOfNotNull(initializer)
+        else -> emptyList()
     }
 }

@@ -1,0 +1,17 @@
+// PROBLEM: 'when' has empty body
+// FIX: Extract side effects
+
+fun test(i: Int) {
+    <caret>when (bar() == baz()) {
+    }
+}
+
+fun bar(): Int {
+    // do something
+    return 1
+}
+
+fun baz(): Int {
+    // do something
+    return 2
+}

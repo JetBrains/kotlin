@@ -1,0 +1,11 @@
+// PROBLEM: 'if' has empty body
+// FIX: Extract side effects
+
+fun test(i: Int) {
+    foo()
+}
+
+fun foo(): Boolean {
+    // do something
+    return true
+}

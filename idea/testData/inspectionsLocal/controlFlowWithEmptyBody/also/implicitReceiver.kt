@@ -1,0 +1,6 @@
+// PROBLEM: 'also' has empty body
+// WITH_RUNTIME
+
+fun String.test() {
+    <caret>also {  }
+}

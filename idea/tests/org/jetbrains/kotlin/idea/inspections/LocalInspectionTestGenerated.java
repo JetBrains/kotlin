@@ -1799,9 +1799,24 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/also"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("anonymousFunction.kt")
+            public void testAnonymousFunction() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/also/anonymousFunction.kt");
+            }
+
+            @TestMetadata("anonymousFunctionHasStatement.kt")
+            public void testAnonymousFunctionHasStatement() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/also/anonymousFunctionHasStatement.kt");
+            }
+
             @TestMetadata("block.kt")
             public void testBlock() throws Exception {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/also/block.kt");
+            }
+
+            @TestMetadata("block2.kt")
+            public void testBlock2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/also/block2.kt");
             }
 
             @TestMetadata("blockHasComment.kt")
@@ -1812,6 +1827,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("blockHasStatement.kt")
             public void testBlockHasStatement() throws Exception {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/also/blockHasStatement.kt");
+            }
+
+            @TestMetadata("blockHasStatement2.kt")
+            public void testBlockHasStatement2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/also/blockHasStatement2.kt");
+            }
+
+            @TestMetadata("functionReference.kt")
+            public void testFunctionReference() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/also/functionReference.kt");
+            }
+
+            @TestMetadata("implicitReceiver.kt")
+            public void testImplicitReceiver() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/also/implicitReceiver.kt");
             }
         }
 
@@ -1948,6 +1978,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/elseIf3.kt");
             }
 
+            @TestMetadata("sideEffects.kt")
+            public void testSideEffects() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/sideEffects.kt");
+            }
+
+            @TestMetadata("sideEffects2.kt")
+            public void testSideEffects2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/sideEffects2.kt");
+            }
+
+            @TestMetadata("sideEffects3.kt")
+            public void testSideEffects3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/sideEffects3.kt");
+            }
+
+            @TestMetadata("sideEffects4.kt")
+            public void testSideEffects4() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/sideEffects4.kt");
+            }
+
             @TestMetadata("single.kt")
             public void testSingle() throws Exception {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/single.kt");
@@ -2014,6 +2064,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/when/block.kt");
             }
 
+            @TestMetadata("block2.kt")
+            public void testBlock2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/when/block2.kt");
+            }
+
             @TestMetadata("blockHasComment.kt")
             public void testBlockHasComment() throws Exception {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/when/blockHasComment.kt");
@@ -2022,6 +2077,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("blockHasStatement.kt")
             public void testBlockHasStatement() throws Exception {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/when/blockHasStatement.kt");
+            }
+
+            @TestMetadata("sideEffects.kt")
+            public void testSideEffects() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/when/sideEffects.kt");
+            }
+
+            @TestMetadata("sideEffects2.kt")
+            public void testSideEffects2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/when/sideEffects2.kt");
+            }
+
+            @TestMetadata("sideEffects3.kt")
+            public void testSideEffects3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/when/sideEffects3.kt");
             }
         }
 
