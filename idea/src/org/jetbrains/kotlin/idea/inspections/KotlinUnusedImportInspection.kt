@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
@@ -75,12 +74,10 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 .map { it.fqName }
                 .toSet()
 
-            val fqNames = HashMap<FqName, Set<Name>>()
+            val fqNames = optimizerData.namesToImport
             val parentFqNames = HashSet<FqName>()
-            for ((descriptor, names) in optimizerData.descriptorsToImport) {
+            for (descriptor in optimizerData.descriptorsToImport) {
                 val fqName = descriptor.importableFqName!!
-                fqNames.compute(fqName) { _, u -> u?.plus(names) ?: names }
-
                 if (fqName !in explicitlyImportedFqNames) { // we don't add parents of explicitly imported fq-names because such imports are not needed
                     val parentFqName = fqName.parent()
                     if (!parentFqName.isRoot) {

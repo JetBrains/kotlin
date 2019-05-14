@@ -79,6 +79,16 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
             runTest("idea/testData/editor/optimizeImports/common/CurrentPackage.kt");
         }
 
+        @TestMetadata("DefaultImportAndAlias.kt")
+        public void testDefaultImportAndAlias() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/DefaultImportAndAlias.kt");
+        }
+
+        @TestMetadata("DefaultImportAndAlias2.kt")
+        public void testDefaultImportAndAlias2() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/DefaultImportAndAlias2.kt");
+        }
+
         @TestMetadata("DefaultObjectReference.kt")
         public void testDefaultObjectReference() throws Exception {
             runTest("idea/testData/editor/optimizeImports/common/DefaultObjectReference.kt");
@@ -177,6 +187,16 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
         @TestMetadata("UnresolvedImport.kt")
         public void testUnresolvedImport() throws Exception {
             runTest("idea/testData/editor/optimizeImports/common/UnresolvedImport.kt");
+        }
+
+        @TestMetadata("WithAlias.kt")
+        public void testWithAlias() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/WithAlias.kt");
+        }
+
+        @TestMetadata("WithAlias2.kt")
+        public void testWithAlias2() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/WithAlias2.kt");
         }
 
         @TestMetadata("idea/testData/editor/optimizeImports/common/kt21515")
