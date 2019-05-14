@@ -569,7 +569,6 @@ class ExceptionObjHolder {
    ObjHeader* obj_;
 };
 
-
 class KRefSharedHolder {
  public:
   inline ObjHeader** slotToInit() {

@@ -5,6 +5,10 @@
 #define T_(x) testlib_kref_ ## x
 #define CAST(T, v) testlib_kref_ ## T { .pinned = v }
 
+void errorHandler(const char* str) {
+  printf("Error handler: %s\n", str);
+}
+
 int main(void) {
     T_(Singleton) singleton = __ kotlin.root.Singleton._instance();
     T_(Base) base = __ kotlin.root.Base.Base();
@@ -60,6 +64,9 @@ int main(void) {
     __ DisposeStablePointer(impl2.pinned);
     __ DisposeStablePointer(enum1.pinned);
     __ DisposeStablePointer(object1.pinned);
+
+    __ kotlin.root.setCErrorHandler(&errorHandler);
+    __ kotlin.root.throwException();
 
     return 0;
 }

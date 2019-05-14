@@ -3297,7 +3297,8 @@ task produce_dynamic(type: DynamicKonanTest) {
                 "object = 42\n" +
                 "singleton = I am single\n" +
                 "mutable = foo\n" +
-                "topLevel = 777 3\n"
+                "topLevel = 777 3\n" +
+                "Error handler: kotlin.Error: Expected error\n"
 }
 
 task library_mismatch(type: RunStandaloneKonanTest) {
