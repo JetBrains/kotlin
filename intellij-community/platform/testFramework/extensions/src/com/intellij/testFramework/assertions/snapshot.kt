@@ -26,7 +26,7 @@ internal interface SnapshotFileUsageListener {
 
 internal val snapshotFileUsageListeners = ContainerUtil.newConcurrentSet<SnapshotFileUsageListener>()
 
-class ListAssertEx<ELEMENT>(actual: List<ELEMENT>) : ListAssert<ELEMENT>(actual) {
+class ListAssertEx<ELEMENT>(actual: List<ELEMENT>?) : ListAssert<ELEMENT>(actual) {
   fun toMatchSnapshot(snapshotFile: Path) {
     snapshotFileUsageListeners.forEach { it.beforeMatch(snapshotFile) }
     isNotNull

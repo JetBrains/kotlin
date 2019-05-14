@@ -80,17 +80,16 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     long startTs = System.currentTimeMillis();
     long readEnd = startTs;
     try {
-      List<InternalExternalProjectInfo> projectInfos;
-      projectInfos = load(myProject);
+      List<InternalExternalProjectInfo> projectInfos = load(myProject);
       readEnd = System.currentTimeMillis();
 
-      if (projectInfos.isEmpty() &&
-          myProject.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) != Boolean.TRUE &&
-          hasLinkedExternalProjects()) {
+      if (projectInfos == null || (projectInfos.isEmpty() &&
+                                   myProject.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) != Boolean.TRUE &&
+                                   hasLinkedExternalProjects())) {
         markDirtyAllExternalProjects();
       }
 
-      for (InternalExternalProjectInfo projectInfo : projectInfos) {
+      for (InternalExternalProjectInfo projectInfo : ContainerUtil.notNullize(projectInfos)) {
         if (validate(projectInfo)) {
           myExternalRootProjects.put(
             Pair.create(projectInfo.getProjectSystemId(), new File(projectInfo.getExternalProjectPath())), projectInfo);
@@ -368,7 +367,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     return parent;
   }
 
-  @NotNull
+  @Nullable("null indicates that cache was invalid")
   private static List<InternalExternalProjectInfo> load(@NotNull Project project) throws IOException {
     VersionedFile cacheFile = getCacheFile(project);
     BasicFileAttributes fileAttributes = PathKt.basicAttributesIfExists(cacheFile.getFile());
@@ -377,9 +376,10 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     }
 
     if (isInvalidated(cacheFile.getFile(), fileAttributes)) {
-      throw new IOException("External projects data storage was invalidated");
+      LOG.debug("External projects data storage was invalidated");
+      return null;
     }
-    return ContainerUtil.notNullize(cacheFile.readList(InternalExternalProjectInfo.class, SerializationKt.getExternalSystemBeanConstructed()));
+    return cacheFile.readList(InternalExternalProjectInfo.class, SerializationKt.getExternalSystemBeanConstructed());
   }
 
   private static boolean isInvalidated(@NotNull Path configurationFile, @NotNull BasicFileAttributes fileAttributes) throws IOException {
