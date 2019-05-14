@@ -367,6 +367,11 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             runTest("idea/testData/editor/optimizeImports/common/TwoConstructors.kt");
         }
 
+        @TestMetadata("UnresolvedImport.kt")
+        public void testUnresolvedImport() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/UnresolvedImport.kt");
+        }
+
         @TestMetadata("idea/testData/editor/optimizeImports/common/kt21515")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

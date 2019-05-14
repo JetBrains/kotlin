@@ -87,8 +87,9 @@ class OptimizedImportsBuilder(
     private val importRules = HashSet<ImportRule>()
 
     fun buildOptimizedImports(): List<ImportPath>? {
+        val facade = file.getResolutionFacade()
         file.importDirectives
-            .filterNot(KtImportDirective::canResolve)
+            .filterNot { it.canResolve(facade) }
             .mapNotNull(KtImportDirective::getImportPath)
             .mapTo(importRules) { ImportRule.Add(it) }
 
