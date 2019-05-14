@@ -34,7 +34,7 @@ object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
         return K2JVMCompilerArguments()
     }
 
-    override val platforms = JvmTarget.values().map { ver -> JvmPlatforms.jvmPlatformByTargetVersion(ver) }
+    override val platforms: List<TargetPlatform> = JvmTarget.values().map { ver -> JvmPlatforms.jvmPlatformByTargetVersion(ver) } + listOf(JvmPlatforms.defaultJvmPlatform)
     override val defaultPlatform get() = JvmPlatforms.defaultJvmPlatform
 
     override val argumentsClass get() = K2JVMCompilerArguments::class.java
