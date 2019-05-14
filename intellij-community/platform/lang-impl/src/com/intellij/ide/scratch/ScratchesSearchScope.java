@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyKey;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectAndLibrariesScope;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -55,13 +54,6 @@ public class ScratchesSearchScope extends GlobalSearchScope {
   @Override
   public boolean isSearchInLibraries() {
     return false;
-  }
-
-  @NotNull
-  @Override
-  public GlobalSearchScope intersectWith(@NotNull GlobalSearchScope scope) {
-    if (scope instanceof ProjectAndLibrariesScope) return this;
-    return super.intersectWith(scope);
   }
 
   @Override
