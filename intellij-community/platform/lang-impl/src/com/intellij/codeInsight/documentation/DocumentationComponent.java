@@ -812,6 +812,14 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     myIsEmpty = false;
     if (myManager == null) return;
 
+    myText = text;
+    myDecoratedText = decorate(text);
+    setElement(element);
+
+    showHint(viewRect, ref);
+  }
+
+  protected void showHint(@NotNull Rectangle viewRect, @Nullable String ref) {
     String refToUse;
     Rectangle viewRectToUse;
     if (DocumentationManagerProtocol.KEEP_SCROLLING_POSITION_REF.equals(ref)) {
@@ -825,17 +833,12 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
     updateControlState();
 
-    setElement(element);
-
     highlightLink(-1);
 
-    myDecoratedText = decorate(text);
     myEditorPane.setText(myDecoratedText);
     applyFontProps();
 
     showHint();
-
-    myText = text;
 
     //noinspection SSBasedInspection
     SwingUtilities.invokeLater(() -> {
@@ -1485,6 +1488,10 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   public String getText() {
     return myText;
+  }
+
+  public String getDecoratedText() {
+    return myDecoratedText;
   }
 
   @Override
