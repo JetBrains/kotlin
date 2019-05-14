@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.compose.Recomposer
 import androidx.compose.Component
 import androidx.compose.CompositionContext
 import androidx.compose.Compose
@@ -1775,8 +1776,10 @@ class ModelClass() {
         val parameterList = candidateValues.map {
             "${it.key}: ${it.value::class.qualifiedName}"
         }.joinToString()
-        val parameterTypes = candidateValues.map { it.value::class.javaPrimitiveType
-            ?: it.value::class.javaObjectType }.toTypedArray()
+        val parameterTypes = candidateValues.map {
+            it.value::class.javaPrimitiveType
+                ?: it.value::class.javaObjectType
+        }.toTypedArray()
 
         val compiledClasses = classLoader(
             """
@@ -1860,15 +1863,15 @@ class CompositionTest(val composable: () -> Unit) {
     inner class ActiveTest(val activity: Activity, val cc: CompositionContext) {
 
         fun then(block: (activity: Activity) -> Unit): ActiveTest {
-            cc.runWithCurrent {
-                val composer = composer.composer
+
+            val composer = cc.composer
+            composer.runWithCurrent {
                 val scheduler = RuntimeEnvironment.getMasterScheduler()
                 scheduler.pause()
                 composer.startRoot()
                 composable()
                 composer.endRoot()
                 composer.applyChanges()
-                cc.scheduleRecompose()
                 scheduler.advanceToLastPostedRunnable()
                 block(activity)
             }

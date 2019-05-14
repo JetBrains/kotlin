@@ -384,8 +384,8 @@ class ModelCompositionTest(val composable: () -> Unit, val advance: () -> Unit) 
         val root = activity.root
         val component = ModelRoot()
         val cc = Compose.createCompositionContext(root.context, root, component, null)
-        cc.runWithCurrent {
-            val composer = composer.composer
+        cc.composer.runWithCurrent {
+            val composer = cc.composer
             composer.startRoot()
             composable()
             composer.endRoot()
