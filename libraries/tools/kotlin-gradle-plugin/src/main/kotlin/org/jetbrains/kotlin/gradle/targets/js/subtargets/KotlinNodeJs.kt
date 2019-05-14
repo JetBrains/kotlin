@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
+import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.TaskHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
@@ -26,29 +28,37 @@ class KotlinNodeJs(target: KotlinJsTarget) :
     }
 
     override fun configureRun(compilation: KotlinJsCompilation) {
-        // source maps support
-        compilation.dependencies {
-            runtimeOnly(kotlin("test-nodejs-runner"))
-        }
-
         val project = target.project
 
-        project.createOrRegisterTask<NodeJsExec>(disambiguateCamelCased("run")) { runTask ->
+        val runTaskHolder = project.createOrRegisterTask<NodeJsExec>(disambiguateCamelCased("run")) { runTask ->
             val compileKotlinTask = compilation.compileKotlinTask
             runTask.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider(), compileKotlinTask)
 
             val npmProject = project.npmProject
             runTask.args(npmProject.compileOutput(compileKotlinTask))
 
-            target.npmResolveTaskHolder.doGetTask().doLast {
-                // source maps support
+            target.runTask.dependsOn(runTask)
+        }
+
+        addSourceMapSupport(compilation, runTaskHolder, project)
+    }
+
+    private fun addSourceMapSupport(
+        compilation: KotlinJsCompilation,
+        runTaskHolder: TaskHolder<NodeJsExec>,
+        project: Project
+    ) {
+        compilation.dependencies {
+            runtimeOnly(kotlin("test-nodejs-runner"))
+        }
+
+        target.npmResolveTaskHolder.doGetTask().doLast {
+            runTaskHolder.configure { runTask ->
                 runTask.args(
                     "--require",
-                    npmProject.require("kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support")
+                    project.npmProject.require("kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support")
                 )
             }
-
-            target.runTask.dependsOn(runTask)
         }
     }
 }
