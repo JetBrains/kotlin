@@ -642,7 +642,7 @@ internal object DataFlowIR {
         }
 
         private val IrFunction.isSpecial get() =
-            name.asString().let { it.startsWith("<bridge-") || it == "<box>" || it == "<unbox>" }
+            name.asString().let { it.startsWith("<bridge-") || it.endsWith("-box>") || it.endsWith("-unbox>") }
 
         private fun mapPropertyInitializer(irField: IrField): FunctionSymbol {
             functionMap[irField]?.let { return it }

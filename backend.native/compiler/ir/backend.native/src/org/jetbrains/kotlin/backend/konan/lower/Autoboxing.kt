@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -46,7 +45,7 @@ internal class Autoboxing(val context: Context) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(transformer)
-        irFile.transformChildrenVoid(InlineClassTransformer(context))
+        irFile.transform(InlineClassTransformer(context), data = null)
     }
 
 }
@@ -213,6 +212,15 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     private val symbols = context.ir.symbols
     private val irBuiltIns = context.irBuiltIns
 
+    private val builtBoxUnboxFunctions = mutableListOf<IrFunction>()
+
+    override fun visitFile(declaration: IrFile): IrFile {
+        declaration.transformChildrenVoid(this)
+        declaration.declarations.addAll(builtBoxUnboxFunctions)
+        builtBoxUnboxFunctions.clear()
+        return declaration
+    }
+
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
 
@@ -341,7 +349,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             +irReturn(irGet(box))
         }
 
-        irClass.declarations += function
+        builtBoxUnboxFunctions += function
     }
 
     private fun IrBuilderWithScope.irNullPointerOrReference(type: IrType): IrExpression =
@@ -367,7 +375,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             +irReturn(irGetField(irGet(boxParameter), getInlineClassBackingField(irClass)))
         }
 
-        irClass.declarations += function
+        builtBoxUnboxFunctions += function
     }
 
     private fun buildBoxField(declaration: IrClass) {

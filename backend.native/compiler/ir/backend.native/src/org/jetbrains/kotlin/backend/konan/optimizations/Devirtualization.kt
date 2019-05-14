@@ -1033,10 +1033,10 @@ internal object Devirtualization {
         }
     }
 
-    private val specialNames = listOf("<box>", "<unbox>")
+    private val specialNames = listOf("-box>", "-unbox>")
 
     // TODO: do it more reliably.
-    private fun IrExpression.isBoxOrUnboxCall() = (this is IrCall && symbol.owner.name.asString().let { specialNames.contains(it) })
+    private fun IrExpression.isBoxOrUnboxCall() = (this is IrCall && symbol.owner.name.asString().let { name -> specialNames.any { name.endsWith(it) } })
 
     private fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
                              devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
@@ -1356,6 +1356,14 @@ internal object Devirtualization {
 
         irModule.transformChildrenVoid(object: IrElementTransformerVoid() {
 
+            fun IrFunction.getCoercedClass(): IrClassifierSymbol {
+                if (name.asString().endsWith("-box>"))
+                    return valueParameters[0].type.classifierOrFail
+                if (name.asString().endsWith("-unbox>"))
+                    return returnType.classifierOrFail
+                error("Unexpected coercion: ${this.dump()}")
+            }
+
             fun fold(expression: IrExpression, coercion: IrCall, cast: IrTypeOperatorCall?,
                      transformRecursively: Boolean): PossiblyFoldedExpression {
 
@@ -1367,11 +1375,11 @@ internal object Devirtualization {
                 fun IrElement.transformIfAsked() =
                         if (transformRecursively) this.transform(transformer, data = null) else this
 
-                val coercionDeclaringClass = coercion.symbol.owner.parentAsClass
+                val coercionDeclaringClass = coercion.symbol.owner.getCoercedClass()
                 if (expression.isBoxOrUnboxCall()) {
                     expression as IrCall
                     val result =
-                            if (coercionDeclaringClass == expression.symbol.owner.parentAsClass)
+                            if (coercionDeclaringClass == expression.symbol.owner.getCoercedClass())
                                 expression.getArguments().single().second
                             else expression
 
