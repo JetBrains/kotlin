@@ -59,15 +59,14 @@ fun KtWhenExpression.getSubjectToIntroduce(): KtExpression?  {
         for (condition in conditions) {
             if (condition !is KtWhenConditionWithExpression) return null
 
-            val candidate = condition.expression?.getWhenConditionSubjectCandidate() as? KtNameReferenceExpression ?: return null
+            val candidate = condition.expression?.getWhenConditionSubjectCandidate() ?: return null
+            if (candidate !is KtNameReferenceExpression && candidate !is KtThisExpression) return null
 
             if (lastCandidate == null) {
                 lastCandidate = candidate
-            }
-            else if (!lastCandidate.matches(candidate)) {
+            } else if (!lastCandidate.matches(candidate)) {
                 return null
             }
-
         }
     }
 
