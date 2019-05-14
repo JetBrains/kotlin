@@ -209,12 +209,17 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   }
 
   synchronized void restoreInclusionSettings(@Nullable DataNode<ProjectData> projectDataNode) {
-    if (projectDataNode == null) return;
-    final String rootProjectPath = projectDataNode.getData().getLinkedExternalProjectPath();
-    final ProjectState projectState = myState.map.get(rootProjectPath);
-    if (projectState == null) return;
+    if (projectDataNode == null) {
+      return;
+    }
 
-    ExternalSystemApiUtil.visit(projectDataNode, node -> {
+    String rootProjectPath = projectDataNode.getData().getLinkedExternalProjectPath();
+    ProjectState projectState = myState.map.get(rootProjectPath);
+    if (projectState == null) {
+      return;
+    }
+
+    projectDataNode.visit(node -> {
       final DataNode<ExternalConfigPathAware> projectOrModuleNode = resolveProjectNode(node);
       assert projectOrModuleNode != null;
       final ModuleState moduleState = projectState.map.get(projectOrModuleNode.getData().getLinkedExternalProjectPath());
@@ -227,7 +232,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
 
     final MultiMap<String, String> inclusionMap = MultiMap.createSmart();
     final MultiMap<String, String> exclusionMap = MultiMap.createSmart();
-    ExternalSystemApiUtil.visit(projectDataNode, dataNode -> {
+    projectDataNode.visit(dataNode -> {
       DataNode<ExternalConfigPathAware> projectNode = resolveProjectNode(dataNode);
       if (projectNode != null) {
         final String projectPath = projectNode.getData().getLinkedExternalProjectPath();
@@ -414,7 +419,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     myState = state;
   }
 
-  synchronized void setIgnored(@NotNull final DataNode<?> dataNode, final boolean isIgnored) {
+  synchronized void setIgnored(@NotNull DataNode<?> dataNode, boolean isIgnored) {
     //noinspection unchecked
     final DataNode<ProjectData> projectDataNode =
       PROJECT.equals(dataNode.getKey()) ? (DataNode<ProjectData>)dataNode : ExternalSystemApiUtil.findParent(dataNode, PROJECT);
@@ -422,7 +427,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
       return;
     }
 
-    ExternalSystemApiUtil.visit(dataNode, node -> node.setIgnored(isIgnored));
+    dataNode.visit(node -> node.setIgnored(isIgnored));
 
     saveInclusionSettings(projectDataNode);
   }
