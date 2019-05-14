@@ -173,14 +173,14 @@ public class SingleInspectionProfilePanel extends JPanel {
 
   public static String renderSeverity(HighlightSeverity severity) {
     if (HighlightSeverity.INFORMATION.equals(severity)) return "No highlighting, only fix"; //todo severity presentation
-    return StringUtil.capitalizeWords(severity.getName().toLowerCase(Locale.US), true);
+    return StringUtil.capitalizeWords(StringUtil.toLowerCase(severity.getName()), true);
   }
 
   private static boolean isDescriptorAccepted(Descriptor descriptor,
                                               @NonNls String filter,
                                               final boolean forceInclude,
                                               final List<Set<String>> keySetList, final Set<String> quoted) {
-    filter = filter.toLowerCase();
+    filter = StringUtil.toLowerCase(filter);
     if (StringUtil.containsIgnoreCase(descriptor.getText(), filter)) {
       return true;
     }
@@ -200,7 +200,7 @@ public class SingleInspectionProfilePanel extends JPanel {
         }
       }
       final String description = descriptor.getToolWrapper().loadDescription();
-      if (description != null && StringUtil.containsIgnoreCase(description.toLowerCase(Locale.US), stripped)) {
+      if (description != null && StringUtil.containsIgnoreCase(StringUtil.toLowerCase(description), stripped)) {
         if (!forceInclude) return true;
       } else if (forceInclude) return false;
     }

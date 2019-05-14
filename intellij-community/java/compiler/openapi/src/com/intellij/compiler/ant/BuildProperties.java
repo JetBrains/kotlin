@@ -21,6 +21,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
@@ -223,7 +224,7 @@ public abstract class BuildProperties extends CompositeGenerator {
    */
   @NonNls
   public static String convertName(@NonNls final String name) {
-    return name.replaceAll("\"", "").replaceAll("\\s+", "_").toLowerCase();
+    return StringUtil.toLowerCase(name.replaceAll("\"", "").replaceAll("\\s+", "_"));
   }
 
   @NonNls

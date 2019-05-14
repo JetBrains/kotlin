@@ -161,7 +161,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
       try {
         SearchableOptionsRegistrar registrar = SearchableOptionsRegistrar.getInstance();
         if (registrar == null) return;
-        @NonNls String descriptionText = description.getText().toLowerCase();
+        @NonNls String descriptionText = StringUtil.toLowerCase(description.getText());
         descriptionText = HTML_PATTERN.matcher(descriptionText).replaceAll(" ");
         Set<String> words = registrar.getProcessedWordsWithoutStemming(descriptionText);
         words.addAll(registrar.getProcessedWords(metaData.getFamily()));

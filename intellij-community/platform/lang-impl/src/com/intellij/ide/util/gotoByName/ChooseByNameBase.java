@@ -1193,7 +1193,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
       String commonPrefix = null;
       if (!list.isEmpty()) {
         for (String name : list) {
-          final String string = name.toLowerCase();
+          final String string = StringUtil.toLowerCase(name);
           if (commonPrefix == null) {
             commonPrefix = string;
           }
@@ -1211,7 +1211,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
         for (int i = 1; i < list.size(); i++) {
           final String string = list.get(i).substring(0, commonPrefix.length());
           if (!string.equals(commonPrefix)) {
-            commonPrefix = commonPrefix.toLowerCase();
+            commonPrefix = StringUtil.toLowerCase(commonPrefix);
             break;
           }
         }
@@ -1467,7 +1467,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
 
   @NotNull
   private static String patternToLowerCase(@NotNull String pattern) {
-    return pattern.toLowerCase(Locale.US);
+    return StringUtil.toLowerCase(pattern);
   }
 
   @Override

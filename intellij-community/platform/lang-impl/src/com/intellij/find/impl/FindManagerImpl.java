@@ -885,7 +885,7 @@ public class FindManagerImpl extends FindManager {
       buffer.append(StringUtil.toUpperCase(toReplace.substring(1)));
     }
     else if (isTailLower && (isReplacementLowercase || isReplacementUppercase)) {
-      buffer.append(toReplace.substring(1).toLowerCase());
+      buffer.append(StringUtil.toLowerCase(toReplace.substring(1)));
     }
     else {
       buffer.append(toReplace.substring(1));

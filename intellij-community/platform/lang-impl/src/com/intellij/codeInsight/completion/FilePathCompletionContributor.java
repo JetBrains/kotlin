@@ -229,7 +229,7 @@ public class FilePathCompletionContributor extends CompletionContributor {
     PsiFileSystemItem parent;
     while ((parent = parentFile.getParent()) != null && 
            (stopParent == null || !Objects.equals(parent.getVirtualFile(), stopParent))) {
-      if (parent.getName().length() > 0) contextParts.add(0, parent.getName().toLowerCase());
+      if (parent.getName().length() > 0) contextParts.add(0, StringUtil.toLowerCase(parent.getName()));
       parentFile = parent;
     }
 
@@ -237,7 +237,7 @@ public class FilePathCompletionContributor extends CompletionContributor {
 
     int nextIndex = 0;
     for (@NonNls final String s : pathPrefix) {
-      if ((nextIndex = path.indexOf(s.toLowerCase(), nextIndex)) == -1) return false;
+      if ((nextIndex = path.indexOf(StringUtil.toLowerCase(s), nextIndex)) == -1) return false;
     }
 
     return true;

@@ -319,7 +319,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       int count = status.errorCount[i];
       if (count > 0) {
         final HighlightSeverity severity = mySeverityRegistrar.getSeverityByIndex(i);
-        String name = count > 1 ? StringUtil.pluralize(severity.getName().toLowerCase()) : severity.getName().toLowerCase();
+        String name = count > 1 ? StringUtil.pluralize(StringUtil.toLowerCase(severity.getName())) : StringUtil.toLowerCase(severity.getName());
         text += status.errorAnalyzingFinished
                 ? DaemonBundle.message("errors.found", count, name)
                 : DaemonBundle.message("errors.found.so.far", count, name);

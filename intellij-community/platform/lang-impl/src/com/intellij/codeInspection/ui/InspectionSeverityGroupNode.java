@@ -7,8 +7,7 @@ import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import java.util.Locale;
+import javax.swing.*;
 
 
 public class InspectionSeverityGroupNode extends InspectionTreeNode{
@@ -35,7 +34,7 @@ public class InspectionSeverityGroupNode extends InspectionTreeNode{
 
   @Override
   public String getPresentableText() {
-    return StringUtil.capitalize(myLevel.toString().toLowerCase(Locale.ENGLISH));
+    return StringUtil.capitalize(StringUtil.toLowerCase(myLevel.toString()));
   }
 
   public HighlightDisplayLevel getSeverityLevel() {
