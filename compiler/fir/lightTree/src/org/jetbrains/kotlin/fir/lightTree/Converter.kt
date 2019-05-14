@@ -9,7 +9,6 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
-import com.intellij.util.containers.getIfSingle
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.*
 import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.nameAsSafeName
 import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.toDelegatedSelfType
@@ -64,6 +62,18 @@ class Converter(
     private val implicitEnumType = FirImplicitEnumTypeRef(session, null)
     private val implicitType = FirImplicitTypeRefImpl(session, null)
 
+    private inline fun LighterASTNode.forEachChildren(f: (LighterASTNode) -> Unit) {
+        val kidsRef = Ref<Array<LighterASTNode?>>()
+        tree.getChildren(this, kidsRef)
+        val kidsArray = kidsRef.get()
+        for (kid in kidsArray) {
+            if (kid == null) continue
+            val tokenType = kid.tokenType
+            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType == COLON) continue
+            f(kid)
+        }
+    }
+
     fun convertFile(file: LighterASTNode, fileName: String = ""): FirFile {
         val tokenType = file.tokenType
         if (tokenType !is IFileElementType) {
@@ -71,25 +81,20 @@ class Converter(
             throw Exception()
         }
 
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(file, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val fileAnnotationList = mutableListOf<FirAnnotationCall>()
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
         ClassNameUtil.packageFqName = FqName.ROOT
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                FILE_ANNOTATION_LIST -> fileAnnotationList += convertFileAnnotation(kid)
-                PACKAGE_DIRECTIVE -> ClassNameUtil.packageFqName = convertPackageHeader(kid)
-                IMPORT_LIST -> importList += convertImportList(kid)
-                CLASS -> firDeclarationList += convertClass(kid)
-                FUN -> firDeclarationList += convertFunctionDeclaration(kid)
-                PROPERTY -> firDeclarationList += convertPropertyDeclaration(kid)
-                TYPEALIAS -> firDeclarationList += convertTypeAlias(kid)
-                OBJECT_DECLARATION -> firDeclarationList += convertClass(kid)
+        file.forEachChildren {
+            when (it.tokenType) {
+                FILE_ANNOTATION_LIST -> fileAnnotationList += convertFileAnnotation(it)
+                PACKAGE_DIRECTIVE -> ClassNameUtil.packageFqName = convertPackageHeader(it)
+                IMPORT_LIST -> importList += convertImportList(it)
+                CLASS -> firDeclarationList += convertClass(it)
+                FUN -> firDeclarationList += convertFunctionDeclaration(it)
+                PROPERTY -> firDeclarationList += convertPropertyDeclaration(it)
+                TYPEALIAS -> firDeclarationList += convertTypeAlias(it)
+                OBJECT_DECLARATION -> firDeclarationList += convertClass(it)
             }
         }
 
@@ -107,15 +112,10 @@ class Converter(
     }
 
     private fun convertFileAnnotation(fileAnnotationList: LighterASTNode): List<FirAnnotationCall> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(fileAnnotationList, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val annotationList = mutableListOf<FirAnnotationCall>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                ANNOTATION -> annotationList += convertAnnotation(kid)
+        fileAnnotationList.forEachChildren {
+            when (it.tokenType) {
+                ANNOTATION -> annotationList += convertAnnotation(it)
             }
         }
 
@@ -123,28 +123,20 @@ class Converter(
     }
 
     private fun convertPackageHeader(packageNode: LighterASTNode): FqName {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(packageNode, kidsRef)
-        val kidsArray = kidsRef.get()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> return FqName(kid.toString())
+        var packageName: FqName = FqName.ROOT
+        packageNode.forEachChildren {
+            when (it.tokenType) {
+                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> packageName = FqName(it.toString())
             }
         }
-        return FqName.ROOT
+        return packageName
     }
 
     private fun convertImportList(importList: LighterASTNode): List<FirImport> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(importList, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val imports = mutableListOf<FirImport>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                IMPORT_DIRECTIVE -> imports += convertImportDirective(kid)
+        importList.forEachChildren {
+            when (it.tokenType) {
+                IMPORT_DIRECTIVE -> imports += convertImportDirective(it)
             }
         }
 
@@ -152,25 +144,20 @@ class Converter(
     }
 
     private fun convertImportDirective(importDirective: LighterASTNode): FirImport {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(importDirective, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var importedFqName: FqName? = null
         var isAllUnder: Boolean = false
         var aliasName: String? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
+        importDirective.forEachChildren {
+            when (it.tokenType) {
                 DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> {
-                    val importName = kid.toString()
+                    val importName = it.toString()
                     if (importName.endsWith(".*")) {
                         isAllUnder = true
                         importName.replace(".*", "")
                     }
                     importedFqName = FqName(importName)
                 }
-                IMPORT_ALIAS -> aliasName = convertImportAlias(kid)
+                IMPORT_ALIAS -> aliasName = convertImportAlias(it)
             }
         }
 
@@ -184,25 +171,18 @@ class Converter(
     }
 
     private fun convertImportAlias(importAlias: LighterASTNode): String {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(importAlias, kidsRef)
-        val kidsArray = kidsRef.get()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                IDENTIFIER -> return kid.toString()
+        var alias: String? = null
+        importAlias.forEachChildren {
+            when (it.tokenType) {
+                IDENTIFIER -> alias = it.toString()
             }
         }
 
         //TODO specify error
-        throw Exception()
+        return alias ?: throw Exception()
     }
 
     private fun convertClass(classNode: LighterASTNode): FirDeclaration {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(classNode, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
         var classKind: ClassKind? = null
         var identifier: String? = null
@@ -213,23 +193,22 @@ class Converter(
         var delegatedSuperTypeRef: FirTypeRef? = null
         val typeConstraints = mutableListOf<Pair<String, FirTypeRef>>()
         var classBody: LighterASTNode? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
+        classNode.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
                 CLASS_KEYWORD -> classKind = ClassKind.CLASS
                 INTERFACE_KEYWORD -> classKind = ClassKind.INTERFACE
                 OBJECT_KEYWORD -> classKind = ClassKind.OBJECT
-                IDENTIFIER -> identifier = kid.toString()
-                TYPE_PARAMETER_LIST -> typeParameters += convertTypeParameters(kid)
-                PRIMARY_CONSTRUCTOR -> primaryConstructor = kid
-                SUPER_TYPE_LIST -> convertDelegationSpecifiers(kid).apply {
+                IDENTIFIER -> identifier = it.toString()
+                TYPE_PARAMETER_LIST -> typeParameters += convertTypeParameters(it)
+                PRIMARY_CONSTRUCTOR -> primaryConstructor = it
+                SUPER_TYPE_LIST -> convertDelegationSpecifiers(it).apply {
                     delegatedSuperTypeRef = first
                     superTypeRefs += second
                     superTypeCallEntry += third
                 }
-                TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(kid)
-                CLASS_BODY -> classBody = kid
+                TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
+                CLASS_BODY -> classBody = it
             }
         }
 
@@ -250,7 +229,7 @@ class Converter(
                 modifiers.inheritanceModifier?.toModality(),
                 modifiers.platformModifier == PlatformModifier.EXPECT,
                 modifiers.platformModifier == PlatformModifier.ACTUAL,
-                classKind,
+                classKind!!,
                 isInner = modifiers.classModifier == ClassModifier.INNER,
                 isCompanion = modifiers.classModifier == ClassModifier.COMPANION,
                 isData = modifiers.classModifier == ClassModifier.DATA,
@@ -307,7 +286,7 @@ class Converter(
                             enumDelegatedSuperTypeRef = implicitAnyType
                         }
 
-                        val firPrimaryConstructor = convertPrimaryConstructor(
+                        val firEnumPrimaryConstructor = convertPrimaryConstructor(
                             null,  //null means that enum entry has no primary consctuctor
                             false,
                             firPrimaryConstructor?.valueParameters?.map { valueParameter ->
@@ -319,7 +298,7 @@ class Converter(
                             enumDelegatedSelfTypeRef,
                             enumDelegatedSuperTypeRef
                         )
-                        firEnumEntry.declarations.add(0, firPrimaryConstructor!!)
+                        firEnumEntry.declarations.add(0, firEnumPrimaryConstructor!!)
                     }
                     firClass.declarations += firEnumEntries
                 }
@@ -346,15 +325,10 @@ class Converter(
     private fun getValueParameters(primaryConstructor: LighterASTNode?): List<ValueParameter> {
         if (primaryConstructor == null) return listOf()
 
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(primaryConstructor, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val valueParameters = mutableListOf<ValueParameter>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameters += convertClassParameters(kid)
+        primaryConstructor.forEachChildren {
+            when (it.tokenType) {
+                VALUE_PARAMETER_LIST -> valueParameters += convertClassParameters(it)
             }
         }
 
@@ -372,17 +346,10 @@ class Converter(
 
         var modifiers = Modifier(session)
         val valueParameters = mutableListOf<ValueParameter>()
-        if (primaryConstructor != null) {
-            val kidsRef = Ref<Array<LighterASTNode?>>()
-            tree.getChildren(primaryConstructor, kidsRef)
-            val kidsArray = kidsRef.get()
-
-            for (kid in kidsArray) {
-                if (kid == null) continue
-                when (kid.tokenType) {
-                    MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                    VALUE_PARAMETER_LIST -> valueParameters += convertClassParameters(kid)
-                }
+        primaryConstructor?.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                VALUE_PARAMETER_LIST -> valueParameters += convertClassParameters(it)
             }
         }
 
@@ -414,15 +381,10 @@ class Converter(
     }
 
     private fun convertClassParameters(classParameters: LighterASTNode): List<ValueParameter> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(classParameters, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val valueParameters = mutableListOf<ValueParameter>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                VALUE_PARAMETER -> valueParameters += convertClassParameter(kid)
+        classParameters.forEachChildren {
+            when (it.tokenType) {
+                VALUE_PARAMETER -> valueParameters += convertClassParameter(it)
             }
         }
 
@@ -430,28 +392,23 @@ class Converter(
     }
 
     private fun convertClassParameter(classParameter: LighterASTNode): ValueParameter {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(classParameter, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
         var isVal = false
         var isVar = false
         var identifier: String? = null
         var firType: FirTypeRef? = null
         var firExpression: FirExpression? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
+        classParameter.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
                 VAL_KEYWORD -> isVal = true
                 VAR_KEYWORD -> isVar = true
-                IDENTIFIER -> identifier = kid.toString()
-                TYPE_REFERENCE -> firType = convertType(kid)
+                IDENTIFIER -> identifier = it.toString()
+                TYPE_REFERENCE -> firType = convertType(it)
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(kid)
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it)
             }
         }
 
@@ -469,23 +426,18 @@ class Converter(
     }
 
     private fun convertDelegationSpecifiers(delegationSpecifiers: LighterASTNode): Triple<FirTypeRef?, List<FirTypeRef>, List<FirExpression>> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(delegationSpecifiers, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val superTypeRefs = mutableListOf<FirTypeRef>()
         val superTypeCallEntry = mutableListOf<FirExpression>()
         var delegatedSuperTypeRef: FirTypeRef? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                SUPER_TYPE_ENTRY -> superTypeRefs += convertType(kid)
-                SUPER_TYPE_CALL_ENTRY -> convertConstructorInvocation(kid).apply {
+        delegationSpecifiers.forEachChildren {
+            when (it.tokenType) {
+                SUPER_TYPE_ENTRY -> superTypeRefs += convertType(it)
+                SUPER_TYPE_CALL_ENTRY -> convertConstructorInvocation(it).apply {
                     delegatedSuperTypeRef = first
                     superTypeRefs += first
                     superTypeCallEntry += second
                 }
-                DELEGATED_SUPER_TYPE_ENTRY -> superTypeRefs += convertExplicitDelegation(kid)
+                DELEGATED_SUPER_TYPE_ENTRY -> superTypeRefs += convertExplicitDelegation(it)
             }
         }
         return Triple(delegatedSuperTypeRef, superTypeRefs, superTypeCallEntry)
@@ -496,37 +448,27 @@ class Converter(
     }*/
 
     private fun convertConstructorInvocation(constructorInvocation: LighterASTNode): Pair<FirTypeRef, List<FirExpression>> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(constructorInvocation, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var firTypeRef: FirTypeRef? = null
         val firValueArguments = mutableListOf<FirExpression>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                CONSTRUCTOR_CALLEE -> firTypeRef = convertType(kid)
-                VALUE_ARGUMENT_LIST -> if (!stubMode) firValueArguments += convertValueArguments(kid)
+        constructorInvocation.forEachChildren {
+            when (it.tokenType) {
+                CONSTRUCTOR_CALLEE -> firTypeRef = convertType(it)
+                VALUE_ARGUMENT_LIST -> if (!stubMode) firValueArguments += convertValueArguments(it)
             }
         }
         return Pair(firTypeRef!!, firValueArguments)
     }
 
     private fun convertExplicitDelegation(explicitDelegation: LighterASTNode): FirDelegatedTypeRef {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(explicitDelegation, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var firTypeRef: FirTypeRef? = null
         var expression: FirExpression? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                TYPE_REFERENCE -> firTypeRef = convertType(kid)
+        explicitDelegation.forEachChildren {
+            when (it.tokenType) {
+                TYPE_REFERENCE -> firTypeRef = convertType(it)
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> expression = visitExpression(kid) // TODO implement
+                is KtStringTemplateExpressionElementType -> expression = visitExpression(it) // TODO implement
             }
         }
 
@@ -537,21 +479,16 @@ class Converter(
     }
 
     private fun convertClassBody(classBody: LighterASTNode): List<FirDeclaration> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(classBody, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val firDeclarationList = mutableListOf<FirDeclaration>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                CLASS -> firDeclarationList += convertClass(kid)
-                FUN -> firDeclarationList += convertFunctionDeclaration(kid)
-                PROPERTY -> firDeclarationList += convertPropertyDeclaration(kid)
-                TYPEALIAS -> firDeclarationList += convertTypeAlias(kid)
-                OBJECT_DECLARATION -> firDeclarationList += convertClass(kid)
-                CLASS_INITIALIZER -> firDeclarationList += convertAnonymousInitializer(kid) //anonymousInitializer
-                SECONDARY_CONSTRUCTOR -> firDeclarationList += convertSecondaryConstructor(kid)
+        classBody.forEachChildren {
+            when (it.tokenType) {
+                CLASS -> firDeclarationList += convertClass(it)
+                FUN -> firDeclarationList += convertFunctionDeclaration(it)
+                PROPERTY -> firDeclarationList += convertPropertyDeclaration(it)
+                TYPEALIAS -> firDeclarationList += convertTypeAlias(it)
+                OBJECT_DECLARATION -> firDeclarationList += convertClass(it)
+                CLASS_INITIALIZER -> firDeclarationList += convertAnonymousInitializer(it) //anonymousInitializer
+                SECONDARY_CONSTRUCTOR -> firDeclarationList += convertSecondaryConstructor(it)
             }
         }
 
@@ -559,18 +496,13 @@ class Converter(
     }
 
     private fun convertConstructorDelegationCall(constructorDelegationCall: LighterASTNode): FirDelegatedConstructorCall {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(constructorDelegationCall, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var isThis: Boolean = false
         var isSuper: Boolean = false
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
+        constructorDelegationCall.forEachChildren {
+            when (it.tokenType) {
                 CONSTRUCTOR_DELEGATION_REFERENCE -> {
-                    if (kid.toString() == "this") isThis = true
-                    if (kid.toString() == "super") isSuper = true
+                    if (it.toString() == "this") isThis = true
+                    if (it.toString() == "super") isSuper = true
                 }
                 VALUE_ARGUMENT_LIST -> "" //TODO implement
             }
@@ -595,15 +527,10 @@ class Converter(
     }
 
     private fun convertEnumClassBody(classBody: LighterASTNode): List<FirEnumEntryImpl> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(classBody, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val firDeclarationList = mutableListOf<FirEnumEntryImpl>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                ENUM_ENTRY -> firDeclarationList += convertEnumEntry(kid)
+        classBody.forEachChildren {
+            when (it.tokenType) {
+                ENUM_ENTRY -> firDeclarationList += convertEnumEntry(it)
             }
         }
 
@@ -615,15 +542,10 @@ class Converter(
     }*/
 
     private fun convertAnonymousInitializer(anonymousInitializer: LighterASTNode): FirDeclaration {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(anonymousInitializer, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var firBlock: FirBlock? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                BLOCK -> firBlock = visitBlock(kid)
+        anonymousInitializer.forEachChildren {
+            when (it.tokenType) {
+                BLOCK -> firBlock = visitBlock(it)
             }
         }
 
@@ -635,21 +557,17 @@ class Converter(
     }
 
     private fun convertSecondaryConstructor(secondaryConstructor: LighterASTNode): FirConstructor {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(secondaryConstructor, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
         val firValueParameters = mutableListOf<FirValueParameter>()
         var constructorDelegationCall: FirDelegatedConstructorCall? = null
         var firBlock: FirBlock? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                VALUE_PARAMETER_LIST -> firValueParameters += convertFunctionValueParameters(kid)
-                CONSTRUCTOR_DELEGATION_CALL -> constructorDelegationCall = convertConstructorDelegationCall(kid)
-                BLOCK -> firBlock = visitBlock(kid)
+
+        secondaryConstructor.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                VALUE_PARAMETER_LIST -> firValueParameters += convertFunctionValueParameters(it)
+                CONSTRUCTOR_DELEGATION_CALL -> constructorDelegationCall = convertConstructorDelegationCall(it)
+                BLOCK -> firBlock = visitBlock(it)
             }
         }
 
@@ -672,21 +590,16 @@ class Converter(
     }
 
     private fun convertEnumEntry(enumEntry: LighterASTNode): FirEnumEntryImpl {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(enumEntry, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
         var identifier: String? = null
         var initializerList = null
         val firDeclarations = mutableListOf<FirDeclaration>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                IDENTIFIER -> identifier = kid.toString()
+        enumEntry.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                IDENTIFIER -> identifier = it.toString()
                 INITIALIZER_LIST -> "" //TODO implement
-                CLASS_BODY -> firDeclarations += convertClassBody(kid)
+                CLASS_BODY -> firDeclarations += convertClassBody(it)
             }
         }
 
@@ -705,10 +618,6 @@ class Converter(
     }
 
     private fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirDeclaration {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(functionDeclaration, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
         var identifier: String? = null
         val typeParameters = mutableListOf<FirTypeParameter>()
@@ -719,21 +628,20 @@ class Converter(
         val typeConstraints = mutableListOf<Pair<String, FirTypeRef>>()
         var firBlock: FirBlock? = null
         var firExpression: FirExpression? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                IDENTIFIER -> identifier = kid.toString()
-                TYPE_PARAMETER_LIST -> typeParameters += convertTypeParameters(kid)
-                VALUE_PARAMETER_LIST -> valueParametersList += convertFunctionValueParameters(kid)
+        functionDeclaration.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                IDENTIFIER -> identifier = it.toString()
+                TYPE_PARAMETER_LIST -> typeParameters += convertTypeParameters(it)
+                VALUE_PARAMETER_LIST -> valueParametersList += convertFunctionValueParameters(it)
                 COLON -> isReturnType = true
-                TYPE_REFERENCE -> if (isReturnType) returnType = convertType(kid) else receiverType = convertType(kid)
-                TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(kid)
-                BLOCK -> firBlock = visitBlock(kid)
+                TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
+                TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
+                BLOCK -> firBlock = visitBlock(it)
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(kid) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -760,7 +668,7 @@ class Converter(
             modifiers.functionModifier == FunctionModifier.EXTERNAL,
             modifiers.functionModifier == FunctionModifier.SUSPEND,
             receiverType,
-            returnType
+            returnType!!
         )
 
         FunctionUtil.firFunctions += firFunction
@@ -783,15 +691,10 @@ class Converter(
     }
 
     private fun convertFunctionValueParameters(functionValueParameters: LighterASTNode): List<FirValueParameter> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(functionValueParameters, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val firValueParameters = mutableListOf<FirValueParameter>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                VALUE_PARAMETER -> firValueParameters += convertFunctionValueParameter(kid)
+        functionValueParameters.forEachChildren {
+            when (it.tokenType) {
+                VALUE_PARAMETER -> firValueParameters += convertFunctionValueParameter(it)
             }
         }
 
@@ -799,24 +702,19 @@ class Converter(
     }
 
     private fun convertFunctionValueParameter(functionValueParameter: LighterASTNode): FirValueParameter {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(functionValueParameter, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
         var identifier: String? = null
         var firType: FirTypeRef? = null
         var firExpression: FirExpression? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                IDENTIFIER -> identifier = kid.toString()
-                TYPE_REFERENCE -> firType = convertType(kid)
+        functionValueParameter.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                IDENTIFIER -> identifier = it.toString()
+                TYPE_REFERENCE -> firType = convertType(it)
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(kid) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -833,17 +731,12 @@ class Converter(
     }
 
     private fun convertParameter(parameter: LighterASTNode): FirValueParameter {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(parameter, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var identifier: String? = null
         var firType: FirTypeRef? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                IDENTIFIER -> identifier = kid.toString()
-                TYPE_REFERENCE -> firType = convertType(kid)
+        parameter.forEachChildren {
+            when (it.tokenType) {
+                IDENTIFIER -> identifier = it.toString()
+                TYPE_REFERENCE -> firType = convertType(it)
             }
         }
 
@@ -860,17 +753,12 @@ class Converter(
     }
 
     private fun convertSetterParameter(setterParameter: LighterASTNode, propertyTypeRef: FirTypeRef): FirValueParameter {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(setterParameter, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
         var firValueParameter: FirValueParameter? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                VALUE_PARAMETER -> firValueParameter = convertParameter(kid)
+        setterParameter.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                VALUE_PARAMETER -> firValueParameter = convertParameter(it)
             }
         }
 
@@ -878,7 +766,7 @@ class Converter(
             session,
             null,
             firValueParameter!!.name,
-            if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef,
+            if (firValueParameter!!.returnTypeRef == implicitType) propertyTypeRef else firValueParameter!!.returnTypeRef,
             null,
             isCrossinline = modifiers.parameterModifier == ParameterModifier.CROSSINLINE,
             isNoinline = modifiers.parameterModifier == ParameterModifier.NOINLINE,
@@ -910,10 +798,6 @@ class Converter(
 
     private fun convertPropertyDeclaration(property: LighterASTNode): FirDeclaration {
         //TODO DESTRUCTURING_DECLARATION
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(property, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
         var identifier: String? = null
         val typeParameters = mutableListOf<FirTypeParameter>()
@@ -926,26 +810,25 @@ class Converter(
         var getter: FirPropertyAccessor? = null
         var setter: FirPropertyAccessor? = null
         var firExpression: FirExpression? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                IDENTIFIER -> identifier = kid.toString()
-                TYPE_PARAMETER_LIST -> typeParameters += convertTypeParameters(kid)
+        property.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                IDENTIFIER -> identifier = it.toString()
+                TYPE_PARAMETER_LIST -> typeParameters += convertTypeParameters(it)
                 COLON -> isReturnType = true
-                TYPE_REFERENCE -> if (isReturnType) returnType = convertType(kid) else receiverType = convertType(kid)
-                TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(kid)
+                TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
+                TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
                 BY_KEYWORD -> isDelegate = true
                 VAR_KEYWORD -> isVar = true
                 PROPERTY_ACCESSOR ->
-                    if (kid.toString().contains("get")) //TODO make it better
-                        getter = convertGetter(kid, returnType)
+                    if (it.toString().contains("get")) //TODO make it better
+                        getter = convertGetter(it, returnType)
                     else
-                        setter = convertSetter(kid, returnType)
+                        setter = convertSetter(it, returnType)
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(kid) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -1005,25 +888,20 @@ class Converter(
     }
 
     private fun convertGetter(getter: LighterASTNode, propertyTypeRef: FirTypeRef): FirPropertyAccessor {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(getter, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
 
         var returnType: FirTypeRef? = null
         var firBlock: FirBlock? = null
         var firExpression: FirExpression? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                TYPE_REFERENCE -> returnType = convertType(kid)
-                BLOCK -> firBlock = visitBlock(kid)
+        getter.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                TYPE_REFERENCE -> returnType = convertType(it)
+                BLOCK -> firBlock = visitBlock(it)
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(kid) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -1043,27 +921,22 @@ class Converter(
     }
 
     private fun convertSetter(setter: LighterASTNode, propertyTypeRef: FirTypeRef): FirPropertyAccessor {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(setter, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
 
         var returnType: FirTypeRef? = null
         val firValueParameters = mutableListOf<FirValueParameter>()
         var firBlock: FirBlock? = null
         var firExpression: FirExpression? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                TYPE_REFERENCE -> returnType = convertType(kid)
-                VALUE_PARAMETER_LIST -> firValueParameters += convertSetterParameter(kid, propertyTypeRef)
-                BLOCK -> firBlock = visitBlock(kid)
+        setter.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                TYPE_REFERENCE -> returnType = convertType(it)
+                VALUE_PARAMETER_LIST -> firValueParameters += convertSetterParameter(it, propertyTypeRef)
+                BLOCK -> firBlock = visitBlock(it)
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(kid) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -1077,7 +950,13 @@ class Converter(
         FunctionUtil.firFunctions += firAccessor
         firAccessor.annotations += modifiers.annotations
 
-        firAccessor.valueParameters += if (firValueParameters.isEmpty()) listOf(FirDefaultSetterValueParameter(session, null, propertyTypeRef)) else firValueParameters
+        firAccessor.valueParameters += if (firValueParameters.isEmpty()) listOf(
+            FirDefaultSetterValueParameter(
+                session,
+                null,
+                propertyTypeRef
+            )
+        ) else firValueParameters
 
         firAccessor.body = visitFunctionBody(firBlock, firExpression)
         FunctionUtil.firFunctions.removeLast()
@@ -1085,21 +964,16 @@ class Converter(
     }
 
     private fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(typeAlias, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = Modifier(session)
         var identifier: String? = null
         var firType: FirTypeRef? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(kid)
-                IDENTIFIER -> identifier = kid.toString()
-                TYPE_PARAMETER_LIST -> firTypeParameters += convertTypeParameters(kid)
-                TYPE_REFERENCE -> firType = convertType(kid)
+        typeAlias.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                IDENTIFIER -> identifier = it.toString()
+                TYPE_PARAMETER_LIST -> firTypeParameters += convertTypeParameters(it)
+                TYPE_REFERENCE -> firType = convertType(it)
             }
         }
 
@@ -1122,15 +996,10 @@ class Converter(
     }
 
     private fun convertTypeParameters(typeParameterList: LighterASTNode): List<FirTypeParameter> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(typeParameterList, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val firTypeParameters = mutableListOf<FirTypeParameter>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                TYPE_PARAMETER -> firTypeParameters += convertTypeParameter(kid)
+        typeParameterList.forEachChildren {
+            when (it.tokenType) {
+                TYPE_PARAMETER -> firTypeParameters += convertTypeParameter(it)
             }
         }
 
@@ -1138,19 +1007,14 @@ class Converter(
     }
 
     private fun convertTypeParameter(typeParameter: LighterASTNode): FirTypeParameter {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(typeParameter, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var typeParameterModifiers = TypeParameterModifier(session)
         var parameterName: String? = null
         var type: FirTypeRef? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> typeParameterModifiers = convertTypeParameterModifiers(kid)
-                IDENTIFIER -> parameterName = kid.toString()
-                TYPE_REFERENCE -> type = convertType(kid)
+        typeParameter.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> typeParameterModifiers = convertTypeParameterModifiers(it)
+                IDENTIFIER -> parameterName = it.toString()
+                TYPE_REFERENCE -> type = convertType(it)
             }
         }
 
@@ -1169,19 +1033,14 @@ class Converter(
     }
 
     private fun convertTypeParameterModifiers(typeParameterModifiers: LighterASTNode): TypeParameterModifier {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(typeParameterModifiers, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val modifier = TypeParameterModifier(session)
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            val tokenType = kid.tokenType
+        typeParameterModifiers.forEachChildren {
+            val tokenType = it.tokenType
             when {
-                VARIANCE_MODIFIER.contains(tokenType) -> modifier.varianceModifier = convertVarianceModifier(kid)
-                REIFICATION_MODIFIER.contains(tokenType) -> modifier.reificationModifier = convertReificationModifier(kid)
-                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(kid)
-                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(kid, null)
+                VARIANCE_MODIFIER.contains(tokenType) -> modifier.varianceModifier = convertVarianceModifier(it)
+                REIFICATION_MODIFIER.contains(tokenType) -> modifier.reificationModifier = convertReificationModifier(it)
+                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
             }
         }
         return modifier
@@ -1192,20 +1051,15 @@ class Converter(
     }*/
 
     private fun convertType(type: LighterASTNode): FirTypeRef {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(type, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var typeModifiers = TypeModifier(session) //TODO what with suspend?
         var firType: FirTypeRef? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                TYPE_REFERENCE -> firType = convertType(kid)
-                MODIFIER_LIST -> typeModifiers = convertTypeModifiers(kid)
-                USER_TYPE -> firType = convertUserType(kid).also { (it as FirUserTypeRefImpl).qualifier.reverse() }
-                NULLABLE_TYPE -> firType = convertNullableType(kid)
-                FUNCTION_TYPE -> firType = convertFunctionType(kid)
+        type.forEachChildren {
+            when (it.tokenType) {
+                TYPE_REFERENCE -> firType = convertType(it)
+                MODIFIER_LIST -> typeModifiers = convertTypeModifiers(it)
+                USER_TYPE -> firType = convertUserType(it).also { (it as FirUserTypeRefImpl).qualifier.reverse() }
+                NULLABLE_TYPE -> firType = convertNullableType(it)
+                FUNCTION_TYPE -> firType = convertFunctionType(it)
                 DYNAMIC_TYPE -> firType = FirDynamicTypeRefImpl(session, null, false)
             }
         }
@@ -1214,18 +1068,13 @@ class Converter(
     }
 
     private fun convertTypeModifiers(typeModifiers: LighterASTNode): TypeModifier {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(typeModifiers, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val modifier = TypeModifier(session)
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            val tokenType = kid.tokenType
+        typeModifiers.forEachChildren {
+            val tokenType = it.tokenType
             when {
-                kid.toString() == SUSPEND_KEYWORD.value -> modifier.suspendModifier = SuspendModifier.SUSPEND
-                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(kid)
-                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(kid, null)
+                it.toString() == SUSPEND_KEYWORD.value -> modifier.suspendModifier = SuspendModifier.SUSPEND
+                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
             }
         }
         return modifier
@@ -1236,38 +1085,29 @@ class Converter(
     }*/
 
     private fun convertNullableType(nullableType: LighterASTNode): FirTypeRef {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(nullableType, kidsRef)
-        val kidsArray = kidsRef.get()
-
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                USER_TYPE -> return convertUserType(kid, true)
-                FUNCTION_TYPE -> return convertFunctionType(kid, true)
-                NULLABLE_TYPE -> return convertNullableType(kid)
-                DYNAMIC_TYPE -> return FirDynamicTypeRefImpl(session, null, true)
+        var firTypeRef: FirTypeRef? = null
+        nullableType.forEachChildren {
+            when (it.tokenType) {
+                USER_TYPE -> firTypeRef = convertUserType(it, true)
+                FUNCTION_TYPE -> firTypeRef = convertFunctionType(it, true)
+                NULLABLE_TYPE -> firTypeRef = convertNullableType(it)
+                DYNAMIC_TYPE -> firTypeRef = FirDynamicTypeRefImpl(session, null, true)
             }
         }
 
         //TODO specify error
-        throw Exception()
+        return firTypeRef ?: throw Exception()
     }
 
     private fun convertFunctionType(functionType: LighterASTNode, isNullable: Boolean = false): FirTypeRef {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(functionType, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var receiverTypeReference: FirTypeRef? = null
         var returnTypeReference: FirTypeRef? = null
         val valueParametersList = mutableListOf<FirValueParameter>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(kid)
-                VALUE_PARAMETER_LIST -> valueParametersList += convertFunctionTypeParameters(kid)
-                TYPE_REFERENCE -> returnTypeReference = convertType(kid)
+        functionType.forEachChildren {
+            when (it.tokenType) {
+                FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(it)
+                VALUE_PARAMETER_LIST -> valueParametersList += convertFunctionTypeParameters(it)
+                TYPE_REFERENCE -> returnTypeReference = convertType(it)
             }
         }
 
@@ -1281,35 +1121,26 @@ class Converter(
     }
 
     private fun convertReceiverType(receiverType: LighterASTNode): FirTypeRef? {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(receiverType, kidsRef)
-        val kidsArray = kidsRef.get()
-
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                TYPE_REFERENCE -> return convertType(kid)
+        var firTypeRef: FirTypeRef? = null
+        receiverType.forEachChildren {
+            when (it.tokenType) {
+                TYPE_REFERENCE -> firTypeRef = convertType(it)
             }
         }
 
         //TODO specify error
-        throw Exception()
+        return firTypeRef ?: throw Exception()
     }
 
     private fun convertUserType(userType: LighterASTNode, isNullable: Boolean = false): FirUserTypeRef {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(userType, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var simpleFirUserType: FirUserTypeRef? = null
         var identifier: String? = null
         val firTypeArguments = mutableListOf<FirTypeProjection>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                USER_TYPE -> simpleFirUserType = convertUserType(kid) //simple user type
-                REFERENCE_EXPRESSION -> identifier = kid.toString()
-                TYPE_ARGUMENT_LIST -> firTypeArguments += convertTypeArguments(kid)
+        userType.forEachChildren {
+            when (it.tokenType) {
+                USER_TYPE -> simpleFirUserType = convertUserType(it) //simple user type
+                REFERENCE_EXPRESSION -> identifier = it.toString()
+                TYPE_ARGUMENT_LIST -> firTypeArguments += convertTypeArguments(it)
             }
         }
 
@@ -1328,15 +1159,10 @@ class Converter(
     }
 
     private fun convertFunctionTypeParameters(functionTypeParameters: LighterASTNode): List<FirValueParameter> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(functionTypeParameters, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val valueParametersList = mutableListOf<FirValueParameter>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                VALUE_PARAMETER -> valueParametersList += convertParameter(kid)
+        functionTypeParameters.forEachChildren {
+            when (it.tokenType) {
+                VALUE_PARAMETER -> valueParametersList += convertParameter(it)
             }
         }
 
@@ -1344,15 +1170,10 @@ class Converter(
     }
 
     private fun convertTypeConstraints(typeConstraints: LighterASTNode): List<Pair<String, FirTypeRef>> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(typeConstraints, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val typeConstraintsList = mutableListOf<Pair<String, FirTypeRef>>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                TYPE_CONSTRAINT -> typeConstraintsList += convertTypeConstraint(kid)
+        typeConstraints.forEachChildren {
+            when (it.tokenType) {
+                TYPE_CONSTRAINT -> typeConstraintsList += convertTypeConstraint(it)
             }
         }
 
@@ -1360,17 +1181,12 @@ class Converter(
     }
 
     private fun convertTypeConstraint(typeConstraint: LighterASTNode): Pair<String, FirTypeRef> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(typeConstraint, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var identifier: String? = null
         var firType: FirTypeRef? = null
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                REFERENCE_EXPRESSION -> identifier = kid.toString()
-                TYPE_REFERENCE -> firType = convertType(kid)
+        typeConstraint.forEachChildren {
+            when (it.tokenType) {
+                REFERENCE_EXPRESSION -> identifier = it.toString()
+                TYPE_REFERENCE -> firType = convertType(it)
             }
         }
 
@@ -1378,30 +1194,20 @@ class Converter(
     }
 
     private fun convertValueArguments(valueArguments: LighterASTNode): List<FirExpression> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(valueArguments, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val firValueArguments = mutableListOf<FirExpression>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                VALUE_ARGUMENT -> firValueArguments += convertValueArgument(kid)
+        valueArguments.forEachChildren {
+            when (it.tokenType) {
+                VALUE_ARGUMENT -> firValueArguments += convertValueArgument(it)
             }
         }
         return firValueArguments
     }
 
     private fun convertTypeArguments(typeArguments: LighterASTNode): List<FirTypeProjection> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(typeArguments, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val firTypeArguments = mutableListOf<FirTypeProjection>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                TYPE_PROJECTION -> firTypeArguments += convertTypeProjection(kid)
+        typeArguments.forEachChildren {
+            when (it.tokenType) {
+                TYPE_PROJECTION -> firTypeArguments += convertTypeProjection(it)
             }
         }
 
@@ -1409,18 +1215,13 @@ class Converter(
     }
 
     private fun convertTypeProjection(typeProjection: LighterASTNode): FirTypeProjection {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(typeProjection, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var modifiers = TypeProjectionModifier(session)
         var type: FirTypeRef? = null
         var isStarProjection = false
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                MODIFIER_LIST -> modifiers = convertTypeProjectionModifiers(kid)
-                TYPE_REFERENCE -> type = convertType(kid)
+        typeProjection.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertTypeProjectionModifiers(it)
+                TYPE_REFERENCE -> type = convertType(it)
                 MUL -> isStarProjection = true
             }
         }
@@ -1436,18 +1237,13 @@ class Converter(
     }
 
     private fun convertTypeProjectionModifiers(modifiers: LighterASTNode): TypeProjectionModifier {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(modifiers, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val modifier = TypeProjectionModifier(session)
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            val tokenType = kid.tokenType
+        modifiers.forEachChildren {
+            val tokenType = it.tokenType
             when {
-                VARIANCE_MODIFIER.contains(tokenType) -> modifier.varianceModifier = convertVarianceModifier(kid)
-                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(kid)
-                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(kid, null)
+                VARIANCE_MODIFIER.contains(tokenType) -> modifier.varianceModifier = convertVarianceModifier(it)
+                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
             }
         }
         return modifier
@@ -1463,25 +1259,20 @@ class Converter(
     }
 
     private fun convertModifiers(modifiers: LighterASTNode): Modifier {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(modifiers, kidsRef)
-        val kidsArray = kidsRef.get()
-
         val modifier = Modifier(session)
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            val tokenType = kid.tokenType
+        modifiers.forEachChildren {
+            val tokenType = it.tokenType
             when {
-                CLASS_MODIFIER.contains(tokenType) -> modifier.classModifier = convertClassModifier(kid)
-                MEMBER_MODIFIER.contains(tokenType) -> modifier.memberModifier = convertMemberModifier(kid)
-                VISIBILITY_MODIFIER.contains(tokenType) -> modifier.visibilityModifier = convertVisibilityModifier(kid)
-                FUNCTION_MODIFIER.contains(tokenType) -> modifier.functionModifier = convertFunctionModifier(kid)
-                PROPERTY_MODIFIER.contains(tokenType) -> modifier.propertyModifier = convertPropertyModifier(kid)
-                INHERITANCE_MODIFIER.contains(tokenType) -> modifier.inheritanceModifier = convertInheritanceModifier(kid)
-                PARAMETER_MODIFIER.contains(tokenType) -> modifier.parameterModifier = convertParameterModifier(kid)
-                PLATFORM_MODIFIER.contains(tokenType) -> modifier.platformModifier = convertPlatformModifier(kid)
-                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(kid)
-                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(kid, null)
+                CLASS_MODIFIER.contains(tokenType) -> modifier.classModifier = convertClassModifier(it)
+                MEMBER_MODIFIER.contains(tokenType) -> modifier.memberModifier = convertMemberModifier(it)
+                VISIBILITY_MODIFIER.contains(tokenType) -> modifier.visibilityModifier = convertVisibilityModifier(it)
+                FUNCTION_MODIFIER.contains(tokenType) -> modifier.functionModifier = convertFunctionModifier(it)
+                PROPERTY_MODIFIER.contains(tokenType) -> modifier.propertyModifier = convertPropertyModifier(it)
+                INHERITANCE_MODIFIER.contains(tokenType) -> modifier.inheritanceModifier = convertInheritanceModifier(it)
+                PARAMETER_MODIFIER.contains(tokenType) -> modifier.parameterModifier = convertParameterModifier(it)
+                PLATFORM_MODIFIER.contains(tokenType) -> modifier.platformModifier = convertPlatformModifier(it)
+                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
             }
         }
         return modifier
@@ -1532,17 +1323,12 @@ class Converter(
     }
 
     private fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotationCall> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(annotationNode, kidsRef)
-        val kidsArray = kidsRef.get()
-
         var annotationTarget: AnnotationUseSiteTarget? = null
         val annotationList = mutableListOf<FirAnnotationCall>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                ANNOTATION_TARGET -> annotationTarget = convertAnnotationTarget(kid)
-                ANNOTATION_ENTRY -> annotationList += convertUnescapedAnnotation(kid, annotationTarget)
+        annotationNode.forEachChildren {
+            when (it.tokenType) {
+                ANNOTATION_TARGET -> annotationTarget = convertAnnotationTarget(it)
+                ANNOTATION_ENTRY -> annotationList += convertUnescapedAnnotation(it, annotationTarget)
             }
         }
 
@@ -1550,26 +1336,22 @@ class Converter(
     }
 
     private fun convertAnnotationTarget(annotationUseSiteTarget: LighterASTNode): AnnotationUseSiteTarget {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(annotationUseSiteTarget, kidsRef)
-        val kidsArray = kidsRef.get()
-
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                FILE_KEYWORD -> return AnnotationUseSiteTarget.FILE
-                PROPERTY_KEYWORD -> return AnnotationUseSiteTarget.PROPERTY
-                GET_KEYWORD -> return AnnotationUseSiteTarget.PROPERTY_GETTER
-                SET_KEYWORD -> return AnnotationUseSiteTarget.PROPERTY_SETTER
-                RECEIVER_KEYWORD -> return AnnotationUseSiteTarget.RECEIVER
-                PARAM_KEYWORD -> return AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
-                SETPARAM_KEYWORD -> return AnnotationUseSiteTarget.SETTER_PARAMETER
-                DELEGATE_KEYWORD -> return AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+        var annotationTarget: AnnotationUseSiteTarget? = null
+        annotationUseSiteTarget.forEachChildren {
+            when (it.tokenType) {
+                FILE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.FILE
+                PROPERTY_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY
+                GET_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_GETTER
+                SET_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_SETTER
+                RECEIVER_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.RECEIVER
+                PARAM_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+                SETPARAM_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.SETTER_PARAMETER
+                DELEGATE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
             }
         }
 
         //TODO specify error
-        throw Exception()
+        return annotationTarget ?: throw Exception()
     }
 
     //equals to ANNOTATION_ENTRY
