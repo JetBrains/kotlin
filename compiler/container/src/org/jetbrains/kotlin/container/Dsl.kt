@@ -46,6 +46,10 @@ fun StorageComponentContainer.useInstance(instance: Any) {
     registerInstance(instance)
 }
 
+fun StorageComponentContainer.useInstanceIfNotNull(instance: Any?) {
+    if (instance != null) registerInstance(instance)
+}
+
 inline operator fun <reified T : Any> ComponentProvider.getValue(thisRef: Any?, desc: KProperty<*>): T {
     return getService(T::class.java)
 }

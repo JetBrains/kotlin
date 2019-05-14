@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -59,6 +60,7 @@ interface KotlinResolutionCallbacks {
     fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom)
 }
 
+@DefaultImplementation(impl = SamConversionTransformer.Empty::class)
 interface SamConversionTransformer {
     fun getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType?
 

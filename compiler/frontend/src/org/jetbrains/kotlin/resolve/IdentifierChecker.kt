@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
+@DefaultImplementation(impl = IdentifierChecker.Default::class)
 interface IdentifierChecker {
     fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink)
     fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink)

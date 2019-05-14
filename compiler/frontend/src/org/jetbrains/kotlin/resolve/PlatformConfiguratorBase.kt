@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.resolve.calls.checkers.*
+import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.resolve.checkers.*
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.DynamicTypesSettings
@@ -56,18 +57,18 @@ private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>()
 
 
 abstract class PlatformConfiguratorBase(
-    private val dynamicTypesSettings: DynamicTypesSettings,
-    additionalDeclarationCheckers: List<DeclarationChecker>,
-    additionalCallCheckers: List<CallChecker>,
-    additionalTypeCheckers: List<AdditionalTypeChecker>,
-    additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
-    additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
-    private val identifierChecker: IdentifierChecker,
-    private val overloadFilter: OverloadFilter,
-    private val platformToKotlinClassMap: PlatformToKotlinClassMap,
-    private val delegationFilter: DelegationFilter,
-    private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper,
-    private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer
+    private val dynamicTypesSettings: DynamicTypesSettings? = null,
+    additionalDeclarationCheckers: List<DeclarationChecker> = emptyList(),
+    additionalCallCheckers: List<CallChecker> = emptyList(),
+    additionalTypeCheckers: List<AdditionalTypeChecker> = emptyList(),
+    additionalClassifierUsageCheckers: List<ClassifierUsageChecker> = emptyList(),
+    additionalAnnotationCheckers: List<AdditionalAnnotationChecker> = emptyList(),
+    private val identifierChecker: IdentifierChecker? = null,
+    private val overloadFilter: OverloadFilter? = null,
+    private val platformToKotlinClassMap: PlatformToKotlinClassMap? = null,
+    private val delegationFilter: DelegationFilter? = null,
+    private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper? = null,
+    private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer? = null
 ) : PlatformConfigurator {
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
     private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
@@ -77,18 +78,18 @@ abstract class PlatformConfiguratorBase(
     private val annotationCheckers: List<AdditionalAnnotationChecker> = DEFAULT_ANNOTATION_CHECKERS + additionalAnnotationCheckers
 
     override val platformSpecificContainer = composeContainer(this::class.java.simpleName) {
-        useInstance(dynamicTypesSettings)
+        useInstanceIfNotNull(dynamicTypesSettings)
         declarationCheckers.forEach { useInstance(it) }
         callCheckers.forEach { useInstance(it) }
         typeCheckers.forEach { useInstance(it) }
         classifierUsageCheckers.forEach { useInstance(it) }
         annotationCheckers.forEach { useInstance(it) }
-        useInstance(identifierChecker)
-        useInstance(overloadFilter)
-        useInstance(platformToKotlinClassMap)
-        useInstance(delegationFilter)
-        useInstance(overridesBackwardCompatibilityHelper)
-        useInstance(declarationReturnTypeSanitizer)
+        useInstanceIfNotNull(identifierChecker)
+        useInstanceIfNotNull(overloadFilter)
+        useInstanceIfNotNull(platformToKotlinClassMap)
+        useInstanceIfNotNull(delegationFilter)
+        useInstanceIfNotNull(overridesBackwardCompatibilityHelper)
+        useInstanceIfNotNull(declarationReturnTypeSanitizer)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
