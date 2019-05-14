@@ -1,0 +1,14 @@
+FILE: exception.kt
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
+    public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        when () {
+            ==(R|/box|(), String(OK)) ->  {
+                throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#(String(Hello))
+            }
+            else ->  {
+            }
+        }
+
+    }
