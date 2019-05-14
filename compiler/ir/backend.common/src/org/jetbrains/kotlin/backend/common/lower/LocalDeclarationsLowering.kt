@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
@@ -54,6 +55,8 @@ val IrDeclaration.parents: Sequence<IrDeclarationParent>
     get() = parentsWithSelf.drop(1)
 
 object BOUND_VALUE_PARAMETER: IrDeclarationOriginImpl("BOUND_VALUE_PARAMETER")
+
+object BOUND_RECEIVER_PARAMETER: IrDeclarationOriginImpl("BOUND_RECEIVER_PARAMETER")
 
 class LocalDeclarationsLowering(
     val context: BackendContext,
@@ -530,8 +533,17 @@ class LocalDeclarationsLowering(
                 val parameterDescriptor = WrappedValueParameterDescriptor()
                 val p = capturedValue.owner
                 IrValueParameterImpl(
-                    p.startOffset, p.endOffset, BOUND_VALUE_PARAMETER, IrValueParameterSymbolImpl(parameterDescriptor),
-                    suggestNameForCapturedValue(p), i, p.type, null, isCrossinline = false, isNoinline = false
+                    p.startOffset,
+                    p.endOffset,
+                    if (p.descriptor is ReceiverParameterDescriptor && newDeclaration is IrConstructor)
+                        BOUND_RECEIVER_PARAMETER else BOUND_VALUE_PARAMETER,
+                    IrValueParameterSymbolImpl(parameterDescriptor),
+                    suggestNameForCapturedValue(p),
+                    i,
+                    p.type,
+                    null,
+                    isCrossinline = false,
+                    isNoinline = false
                 ).also {
                     parameterDescriptor.bind(it)
                     it.parent = newDeclaration
