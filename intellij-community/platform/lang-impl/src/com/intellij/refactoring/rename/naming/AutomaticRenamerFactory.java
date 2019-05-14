@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.rename.naming;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -33,7 +33,9 @@ public interface AutomaticRenamerFactory {
    *
    * @return the checkbox title.
    */
-  @Nullable @Nls String getOptionName();
+  @Nullable
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  String getOptionName();
 
   /**
    * Returns true if this renamer factory is enabled (and the checkbox representing its state should be checked.)
