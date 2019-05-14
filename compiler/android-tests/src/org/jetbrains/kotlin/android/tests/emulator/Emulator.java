@@ -178,11 +178,6 @@ public class Emulator {
         command.addParameter("kill");
         RunUtils.execute(command);
 
-        if (SystemInfo.isWindows) {
-            //TODO check that command above works on windows and remove this
-            OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
-        }
-
         finishProcess("emulator64-" + platform);
         finishProcess("emulator-" + platform);
     }
