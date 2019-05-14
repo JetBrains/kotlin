@@ -9,10 +9,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinGradleNpmPackage
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
@@ -54,7 +52,7 @@ class KotlinNodeJsTestRunner : KotlinJsTestFramework {
 
         val args = nodeJsArgs +
                 testRuntimeNodeModules.map {
-                    npmProjectLayout.getModuleEntryPath(it)
+                    npmProjectLayout.require(it)
                 } +
                 cliArgs.toList()
 
