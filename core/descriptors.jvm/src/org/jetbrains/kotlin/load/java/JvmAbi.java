@@ -51,8 +51,8 @@ public final class JvmAbi {
     public static final String IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS = "-impl";
 
     @NotNull
-    public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
-        return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
+    public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull String getterName) {
+        return getterName + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
     }
 
     @NotNull

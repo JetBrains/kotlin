@@ -3,8 +3,8 @@ public final class test/TopLevel$Companion {
     inner class test/TopLevel$Companion
     private method <init>(): void
     public final method a(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getQ$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getQ(): java.lang.String
-    public synthetic deprecated static @kotlin.jvm.JvmStatic method q$annotations(): void
 }
 
 @kotlin.Metadata

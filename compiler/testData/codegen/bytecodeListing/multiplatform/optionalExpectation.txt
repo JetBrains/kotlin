@@ -16,7 +16,7 @@ public final class Foo {
     inner class Foo$Nested
     public method <init>(p0: int): void
     public final method bar(): void
+    public synthetic deprecated static method getX$annotations(): void
     public final method getX(): int
     public final method setX(p0: int): void
-    public synthetic deprecated static method x$annotations(): void
 }

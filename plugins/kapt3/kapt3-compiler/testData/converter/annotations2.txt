@@ -30,7 +30,7 @@ public final class AnnotationsTest {
     }
 
     @Anno(value = "top-level-val")
-    public static void topLevelVal$annotations(int p0) {
+    public static void getTopLevelVal$annotations(int p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -82,14 +82,14 @@ public abstract class Test {
     public abstract java.lang.String abstractMethod();
 
     @Anno(value = "abstract-val")
-    public static void abstractVal$annotations() {
+    public static void getAbstractVal$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String getAbstractVal();
 
     @Anno(value = "v-property")
-    public static void v$annotations() {
+    public static void getV$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()

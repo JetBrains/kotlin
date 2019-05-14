@@ -29,7 +29,7 @@ public final class Test {
 
     @Anno2()
     @Anno()
-    public static void prop$annotations() {
+    public static void getProp$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
