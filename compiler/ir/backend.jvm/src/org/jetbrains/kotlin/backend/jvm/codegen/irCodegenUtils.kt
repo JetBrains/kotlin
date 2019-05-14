@@ -444,3 +444,106 @@ fun IrClass.isOptionalAnnotationClass(): Boolean =
 
 //        JvmDeclarationOrigin(OTHER, element, descriptor)
 
+/* From generateJava8ParameterNames.kt */
+
+fun generateParameterNames(
+    irFunction: IrFunction,
+    mv: MethodVisitor,
+    jvmSignature: JvmMethodSignature,
+    state: GenerationState,
+    isSynthetic: Boolean
+) {
+    if (!state.generateParametersMetadata || isSynthetic) {
+        return
+    }
+
+    val iterator = irFunction.valueParameters.iterator()
+    val kotlinParameterTypes = jvmSignature.valueParameters
+    var isEnumName = true
+
+    kotlinParameterTypes.forEachIndexed { index, parameterSignature ->
+        val kind = parameterSignature.kind
+
+        val name = when (kind) {
+            JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL -> {
+                isEnumName = !isEnumName
+                if (!isEnumName) "\$enum\$name" else "\$enum\$ordinal"
+            }
+            JvmMethodParameterKind.RECEIVER -> {
+                getNameForReceiverParameter(irFunction, state.languageVersionSettings)
+            }
+            JvmMethodParameterKind.OUTER -> AsmUtil.CAPTURED_THIS_FIELD
+            JvmMethodParameterKind.VALUE -> iterator.next().name.asString()
+
+            JvmMethodParameterKind.CONSTRUCTOR_MARKER,
+            JvmMethodParameterKind.SUPER_CALL_PARAM,
+            JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE,
+            JvmMethodParameterKind.THIS -> {
+                //we can't generate null name cause of jdk problem #9045294
+                "arg" + index
+            }
+        }
+
+        //A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared explicitly or
+        // implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
+        //A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
+        // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
+        val access = when (kind) {
+            JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL -> Opcodes.ACC_SYNTHETIC
+            JvmMethodParameterKind.RECEIVER -> Opcodes.ACC_MANDATED
+            JvmMethodParameterKind.OUTER -> Opcodes.ACC_MANDATED
+            JvmMethodParameterKind.VALUE -> 0
+
+            JvmMethodParameterKind.CONSTRUCTOR_MARKER,
+            JvmMethodParameterKind.SUPER_CALL_PARAM,
+            JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE,
+            JvmMethodParameterKind.THIS -> Opcodes.ACC_SYNTHETIC
+        }
+
+        mv.visitParameter(name, access)
+    }
+}
+
+/* From AsmUtil.java */
+
+fun getNameForReceiverParameter(
+    irFunction: IrFunction,
+    languageVersionSettings: LanguageVersionSettings
+): String {
+    return getLabeledThisNameForReceiver(
+        irFunction, languageVersionSettings, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME
+    )
+}
+
+private fun getLabeledThisNameForReceiver(
+    irFunction: IrFunction,
+    languageVersionSettings: LanguageVersionSettings,
+    prefix: String,
+    defaultName: String
+): String {
+    if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+        return defaultName
+    }
+
+    // Current codegen never touches CALL_LABEL_FOR_LAMBDA_ARGUMENT
+//    if (irFunction is IrSimpleFunction) {
+//        val labelName = bindingContext.get(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, irFunction.descriptor)
+//        if (labelName != null) {
+//            return getLabeledThisName(labelName, prefix, defaultName)
+//        }
+//    }
+
+//    val callableName = irFunction.descriptor.safeAs<VariableAccessorDescriptor>()?.correspondingVariable?.name ?: irFunction.descriptor.name
+    val callableName = irFunction.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner?.name ?: irFunction.name
+
+    return if (callableName.isSpecial) {
+        defaultName
+    } else getLabeledThisName(callableName.asString(), prefix, defaultName)
+
+}
+
+fun getLabeledThisName(callableName: String, prefix: String, defaultName: String): String {
+    return if (!Name.isValidIdentifier(callableName)) {
+        defaultName
+    } else prefix + mangleNameIfNeeded(callableName)
+}
