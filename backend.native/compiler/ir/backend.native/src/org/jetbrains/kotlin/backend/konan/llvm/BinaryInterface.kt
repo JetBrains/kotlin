@@ -6,30 +6,30 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.serialization.KotlinMangler
 import org.jetbrains.kotlin.backend.common.serialization.KotlinManglerImpl
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.externalSymbolOrThrow
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationValue
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.allParameters
+import org.jetbrains.kotlin.backend.konan.ir.getObjCMethodInfo
+import org.jetbrains.kotlin.backend.konan.ir.isObjCClassMethod
+import org.jetbrains.kotlin.backend.konan.ir.isUnit
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMangler.isExported
-import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.util.fqNameSafe
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.konan.library.uniqueName
 import org.jetbrains.kotlin.backend.konan.isInlinedNative
+import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 
 // This file describes the ABI for Kotlin descriptors of exported declarations.

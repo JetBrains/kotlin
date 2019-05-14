@@ -6,31 +6,17 @@
 package org.jetbrains.kotlin.backend.konan.library
 
 import llvm.LLVMModuleRef
-import org.jetbrains.kotlin.backend.common.serialization.SerializedIr
-import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.KonanLibraryVersioning
-import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.library.BaseWriter
+import org.jetbrains.kotlin.library.IrWriter
+import org.jetbrains.kotlin.library.MetadataWriter
 
-interface KonanLibraryWriter {
-    val versions: KonanLibraryVersioning
-    fun addLinkData(linkData: LinkData)
-    fun addNativeBitcode(library: String)
+interface TargetedWriter {
     fun addIncludedBinary(library: String)
+}
+
+interface BitcodeWriter : TargetedWriter {
     fun addKotlinBitcode(llvmModule: LLVMModuleRef)
-    fun addLinkDependencies(libraries: List<KonanLibrary>)
-    fun addManifestAddend(properties: Properties)
-    fun addDataFlowGraph(dataFlowGraph: ByteArray)
-    val mainBitcodeFileName: String
-    fun commit()
+    fun addNativeBitcode(library: String)
 }
 
-class LinkData(
-    val module: ByteArray,
-    val fragments: List<List<ByteArray>>,
-    val fragmentNames: List<String>,
-    val ir: SerializedIr? = null
-)
-
-interface MetadataWriter {
-    fun addLinkData(linkData: LinkData)
-}
+interface KonanLibraryWriter : MetadataWriter, BaseWriter, IrWriter, BitcodeWriter

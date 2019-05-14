@@ -63,4 +63,6 @@ jar {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-util-io:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion"
 }

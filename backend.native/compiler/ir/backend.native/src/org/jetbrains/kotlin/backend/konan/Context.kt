@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescr
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
-import org.jetbrains.kotlin.backend.konan.library.LinkData
+import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.optimizations.Devirtualization
@@ -49,10 +50,12 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.serialization.KotlinMangler
+import org.jetbrains.kotlin.backend.common.serialization.SerializedIr
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -264,11 +267,11 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         ClassLayoutBuilder(irClass, this)
     }
 
-    // We serialize untouched descriptor tree and inline IR bodies
-    // right after the frontend.
+    // We serialize untouched descriptor tree and IR.
     // But we have to wait until the code generation phase,
     // to dump this information into generated file.
-    var serializedLinkData: LinkData? = null
+    var serializedMetadata: SerializedMetadata? = null
+    var serializedIr: SerializedIr? = null
     var dataFlowGraph: ByteArray? = null
 
     val librariesWithDependencies by lazy {
@@ -322,6 +325,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val llvmImports: LlvmImports = Llvm.ImportsImpl(this)
     lateinit var llvmDeclarations: LlvmDeclarations
     lateinit var bitcodeFileName: String
+    lateinit var library: KonanLibraryLayout
 
     val cStubsManager = CStubsManager(config.target)
 

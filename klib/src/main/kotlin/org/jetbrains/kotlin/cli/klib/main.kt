@@ -12,14 +12,12 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KLIB_FILE_EXTENSION_WITH_DOT
-import org.jetbrains.kotlin.konan.library.createKonanLibrary
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
-import org.jetbrains.kotlin.konan.KonanAbiVersion
-import org.jetbrains.kotlin.konan.library.unpackZippedKonanLibraryTo
+import org.jetbrains.kotlin.library.unpackZippedKonanLibraryTo
 import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescriptorFactory
 import org.jetbrains.kotlin.konan.util.Logger
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf

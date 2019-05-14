@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.konan.library.resolver
 
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.SearchPathResolverWithTarget
-import org.jetbrains.kotlin.konan.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.UnresolvedLibrary
 
 interface KonanLibraryResolver {
 
@@ -13,9 +13,9 @@ interface KonanLibraryResolver {
      * resolves libraries and evaluates dependencies between them.
      */
     fun resolveWithDependencies(
-            unresolvedLibraries: List<UnresolvedLibrary>,
-            noStdLib: Boolean = false,
-            noDefaultLibs: Boolean = false
+        unresolvedLibraries: List<UnresolvedLibrary>,
+        noStdLib: Boolean = false,
+        noDefaultLibs: Boolean = false
     ): KonanLibraryResolveResult
 }
 

@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.konan.library.libraryResolver
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.konan.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.konan.util.Logger
 import kotlin.system.exitProcess
+import org.jetbrains.kotlin.library.toUnresolvedLibraries
+import org.jetbrains.kotlin.konan.KonanVersion
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 

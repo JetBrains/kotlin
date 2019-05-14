@@ -1,13 +1,17 @@
 package org.jetbrains.kotlin.konan.library
 
-import org.jetbrains.kotlin.konan.KonanAbiVersion
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
+import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.*
 import kotlin.system.exitProcess
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION_WITH_DOT
+import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.uniqueName
 
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the constants below:
 const val KONAN_STDLIB_NAME = "stdlib"
@@ -24,7 +28,7 @@ interface SearchPathResolver : WithLogger {
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove this interface!
 interface SearchPathResolverWithTarget: SearchPathResolver {
     val target: KonanTarget
-    val knownAbiVersions: List<KonanAbiVersion>?
+    val knownAbiVersions: List<KotlinAbiVersion>?
     val knownCompilerVersions: List<KonanVersion>?
 }
 
@@ -47,7 +51,7 @@ fun defaultResolver(
         repositories,
         directLibs,
         target,
-        listOf(KonanAbiVersion.CURRENT),
+        listOf(KotlinAbiVersion.CURRENT),
         compatibleCompilerVersions,
         distribution.klib,
         distribution.localKonanDir.absolutePath,
@@ -179,7 +183,7 @@ internal class KonanLibraryProperResolver(
     repositories: List<String>,
     directLibs: List<String>,
     override val target: KonanTarget,
-    override val knownAbiVersions: List<KonanAbiVersion>?,
+    override val knownAbiVersions: List<KotlinAbiVersion>?,
     override val knownCompilerVersions: List<KonanVersion>?,
     distributionKlib: String?,
     localKonanDir: String?,

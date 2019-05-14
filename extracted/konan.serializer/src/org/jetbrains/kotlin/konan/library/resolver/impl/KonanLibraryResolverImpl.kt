@@ -20,15 +20,17 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.library.resolver.*
 import org.jetbrains.kotlin.konan.util.WithLogger
+import org.jetbrains.kotlin.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.unresolvedDependencies
 
 internal class KonanLibraryResolverImpl(
         override val searchPathResolver: SearchPathResolverWithTarget
 ): KonanLibraryResolver, WithLogger by searchPathResolver {
 
     override fun resolveWithDependencies(
-            unresolvedLibraries: List<UnresolvedLibrary>,
-            noStdLib: Boolean,
-            noDefaultLibs: Boolean
+        unresolvedLibraries: List<UnresolvedLibrary>,
+        noStdLib: Boolean,
+        noDefaultLibs: Boolean
     ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs)
             .leaveDistinct()
             .resolveDependencies()

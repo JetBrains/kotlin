@@ -1,29 +1,26 @@
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.backend.konan.serialization.KonanDeclarationTable
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializationUtil
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
-import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.KonanAbiVersion
-import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.library.KonanLibraryVersioning
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -181,10 +178,9 @@ internal val patchDeclarationParents0Phase = konanUnitPhase(
 internal val serializerPhase = konanUnitPhase(
         op = {
             val declarationTable = KonanDeclarationTable(irModule!!.irBuiltins, DescriptorTable())
-            val serializedIr = KonanIrModuleSerializer(this, declarationTable).serializedIrModule(irModule!!)
+            serializedIr = KonanIrModuleSerializer(this, declarationTable).serializedIrModule(irModule!!)
             val serializer = KonanSerializationUtil(this, config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, declarationTable)
-            serializedLinkData =
-                    serializer.serializeModule(moduleDescriptor, /*if (!config.isInteropStubs) serializedIr else null*/ serializedIr)
+            serializedMetadata = serializer.serializeModule(moduleDescriptor)
         },
         name = "Serializer",
         description = "Serialize descriptor tree and inline IR bodies"

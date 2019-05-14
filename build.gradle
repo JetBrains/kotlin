@@ -59,6 +59,8 @@ ext {
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
     kotlinNativeUtilsModule="org.jetbrains.kotlin:kotlin-native-utils:${kotlinVersion}"
+    kotlinUtilIoModule="org.jetbrains.kotlin:kotlin-util-io:${kotlinVersion}"
+    kotlinUtilKlibModule="org.jetbrains.kotlin:kotlin-util-klib:${kotlinVersion}"
 
     konanVersionFull = KonanVersionGeneratedKt.getCurrentKonanVersion()
 

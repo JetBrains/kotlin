@@ -9,8 +9,6 @@ import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 

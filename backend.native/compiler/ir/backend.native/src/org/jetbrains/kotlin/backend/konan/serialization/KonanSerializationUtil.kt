@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializedIr
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.isSerializableExpectClass
-import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
@@ -207,7 +207,7 @@ internal class KonanSerializationUtil(val context: Context, val metadataVersion:
                 .build()
     }
 
-    internal fun serializeModule(moduleDescriptor: ModuleDescriptor, serializedIr: SerializedIr?): LinkData {
+    internal fun serializeModule(moduleDescriptor: ModuleDescriptor): SerializedMetadata {
         val libraryProto = KonanProtoBuf.LinkDataLibrary.newBuilder()
         libraryProto.moduleName = moduleDescriptor.name.asString()
         val fragments = mutableListOf<List<ByteArray>>()
@@ -233,7 +233,7 @@ internal class KonanSerializationUtil(val context: Context, val metadataVersion:
         }
 
         val libraryAsByteArray = libraryProto.build().toByteArray()
-        return LinkData(libraryAsByteArray, fragments, fragmentNames, serializedIr)
+        return SerializedMetadata(libraryAsByteArray, fragments, fragmentNames)
     }
 }
 

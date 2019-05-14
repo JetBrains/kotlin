@@ -24,7 +24,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanArtifactWithLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
-import org.jetbrains.kotlin.konan.CURRENT
+import org.jetbrains.kotlin.konan.*
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.library.SearchPathResolver
 import org.jetbrains.kotlin.konan.library.defaultResolver

@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.KonanAbiVersion
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.isBitcode
-import org.jetbrains.kotlin.konan.library.KonanLibraryVersioning
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 
@@ -89,10 +89,14 @@ internal fun produceOutput(context: Context) {
             val output = context.config.outputFiles.outputName
             val libraryName = context.config.moduleId
             val neededLibraries = context.librariesWithDependencies
-            val abiVersion = KonanAbiVersion.CURRENT
+            val abiVersion = KotlinAbiVersion.CURRENT
             val compilerVersion = KonanVersion.CURRENT
             val libraryVersion = config.get(KonanConfigKeys.LIBRARY_VERSION)
-            val versions = KonanLibraryVersioning(abiVersion = abiVersion, libraryVersion = libraryVersion, compilerVersion = compilerVersion)
+            val versions = KonanLibraryVersioning(
+                abiVersion = abiVersion,
+                libraryVersion = libraryVersion,
+                compilerVersion = compilerVersion
+            )
             val target = context.config.target
             val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
             val manifestProperties = context.config.manifestProperties
@@ -101,7 +105,10 @@ internal fun produceOutput(context: Context) {
                 context.config.nativeLibraries,
                 context.config.includeBinaries,
                 neededLibraries,
-                context.serializedLinkData!!,
+                context.serializedMetadata!!,
+                // During serializer and library commonizations we've got duplicate SerializedIr in
+                // two different packages. TODO: Eliminate them eventually.
+                SerializedIr(context.serializedIr!!.module, context.serializedIr!!.combinedDeclarationFilePath),
                 versions,
                 target,
                 output,

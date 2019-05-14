@@ -91,7 +91,7 @@ internal val Project.konanHome: String
 
 internal val Project.konanVersion: KonanVersion
     get() = project.findProperty(KonanPlugin.ProjectProperty.KONAN_VERSION)
-        ?.toString()?.parseKonanVersion()
+        ?.toString()?.let { KonanVersion.fromString(it) }
         ?: KonanVersion.CURRENT
 
 internal val Project.konanBuildRoot          get() = buildDir.resolve("konan")

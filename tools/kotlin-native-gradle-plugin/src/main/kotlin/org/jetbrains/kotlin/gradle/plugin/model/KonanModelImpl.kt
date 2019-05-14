@@ -100,11 +100,11 @@ object KonanToolingModelBuilder : ToolingModelBuilder {
 }
 
 internal data class KonanModelImpl(
-        override val artifacts: List<KonanModelArtifact>,
-        override val konanHome: File,
-        override val konanVersion: KonanVersion,
-        override val languageVersion: String?,
-        override val apiVersion: String?
+    override val artifacts: List<KonanModelArtifact>,
+    override val konanHome: File,
+    override val konanVersion: KonanVersion,
+    override val languageVersion: String?,
+    override val apiVersion: String?
 ) : KonanModel
 
 internal data class KonanModelArtifactImpl(
