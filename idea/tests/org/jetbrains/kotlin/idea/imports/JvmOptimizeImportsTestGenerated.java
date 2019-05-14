@@ -372,6 +372,16 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             runTest("idea/testData/editor/optimizeImports/common/Overloads.kt");
         }
 
+        @TestMetadata("ProvideDelegate.kt")
+        public void testProvideDelegate() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/ProvideDelegate.kt");
+        }
+
+        @TestMetadata("ProvideDelegate2.kt")
+        public void testProvideDelegate2() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/ProvideDelegate2.kt");
+        }
+
         @TestMetadata("TwoConstructors.kt")
         public void testTwoConstructors() throws Exception {
             runTest("idea/testData/editor/optimizeImports/common/TwoConstructors.kt");
