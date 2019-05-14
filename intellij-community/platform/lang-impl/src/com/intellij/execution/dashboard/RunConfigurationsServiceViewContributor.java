@@ -3,9 +3,11 @@ package com.intellij.execution.dashboard;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.actions.StopAction;
+import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.dashboard.tree.ConfigurationTypeDashboardGroupingRule;
 import com.intellij.execution.dashboard.tree.RunConfigurationNode;
+import com.intellij.execution.dashboard.tree.RunDashboardGroupImpl;
 import com.intellij.execution.runners.FakeRerunAction;
 import com.intellij.execution.services.ServiceViewDescriptor;
 import com.intellij.execution.services.ServiceViewGroupingContributor;
@@ -91,6 +93,18 @@ public class RunConfigurationsServiceViewContributor
     presentationData.setPresentableText(group.getName());
     presentationData.setIcon(group.getIcon());
     return new ServiceViewDescriptor() {
+      @Nullable
+      @Override
+      public String getId() {
+        if (group instanceof RunDashboardGroupImpl) {
+          Object value = ((RunDashboardGroupImpl)group).getValue();
+          if (value instanceof ConfigurationType) {
+            return ((ConfigurationType)value).getId();
+          }
+        }
+        return group.getName();
+      }
+
       @Override
       public JComponent getContentComponent() {
         return null;
@@ -157,6 +171,13 @@ public class RunConfigurationsServiceViewContributor
 
     RunConfigurationServiceViewDescriptor(RunConfigurationNode node) {
       this.node = node;
+    }
+
+    @Nullable
+    @Override
+    public String getId() {
+      RunConfiguration configuration = node.getConfigurationSettings().getConfiguration();
+      return configuration.getType().getId() + "/" + configuration.getName();
     }
 
     @Override
