@@ -27,7 +27,7 @@ buildscript {
 
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
-        classpath("net.sf.proguard:proguard-gradle:6.0.3")
+        classpath("net.sf.proguard:proguard-gradle:6.1.0")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
 
         // a workaround to add another one buildSrc with Cidr-specific tools to Gradle classpath
