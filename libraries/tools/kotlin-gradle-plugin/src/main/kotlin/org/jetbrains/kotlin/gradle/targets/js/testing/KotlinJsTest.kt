@@ -33,7 +33,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = testFramework!!.requiredNpmDependencies
 
-    fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(), body)
+    fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(project), body)
 
     fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(project), body)
 
