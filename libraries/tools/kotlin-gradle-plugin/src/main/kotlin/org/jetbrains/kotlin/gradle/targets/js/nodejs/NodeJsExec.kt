@@ -29,17 +29,10 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java) {
         args("--require", moduleName)
     }
 
-    fun requireSourceMapSupport() {
-        require("kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support.js")
-    }
-
     fun script(file: File) {
         check(script == null) {
             "Script was already set to $script"
         }
         script = file.canonicalFile.relativeToOrSelf(npmProject.nodeWorkDir).path
     }
-
-    fun compileOutput(compilationTask: Kotlin2JsCompile) =
-        script(npmProject.compileOutput(compilationTask))
 }
