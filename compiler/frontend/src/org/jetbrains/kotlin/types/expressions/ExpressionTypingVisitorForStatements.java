@@ -140,7 +140,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         components.destructuringDeclarationResolver
                 .defineLocalVariablesFromDestructuringDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
         components.modifiersChecker.withTrace(context.trace).checkModifiersForDestructuringDeclaration(multiDeclaration);
-        components.identifierChecker.checkDeclaration(multiDeclaration, context.trace);
+        components.identifierCheckers.forEach((checker) -> checker.checkDeclaration(multiDeclaration, context.trace));
 
         if (expressionReceiver == null) {
             return TypeInfoFactoryKt.noTypeInfo(context);

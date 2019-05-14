@@ -65,7 +65,7 @@ class TypeResolver(
     private val typeTransformerForTests: TypeTransformerForTests,
     private val dynamicTypesSettings: DynamicTypesSettings,
     private val dynamicCallableDescriptors: DynamicCallableDescriptors,
-    private val identifierChecker: IdentifierChecker,
+    private val identifierCheckers: Iterable<IdentifierChecker>,
     private val platformToKotlinClassMap: PlatformToKotlinClassMap,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
@@ -288,9 +288,9 @@ class TypeResolver(
                     }
                 }
 
-                parameters.forEach {
-                    identifierChecker.checkDeclaration(it, c.trace)
-                    checkParameterInFunctionType(it)
+                parameters.forEach { param ->
+                    identifierCheckers.forEach { it.checkDeclaration(param, c.trace) }
+                    checkParameterInFunctionType(param)
                 }
                 return parameters.map { parameter ->
                     val parameterType = resolveType(c.noBareTypes(), parameter.typeReference!!)

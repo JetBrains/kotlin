@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.ModifierCheckerCore;
-import org.jetbrains.kotlin.resolve.ModifiersChecker;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
@@ -427,7 +424,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             VariableDescriptor variableDescriptor = createLoopParameterDescriptor(loopParameter, expectedParameterType, context);
             ModifiersChecker.ModifiersCheckingProcedure modifiersCheckingProcedure = components.modifiersChecker.withTrace(context.trace);
             modifiersCheckingProcedure.checkModifiersForLocalDeclaration(loopParameter, variableDescriptor);
-            components.identifierChecker.checkDeclaration(loopParameter, context.trace);
+            for (IdentifierChecker checker : components.identifierCheckers) {
+                checker.checkDeclaration(loopParameter, context.trace);
+            }
             loopScope.addVariableDescriptor(variableDescriptor);
             KtDestructuringDeclaration multiParameter = loopParameter.getDestructuringDeclaration();
             if (multiParameter != null) {
@@ -438,7 +437,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                         loopScope, multiParameter, iteratorNextAsReceiver, loopRange, context
                 );
                 modifiersCheckingProcedure.checkModifiersForDestructuringDeclaration(multiParameter);
-                components.identifierChecker.checkDeclaration(multiParameter, context.trace);
+                for (IdentifierChecker checker : components.identifierCheckers) {
+                    checker.checkDeclaration(multiParameter, context.trace);
+                }
             }
         }
 
@@ -788,7 +789,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private void checkCatchParameterDeclaration(KtParameter catchParameter, ExpressionTypingContext context) {
-        components.identifierChecker.checkDeclaration(catchParameter, context.trace);
+        components.identifierCheckers.forEach((checker) -> checker.checkDeclaration(catchParameter, context.trace));
         ModifiersChecker.ModifiersCheckingProcedure modifiersChecking = components.modifiersChecker.withTrace(context.trace);
         modifiersChecking.checkParameterHasNoValOrVar(catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
         ModifierCheckerCore.INSTANCE.check(catchParameter, context.trace, null, components.languageVersionSettings);

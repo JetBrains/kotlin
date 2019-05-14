@@ -48,7 +48,7 @@ class LazyTopDownAnalyzer(
     private val fileScopeProvider: FileScopeProvider,
     private val declarationScopeProvider: DeclarationScopeProvider,
     private val qualifiedExpressionResolver: QualifiedExpressionResolver,
-    private val identifierChecker: IdentifierChecker,
+    private val identifierCheckers: Iterable<IdentifierChecker>,
     private val languageVersionSettings: LanguageVersionSettings,
     private val deprecationResolver: DeprecationResolver,
     private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>,
@@ -102,7 +102,7 @@ class LazyTopDownAnalyzer(
                 }
 
                 override fun visitPackageDirective(directive: KtPackageDirective) {
-                    directive.packageNames.forEach { identifierChecker.checkIdentifier(it, trace) }
+                    directive.packageNames.forEach { packageName -> identifierCheckers.forEach { it.checkIdentifier(packageName, trace) } }
                     qualifiedExpressionResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
                 }
 

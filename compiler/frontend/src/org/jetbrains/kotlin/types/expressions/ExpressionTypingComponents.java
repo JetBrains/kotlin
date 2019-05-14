@@ -49,7 +49,7 @@ public class ExpressionTypingComponents {
     /*package*/ ModifiersChecker modifiersChecker;
     /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
     /*package*/ Iterable<CallChecker> callCheckers;
-    /*package*/ IdentifierChecker identifierChecker;
+    /*package*/ Iterable<IdentifierChecker> identifierCheckers;
     /*package*/ DeclarationsCheckerBuilder declarationsCheckerBuilder;
     /*package*/ LocalVariableResolver localVariableResolver;
     /*package*/ LookupTracker lookupTracker;
@@ -164,8 +164,8 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setIdentifierChecker(@NotNull IdentifierChecker identifierChecker) {
-        this.identifierChecker = identifierChecker;
+    public void setIdentifierCheckers(@NotNull Iterable<IdentifierChecker> identifierCheckers) {
+        this.identifierCheckers = identifierCheckers;
     }
 
     @Inject

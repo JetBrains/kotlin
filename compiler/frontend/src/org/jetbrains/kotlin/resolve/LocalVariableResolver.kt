@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
 class LocalVariableResolver(
     private val modifiersChecker: ModifiersChecker,
-    private val identifierChecker: IdentifierChecker,
+    private val identifierCheckers: Iterable<IdentifierChecker>,
     private val dataFlowAnalyzer: DataFlowAnalyzer,
     private val annotationResolver: AnnotationResolver,
     private val variableTypeAndInitializerResolver: VariableTypeAndInitializerResolver,
@@ -144,7 +144,7 @@ class LocalVariableResolver(
         ExpressionTypingUtils.checkVariableShadowing(context.scope, context.trace, descriptor)
 
         modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(ktProperty, descriptor)
-        identifierChecker.checkDeclaration(ktProperty, context.trace)
+        identifierCheckers.forEach { it.checkDeclaration(ktProperty, context.trace) }
 
         LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(context.trace, ktProperty, descriptor)
     }
