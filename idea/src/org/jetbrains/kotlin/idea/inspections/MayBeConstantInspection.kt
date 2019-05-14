@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.propertyVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ErrorValue
@@ -40,8 +41,7 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return propertyVisitor { property ->
-            val status = property.getStatus()
-            when (status) {
+            when (val status = property.getStatus()) {
                 NONE, JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER,
                 MIGHT_BE_CONST_ERRONEOUS, JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS -> return@propertyVisitor
                 MIGHT_BE_CONST, JVM_FIELD_MIGHT_BE_CONST -> {
@@ -59,7 +59,7 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
     companion object {
         fun KtProperty.getStatus(): Status {
             if (isLocal || isVar || getter != null ||
-                hasModifier(KtTokens.CONST_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD)
+                hasModifier(KtTokens.CONST_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD) || hasActualModifier()
             ) {
                 return NONE
             }

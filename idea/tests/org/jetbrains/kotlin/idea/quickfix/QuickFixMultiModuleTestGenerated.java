@@ -549,6 +549,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/makeOpenFromExpect/");
     }
 
+    @TestMetadata("mayBeConstantWithActual")
+    public void testMayBeConstantWithActual() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/mayBeConstantWithActual/");
+    }
+
     @TestMetadata("memberFunParameterToReceiverByHeader")
     public void testMemberFunParameterToReceiverByHeader() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/memberFunParameterToReceiverByHeader/");

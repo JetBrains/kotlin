@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.checkers.ConstModifierChecker
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
@@ -69,11 +70,15 @@ class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(KtProperty:
 
     companion object {
         fun isApplicableTo(element: KtProperty): Boolean {
-            if (element.isLocal || element.isVar || element.hasDelegate() || element.initializer == null
-                || element.getter?.hasBody() == true || element.receiverTypeReference != null
-                || element.hasModifier(KtTokens.CONST_KEYWORD) || element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
-                return false
+            with(element) {
+                if (isLocal || isVar || hasDelegate() || initializer == null
+                    || getter?.hasBody() == true || receiverTypeReference != null
+                    || hasModifier(KtTokens.CONST_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD) || hasActualModifier()
+                ) {
+                    return false
+                }
             }
+
             val propertyDescriptor = element.descriptor as? VariableDescriptor ?: return false
             return ConstModifierChecker.canBeConst(element, element, propertyDescriptor)
         }
