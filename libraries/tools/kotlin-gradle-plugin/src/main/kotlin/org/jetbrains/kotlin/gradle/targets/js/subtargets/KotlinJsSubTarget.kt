@@ -63,14 +63,14 @@ abstract class KotlinJsSubTarget(
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
-            testJs.dependsOn(target.npmResolveTask, compileTask, nodeJs.nodeJsSetupTask)
+            testJs.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider(), compileTask, nodeJs.nodeJsSetupTask)
 
             testJs.onlyIf {
                 compileTask.outputFile.exists()
             }
 
             testJs.targetName = disambiguationClassifier
-            testJs.nodeModulesToLoad.add(compileTask.outputFile.name)
+            testJs.nodeModulesToLoad.add(compileTask.outputFile.nameWithoutExtension)
 
             testJs.configureConventions()
 

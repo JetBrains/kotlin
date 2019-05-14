@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
@@ -45,7 +44,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
             val compileKotlinTask = compilation.compileKotlinTask
-            it.dependsOn(target.npmResolveTask, compileKotlinTask)
+            it.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider(), compileKotlinTask)
 
             it.entry = npmProject.compileOutput(compileKotlinTask)
 
@@ -54,7 +53,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("run")) {
             val compileKotlinTask = compilation.compileKotlinTask
-            it.dependsOn(target.npmResolveTask, compileKotlinTask)
+            it.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider(), compileKotlinTask)
 
             it.bin = "webpack-dev-server"
             it.entry = npmProject.compileOutput(compileKotlinTask)

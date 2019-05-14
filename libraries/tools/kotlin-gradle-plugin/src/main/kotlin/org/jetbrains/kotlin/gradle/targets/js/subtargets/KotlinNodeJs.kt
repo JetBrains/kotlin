@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
 class KotlinNodeJs(target: KotlinJsTarget) :
-    KotlinJsSubTarget(target, "nodeJs"),
+    KotlinJsSubTarget(target, "node"),
     KotlinJsNodeDsl {
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
@@ -34,17 +33,22 @@ class KotlinNodeJs(target: KotlinJsTarget) :
 
         val project = target.project
 
-        project.createOrRegisterTask<NodeJsExec>(disambiguateCamelCased("run")) {
+        project.createOrRegisterTask<NodeJsExec>(disambiguateCamelCased("run")) { runTask ->
             val compileKotlinTask = compilation.compileKotlinTask
-            it.dependsOn(target.npmResolveTask, compileKotlinTask)
+            runTask.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider(), compileKotlinTask)
 
             val npmProject = project.npmProject
-            it.args(npmProject.compileOutput(compileKotlinTask))
+            runTask.args(npmProject.compileOutput(compileKotlinTask))
 
-            // source maps support
-            it.args("--require", npmProject.getModuleEntryPath("kotlin-test-nodejs-runner"))
+            target.npmResolveTaskHolder.doGetTask().doLast {
+                // source maps support
+                runTask.args(
+                    "--require",
+                    npmProject.require("kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support")
+                )
+            }
 
-            target.runTask.dependsOn(it)
+            target.runTask.dependsOn(runTask)
         }
     }
 }

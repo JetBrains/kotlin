@@ -23,7 +23,7 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         super.configureTarget(target)
 
         target.compilations.forEach {
-            it.compileKotlinTask.dependsOn(target.npmResolveTask)
+            it.compileKotlinTask.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider())
         }
 
         if (target.disambiguationClassifier != null) {
