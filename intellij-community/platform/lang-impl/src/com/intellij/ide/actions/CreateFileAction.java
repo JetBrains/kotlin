@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,9 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
     super(ActionsBundle.message("action.NewFile.text"), IdeBundle.message("action.create.new.file.description"), AllIcons.FileTypes.Text);
   }
 
-  public CreateFileAction(final String text, final String description, final Icon icon) {
+  public CreateFileAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
+                          @Nls(capitalization = Nls.Capitalization.Sentence) String description,
+                          final Icon icon) {
     super(text, description, icon);
   }
 
