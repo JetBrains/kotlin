@@ -16,6 +16,7 @@ import org.yaml.snakeyaml.nodes.Node
 import org.yaml.snakeyaml.nodes.Tag
 import org.yaml.snakeyaml.representer.Represent
 import org.yaml.snakeyaml.representer.Representer
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import java.util.regex.Pattern
 
@@ -27,8 +28,8 @@ internal val snapshotFileUsageListeners = ContainerUtil.newConcurrentSet<Snapsho
 
 class ListAssertEx<ELEMENT>(actual: List<ELEMENT>) : ListAssert<ELEMENT>(actual) {
   fun toMatchSnapshot(snapshotFile: Path) {
+    snapshotFileUsageListeners.forEach { it.beforeMatch(snapshotFile) }
     isNotNull
-
     compareFileContent(actual, snapshotFile)
   }
 }
@@ -51,11 +52,6 @@ private class DumpRepresenter : Representer() {
   }
 }
 
-@Throws(FileComparisonFailure::class)
-fun compareFileContent(actual: Any, snapshotFile: Path, updateIfMismatch: Boolean = false) {
-  compareFileContent(actual, loadSnapshotContent(snapshotFile), snapshotFile, updateIfMismatch)
-}
-
 internal fun loadSnapshotContent(snapshotFile: Path, convertLineSeparators: Boolean = SystemInfoRt.isWindows): CharSequence {
   // because developer can open file and depending on editor settings, newline maybe added to the end of file
   var content = snapshotFile.readChars().trimEnd()
@@ -66,15 +62,29 @@ internal fun loadSnapshotContent(snapshotFile: Path, convertLineSeparators: Bool
 }
 
 @Throws(FileComparisonFailure::class)
-internal fun compareFileContent(actual: Any, expected: CharSequence, snapshotFile: Path, updateIfMismatch: Boolean = isUpdateSnapshotIfMismatch()) {
-  val actualContent = if (actual is CharSequence) actual.trimEnd() else dumpData(actual).trimEnd()
+fun compareFileContent(actual: Any, snapshotFile: Path, updateIfMismatch: Boolean = isUpdateSnapshotIfMismatch(), writeIfNotFound: Boolean = true) {
+  val actualContent = if (actual is CharSequence) getNormalizedActualContent(actual) else dumpData(actual).trimEnd()
+
+  val expected = try {
+    loadSnapshotContent(snapshotFile)
+  }
+  catch (e: NoSuchFileException) {
+    if (!writeIfNotFound || UsefulTestCase.IS_UNDER_TEAMCITY) {
+      throw e
+    }
+
+    println("Write a new snapshot ${snapshotFile.fileName}")
+    snapshotFile.write(actualContent)
+    return
+  }
+
   if (StringUtil.equal(actualContent, expected, true)) {
     return
   }
 
   if (updateIfMismatch) {
     System.out.println("UPDATED snapshot ${snapshotFile.fileName}")
-    snapshotFile.write(actualContent.toString())
+    snapshotFile.write(StringBuilder(actualContent))
   }
   else {
     @Suppress("SpellCheckingInspection")
@@ -82,6 +92,14 @@ internal fun compareFileContent(actual: Any, expected: CharSequence, snapshotFil
       "Received value does not match stored snapshot ${snapshotFile.fileName}.\nInspect your code changes or run with `-Dtest.update.snapshots` to update",
       expected.toString(), actualContent.toString(), snapshotFile.toString())
   }
+}
+
+private fun getNormalizedActualContent(actual: CharSequence): CharSequence {
+  var actualContent = actual
+  if (SystemInfoRt.isWindows) {
+    actualContent = StringUtilRt.convertLineSeparators(actualContent, "\n")
+  }
+  return actualContent.trimEnd()
 }
 
 private fun isUpdateSnapshotIfMismatch(): Boolean {

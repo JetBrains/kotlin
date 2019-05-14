@@ -112,7 +112,7 @@ internal class DefaultProjectStoreTest {
     assertThat(element.isEmpty()).isTrue()
 
     val directoryTree = tempDir.getDirectoryTree()
-    assertThat(directoryTree.trim()).isEqualTo(testData.resolve("testData1.txt"))
+    assertThat(directoryTree.trim()).toMatchSnapshot(testData.resolve("testData1.txt"))
   }
 
   @Test
@@ -125,6 +125,6 @@ internal class DefaultProjectStoreTest {
     assertThat(element).isEqualTo(loadElement(testData.resolve("normalize-ipr.xml")))
 
     val directoryTree = tempDir.getDirectoryTree()
-    assertThat(directoryTree.trim()).isEqualTo(testData.resolve("testData1-ipr.txt"))
+    assertThat(directoryTree.trim()).toMatchSnapshot(testData.resolve("testData1-ipr.txt"))
   }
 }
