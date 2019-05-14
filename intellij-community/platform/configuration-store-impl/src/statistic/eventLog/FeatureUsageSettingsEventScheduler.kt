@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.statistic.eventLog
 
 import com.intellij.concurrency.JobScheduler
@@ -14,6 +14,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.openapi.project.processOpenedProjects
 import com.intellij.util.ArrayUtilRt
 import java.util.concurrent.TimeUnit
 
@@ -43,7 +44,7 @@ class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracker {
     if (ProjectManagerEx.getInstanceEx().isDefaultProjectInitialized) {
       logInitializedComponents(ProjectManager.getInstance().defaultProject)
     }
-    ProjectManager.getInstance().openProjects.filter { project -> !project.isDefault }.forEach { project ->
+    processOpenedProjects { project ->
       logInitializedComponents(project)
     }
   }
