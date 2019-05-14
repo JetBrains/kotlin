@@ -4,16 +4,20 @@ FILE fqName:<root> fileName:/samOperators.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       CALL 'public open fun get (k: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        $this: ERROR_CALL 'Unresolved reference: this#' type=<root>.J
         k: ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
       CALL 'public open fun get (k: java.lang.Runnable?, m: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        $this: ERROR_CALL 'Unresolved reference: this#' type=<root>.J
         k: ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
         m: ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       CALL 'public open fun set (k: java.lang.Runnable?, v: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        $this: ERROR_CALL 'Unresolved reference: this#' type=<root>.J
         k: ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
         v: ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
       CALL 'public open fun set (k: java.lang.Runnable?, m: java.lang.Runnable?, v: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        $this: ERROR_CALL 'Unresolved reference: this#' type=<root>.J
         k: ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
         m: ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
         v: ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType

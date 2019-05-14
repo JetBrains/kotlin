@@ -163,6 +163,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun f (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+                $this: CONST Boolean type=kotlin.Boolean value=true
               arg1: CONST Int type=kotlin.String value=3
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="3"
@@ -189,6 +190,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-ext> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+                $this: CONST Int type=kotlin.Int value=5
               arg1: CONST Int type=kotlin.String value=6
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="6"
@@ -207,6 +209,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-g2> (): T of <uninitialized parent> declared in <root>.C' type=T of <uninitialized parent> origin=null
+                $this: CONST String type=kotlin.String value="8"
               arg1: CONST String type=kotlin.String value="8"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="8"
@@ -223,6 +226,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass' type=T of <uninitialized parent> origin=null
+                $this: CONST String type=kotlin.String value="10"
               arg1: CONST String type=kotlin.String value="10"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="10"

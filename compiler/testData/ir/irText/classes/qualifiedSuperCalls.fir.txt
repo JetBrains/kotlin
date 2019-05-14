@@ -59,16 +59,21 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.CBoth 
       BLOCK_BODY
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.ILeft' type=kotlin.Unit origin=null
+          $this: ERROR_CALL 'Unresolved reference: super<R|ILeft|>' type=<root>.ILeft
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.IRight' type=kotlin.Unit origin=null
-    PROPERTY name:bar visibility:public modality:FINAL [val] 
+          $this: ERROR_CALL 'Unresolved reference: super<R|IRight|>' type=<root>.IRight
+    PROPERTY name:bar visibility:public modality:FINAL [val]
       FUN name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.CBoth) returnType:kotlin.Int 
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.CBoth 
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.Int declared in <root>.CBoth'
             CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: CALL 'public open fun <get-bar> (): kotlin.Int declared in <root>.ILeft' type=kotlin.Int origin=null
+                $this: ERROR_CALL 'Unresolved reference: super<R|ILeft|>' type=<root>.ILeft
               other: CALL 'public open fun <get-bar> (): kotlin.Int declared in <root>.IRight' type=kotlin.Int origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+                $this: ERROR_CALL 'Unresolved reference: super<R|IRight|>' type=<root>.IRight
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

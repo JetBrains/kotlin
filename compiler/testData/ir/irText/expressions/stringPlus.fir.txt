@@ -5,6 +5,7 @@ FILE fqName:<root> fileName:/stringPlus.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.String, b: kotlin.Any): kotlin.String declared in <root>'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+          $this: GET_VAR 'a: kotlin.String declared in <root>.test1' type=kotlin.String origin=null
           other: GET_VAR 'b: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String 
     VALUE_PARAMETER name:a index:0 type:kotlin.String 
@@ -12,6 +13,9 @@ FILE fqName:<root> fileName:/stringPlus.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.String, b: kotlin.Int): kotlin.String declared in <root>'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+          $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+            $this: GET_VAR 'a: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
+            other: CONST String type=kotlin.String value="+"
           other: GET_VAR 'b: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String 
     VALUE_PARAMETER name:a index:0 type:kotlin.String 
@@ -19,5 +23,12 @@ FILE fqName:<root> fileName:/stringPlus.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.String, b: kotlin.Int): kotlin.String declared in <root>'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+          $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+            $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+              $this: GET_VAR 'a: kotlin.String declared in <root>.test3' type=kotlin.String origin=null
+              other: CONST String type=kotlin.String value="+"
+            other: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'b: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=1
           other: GET_VAR 'a: kotlin.String declared in <root>.test3' type=kotlin.String origin=null
 

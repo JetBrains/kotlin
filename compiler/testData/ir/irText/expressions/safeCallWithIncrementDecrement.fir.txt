@@ -57,5 +57,6 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
       CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in test' type=kotlin.Unit origin=null
         index: CONST Int type=kotlin.Int value=0
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
       GET_VAR 'val <unary>: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
 

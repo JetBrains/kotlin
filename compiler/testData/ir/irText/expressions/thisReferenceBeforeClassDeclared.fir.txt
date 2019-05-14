@@ -19,6 +19,7 @@ FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (a: <root>.WithCompanion.Companion) [primary] declared in <root>.WithCompanion'
                   a: CALL 'public final fun foo (): <root>.WithCompanion.Companion declared in <root>.WithCompanion.Companion' type=<root>.WithCompanion.Companion origin=null
+                    $this: ERROR_CALL 'Unresolved reference: this#' type=<root>.WithCompanion
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.WithCompanion]'
           CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=null
   CLASS CLASS name:WithCompanion modality:OPEN visibility:public superTypes:[kotlin.Any]

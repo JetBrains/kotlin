@@ -24,6 +24,7 @@ FILE fqName:<root> fileName:/superCalls.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Base'
           CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+            $this: ERROR_CALL 'Unresolved reference: super<<implicit>>' type=kotlin.Any
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -43,13 +44,15 @@ FILE fqName:<root> fileName:/superCalls.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived 
       BLOCK_BODY
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.Base' type=kotlin.Unit origin=null
-    PROPERTY name:bar visibility:public modality:FINAL [val] 
+          $this: ERROR_CALL 'Unresolved reference: super<<implicit>>' type=<root>.Base
+    PROPERTY name:bar visibility:public modality:FINAL [val]
       FUN name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.String 
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived 
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.String declared in <root>.Derived'
             CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.Base' type=kotlin.String origin=null
+              $this: ERROR_CALL 'Unresolved reference: super<<implicit>>' type=<root>.Base
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<root>.Base) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Base

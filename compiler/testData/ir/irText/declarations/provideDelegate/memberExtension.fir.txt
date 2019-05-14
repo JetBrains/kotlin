@@ -30,6 +30,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun getValue (receiver: kotlin.String, p: kotlin.Any): kotlin.String declared in <root>.Host.StringDelegate'
             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+              $this: GET_VAR 'receiver: kotlin.String declared in <root>.Host.StringDelegate.getValue' type=kotlin.String origin=null
               other: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.Host.StringDelegate' type=kotlin.String origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
@@ -65,7 +66,8 @@ FILE fqName:<root> fileName:/memberExtension.kt
       FIELD PROPERTY_BACKING_FIELD name:ok type:IrErrorType visibility:public [final] 
         EXPRESSION_BODY
           CALL 'public final fun <get-plusK> (): IrErrorType declared in <root>.Host' type=IrErrorType origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType 
+            $this: CONST String type=kotlin.String value="O"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType
         correspondingProperty: PROPERTY name:ok visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Host 
         BLOCK_BODY

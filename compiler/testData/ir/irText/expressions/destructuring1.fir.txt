@@ -53,6 +53,7 @@ FILE fqName:<root> fileName:/destructuring1.kt
         ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
       VAR name:x type:kotlin.Int [val] 
         CALL 'public final fun component1 (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
-      VAR name:y type:kotlin.Int [val] 
+          $this: GET_VAR 'val <destruct>: <root>.A [val] declared in <root>.test' type=<root>.A origin=null
+      VAR name:y type:kotlin.Int [val]
         CALL 'public final fun component2 (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
-
+          $this: GET_VAR 'val <destruct>: <root>.A [val] declared in <root>.test' type=<root>.A origin=null

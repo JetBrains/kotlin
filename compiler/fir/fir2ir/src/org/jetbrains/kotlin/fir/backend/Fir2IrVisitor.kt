@@ -208,7 +208,9 @@ internal class Fir2IrVisitor(
                     val origin = IrDeclarationOrigin.FAKE_OVERRIDE
                     if (functionSymbol.isFakeOverride) {
                         // Substitution case
-                        val irFunction = declarationStorage.getIrFunction(originalFunction, setParent = false, origin = origin)
+                        val irFunction = declarationStorage.getIrFunction(
+                            originalFunction, declarationStorage.findIrParent(originalFunction), origin = origin
+                        )
                         val baseSymbol = functionSymbol.overriddenSymbol
                         declarations += irFunction.setParentByParentStack().withFunction {
                             setFunctionContent(irFunction.descriptor, originalFunction, firOverriddenSymbol = baseSymbol)
@@ -218,7 +220,9 @@ internal class Fir2IrVisitor(
                         val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverride(session, originalFunction, functionSymbol)
                         val fakeOverrideFunction = fakeOverrideSymbol.fir as FirNamedFunction
 
-                        val irFunction = declarationStorage.getIrFunction(fakeOverrideFunction, setParent = false, origin = origin)
+                        val irFunction = declarationStorage.getIrFunction(
+                            fakeOverrideFunction, declarationStorage.findIrParent(originalFunction), origin = origin
+                        )
                         declarations += irFunction.setParentByParentStack().withFunction {
                             setFunctionContent(irFunction.descriptor, fakeOverrideFunction, firOverriddenSymbol = functionSymbol)
                         }
@@ -340,7 +344,9 @@ internal class Fir2IrVisitor(
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement {
-        val irConstructor = declarationStorage.getIrConstructor(constructor, setParent = false)
+        val irConstructor = declarationStorage.getIrConstructor(
+            constructor, irParent = parentStack.last() as? IrClass
+        )
         return irConstructor.setParentByParentStack().withFunction {
             setFunctionContent(irConstructor.descriptor, constructor)
         }.withParent {
@@ -420,7 +426,9 @@ internal class Fir2IrVisitor(
     }
 
     override fun visitNamedFunction(namedFunction: FirNamedFunction, data: Any?): IrElement {
-        val irFunction = declarationStorage.getIrFunction(namedFunction, setParent = false)
+        val irFunction = declarationStorage.getIrFunction(
+            namedFunction, irParent = parentStack.last() as? IrClass
+        )
         return irFunction.setParentByParentStack().withFunction {
             setFunctionContent(irFunction.descriptor, namedFunction)
         }
@@ -503,7 +511,7 @@ internal class Fir2IrVisitor(
     }
 
     override fun visitProperty(property: FirProperty, data: Any?): IrProperty {
-        val irProperty = declarationStorage.getIrProperty(property, setParent = false)
+        val irProperty = declarationStorage.getIrProperty(property)
         return irProperty.setParentByParentStack().withProperty { setPropertyContent(irProperty.descriptor, property) }
     }
 
@@ -515,12 +523,6 @@ internal class Fir2IrVisitor(
             }
         }
         return this
-    }
-
-    private fun <T : IrFunction> T.declareParameters(function: FirFunction) {
-        return with(declarationStorage) {
-            declareParameters(function)
-        }
     }
 
 
@@ -548,7 +550,7 @@ internal class Fir2IrVisitor(
                 descriptor.bind(this)
                 declarationStorage.enterScope(descriptor)
                 if (!isDefault) {
-                    declareParameters(propertyAccessor)
+                    with(declarationStorage) { declareParameters(propertyAccessor, containingClass = null) }
                 }
                 setFunctionContent(descriptor, propertyAccessor).apply {
                     correspondingPropertySymbol = symbolTable.referenceProperty(correspondingProperty.descriptor)
@@ -710,8 +712,33 @@ internal class Fir2IrVisitor(
         }
     }
 
+    private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccess): IrExpression {
+        return when (this) {
+            is IrCallImpl -> {
+                val ownerFunction = symbol.owner
+                if (ownerFunction.dispatchReceiverParameter != null) {
+                    val explicitReceiver = qualifiedAccess.explicitReceiver?.toIrExpression()
+                    if (explicitReceiver != null) {
+                        dispatchReceiver = explicitReceiver
+                    } else {
+                        // TODO: implicit dispatch receiver
+                    }
+                } else if (ownerFunction.extensionReceiverParameter != null) {
+                    val explicitReceiver = qualifiedAccess.explicitReceiver?.toIrExpression()
+                    if (explicitReceiver != null) {
+                        extensionReceiver = explicitReceiver
+                    } else {
+                        // TODO: implicit extension receiver
+                    }
+                }
+                this
+            }
+            else -> this
+        }
+    }
+
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?): IrElement {
-        return functionCall.toIrExpression(functionCall.typeRef).applyCallArguments(functionCall)
+        return functionCall.toIrExpression(functionCall.typeRef).applyCallArguments(functionCall).applyReceivers(functionCall)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): IrElement {
@@ -719,7 +746,7 @@ internal class Fir2IrVisitor(
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
-        return qualifiedAccessExpression.toIrExpression(qualifiedAccessExpression.typeRef)
+        return qualifiedAccessExpression.toIrExpression(qualifiedAccessExpression.typeRef).applyReceivers(qualifiedAccessExpression)
     }
 
     private fun generateErrorCallExpression(startOffset: Int, endOffset: Int, calleeReference: FirReference): IrErrorCallExpression {

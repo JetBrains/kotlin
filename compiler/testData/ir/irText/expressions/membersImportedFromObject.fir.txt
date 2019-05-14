@@ -68,7 +68,8 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun fooExt (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Int 
+          $this: CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Int declared in <root>'
@@ -77,7 +78,8 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
     FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun <get-barExt> (): IrErrorType declared in <root>.A' type=IrErrorType origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:IrErrorType 
+          $this: CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:IrErrorType
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): IrErrorType declared in <root>'

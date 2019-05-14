@@ -48,6 +48,7 @@ FILE fqName:<root> fileName:/kt28456.kt
             i: CONST Int type=kotlin.Int value=1
             j: CONST Int type=kotlin.Int value=2
             v: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
   FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit 
     VALUE_PARAMETER name:a index:0 type:<root>.A 

@@ -36,7 +36,8 @@ FILE fqName:<root> fileName:/differentReceivers.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
         CALL 'public final fun <get-value> (): kotlin.String declared in <root>.MyClass' type=kotlin.String origin=null
-  FUN name:getValue visibility:public modality:FINAL <> (receiver:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String 
+          $this: ERROR_CALL 'Unresolved reference: this#' type=<root>.MyClass
+  FUN name:getValue visibility:public modality:FINAL <> (receiver:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? 
     VALUE_PARAMETER name:p index:1 type:kotlin.Any 
     BLOCK_BODY

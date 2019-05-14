@@ -5,6 +5,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1d (x: kotlin.Double, y: kotlin.Double): kotlin.Int declared in <root>'
         CALL 'public open fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
+          $this: GET_VAR 'x: kotlin.Double declared in <root>.test1d' type=kotlin.Double origin=null
           other: GET_VAR 'y: kotlin.Double declared in <root>.test1d' type=kotlin.Double origin=null
   FUN name:test2d visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Any) returnType:kotlin.Boolean 
     VALUE_PARAMETER name:x index:0 type:kotlin.Double 
@@ -51,6 +52,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1f (x: kotlin.Float, y: kotlin.Float): kotlin.Int declared in <root>'
         CALL 'public open fun compareTo (other: kotlin.Float): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
+          $this: GET_VAR 'x: kotlin.Float declared in <root>.test1f' type=kotlin.Float origin=null
           other: GET_VAR 'y: kotlin.Float declared in <root>.test1f' type=kotlin.Float origin=null
   FUN name:test2f visibility:public modality:FINAL <> (x:kotlin.Float, y:kotlin.Any) returnType:kotlin.Boolean 
     VALUE_PARAMETER name:x index:0 type:kotlin.Float 

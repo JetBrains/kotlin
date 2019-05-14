@@ -16,11 +16,14 @@ FILE fqName:<root> fileName:/coercionToUnit.kt
     VALUE_PARAMETER name:mc index:0 type:kotlin.collections.MutableCollection<kotlin.String> 
     BLOCK_BODY
       CALL 'public abstract fun add (element: kotlin.String): kotlin.Boolean declared in kotlin.collections.MutableCollection' type=kotlin.Boolean origin=null
+        $this: GET_VAR 'mc: kotlin.collections.MutableCollection<kotlin.String> declared in <root>.test2' type=kotlin.collections.MutableCollection<kotlin.String> origin=null
         element: CONST String type=kotlin.String value=""
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
+        $this: ERROR_CALL 'No getter found for R|java/lang/System.out|' type=java.io.PrintStream?
         x: CONST String type=kotlin.String value="Hello,"
       CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
+        $this: ERROR_CALL 'No getter found for R|java/lang/System.out|' type=java.io.PrintStream?
         x: CONST String type=kotlin.String value="world!"
 

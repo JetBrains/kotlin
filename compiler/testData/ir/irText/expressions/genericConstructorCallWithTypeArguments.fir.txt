@@ -4,6 +4,7 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
       RETURN type=kotlin.Nothing from='public final fun testSimple (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Box.Box]>#' type=IrErrorType
           CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CONST Int type=kotlin.Int value=2
             other: CONST Int type=kotlin.Int value=3
   FUN name:testArray visibility:public modality:FINAL <T> (n:kotlin.Int, block:kotlin.Function0<T of <root>.testArray>) returnType:kotlin.Array<T of <root>.testArray> [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]

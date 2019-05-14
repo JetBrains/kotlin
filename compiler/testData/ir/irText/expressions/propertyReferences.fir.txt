@@ -257,7 +257,8 @@ FILE fqName:<root> fileName:/propertyReferences.kt
     FIELD PROPERTY_BACKING_FIELD name:test_varWithPrivateSet type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun <get-varWithPrivateSet> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithPrivateSet> visibility:public modality:FINAL <> () returnType:kotlin.Int 
+          $this: ERROR_CALL 'Unresolved reference: R|/C|' type=<root>.C
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithPrivateSet> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test_varWithPrivateSet visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test_varWithPrivateSet> (): kotlin.Int declared in <root>'
@@ -266,7 +267,8 @@ FILE fqName:<root> fileName:/propertyReferences.kt
     FIELD PROPERTY_BACKING_FIELD name:test_varWithProtectedSet type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun <get-varWithProtectedSet> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithProtectedSet> visibility:public modality:FINAL <> () returnType:kotlin.Int 
+          $this: ERROR_CALL 'Unresolved reference: R|/C|' type=<root>.C
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithProtectedSet> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test_varWithProtectedSet visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test_varWithProtectedSet> (): kotlin.Int declared in <root>'

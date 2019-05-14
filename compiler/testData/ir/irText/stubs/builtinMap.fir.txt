@@ -8,6 +8,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
         WHEN type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=IF
           BRANCH
             if: CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Map' type=kotlin.Boolean origin=null
+              $this: ERROR_CALL 'Unresolved reference: this#' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>
             then: ERROR_CALL 'Unresolved reference: <Ambiguity: mapOf, [kotlin/collections/mapOf, kotlin/collections/mapOf]>#' type=IrErrorType
               GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
           BRANCH
