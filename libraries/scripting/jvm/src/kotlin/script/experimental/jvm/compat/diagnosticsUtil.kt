@@ -39,5 +39,17 @@ fun mapToLegacyScriptReportSeverity(severity: ScriptDiagnostic.Severity): Script
 fun mapLegacyScriptPosition(pos: ScriptContents.Position?): SourceCode.Location? =
     pos?.let { SourceCode.Location(SourceCode.Position(pos.line, pos.col)) }
 
+fun mapLegacyScriptPosition(pos: ScriptReport.Position?): SourceCode.Location? =
+    pos?.let {
+        val endPos =
+            if (pos.endLine == null || pos.endColumn == null) null
+            else SourceCode.Position(pos.endLine!!, pos.endColumn!!)
+        SourceCode.Location(SourceCode.Position(pos.startLine, pos.startColumn), endPos)
+    }
+
 fun mapToLegacyScriptReportPosition(pos: SourceCode.Location?): ScriptReport.Position? =
     pos?.let { ScriptReport.Position(pos.start.line, pos.start.col) }
+
+fun Iterable<ScriptReport>.mapToDiagnostics(): List<ScriptDiagnostic> = map { (message, severity, position: ScriptReport.Position?) ->
+    ScriptDiagnostic(message, mapLegacyDiagnosticSeverity(severity), null, mapLegacyScriptPosition(position))
+}

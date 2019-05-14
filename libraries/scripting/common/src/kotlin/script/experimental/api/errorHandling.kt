@@ -139,6 +139,24 @@ fun <R> R.asSuccess(reports: List<ScriptDiagnostic> = listOf()): ResultWithDiagn
     ResultWithDiagnostics.Success(this, reports)
 
 /**
+ * Makes Failure result with optional diagnostic [reports]
+ */
+fun makeFailureResult(reports: List<ScriptDiagnostic>): ResultWithDiagnostics.Failure =
+    ResultWithDiagnostics.Failure(reports)
+
+/**
+ * Makes Failure result with optional diagnostic [reports]
+ */
+fun makeFailureResult(vararg reports: ScriptDiagnostic): ResultWithDiagnostics.Failure =
+    ResultWithDiagnostics.Failure(reports.asList())
+
+/**
+ * Makes Failure result with diagnostic [message] with optional [path] and [location]
+ */
+fun makeFailureResult(message: String, path: String? = null, location: SourceCode.Location? = null): ResultWithDiagnostics.Failure =
+    ResultWithDiagnostics.Failure(message.asErrorDiagnostics(path, location))
+
+/**
  * Converts the receiver Throwable to the Failure results wrapper with optional [customMessage], [path] and [location]
  */
 fun Throwable.asDiagnostics(

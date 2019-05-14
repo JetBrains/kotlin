@@ -34,6 +34,16 @@ open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCom
     companion object : ScriptCompilationConfigurationKeys
 
     object Default : ScriptCompilationConfiguration()
+
+    /**
+     * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
+     * to the original one, otherwise returns original
+     */
+    fun withUpdates(body: Builder.() -> Unit = {}): ScriptCompilationConfiguration {
+        val newConfiguration = ScriptCompilationConfiguration(this, body = body)
+        return if (newConfiguration == this) this
+        else newConfiguration
+    }
 }
 
 /**
