@@ -37,9 +37,9 @@ class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) : KtMult
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val property = expression.getStrictParentOfType<KtProperty>() ?: return emptyList()
-        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptorWithAccessors ?: return emptyList()
-        return (descriptor.accessors.mapNotNull {
-            accessor ->
+        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptorWithAccessors
+            ?: return emptyList()
+        return (descriptor.accessors.mapNotNull { accessor ->
             context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.candidateDescriptor
         } + listOfNotNull(context.get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, descriptor)?.candidateDescriptor))
     }
@@ -47,6 +47,10 @@ class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) : KtMult
     override val resolvesByNames: Collection<Name> get() = NAMES
 
     companion object {
-        private val NAMES = listOf(OperatorNameConventions.GET_VALUE, OperatorNameConventions.SET_VALUE)
+        private val NAMES = listOf(
+            OperatorNameConventions.GET_VALUE,
+            OperatorNameConventions.SET_VALUE,
+            OperatorNameConventions.PROVIDE_DELEGATE
+        )
     }
 }
