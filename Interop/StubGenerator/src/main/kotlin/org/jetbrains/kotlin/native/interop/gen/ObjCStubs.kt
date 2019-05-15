@@ -248,19 +248,24 @@ internal val ObjCContainer.classOrProtocol: ObjCClassOrProtocol
 internal fun Type.isStret(target: KonanTarget): Boolean {
     val unwrappedType = this.unwrapTypedefs()
     return when (target) {
-        KonanTarget.IOS_ARM64 ->
+        KonanTarget.IOS_ARM64,
+        KonanTarget.TVOS_ARM64 ->
             false // On aarch64 stret is never the case, since an implicit argument gets passed on x8.
 
-        KonanTarget.IOS_X64, KonanTarget.MACOS_X64 -> when (unwrappedType) {
+        KonanTarget.IOS_X64,
+        KonanTarget.MACOS_X64,
+        KonanTarget.WATCHOS_X64,
+        KonanTarget.TVOS_X64 -> when (unwrappedType) {
             is RecordType -> unwrappedType.decl.def!!.size > 16 || this.hasUnalignedMembers()
             else -> false
         }
-        KonanTarget.IOS_ARM32 -> {
-            when (unwrappedType) {
+
+        KonanTarget.IOS_ARM32 -> when (unwrappedType) {
                 is RecordType -> !this.isIntegerLikeType()
                 else -> false
             }
-        }
+        
+        KonanTarget.WATCHOS_ARM64 -> TODO("")
 
         else -> error(target)
     }

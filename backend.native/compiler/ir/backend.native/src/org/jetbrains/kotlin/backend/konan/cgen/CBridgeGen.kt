@@ -634,8 +634,9 @@ private fun KotlinStubs.getNamedCStructType(kotlinClass: IrClass): CType? {
 }
 
 // TODO: rework Boolean support.
+// TODO: What should be used on watchOS?
 private fun cBoolType(target: KonanTarget): CType? = when (target.family) {
-    Family.IOS -> CTypes.C99Bool
+    Family.IOS, Family.TVOS -> CTypes.C99Bool
     else -> CTypes.signedChar
 }
 
@@ -809,7 +810,7 @@ private fun KotlinStubs.mapType(
 }
 
 private fun KotlinStubs.isObjCReferenceType(type: IrType): Boolean {
-    if (target.family != Family.OSX && target.family != Family.IOS) return false
+    if (!target.family.isAppleFamily) return false
 
     // Handle the same types as produced by [objCPointerMirror] in Interop/StubGenerator/.../Mappings.kt.
 

@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 
 internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
@@ -66,7 +67,9 @@ internal class Linker(val context: Context) {
             val framework = File(context.config.outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
             val dylibRelativePath = when (target.family) {
-                Family.IOS -> dylibName
+                Family.IOS,
+                Family.TVOS,
+                Family.WATCHOS -> dylibName
                 Family.OSX -> "Versions/A/$dylibName"
                 else -> error(target)
             }

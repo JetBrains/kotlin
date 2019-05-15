@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
-import org.jetbrains.kotlin.konan.target.AppleConfigurables
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isSubpackageOf
@@ -43,7 +40,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
 
     private fun produceInterface(): ObjCExportedInterface? {
-        if (target.family != Family.IOS && target.family != Family.OSX) return null
+        if (!target.family.isAppleFamily) return null
 
         if (!context.config.produce.isNativeBinary) return null // TODO: emit RTTI to the same modules as classes belong to.
 
@@ -70,7 +67,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     }
 
     internal fun generate(codegen: CodeGenerator) {
-        if (target.family != Family.IOS && target.family != Family.OSX) return
+        if (!target.family.isAppleFamily) return
 
         if (!context.config.produce.isNativeBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
@@ -99,7 +96,9 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     private fun produceFrameworkSpecific(headerLines: List<String>) {
         val framework = File(context.config.outputFile)
         val frameworkContents = when(target.family) {
-            Family.IOS -> framework
+            Family.IOS,
+            Family.WATCHOS,
+            Family.TVOS -> framework
             Family.OSX -> framework.child("Versions/A")
             else -> error(target)
         }
@@ -137,9 +136,11 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     }
 
     private fun emitInfoPlist(frameworkContents: File, name: String) {
-        val directory = when {
-            target.family == Family.IOS -> frameworkContents
-            target == KonanTarget.MACOS_X64 -> frameworkContents.child("Resources").also { it.mkdirs() }
+        val directory = when (target.family) {
+            Family.IOS,
+            Family.WATCHOS,
+            Family.TVOS -> frameworkContents
+            Family.OSX -> frameworkContents.child("Resources").also { it.mkdirs() }
             else -> error(target)
         }
 
@@ -150,6 +151,8 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         val platform = when (target) {
             KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> "iPhoneOS"
             KonanTarget.IOS_X64 -> "iPhoneSimulator"
+            KonanTarget.TVOS_ARM64 -> "AppleTVOS"
+            KonanTarget.TVOS_X64 -> "AppleTVSimulator"
             KonanTarget.MACOS_X64 -> "MacOSX"
             else -> error(target)
         }
@@ -183,21 +186,32 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
 
         """.trimIndent())
 
-
-        contents.append(when (target.family) {
-            Family.IOS -> """
+        fun addUiDeviceFamilies(vararg values: Int) {
+            val xmlValues = values.joinToString(separator = "\n") {
+                "        <integer>$it</integer>"
+            }
+            contents.append("""
                 |    <key>MinimumOSVersion</key>
                 |    <string>$minimumOsVersion</string>
                 |    <key>UIDeviceFamily</key>
                 |    <array>
-                |        <integer>1</integer>
-                |        <integer>2</integer>
+                |$xmlValues       
                 |    </array>
 
-                """.trimMargin()
-            Family.OSX -> ""
-            else -> error(target)
-        })
+                """.trimMargin())
+        }
+
+        // UIDeviceFamily mapping:
+        // 1 - iPhone
+        // 2 - iPad
+        // 3 - AppleTV
+        // 4 - Apple Watch
+        when (target.family) {
+            Family.IOS -> addUiDeviceFamilies(1, 2)
+            Family.TVOS -> addUiDeviceFamilies(3)
+            Family.WATCHOS -> addUiDeviceFamilies(4)
+            else -> {}
+        }
 
         if (target == KonanTarget.IOS_ARM64) {
             contents.append("""

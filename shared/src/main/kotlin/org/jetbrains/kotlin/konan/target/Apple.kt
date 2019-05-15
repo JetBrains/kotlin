@@ -35,6 +35,8 @@ class AppleConfigurablesImpl(
             KonanTarget.MACOS_X64 -> xcodePartsProvider.xcode.macosxSdk
             KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> xcodePartsProvider.xcode.iphoneosSdk
             KonanTarget.IOS_X64 -> xcodePartsProvider.xcode.iphonesimulatorSdk
+            KonanTarget.TVOS_ARM64 -> xcodePartsProvider.xcode.appletvosSdk
+            KonanTarget.TVOS_X64 -> xcodePartsProvider.xcode.appletvsimulatorSdk
             else -> error(target)
         }
         XcodePartsProvider.InternalServer -> absolute(sdkDependency)

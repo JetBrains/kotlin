@@ -85,6 +85,7 @@ fun create(project: Project): ExecutorService {
         }
 
         KonanTarget.IOS_X64 -> simulator(project)
+        KonanTarget.TVOS_X64 -> simulator(project)
 
         else -> {
             if (project.hasProperty("remote")) sshExecutor(project)
@@ -213,8 +214,14 @@ fun localExecutor(project: Project) = { a: Action<in ExecSpec> -> project.exec(a
  */
 private fun simulator(project: Project) : ExecutorService = object : ExecutorService {
 
+    private val target = project.testTarget
+
     private val simctl by lazy {
-        val sdk = Xcode.current.iphonesimulatorSdk
+        val sdk = when (target) {
+            KonanTarget.TVOS_X64 -> Xcode.current.appletvsimulatorSdk
+            KonanTarget.IOS_X64 -> Xcode.current.iphonesimulatorSdk
+            else -> error("Unexpected simulation target: $target")
+        }
         val out = ByteArrayOutputStream()
         val result = project.exec {
             it.commandLine("/usr/bin/xcrun", "--find", "simctl", "--sdk", sdk)
@@ -224,11 +231,16 @@ private fun simulator(project: Project) : ExecutorService = object : ExecutorSer
         out.toString("UTF-8").trim()
     }
 
-    private val iosDevice = project.findProperty("iosDevice")?.toString() ?: "iPhone 6"
+    private val device = project.findProperty("iosDevice")?.toString() ?: when (target) {
+        KonanTarget.TVOS_X64 -> "Apple TV 4K"
+        KonanTarget.IOS_X64 -> "iPhone 6"
+        else -> error("Unexpected simulation target: $target")
+    }
 
     override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec { execSpec ->
         action.execute(execSpec)
-        with(execSpec) { commandLine = listOf(simctl, "spawn", iosDevice, executable) + args }
+        // Starting Xcode 11 `simctl spawn` requires explicit `--standalone` flag.
+        with(execSpec) { commandLine = listOf(simctl, "spawn", "--standalone", device, executable) + args }
     }
 }
 

@@ -119,7 +119,7 @@ open class KonanFramework(name: String,
         get() = project.konanBinBaseDir
 
     override fun targetIsSupported(target: KonanTarget): Boolean =
-        target.family == Family.OSX || target.family == Family.IOS
+        target.family.isAppleFamily
 }
 
 open class KonanLibrary(name: String,

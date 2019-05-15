@@ -37,6 +37,12 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         configurables.targetArg
     else null
 
+    private val osVersionMin: String
+            get() {
+                require(configurables is AppleConfigurables)
+                return configurables.osVersionMin
+            }
+
     val specificClangArgs: List<String>
         get() {
             val result = when (target) {
@@ -74,16 +80,22 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                     listOf("-target", targetArg!!, "--sysroot=$absoluteTargetSysRoot", "-Xclang", "-flto-visibility-public-std")
 
                 KonanTarget.MACOS_X64 ->
-                    listOf("--sysroot=$absoluteTargetSysRoot", "-mmacosx-version-min=10.11")
+                    listOf("--sysroot=$absoluteTargetSysRoot", "-mmacosx-version-min=$osVersionMin")
 
                 KonanTarget.IOS_ARM32 ->
-                    listOf("-stdlib=libc++", "-arch", "armv7", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=9.0.0")
+                    listOf("-stdlib=libc++", "-arch", "armv7", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=$osVersionMin")
 
                 KonanTarget.IOS_ARM64 ->
-                    listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=9.0.0")
+                    listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=$osVersionMin")
+
+                KonanTarget.TVOS_ARM64 ->
+                    listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", absoluteTargetSysRoot, "-mtvos-version-min=$osVersionMin")
+
+                KonanTarget.TVOS_X64 ->
+                    listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-mtvos-simulator-version-min=$osVersionMin")
 
                 KonanTarget.IOS_X64 ->
-                    listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=9.0.0")
+                    listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=$osVersionMin")
 
                 KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
                 KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
@@ -118,8 +130,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 KonanTarget.WATCHOS_ARM32 -> TODO("implement me")
                 KonanTarget.WATCHOS_X64 -> TODO("implement me")
                 KonanTarget.WATCHOS_X86 -> TODO("implement me")
-                KonanTarget.TVOS_ARM64 -> TODO("implement me")
-                KonanTarget.TVOS_X64 -> TODO("implement me")
 
                 is KonanTarget.ZEPHYR ->
                     listOf("-target", targetArg!!,
@@ -233,6 +243,21 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
+            KonanTarget.TVOS_ARM64 ->
+                listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_IOS=1",
+                        "-DKONAN_ARM64=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
+                        "-DKONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG=1",
+                        "-DMACHSIZE=64")
+
+            KonanTarget.TVOS_X64 ->
+                listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_IOS=1",
+                        "-DKONAN_X64=1",
+                        "-DKONAN_CORE_SYMBOLICATION=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
+
             KonanTarget.ANDROID_ARM32 ->
                 listOf("-D__ANDROID__",
                         "-DUSE_GCC_UNWIND=1",
@@ -284,9 +309,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             KonanTarget.WATCHOS_ARM32 -> TODO("implement me")
             KonanTarget.WATCHOS_X64 -> TODO("implement me")
             KonanTarget.WATCHOS_X86 -> TODO("implement me")
-            KonanTarget.TVOS_ARM64 -> TODO("implement me")
-            KonanTarget.TVOS_X64 -> TODO("implement me")
-
 
             is KonanTarget.ZEPHYR ->
                 listOf( "-DKONAN_ZEPHYR=1",

@@ -2,10 +2,12 @@
 
 # "brew install coreutils" for grealpath.
 KONAN_TOOLCHAIN_VERSION=9
-SDKS="macosx iphoneos iphonesimulator"
+SDKS="macosx iphoneos iphonesimulator appletvos appletvsimulator"
 TARBALL_macosx=target-sysroot-$KONAN_TOOLCHAIN_VERSION-macos_x64
 TARBALL_iphoneos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-ios_arm64
 TARBALL_iphonesimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-ios_x64
+TARBALL_appletvos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-tvos_arm64
+TARBALL_appletvsimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-tvos_x64
 TARBALL_watchos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-watchos_arm32
 TARBALL_watchsimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-watchos_x64
 TARBALL_xcode=target-toolchain-$KONAN_TOOLCHAIN_VERSION-macos_x64

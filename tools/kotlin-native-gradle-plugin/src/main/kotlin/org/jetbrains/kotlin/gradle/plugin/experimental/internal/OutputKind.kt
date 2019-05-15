@@ -54,7 +54,7 @@ enum class OutputKind(
         false
     ) {
         override fun availableFor(target: KonanTarget) =
-            target.family == Family.OSX || target.family == Family.IOS
+            target.family.isAppleFamily
     },
     DYNAMIC(
         CompilerOutputKind.DYNAMIC,

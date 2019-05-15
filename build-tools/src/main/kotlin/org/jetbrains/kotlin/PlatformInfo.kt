@@ -15,12 +15,12 @@ object PlatformInfo {
     @JvmStatic
     fun isAppleTarget(project: Project): Boolean {
         val target = getTarget(project)
-        return target.family == Family.IOS || target.family == Family.OSX
+        return target.family.isAppleFamily
     }
 
     @JvmStatic
     fun isAppleTarget(target: KonanTarget): Boolean {
-        return target.family == Family.IOS || target.family == Family.OSX
+        return target.family.isAppleFamily
     }
 
     @JvmStatic
