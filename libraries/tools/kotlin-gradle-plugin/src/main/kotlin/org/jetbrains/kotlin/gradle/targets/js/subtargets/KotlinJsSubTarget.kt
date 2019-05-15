@@ -69,7 +69,7 @@ abstract class KotlinJsSubTarget(
                 compileTask.outputFile.exists()
             }
 
-            testJs.targetName = disambiguationClassifier
+            testJs.targetName = target.disambiguationClassifier + "," + disambiguationClassifier
             testJs.nodeModulesToLoad.add(compileTask.outputFile.nameWithoutExtension)
 
             testJs.configureConventions()
