@@ -40,8 +40,7 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
             val rootProject = project.rootProject
             val process = ProjectData[rootProject]
 
-            if (process != null && process.resolved == null)
-                return AlreadyInProgress
+            if (process != null && process.resolved == null) return AlreadyInProgress
 
             val resolved = process?.resolved
 
@@ -52,6 +51,16 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
                 resolver.close()
                 ResolvedNow(ProjectData[project]!!.resolved!!)
             }
+        }
+
+        fun getAlreadyResolvedOrNull(project: Project): ResolutionCallResult? {
+            val rootProject = project.rootProject
+            val process = ProjectData[rootProject]
+            if (process != null && process.resolved == null) return AlreadyInProgress
+            val resolved = process?.resolved
+            if (resolved != null) return AlreadyResolved(ProjectData[project]!!.resolved!!)
+
+            return null
         }
 
         fun requireResolved(project: Project, reason: String = ""): ResolvedProject =
