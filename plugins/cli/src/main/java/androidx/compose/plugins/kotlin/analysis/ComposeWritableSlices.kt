@@ -25,6 +25,8 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val FCS_RESOLVEDCALL_COMPOSABLE: WritableSlice<KtElement, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val INFERRED_COMPOSABLE_DESCRIPTOR: WritableSlice<FunctionDescriptor, Boolean> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
 
 private val REWRITES_ALLOWED = object : RewritePolicy {

@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class ComposeObservePatcher(val context: JvmBackendContext) :
     IrElementTransformerVoid(),
@@ -77,7 +78,12 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
     override fun visitFunction(declaration: IrFunction): IrStatement {
 
         super.visitFunction(declaration)
+
+        // Only insert observe scopes in non-empty composable function
+        if (declaration.body == null) return declaration
         if (!isComposable(declaration)) return declaration
+
+        // Do not insert an observe scope in an inline composable
         declaration.descriptor.findPsi()?.let { psi ->
             (psi as? KtFunctionLiteral)?.let {
                 if (InlineUtil.isInlinedArgument(
@@ -90,7 +96,8 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
             }
         }
 
-        if (declaration.body == null) return declaration
+        // Do not insert an observe scope if the funciton has a return result
+        if (declaration.descriptor.returnType.let { it == null || !it.isUnit() }) return declaration
 
         val module = declaration.descriptor.module
         val observeFunctionDescriptor = module
