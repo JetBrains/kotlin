@@ -21,6 +21,17 @@ val fatJarContents by configurations.creating
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
 
+// JPS build assumes fat jar is built from embedded configuration,
+// but we can't use it in gradle build since slightly more complex processing is required like stripping metadata & services from some jars
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    val embedded by configurations
+    embedded.apply {
+        extendsFrom(fatJarContents)
+        extendsFrom(fatJarContentsStripMetadata)
+        extendsFrom(fatJarContentsStripServices)
+    }
+}
+
 val runtimeJar by configurations.creating
 val compile by configurations  // maven plugin writes pom compile scope from compile configuration by default
 val proguardLibraries by configurations.creating {
@@ -192,7 +203,7 @@ dependencies {
     }
 
     fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
-    
+
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
 }
 
