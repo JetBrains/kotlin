@@ -18,7 +18,8 @@ FILE fqName:<root> fileName:/temporaryInInitBlock.kt
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:public [final] ' type=kotlin.String? origin=null
-          value: CALL 'public final fun toString (): kotlin.String declared in kotlin' type=kotlin.String origin=null
+          value: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+            $this: GET_VAR 'x: kotlin.Any? declared in <root>.C.<init>' type=kotlin.Any? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

@@ -103,10 +103,15 @@ internal sealed class CheckReceivers : ResolutionStage() {
         if (receiverParameterValue != null) {
             if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeResolvedAsExplicit()) {
                 resolveArgumentExpression(
-                    candidate.csBuilder, explicitReceiverExpression,
+                    candidate.csBuilder,
+                    explicitReceiverExpression,
                     candidate.substitutor.substituteOrSelf(receiverParameterValue.type),
                     explicitReceiverExpression.typeRef,
-                    sink, isReceiver = true, typeProvider = callInfo.typeProvider, acceptLambdaAtoms = { candidate.postponedAtoms += it }
+                    sink,
+                    isReceiver = true,
+                    isSafeCall = callInfo.isSafeCall,
+                    typeProvider = callInfo.typeProvider,
+                    acceptLambdaAtoms = { candidate.postponedAtoms += it }
                 )
             }
         }
@@ -132,7 +137,14 @@ internal object CheckArguments : CheckerStage() {
         val argumentMapping =
             candidate.argumentMapping ?: throw IllegalStateException("Argument should be already mapped while checking arguments!")
         for ((argument, parameter) in argumentMapping) {
-            candidate.resolveArgument(argument, parameter, isReceiver = false, typeProvider = callInfo.typeProvider, sink = sink)
+            candidate.resolveArgument(
+                argument,
+                parameter,
+                isReceiver = false,
+                isSafeCall = false,
+                typeProvider = callInfo.typeProvider,
+                sink = sink
+            )
         }
 
         if (candidate.system.hasContradiction) {

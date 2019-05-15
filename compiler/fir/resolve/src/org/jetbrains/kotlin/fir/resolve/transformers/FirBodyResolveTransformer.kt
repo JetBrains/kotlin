@@ -248,7 +248,16 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
         val receiver = qualifiedAccess.explicitReceiver?.transformSingle(this, noExpectedType)
 
-        val info = CallInfo(CallKind.VariableAccess, receiver, emptyList(), emptyList(), session, file, container!!) { it.resultType }
+        val info = CallInfo(
+            CallKind.VariableAccess,
+            receiver,
+            emptyList(),
+            qualifiedAccess.safe,
+            emptyList(),
+            session,
+            file,
+            container!!
+        ) { it.resultType }
         val resolver = CallResolver(jump, inferenceComponents)
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
@@ -358,7 +367,16 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         val arguments = functionCall.arguments
         val typeArguments = functionCall.typeArguments
 
-        val info = CallInfo(CallKind.Function, explicitReceiver, arguments, typeArguments, session, file, container!!) { it.resultType }
+        val info = CallInfo(
+            CallKind.Function,
+            explicitReceiver,
+            arguments,
+            functionCall.safe,
+            typeArguments,
+            session,
+            file,
+            container!!
+        ) { it.resultType }
         val resolver = CallResolver(jump, inferenceComponents)
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()

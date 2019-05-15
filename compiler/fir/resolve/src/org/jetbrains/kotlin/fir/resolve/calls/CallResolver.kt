@@ -36,6 +36,7 @@ class CallInfo(
 
     val explicitReceiver: FirExpression?,
     val arguments: List<FirExpression>,
+    val isSafeCall: Boolean,
 
     val typeArguments: List<FirTypeProjection>,
     val session: FirSession,

@@ -28,9 +28,12 @@ FILE fqName:<root> fileName:/chainOfSafeCalls.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test visibility:public modality:FINAL <> (nc:<root>.C?) returnType:IrErrorType 
+  FUN name:test visibility:public modality:FINAL <> (nc:<root>.C?) returnType:<root>.C
     VALUE_PARAMETER name:nc index:0 type:<root>.C? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (nc: <root>.C?): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: foo>#' type=IrErrorType
-
+      RETURN type=kotlin.Nothing from='public final fun test (nc: <root>.C?): <root>.C declared in <root>'
+        CALL 'public final fun foo (): <root>.C declared in <root>.C' type=<root>.C origin=null
+          $this: CALL 'public final fun foo (): <root>.C declared in <root>.C' type=<root>.C origin=null
+            $this: CALL 'public final fun bar (): <root>.C? declared in <root>.C' type=<root>.C? origin=null
+              $this: CALL 'public final fun foo (): <root>.C declared in <root>.C' type=<root>.C origin=null
+                $this: GET_VAR 'nc: <root>.C? declared in <root>.test' type=<root>.C? origin=null

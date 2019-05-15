@@ -67,24 +67,25 @@ FILE fqName:<root> fileName:/safeCalls.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.String? 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.String?): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/Any.hashCode, kotlin/Any.hashCode]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Ambiguity: hashCode, [kotlin/Any.hashCode, kotlin/Any.hashCode]>#' type=IrErrorType
   FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.String?, y:kotlin.Any?) returnType:IrErrorType 
     VALUE_PARAMETER name:x index:0 type:kotlin.String? 
     VALUE_PARAMETER name:y index:1 type:kotlin.Any? 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.String?, y: kotlin.Any?): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/Any.equals, kotlin/Any.equals]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Ambiguity: equals, [kotlin/Any.equals, kotlin/Any.equals]>#' type=IrErrorType
           GET_VAR 'y: kotlin.Any? declared in <root>.test3' type=kotlin.Any? origin=null
   FUN name:test4 visibility:public modality:FINAL <> (x:<root>.Ref?) returnType:kotlin.Unit 
     VALUE_PARAMETER name:x index:0 type:<root>.Ref? 
     BLOCK_BODY
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
         value: CONST Int type=kotlin.Int value=0
-  FUN name:test5 visibility:public modality:FINAL <> (s:kotlin.String?) returnType:IrErrorType 
+  FUN name:test5 visibility:public modality:FINAL <> (s:kotlin.String?) returnType:kotlin.Int
     VALUE_PARAMETER name:s index:0 type:kotlin.String? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test5 (s: kotlin.String?): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [/IHost.extLength]>#' type=IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun test5 (s: kotlin.String?): kotlin.Int declared in <root>'
+        CALL 'public open fun extLength (): kotlin.Int declared in <root>.IHost' type=kotlin.Int origin=null
+          $this: GET_VAR 's: kotlin.String? declared in <root>.test5' type=kotlin.String? origin=null
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>'

@@ -31,7 +31,8 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
       CONSTRUCTOR visibility:public <> () returnType:<root>.En.ENTRY [primary] 
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.String?) [primary] declared in <root>.En'
-            x: CALL 'public final fun toString (): kotlin.String declared in kotlin' type=kotlin.String origin=null
+            x: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+              $this: CALL 'public final fun <get-n> (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:public superTypes:[<root>.En]'
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any 
         overridden:

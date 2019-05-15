@@ -109,6 +109,7 @@ class PostponedArgumentsAnalyzer(
                 lambda.atom.returnTypeRef, // TODO: proper ref
                 checkerSink,
                 false,
+                false,
                 { atom = it },
                 typeProvider
             )

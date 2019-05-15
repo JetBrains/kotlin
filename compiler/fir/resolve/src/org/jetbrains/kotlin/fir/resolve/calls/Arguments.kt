@@ -32,6 +32,7 @@ fun resolveArgumentExpression(
     expectedTypeRef: FirTypeRef,
     sink: CheckerSink,
     isReceiver: Boolean,
+    isSafeCall: Boolean,
     acceptLambdaAtoms: (PostponedResolvedAtomMarker) -> Unit,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
@@ -42,6 +43,7 @@ fun resolveArgumentExpression(
             expectedType,
             sink,
             isReceiver,
+            isSafeCall,
             typeProvider
         )
         // TODO:!
@@ -57,6 +59,7 @@ fun resolveArgumentExpression(
             expectedTypeRef,
             sink,
             isReceiver,
+            isSafeCall,
             acceptLambdaAtoms,
             typeProvider
         )
@@ -67,10 +70,11 @@ fun resolveArgumentExpression(
             expectedTypeRef,
             sink,
             isReceiver,
+            isSafeCall,
             acceptLambdaAtoms,
             typeProvider
         )
-        else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, typeProvider)
+        else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
     }
 }
 
@@ -80,11 +84,12 @@ fun resolvePlainExpressionArgument(
     expectedType: ConeKotlinType?,
     sink: CheckerSink,
     isReceiver: Boolean,
+    isSafeCall: Boolean,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     if (expectedType == null) return
     val argumentType = typeProvider(argument)?.coneTypeSafe<ConeKotlinType>() ?: return
-    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver)
+    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isSafeCall)
 }
 
 fun resolvePlainArgumentType(
@@ -92,12 +97,20 @@ fun resolvePlainArgumentType(
     argumentType: ConeKotlinType,
     expectedType: ConeKotlinType,
     sink: CheckerSink,
-    isReceiver: Boolean
+    isReceiver: Boolean,
+    isSafeCall: Boolean
 ) {
     val position = SimpleConstraintSystemConstraintPosition //TODO
 
+    val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE)
+    if (isReceiver && isSafeCall) {
+        if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
+            sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER) // TODO
+        }
+        return
+    }
+
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
-        val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE)
         if (!isReceiver) {
             if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
                 csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
@@ -119,6 +132,7 @@ internal fun Candidate.resolveArgument(
     argument: FirExpression,
     parameter: FirValueParameter,
     isReceiver: Boolean,
+    isSafeCall: Boolean,
     typeProvider: (FirExpression) -> FirTypeRef?,
     sink: CheckerSink
 ) {
@@ -131,6 +145,7 @@ internal fun Candidate.resolveArgument(
         parameter.returnTypeRef,
         sink,
         isReceiver,
+        isSafeCall,
         { this.postponedAtoms += it },
         typeProvider
     )
