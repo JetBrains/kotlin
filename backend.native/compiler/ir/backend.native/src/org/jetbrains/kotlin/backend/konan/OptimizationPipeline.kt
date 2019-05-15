@@ -45,6 +45,7 @@ private class LlvmPipelineConfiguration(context: Context) {
     val cpuArchitecture: String = when (target) {
         KonanTarget.IOS_ARM32 -> "armv7"
         KonanTarget.IOS_ARM64 -> "arm64"
+        KonanTarget.IOS_X64 -> "core2"
         KonanTarget.MACOS_X64 -> "core2"
         else -> error("There is no support for ${target.name} target yet.")
     }
