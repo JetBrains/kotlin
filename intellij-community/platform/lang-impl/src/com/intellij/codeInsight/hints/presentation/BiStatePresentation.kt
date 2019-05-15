@@ -4,6 +4,9 @@ package com.intellij.codeInsight.hints.presentation
 import java.awt.Point
 import java.awt.event.MouseEvent
 
+/**
+ * Presentation, that may be in two states and can preserve state type between passes.
+ */
 class BiStatePresentation(
   val first: () -> InlayPresentation,
   val second: () -> InlayPresentation,
