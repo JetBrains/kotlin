@@ -58,6 +58,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     ideArtifacts {
                         generateIdeArtifacts(rootProject, this@ideArtifacts)
 
+                        kotlinCompilerJar()
+                        
                         kotlinPluginJar()
 
                         kotlinReflectJar()
@@ -185,6 +187,9 @@ val jarArtifactProjects = listOf(
     "kotlin-main-kts",
     "kotlin-reflect"
 )
+
+fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinCompilerJar() =
+    jarFromProject(project(":kotlin-compiler"), "kotlin-compiler.jar")
 
 fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinReflectJar() =
     jarFromProject(project(":kotlin-reflect"))
