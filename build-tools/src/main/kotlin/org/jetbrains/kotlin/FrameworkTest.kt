@@ -100,11 +100,14 @@ open class FrameworkTest : DefaultTask() {
             KonanTarget.TVOS_X64 -> "appletvsimulator"
             KonanTarget.TVOS_ARM64 -> "appletvos"
             KonanTarget.MACOS_X64 -> "macosx"
+            KonanTarget.WATCHOS_ARM64 -> "watchos"
+            KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 -> "watchsimulator"
             else -> throw IllegalStateException("Test target $target is not supported")
         }
         val simulatorPath = when (target) {
             KonanTarget.TVOS_X64,
             KonanTarget.IOS_X64,
+            KonanTarget.WATCHOS_X86,
             KonanTarget.WATCHOS_X64 -> Xcode.current.getLatestSimulatorRuntimeFor(target, configs.osVersionMin)?.bundlePath?.let {
                 "$it/Contents/Resources/RuntimeRoot/usr/lib/swift"
             }
@@ -120,7 +123,10 @@ open class FrameworkTest : DefaultTask() {
         // Hopefully, lexicographical comparison will work.
         val newMacos = System.getProperty("os.version").compareTo("10.14.4") >= 0
         val dyldLibraryPathKey = when (target) {
-            KonanTarget.IOS_X64, KonanTarget.TVOS_X64 -> "SIMCTL_CHILD_DYLD_LIBRARY_PATH"
+            KonanTarget.IOS_X64,
+            KonanTarget.WATCHOS_X86,
+            KonanTarget.WATCHOS_X64,
+            KonanTarget.TVOS_X64 -> "SIMCTL_CHILD_DYLD_LIBRARY_PATH"
             else -> "DYLD_LIBRARY_PATH"
         }
         return if (newMacos && target == KonanTarget.MACOS_X64) emptyMap() else mapOf(
@@ -139,7 +145,7 @@ open class FrameworkTest : DefaultTask() {
             |stdout: $stdOut
             |stderr: $stdErr
             """.trimMargin())
-        check(exitCode == 0) { "Execution failed with exit code: $exitCode "}
+        check(exitCode == 0) { "Execution failed with exit code: $exitCode " }
     }
 
     private fun validateBitcodeEmbedding(frameworkBinary: String) {
@@ -153,10 +159,16 @@ open class FrameworkTest : DefaultTask() {
         val bitcodeBuildTool = "${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool"
         val ldPath = "${configurables.absoluteTargetToolchain}/usr/bin/ld"
         val sdk = when (testTarget) {
-            KonanTarget.IOS_X64, KonanTarget.TVOS_X64 -> return // bitcode-build-tool doesn't support simulators.
-            KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32 -> Xcode.current.iphoneosSdk
+            KonanTarget.IOS_X64,
+            KonanTarget.TVOS_X64,
+            KonanTarget.WATCHOS_X86,
+            KonanTarget.WATCHOS_X64 -> return // bitcode-build-tool doesn't support simulators.
+            KonanTarget.IOS_ARM64,
+            KonanTarget.IOS_ARM32 -> Xcode.current.iphoneosSdk
             KonanTarget.MACOS_X64 -> Xcode.current.macosxSdk
             KonanTarget.TVOS_ARM64 -> Xcode.current.appletvosSdk
+            KonanTarget.WATCHOS_ARM32,
+            KonanTarget.WATCHOS_ARM64 -> Xcode.current.watchosSdk
             else -> error("Cannot validate bitcode for test target $testTarget")
         }
 

@@ -88,14 +88,23 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 KonanTarget.IOS_ARM64 ->
                     listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=$osVersionMin")
 
+                KonanTarget.IOS_X64 ->
+                    listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=$osVersionMin")
+
                 KonanTarget.TVOS_ARM64 ->
                     listOf("-stdlib=libc++", "-arch", "arm64", "-isysroot", absoluteTargetSysRoot, "-mtvos-version-min=$osVersionMin")
 
                 KonanTarget.TVOS_X64 ->
                     listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-mtvos-simulator-version-min=$osVersionMin")
 
-                KonanTarget.IOS_X64 ->
-                    listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=$osVersionMin")
+                KonanTarget.WATCHOS_ARM32 ->
+                    listOf("-stdlib=libc++", "-arch", "armv7k", "-isysroot", absoluteTargetSysRoot, "-mwatchos-version-min=$osVersionMin")
+
+                KonanTarget.WATCHOS_X86 ->
+                    listOf("-stdlib=libc++", "-arch", "i386", "-isysroot", absoluteTargetSysRoot, "-mwatchos-simulator-version-min=$osVersionMin")
+
+                KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
+                KonanTarget.WATCHOS_X64 -> TODO("implement me")
 
                 KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
                 KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
@@ -126,11 +135,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                             "-Xclang", "-isystem$absoluteTargetSysRoot/include/compat",
                             "-Xclang", "-isystem$absoluteTargetSysRoot/include/libc")
 
-                KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
-                KonanTarget.WATCHOS_ARM32 -> TODO("implement me")
-                KonanTarget.WATCHOS_X64 -> TODO("implement me")
-                KonanTarget.WATCHOS_X86 -> TODO("implement me")
-
                 is KonanTarget.ZEPHYR ->
                     listOf("-target", targetArg!!,
                         "-fno-rtti",
@@ -148,7 +152,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-isystem$absoluteTargetSysRoot/include/libc"
                         ) +
                     (configurables as ZephyrConfigurables).boardSpecificClangFlags
-
             }
             return result
         }
@@ -258,6 +261,27 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
+            KonanTarget.WATCHOS_ARM32 ->
+                listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_IOS",
+                        "-DKONAN_ARM32=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
+                        "-DKONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG=1",
+                        "-DMACHSIZE=32",
+                        // See explanation for ios_arm32 above.
+                        "-DKONAN_NO_64BIT_ATOMIC=1",
+                        "-DKONAN_NO_UNALIGNED_ACCESS=1")
+
+            KonanTarget.WATCHOS_X86 ->
+                listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_IOS=1",
+                        "-DKONAN_X86=1",
+                        "-DKONAN_CORE_SYMBOLICATION=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
+
+            KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
+            KonanTarget.WATCHOS_X64 -> TODO("implement me")
+
             KonanTarget.ANDROID_ARM32 ->
                 listOf("-D__ANDROID__",
                         "-DUSE_GCC_UNWIND=1",
@@ -304,11 +328,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_INTERNAL_NOW=1",
                         "-DKONAN_NO_MEMMEM",
                         "-DKONAN_NO_CTORS_SECTION=1")
-
-            KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
-            KonanTarget.WATCHOS_ARM32 -> TODO("implement me")
-            KonanTarget.WATCHOS_X64 -> TODO("implement me")
-            KonanTarget.WATCHOS_X86 -> TODO("implement me")
 
             is KonanTarget.ZEPHYR ->
                 listOf( "-DKONAN_ZEPHYR=1",

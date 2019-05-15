@@ -33,7 +33,7 @@ private fun Xcode.getSimulatorRuntimeDescriptors(): List<SimulatorRuntimeDescrip
 fun Xcode.getLatestSimulatorRuntimeFor(target: KonanTarget, osMinVersion: String): SimulatorRuntimeDescriptor? {
     val osName = when (target) {
         KonanTarget.IOS_X64 -> "iOS"
-        KonanTarget.WATCHOS_X64 -> "watchOS"
+        KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 -> "watchOS"
         KonanTarget.TVOS_X64 -> "tvOS"
         else -> error("Unexpected simulator target: $target")
     }

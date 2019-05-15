@@ -37,6 +37,8 @@ class AppleConfigurablesImpl(
             KonanTarget.IOS_X64 -> xcodePartsProvider.xcode.iphonesimulatorSdk
             KonanTarget.TVOS_ARM64 -> xcodePartsProvider.xcode.appletvosSdk
             KonanTarget.TVOS_X64 -> xcodePartsProvider.xcode.appletvsimulatorSdk
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32 -> xcodePartsProvider.xcode.watchosSdk
+            KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 -> xcodePartsProvider.xcode.watchsimulatorSdk
             else -> error(target)
         }
         XcodePartsProvider.InternalServer -> absolute(sdkDependency)

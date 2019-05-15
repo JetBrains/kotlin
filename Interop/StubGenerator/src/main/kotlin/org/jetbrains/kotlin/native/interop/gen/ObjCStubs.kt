@@ -260,14 +260,26 @@ internal fun Type.isStret(target: KonanTarget): Boolean {
             else -> false
         }
 
-        KonanTarget.IOS_ARM32 -> when (unwrappedType) {
+        // See: https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/LowLevelABI/130-IA-32_Function_Calling_Conventions/IA32.html#//apple_ref/doc/uid/TP40002492-SW5
+        // Structures 1 or 2 bytes in size are placed in EAX.
+        // Structures 4 or 8 bytes in size are placed in: EAX and EDX.
+        // Structures of other sizes are placed at the address supplied by the caller.
+        KonanTarget.WATCHOS_X86 -> when (unwrappedType) {
+            is RecordType -> {
+                val size = unwrappedType.decl.def!!.size
+                val canBePassedInRegisters = (size == 1L || size == 2L || size == 4L || size == 8L)
+                return !canBePassedInRegisters
+            }
+            else -> false
+        }
+
+        KonanTarget.IOS_ARM32,
+        KonanTarget.WATCHOS_ARM32 -> when (unwrappedType) {
                 is RecordType -> !this.isIntegerLikeType()
                 else -> false
             }
-        
-        KonanTarget.WATCHOS_ARM64 -> TODO("")
 
-        else -> error(target)
+        else -> error("Cannot generate ObjC stubs for $target.")
     }
 }
 

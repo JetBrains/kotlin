@@ -637,7 +637,7 @@ private fun KotlinStubs.getNamedCStructType(kotlinClass: IrClass): CType? {
 // TODO: rework Boolean support.
 // TODO: What should be used on watchOS?
 private fun cBoolType(target: KonanTarget): CType? = when (target.family) {
-    Family.IOS, Family.TVOS -> CTypes.C99Bool
+    Family.IOS, Family.TVOS, Family.WATCHOS -> CTypes.C99Bool
     else -> CTypes.signedChar
 }
 
