@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 
 interface KotlinJsTestFramework : RequiresNpmDependencies {
+    val settingsState: String
+
     fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,

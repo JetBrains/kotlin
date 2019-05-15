@@ -42,6 +42,9 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = requiredDependencies.toList()
 
+    override val settingsState: String
+        get() = "KotlinKarma($config)"
+
     init {
         requiredDependencies.add(versions.karma)
 

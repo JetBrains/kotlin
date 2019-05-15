@@ -23,6 +23,9 @@ class KotlinNodeJsTestRunner(val project: Project) : KotlinJsTestFramework {
     @Input
     var ignoredTestSuites: IgnoredTestSuites = IgnoredTestSuites.showWithContents
 
+    override val settingsState: String
+        get() = "KotlinNodeJsTestRunner(ignoredTestSuites=$ignoredTestSuites)"
+
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = listOf(KotlinGradleNpmPackage("test-nodejs-runner"))
 
