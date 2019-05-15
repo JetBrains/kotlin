@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 /**
  * Generates `package.json` file for projects with npm or js dependencies and
- * runs selected [NodeJsRootExtension.packageManager] to download and install it.
+ * runs selected [NodeJsRootExtension.packageManager] to download and install all of it's dependencies.
  *
  * All [NpmDependency] for configurations related to kotlin/js will be added to `package.json`.
  * For external gradle modules, fake npm packages will be created and added to `package.json`
@@ -45,14 +45,10 @@ internal class NpmResolver private constructor(val rootProject: Project) {
 
             val resolved = process?.resolved
 
-            return if (resolved != null) AlreadyResolved(resolved)
+            return if (resolved != null) AlreadyResolved(ProjectData[project]!!.resolved!!)
             else {
-                val resolver = NpmResolver(rootProject)
-                check(resolver.resolve(rootProject, null))
-                val resolution = ResolvedProject(resolver.npmPackages, resolver.requiredByTasks)
-                ProjectData[rootProject]!!.resolved = resolution
-
-                ResolvedNow(resolution)
+                NpmResolver(rootProject).resolve(rootProject, null)!!
+                ResolvedNow(ProjectData[project]!!.resolved!!)
             }
         }
 
@@ -61,7 +57,7 @@ internal class NpmResolver private constructor(val rootProject: Project) {
                 ?: error("NPM dependencies should be resolved$reason")
 
         fun checkRequiredDependencies(project: Project, target: RequiresNpmDependencies) {
-            val required = requireResolved(project, "before $target execution").requiredByTasks
+            val required = requireResolved(project, "before $target execution").taskDependencies
             val targetRequired = required[target]?.toSet() ?: setOf()
 
             target.requiredNpmDependencies.forEach {
@@ -98,13 +94,9 @@ internal class NpmResolver private constructor(val rootProject: Project) {
     }
 
     class ResolvedProject(
-        val npmPackages: Collection<NpmPackage>,
-        val requiredByTasks: Map<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>
-    ) {
-        val dependencies by lazy {
-            npmPackages.flatMapTo(mutableSetOf()) { it.npmDependencies }
-        }
-    }
+        val npmPackage: NpmPackage?,
+        val taskDependencies: Map<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>
+    )
 
     class NpmPackage(
         val project: Project,
@@ -128,19 +120,15 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         packageManagerInstalled = true
     }
 
+    private fun getOrResolve(project: Project, parentGradleModules: GradleNodeModulesBuilder?): ResolvedProject {
+        return (ProjectData[project] ?: resolve(project, parentGradleModules)!!).resolved!!
+    }
+
     private fun resolve(
         project: Project,
         parentGradleModules: GradleNodeModulesBuilder?
-    ): Boolean {
-        val existedProcess = ProjectData[project]
-        if (existedProcess != null) {
-            if (existedProcess.resolved != null) error("yarn dependencies for $project already resolved")
-            else {
-                // called inside resolution of classpath (from visitTarget)
-                // we should return as we are already in progress
-                return false
-            }
-        } else ProjectData().also {
+    ): ProjectData? {
+        val result = ProjectData().also {
             ProjectData[project] = it
         }
 
@@ -149,10 +137,10 @@ internal class NpmResolver private constructor(val rootProject: Project) {
             else GradleNodeModulesBuilder(project)
 
         project.subprojects.forEach {
-            resolve(it, gradleModules)
+            getOrResolve(it, gradleModules)
         }
 
-        val npmPackage = extractNpmPackage(project, gradleModules)
+        val npmPackage = extractNpmPackage(project, gradleModules, parentGradleModules)
         if (npmPackage != null) {
             npmPackage.savePackageJson(gson)
 
@@ -161,6 +149,8 @@ internal class NpmResolver private constructor(val rootProject: Project) {
 
             npmPackages.add(npmPackage)
         }
+
+        result.resolved = ResolvedProject(npmPackage, requiredByTasks)
 
         if (project == rootProject) {
             if (npmPackages.isNotEmpty()) {
@@ -173,12 +163,13 @@ internal class NpmResolver private constructor(val rootProject: Project) {
             gradleModules.close()
         }
 
-        return true
+        return result
     }
 
     private fun extractNpmPackage(
         project: Project,
-        gradleComponents: GradleNodeModulesBuilder
+        gradleComponents: GradleNodeModulesBuilder,
+        parentGradleModules: GradleNodeModulesBuilder?
     ): NpmPackage? {
         val packageJson = PackageJson(project.name, project.version.toString())
         val npmDependencies = mutableSetOf<NpmDependency>()
@@ -191,6 +182,12 @@ internal class NpmResolver private constructor(val rootProject: Project) {
             gradleComponents.modules.forEach {
                 val relativePath = it.path.relativeTo(NpmProject[project].nodeWorkDir)
                 packageJson.dependencies[it.name] = "file:$relativePath"
+            }
+            gradleComponents.projects.forEach {
+                val npmPackage = getOrResolve(it, parentGradleModules).npmPackage
+                if (npmPackage != null) {
+                    packageJson.dependencies[npmPackage.packageJson.name] = npmPackage.packageJson.version
+                }
             }
         }
 

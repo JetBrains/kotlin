@@ -10,9 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 
 internal class GradleNodeModulesBuilder(val project: Project) : AutoCloseable {
     companion object {
@@ -27,6 +25,8 @@ internal class GradleNodeModulesBuilder(val project: Project) : AutoCloseable {
         get() = cache.targets.map {
             GradleNodeModule(it, dir.resolve(it))
         }
+
+    val projects = mutableSetOf<Project>()
 
     fun visitConfiguration(configuration: Configuration) {
         if (configuration.isCanBeResolved) {
@@ -57,7 +57,13 @@ internal class GradleNodeModulesBuilder(val project: Project) : AutoCloseable {
         }
 
         artifacts.forEach { artifact ->
-            if (artifact.id.componentIdentifier !is ProjectComponentIdentifier) {
+            val componentIdentifier = artifact.id.componentIdentifier
+            if (componentIdentifier is ProjectComponentIdentifier) {
+                val dependentProject = project.findProject(componentIdentifier.projectPath)
+                    ?: error("Cannot find project ${componentIdentifier.projectPath}")
+
+                projects.add(dependentProject)
+            } else {
                 cache.getOrCompute(artifact.file) {
                     lazyDirName
                 }
