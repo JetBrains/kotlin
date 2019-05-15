@@ -56,7 +56,7 @@ interface DokkaConfiguration {
         val collectInheritedExtensionsFromLibraries: Boolean
         val analysisPlatform: Platform
         val targets: List<String>
-        val sinceKotlin: String
+        val sinceKotlin: String?
     }
 
     interface SourceRoot {
