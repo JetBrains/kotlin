@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfigWriter
@@ -20,7 +19,6 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    private val versions = project.nodeJs.versions
     private val webpackTaskName = disambiguateCamelCased("webpack")
 
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
@@ -39,13 +37,12 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
     override fun configureRun(compilation: KotlinJsCompilation) {
         val project = compilation.target.project
-        val npmProject = project.npmProject
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
             val compileKotlinTask = compilation.compileKotlinTask
             it.dependsOn(target.project.nodeJs.root.npmResolveTask, compileKotlinTask)
 
-            it.entry = npmProject.compileOutput(compileKotlinTask)
+            it.compilation = compilation
 
             project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
         }
@@ -59,7 +56,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             )
 
             it.bin = "webpack-dev-server"
-            it.entry = npmProject.compileOutput(compileKotlinTask)
+            it.compilation = compilation
 
             it.devServer = KotlinWebpackConfigWriter.DevServer(
                 open = true,

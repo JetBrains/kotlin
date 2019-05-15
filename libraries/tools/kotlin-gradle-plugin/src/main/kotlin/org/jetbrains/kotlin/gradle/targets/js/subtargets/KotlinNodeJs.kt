@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.TaskHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -35,19 +34,18 @@ class KotlinNodeJs(target: KotlinJsTarget) :
             val compileKotlinTask = compilation.compileKotlinTask
             runTask.dependsOn(target.project.nodeJs.root.npmResolveTask, compileKotlinTask)
 
-            val npmProject = project.npmProject
-            runTask.args(npmProject.compileOutput(compileKotlinTask))
+            val npmProject = compilation.npmProject
+            runTask.args(compileKotlinTask.outputFile)
         }
 
-        addSourceMapSupport(compilation, runTaskHolder, project)
+        addSourceMapSupport(compilation, runTaskHolder)
 
         target.runTask.dependsOn(runTaskHolder.getTaskOrProvider())
     }
 
     private fun addSourceMapSupport(
         compilation: KotlinJsCompilation,
-        runTaskHolder: TaskHolder<NodeJsExec>,
-        project: Project
+        runTaskHolder: TaskHolder<NodeJsExec>
     ) {
         compilation.dependencies {
             runtimeOnly(kotlin("test-nodejs-runner"))
@@ -57,7 +55,7 @@ class KotlinNodeJs(target: KotlinJsTarget) :
             runTaskHolder.configure { runTask ->
                 runTask.args(
                     "--require",
-                    project.npmProject.require("kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support")
+                    compilation.npmProject.require("kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support")
                 )
             }
         }

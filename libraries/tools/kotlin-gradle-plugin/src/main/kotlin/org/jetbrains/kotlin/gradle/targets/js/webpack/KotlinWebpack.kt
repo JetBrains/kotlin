@@ -13,8 +13,9 @@ import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -34,12 +35,20 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     open val execHandleFactory: ExecHandleFactory
         get() = injected
 
-    @Input
-    @SkipWhenEmpty
-    open lateinit var entry: File
+    @Internal
+    override lateinit var compilation: KotlinJsCompilation
+
+    val compilationId: String
+        @Input get() = compilation.let {
+            val target = it.target
+            target.project.path + "@" + target.name + ":" + it.compilationName
+        }
+
+    val entry: File
+        get() = compilation.compileKotlinTask.outputFile
 
     open val configFile: File
-        @OutputFile get() = project.npmProject.nodeWorkDir.resolve("webpack.config.js")
+        @OutputFile get() = compilation.npmProject.dir.resolve("webpack.config.js")
 
     @Input
     var saveEvaluatedConfigFile: Boolean = true
@@ -89,7 +98,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         }
 
     private fun createRunner() = KotlinWebpackRunner(
-        project,
+        compilation!!.npmProject,
         configFile,
         execHandleFactory,
         bin,
@@ -107,7 +116,6 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @TaskAction
     fun execute() {
-        NpmResolver.resolve(project)
         NpmResolver.checkRequiredDependencies(project, this)
 
         val runner = createRunner()

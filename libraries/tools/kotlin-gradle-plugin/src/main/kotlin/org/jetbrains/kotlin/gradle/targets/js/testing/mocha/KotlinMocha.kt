@@ -9,15 +9,19 @@ import org.gradle.api.Project
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinGradleNpmPackage
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.KotlinGradleNpmPackage
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 
-class KotlinMocha(val project: Project) : KotlinJsTestFramework {
+class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
+    val project: Project
+        get() = compilation.target.project
+
     private val versions = project.nodeJs.versions
 
     override val settingsState: String
@@ -48,11 +52,11 @@ class KotlinMocha(val project: Project) : KotlinJsTestFramework {
             task.nodeModulesToLoad.single()
         )
 
-        val npmProjectLayout = NpmProject[task.project]
+        val npmProject = compilation.npmProject
 
         val args = nodeJsArgs +
                 nodeModules.map {
-                    npmProjectLayout.nodeModulesDir.resolve(it).also { file ->
+                    npmProject.nodeModulesDir.resolve(it).also { file ->
                         check(file.isFile) { "Cannot find ${file.canonicalPath}" }
                     }.canonicalPath
                 } +

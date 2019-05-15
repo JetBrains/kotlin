@@ -28,12 +28,14 @@ data class NpmDependency(
     SelfResolvingDependencyInternal,
     ResolvableDependency,
     FileCollectionDependency {
+
     override fun getGroup(): String? = org
 
     internal val dependencies = mutableSetOf<NpmDependency>()
 
-    override fun resolve(): MutableSet<File> {
-        resolveProject() ?: return mutableSetOf()
+    override fun resolve(transitive: Boolean): MutableSet<File> {
+        val npmPackage = resolveProject() ?: return mutableSetOf()
+        val npmProject = npmPackage.npmProject
 
         val all = mutableSetOf<File>()
         val visited = mutableSetOf<NpmDependency>()
@@ -41,8 +43,15 @@ data class NpmDependency(
         fun visit(item: NpmDependency) {
             if (item in visited) return
             visited.add(item)
-            item.project.npmProject.resolve(item.key)?.let {
+
+            npmProject.resolve(item.key)?.let {
                 all.add(it)
+            }
+
+            if (transitive) {
+                item.dependencies.forEach {
+                    visit(it)
+                }
             }
         }
 
@@ -51,45 +60,42 @@ data class NpmDependency(
         return all
     }
 
-    private fun resolveProject(): NpmResolver.ResolvedProject? {
+    override fun resolve(): MutableSet<File> {
+        val npmPackage = resolveProject() ?: return mutableSetOf()
+        return mutableSetOf(npmPackage.npmProject.resolve(key)!!)
+    }
+
+    override fun resolve(context: DependencyResolveContext) {
+        val npmPackage = resolveProject()
+        if (npmPackage != null) {
+            npmPackage.project.files(npmPackage.npmProject.resolve(key))
+            dependencies.forEach {
+                context.add(it)
+            }
+        }
+    }
+
+    private fun resolveProject(): NpmProjectPackage? {
         val result =
-            if (isInIdeaSync) NpmResolver.resolve(project)
+            if (isInIdeaSync) NpmResolver.resolveIfNeeded(project)
             else NpmResolver.getAlreadyResolvedOrNull(project)
 
         return when (result) {
             null -> null
             is AlreadyInProgress -> null
-            is AlreadyResolved -> {
-                check(this in result.resolution.npmPackage!!.npmDependencies) {
-                    "Project hierarchy is already resolved in NPM without $this"
-                }
-
-                result.resolution
-            }
-            is ResolvedNow -> {
-                check(this in result.resolution.npmPackage!!.npmDependencies) {
-                    "$this was not visited during resolution"
-                }
-
-                result.resolution
-            }
+            is AlreadyResolved -> findIn(result.resolution) ?: error("Project hierarchy is already resolved in NPM without $this")
+            is ResolvedNow -> findIn(result.resolution) ?: error("Cannot find $this after NPM project resolve")
         }
     }
+
+    private fun findIn(npmProjects: NpmProjects) =
+        npmProjects.npmProjectsByNpmDependency[this]
 
     val key: String = if (org == null) name else "@$org/$name"
 
     override fun toString() = "$key: $version"
 
-    override fun resolve(context: DependencyResolveContext) {
-        resolve()
-        dependencies.forEach {
-            context.add(it)
-        }
-    }
-
-    override fun resolve(transitive: Boolean): MutableSet<File> = resolve()
-
-    override fun getFiles(): FileCollection = project.files(resolve())
+    override fun getFiles(): FileCollection = project.files(resolve(true))
 
     override fun getName() = name
 

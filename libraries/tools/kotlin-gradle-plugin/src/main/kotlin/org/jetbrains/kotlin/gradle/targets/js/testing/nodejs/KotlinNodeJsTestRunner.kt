@@ -6,21 +6,22 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing.nodejs
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.Input
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinGradleNpmPackage
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.KotlinGradleNpmPackage
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
 
-class KotlinNodeJsTestRunner(val project: Project) : KotlinJsTestFramework {
-    @Input
+class KotlinNodeJsTestRunner(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
+    val project: Project
+        get() = compilation.target.project
+
     var ignoredTestSuites: IgnoredTestSuites = IgnoredTestSuites.showWithContents
 
     override val settingsState: String
@@ -34,7 +35,7 @@ class KotlinNodeJsTestRunner(val project: Project) : KotlinJsTestFramework {
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>
     ): TCServiceMessagesTestExecutionSpec {
-        val npmProject = project.npmProject
+        val npmProject = compilation.npmProject
 
         val cliArgs = KotlinNodeJsTestRunnerCliArgs(
             task.nodeModulesToLoad.map { npmProject.require(it) },
@@ -55,11 +56,9 @@ class KotlinNodeJsTestRunner(val project: Project) : KotlinJsTestFramework {
             "kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support.js"
         )
 
-        val npmProjectLayout = NpmProject[task.project]
-
         val args = nodeJsArgs +
                 testRuntimeNodeModules.map {
-                    npmProjectLayout.require(it)
+                    npmProject.require(it)
                 } +
                 cliArgs.toList()
 

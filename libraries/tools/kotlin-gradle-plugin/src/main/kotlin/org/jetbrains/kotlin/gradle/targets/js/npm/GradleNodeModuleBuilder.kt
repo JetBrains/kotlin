@@ -12,6 +12,9 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import java.io.File
 
+/**
+ * Creates fake NodeJS module directory from given gradle [dependency].
+ */
 internal class GradleNodeModuleBuilder(
     val project: Project,
     val dependency: ResolvedDependency,
