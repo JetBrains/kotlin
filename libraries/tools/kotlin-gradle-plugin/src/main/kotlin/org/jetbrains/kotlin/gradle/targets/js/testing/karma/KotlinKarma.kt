@@ -9,7 +9,9 @@ import com.google.gson.GsonBuilder
 import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
 import org.gradle.api.Project
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
+import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.process.ProcessForkOptions
+import org.jetbrains.kotlin.gradle.internal.operation
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -221,8 +223,27 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
             false,
             clientSettings
         ) {
+            lateinit var progressLogger: ProgressLogger
+            val suppressedOutput = StringBuilder()
+
+            override fun wrapExecute(body: () -> Unit) {
+                project.operation("Running and building tests with karma and webpack") {
+                    progressLogger = this
+                    body()
+                }
+            }
+
+            override fun showSuppressedOutput() {
+                println(suppressedOutput)
+            }
+
             override fun createClient(testResultProcessor: TestResultProcessor, log: Logger) =
                 object : TCServiceMessagesClient(testResultProcessor, clientSettings, log) {
+                    override fun printNonTestOutput(actualText: String) {
+                        suppressedOutput.appendln(actualText)
+                        progressLogger.progress(actualText)
+                    }
+
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
 
