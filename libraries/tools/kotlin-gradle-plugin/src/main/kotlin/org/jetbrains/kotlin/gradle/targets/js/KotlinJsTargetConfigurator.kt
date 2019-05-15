@@ -19,7 +19,6 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
     override fun configureTarget(target: KotlinOnlyTarget<KotlinJsCompilation>) {
         target as KotlinJsTarget
 
-        target.configureDefaults()
         super.configureTarget(target)
 
         target.compilations.forEach {
