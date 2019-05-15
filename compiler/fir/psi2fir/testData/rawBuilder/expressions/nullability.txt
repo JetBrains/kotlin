@@ -5,7 +5,7 @@ FILE: nullability.kt
                 Int(42)
             }
             else ->  {
-                R|<local>/<elvis>|
+                R|<local>/<elvis>|!
             }
         }
 
@@ -16,7 +16,7 @@ FILE: nullability.kt
                 throw KotlinNullPointerException#()
             }
             else ->  {
-                R|<local>/<bangbang>|
+                R|<local>/<bangbang>|!
             }
         }
 

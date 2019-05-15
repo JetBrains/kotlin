@@ -629,6 +629,11 @@ internal class Fir2IrVisitor(
         }
     }
 
+    override fun visitUncheckedNotNullCast(uncheckedNotNullCast: FirUncheckedNotNullCast, data: Any?): IrElement {
+        // TODO: Ensure correct
+        return uncheckedNotNullCast.expression.toIrExpression()
+    }
+
     override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: Any?): IrElement {
         // TODO: change this temporary hack to something correct
         return wrappedArgumentExpression.expression.toIrExpression()

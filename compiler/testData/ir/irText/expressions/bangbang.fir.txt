@@ -1,12 +1,12 @@
 FILE fqName:<root> fileName:/bangbang.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Any? 
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Any
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Any?): kotlin.Any? declared in <root>'
-        BLOCK type=kotlin.Any? origin=EXCLEXCL
+      RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Any?): kotlin.Any declared in <root>'
+        BLOCK type=kotlin.Any origin=EXCLEXCL
           VAR name:<bangbang> type:kotlin.Any? [val] 
             GET_VAR 'a: kotlin.Any? declared in <root>.test1' type=kotlin.Any? origin=null
-          WHEN type=kotlin.Any? origin=EXCLEXCL
+          WHEN type=kotlin.Any origin=EXCLEXCL
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <bangbang>: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null

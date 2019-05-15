@@ -236,6 +236,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitCall(stringConcatenationCall, null)
     }
 
+    open fun visitUncheckedNotNullCast(uncheckedNotNullCast: FirUncheckedNotNullCast) {
+        visitCall(uncheckedNotNullCast, null)
+    }
+
     open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression) {
         visitExpression(classReferenceExpression, null)
     }
@@ -730,6 +734,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: Nothing?) {
         visitTypedDeclaration(typedDeclaration)
+    }
+
+    final override fun visitUncheckedNotNullCast(uncheckedNotNullCast: FirUncheckedNotNullCast, data: Nothing?) {
+        visitUncheckedNotNullCast(uncheckedNotNullCast)
     }
 
     final override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: Nothing?) {

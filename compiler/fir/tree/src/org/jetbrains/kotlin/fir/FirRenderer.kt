@@ -919,4 +919,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     override fun visitErrorExpression(errorExpression: FirErrorExpression) {
         print("ERROR_EXPR(${errorExpression.reason})")
     }
+
+    override fun visitUncheckedNotNullCast(uncheckedNotNullCast: FirUncheckedNotNullCast) {
+        uncheckedNotNullCast.expression.accept(this)
+        print("!")
+    }
 }

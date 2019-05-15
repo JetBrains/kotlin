@@ -131,6 +131,17 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         }
     }
 
+    override fun transformUncheckedNotNullCast(
+        uncheckedNotNullCast: FirUncheckedNotNullCast,
+        data: Any?
+    ): CompositeTransformResult<FirStatement> {
+        val notNullCast = super.transformUncheckedNotNullCast(uncheckedNotNullCast, data).single as FirUncheckedNotNullCast
+        val resultType = notNullCast.expression.resultType
+        notNullCast.resultType =
+            resultType.withReplacedConeType(session, resultType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NOT_NULL))
+        return notNullCast.compose()
+    }
+
     override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Any?): CompositeTransformResult<FirStatement> {
         val symbolProvider = session.service<FirSymbolProvider>()
         val resolved = super.transformTypeOperatorCall(typeOperatorCall, data).single

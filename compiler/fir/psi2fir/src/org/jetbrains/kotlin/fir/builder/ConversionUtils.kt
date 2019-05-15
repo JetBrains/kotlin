@@ -197,7 +197,10 @@ internal fun FirExpression.generateNotNullOrOther(
         )
         branches += FirWhenBranchImpl(
             session, other.psi, FirElseIfTrueCondition(session, psi),
-            FirSingleExpressionBlock(session, generateResolvedAccessExpression(session, psi, subjectVariable))
+            FirSingleExpressionBlock(
+                session,
+                FirUncheckedNotNullCastImpl(session, psi, generateResolvedAccessExpression(session, psi, subjectVariable))
+            )
         )
     }
 }

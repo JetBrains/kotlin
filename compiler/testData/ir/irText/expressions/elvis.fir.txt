@@ -12,15 +12,15 @@ FILE fqName:<root> fileName:/elvis.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Any? declared in <root>'
         CONST Null type=kotlin.Nothing? value=null
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?, b:kotlin.Any) returnType:kotlin.Any? 
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?, b:kotlin.Any) returnType:kotlin.Any
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? 
     VALUE_PARAMETER name:b index:1 type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Any?, b: kotlin.Any): kotlin.Any? declared in <root>'
-        BLOCK type=kotlin.Any? origin=ELVIS
+      RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Any?, b: kotlin.Any): kotlin.Any declared in <root>'
+        BLOCK type=kotlin.Any origin=ELVIS
           VAR name:<elvis> type:kotlin.Any? [val] 
             GET_VAR 'a: kotlin.Any? declared in <root>.test1' type=kotlin.Any? origin=null
-          WHEN type=kotlin.Any? origin=ELVIS
+          WHEN type=kotlin.Any origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
@@ -29,15 +29,15 @@ FILE fqName:<root> fileName:/elvis.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String?, b:kotlin.Any) returnType:kotlin.Any? 
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String?, b:kotlin.Any) returnType:kotlin.Any
     VALUE_PARAMETER name:a index:0 type:kotlin.String? 
     VALUE_PARAMETER name:b index:1 type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.String?, b: kotlin.Any): kotlin.Any? declared in <root>'
-        BLOCK type=kotlin.Any? origin=ELVIS
+      RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.String?, b: kotlin.Any): kotlin.Any declared in <root>'
+        BLOCK type=kotlin.Any origin=ELVIS
           VAR name:<elvis> type:kotlin.String? [val] 
             GET_VAR 'a: kotlin.String? declared in <root>.test2' type=kotlin.String? origin=null
-          WHEN type=kotlin.Any? origin=ELVIS
+          WHEN type=kotlin.Any origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: kotlin.String? [val] declared in <root>.test2' type=kotlin.String? origin=null
@@ -75,14 +75,14 @@ FILE fqName:<root> fileName:/elvis.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: kotlin.Any? [val] declared in <root>.test3' type=kotlin.Any? origin=null
-  FUN name:test4 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any? 
+  FUN name:test4 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any
     VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (x: kotlin.Any): kotlin.Any? declared in <root>'
-        BLOCK type=kotlin.Any? origin=ELVIS
+      RETURN type=kotlin.Nothing from='public final fun test4 (x: kotlin.Any): kotlin.Any declared in <root>'
+        BLOCK type=kotlin.Any origin=ELVIS
           VAR name:<elvis> type:kotlin.Any? [val] 
             CALL 'public final fun <get-p> (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
-          WHEN type=kotlin.Any? origin=ELVIS
+          WHEN type=kotlin.Any origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: kotlin.Any? [val] declared in <root>.test4' type=kotlin.Any? origin=null
@@ -91,14 +91,14 @@ FILE fqName:<root> fileName:/elvis.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: kotlin.Any? [val] declared in <root>.test4' type=kotlin.Any? origin=null
-  FUN name:test5 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any? 
+  FUN name:test5 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any
     VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test5 (x: kotlin.Any): kotlin.Any? declared in <root>'
-        BLOCK type=kotlin.Any? origin=ELVIS
+      RETURN type=kotlin.Nothing from='public final fun test5 (x: kotlin.Any): kotlin.Any declared in <root>'
+        BLOCK type=kotlin.Any origin=ELVIS
           VAR name:<elvis> type:kotlin.Any? [val] 
             CALL 'public final fun foo (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
-          WHEN type=kotlin.Any? origin=ELVIS
+          WHEN type=kotlin.Any origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: kotlin.Any? [val] declared in <root>.test5' type=kotlin.Any? origin=null

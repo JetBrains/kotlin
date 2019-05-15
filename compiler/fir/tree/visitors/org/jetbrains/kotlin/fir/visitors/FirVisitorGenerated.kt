@@ -236,6 +236,10 @@ abstract class FirVisitor<out R, in D> {
         return visitCall(stringConcatenationCall, data)
     }
 
+    open fun visitUncheckedNotNullCast(uncheckedNotNullCast: FirUncheckedNotNullCast, data: D): R {
+        return visitCall(uncheckedNotNullCast, data)
+    }
+
     open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): R {
         return visitExpression(classReferenceExpression, data)
     }

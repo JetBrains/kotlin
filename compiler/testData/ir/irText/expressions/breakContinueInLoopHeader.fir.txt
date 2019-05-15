@@ -45,11 +45,11 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
-          VAR name:<range> type:kotlin.collections.List<kotlin.String>? [val] 
-            BLOCK type=kotlin.collections.List<kotlin.String>? origin=ELVIS
+          VAR name:<range> type:kotlin.collections.List<kotlin.String> [val]
+            BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
               VAR name:<elvis> type:kotlin.collections.List<kotlin.String>? [val] 
                 GET_VAR 'ss: kotlin.collections.List<kotlin.String>? declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
-              WHEN type=kotlin.collections.List<kotlin.String>? origin=ELVIS
+              WHEN type=kotlin.collections.List<kotlin.String> origin=ELVIS
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val <elvis>: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
@@ -58,24 +58,27 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val <elvis>: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
-          VAR name:<iterator> type:IrErrorType [val] 
-            ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/collections/List.iterator]>#' type=IrErrorType
+          VAR name:<iterator> type:kotlin.collections.Iterator<kotlin.String> [val]
+            CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
+              $this: GET_VAR 'val <range>: kotlin.collections.List<kotlin.String> [val] declared in <root>.test3' type=kotlin.collections.List<kotlin.String> origin=null
           WHILE label=L2 origin=FOR_LOOP_INNER_WHILE
-            condition: ERROR_CALL 'Unresolved reference: <Unresolved name: hasNext>#' type=IrErrorType
+            condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'val <iterator>: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.test3' type=kotlin.collections.Iterator<kotlin.String> origin=null
             body: BLOCK type=kotlin.Unit origin=null
-              VAR name:s type:IrErrorType [val] 
-                ERROR_CALL 'Unresolved reference: <Unresolved name: next>#' type=IrErrorType
+              VAR name:s type:kotlin.String [val]
+                CALL 'public abstract fun next (): kotlin.String declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+                  $this: GET_VAR 'val <iterator>: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.test3' type=kotlin.collections.Iterator<kotlin.String> origin=null
   FUN name:test4 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit 
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>? 
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
-          VAR name:<range> type:kotlin.collections.List<kotlin.String>? [val] 
-            BLOCK type=kotlin.collections.List<kotlin.String>? origin=ELVIS
+          VAR name:<range> type:kotlin.collections.List<kotlin.String> [val]
+            BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
               VAR name:<elvis> type:kotlin.collections.List<kotlin.String>? [val] 
                 GET_VAR 'ss: kotlin.collections.List<kotlin.String>? declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
-              WHEN type=kotlin.collections.List<kotlin.String>? origin=ELVIS
+              WHEN type=kotlin.collections.List<kotlin.String> origin=ELVIS
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val <elvis>: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
@@ -84,13 +87,16 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val <elvis>: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
-          VAR name:<iterator> type:IrErrorType [val] 
-            ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/collections/List.iterator]>#' type=IrErrorType
+          VAR name:<iterator> type:kotlin.collections.Iterator<kotlin.String> [val]
+            CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
+              $this: GET_VAR 'val <range>: kotlin.collections.List<kotlin.String> [val] declared in <root>.test4' type=kotlin.collections.List<kotlin.String> origin=null
           WHILE label=L2 origin=FOR_LOOP_INNER_WHILE
-            condition: ERROR_CALL 'Unresolved reference: <Unresolved name: hasNext>#' type=IrErrorType
+            condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'val <iterator>: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.test4' type=kotlin.collections.Iterator<kotlin.String> origin=null
             body: BLOCK type=kotlin.Unit origin=null
-              VAR name:s type:IrErrorType [val] 
-                ERROR_CALL 'Unresolved reference: <Unresolved name: next>#' type=IrErrorType
+              VAR name:s type:kotlin.String [val]
+                CALL 'public abstract fun next (): kotlin.String declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+                  $this: GET_VAR 'val <iterator>: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.test4' type=kotlin.collections.Iterator<kotlin.String> origin=null
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       VAR name:i type:kotlin.Int [var] 

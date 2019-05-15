@@ -236,6 +236,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformCall(stringConcatenationCall, data)
     }
 
+    open fun transformUncheckedNotNullCast(uncheckedNotNullCast: FirUncheckedNotNullCast, data: D): CompositeTransformResult<FirStatement> {
+        return transformCall(uncheckedNotNullCast, data)
+    }
+
     open fun transformClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(classReferenceExpression, data)
     }
@@ -730,6 +734,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): CompositeTransformResult<FirElement> {
         return transformTypedDeclaration(typedDeclaration, data)
+    }
+
+    final override fun visitUncheckedNotNullCast(uncheckedNotNullCast: FirUncheckedNotNullCast, data: D): CompositeTransformResult<FirElement> {
+        return transformUncheckedNotNullCast(uncheckedNotNullCast, data)
     }
 
     final override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): CompositeTransformResult<FirElement> {
