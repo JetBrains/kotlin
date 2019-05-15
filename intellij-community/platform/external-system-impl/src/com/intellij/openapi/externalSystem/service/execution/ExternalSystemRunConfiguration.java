@@ -482,7 +482,6 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
       myContentDescriptor = contentDescriptor;
       if (contentDescriptor != null) {
         contentDescriptor.setExecutionId(myEnv.getExecutionId());
-        contentDescriptor.setAutoFocusContent(true);
         RunnerAndConfigurationSettings settings = myEnv.getRunnerAndConfigurationSettings();
         if (settings != null) {
           contentDescriptor.setActivateToolWindowWhenAdded(settings.isActivateToolWindowBeforeRun());

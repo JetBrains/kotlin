@@ -26,6 +26,9 @@ public class DefaultBuildDescriptor implements BuildDescriptor {
   private final String myTitle;
   private final String myWorkingDir;
   private final long myStartTime;
+  private boolean myActivateToolWindowWhenAdded;
+  private boolean myActivateToolWindowWhenFailed = true;
+  private boolean myAutoFocusContent = false;
 
   public DefaultBuildDescriptor(@NotNull Object id, @NotNull String title, @NotNull String workingDir, long startTime) {
     myId = id;
@@ -56,5 +59,29 @@ public class DefaultBuildDescriptor implements BuildDescriptor {
   @Override
   public long getStartTime() {
     return myStartTime;
+  }
+
+  public boolean isActivateToolWindowWhenAdded() {
+    return myActivateToolWindowWhenAdded;
+  }
+
+  public void setActivateToolWindowWhenAdded(boolean activateToolWindowWhenAdded) {
+    myActivateToolWindowWhenAdded = activateToolWindowWhenAdded;
+  }
+
+  public boolean isActivateToolWindowWhenFailed() {
+    return myActivateToolWindowWhenFailed;
+  }
+
+  public void setActivateToolWindowWhenFailed(boolean activateToolWindowWhenFailed) {
+    myActivateToolWindowWhenFailed = activateToolWindowWhenFailed;
+  }
+
+  public boolean isAutoFocusContent() {
+    return myAutoFocusContent;
+  }
+
+  public void setAutoFocusContent(boolean autoFocusContent) {
+    myAutoFocusContent = autoFocusContent;
   }
 }

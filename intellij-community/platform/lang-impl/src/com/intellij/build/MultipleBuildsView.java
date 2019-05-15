@@ -157,35 +157,46 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
           (DefaultListModel<AbstractViewManager.BuildInfo>)myBuildsList.getModel();
         listModel.addElement(buildInfo);
 
+        RunContentDescriptor contentDescriptor;
+        Supplier<RunContentDescriptor> contentDescriptorSupplier = startBuildEvent.getContentDescriptorSupplier();
+        contentDescriptor = contentDescriptorSupplier != null ? contentDescriptorSupplier.get() : null;
+        final Runnable activationCallback;
+        if (contentDescriptor != null) {
+          buildInfo.setActivateToolWindowWhenAdded(contentDescriptor.isActivateToolWindowWhenAdded());
+          if (contentDescriptor instanceof BuildContentDescriptor) {
+            buildInfo.setActivateToolWindowWhenFailed(((BuildContentDescriptor)contentDescriptor).isActivateToolWindowWhenFailed());
+          }
+          buildInfo.setAutoFocusContent(contentDescriptor.isAutoFocusContent());
+          activationCallback = contentDescriptor.getActivationCallback();
+        }
+        else {
+          activationCallback = null;
+        }
+
         BuildView view = myViewMap.computeIfAbsent(buildInfo, info -> {
-          final BuildDescriptor buildDescriptor = new DefaultBuildDescriptor(
-            startBuildEvent.getId(), startBuildEvent.getBuildTitle(), startBuildEvent.getWorkingDir(), startBuildEvent.getEventTime());
+          final DefaultBuildDescriptor buildDescriptor = new DefaultBuildDescriptor(
+            buildInfo.getId(), buildInfo.getTitle(), buildInfo.getWorkingDir(), buildInfo.getStartTime());
+          buildDescriptor.setActivateToolWindowWhenAdded(buildInfo.isActivateToolWindowWhenAdded());
+          buildDescriptor.setActivateToolWindowWhenFailed(buildInfo.isActivateToolWindowWhenFailed());
+          buildDescriptor.setAutoFocusContent(buildInfo.isAutoFocusContent());
+
           String selectionStateKey = "build.toolwindow." + myViewManager.getViewName() + ".selection.state";
           final BuildView buildView = new BuildView(myProject, buildDescriptor, selectionStateKey, myViewManager);
           Disposer.register(this, buildView);
+          if (contentDescriptor != null) {
+            Disposer.register(buildView, contentDescriptor);
+          }
           return buildView;
         });
         view.onEvent(startBuildEvent);
 
         myContent.setPreferredFocusedComponent(view::getPreferredFocusableComponent);
 
-        RunContentDescriptor contentDescriptor;
-        Supplier<RunContentDescriptor> contentDescriptorSupplier = startBuildEvent.getContentDescriptorSupplier();
-        contentDescriptor = contentDescriptorSupplier != null ? contentDescriptorSupplier.get() : null;
-        if (contentDescriptor != null) {
-          boolean activateToolWindow = contentDescriptor.isActivateToolWindowWhenAdded();
-          buildInfo.activateToolWindowWhenAdded = activateToolWindow;
-          if (contentDescriptor instanceof BuildContentDescriptor) {
-            buildInfo.activateToolWindowWhenFailed = ((BuildContentDescriptor)contentDescriptor).isActivateToolWindowWhenFailed();
-          }
-          boolean focusContent = contentDescriptor.isAutoFocusContent();
-          myBuildContentManager.setSelectedContent(
-            myContent, focusContent, focusContent, activateToolWindow, contentDescriptor.getActivationCallback());
-          Disposer.register(view, contentDescriptor);
-        }
-        else {
-          myBuildContentManager.setSelectedContent(myContent, true, true, false, null);
-        }
+        myBuildContentManager.setSelectedContent(myContent,
+                                                 buildInfo.isAutoFocusContent(),
+                                                 buildInfo.isAutoFocusContent(),
+                                                 buildInfo.isActivateToolWindowWhenAdded(),
+                                                 activationCallback);
         buildInfo.content = myContent;
 
         if (myThreeComponentsSplitter.getSecondComponent() == null) {

@@ -30,7 +30,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.actions.ToggleUseSoftWrapsToolbarAction;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.openapi.project.DumbAware;
@@ -63,7 +62,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
 import javax.swing.plaf.TreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
@@ -102,6 +100,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private final AtomicBoolean myFinishedBuildEventReceived = new AtomicBoolean();
   private final AtomicBoolean myDisposed = new AtomicBoolean();
   private final AtomicBoolean myShownFirstError = new AtomicBoolean();
+  private final boolean myFocusFirstError;
   private final StructureTreeModel<SimpleTreeStructure> myTreeModel;
   private final Tree myTree;
   private final ExecutionNode myRootNode;
@@ -117,6 +116,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     myNodeFilters = ContainerUtil.newConcurrentSet();
     myProject = project;
     myWorkingDir = FileUtil.toSystemIndependentName(buildDescriptor.getWorkingDir());
+    myFocusFirstError = !(buildDescriptor instanceof DefaultBuildDescriptor) ||
+                        ((DefaultBuildDescriptor)buildDescriptor).isActivateToolWindowWhenFailed();
 
     myRootNode = new ExecutionNode(myProject, null);
     myRootNode.setAutoExpandNode(true);
@@ -381,9 +382,9 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
   private void showErrorIfFirst(@NotNull ExecutionNode node, @Nullable Navigatable navigatable) {
     if (myShownFirstError.compareAndSet(false, true)) {
-      if (navigatable != null && navigatable != NonNavigatable.INSTANCE) {
+      if (myFocusFirstError && navigatable != null && navigatable != NonNavigatable.INSTANCE) {
         ApplicationManager.getApplication()
-          .invokeLater(() -> navigatable.navigate(false), ModalityState.defaultModalityState(), myProject.getDisposed());
+          .invokeLater(() -> navigatable.navigate(true), ModalityState.defaultModalityState(), myProject.getDisposed());
       }
       SimpleNode parentOrNode = node.getParent() == null ? node : node.getParent();
       myTreeModel.invalidate(parentOrNode, true).onProcessed(p -> TreeUtil.promiseSelect(myTree, visitor(node)));
