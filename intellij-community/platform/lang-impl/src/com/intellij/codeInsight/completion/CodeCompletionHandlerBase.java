@@ -244,7 +244,7 @@ public class CodeCompletionHandlerBase {
     Future<?> future = indicator.getCompletionThreading().startThread(indicator, () -> AsyncCompletion.tryReadOrCancel(indicator, () -> {
       CompletionParameters parameters = CompletionInitializationUtil.prepareCompletionParameters(initContext, indicator);
       if (parameters != null) {
-        parameters.setIsTestingMode(isTestingCompletionQualityMode());
+        parameters.setIsTestingMode(isTestingMode());
         indicator.runContributors(initContext);
       }
     }));
