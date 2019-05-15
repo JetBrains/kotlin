@@ -25,6 +25,9 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     @SkipWhenEmpty
     internal var testFramework: KotlinJsTestFramework? = null
 
+    val testFrameworkSettings: String
+        @Input get() = testFramework!!.settingsState
+
     @Input
     var debug: Boolean = false
 
