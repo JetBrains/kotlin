@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.testFramework.assertions
 
 import com.intellij.configurationStore.deserialize
@@ -77,7 +77,7 @@ fun <T : Any> doSerializerTest(@Language("XML") expectedText: String, bean: T): 
 }
 
 private fun assertSerializer(bean: Any, expected: String, description: String = "Serialization failure"): Element? {
-  val element = bean.serialize()
+  val element = serialize(bean)
   Assertions.assertThat(element?.let { JDOMUtil.writeElement(element).trim() }).`as`(description).isEqualTo(expected)
   return element
 }

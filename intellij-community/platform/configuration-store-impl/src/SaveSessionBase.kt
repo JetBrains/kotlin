@@ -43,6 +43,6 @@ internal fun serializeState(state: Any): Element? {
       state.writeExternal(element)
       return element
     }
-    else -> return state.serialize()
+    else -> return serialize(state)
   }
 }
