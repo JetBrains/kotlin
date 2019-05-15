@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -57,13 +58,19 @@ public class XDebuggerTestUtil {
                                                                          VirtualFile file,
                                                                          int line,
                                                                          boolean validity,
+                                                                         boolean pending,
                                                                          String errorMessage,
                                                                          Class<? extends XBreakpointType<B, ?>> breakpointType) {
     XLineBreakpointType type = (XLineBreakpointType)XDebuggerUtil.getInstance().findBreakpointType(breakpointType);
     XBreakpointManager manager = XDebuggerManager.getInstance(project).getBreakpointManager();
     XLineBreakpointImpl breakpoint = ReadAction.compute(() -> (XLineBreakpointImpl)manager.findBreakpointAtLine(type, file, line));
     assertNotNull(breakpoint);
-    assertEquals(validity ? XDebuggerUtilImpl.getVerifiedIcon(breakpoint) : AllIcons.Debugger.Db_invalid_breakpoint, breakpoint.getIcon());
+    Icon expectedIcon = validity
+                        ? pending
+                          ? AllIcons.Debugger.Db_set_breakpoint
+                          : XDebuggerUtilImpl.getVerifiedIcon(breakpoint)
+                        : AllIcons.Debugger.Db_invalid_breakpoint;
+    assertEquals(expectedIcon, breakpoint.getIcon());
     assertEquals(errorMessage, breakpoint.getErrorMessage());
   }
 
