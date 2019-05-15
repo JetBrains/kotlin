@@ -111,8 +111,8 @@ object Yarn : NpmApi {
         return false
     }
 
-    override fun shouldHoistGradleNodeModules(project: Project): Boolean =
-        project.rootProject.yarn.useWorkspaces
+//    override fun shouldHoistGradleNodeModules(project: Project): Boolean =
+//        project.rootProject.yarn.useWorkspaces
 
     @Suppress("EXPOSED_PARAMETER_TYPE")
     override fun resolveRootProject(

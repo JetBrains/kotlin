@@ -56,14 +56,14 @@ data class NpmDependency(
         return when (result) {
             is AlreadyInProgress -> null
             is AlreadyResolved -> {
-                check(this in result.resolution.dependencies) {
+                check(this in result.resolution.npmPackage!!.npmDependencies) {
                     "Project hierarchy is already resolved in NPM without $this"
                 }
 
                 result.resolution
             }
             is ResolvedNow -> {
-                check(this in result.resolution.dependencies) {
+                check(this in result.resolution.npmPackage!!.npmDependencies) {
                     "$this was not visited during resolution"
                 }
 
