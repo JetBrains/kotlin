@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -304,8 +305,10 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         val npmProject = project.npmProject
         val kotlin2JsCompile = compilation.compileKotlinTask
         if (npmProject.compileOutputCopyDest != null) {
-            if (kotlin2JsCompile.outputFile.exists()) {
-                visitCompile(project.npmProject, kotlin2JsCompile)
+            project.whenEvaluated {
+                if (kotlin2JsCompile.outputFile.exists()) {
+                    visitCompile(project.npmProject, kotlin2JsCompile)
+                }
             }
 
             kotlin2JsCompile.doLast {
