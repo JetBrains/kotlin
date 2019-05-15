@@ -101,6 +101,7 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
             it.appendln("function createWebpackConfig() {")
 
             KotlinWebpackConfigWriter(
+                configDirectory = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory },
                 sourceMaps = true,
                 export = false
             ).appendTo(it)
@@ -213,11 +214,7 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
         val nodeModules = listOf("karma/bin/karma")
 
         val args = nodeJsArgs +
-                nodeModules.map {
-                    npmProject.nodeModulesDir.resolve(it).also { file ->
-                        check(file.isFile) { "Cannot find ${file.canonicalPath}" }
-                    }.canonicalPath
-                } +
+                nodeModules.map { npmProject.require(it) } +
                 listOf("start", karmaConfJs.absolutePath)
 
         return object : TCServiceMessagesTestExecutionSpec(
