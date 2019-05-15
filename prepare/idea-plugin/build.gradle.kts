@@ -92,6 +92,23 @@ val projectsToShadow by extra(listOf(
             emptyArray<String>()
 ))
 
+// Projects published to maven copied to the plugin as separate jars
+val libraryProjects = listOf(
+    ":kotlin-reflect",
+    ":kotlin-compiler-client-embeddable",
+    ":kotlin-daemon-client",
+    ":kotlin-daemon-client-new",
+    ":kotlin-daemon",
+    ":kotlin-script-runtime",
+    ":kotlin-script-util",
+    ":kotlin-scripting-common",
+    ":kotlin-scripting-compiler-impl",
+    ":kotlin-scripting-intellij",
+    ":kotlin-scripting-jvm",
+    ":kotlin-util-io",
+    ":kotlin-util-klib"
+)
+
 // Gradle tooling model jars are loaded into Gradle during import and should present in plugin as separate jar
 val gradleToolingModel by configurations.creating
 
@@ -122,22 +139,10 @@ dependencies {
     libraries(commonDep("io.javaslang", "javaslang"))
 
     libraries(kotlinStdlib("jdk8"))
-    libraries(project(":kotlin-reflect"))
-    libraries(project(":kotlin-compiler-client-embeddable"))
-    libraries(project(":kotlin-daemon-client"))
-    libraries(project(":kotlin-daemon-client-new"))
-    libraries(project(":kotlin-daemon")) {
-        isTransitive = false
-    }
-    libraries(project(":kotlin-script-runtime"))
-    libraries(project(":kotlin-script-util"))
-    libraries(project(":kotlin-scripting-common"))
-    libraries(project(":kotlin-scripting-compiler-impl"))
-    libraries(project(":kotlin-scripting-intellij"))
-    libraries(project(":kotlin-scripting-jvm"))
 
-    libraries(project(":kotlin-util-io"))
-    libraries(project(":kotlin-util-klib"))
+    libraryProjects.forEach {
+        libraries(project(it)) { isTransitive = false }
+    }
 
     gradleToolingModel(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
     gradleToolingModel(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
@@ -146,7 +151,7 @@ dependencies {
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
 
-    jpsPlugin(project(":kotlin-jps-plugin"))
+    jpsPlugin(project(":kotlin-jps-plugin")) { isTransitive = false }
 }
 
 val jar = runtimeJar {
