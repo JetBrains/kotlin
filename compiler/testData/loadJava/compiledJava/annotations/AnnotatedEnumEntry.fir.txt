@@ -1,11 +1,8 @@
 public final enum class AnnotatedEnumEntry : R|kotlin/Enum<test/AnnotatedEnumEntry>| {
-    @R|test/AnnotatedEnumEntry.Anno|(String(a)) public final static val E1: R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
-        public get(): R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
+    @R|test/AnnotatedEnumEntry.Anno|(String(a)) public final static field E1: R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
 
-    @R|test/AnnotatedEnumEntry.Anno|(String(b)) @R|test/AnnotatedEnumEntry.Anno2|() public final static val E2: R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
-        public get(): R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
+    @R|test/AnnotatedEnumEntry.Anno|(String(b)) @R|test/AnnotatedEnumEntry.Anno2|() public final static field E2: R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
 
-    public final static val E3: R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
-        public get(): R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
+    public final static field E3: R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
 
 }

@@ -1,10 +1,6 @@
 public open class PropertySimpleType : R|kotlin/Any| {
-    public open var fieldOne: R|ft<kotlin/String, kotlin/String?>|!
-        public get(): R|ft<kotlin/String, kotlin/String?>|!
-        public set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
+    public open field fieldOne: R|ft<kotlin/String, kotlin/String?>|!
 
-    public open var fieldTwo: R|ft<kotlin/String, kotlin/String?>|!
-        public get(): R|ft<kotlin/String, kotlin/String?>|!
-        public set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
+    public open field fieldTwo: R|ft<kotlin/String, kotlin/String?>|!
 
 }

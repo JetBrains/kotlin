@@ -1,14 +1,8 @@
 public open class PropertyArrayTypes<T> : R|kotlin/Any| {
-    public open var arrayOfArrays: R|kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<ft<kotlin/String, kotlin/String?>>?>>|
-        public get(): R|kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<ft<kotlin/String, kotlin/String?>>?>>|
-        public set(value: R|kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<ft<kotlin/String, kotlin/String?>>?>>|): kotlin/Unit
+    public open field arrayOfArrays: R|kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<ft<kotlin/String, kotlin/String?>>?>>|
 
-    public open var array: R|kotlin/Array<ft<kotlin/String, kotlin/String?>>|
-        public get(): R|kotlin/Array<ft<kotlin/String, kotlin/String?>>|
-        public set(value: R|kotlin/Array<ft<kotlin/String, kotlin/String?>>|): kotlin/Unit
+    public open field array: R|kotlin/Array<ft<kotlin/String, kotlin/String?>>|
 
-    public open var genericArray: R|kotlin/Array<ft<T, T?>>|
-        public get(): R|kotlin/Array<ft<T, T?>>|
-        public set(value: R|kotlin/Array<ft<T, T?>>|): kotlin/Unit
+    public open field genericArray: R|kotlin/Array<ft<T, T?>>|
 
 }

@@ -1,17 +1,11 @@
 public open class Frame : R|kotlin/Any| {
-    public/*package*/ open var accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
-        public/*package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
-        public/*package*/ set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
+    public/*package*/ open field accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
 
 }
 public open class JFrame : R|awt/Frame| {
-    protected/*protected and package*/ open var accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
-        protected/*protected and package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
-        protected/*protected and package*/ set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
+    protected/*protected and package*/ open field accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
 
-    public/*package*/ open var accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
-        public/*package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
-        public/*package*/ set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
+    public/*package*/ open field accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
 
     public constructor(): R|test/JFrame|
 

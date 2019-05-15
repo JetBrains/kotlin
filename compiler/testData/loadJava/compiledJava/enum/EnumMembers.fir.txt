@@ -1,12 +1,9 @@
 public final enum class EnumMembers : R|kotlin/Enum<test/EnumMembers>| {
-    public final static val FIRST: R|ft<test/EnumMembers, test/EnumMembers?>|!
-        public get(): R|ft<test/EnumMembers, test/EnumMembers?>|!
+    public final static field FIRST: R|ft<test/EnumMembers, test/EnumMembers?>|!
 
-    public final static val SECOND: R|ft<test/EnumMembers, test/EnumMembers?>|!
-        public get(): R|ft<test/EnumMembers, test/EnumMembers?>|!
+    public final static field SECOND: R|ft<test/EnumMembers, test/EnumMembers?>|!
 
-    public final val isFirst: R|kotlin/Boolean|
-        public get(): R|kotlin/Boolean|
+    public final field isFirst: R|kotlin/Boolean|
 
     public open operator fun first(): R|kotlin/Boolean|
 

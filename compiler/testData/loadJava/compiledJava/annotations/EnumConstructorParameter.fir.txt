@@ -1,6 +1,5 @@
 public final enum class EnumConstructorParameter : R|kotlin/Enum<test/EnumConstructorParameter>| {
-    public final static val INSTANCE: R|ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>|!
-        public get(): R|ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>|!
+    public final static field INSTANCE: R|ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>|!
 
     private constructor(@R|test/EnumConstructorParameter.Anno|(String(string)) s: R|ft<kotlin/String, kotlin/String?>|!): R|test/EnumConstructorParameter|
 

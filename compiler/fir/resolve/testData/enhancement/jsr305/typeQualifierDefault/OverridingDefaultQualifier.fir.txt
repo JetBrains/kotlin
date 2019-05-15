@@ -1,7 +1,5 @@
 @R|NonNullApi|() public open class A : R|kotlin/Any| {
-    public open var field: R|kotlin/String|
-        public get(): R|kotlin/String|
-        public set(value: R|kotlin/String|): kotlin/Unit
+    public open field field: R|kotlin/String|
 
     public open operator fun foo(x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|kotlin/String|
 

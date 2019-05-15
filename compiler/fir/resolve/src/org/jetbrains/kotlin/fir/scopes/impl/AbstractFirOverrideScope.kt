@@ -70,6 +70,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope {
                     self.receiverTypeRef,
                     ConeSubstitutor.Empty // TODO
                 )
+                is FirField -> false
                 else -> error("Unknown fir callable type: $declaration, $self")
             }
         }

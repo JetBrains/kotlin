@@ -1,5 +1,4 @@
 public final class FinalFieldAsVal : R|kotlin/Any| {
-    public final val f: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+    public final field f: R|kotlin/Int|
 
 }

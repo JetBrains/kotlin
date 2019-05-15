@@ -1,7 +1,5 @@
 public open class A : R|kotlin/Any| {
-    @R|javax/annotation/Nullable|() public open var field: R|kotlin/String|?
-        public get(): R|kotlin/String|?
-        public set(value: R|kotlin/String|?): kotlin/Unit
+    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String|?
 
     public open operator fun foo(q: R|ft<kotlin/String, kotlin/String?>|!, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|ft<kotlin/String, kotlin/String?>|!
 
@@ -9,9 +7,7 @@ public open class A : R|kotlin/Any| {
 
 }
 public open class A2 : R|kotlin/Any| {
-    @R|javax/annotation/Nullable|() public open var field: R|kotlin/String|?
-        public get(): R|kotlin/String|?
-        public set(value: R|kotlin/String|?): kotlin/Unit
+    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String|?
 
     public open operator fun foo(q: R|ft<kotlin/String, kotlin/String?>|!, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|ft<kotlin/String, kotlin/String?>|!
 

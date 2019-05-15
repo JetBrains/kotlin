@@ -1,20 +1,14 @@
 public open class StaticFinal : R|kotlin/Any| {
-    public final static val publicNonNull: R|ft<kotlin/String, kotlin/String?>|!
-        public get(): R|ft<kotlin/String, kotlin/String?>|!
+    public final static field publicNonNull: R|ft<kotlin/String, kotlin/String?>|!
 
-    public final static val publicNull: R|ft<kotlin/String, kotlin/String?>|!
-        public get(): R|ft<kotlin/String, kotlin/String?>|!
+    public final static field publicNull: R|ft<kotlin/String, kotlin/String?>|!
 
-    public/*package*/ final static val packageNonNull: R|ft<kotlin/String, kotlin/String?>|!
-        public/*package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
+    public/*package*/ final static field packageNonNull: R|ft<kotlin/String, kotlin/String?>|!
 
-    public/*package*/ final static val packageNull: R|ft<kotlin/String, kotlin/String?>|!
-        public/*package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
+    public/*package*/ final static field packageNull: R|ft<kotlin/String, kotlin/String?>|!
 
-    private final static val privateNonNull: R|ft<kotlin/String, kotlin/String?>|!
-        private get(): R|ft<kotlin/String, kotlin/String?>|!
+    private final static field privateNonNull: R|ft<kotlin/String, kotlin/String?>|!
 
-    private final static val privateNull: R|ft<kotlin/String, kotlin/String?>|!
-        private get(): R|ft<kotlin/String, kotlin/String?>|!
+    private final static field privateNull: R|ft<kotlin/String, kotlin/String?>|!
 
 }

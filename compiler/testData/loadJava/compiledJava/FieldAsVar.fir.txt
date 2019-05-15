@@ -1,6 +1,4 @@
 public final class FieldAsVar : R|kotlin/Any| {
-    public open var f: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): kotlin/Unit
+    public open field f: R|kotlin/Int|
 
 }

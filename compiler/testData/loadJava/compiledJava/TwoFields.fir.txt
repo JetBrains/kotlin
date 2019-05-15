@@ -1,10 +1,6 @@
 public final class TwoFields : R|kotlin/Any| {
-    public open var a: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): kotlin/Unit
+    public open field a: R|kotlin/Int|
 
-    public open var b: R|kotlin/Short|
-        public get(): R|kotlin/Short|
-        public set(value: R|kotlin/Short|): kotlin/Unit
+    public open field b: R|kotlin/Short|
 
 }

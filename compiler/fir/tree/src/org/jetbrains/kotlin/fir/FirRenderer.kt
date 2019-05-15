@@ -276,6 +276,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
                 is FirTypeAlias -> "typealias"
                 is FirNamedFunction -> "fun"
                 is FirProperty -> if (declaration.isVal) "val" else "var"
+                is FirField -> "field"
                 is FirVariable -> if (declaration.isVal) "lval" else "lvar"
                 else -> "unknown"
             }
@@ -333,6 +334,11 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             print("by ")
             it.accept(this)
         }
+    }
+
+    override fun visitField(field: FirField) {
+        visitVariable(field)
+        println()
     }
 
     override fun visitProperty(property: FirProperty) {

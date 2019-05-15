@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 
 class FirJavaField(
@@ -21,7 +22,7 @@ class FirJavaField(
     name: Name,
     visibility: Visibility,
     modality: Modality?,
-    returnTypeRef: FirJavaTypeRef,
+    returnTypeRef: FirTypeRef,
     override val isVar: Boolean,
     isStatic: Boolean
 ) : FirAbstractCallableMember(

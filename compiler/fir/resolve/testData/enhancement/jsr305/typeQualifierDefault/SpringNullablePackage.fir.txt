@@ -1,7 +1,5 @@
 public open class A : R|kotlin/Any| {
-    public open var field: R|ft<kotlin/String, kotlin/String?>|!
-        public get(): R|ft<kotlin/String, kotlin/String?>|!
-        public set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
+    public open field field: R|ft<kotlin/String, kotlin/String?>|!
 
     public open operator fun foo(x: R|ft<kotlin/String, kotlin/String?>|!, @R|spr/Nullable|() y: R|kotlin/CharSequence|?): R|ft<kotlin/String, kotlin/String?>|!
 

@@ -9,18 +9,14 @@ public/*package*/ open class A : R|kotlin/Any| {
 
 }
 public final enum class Mixed : R|kotlin/Enum<Mixed>| {
-    public final static val NOT_ENTRY_EITHER: R|ft<Mixed, Mixed?>|!
-        public get(): R|ft<Mixed, Mixed?>|!
+    public final static field NOT_ENTRY_EITHER: R|ft<Mixed, Mixed?>|!
 
 }
 public final enum class Signs : R|kotlin/Enum<Signs>| {
-    public final static val HELLO: R|ft<Signs, Signs?>|!
-        public get(): R|ft<Signs, Signs?>|!
+    public final static field HELLO: R|ft<Signs, Signs?>|!
 
-    public final static val WORLD: R|ft<Signs, Signs?>|!
-        public get(): R|ft<Signs, Signs?>|!
+    public final static field WORLD: R|ft<Signs, Signs?>|!
 
-    public final static val X: R|ft<Signs, Signs?>|!
-        public get(): R|ft<Signs, Signs?>|!
+    public final static field X: R|ft<Signs, Signs?>|!
 
 }

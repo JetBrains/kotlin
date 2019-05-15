@@ -59,7 +59,7 @@ class JavaClassEnhancementScope(
         useSiteScope.processPropertiesByName(name) process@{ original ->
 
             val field = enhancements.getOrPut(original) { enhance(original, name) }
-            processor(field as ConePropertySymbol)
+            processor(field as ConeVariableSymbol)
         }
 
         return super.processPropertiesByName(name, processor)
@@ -78,28 +78,26 @@ class JavaClassEnhancementScope(
     private fun enhance(
         original: ConeVariableSymbol,
         name: Name
-    ): ConePropertySymbol {
+    ): ConeVariableSymbol {
         when (val firElement = (original as FirBasedSymbol<*>).fir) {
             is FirJavaField -> {
-
+                if (firElement.returnTypeRef !is FirJavaTypeRef) return original
                 val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firElement.annotations)
                 val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), memberContext, null)
 
                 val symbol = FirPropertySymbol(original.callableId)
                 with(firElement) {
-                    FirMemberPropertyImpl(
-                        this@JavaClassEnhancementScope.session, null, symbol, name,
-                        visibility, modality, isExpect, isActual, isOverride,
-                        isConst = false, isLateInit = false,
-                        receiverTypeRef = null,
-                        returnTypeRef = newReturnTypeRef,
-                        isVar = isVar, initializer = null,
-                        getter = FirDefaultPropertyGetter(this@JavaClassEnhancementScope.session, null, newReturnTypeRef, visibility),
-                        setter = FirDefaultPropertySetter(this@JavaClassEnhancementScope.session, null, newReturnTypeRef, visibility),
-                        delegate = null
+                    FirJavaField(
+                        session,
+                        symbol,
+                        name,
+                        visibility,
+                        modality,
+                        newReturnTypeRef,
+                        isVar,
+                        isStatic
                     ).apply {
                         annotations += firElement.annotations
-                        status.isStatic = firElement.isStatic
                     }
                 }
                 return symbol

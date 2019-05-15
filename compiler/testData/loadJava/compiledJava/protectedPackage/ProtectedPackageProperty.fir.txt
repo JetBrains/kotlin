@@ -1,6 +1,4 @@
 public open class ProtectedPackageProperty : R|kotlin/Any| {
-    protected/*protected and package*/ open var foo: R|kotlin/Int|
-        protected/*protected and package*/ get(): R|kotlin/Int|
-        protected/*protected and package*/ set(value: R|kotlin/Int|): kotlin/Unit
+    protected/*protected and package*/ open field foo: R|kotlin/Int|
 
 }

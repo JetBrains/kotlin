@@ -126,7 +126,7 @@ class JavaClassUseSiteScope(
                 }
             }
             is FirPropertySymbol -> {
-                val self = fir as FirProperty
+                val self = fir as? FirProperty ?: return null
                 candidates.firstOrNull {
                     val member = (it as FirFunctionSymbol).fir as FirNamedFunction
                     self.modality != Modality.FINAL && isOverriddenPropertyCheck(member, self)
