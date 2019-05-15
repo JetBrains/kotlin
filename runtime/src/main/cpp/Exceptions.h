@@ -52,8 +52,8 @@ void RUNTIME_NORETURN ThrowNumberFormatException();
 void RUNTIME_NORETURN ThrowOutOfMemoryError();
 // Throws not implemented error.
 void RUNTIME_NORETURN ThrowNotImplementedError();
-// Throws illegal character conversion exception (used in UTF8/UTF16 conversions).
-void RUNTIME_NORETURN ThrowIllegalCharacterConversionException();
+// Throws character coding exception (used in UTF8/UTF16 conversions).
+void RUNTIME_NORETURN ThrowCharacterCodingException();
 void RUNTIME_NORETURN ThrowIllegalArgumentException();
 void RUNTIME_NORETURN ThrowIllegalStateException();
 void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where);

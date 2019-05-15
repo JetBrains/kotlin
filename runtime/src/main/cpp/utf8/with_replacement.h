@@ -37,13 +37,13 @@ uint32_t next(octet_iterator &it, const octet_iterator end, uint32_t replacement
         case internal::UTF8_OK :
             return cp;
         case internal::INVALID_LEAD :
+        case internal::INVALID_CODE_POINT :
+        case internal::OVERLONG_SEQUENCE :
             it++;
             return replacement;
         case internal::NOT_ENOUGH_ROOM :
         case internal::INCOMPLETE_SEQUENCE :
-        case internal::OVERLONG_SEQUENCE :
-        case internal::INVALID_CODE_POINT :
-            // The whole invalid sequence is replaced with one replacement codepoint.
+            // The whole incomplete sequence is replaced with one replacement codepoint.
             for (it++; it < end && utf8::internal::is_trail(*it); it++);
             return replacement;
     }

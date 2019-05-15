@@ -3472,10 +3472,10 @@ task coverage_basic_library(type: RunStandaloneKonanTest) {
 
 task buildKonanStdlibTests(type: BuildKonanTest) {
     outputSourceSetName = "testOutputStdlib"
-    flags = [ "-Xmulti-platform", "-friend-modules",  project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib") ]
+    flags = [ "-Xmulti-platform", '-Xuse-experimental=kotlin.ExperimentalStdlibApi', "-friend-modules",  project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib") ]
     def testSources = externalStdlibTestsDir.absolutePath
     compileList = [ "$testSources/stdlib/test", "$testSources/stdlib/common",
-                    "stdlib_external/utils.kt", "stdlib_external/jsCollectionFactoriesActuals.kt" ]
+                    "stdlib_external/utils.kt", "stdlib_external/text/StringEncodingTestNative.kt", "stdlib_external/jsCollectionFactoriesActuals.kt" ]
     excludeList = [ "$testSources/stdlib/test/internalAnnotations.kt" ]
 }
 

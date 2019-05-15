@@ -166,6 +166,7 @@ public actual open class NumberFormatException : IllegalArgumentException {
     actual constructor(message: String?) : super(message)
 }
 
+// TODO: Deprecate and replace with CharacterCodingException
 public open class IllegalCharacterConversionException : IllegalArgumentException {
 
     constructor(): super()

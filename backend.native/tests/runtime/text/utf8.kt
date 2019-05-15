@@ -66,7 +66,7 @@ fun <T: Any> checkThrows(e: KClass<T>, string: String, action: () -> Unit) {
     assertTrue(e.isInstance(exception),"""
                 Wrong exception was thrown for string: $string
                 Expected: ${e.qualifiedName}
-                Actual: ${exception::class.qualifiedName}
+                Actual: ${exception::class.qualifiedName}: $exception}
     """.trimIndent())
 }
 
@@ -197,7 +197,7 @@ fun test16to8CustomBorders() {
     checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8(-1, 4)}
     checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8(5, 10)}
     checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8(2, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8(3, -2)}
+    checkThrows(IllegalArgumentException::class, "Hello") { "Hello".toUtf8(3, -2)}
 
 
     // Test manual conversion with an exception if an input is invalid and custom borders.
@@ -228,7 +228,7 @@ fun test16to8CustomBorders() {
     checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8OrThrow(-1, 4)}
     checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8OrThrow(5, 10)}
     checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8OrThrow(2, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8OrThrow(3, -2)}
+    checkThrows(IllegalArgumentException::class, "Hello") { "Hello".toUtf8OrThrow(3, -2)}
 }
 
 fun testPrint() {
@@ -294,8 +294,6 @@ fun test8to16CustomBorders() {
             intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 3, 2)
     checkUtf8to16Replacing("",
             intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 0, 0)
-    checkUtf8to16Replacing("",
-            intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 10, 0)
 
     checkUtf8to16Replacing("\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128),
@@ -323,7 +321,8 @@ fun test8to16CustomBorders() {
     checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8(-1, 4)}
     checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8(5, 10)}
     checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8(2, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8(3, -2)}
+    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8(10, 0)}
+    checkThrows(IllegalArgumentException::class, "Hello") { helloArray.stringFromUtf8(3, -2)}
 
     // Conversion with throwing
     checkUtf8to16Throwing("He",
@@ -334,8 +333,6 @@ fun test8to16CustomBorders() {
             intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 3, 2)
     checkUtf8to16Throwing("",
             intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 0, 0)
-    checkUtf8to16Throwing("",
-            intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 10, 0)
 
     checkUtf8to16Throwing("\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128),
@@ -361,7 +358,8 @@ fun test8to16CustomBorders() {
     checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8OrThrow(-1, 4)}
     checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8OrThrow(5, 10)}
     checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8OrThrow(2, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8OrThrow(3, -2)}
+    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8OrThrow(10, 0)}
+    checkThrows(IllegalArgumentException::class, "Hello") { helloArray.stringFromUtf8OrThrow(3, -2)}
 }
 // endregion
 

@@ -35,7 +35,7 @@ typedef KStdStringInserter utf16to8(const KChar*,const KChar*, KStdStringInserte
 KStdStringInserter utf16toUtf8OrThrow(const KChar* start, const KChar* end, KStdStringInserter result) {
   TRY_CATCH(result = utf8::utf16to8(start, end, result),
             result = utf8::unchecked::utf16to8(start, end, result),
-            ThrowIllegalCharacterConversionException());
+            ThrowCharacterCodingException());
   return result;
 }
 
@@ -67,7 +67,7 @@ OBJ_GETTER(utf8ToUtf16OrThrow, const char* rawString, size_t rawStringLength) {
   uint32_t charCount;
   TRY_CATCH(charCount = utf8::utf16_length(rawString, end),
             charCount = utf8::unchecked::utf16_length(rawString, end),
-            ThrowIllegalCharacterConversionException());
+            ThrowCharacterCodingException());
   RETURN_RESULT_OF(utf8ToUtf16Impl<utf8::unchecked::utf8to16>, rawString, end, charCount);
 }
 
@@ -787,11 +787,7 @@ OBJ_GETTER(Kotlin_ByteArray_stringFromUtf8OrThrow, KConstRef thiz, KInt start, K
     RETURN_RESULT_OF0(TheEmptyString);
   }
   const char* rawString = byteArrayAsCString(thiz, start, size);
-  KInt realSize = 0;
-  while (rawString[realSize] != 0 && realSize < size) {
-     realSize++;
-  }
-  RETURN_RESULT_OF(utf8ToUtf16OrThrow, rawString, realSize);
+  RETURN_RESULT_OF(utf8ToUtf16OrThrow, rawString, size);
 }
 
 OBJ_GETTER(Kotlin_ByteArray_stringFromUtf8, KConstRef thiz, KInt start, KInt size) {
@@ -799,11 +795,7 @@ OBJ_GETTER(Kotlin_ByteArray_stringFromUtf8, KConstRef thiz, KInt start, KInt siz
     RETURN_RESULT_OF0(TheEmptyString);
   }
   const char* rawString = byteArrayAsCString(thiz, start, size);
-  KInt realSize = 0;
-  while (rawString[realSize] != 0 && realSize < size) {
-     realSize++;
-  }
-  RETURN_RESULT_OF(utf8ToUtf16, rawString, realSize);
+  RETURN_RESULT_OF(utf8ToUtf16, rawString, size);
 }
 
 OBJ_GETTER(Kotlin_String_toUtf8, KString thiz, KInt start, KInt size) {
@@ -833,12 +825,12 @@ OBJ_GETTER(Kotlin_String_fromCharArray, KConstRef thiz, KInt start, KInt size) {
   RETURN_OBJ(result->obj());
 }
 
-OBJ_GETTER(Kotlin_String_toCharArray, KString string) {
+OBJ_GETTER(Kotlin_String_toCharArray, KString string, KInt start, KInt size) {
   ArrayHeader* result = AllocArrayInstance(
-    theCharArrayTypeInfo, string->count_, OBJ_RESULT)->array();
+    theCharArrayTypeInfo, size, OBJ_RESULT)->array();
   memcpy(CharArrayAddressOfElementAt(result, 0),
-         CharArrayAddressOfElementAt(string, 0),
-         string->count_ * sizeof(KChar));
+         CharArrayAddressOfElementAt(string, start),
+         size * sizeof(KChar));
   RETURN_OBJ(result->obj());
 }
 
