@@ -87,6 +87,43 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
+    fun testSetContent(): Unit = ensureSetup {
+        codegen(
+            """
+                fun fakeCompose(block: @Composable() ()->Unit) { }
+
+                class Test {
+                    fun test() {
+                        fakeCompose {
+                            LinearLayout(orientation = LinearLayout.VERTICAL) {}
+                        }
+                    }
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testComposeWithResult(): Unit = ensureSetup {
+        compose(
+            """
+                fun <T> identity(block: @Composable() ()->T): T = block()
+
+                @Composable
+                fun TestCall() {
+                  val value: Any = identity { 12 }
+                  TextView(text = value.toString(), id = 100)
+                }
+            """,
+            { emptyMap<String, String>() },
+            "TestCall()", dumpClasses = true
+        ).then { activity ->
+            val textView = activity.findViewById<TextView>(100)
+            assertEquals("12", textView.text)
+        }
+    }
+
+    @Test
     fun testObservable(): Unit = ensureSetup {
         compose(
             """
@@ -138,7 +175,11 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 @Composable
                 fun SimpleComposable(state: FancyButtonCount) {
                     FancyBox2 {
-                        Button(text=("Button clicked "+state.count+" times"), onClick={state.count++}, id=42)
+                        Button(
+                          text=("Button clicked "+state.count+" times"),
+                          onClick={state.count++},
+                          id=42
+                        )
                     }
                 }
 
@@ -340,9 +381,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
                 Foo(onClick={})
             """
-        ).then {
-
-        }
+        ).then { }
     }
 
     @Test
@@ -358,9 +397,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
                 Foo(onClick={})
             """
-        ).then {
-
-        }
+        ).then { }
     }
 
     @Test
@@ -376,9 +413,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
                 Foo(onClick={})
             """
-        ).then {
-
-        }
+        ).then {}
     }
 
     @Test
@@ -499,7 +534,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }
     }
 
-
     // @Test
     fun testAmbientPortal1(): Unit = ensureSetup {
         val llId = 123
@@ -565,7 +599,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
             assertEquals(text, textView.text)
         }
     }
-
 
     // @Test
     fun testAmbientPortal2(): Unit = ensureSetup {
@@ -1115,23 +1148,35 @@ class FcsCodegenTests : AbstractCodegenTest() {
         ).then { activity ->
             // Should be called on the first compose
             assertEquals("1", (activity.findViewById(rsId) as TextView).text)
-            assertEquals("$left + $right = ${left + right}", (activity.findViewById(tvId) as TextView).text)
+            assertEquals(
+                "$left + $right = ${left + right}",
+                (activity.findViewById(tvId) as TextView).text
+            )
         }.then { activity ->
             // Should be skipped on the second compose
             assertEquals("1", (activity.findViewById(rsId) as TextView).text)
-            assertEquals("$left + $right = ${left + right}", (activity.findViewById(tvId) as TextView).text)
+            assertEquals(
+                "$left + $right = ${left + right}",
+                (activity.findViewById(tvId) as TextView).text
+            )
 
             left = 1
         }.then { activity ->
             // Should be called again because left changed.
             assertEquals("2", (activity.findViewById(rsId) as TextView).text)
-            assertEquals("$left + $right = ${left + right}", (activity.findViewById(tvId) as TextView).text)
+            assertEquals(
+                "$left + $right = ${left + right}",
+                (activity.findViewById(tvId) as TextView).text
+            )
 
             right = 41
         }.then { activity ->
             // Should be called again because right changed
             assertEquals("3", (activity.findViewById(rsId) as TextView).text)
-            assertEquals("$left + $right = ${left + right}", (activity.findViewById(tvId) as TextView).text)
+            assertEquals(
+                "$left + $right = ${left + right}",
+                (activity.findViewById(tvId) as TextView).text
+            )
         }.then { activity ->
             // Should be skipped because nothing changed
             assertEquals("3", (activity.findViewById(rsId) as TextView).text)
@@ -1593,7 +1638,6 @@ class Path3(private val internalPath: android.graphics.Path = android.graphics.P
         """
     )
 
-
     @Test
     fun testMovement(): Unit = ensureSetup {
         val tvId = 50
@@ -1681,7 +1725,6 @@ class Path3(private val internalPath: android.graphics.Path = android.graphics.P
         }
     }
 
-
     @Test
     fun testObserveKtxWithInline(): Unit = ensureSetup {
         compose(
@@ -1728,7 +1771,11 @@ class Path3(private val internalPath: android.graphics.Path = android.graphics.P
             fun Reordering() {
                 LinearLayout {
                     Recompose { recompose ->
-                        Button(id=50, text="Recompose!", onClick={ list.add(list.removeAt(0)); recompose(); })
+                        Button(
+                          id=50,
+                          text="Recompose!",
+                          onClick={ list.add(list.removeAt(0)); recompose(); }
+                        )
                         LinearLayout(id=100) {
                             for(id in list) {
                                 Key(key=id) {
@@ -1814,10 +1861,17 @@ class Path3(private val internalPath: android.graphics.Path = android.graphics.P
         )
     }
 
-    fun compose(text: String, dumpClasses: Boolean = false): CompositionTest = compose({ mapOf<String, Any>() }, text, dumpClasses)
+    fun compose(text: String, dumpClasses: Boolean = false): CompositionTest = compose(
+        { mapOf<String, Any>() },
+        text,
+        dumpClasses
+    )
 
-    fun <T : Any> compose(valuesFactory: () -> Map<String, T>, text: String, dumpClasses: Boolean = false) =
-        compose("", valuesFactory, text, dumpClasses)
+    fun <T : Any> compose(
+        valuesFactory: () -> Map<String, T>,
+        text: String,
+        dumpClasses: Boolean = false
+    ) = compose("", valuesFactory, text, dumpClasses)
 
     private fun execute(block: () -> Unit) {
         val scheduler = RuntimeEnvironment.getMasterScheduler()
@@ -1838,8 +1892,12 @@ class Path3(private val internalPath: android.graphics.Path = android.graphics.P
         val candidateValues = valuesFactory()
 
         @Suppress("NO_REFLECTION_IN_CLASS_PATH")
-        val parameterList = candidateValues.map { "${it.key}: ${it.value::class.qualifiedName}" }.joinToString()
-        val parameterTypes = candidateValues.map { it.value::class.javaPrimitiveType ?: it.value::class.javaObjectType }.toTypedArray()
+        val parameterList = candidateValues.map {
+            "${it.key}: ${it.value::class.qualifiedName}"
+        }.joinToString()
+        val parameterTypes = candidateValues.map {
+            it.value::class.javaPrimitiveType ?: it.value::class.javaObjectType
+        }.toTypedArray()
 
         val compiledClasses = classLoader(
             """
@@ -1860,7 +1918,9 @@ class Path3(private val internalPath: android.graphics.Path = android.graphics.P
         """, fileName, dumpClasses
         )
 
-        val allClassFiles = compiledClasses.allGeneratedFiles.filter { it.relativePath.endsWith(".class") }
+        val allClassFiles = compiledClasses.allGeneratedFiles.filter {
+            it.relativePath.endsWith(".class")
+        }
 
         val loader = URLClassLoader(emptyArray(), this.javaClass.classLoader)
 
