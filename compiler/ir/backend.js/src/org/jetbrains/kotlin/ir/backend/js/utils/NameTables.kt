@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInlined
@@ -254,8 +256,8 @@ class LegacyMemberNameGenerator(val scope: JsScope) {
         val nameBuilder = StringBuilder()
 
         // Handle names for special functions
-        if (declaration.isEqualsInheritedFromAny()) {
-            return scope.declareName("equals")
+        if (declaration.isMethodOfAny()) {
+            return scope.declareName(declarationName)
         }
 
         nameBuilder.append(declarationName)
@@ -272,9 +274,9 @@ class LegacyMemberNameGenerator(val scope: JsScope) {
             joinTo(nameBuilder, "") { "_${it.type.asString()}" }
         }
         declaration.returnType.let {
-            // Return type is only used in signature for inline class types because
+            // Return type is only used in signature for inline class and Unit types because
             // they are binary incompatible with supertypes.
-            if (it.isInlined()) {
+            if (it.isInlined() || it.isUnit()) {
                 nameBuilder.append("_ret$${it.asString()}")
             }
         }

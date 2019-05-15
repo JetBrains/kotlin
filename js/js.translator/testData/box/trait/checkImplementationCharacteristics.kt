@@ -1,10 +1,12 @@
 // EXPECTED_REACHABLE_NODES: 1301
 
 public interface A {
+    @JsName("foo")
     fun foo() {
     }
 }
 public interface B : A {
+    @JsName("boo")
     fun boo() {
     }
 }

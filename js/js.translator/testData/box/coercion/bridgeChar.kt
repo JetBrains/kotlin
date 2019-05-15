@@ -4,6 +4,7 @@ open class A {
 }
 
 interface I {
+    @JsName("foo")
     fun foo(): Any
 }
 

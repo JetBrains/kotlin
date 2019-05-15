@@ -215,9 +215,9 @@ class FunctionAndSignature(val function: IrSimpleFunction) {
             function.name.asString(),
             function.extensionReceiverParameter?.type?.asString(),
             function.valueParameters.map { it.type.asString() },
-            // Return type used in signature for inline classes only because
+            // Return type used in signature for inline classes and Unit because
             // they are binary incompatible with supertypes and require bridges.
-            function.returnType.run { if (isInlined()) asString() else null }
+            function.returnType.run { if (isInlined() || isUnit()) asString() else null }
         )
     }
 

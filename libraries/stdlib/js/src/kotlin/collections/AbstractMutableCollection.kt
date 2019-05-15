@@ -44,6 +44,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
         }
     }
 
+    @JsName("toJSON")
     open fun toJSON(): Any = this.toArray()
 }
 
