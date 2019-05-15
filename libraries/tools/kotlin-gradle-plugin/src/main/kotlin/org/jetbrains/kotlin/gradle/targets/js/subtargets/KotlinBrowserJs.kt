@@ -50,7 +50,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
         }
 
-        project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("run")) {
+        val run = project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("run")) {
             val compileKotlinTask = compilation.compileKotlinTask
             it.dependsOn(
                 target.npmResolveTaskHolder.getTaskOrProvider(),
@@ -67,7 +67,8 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             )
 
             it.outputs.upToDateWhen { false }
-            target.runTask.dependsOn(it)
         }
+
+        target.runTask.dependsOn(run.getTaskOrProvider())
     }
 }
