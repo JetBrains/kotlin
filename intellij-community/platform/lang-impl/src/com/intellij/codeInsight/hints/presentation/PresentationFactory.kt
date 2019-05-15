@@ -88,7 +88,6 @@ class PresentationFactory(private val editor: EditorImpl) {
     else -> onHover(base, tooltipHandler(tooltip))
   }
 
-  // TODO needed some hotkey to open all of them
   fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
     return ChangeOnClickPresentation(changeOnHover(placeholder, onHover = {
       attributes(placeholder) {
@@ -98,9 +97,8 @@ class PresentationFactory(private val editor: EditorImpl) {
   }
 
   /**
-   * Creates node, that can be collapsed by clicking on prefix/suffix.
-   * Default presentation of content is first.
-//  TODO fix me  * @param content main content, first is expected to be collapsed presentation, second - expanded one
+   * Creates node, that can be collapsed/expanded by clicking on prefix/suffix.
+   * If presentation is collapsed, clicking to content will expand it.
    */
   fun collapsible(
     prefix: InlayPresentation,
@@ -144,8 +142,8 @@ class PresentationFactory(private val editor: EditorImpl) {
   }
 
   /**
-   * On hover changes all the presentations with a given decorator
-   * Stateless presentation
+   * On hover of any of [presentations] changes all the presentations with a given decorator.
+   * This presentation is stateless.
    */
   fun synchronousOnHover(presentations: List<InlayPresentation>, decorator: (InlayPresentation) -> InlayPresentation) : List<InlayPresentation> {
     val forwardings = presentations.map { DynamicDelegatePresentation(it) }
@@ -164,16 +162,16 @@ class PresentationFactory(private val editor: EditorImpl) {
     }
   }
 
-  fun asWrongReference(presentation: InlayPresentation): InlayPresentation {
-    return attributes(presentation) {
-      it.with(attributesOf(CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES))
-    }
-  }
-
+  /**
+   * @see OnHoverPresentation
+   */
   fun onHover(base: InlayPresentation, onHover: (MouseEvent?) -> Unit): InlayPresentation {
     return OnHoverPresentation(base, onHover)
   }
 
+  /**
+   * @see OnClickPresentation
+   */
   fun onClick(base: InlayPresentation, button: MouseButton, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
     return OnClickPresentation(base) { e, p ->
       if (button == e.mouseButton) {
@@ -182,6 +180,9 @@ class PresentationFactory(private val editor: EditorImpl) {
     }
   }
 
+  /**
+   * @see OnClickPresentation
+   */
   fun onClick(base: InlayPresentation, buttons: EnumSet<MouseButton>, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
     return OnClickPresentation(base) { e, p ->
       if (e.mouseButton in buttons) {
