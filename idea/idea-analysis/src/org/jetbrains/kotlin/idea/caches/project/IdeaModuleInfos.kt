@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -217,7 +216,7 @@ private fun Module.hasTestRoots() = hasRootsOfType(JavaSourceRootType.TEST_SOURC
 private fun Module.hasRootsOfType(sourceRootType: JpsModuleSourceRootType<*>): Boolean =
     rootManager.contentEntries.any { it.getSourceFolders(sourceRootType).isNotEmpty() }
 
-private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project), GlobalSearchScopeWithModuleSources {
+private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project) {
     override fun compare(file1: VirtualFile, file2: VirtualFile) = 0
     override fun isSearchInModuleContent(aModule: Module) = aModule == module
     override fun isSearchInLibraries() = false
