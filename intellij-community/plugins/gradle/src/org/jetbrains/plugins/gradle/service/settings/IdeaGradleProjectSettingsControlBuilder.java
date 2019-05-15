@@ -305,8 +305,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
           ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
 
         JBLabel label = new JBLabel(
-          XmlStringUtil.wrapInHtml(getIDEName() + " generates module per source set to correctly model Gradle dependency rules.<br>" +
-                                   "In case of ???? consider disabling it"),
+          XmlStringUtil.wrapInHtml("Disable to ???"),
           UIUtil.ComponentStyle.SMALL);
         label.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
 
@@ -726,10 +725,9 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
       JBLabel label = new JBLabel(
         XmlStringUtil.wrapInHtml(
-                getIDEName() + " uses Gradle to build the project and run the tasks, " +
-                "to ensure that the results are the same as in the command line.<br><br>" +
-                "In a pure Java/Kotlin project, building by means of the IDE might be faster, thanks for the incremental compilation. " +
-                "Note, that the IDE compiler doesn’t support all Gradle features and the behavior might differ"),
+                "By default " +  getIDEName() + " uses Gradle to build the project and run the tasks.<br><br>" +
+                "In a pure Java/Kotlin project, building and running by means of the IDE might be faster, thanks to the optimizations. " +
+                "Note, that the IDE doesn’t support all Gradle features and the behavior might differ"),
         UIUtil.ComponentStyle.SMALL);
       label.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
 

@@ -96,8 +96,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       canvas.add(myGenerateImlFilesCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
 
       myGenerateImlFilesHint = new JBLabel(
-        XmlStringUtil.wrapInHtml("By default, project files (e.g. '.iml') are not generated, as all information is imported from Gradle scripts.\n" +
-                                 "Enabled this option, if you need to manually configure the imported modules (e.g. add Facets) and to share these settings via VCS\n"),
+        XmlStringUtil.wrapInHtml("Enable, if you need to manually configure the imported project in the IDE (e.g. add Facets) and to share these settings via VCS\n"),
         UIUtil.ComponentStyle.SMALL);
       myGenerateImlFilesHint.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
 
@@ -208,7 +207,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
 
     myServiceDirectoryLabel = new JBLabel("Gradle user home:");
     myServiceDirectoryHint = new JBLabel(
-      XmlStringUtil.wrapInHtml("You can override the location where Gradle stores downloaded files, " +
+      XmlStringUtil.wrapInHtml("Override the default location where Gradle stores downloaded files, " +
                                "e.g. to tune anti-virus software on Windows"),
       UIUtil.ComponentStyle.SMALL);
     myServiceDirectoryHint.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
