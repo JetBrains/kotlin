@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolveTask
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.testing.internal.getAggregatedTestTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
@@ -25,7 +26,12 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
     val npmResolveTaskHolder = project.locateOrRegisterTask<NpmResolveTask>("npmResolve") {}
 
     val testTaskName get() = lowerCamelCaseName(disambiguationClassifier, testTaskNameSuffix)
-    val testTask get() = project.tasks.maybeCreate(testTaskName)
+    val testTask
+        get() = project.getAggregatedTestTask(
+            name = testTaskName,
+            description = "Run JS tests for all platforms",
+            reportName = "jsAll"
+        )
 
     val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
     val runTask get() = project.tasks.maybeCreate(runTaskName)
