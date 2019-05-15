@@ -26,6 +26,8 @@ import com.intellij.packaging.impl.compiler.ArtifactCompileScope;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.testFramework.*;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.io.DirectoryContentSpec;
+import com.intellij.util.io.DirectoryContentSpecKt;
 import com.intellij.util.io.TestFileSystemBuilder;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashSet;
@@ -340,6 +342,10 @@ public abstract class BaseCompilerTestCase extends ModuleTestCase {
 
   protected static void assertOutput(Module module, TestFileSystemBuilder item) {
     assertOutput(module, item, false);
+  }
+
+  protected static void assertOutput(Module module, DirectoryContentSpec spec) {
+    DirectoryContentSpecKt.assertMatches(getOutputDir(module, false), spec);
   }
 
   protected static void assertOutput(Module module, TestFileSystemBuilder item, final boolean forTests) {
