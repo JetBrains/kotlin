@@ -484,6 +484,22 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return functionCall
     }
 
+    override fun transformTryExpression(tryExpression: FirTryExpression, data: Any?): CompositeTransformResult<FirStatement> {
+        val tryExpression = tryExpression.transformChildren(this, data) as FirTryExpression
+        if (tryExpression.resultType !is FirResolvedTypeRef) {
+            val type = commonSuperType((listOf(tryExpression.tryBlock) + tryExpression.catches.map { it.block }).mapNotNull {
+                val expression = it.statements.lastOrNull() as? FirExpression
+                if (expression != null) {
+                    (expression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(session, null, "No type for when branch result")
+                } else {
+                    FirImplicitUnitTypeRef(session, null)
+                }
+            })
+            if (type != null) tryExpression.resultType = type
+        }
+        return tryExpression.compose()
+    }
+
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): CompositeTransformResult<FirStatement> {
         if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
         val expectedTypeRef = data as FirTypeRef?

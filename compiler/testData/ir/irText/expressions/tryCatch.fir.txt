@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/tryCatch.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      TRY type=IrErrorType
+      TRY type=kotlin.Unit
         try: CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
         CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.test1
           VAR name:e type:kotlin.Throwable [val] 
@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/tryCatch.kt
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Int 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Int declared in <root>'
-        TRY type=IrErrorType
+        TRY type=kotlin.Int
           try: BLOCK type=kotlin.Int origin=null
             CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
             CONST Int type=kotlin.Int value=42

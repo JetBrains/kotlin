@@ -1,9 +1,9 @@
 FILE fqName:<root> fileName:/catchParameterAccess.kt
-  FUN name:test visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.Unit>) returnType:IrErrorType 
+  FUN name:test visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Nothing?
     VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (f: kotlin.Function0<kotlin.Unit>): IrErrorType declared in <root>'
-        TRY type=IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun test (f: kotlin.Function0<kotlin.Unit>): kotlin.Nothing? declared in <root>'
+        TRY type=kotlin.Nothing?
           try: ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
           CATCH parameter=val e: java.lang.Exception [val] declared in <root>.test
             VAR name:e type:java.lang.Exception [val] 
