@@ -80,8 +80,12 @@ internal open class TCServiceMessagesClient(
         if (test != null) {
             test.output(StdOut, actualText)
         } else {
-            print(actualText)
+            printNonTestOutput(actualText)
         }
+    }
+
+    protected open fun printNonTestOutput(actualText: String) {
+        print(actualText)
     }
 
     protected open val testNameSuffix: String?

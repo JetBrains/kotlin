@@ -22,6 +22,9 @@ open class TCServiceMessagesTestExecutionSpec(
 ) : TestExecutionSpec {
     internal open fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient =
         TCServiceMessagesClient(testResultProcessor, clientSettings, log)
+
+    internal open fun wrapExecute(body: () -> Unit) = body()
+    internal open fun showSuppressedOutput() = Unit
 }
 
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing")
@@ -35,51 +38,56 @@ class TCServiceMessagesTestExecutor(
     var shouldStop = false
 
     override fun execute(spec: TCServiceMessagesTestExecutionSpec, testResultProcessor: TestResultProcessor) {
-        val stdInPipe = PipedInputStream()
+        spec.wrapExecute {
+            val stdInPipe = PipedInputStream()
 
-        val rootOperation = buildOperationExecutor.currentOperation.parentId
+            val rootOperation = buildOperationExecutor.currentOperation.parentId
 
-        outputReaderThread = thread(name = "${spec.forkOptions} output reader") {
-            try {
-                val client = spec.createClient(testResultProcessor, log)
+            outputReaderThread = thread(name = "${spec.forkOptions} output reader") {
+                try {
+                    val client = spec.createClient(testResultProcessor, log)
 
-                client.root(rootOperation) {
-                    stdInPipe.reader().useLines { lines ->
-                        lines.forEach {
-                            if (shouldStop) {
-                                client.closeAll()
-                                return@thread
-                            }
+                    client.root(rootOperation) {
+                        stdInPipe.reader().useLines { lines ->
+                            lines.forEach {
+                                if (shouldStop) {
+                                    client.closeAll()
+                                    return@thread
+                                }
 
-                            try {
-                                ServiceMessage.parse(it, client)
-                            } catch (e: Exception) {
-                                log.error(
-                                    "Error while processing test process output message \"$it\"",
-                                    e
-                                )
+                                try {
+                                    ServiceMessage.parse(it, client)
+                                } catch (e: Exception) {
+                                    spec.showSuppressedOutput()
+                                    log.error(
+                                        "Error while processing test process output message \"$it\"",
+                                        e
+                                    )
+                                }
                             }
                         }
                     }
+                } catch (t: Throwable) {
+                    spec.showSuppressedOutput()
+                    log.error("Error creating TCServiceMessagesClient", t)
                 }
-            } catch (t: Throwable) {
-                log.error("Error creating TCServiceMessagesClient", t)
             }
-        }
 
-        val exec = execHandleFactory.newExec()
-        spec.forkOptions.copyTo(exec)
-        exec.args = spec.args
-        exec.standardOutput = PipedOutputStream(stdInPipe)
+            val exec = execHandleFactory.newExec()
+            spec.forkOptions.copyTo(exec)
+            exec.args = spec.args
+            exec.standardOutput = PipedOutputStream(stdInPipe)
 
-        execHandle = exec.build()
+            execHandle = exec.build()
 
-        execHandle!!.start()
-        val result = execHandle!!.waitForFinish()
-        outputReaderThread!!.join()
+            execHandle!!.start()
+            val result = execHandle!!.waitForFinish()
+            outputReaderThread!!.join()
 
-        if (spec.checkExitCode && result.exitValue != 0) {
-            error("$execHandle exited with errors (exit code: ${result.exitValue})")
+            if (spec.checkExitCode && result.exitValue != 0) {
+                spec.showSuppressedOutput()
+                error("$execHandle exited with errors (exit code: ${result.exitValue})")
+            }
         }
     }
 
