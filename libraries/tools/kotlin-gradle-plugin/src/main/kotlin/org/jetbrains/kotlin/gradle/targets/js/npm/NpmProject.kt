@@ -33,13 +33,8 @@ open class NpmProject(
     private val parentModules: NpmProjectModules?
         get() = project.parent?.npmProject?.modules
 
-    val hoistGradleNodeModules: Boolean
-        get() = project.nodeJs.root.packageManager.shouldHoistGradleNodeModules(project)
-
     val gradleNodeModulesDir: File
-        get() =
-            if (hoistGradleNodeModules) project.rootProject.npmProject.nodeModulesDir
-            else nodeModulesDir
+        get() = project.rootProject.npmProject.nodeModulesDir
 
     open fun compileOutput(compilationTask: Kotlin2JsCompile): File {
         return compileOutputCopyDest?.resolve(compilationTask.outputFile.name) ?: compilationTask.outputFile
