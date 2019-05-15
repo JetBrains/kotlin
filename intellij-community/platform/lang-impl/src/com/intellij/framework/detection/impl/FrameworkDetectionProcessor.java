@@ -64,7 +64,7 @@ public class FrameworkDetectionProcessor {
     myContext = context;
   }
 
-  public List<? extends DetectedFrameworkDescription> processRoots(List<File> roots) {
+  public List<? extends DetectedFrameworkDescription> processRoots(List<? extends File> roots) {
     myProcessedFiles = new HashSet<>();
     for (File root : roots) {
       VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(root);

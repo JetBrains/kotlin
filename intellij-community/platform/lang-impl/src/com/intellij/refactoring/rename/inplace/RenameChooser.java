@@ -51,7 +51,7 @@ abstract class RenameChooser {
 
   protected abstract void runRenameTemplate(Collection<Pair<PsiElement, TextRange>> stringUsages);
 
-  public void showChooser(final Collection<PsiReference> refs,
+  public void showChooser(final Collection<? extends PsiReference> refs,
                           final Collection<Pair<PsiElement, TextRange>> stringUsages) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       runRenameTemplate(

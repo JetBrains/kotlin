@@ -529,7 +529,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     }
 
     @Nullable
-    private String getPathName(@NotNull List<ActionGroup> path) {
+    private String getPathName(@NotNull List<? extends ActionGroup> path) {
       String name = "";
       for (ActionGroup group : path) {
         name = appendGroupName(name, group, group.getTemplatePresentation());
@@ -538,7 +538,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     }
 
     @Nullable
-    private String getActualPathName(@NotNull List<ActionGroup> path, @NotNull DataContext context) {
+    private String getActualPathName(@NotNull List<? extends ActionGroup> path, @NotNull DataContext context) {
       String name = "";
       for (ActionGroup group : path) {
         Presentation presentation = updateActionBeforeShow(group, context).getPresentation();

@@ -318,8 +318,8 @@ public class HippieWordCompletionHandler implements CodeInsightActionHandler {
 
   private static void addWordsForEditor(final EditorEx editor,
                                         final CamelHumpMatcher matcher,
-                                        final List<CompletionVariant> words,
-                                        final List<CompletionVariant> afterWords, boolean takeCaretsIntoAccount) {
+                                        final List<? super CompletionVariant> words,
+                                        final List<? super CompletionVariant> afterWords, boolean takeCaretsIntoAccount) {
     final CharSequence chars = editor.getDocument().getImmutableCharSequence();
     final int primaryCaretOffset;
     final int[] caretOffsets;

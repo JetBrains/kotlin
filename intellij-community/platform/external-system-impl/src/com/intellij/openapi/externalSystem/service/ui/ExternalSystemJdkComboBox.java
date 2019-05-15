@@ -113,14 +113,14 @@ public class ExternalSystemJdkComboBox extends ComboBoxWithWidePopup<ExternalSys
   public void setSetupButton(@NotNull JButton setUpButton,
                              @NotNull ProjectSdksModel jdksModel,
                              @Nullable String actionGroupTitle,
-                             @Nullable Condition<SdkTypeId> creationFilter) {
+                             @Nullable Condition<? super SdkTypeId> creationFilter) {
     setSetupButton(setUpButton, jdksModel, actionGroupTitle, creationFilter, null);
   }
 
   public void setSetupButton(@NotNull JButton setUpButton,
                              @NotNull ProjectSdksModel jdksModel,
                              @Nullable String actionGroupTitle,
-                             @Nullable Condition<SdkTypeId> creationFilter,
+                             @Nullable Condition<? super SdkTypeId> creationFilter,
                              @Nullable WizardContext wizardContext) {
     Arrays.stream(setUpButton.getActionListeners()).forEach(setUpButton::removeActionListener);
 

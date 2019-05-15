@@ -27,10 +27,10 @@ import java.util.List;
  * @author peter
  */
 public class CompletionSorterImpl extends CompletionSorter {
-  private final List<ClassifierFactory<LookupElement>> myMembers;
+  private final List<? extends ClassifierFactory<LookupElement>> myMembers;
   private final int myHashCode;
 
-  CompletionSorterImpl(List<ClassifierFactory<LookupElement>> members) {
+  CompletionSorterImpl(List<? extends ClassifierFactory<LookupElement>> members) {
     myMembers = members;
     myHashCode = myMembers.hashCode();
   }
@@ -109,7 +109,7 @@ public class CompletionSorterImpl extends CompletionSorter {
   }
 
   private static Classifier<LookupElement> createClassifier(final int index,
-                                                            final List<ClassifierFactory<LookupElement>> components,
+                                                            final List<? extends ClassifierFactory<LookupElement>> components,
                                                             Classifier<LookupElement> tail) {
     if (index == components.size()) {
       return tail;

@@ -102,7 +102,7 @@ public class ExternalSystemShortcutsManager implements Disposable {
     void shortcutsUpdated();
   }
 
-  public void scheduleKeymapUpdate(Collection<DataNode<TaskData>> taskData) {
+  public void scheduleKeymapUpdate(Collection<? extends DataNode<TaskData>> taskData) {
     ExternalSystemKeymapExtension.updateActions(myProject, taskData);
   }
 

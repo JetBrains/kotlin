@@ -77,7 +77,7 @@ class SmartPointerListModel<T> extends AbstractListModel<T> implements ModelDiff
   }
 
   @Override
-  public void addAllToModel(int index, List<T> elements) {
+  public void addAllToModel(int index, List<? extends T> elements) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     myDelegate.addAll(Math.min(index, getSize()), ContainerUtil.map(elements, this::wrap));
   }

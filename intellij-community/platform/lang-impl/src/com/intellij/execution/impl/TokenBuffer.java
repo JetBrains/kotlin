@@ -152,7 +152,7 @@ class TokenBuffer {
   }
 
   @NotNull
-  static CharSequence getRawText(@NotNull List<TokenInfo> tokens) {
+  static CharSequence getRawText(@NotNull List<? extends TokenInfo> tokens) {
     int size = 0;
     for (TokenInfo token : tokens) {
       size += token.getText().length();

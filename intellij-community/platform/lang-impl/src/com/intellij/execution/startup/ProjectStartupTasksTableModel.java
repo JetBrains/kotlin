@@ -38,8 +38,8 @@ public class ProjectStartupTasksTableModel extends AbstractTableModel implements
     myAllConfigurations = new ArrayList<>();
   }
 
-  public void setData(final Collection<RunnerAndConfigurationSettings> shared,
-                      final Collection<RunnerAndConfigurationSettings> local) {
+  public void setData(final Collection<? extends RunnerAndConfigurationSettings> shared,
+                      final Collection<? extends RunnerAndConfigurationSettings> local) {
     mySharedConfigurations.clear();
     myAllConfigurations.clear();
 
@@ -146,7 +146,7 @@ public class ProjectStartupTasksTableModel extends AbstractTableModel implements
     return myAllConfigurations;
   }
 
-  public void reValidateConfigurations(final Processor<RunnerAndConfigurationSettings> existenceChecker) {
+  public void reValidateConfigurations(final Processor<? super RunnerAndConfigurationSettings> existenceChecker) {
     final Iterator<RunnerAndConfigurationSettings> iterator = myAllConfigurations.iterator();
     while (iterator.hasNext()) {
       final RunnerAndConfigurationSettings settings = iterator.next();

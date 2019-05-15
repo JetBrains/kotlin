@@ -76,7 +76,7 @@ abstract class FileTemplateTabAsTree extends FileTemplateTab {
            descriptor instanceof FileTemplateGroupDescriptor ? null : descriptor.getFileName());
     }
 
-    FileTemplateNode(String name, Icon icon, List<FileTemplateNode> children) {
+    FileTemplateNode(String name, Icon icon, List<? extends FileTemplateNode> children) {
       this(name, icon, children, null);
     }
 
@@ -84,7 +84,7 @@ abstract class FileTemplateTabAsTree extends FileTemplateTab {
       this(templateName, icon, Collections.emptyList(), templateName);
     }
 
-    private FileTemplateNode(String name, Icon icon, List<FileTemplateNode> children, String templateName) {
+    private FileTemplateNode(String name, Icon icon, List<? extends FileTemplateNode> children, String templateName) {
       super(name);
       myIcon = icon;
       myTemplateName = templateName;

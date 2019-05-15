@@ -283,11 +283,11 @@ public class ContentEntryTreeEditor {
 
   private static class MyFileTreeBuilder extends FileTreeBuilder {
     MyFileTreeBuilder(JTree tree,
-                             DefaultTreeModel treeModel,
-                             AbstractTreeStructure treeStructure,
-                             Comparator<NodeDescriptor> comparator,
-                             FileChooserDescriptor descriptor,
-                             @Nullable Runnable onInitialized) {
+                      DefaultTreeModel treeModel,
+                      AbstractTreeStructure treeStructure,
+                      Comparator<? super NodeDescriptor> comparator,
+                      FileChooserDescriptor descriptor,
+                      @Nullable Runnable onInitialized) {
       super(tree, treeModel, treeStructure, comparator, descriptor, onInitialized);
     }
 

@@ -87,7 +87,7 @@ public class ArrangementRuleAliasesPanel extends JPanel implements DataProvider 
     return myControl.getRuleSequences();
   }
 
-  public void setRuleSequences(@Nullable Collection<StdArrangementMatchRule> rules) {
+  public void setRuleSequences(@Nullable Collection<? extends StdArrangementMatchRule> rules) {
     myControl.setRuleSequences(rules);
   }
 

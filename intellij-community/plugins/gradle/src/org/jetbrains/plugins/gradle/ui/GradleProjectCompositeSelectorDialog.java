@@ -156,7 +156,7 @@ public class GradleProjectCompositeSelectorDialog extends DialogWrapper {
     return tree;
   }
 
-  private void walkTree(Consumer<CheckedTreeNode> consumer) {
+  private void walkTree(Consumer<? super CheckedTreeNode> consumer) {
     final TreeModel treeModel = myTree.getModel();
     final Object root = treeModel.getRoot();
     if (!(root instanceof CheckedTreeNode)) return;

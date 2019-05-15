@@ -14,6 +14,11 @@ public class DefaultGradleConvention extends DefaultGradleProperty implements Gr
     super(name, typeFqn, null);
   }
 
+  @SuppressWarnings("unused")
+  private DefaultGradleConvention() {
+    super();
+  }
+
   public DefaultGradleConvention(GradleConvention convention) {
     this(convention.getName(), convention.getTypeFqn());
   }

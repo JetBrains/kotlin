@@ -605,7 +605,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
       }
     }
 
-    private String getEnableMessage(List<DataNode<Identifiable>> selectedModules, Set<DataNode<Identifiable>> deps) {
+    private String getEnableMessage(List<? extends DataNode<Identifiable>> selectedModules, Set<? extends DataNode<Identifiable>> deps) {
       if (deps.size() > MAX_DEPENDENCIES_TO_DESCRIBE || selectedModules.size() > MAX_DEPENDENCIES_TO_DESCRIBE) {
         return String.format(
           "%d disabled %s depend on %d selected %s. Would you like to enable %s too?",
@@ -624,7 +624,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
         listOfDependencies, deps.size() == 1 ? "it" : "them");
     }
 
-    private String getDisableMessage(Set<DataNode<Identifiable>> deps) {
+    private String getDisableMessage(Set<? extends DataNode<Identifiable>> deps) {
       if (deps.size() > MAX_DEPENDENCIES_TO_DESCRIBE) {
         return String.format("%d enabled modules depend on selected modules. Would you like to disable them too?", deps.size());
       }

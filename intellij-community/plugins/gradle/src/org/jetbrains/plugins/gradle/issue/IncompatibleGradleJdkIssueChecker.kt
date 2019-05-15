@@ -36,8 +36,8 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
       return null
     }
 
-    val myQuickFixes: MutableList<BuildIssueQuickFix>
-    myQuickFixes = ArrayList()
+    val quickFixes: MutableList<BuildIssueQuickFix>
+    quickFixes = ArrayList()
     val issueDescription = StringBuilder(rootCause.message)
     var gradleVersionUsed: GradleVersion? = null
     val gradleMinimumVersionRequired = GradleVersion.version("4.8.1")
@@ -59,15 +59,15 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
       val gradleVersionFix = GradleVersionQuickFix(issueData.projectPath, gradleMinimumVersionRequired, true)
       issueDescription.append(" - <a href=\"${gradleVersionFix.id}\">Upgrade Gradle wrapper to ${gradleMinimumVersionRequired.version} version " +
                               "and re-import the project</a>\n")
-      myQuickFixes.add(gradleVersionFix)
+      quickFixes.add(gradleVersionFix)
     }
     else {
       val wrapperSettingsOpenQuickFix = GradleWrapperSettingsOpenQuickFix(issueData.projectPath, "distributionUrl")
       val reimportQuickFix = ReimportQuickFix(issueData.projectPath)
       issueDescription.append(" - <a href=\"${wrapperSettingsOpenQuickFix.id}\">Open Gradle wrapper settings</a>, " +
                               "upgrade version to 4.8.1 or newer and <a href=\"${reimportQuickFix.id}\">reimport the project</a>\n")
-      myQuickFixes.add(wrapperSettingsOpenQuickFix)
-      myQuickFixes.add(reimportQuickFix)
+      quickFixes.add(wrapperSettingsOpenQuickFix)
+      quickFixes.add(reimportQuickFix)
     }
     if (!isToolingClientIssue && "AndroidStudio" != getPlatformPrefix()) { // Android Studio doesn't have Gradle JVM setting
       val gradleSettingsFix = GradleSettingsQuickFix(
@@ -77,13 +77,13 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
         },
         GradleBundle.message("gradle.settings.text.jvm.path")
       )
-      myQuickFixes.add(gradleSettingsFix)
+      quickFixes.add(gradleSettingsFix)
       issueDescription.append(" - Use Java 8 as Gradle JVM: <a href=\"${gradleSettingsFix.id}\">Fix Gradle settings</a> \n")
     }
 
     return object : BuildIssue {
       override val description: String = issueDescription.toString()
-      override val quickFixes = myQuickFixes
+      override val quickFixes = quickFixes
     }
   }
 }

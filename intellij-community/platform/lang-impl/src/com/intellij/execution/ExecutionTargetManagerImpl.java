@@ -168,7 +168,7 @@ public class ExecutionTargetManagerImpl extends ExecutionTargetManager implement
     }
   }
 
-  private ExecutionTarget getDefaultTarget(List<ExecutionTarget> suitable){
+  private ExecutionTarget getDefaultTarget(List<? extends ExecutionTarget> suitable){
     // The following cases are possible when we enter this method:
     // a) mySavedActiveTargetId == null. It means that we open / import project for the first time and there is no target selected
     // In this case we are trying to find the first ExecutionTarget that is ready, because we do not have any other conditions.
@@ -258,7 +258,7 @@ public class ExecutionTargetManagerImpl extends ExecutionTargetManager implement
     return Collections.unmodifiableList(ContainerUtil.filter(result, it -> doCanRun(configuration, it)));
   }
 
-  private boolean doWithEachNonCompoundWithSpecifiedTarget(@NotNull RunConfiguration configuration, @NotNull BiPredicate<RunConfiguration, ExecutionTarget> action) {
+  private boolean doWithEachNonCompoundWithSpecifiedTarget(@NotNull RunConfiguration configuration, @NotNull BiPredicate<? super RunConfiguration, ? super ExecutionTarget> action) {
     Set<RunConfiguration> recursionGuard = new THashSet<>();
     LinkedList<Pair<RunConfiguration, ExecutionTarget>> toProcess = new LinkedList<>();
     toProcess.add(Pair.create(configuration, null));

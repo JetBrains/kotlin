@@ -56,7 +56,7 @@ public class ArrangementGroupingRulesPanel extends JPanel implements DataProvide
     add(myControl, new GridBag().fillCell().weightx(1).weighty(1).insets(0, ArrangementConstants.HORIZONTAL_PADDING, 0, 0));
   }
 
-  public void setRules(@Nullable List<ArrangementGroupingRule> rules) {
+  public void setRules(@Nullable List<? extends ArrangementGroupingRule> rules) {
     myControl.setRules(rules);
   }
   

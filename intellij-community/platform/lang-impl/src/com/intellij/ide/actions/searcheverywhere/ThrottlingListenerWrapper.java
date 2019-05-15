@@ -50,14 +50,14 @@ class ThrottlingListenerWrapper implements MultiThreadSearcher.Listener {
   }
 
   @Override
-  public void elementsAdded(@NotNull List<SearchEverywhereFoundElementInfo> list) {
+  public void elementsAdded(@NotNull List<? extends SearchEverywhereFoundElementInfo> list) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     myBuffer.addEvent(new Event(Event.ADD, list));
     scheduleFlushBuffer();
   }
 
   @Override
-  public void elementsRemoved(@NotNull List<SearchEverywhereFoundElementInfo> list) {
+  public void elementsRemoved(@NotNull List<? extends SearchEverywhereFoundElementInfo> list) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     myBuffer.addEvent(new Event(Event.REMOVE, list));
     scheduleFlushBuffer();
@@ -98,9 +98,9 @@ class ThrottlingListenerWrapper implements MultiThreadSearcher.Listener {
     static final int ADD = 1;
 
     final int type;
-    final List<SearchEverywhereFoundElementInfo> items;
+    final List<? extends SearchEverywhereFoundElementInfo> items;
 
-    Event(int type, List<SearchEverywhereFoundElementInfo> items) {
+    Event(int type, List<? extends SearchEverywhereFoundElementInfo> items) {
       this.type = type;
       this.items = items;
     }
@@ -113,7 +113,7 @@ class ThrottlingListenerWrapper implements MultiThreadSearcher.Listener {
       myQueue.add(event);
     }
 
-    public void flush(BiConsumer<List<SearchEverywhereFoundElementInfo>, List<SearchEverywhereFoundElementInfo>> consumer) {
+    public void flush(BiConsumer<? super List<SearchEverywhereFoundElementInfo>, ? super List<SearchEverywhereFoundElementInfo>> consumer) {
       List<SearchEverywhereFoundElementInfo> added = new ArrayList<>();
       List<SearchEverywhereFoundElementInfo> removed = new ArrayList<>();
       myQueue.forEach(event -> {

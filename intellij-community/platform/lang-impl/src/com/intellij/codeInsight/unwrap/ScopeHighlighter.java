@@ -48,7 +48,7 @@ public class ScopeHighlighter {
     myRanger = ranger;
   }
 
-  public void highlight(@NotNull PsiElement wholeAffected, @NotNull List<PsiElement> toExtract) {
+  public void highlight(@NotNull PsiElement wholeAffected, @NotNull List<? extends PsiElement> toExtract) {
     Pair<TextRange, List<TextRange>> ranges = collectTextRanges(wholeAffected, toExtract);
 
     highlight(ranges);
@@ -70,7 +70,7 @@ public class ScopeHighlighter {
     }
   }
 
-  private Pair<TextRange, List<TextRange>> collectTextRanges(PsiElement wholeElement, List<PsiElement> elementsToExtract) {
+  private Pair<TextRange, List<TextRange>> collectTextRanges(PsiElement wholeElement, List<? extends PsiElement> elementsToExtract) {
     TextRange affectedRange = getRange(wholeElement);
     List<TextRange> rangesToExtract = new ArrayList<>();
 

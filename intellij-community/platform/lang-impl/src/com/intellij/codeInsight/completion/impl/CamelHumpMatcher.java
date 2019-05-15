@@ -182,7 +182,7 @@ public class CamelHumpMatcher extends PrefixMatcher {
     return myMatcher.matchingFragments(string);
   }
 
-  public int matchingDegree(String string, @Nullable FList<TextRange> fragments) {
+  public int matchingDegree(String string, @Nullable FList<? extends TextRange> fragments) {
     int underscoreEnd = skipUnderscores(string);
     if (underscoreEnd > 0) {
       FList<TextRange> ciRanges = myCaseInsensitiveMatcher.matchingFragments(string);

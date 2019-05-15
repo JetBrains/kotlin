@@ -33,9 +33,6 @@
     <orderEntry type="module" module-name="intellij.platform.testExtensions" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.execution.impl" />
     <orderEntry type="module" module-name="intellij.java.compiler.tests" scope="TEST" />
-    <orderEntry type="library" name="de.ruedigermoeller:fst" level="project" />
-    <orderEntry type="library" name="Objenesis" level="project" />
-    <orderEntry type="library" name="jackson" level="project" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
   </component>
 </module>

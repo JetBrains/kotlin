@@ -77,7 +77,7 @@ public class UsesMemberDependencyGraph<T extends NavigatablePsiElement, C extend
   }
 
 
-  private void buildDeps(T sourceElement, Set<T> members) {
+  private void buildDeps(T sourceElement, Set<? extends T> members) {
     if (myRecursive) {
       buildDepsRecursively(sourceElement, members);
     }
@@ -93,7 +93,7 @@ public class UsesMemberDependencyGraph<T extends NavigatablePsiElement, C extend
     }
   }
 
-  private void buildDepsRecursively(final T sourceElement, @Nullable final Set<T> members) {
+  private void buildDepsRecursively(final T sourceElement, @Nullable final Set<? extends T> members) {
     if (members != null) {
       for (T member : members) {
         if (!myDependencies.contains(member)) {

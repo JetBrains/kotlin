@@ -177,7 +177,7 @@ public class LiveTemplateSettingsEditor extends JPanel {
     add(panel, BorderLayout.CENTER);
   }
 
-  private void applyVariables(final List<Variable> variables) {
+  private void applyVariables(final List<? extends Variable> variables) {
     myTemplate.removeAllParsed();
     for (Variable variable : variables) {
       myTemplate.addVariable(variable.getName(), variable.getExpressionString(), variable.getDefaultValueString(),
@@ -434,7 +434,7 @@ public class LiveTemplateSettingsEditor extends JPanel {
   }
 
   @NotNull
-  private static List<TemplateContextType> sortContexts(Collection<TemplateContextType> contextTypes) {
+  private static List<TemplateContextType> sortContexts(Collection<? extends TemplateContextType> contextTypes) {
     return ContainerUtil.sorted(contextTypes, (o1, o2) -> StringUtil.compare(presentableName(o1), presentableName(o2), true));
   }
 

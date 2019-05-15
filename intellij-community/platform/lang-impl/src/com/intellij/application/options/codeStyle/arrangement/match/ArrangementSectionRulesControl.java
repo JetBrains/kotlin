@@ -121,7 +121,7 @@ public class ArrangementSectionRulesControl extends ArrangementMatchingRulesCont
     return result;
   }
 
-  public void setSections(@Nullable List<ArrangementSectionRule> sections) {
+  public void setSections(@Nullable List<? extends ArrangementSectionRule> sections) {
     final List<StdArrangementMatchRule> rules = sections == null ? null : ArrangementUtil.collectMatchRules(sections);
     myComponents.clear();
     getModel().clear();

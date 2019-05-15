@@ -247,7 +247,7 @@ public abstract class AbstractListBuilder {
     }
   }
 
-  private AbstractTreeNode performDeepSearch(Object[] nodes, Object element, Set<AbstractTreeNode> visited) {
+  private AbstractTreeNode performDeepSearch(Object[] nodes, Object element, Set<? super AbstractTreeNode> visited) {
     for (Object node1 : nodes) {
       AbstractTreeNode node = (AbstractTreeNode)node1;
       if (nodeIsAcceptableForElement(node, element)) return node;

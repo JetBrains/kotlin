@@ -328,11 +328,9 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
         else {
           greeting = ExternalSystemBundle.message("run.text.starting.single.task", startDateTime, settingsDescription) + "\n";
         }
+        processHandler.notifyTextAvailable(greeting + "\n", ProcessOutputTypes.SYSTEM);
         try (BuildEventDispatcher eventDispatcher = new ExternalSystemEventDispatcher(task.getId(), progressListener, false)) {
           ExternalSystemTaskNotificationListenerAdapter taskListener = new ExternalSystemTaskNotificationListenerAdapter() {
-
-            private boolean myResetGreeting = true;
-
             @Override
             public void onStart(@NotNull ExternalSystemTaskId id, String workingDir) {
               if (progressListener != null) {
@@ -344,7 +342,6 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
                 progressListener.onEvent(
                   new StartBuildEventImpl(new DefaultBuildDescriptor(id, executionName, workingDir, eventTime), "running...")
                     .withProcessHandler(processHandler, view -> {
-                      processHandler.notifyTextAvailable(greeting + "\n", ProcessOutputTypes.SYSTEM);
                       foldGreetingOrFarewell(consoleView, greeting, true);
                     })
                     .withContentDescriptorSupplier(() -> myContentDescriptor)
@@ -358,10 +355,6 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
 
             @Override
             public void onTaskOutput(@NotNull ExternalSystemTaskId id, @NotNull String text, boolean stdOut) {
-              if (myResetGreeting) {
-                processHandler.notifyTextAvailable("\r", ProcessOutputTypes.SYSTEM);
-                myResetGreeting = false;
-              }
               if (consoleView != null) {
                 consoleManager.onOutput(consoleView, processHandler, text, stdOut ? ProcessOutputTypes.STDOUT : ProcessOutputTypes.STDERR);
               }

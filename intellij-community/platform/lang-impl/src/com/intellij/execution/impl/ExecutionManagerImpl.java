@@ -137,7 +137,7 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
 
   private static boolean userApprovesStopForIncompatibleConfigurations(Project project,
                                                                        String configName,
-                                                                       List<RunContentDescriptor> runningIncompatibleDescriptors) {
+                                                                       List<? extends RunContentDescriptor> runningIncompatibleDescriptors) {
     RunManagerImpl runManager = RunManagerImpl.getInstanceImpl(project);
     final RunManagerConfig config = runManager.getConfig();
     if (!config.isStopIncompatibleRequiresConfirmation()) return true;
@@ -489,7 +489,7 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
   }
 
   @NotNull
-  public List<RunContentDescriptor> getRunningDescriptors(@NotNull Condition<RunnerAndConfigurationSettings> condition) {
+  public List<RunContentDescriptor> getRunningDescriptors(@NotNull Condition<? super RunnerAndConfigurationSettings> condition) {
     List<RunContentDescriptor> result = new SmartList<>();
     for (Trinity<RunContentDescriptor, RunnerAndConfigurationSettings, Executor> trinity : myRunningConfigurations) {
       if (trinity.getSecond() != null && condition.value(trinity.getSecond())) {
@@ -503,7 +503,7 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
   }
 
   @NotNull
-  public List<RunContentDescriptor> getDescriptors(@NotNull Condition<RunnerAndConfigurationSettings> condition) {
+  public List<RunContentDescriptor> getDescriptors(@NotNull Condition<? super RunnerAndConfigurationSettings> condition) {
     List<RunContentDescriptor> result = new SmartList<>();
     for (Trinity<RunContentDescriptor, RunnerAndConfigurationSettings, Executor> trinity : myRunningConfigurations) {
       if (trinity.getSecond() != null && condition.value(trinity.getSecond())) {

@@ -187,7 +187,7 @@ public class CodeStyleSettingsNameProvider implements CodeStyleSettingsCustomiza
     return myValue;
   }
 
-  public String getSettings(List<Value> values) {
+  public String getSettings(List<? extends Value> values) {
     StringBuilder builder = new StringBuilder();
     for (SettingsType settingsType : LanguageCodeStyleSettingsProvider.SettingsType.values()) {
       builder.append("<br><b><u>").append(getSettingsTypeName(settingsType)).append("</u></b>");

@@ -268,7 +268,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
       patterns.stream().sorted(String.CASE_INSENSITIVE_ORDER).forEach(myListModel::addElement);
     }
 
-    void applyTo(List<String> patterns) {
+    void applyTo(List<? super String> patterns) {
       patterns.clear();
       for (Object o : getListItems()) {
         patterns.add((String)o);

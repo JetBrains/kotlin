@@ -6,16 +6,16 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
 
 /*
- * For now, we decide about AB experiment inside from IDE using user id and salt
+ * For now, we decide about AB experiment inside IDE using user id and salt
  */
 class EmulatedExperiment {
     companion object {
-        const val GROUP_A_EXPERIMENT_VERSION: Int = 5
-        const val GROUP_B_EXPERIMENT_VERSION: Int = 6
-        const val IS_ENABLED = false
+        const val GROUP_A_EXPERIMENT_VERSION: Int = 7
+        const val GROUP_B_EXPERIMENT_VERSION: Int = 8
+        const val IS_ENABLED = true
 
         fun shouldRank(experimentVersion: Int): Boolean {
-            return experimentVersion == GROUP_B_EXPERIMENT_VERSION && !Registry.`is`("java.completion.ml.exit.experiment")
+            return experimentVersion == GROUP_B_EXPERIMENT_VERSION && !Registry.`is`("completion.stats.exit.experiment")
         }
     }
 
@@ -26,7 +26,7 @@ class EmulatedExperiment {
         }
 
         val userId = DeviceIdManager.getOrGenerateId()
-        val hash = (userId + salt).hashCode() % 10
+        val hash = (userId + salt).hashCode() % 16
         return when (hash) {
             3 -> GROUP_A_EXPERIMENT_VERSION
             4 -> GROUP_B_EXPERIMENT_VERSION

@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CopyReferenceUtil {
-  static void highlight(Editor editor, Project project, List<PsiElement> elements) {
+  static void highlight(Editor editor, Project project, List<? extends PsiElement> elements) {
     HighlightManager highlightManager = HighlightManager.getInstance(project);
     EditorColorsManager manager = EditorColorsManager.getInstance();
     TextAttributes attributes = manager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);

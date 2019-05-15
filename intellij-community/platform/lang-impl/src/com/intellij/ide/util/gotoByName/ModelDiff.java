@@ -68,7 +68,7 @@ public class ModelDiff {
   public interface Model<T> {
     void addToModel(int index, T element);
 
-    default void addAllToModel(int index, List<T> elements) {
+    default void addAllToModel(int index, List<? extends T> elements) {
       for (int i = 0; i < elements.size(); i++) {
         addToModel(index + i, elements.get(i));
       }
@@ -109,9 +109,9 @@ public class ModelDiff {
   private static class InsertCmd<T> implements Cmd {
     private final Model<T> myListModel;
     private final int idx;
-    private final List<T> elements;
+    private final List<? extends T> elements;
 
-    private InsertCmd(@NotNull Model<T> model, final int idx, @NotNull List<T> elements) {
+    private InsertCmd(@NotNull Model<T> model, final int idx, @NotNull List<? extends T> elements) {
       myListModel = model;
       this.idx = idx;
       this.elements = elements;

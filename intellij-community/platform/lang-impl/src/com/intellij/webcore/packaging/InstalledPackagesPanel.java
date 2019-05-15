@@ -544,7 +544,7 @@ public class InstalledPackagesPanel extends JPanel {
     });
   }
 
-  private Map<String, RepoPackage> buildNameToPackageMap(List<RepoPackage> packages) {
+  private Map<String, RepoPackage> buildNameToPackageMap(List<? extends RepoPackage> packages) {
     try {
       return doBuildNameToPackageMap(packages);
     }
@@ -556,7 +556,7 @@ public class InstalledPackagesPanel extends JPanel {
     }
   }
 
-  private static Map<String, RepoPackage> doBuildNameToPackageMap(List<RepoPackage> packages) {
+  private static Map<String, RepoPackage> doBuildNameToPackageMap(List<? extends RepoPackage> packages) {
     final Map<String, RepoPackage> packageMap = new HashMap<>();
     for (RepoPackage aPackage : packages) {
       packageMap.put(aPackage.getName(), aPackage);

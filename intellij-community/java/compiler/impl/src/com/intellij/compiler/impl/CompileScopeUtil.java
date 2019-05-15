@@ -143,7 +143,7 @@ public class CompileScopeUtil {
     return scope instanceof OneProjectItemCompileScope || scope instanceof FileSetCompileScope;
   }
 
-  public static TargetTypeBuildScope createScopeForArtifacts(Collection<Artifact> artifacts,
+  public static TargetTypeBuildScope createScopeForArtifacts(Collection<? extends Artifact> artifacts,
                                                              boolean forceBuild) {
     TargetTypeBuildScope.Builder builder = TargetTypeBuildScope.newBuilder()
                                                                .setTypeId(ArtifactBuildTargetType.INSTANCE.getTypeId())

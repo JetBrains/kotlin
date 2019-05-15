@@ -703,7 +703,7 @@ public class CompileDriver {
     }
   }
 
-  private void showCyclicModulesHaveDifferentLanguageLevel(Set<Module> modulesInChunk) {
+  private void showCyclicModulesHaveDifferentLanguageLevel(Set<? extends Module> modulesInChunk) {
     Module firstModule = ContainerUtil.getFirstItem(modulesInChunk);
     LOG.assertTrue(firstModule != null);
     String moduleNameToSelect = firstModule.getName();
@@ -713,7 +713,7 @@ public class CompileDriver {
     showConfigurationDialog(moduleNameToSelect, null);
   }
 
-  private void showCyclicModulesHaveDifferentJdksError(Set<Module> modulesInChunk) {
+  private void showCyclicModulesHaveDifferentJdksError(Set<? extends Module> modulesInChunk) {
     Module firstModule = ContainerUtil.getFirstItem(modulesInChunk);
     LOG.assertTrue(firstModule != null);
     String moduleNameToSelect = firstModule.getName();
@@ -723,7 +723,7 @@ public class CompileDriver {
     showConfigurationDialog(moduleNameToSelect, null);
   }
 
-  private static String getModulesString(Collection<Module> modulesInChunk) {
+  private static String getModulesString(Collection<? extends Module> modulesInChunk) {
     return StringUtil.join(modulesInChunk, module->"\""+module.getName()+"\"", "\n");
   }
 

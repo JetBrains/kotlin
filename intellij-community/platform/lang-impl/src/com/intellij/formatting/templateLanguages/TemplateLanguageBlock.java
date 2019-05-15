@@ -87,7 +87,7 @@ public abstract class TemplateLanguageBlock extends AbstractBlock implements Blo
     myForeignChildren.add(foreignChild);
   }
 
-  void addForeignChildren(List<DataLanguageBlockWrapper> foreignChildren) {
+  void addForeignChildren(List<? extends DataLanguageBlockWrapper> foreignChildren) {
     initForeignChildren();
     myForeignChildren.addAll(foreignChildren);
   }

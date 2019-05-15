@@ -364,9 +364,9 @@ public class ExecutorRegistryImpl extends ExecutorRegistry implements Disposable
   // RunExecutorSettings configurations can be modified, so we request current childExecutors on each AnAction#update call
   public static class ExecutorGroupActionGroup extends ActionGroup implements DumbAware {
     private final ExecutorGroup myExecutorGroup;
-    private final Function<Executor, AnAction> myChildConverter;
+    private final Function<? super Executor, ? extends AnAction> myChildConverter;
 
-    private ExecutorGroupActionGroup(ExecutorGroup executorGroup, Function<Executor, AnAction> childConverter) {
+    private ExecutorGroupActionGroup(ExecutorGroup executorGroup, Function<? super Executor, ? extends AnAction> childConverter) {
       myExecutorGroup = executorGroup;
       myChildConverter = childConverter;
     }

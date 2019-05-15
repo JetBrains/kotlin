@@ -10,7 +10,7 @@ class KotlinBuildScriptDataBuilder : BuildScriptDataBuilder {
 
   constructor(buildScriptFile: VirtualFile, gradleVersion: GradleVersion) : super(buildScriptFile, gradleVersion)
 
-  override fun addPluginsLines(lines: MutableList<String>, padding: Function<String, String>) {
+  override fun addPluginsLines(lines: MutableList<in String>, padding: Function<in String, String>) {
     if (plugins.isEmpty()) {
       return
     }

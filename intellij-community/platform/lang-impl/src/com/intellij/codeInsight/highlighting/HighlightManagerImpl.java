@@ -124,7 +124,7 @@ public class HighlightManagerImpl extends HighlightManager {
                                       @NotNull PsiReference[] occurrences,
                                       @NotNull TextAttributes attributes,
                                       boolean hideByTextChange,
-                                      Collection<RangeHighlighter> outHighlighters) {
+                                      Collection<? super RangeHighlighter> outHighlighters) {
     if (occurrences.length == 0) return;
     int flags = HIDE_BY_ESCAPE;
     if (hideByTextChange) {
@@ -160,7 +160,7 @@ public class HighlightManagerImpl extends HighlightManager {
                                      int end,
                                      TextAttributes attributes,
                                      int flags,
-                                     Collection<RangeHighlighter> outHighlighters,
+                                     Collection<? super RangeHighlighter> outHighlighters,
                                      Color scrollMarkColor) {
     RangeHighlighter highlighter = addSegmentHighlighter(editor, start, end, attributes, flags);
     if (highlighter instanceof RangeHighlighterEx) ((RangeHighlighterEx)highlighter).setVisibleIfFolded(true);
@@ -178,7 +178,7 @@ public class HighlightManagerImpl extends HighlightManager {
                                 int endOffset,
                                 @NotNull TextAttributes attributes,
                                 boolean hideByTextChange,
-                                @Nullable Collection<RangeHighlighter> highlighters) {
+                                @Nullable Collection<? super RangeHighlighter> highlighters) {
     addRangeHighlight(editor, startOffset, endOffset, attributes, hideByTextChange, false, highlighters);
   }
 
@@ -189,7 +189,7 @@ public class HighlightManagerImpl extends HighlightManager {
                                 @NotNull TextAttributes attributes,
                                 boolean hideByTextChange,
                                 boolean hideByAnyKey,
-                                @Nullable Collection<RangeHighlighter> highlighters) {
+                                @Nullable Collection<? super RangeHighlighter> highlighters) {
     int flags = HIDE_BY_ESCAPE;
     if (hideByTextChange) {
       flags |= HIDE_BY_TEXT_CHANGE;
@@ -208,7 +208,7 @@ public class HighlightManagerImpl extends HighlightManager {
                                       @NotNull PsiElement[] elements,
                                       @NotNull TextAttributes attributes,
                                       boolean hideByTextChange,
-                                      Collection<RangeHighlighter> outHighlighters) {
+                                      Collection<? super RangeHighlighter> outHighlighters) {
     if (elements.length == 0) return;
     int flags = HIDE_BY_ESCAPE;
     if (hideByTextChange) {

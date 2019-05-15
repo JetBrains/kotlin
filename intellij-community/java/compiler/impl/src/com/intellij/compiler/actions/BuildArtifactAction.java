@@ -332,7 +332,7 @@ public class BuildArtifactAction extends DumbAwareAction {
     }
 
     @Override
-    public boolean hasSubstep(List<ArtifactPopupItem> selectedValues) {
+    public boolean hasSubstep(List<? extends ArtifactPopupItem> selectedValues) {
       return true;
     }
 

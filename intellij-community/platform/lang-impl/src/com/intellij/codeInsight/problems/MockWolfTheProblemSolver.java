@@ -25,17 +25,17 @@ public class MockWolfTheProblemSolver extends WolfTheProblemSolver {
   }
 
   @Override
-  public void weHaveGotProblems(@NotNull final VirtualFile virtualFile, @NotNull final List<Problem> problems) {
+  public void weHaveGotProblems(@NotNull final VirtualFile virtualFile, @NotNull final List<? extends Problem> problems) {
     if (myDelegate != null) myDelegate.weHaveGotProblems(virtualFile, problems);
   }
 
   @Override
-  public void weHaveGotNonIgnorableProblems(@NotNull VirtualFile virtualFile, @NotNull List<Problem> problems) {
+  public void weHaveGotNonIgnorableProblems(@NotNull VirtualFile virtualFile, @NotNull List<? extends Problem> problems) {
     if (myDelegate != null) myDelegate.weHaveGotNonIgnorableProblems(virtualFile, problems);
   }
 
   @Override
-  public boolean hasProblemFilesBeneath(@NotNull final Condition<VirtualFile> condition) {
+  public boolean hasProblemFilesBeneath(@NotNull final Condition<? super VirtualFile> condition) {
     return false;
   }
 
@@ -74,7 +74,7 @@ public class MockWolfTheProblemSolver extends WolfTheProblemSolver {
   }
 
   @Override
-  public void reportProblems(final VirtualFile file, Collection<Problem> problems) {
+  public void reportProblems(final VirtualFile file, Collection<? extends Problem> problems) {
     if (myDelegate != null) myDelegate.reportProblems(file,problems);
   }
 

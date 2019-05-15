@@ -70,7 +70,7 @@ public class ProjectDataManagerImplTest extends PlatformTestCase {
     final DataNode<LibraryDependencyData> badNode =
       new DataNode<LibraryDependencyData>(ProjectKeys.LIBRARY_DEPENDENCY, data, null) {
         @Override
-        public void prepareData(@NotNull ClassLoader... loaders) {
+        public void deserializeData(@NotNull Collection<? extends ClassLoader> loaders) {
           // mock a node that failed to deserialize it's data.
           ReflectionUtil.resetField(this, "myData");
           throw new RuntimeException("Broken node can not be prepared properly");

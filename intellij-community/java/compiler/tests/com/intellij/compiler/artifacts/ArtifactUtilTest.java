@@ -120,7 +120,7 @@ public class ArtifactUtilTest extends PackagingElementsTestCase {
     private final StringBuilder myLog = new StringBuilder();
 
     @Override
-    public boolean process(@NotNull CompositePackagingElement<?> element, @NotNull List<Pair<Artifact,CompositePackagingElement<?>>> parents, @NotNull Artifact artifact) {
+    public boolean process(@NotNull CompositePackagingElement<?> element, @NotNull List<? extends Pair<Artifact, CompositePackagingElement<?>>> parents, @NotNull Artifact artifact) {
       myLog.append(artifact.getName()).append(":").append(element.getName());
       for (Pair<Artifact, CompositePackagingElement<?>> parent : parents) {
         myLog.append("/").append(parent.getSecond().getName());

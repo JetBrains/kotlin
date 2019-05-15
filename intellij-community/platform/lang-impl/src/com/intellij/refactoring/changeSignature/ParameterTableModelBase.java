@@ -55,7 +55,7 @@ public abstract class ParameterTableModelBase<P extends ParameterInfo, TableItem
     addRow(createRowItem(null));
   }
 
-  public void setParameterInfos(List<P> parameterInfos) {
+  public void setParameterInfos(List<? extends P> parameterInfos) {
     List<TableItem> items = new ArrayList<>(parameterInfos.size());
     for (P parameterInfo : parameterInfos) {
       items.add(createRowItem(parameterInfo));

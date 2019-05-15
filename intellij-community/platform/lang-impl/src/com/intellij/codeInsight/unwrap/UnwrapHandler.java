@@ -92,7 +92,7 @@ public class UnwrapHandler implements CodeInsightActionHandler {
     return new MyUnwrapAction(p, ed, u, el);
   }
 
-  protected void selectOption(List<MyUnwrapAction> options, Editor editor, PsiFile file) {
+  protected void selectOption(List<? extends MyUnwrapAction> options, Editor editor, PsiFile file) {
     if (options.isEmpty()) return;
 
     if (!getUnwrapDescription(file).showOptionsDialog() ||

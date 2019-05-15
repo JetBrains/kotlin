@@ -289,6 +289,9 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
               myConsoleViewHandler.addOutput(parentNode, event);
               myConsoleViewHandler.addOutput(parentNode, "\n", true);
             }
+            if (parentNode != null) {
+              reportMessageKind(messageEvent, parentNode);
+            }
             myConsoleViewHandler.addOutput(currentNode, event);
           }
           currentNode.setAutoExpandNode(currentNode == buildProgressRootNode || parentNode == buildProgressRootNode);
@@ -354,6 +357,26 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       }
     }
     scheduleUpdate(currentNode);
+  }
+
+  private void reportMessageKind(@NotNull MessageEvent messageEvent, @NotNull ExecutionNode parentNode) {
+    final MessageEvent.Kind eventKind = messageEvent.getKind();
+    if (eventKind == MessageEvent.Kind.ERROR || eventKind == MessageEvent.Kind.WARNING || eventKind == MessageEvent.Kind.INFO) {
+      SimpleNode p = parentNode;
+      do {
+        ExecutionNode executionNode = (ExecutionNode)p;
+        boolean warningOrInfoUpdate =
+          (eventKind == MessageEvent.Kind.WARNING && !executionNode.hasWarnings()) ||
+          (eventKind == MessageEvent.Kind.INFO && !executionNode.hasInfos());
+        executionNode.reportChildMessageKind(eventKind);
+        if (warningOrInfoUpdate) {
+          executionNode.cleanUpCache();
+          scheduleUpdate(executionNode);
+        }
+      }
+      while ((p = p.getParent()) instanceof ExecutionNode);
+      scheduleUpdate(getRootElement());
+    }
   }
 
   private void showErrorIfFirst(@NotNull ExecutionNode node, @Nullable Navigatable navigatable) {
@@ -438,8 +461,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     List<Failure> failures;
     EventResult result = failureNode.getResult();
     if (result instanceof FailureResult) {
-      failures = ContainerUtil.newArrayList();
-      failures.addAll(((FailureResult)result).getFailures());
+      failures = new ArrayList<>(((FailureResult)result).getFailures());
       failures.add(failure);
     }
     else {
@@ -574,9 +596,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     Object messageEventParentId = messageEvent.getParentId();
     if (messageEventParentId == null) return null;
 
-    String group = messageEvent.getGroup();
-    String groupNodeId = group.hashCode() + messageEventParentId.toString();
-    final MessageEvent.Kind eventKind = messageEvent.getKind();
     if (messageEvent instanceof FileMessageEvent) {
       FilePosition filePosition = ((FileMessageEvent)messageEvent).getFilePosition();
       String filePath = FileUtil.toSystemIndependentName(filePosition.getFile().getPath());
@@ -587,9 +606,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         parentsPath = myWorkingDir;
       }
 
-      String fileNodeId = groupNodeId + filePath;
       relativePath = isEmpty(parentsPath) ? filePath : FileUtil.getRelativePath(parentsPath, filePath, '/');
-      parentNode = getOrCreateMessagesNode(messageEvent, fileNodeId, parentNode, relativePath,
+      parentNode = getOrCreateMessagesNode(messageEvent, filePath, parentNode, relativePath,
                                            () -> {
                                              VirtualFile file = VfsUtil.findFileByIoFile(filePosition.getFile(), false);
                                              if (file != null) {
@@ -597,23 +615,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
                                              }
                                              return null;
                                            }, messageEvent.getNavigatable(myProject), nodesMap, myProject);
-    }
-
-    if (eventKind == MessageEvent.Kind.ERROR || eventKind == MessageEvent.Kind.WARNING || eventKind == MessageEvent.Kind.INFO) {
-      SimpleNode p = parentNode;
-      do {
-        ExecutionNode executionNode = (ExecutionNode)p;
-        boolean warningOrInfoUpdate =
-          (eventKind == MessageEvent.Kind.WARNING && !executionNode.hasWarnings()) ||
-          (eventKind == MessageEvent.Kind.INFO && !executionNode.hasInfos());
-        executionNode.reportChildMessageKind(eventKind);
-        if (warningOrInfoUpdate) {
-          executionNode.cleanUpCache();
-          scheduleUpdate(executionNode);
-        }
-      }
-      while ((p = p.getParent()) instanceof ExecutionNode);
-      scheduleUpdate(getRootElement());
     }
     return parentNode;
   }
@@ -721,7 +722,13 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       myProject = project;
       myPanel = new JPanel(new BorderLayout());
       myViewSettingsProvider = buildViewSettingsProvider;
-      myView = new CompositeView<>(null);
+      myView = new CompositeView<ExecutionConsole>(null) {
+        @Override
+        public void addView(@NotNull ExecutionConsole view, @NotNull String viewName, boolean enable) {
+          super.addView(view, viewName, enable);
+          UIUtil.removeScrollBorder(view.getComponent());
+        }
+      };
       if (executionConsole != null && buildViewSettingsProvider.isSideBySideView()) {
         String nodeConsoleViewName = getNodeConsoleViewName(buildProgressRootNode);
         myView.addView(executionConsole, nodeConsoleViewName, true);
@@ -734,9 +741,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       }
       JComponent consoleComponent = emptyConsole.getComponent();
       consoleComponent.setFocusable(true);
-      final Color editorBackground = EditorColorsManager.getInstance().getGlobalScheme().getDefaultBackground();
-      consoleComponent.setBorder(new CompoundBorder(IdeBorderFactory.createBorder(SideBorder.RIGHT),
-                                                    new SideBorder(editorBackground, SideBorder.LEFT)));
       myPanel.add(myView.getComponent(), BorderLayout.CENTER);
       DefaultActionGroup consoleActionsGroup = new DefaultActionGroup();
       consoleActionsGroup.add(new ToggleUseSoftWrapsToolbarAction(SoftWrapAppliancePlaces.CONSOLE) {

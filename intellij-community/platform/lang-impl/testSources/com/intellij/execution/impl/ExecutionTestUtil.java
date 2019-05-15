@@ -53,7 +53,7 @@ public class ExecutionTestUtil {
   }
 
   @NotNull
-  private static String stringifyDescriptors(@NotNull List<RunContentDescriptor> descriptors) {
+  private static String stringifyDescriptors(@NotNull List<? extends RunContentDescriptor> descriptors) {
     return "Actual descriptors: " + StringUtil.join(descriptors, descriptor -> {
       if (descriptor == null) {
         return "null";

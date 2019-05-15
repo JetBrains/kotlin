@@ -381,7 +381,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
 
   @Override
   public <K> boolean processAllKeys(@NotNull StubIndexKey<K, ?> indexKey,
-                                    @NotNull Processor<K> processor,
+                                    @NotNull Processor<? super K> processor,
                                     @NotNull GlobalSearchScope scope,
                                     @Nullable IdFilter idFilter) {
     final MyIndex<K> index = (MyIndex<K>)getAsyncState().myIndices.get(indexKey); // wait for initialization to finish

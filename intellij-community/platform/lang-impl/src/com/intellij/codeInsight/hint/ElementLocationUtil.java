@@ -40,7 +40,7 @@ public class ElementLocationUtil {
     label.setIcon(ref.get());
   }
 
-  public static String renderElementLocation(final PsiElement element, final Ref<Icon> icon) {
+  public static String renderElementLocation(final PsiElement element, final Ref<? super Icon> icon) {
     if (element != null) {
       PsiFile file = element.getContainingFile();
       VirtualFile vfile = file == null ? null : file.getVirtualFile();

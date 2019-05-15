@@ -176,7 +176,7 @@ public final class MacroManager {
   private static String expandMacroSet(@Nullable String str,
                                        boolean firstQueueExpand,
                                        DataContext dataContext,
-                                       Iterator<Macro> macros,
+                                       Iterator<? extends Macro> macros,
                                        @Nullable String defaultExpandValue) throws ExecutionCancelledException {
     if (str == null) return null;
     while (macros.hasNext()) {

@@ -154,7 +154,7 @@ public class FacetManagerImpl extends FacetManager implements ModuleComponent, P
     }
   }
 
-  private void addFacets(final List<FacetState> facetStates, final Facet underlyingFacet, ModifiableFacetModel model) {
+  private void addFacets(final List<? extends FacetState> facetStates, final Facet underlyingFacet, ModifiableFacetModel model) {
 
     FacetTypeRegistry registry = FacetTypeRegistry.getInstance();
     for (FacetState child : facetStates) {
@@ -308,7 +308,7 @@ public class FacetManagerImpl extends FacetManager implements ModuleComponent, P
   }
 
   @NotNull
-  FacetManagerState saveState(Predicate<Facet> filter) {
+  FacetManagerState saveState(Predicate<? super Facet> filter) {
     FacetManagerState managerState = new FacetManagerState();
 
     final Facet[] facets = getSortedFacets();

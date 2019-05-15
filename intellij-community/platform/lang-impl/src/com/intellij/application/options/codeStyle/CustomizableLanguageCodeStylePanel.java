@@ -151,7 +151,7 @@ public abstract class CustomizableLanguageCodeStylePanel extends CodeStyleAbstra
     throw new UnsupportedOperationException();
   }
 
-  protected <T extends OrderedOption>List<T> sortOptions(Collection<T> options) {
+  protected <T extends OrderedOption>List<T> sortOptions(Collection<? extends T> options) {
     Set<String> names = new THashSet<>(ContainerUtil.map(options, (Function<OrderedOption, String>)option -> option.getOptionName()));
 
     List<T> order = new ArrayList<>(options.size());

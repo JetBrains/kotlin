@@ -32,13 +32,13 @@ public class CompilerUtil {
     return path;
   }
 
-  public static void refreshIOFiles(@NotNull final Collection<File> files) {
+  public static void refreshIOFiles(@NotNull final Collection<? extends File> files) {
     if (!files.isEmpty()) {
       LocalFileSystem.getInstance().refreshIoFiles(files);
     }
   }
 
-  public static void refreshIODirectories(@NotNull final Collection<File> files) {
+  public static void refreshIODirectories(@NotNull final Collection<? extends File> files) {
     if (!files.isEmpty()) {
       LocalFileSystem.getInstance().refreshIoFiles(files, false, true, null);
     }

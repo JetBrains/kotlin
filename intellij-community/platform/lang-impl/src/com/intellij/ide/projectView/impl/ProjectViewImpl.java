@@ -711,7 +711,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   }
 
-  protected void createTitleActions(@NotNull List<AnAction> titleActions) {
+  protected void createTitleActions(@NotNull List<? super AnAction> titleActions) {
     if (!myAutoScrollFromSourceHandler.isAutoScrollEnabled()) {
       titleActions.add(new ScrollFromSourceAction());
     }

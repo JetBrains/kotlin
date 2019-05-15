@@ -122,7 +122,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
     }
   }
 
-  private void createModules(@NotNull Collection<DataNode<E>> toCreate, @NotNull IdeModifiableModelsProvider modelsProvider) {
+  private void createModules(@NotNull Collection<? extends DataNode<E>> toCreate, @NotNull IdeModifiableModelsProvider modelsProvider) {
     for (final DataNode<E> module : toCreate) {
       ModuleData data = module.getData();
       final Module created = modelsProvider.newModule(data);
@@ -153,7 +153,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
   }
 
   @NotNull
-  private Collection<DataNode<E>> filterExistingModules(@NotNull Collection<DataNode<E>> modules,
+  private Collection<DataNode<E>> filterExistingModules(@NotNull Collection<? extends DataNode<E>> modules,
                                                         @NotNull IdeModifiableModelsProvider modelsProvider) {
     Collection<DataNode<E>> result = new ArrayList<>();
     for (DataNode<E> node : modules) {
@@ -326,7 +326,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
     project.putUserData(ORPHAN_MODULE_HANDLERS_COUNTER, null);
   }
 
-  private static boolean showRemovedOrphanModules(@NotNull final List<Pair<String, Path>> orphanModules,
+  private static boolean showRemovedOrphanModules(@NotNull final List<? extends Pair<String, Path>> orphanModules,
                                                   @NotNull final Project project) {
     final CheckBoxList<Pair<String, Path>> orphanModulesList = new CheckBoxList<>();
     DialogWrapper dialog = new DialogWrapper(project) {

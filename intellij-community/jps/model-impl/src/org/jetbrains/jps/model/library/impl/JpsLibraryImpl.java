@@ -175,7 +175,7 @@ public class JpsLibraryImpl<P extends JpsElement> extends JpsNamedCompositeEleme
 
   private static final Set<String> AR_EXTENSIONS  = ContainerUtil.newTroveSet(FileUtil.PATH_HASHING_STRATEGY, "jar", "zip", "swc", "ane");
 
-  private static void collectArchives(File file, boolean recursively, List<String> result) {
+  private static void collectArchives(File file, boolean recursively, List<? super String> result) {
     final File[] children = file.listFiles();
     if (children != null) {
       for (File child : children) {

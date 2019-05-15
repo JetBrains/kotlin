@@ -120,7 +120,7 @@ public class StopBackgroundProcessesAction extends DumbAwareAction implements An
   }
 
   @NotNull
-  private static List<StopAction.HandlerItem> getItemsList(@NotNull List<Pair<TaskInfo, ProgressIndicator>> tasks) {
+  private static List<StopAction.HandlerItem> getItemsList(@NotNull List<? extends Pair<TaskInfo, ProgressIndicator>> tasks) {
     List<StopAction.HandlerItem> items = new ArrayList<>(tasks.size());
     for (final Pair<TaskInfo, ProgressIndicator> eachPair : tasks) {
       items.add(new StopAction.HandlerItem(eachPair.first.getTitle(), AllIcons.Process.Step_passive, false) {

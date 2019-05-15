@@ -58,10 +58,10 @@ public abstract class AutomaticRenamer {
   }
 
   private boolean findUsagesForElement(PsiNamedElement element,
-                                       List<UsageInfo> result,
+                                       List<? super UsageInfo> result,
                                        final boolean searchInStringsAndComments,
                                        final boolean searchInNonJavaFiles,
-                                       List<UnresolvableCollisionUsageInfo> unresolvedUsages,
+                                       List<? super UnresolvableCollisionUsageInfo> unresolvedUsages,
                                        Map<PsiElement, String> allRenames) {
     final String newName = getNewName(element);
     if (newName != null) {

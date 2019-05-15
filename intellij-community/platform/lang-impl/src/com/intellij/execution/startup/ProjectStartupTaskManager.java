@@ -103,8 +103,8 @@ public class ProjectStartupTaskManager {
     myLocal.deleteConfiguration(id);
   }
 
-  public void setStartupConfigurations(final @NotNull Collection<RunnerAndConfigurationSettings> shared,
-                                       final @NotNull Collection<RunnerAndConfigurationSettings> local) {
+  public void setStartupConfigurations(final @NotNull Collection<? extends RunnerAndConfigurationSettings> shared,
+                                       final @NotNull Collection<? extends RunnerAndConfigurationSettings> local) {
     myShared.setConfigurations(shared);
     myLocal.setConfigurations(local);
   }

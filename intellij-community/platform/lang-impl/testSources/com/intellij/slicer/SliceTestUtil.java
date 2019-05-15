@@ -72,7 +72,7 @@ public class SliceTestUtil {
     return extractSliceOffsetsFromDocuments(Collections.singletonList(document));
   }
 
-  public static Map<String, RangeMarker> extractSliceOffsetsFromDocuments(final List<Document> documents) {
+  public static Map<String, RangeMarker> extractSliceOffsetsFromDocuments(final List<? extends Document> documents) {
     Map<String, RangeMarker> sliceUsageName2Offset = new THashMap<>();
 
     extract(documents, sliceUsageName2Offset, "");
@@ -88,7 +88,7 @@ public class SliceTestUtil {
     return sliceUsageName2Offset;
   }
 
-  private static void extract(final List<Document> documents, final Map<String, RangeMarker> sliceUsageName2Offset, final String name) {
+  private static void extract(final List<? extends Document> documents, final Map<String, RangeMarker> sliceUsageName2Offset, final String name) {
     WriteCommandAction.runWriteCommandAction(null, () -> {
       for (int i = 1; i < 9; i++) {
         String newName = name + i;

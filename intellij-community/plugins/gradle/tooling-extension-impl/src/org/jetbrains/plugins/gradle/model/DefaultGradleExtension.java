@@ -14,6 +14,11 @@ public class DefaultGradleExtension extends DefaultGradleProperty implements Gra
     super(name, typeFqn, null);
   }
 
+  @SuppressWarnings("unused")
+  private DefaultGradleExtension() {
+    super();
+  }
+
   public DefaultGradleExtension(GradleExtension extension) {
     this(extension.getName(), extension.getTypeFqn());
   }

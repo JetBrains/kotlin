@@ -94,7 +94,7 @@ class UpdateFoldRegionsOperation implements Runnable {
     foldingModel.clearDocumentRangesModificationStatus();
   }
 
-  private static void applyExpandStatus(@NotNull List<FoldRegion> newRegions,
+  private static void applyExpandStatus(@NotNull List<? extends FoldRegion> newRegions,
                                         @NotNull Map<FoldRegion, Boolean> shouldExpand,
                                         @NotNull Map<FoldingGroup, Boolean> groupExpand) {
     for (final FoldRegion region : newRegions) {

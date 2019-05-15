@@ -51,7 +51,7 @@ public class CodeCleanupCodeProcessor extends AbstractLayoutCodeProcessor {
     return ContainerUtil.newSmartList(file.getTextRange());
   }
 
-  private static boolean isInRanges(Collection<TextRange> ranges, @NotNull ProblemDescriptor descriptor) {
+  private static boolean isInRanges(Collection<? extends TextRange> ranges, @NotNull ProblemDescriptor descriptor) {
     for (TextRange range : ranges) {
       if (range.containsOffset(descriptor.getStartElement().getTextOffset())
           || range.containsOffset(descriptor.getEndElement().getTextOffset())) {

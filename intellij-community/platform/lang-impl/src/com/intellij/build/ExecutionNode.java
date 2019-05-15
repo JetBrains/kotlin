@@ -313,7 +313,7 @@ public class ExecutionNode extends CachingSimpleNode {
 
   @Nullable
   @ApiStatus.Experimental
-  ExecutionNode findFirstChild(@NotNull Predicate<ExecutionNode> filter) {
+  ExecutionNode findFirstChild(@NotNull Predicate<? super ExecutionNode> filter) {
     return myChildrenList.stream().filter(filter).findFirst().orElse(null);
   }
 

@@ -27,7 +27,7 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
   private static final TreeStructureProvider EMPTY = new CompoundTreeStructureProvider(Collections.emptyList());
   private static final Key<TreeStructureProvider> KEY = Key.create("TreeStructureProvider");
   private static final Logger LOG = Logger.getInstance(CompoundTreeStructureProvider.class);
-  private final List<TreeStructureProvider> providers;
+  private final List<? extends TreeStructureProvider> providers;
 
   /**
    * @return a shared instance for the specified project
@@ -42,7 +42,7 @@ public final class CompoundTreeStructureProvider implements TreeStructureProvide
     return provider;
   }
 
-  public CompoundTreeStructureProvider(@NotNull List<TreeStructureProvider> providers) {
+  public CompoundTreeStructureProvider(@NotNull List<? extends TreeStructureProvider> providers) {
     this.providers = providers;
   }
 

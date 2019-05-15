@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
@@ -40,8 +41,6 @@ class ServiceViewTree extends Tree {
     new TreeSpeedSearch(this, TreeSpeedSearch.NODE_DESCRIPTOR_TOSTRING, true);
     ServiceViewTreeLinkMouseListener mouseListener = new ServiceViewTreeLinkMouseListener(this);
     mouseListener.installOn(this);
-
-    //RowsDnDSupport.install(myTree, myTreeModel);
     new DoubleClickListener() {
       @Override
       protected boolean onDoubleClick(MouseEvent e) {
@@ -54,6 +53,10 @@ class ServiceViewTree extends Tree {
                ((ServiceViewItem)lastComponent).getViewDescriptor().handleDoubleClick(e);
       }
     }.installOn(this);
+
+    // DnD
+    //RowsDnDSupport.install(myTree, myTreeModel);
+    setDragEnabled(true);
   }
 
   private static class ServiceViewTreeCellRenderer extends ServiceViewTreeCellRendererBase {

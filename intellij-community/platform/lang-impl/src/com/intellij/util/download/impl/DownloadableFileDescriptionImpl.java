@@ -61,7 +61,7 @@ public class DownloadableFileDescriptionImpl implements DownloadableFileDescript
 
   @NotNull
   @Override
-  public String generateFileName(@NotNull Condition<String> validator) {
+  public String generateFileName(@NotNull Condition<? super String> validator) {
     return UniqueNameGenerator.generateUniqueName("", myFileName, myFileExtension, "_", "", validator);
   }
 

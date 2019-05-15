@@ -38,7 +38,7 @@ public class HighlightsExtractor {
     myAdditionalColorKeyMap = additionalColorKeyMap;
   }
 
-  public String extractHighlights(String text, List<HighlightData> highlights) {
+  public String extractHighlights(String text, List<? super HighlightData> highlights) {
     mySkipped.clear();
     if (ContainerUtil.isEmpty(myTags) && ContainerUtil.isEmpty(myInlineElements)) return text;
     resetIndices();

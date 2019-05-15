@@ -66,7 +66,7 @@ public class ArrangementGroupingRulesControl extends JBTable {
     return (DefaultTableModel)super.getModel();
   }
 
-  public void setRules(@Nullable List<ArrangementGroupingRule> rules) {
+  public void setRules(@Nullable List<? extends ArrangementGroupingRule> rules) {
     for (ArrangementGroupingComponent component : myComponents.values()) {
       component.setSelected(false);
     }

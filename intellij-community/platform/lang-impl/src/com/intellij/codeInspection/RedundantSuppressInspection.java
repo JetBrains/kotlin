@@ -375,7 +375,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
           }
         }
 
-        private boolean isSuppressedFor(PsiElement element, String suppressId, Set<PsiElement> suppressedPlaces) {
+        private boolean isSuppressedFor(PsiElement element, String suppressId, Set<? extends PsiElement> suppressedPlaces) {
           return suppressedPlaces != null && 
                  suppressedPlaces.stream().anyMatch(place -> mySuppressor.isSuppressionFor(element, place, suppressId));
         }

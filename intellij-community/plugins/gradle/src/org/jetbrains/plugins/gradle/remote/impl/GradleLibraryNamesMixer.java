@@ -58,7 +58,7 @@ public class GradleLibraryNamesMixer {
    *
    * @param libraries  libraries to process
    */
-  public void mixNames(@NotNull Collection<DataNode<LibraryData>> libraries) {
+  public void mixNames(@NotNull Collection<? extends DataNode<LibraryData>> libraries) {
     if (libraries.isEmpty()) {
       return;
     }
@@ -81,7 +81,7 @@ public class GradleLibraryNamesMixer {
    * @param cache      cache to use
    * @return           {@code true} if all of the given libraries have distinct names now; {@code false} otherwise
    */
-  private static boolean doMixNames(@NotNull Collection<Wrapped> libraries, @NotNull Map<String, Wrapped> cache) {
+  private static boolean doMixNames(@NotNull Collection<? extends Wrapped> libraries, @NotNull Map<String, Wrapped> cache) {
     cache.clear();
     for (Wrapped current : libraries) {
       Wrapped previous = cache.remove(current.library.getExternalName());

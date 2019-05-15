@@ -5,12 +5,8 @@ package com.intellij.codeInsight.generation.surroundWith;
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.codeInsight.template.CustomLiveTemplate;
 import com.intellij.codeInsight.template.TemplateManager;
-import com.intellij.codeInsight.template.impl.InvokeTemplateAction;
-import com.intellij.codeInsight.template.impl.TemplateImpl;
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
-import com.intellij.codeInsight.template.impl.WrapWithCustomTemplateAction;
+import com.intellij.codeInsight.template.impl.SurroundWithTemplateHandler;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageSurrounders;
@@ -148,7 +144,7 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
                                               PsiFile file,
                                               Surrounder surrounder,
                                               int startOffset,
-                                              int endOffset, List<SurroundDescriptor> surroundDescriptors) {
+                                              int endOffset, List<? extends SurroundDescriptor> surroundDescriptors) {
     assert ApplicationManager.getApplication().isUnitTestMode();
     for (SurroundDescriptor descriptor : surroundDescriptors) {
       final PsiElement[] elements = descriptor.getElementsToSurround(file, startOffset, endOffset);
@@ -200,8 +196,7 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
                                                      Editor editor,
                                                      PsiFile file,
                                                      Map<Surrounder, PsiElement[]> surrounders) {
-    final List<AnAction> applicable = new ArrayList<>();
-    boolean hasEnabledSurrounders = false;
+    List<AnAction> applicable = new ArrayList<>();
 
     Set<Character> usedMnemonicsSet = new HashSet<>();
 
@@ -223,32 +218,17 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
         index++;
         usedMnemonicsSet.add(Character.toUpperCase(mnemonic));
         applicable.add(new InvokeSurrounderAction(surrounder, project, editor, elements, mnemonic));
-        hasEnabledSurrounders = true;
       }
     }
 
-    List<CustomLiveTemplate> customTemplates = TemplateManagerImpl.listApplicableCustomTemplates(editor, file, true);
-    List<TemplateImpl> templates = TemplateManagerImpl.listApplicableTemplateWithInsertingDummyIdentifier(editor, file, true);
-
-    if (!templates.isEmpty() || !customTemplates.isEmpty()) {
+    List<AnAction> templateGroup = SurroundWithTemplateHandler.createActionGroup(editor, file, usedMnemonicsSet);
+    if (!templateGroup.isEmpty()) {
       applicable.add(new Separator("Live templates"));
-    }
-
-    for (TemplateImpl template : templates) {
-      applicable.add(new InvokeTemplateAction(template, editor, project, usedMnemonicsSet));
-      hasEnabledSurrounders = true;
-    }
-
-    for (CustomLiveTemplate customTemplate : customTemplates) {
-      applicable.add(new WrapWithCustomTemplateAction(customTemplate, editor, file, usedMnemonicsSet));
-      hasEnabledSurrounders = true;
-    }
-
-    if (!templates.isEmpty() || !customTemplates.isEmpty()) {
+      applicable.addAll(templateGroup);
       applicable.add(Separator.getInstance());
       applicable.add(new ConfigureTemplatesAction());
     }
-    return hasEnabledSurrounders ? applicable : null;
+    return applicable.isEmpty() ? null : applicable;
   }
 
   private static class InvokeSurrounderAction extends AnAction {

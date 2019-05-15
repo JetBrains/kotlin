@@ -92,12 +92,12 @@ public class ConfigurationSelectionUtil {
       }
 
       @Override
-      public boolean hasSubstep(List<RunConfiguration> selectedValues) {
+      public boolean hasSubstep(List<? extends RunConfiguration> selectedValues) {
         return !getTargets(selectedValues).isEmpty();
       }
 
       @NotNull
-      public List<ExecutionTarget> getTargets(List<RunConfiguration> selectedValues) {
+      public List<ExecutionTarget> getTargets(List<? extends RunConfiguration> selectedValues) {
         LinkedHashSet<ExecutionTarget> intersection = new LinkedHashSet<>();
         for (int i = 0; i < selectedValues.size(); i++) {
           RunConfiguration config = selectedValues.get(i);

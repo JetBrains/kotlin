@@ -82,7 +82,7 @@ public abstract class BaseToolManager<T extends Tool> {
     return mySchemeManager.getAllSchemes();
   }
 
-  public void setTools(@NotNull List<ToolsGroup<T>> tools) {
+  public void setTools(@NotNull List<? extends ToolsGroup<T>> tools) {
     mySchemeManager.setSchemes(tools);
     registerActions();
   }

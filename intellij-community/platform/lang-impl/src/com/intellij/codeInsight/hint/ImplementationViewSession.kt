@@ -30,7 +30,7 @@ interface ImplementationViewSession : Disposable {
   val editor: Editor?
 
   fun searchImplementationsInBackground(indicator: ProgressIndicator,
-                                        processor: Processor<PsiElement>): List<ImplementationViewElement>
+                                        processor: Processor<in PsiElement>): List<ImplementationViewElement>
   fun elementRequiresIncludeSelf(): Boolean
   fun needUpdateInBackground(): Boolean
 }

@@ -80,7 +80,7 @@ public abstract class OccurrencesChooser<T> {
     myAttributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
   }
 
-  public void showChooser(final T selectedOccurrence, final List<T> allOccurrences, final Pass<ReplaceChoice> callback) {
+  public void showChooser(final T selectedOccurrence, final List<T> allOccurrences, final Pass<? super ReplaceChoice> callback) {
     if (allOccurrences.size() == 1) {
       callback.pass(ReplaceChoice.ALL);
     }
@@ -92,11 +92,11 @@ public abstract class OccurrencesChooser<T> {
     }
   }
 
-  public void showChooser(final Pass<ReplaceChoice> callback, final Map<ReplaceChoice, List<T>> occurrencesMap) {
+  public void showChooser(final Pass<? super ReplaceChoice> callback, final Map<ReplaceChoice, List<T>> occurrencesMap) {
     showChooser(callback, occurrencesMap, DEFAULT_CHOOSER_TITLE);
   }
 
-  public <C extends BaseReplaceChoice> void showChooser(final Pass<C> callback,
+  public <C extends BaseReplaceChoice> void showChooser(final Pass<? super C> callback,
                           final Map<C, List<T>> occurrencesMap,
                           String title) {
     if (occurrencesMap.size() == 1) {

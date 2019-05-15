@@ -21,8 +21,8 @@ interface SESearcher {
    * Search process listener interface
    */
   interface Listener {
-    void elementsAdded(@NotNull List<SearchEverywhereFoundElementInfo> list);
-    void elementsRemoved(@NotNull List<SearchEverywhereFoundElementInfo> list);
+    void elementsAdded(@NotNull List<? extends SearchEverywhereFoundElementInfo> list);
+    void elementsRemoved(@NotNull List<? extends SearchEverywhereFoundElementInfo> list);
     void searchFinished(@NotNull Map<SearchEverywhereContributor<?>, Boolean> hasMoreContributors);
   }
 }

@@ -182,7 +182,7 @@ public class ShowImplementationsAction extends AnAction implements PopupAction {
                                   @NotNull ImplementationViewComponent component,
                                   String title,
                                   @NotNull AbstractPopup popup,
-                                  @NotNull Ref<UsageView> usageView) {
+                                  @NotNull Ref<? extends UsageView> usageView) {
     final ImplementationsUpdaterTask updaterTask = SoftReference.dereference(myTaskRef);
     if (updaterTask != null) {
       updaterTask.cancelTask();

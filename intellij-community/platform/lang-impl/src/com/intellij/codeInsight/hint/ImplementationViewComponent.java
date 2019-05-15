@@ -205,7 +205,7 @@ public class ImplementationViewComponent extends JPanel {
     return result;
   }
 
-  public void update(@NotNull final Collection<ImplementationViewElement> elements, final int index) {
+  public void update(@NotNull final Collection<? extends ImplementationViewElement> elements, final int index) {
     update(elements, (psiElements, fileDescriptors) -> {
       if (myEditor.isDisposed()) return false;
       if (psiElements.length == 0) return false;
@@ -253,7 +253,7 @@ public class ImplementationViewComponent extends JPanel {
 
   }
 
-  private static void update(@NotNull Collection<ImplementationViewElement> elements, @NotNull PairFunction<ImplementationViewElement[], ? super List<FileDescriptor>, Boolean> fun) {
+  private static void update(@NotNull Collection<? extends ImplementationViewElement> elements, @NotNull PairFunction<ImplementationViewElement[], ? super List<FileDescriptor>, Boolean> fun) {
     List<ImplementationViewElement> candidates = new ArrayList<>(elements.size());
     List<FileDescriptor> files = new ArrayList<>(elements.size());
     final Set<String> names = new HashSet<>();

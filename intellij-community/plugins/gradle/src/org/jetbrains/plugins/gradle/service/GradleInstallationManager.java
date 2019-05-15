@@ -518,7 +518,7 @@ public class GradleInstallationManager {
            || isGroovyJar(fileName);
   }
 
-  private void addRoots(@NotNull List<File> result, @Nullable File... files) {
+  private void addRoots(@NotNull List<? super File> result, @Nullable File... files) {
     if (files == null) return;
     for (File file : files) {
       if (file == null || !file.isDirectory()) continue;

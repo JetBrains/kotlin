@@ -336,7 +336,7 @@ final class BeforeRunStepsPanel extends JPanel {
     return result;
   }
 
-  private void getAllRunBeforeRuns(@NotNull BeforeRunTask task, @NotNull Set<RunConfiguration> configurationSet) {
+  private void getAllRunBeforeRuns(@NotNull BeforeRunTask task, @NotNull Set<? super RunConfiguration> configurationSet) {
     if (task instanceof RunConfigurableBeforeRunTask) {
       RunConfiguration configuration = Objects.requireNonNull(((RunConfigurableBeforeRunTask)task).getSettings()).getConfiguration();
       for (BeforeRunTask beforeRunTask : RunManagerImplKt.doGetBeforeRunTasks(configuration)) {

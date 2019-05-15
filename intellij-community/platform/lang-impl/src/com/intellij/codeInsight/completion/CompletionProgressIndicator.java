@@ -513,7 +513,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   @Override
-  public void registerChildDisposable(@NotNull Supplier<Disposable> child) {
+  public void registerChildDisposable(@NotNull Supplier<? extends Disposable> child) {
     synchronized (myLock) {
       // avoid registering stuff on an indicator being disposed concurrently
       checkCanceled();

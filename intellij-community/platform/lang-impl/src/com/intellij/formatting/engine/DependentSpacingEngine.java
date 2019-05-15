@@ -94,7 +94,7 @@ class DependentSpacingEngine {
     return false;
   }
   
-  void registerUnresolvedDependentSpacingRanges(final SpacingImpl spaceProperty, List<TextRange> unprocessedRanges) {
+  void registerUnresolvedDependentSpacingRanges(final SpacingImpl spaceProperty, List<? extends TextRange> unprocessedRanges) {
     final DependantSpacingImpl dependantSpaceProperty = (DependantSpacingImpl)spaceProperty;
     if (dependantSpaceProperty.isDependentRegionLinefeedStatusChanged()) return;
 

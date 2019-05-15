@@ -47,6 +47,7 @@ class LiveTemplateRunLogger {
       return "live_template".equals(ruleId) || "live_template_group".equals(ruleId) ;
     }
 
+    @NotNull
     @Override
     protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
       Object group = context.eventData.get("group");

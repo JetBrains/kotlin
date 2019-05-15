@@ -46,8 +46,8 @@ public class JBRunnerTabs extends SameHeightTabs implements JBRunnerTabsBase {
   }
 
   @Override
-  protected JBTabsBackgroundAndBorder createTabBorder() {
-    return new JBTabsBackgroundAndBorder(this) {
+  protected JBTabsBorder createTabBorder() {
+    return new JBTabsBorder(this) {
       @NotNull
       @Override
       public Insets getEffectiveBorder() {
@@ -57,8 +57,6 @@ public class JBRunnerTabs extends SameHeightTabs implements JBRunnerTabsBase {
       @Override
       public void paintBorder(@NotNull Component c, @NotNull Graphics g, int x, int y, int width, int height) {
         if (isEmptyVisible()) return;
-        paintBackground((Graphics2D)g, new Rectangle(x, y, width, height));
-
         getTabPainter().paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y), new Point(x, y + height));
         getTabPainter()
           .paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y + myHeaderFitSize.height),

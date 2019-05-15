@@ -49,8 +49,8 @@ public class FileColorsModel implements Cloneable {
   }
 
   private FileColorsModel(@NotNull Project project,
-                          @NotNull List<FileColorConfiguration> applicationLevel,
-                          @NotNull List<FileColorConfiguration> projectLevel) {
+                          @NotNull List<? extends FileColorConfiguration> applicationLevel,
+                          @NotNull List<? extends FileColorConfiguration> projectLevel) {
     myProject = project;
     myApplicationLevelConfigurations.addAll(applicationLevel);
     myProjectLevelConfigurations.addAll(projectLevel);
@@ -253,7 +253,7 @@ public class FileColorsModel implements Cloneable {
     return myProjectLevelConfigurations.contains(configuration);
   }
 
-  public void setConfigurations(@NotNull List<FileColorConfiguration> configurations, boolean isProjectLevel) {
+  public void setConfigurations(@NotNull List<? extends FileColorConfiguration> configurations, boolean isProjectLevel) {
     if (isProjectLevel) {
       myProjectLevelConfigurations.clear();
       myProjectLevelConfigurations.addAll(configurations);

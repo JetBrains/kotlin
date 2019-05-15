@@ -220,7 +220,7 @@ public class ExternalToolPass extends ProgressableTextEditorHighlightingPass {
     return infos;
   }
 
-  private void doFinish(List<HighlightInfo> highlights, long modificationStampBefore) {
+  private void doFinish(List<? extends HighlightInfo> highlights, long modificationStampBefore) {
     Editor editor = getEditor();
     assert editor != null;
     ApplicationManager.getApplication().invokeLater(() -> {

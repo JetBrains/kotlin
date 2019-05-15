@@ -1,9 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
-import com.intellij.ide.util.treeView.NodeDescriptor;
+import com.intellij.execution.services.ServiceEventListener.ServiceEvent;
+import com.intellij.execution.services.ServiceModel.ServiceGroupNode;
+import com.intellij.execution.services.ServiceModel.ServiceViewItem;
+import com.intellij.execution.services.ServiceModelFilter.ServiceViewFilter;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
 import com.intellij.util.concurrency.Invoker;
 import com.intellij.util.concurrency.InvokerSupplier;
 import com.intellij.util.containers.ContainerUtil;
@@ -11,264 +13,260 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
-interface ServiceViewModel extends Disposable, InvokerSupplier {
-  List<? extends ServiceTreeNode> getRoots();
+abstract class ServiceViewModel implements Disposable, InvokerSupplier {
+  protected final ServiceModel myModel;
+  protected final ServiceModelFilter myModelFilter;
+  private final ServiceViewFilter myFilter;
+  private final List<ServiceViewModelListener> myListeners = ContainerUtil.newSmartList();
 
-  void refresh(@NotNull ServiceEventListener.ServiceEvent e);
+  protected ServiceViewModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter, ServiceViewFilter condition) {
+    myModel = model;
+    myModelFilter = modelFilter;
+    myFilter = condition;
+  }
 
-  void addModelListener(ServiceViewModelListener listener);
+  @NotNull
+  List<? extends ServiceViewItem> getRoots() {
+    return filterEmptyGroups(doGetRoots());
+  }
 
-  void removeModelListener(ServiceViewModelListener listener);
+  @NotNull
+  protected abstract List<? extends ServiceViewItem> doGetRoots();
+
+  abstract void eventProcessed(ServiceEvent e);
+
+  void filtersChanged() {
+    notifyListeners();
+  }
+
+  ServiceViewFilter getFilter() {
+    return myFilter;
+  }
+
+  @NotNull
+  List<? extends ServiceViewItem> getChildren(@NotNull ServiceViewItem parent) {
+    return filterEmptyGroups(myModelFilter.filter(parent.getChildren(), myFilter));
+  }
+
+  void addModelListener(@NotNull ServiceViewModelListener listener) {
+    myListeners.add(listener);
+  }
+
+  void removeModelListener(@NotNull ServiceViewModelListener listener) {
+    myListeners.remove(listener);
+  }
+
+  protected void notifyListeners() {
+    for (ServiceViewModelListener listener : myListeners) {
+      listener.rootsChanged();
+    }
+  }
+
+  @Override
+  public void dispose() {
+  }
+
+  @NotNull
+  @Override
+  public Invoker getInvoker() {
+    return myModel.getInvoker();
+  }
+
+  @NotNull
+  private List<? extends ServiceViewItem> filterEmptyGroups(@NotNull List<? extends ServiceViewItem> items) {
+    return ContainerUtil.filter(items, item -> !(item instanceof ServiceGroupNode) || !getChildren(item).isEmpty());
+  }
+
+  @Nullable
+  private static ServiceViewItem findItem(ServiceViewItem viewItem, List<? extends ServiceViewItem> modelItems) {
+    return findItem(getPath(viewItem), modelItems);
+  }
+
+  @Nullable
+  private static ServiceViewItem findItem(Deque<ServiceViewItem> path, List<? extends ServiceViewItem> modelItems) {
+    ServiceViewItem node = path.removeFirst();
+    for (ServiceViewItem root : modelItems) {
+      if (root.equals(node)) {
+        if (path.isEmpty()) {
+          return root;
+        }
+        else {
+          return findItem(path, root.getChildren());
+        }
+      }
+    }
+    return null;
+  }
+
+  private static Deque<ServiceViewItem> getPath(ServiceViewItem item) {
+    Deque<ServiceViewItem> path = new LinkedList<>();
+    do {
+      path.addFirst(item);
+      item = item.getParent();
+    }
+    while (item != null);
+    return path;
+  }
 
   interface ServiceViewModelListener {
     void rootsChanged();
   }
 
-  static <T> List<ServiceTreeNode> getContributorChildren(Project project,
-                                                          ServiceTreeNode parent,
-                                                          ServiceViewContributor<T> contributor) {
-    Set<ServiceTreeNode> children = new LinkedHashSet<>();
-    Map<Object, ServiceGroupNode> groupNodes = new HashMap<>();
-    for (T service : contributor.getServices(project)) {
-      Object value = service instanceof ServiceViewProvidingContributor ? ((ServiceViewProvidingContributor)service).asService() : service;
-
-      if (contributor instanceof ServiceViewGroupingContributor) {
-        ServiceViewGroupingContributor<T, Object> groupingContributor = (ServiceViewGroupingContributor<T, Object>)contributor;
-        Object group = groupingContributor.groupBy(service);
-        if (group != null) {
-          ServiceGroupNode groupNode = groupNodes.get(group);
-          if (groupNode == null) {
-            groupNode = new ServiceGroupNode(group, parent, contributor, groupingContributor.getGroupDescriptor(group));
-            groupNodes.put(group, groupNode);
-          }
-          ServiceTreeNode serviceNode = new ServiceNode(value, groupNode, contributor, contributor.getServiceDescriptor(service), project,
-                                                        service instanceof ServiceViewContributor ? (ServiceViewContributor)service : null);
-          groupNode.getChildren().add(serviceNode);
-          children.add(groupNode);
-          continue;
-        }
-      }
-
-      ServiceTreeNode serviceNode = new ServiceNode(value, parent, contributor, contributor.getServiceDescriptor(service), project,
-                                                    service instanceof ServiceViewContributor ? (ServiceViewContributor)service : null);
-      children.add(serviceNode);
-    }
-    return new ArrayList<>(children);
-  }
-
-  class AllServicesModel implements ServiceViewModel {
-    private final Project myProject;
-    private final Invoker myInvoker = new Invoker.BackgroundThread(this);
-    private final List<ServiceViewModelListener> myListeners = ContainerUtil.newSmartList();
-    private final List<ServiceTreeNode> myRoots = new ArrayList<>();
-    private boolean myRootInitialized;
-
-    public AllServicesModel(Project project) {
-      myProject = project;
+  static class AllServicesModel extends ServiceViewModel {
+    AllServicesModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter) {
+      super(model, modelFilter, null);
     }
 
     @Override
-    public List<? extends ServiceTreeNode> getRoots() {
-      if (!myRootInitialized) {
-        myRootInitialized = true;
-        myRoots.clear();
-        myRoots.addAll(doGetRoots());
-      }
-      return myRoots;
-    }
-
-    private List<? extends ServiceTreeNode> doGetRoots() {
-      List<ServiceTreeNode> result = new ArrayList<>();
-      for (ServiceViewContributor<?> contributor : ServiceViewManagerImpl.EP_NAME.getExtensions()) {
-        result.addAll(getContributorChildren(myProject, null, contributor));
-      }
-      return result;
-    }
-
-    @Override
-    public void refresh(@NotNull ServiceEventListener.ServiceEvent e) {
-      getInvoker().runOrInvokeLater(() -> reset(e.contributorClass));
-    }
-
-    private void reset(Class<?> contributorClass) {
-      int startIndex = -1;
-
-      if (myRoots.isEmpty()) {
-        startIndex = 0;
-      }
-      else {
-        Map<ServiceViewContributor, Integer> indexes = new HashMap<>();
-        List<ServiceTreeNode> toRemove = new ArrayList<>();
-        ServiceViewContributor previous = null;
-        for (int i = 0; i < myRoots.size(); i++) {
-          ServiceTreeNode child = myRoots.get(i);
-          if (contributorClass.isInstance(child.getContributor())) {
-            toRemove.add(child);
-            if (startIndex < 0) {
-              startIndex = i;
-            }
-          }
-          else if (previous != child.getContributor()) {
-            previous = child.getContributor();
-            indexes.put(previous, i);
-          }
-        }
-        if (startIndex < 0) {
-          ServiceViewContributor[] contributors = ServiceViewManagerImpl.EP_NAME.getExtensions();
-          for (int i = contributors.length - 1; i >= 0; i--) {
-            if (!contributorClass.isInstance(contributors[i])) {
-              startIndex = indexes.getOrDefault(contributors[i], Integer.valueOf(-1));
-              if (startIndex == 0) {
-                break;
-              }
-            }
-            else {
-              break;
-            }
-          }
-          if (startIndex < 0) {
-            startIndex = myRoots.size() - toRemove.size();
-          }
-        }
-        myRoots.removeAll(toRemove);
-      }
-
-      List<ServiceTreeNode> newChildren = null;
-      for (ServiceViewContributor<?> contributor : ServiceViewManagerImpl.EP_NAME.getExtensions()) {
-        if (contributorClass.isInstance(contributor)) {
-          newChildren = getContributorChildren(myProject, null, contributor);
-          break;
-        }
-      }
-      if (newChildren != null) {
-        myRoots.addAll(startIndex, newChildren);
-      }
-
-      for (ServiceViewModelListener listener : myListeners) {
-        listener.rootsChanged();
-      }
-    }
-
-    @Override
-    public void addModelListener(ServiceViewModelListener listener) {
-      myListeners.add(listener);
-    }
-
-    @Override
-    public void removeModelListener(ServiceViewModelListener listener) {
-      myListeners.remove(listener);
-    }
-
-    @Override
-    public void dispose() {
-    }
-
     @NotNull
+    protected List<? extends ServiceViewItem> doGetRoots() {
+      return myModelFilter.filter(myModel.getRoots(), null);
+    }
+
     @Override
-    public Invoker getInvoker() {
-      return myInvoker;
+    void eventProcessed(ServiceEvent e) {
+      notifyListeners();
     }
   }
 
-  abstract class ServiceTreeNode implements ServiceViewItem {
-    private final Object myValue;
-    private final ServiceTreeNode myParent;
+  static class ContributorModel extends ServiceViewModel {
     private final ServiceViewContributor myContributor;
-    private final ServiceViewDescriptor myViewDescriptor;
-    private List<ServiceTreeNode> myChildren;
-    private boolean myPresentationUpdated;
 
-    protected ServiceTreeNode(@NotNull Object value, @Nullable ServiceTreeNode parent, @NotNull ServiceViewContributor contributor,
-                              @NotNull ServiceViewDescriptor viewDescriptor) {
-      myValue = value;
-      myParent = parent;
-      myContributor = contributor;
-      myViewDescriptor = viewDescriptor;
-    }
-
-    @NotNull
-    @Override
-    public Object getValue() {
-      return myValue;
-    }
-
-    @NotNull
-    ServiceViewContributor getContributor() {
-      return myContributor;
-    }
-
-    @NotNull
-    @Override
-    public ServiceViewDescriptor getViewDescriptor() {
-      if (!myPresentationUpdated) {
-        myPresentationUpdated = true;
-        if (myValue instanceof NodeDescriptor) {
-          ((NodeDescriptor)myValue).update();
+    ContributorModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter, @NotNull ServiceViewContributor contributor,
+                     @Nullable ServiceViewFilter parentFilter) {
+      super(model, modelFilter, new ServiceViewFilter(parentFilter) {
+        @Override
+        public boolean value(ServiceViewItem item) {
+          return contributor.equals(item.getContributor());
         }
-      }
-      return myViewDescriptor;
-    }
-
-    @Nullable
-    ServiceTreeNode getParent() {
-      return myParent;
+      });
+      myContributor = contributor;
     }
 
     @NotNull
-    List<ServiceTreeNode> getChildren() {
-      if (myChildren == null) {
-        myChildren = doGetChildren();
+    @Override
+    protected List<? extends ServiceViewItem> doGetRoots() {
+      return myModelFilter.filter(ContainerUtil.filter(myModel.getRoots(), getFilter()), getFilter());
+    }
+
+    @Override
+    void eventProcessed(ServiceEvent e) {
+      if (e.contributorClass.isInstance(myContributor)) {
+        notifyListeners();
       }
-      return myChildren;
-    }
-
-    @NotNull
-    abstract List<ServiceTreeNode> doGetChildren();
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      ServiceTreeNode node = (ServiceTreeNode)o;
-      return myValue.equals(node.myValue);
-    }
-
-    @Override
-    public int hashCode() {
-      return myValue.hashCode();
     }
   }
 
-  class ServiceNode extends ServiceTreeNode {
-    private final Project myProject;
-    private final ServiceViewContributor<?> myProvidingContributor;
+  static class GroupModel extends ServiceViewModel {
+    private final AtomicReference<ServiceGroupNode> myGroupRef;
 
-    ServiceNode(@NotNull Object service, @Nullable ServiceTreeNode parent, @NotNull ServiceViewContributor contributor,
-                @NotNull ServiceViewDescriptor viewDescriptor,
-                @NotNull Project project, @Nullable ServiceViewContributor providingContributor) {
-      super(service, parent, contributor, viewDescriptor);
-      myProject = project;
-      myProvidingContributor = providingContributor;
+    GroupModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter,
+               @NotNull AtomicReference<ServiceGroupNode> groupRef, @Nullable ServiceViewFilter parentFilter) {
+      super(model, modelFilter, new ServiceViewFilter(parentFilter) {
+        @Override
+        public boolean value(ServiceViewItem item) {
+          ServiceViewItem parent = item.getParent();
+          return parent != null && parent.equals(groupRef.get());
+        }
+      });
+      myGroupRef = groupRef;
     }
 
     @NotNull
     @Override
-    List<ServiceTreeNode> doGetChildren() {
-      return myProvidingContributor == null ? Collections.emptyList() : getContributorChildren(myProject, this, myProvidingContributor);
+    protected List<? extends ServiceViewItem> doGetRoots() {
+      ServiceGroupNode group = myGroupRef.get();
+      return group == null ? Collections.emptyList() : getChildren(group);
+    }
+
+    @Override
+    void eventProcessed(ServiceEvent e) {
+      ServiceGroupNode group = myGroupRef.get();
+      if (group == null || !e.contributorClass.isInstance(group.getRootContributor())) return;
+
+      myGroupRef.set((ServiceGroupNode)findItem(group, myModel.getRoots()));
+      notifyListeners();
     }
   }
 
-  class ServiceGroupNode extends ServiceTreeNode {
-    ServiceGroupNode(@NotNull Object group, @Nullable ServiceTreeNode parent, @NotNull ServiceViewContributor contributor,
-                     @NotNull ServiceViewDescriptor viewDescriptor) {
-      super(group, parent, contributor, viewDescriptor);
+  static class SingeServiceModel extends ServiceViewModel {
+    private final AtomicReference<ServiceViewItem> myServiceRef;
+
+    SingeServiceModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter,
+                      @NotNull AtomicReference<ServiceViewItem> serviceRef, @Nullable ServiceViewFilter parentFilter) {
+      super(model, modelFilter, new ServiceViewFilter(parentFilter) {
+        @Override
+        public boolean value(ServiceViewItem item) {
+          return item.equals(serviceRef.get());
+        }
+      });
+      myServiceRef = serviceRef;
     }
 
     @NotNull
     @Override
-    List<ServiceTreeNode> doGetChildren() {
-      return new ArrayList<>();
+    protected List<? extends ServiceViewItem> doGetRoots() {
+      ServiceViewItem service = myServiceRef.get();
+      return service == null ? Collections.emptyList() : Collections.singletonList(service);
+    }
+
+    @Override
+    void eventProcessed(ServiceEvent e) {
+      ServiceViewItem service = myServiceRef.get();
+      if (service == null || !e.contributorClass.isInstance(service.getRootContributor())) return;
+
+      myServiceRef.set(findItem(service, myModel.getRoots()));
+      notifyListeners();
+    }
+  }
+
+  static class ServiceListModel extends ServiceViewModel {
+    private final List<ServiceViewItem> myRoots;
+
+    ServiceListModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter, @NotNull List<ServiceViewItem> roots,
+                     @Nullable ServiceViewFilter parentFilter) {
+      super(model, modelFilter, new ServiceViewFilter(parentFilter) {
+        @Override
+        public boolean value(ServiceViewItem item) {
+          return roots.contains(item);
+        }
+      });
+      myRoots = roots;
+    }
+
+    @NotNull
+    @Override
+    protected List<? extends ServiceViewItem> doGetRoots() {
+      return myModelFilter.filter(myRoots, getFilter());
+    }
+
+    @Override
+    void eventProcessed(ServiceEvent e) {
+      boolean update = false;
+
+      List<ServiceViewItem> toRemove = new ArrayList<>();
+      for (int i = 0; i < myRoots.size(); i++) {
+        ServiceViewItem node = myRoots.get(i);
+        if (!e.contributorClass.isInstance(node.getRootContributor())) continue;
+
+        ServiceViewItem updatedNode = findItem(node, myModel.getRoots());
+        if (updatedNode != null) {
+          //noinspection SuspiciousListRemoveInLoop
+          myRoots.remove(i);
+          myRoots.add(i, updatedNode);
+        }
+        else {
+          toRemove.add(node);
+        }
+        update = true;
+      }
+      myRoots.removeAll(toRemove);
+
+      if (update) {
+        notifyListeners();
+      }
     }
   }
 }

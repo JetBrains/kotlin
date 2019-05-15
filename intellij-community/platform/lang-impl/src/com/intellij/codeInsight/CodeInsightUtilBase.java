@@ -77,7 +77,7 @@ public class CodeInsightUtilBase extends CodeInsightUtilCore {
   }
 
   @Override
-  public boolean prepareVirtualFilesForWrite(@NotNull Project project, @NotNull Collection<VirtualFile> files) {
+  public boolean prepareVirtualFilesForWrite(@NotNull Project project, @NotNull Collection<? extends VirtualFile> files) {
     ReadonlyStatusHandler.OperationStatus status = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(files);
     return !status.hasReadonlyFiles();
   }

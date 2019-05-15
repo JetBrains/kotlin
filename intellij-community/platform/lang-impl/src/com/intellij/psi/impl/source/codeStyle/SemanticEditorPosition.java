@@ -193,7 +193,7 @@ public class SemanticEditorPosition {
   public SemanticEditorPosition findLeftParenthesisBackwardsSkippingNestedWithPredicate(
     @NotNull SyntaxElement leftParenthesis,
     @NotNull SyntaxElement rightParenthesis,
-    @NotNull Predicate<SemanticEditorPosition> terminationCondition) 
+    @NotNull Predicate<? super SemanticEditorPosition> terminationCondition)
   {
     return copyAnd(position -> position.moveToLeftParenthesisBackwardsSkippingNestedWithPredicate(
       leftParenthesis, rightParenthesis, terminationCondition));

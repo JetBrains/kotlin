@@ -390,7 +390,7 @@ public class ManagePackagesDialog extends DialogWrapper {
       filter(filtered, toSelect);
     }
 
-    public void filter(List<RepoPackage> filtered, @Nullable final RepoPackage toSelect){
+    public void filter(List<? extends RepoPackage> filtered, @Nullable final RepoPackage toSelect){
       myView.clear();
       myPackages.clearSelection();
       myView.addAll(filtered);
