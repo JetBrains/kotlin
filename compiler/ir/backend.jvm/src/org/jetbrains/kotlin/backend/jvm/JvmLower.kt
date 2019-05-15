@@ -105,7 +105,7 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
 
             lateinitPhase then
 
-            moveCompanionObjectFieldsPhase then
+            moveOrCopyCompanionObjectFieldsPhase then
             propertyReferencePhase then
             constPhase then
             propertiesToFieldsPhase then
