@@ -18,19 +18,7 @@ abstract class JvmPlatform : SimplePlatform("JVM") {
 
 @Suppress("DEPRECATION_ERROR")
 object JvmPlatforms {
-    private object UnspecifiedSimpleJvmPlatform : JvmPlatform() {
-        override val targetPlatformVersion: TargetPlatformVersion
-            get() = JvmTarget.JVM_1_6
-    }
-
-    @Deprecated(
-        message = "Should be accessed only by compatibility layer, other clients should use 'defaultJvmPlatform'",
-        level = DeprecationLevel.ERROR
-    )
-    object CompatJvmPlatform : TargetPlatform(setOf(UnspecifiedSimpleJvmPlatform)),
-        // Needed for backward compatibility, because old code uses INSTANCEOF checks instead of calling extensions
-        org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform {}
-
+    private val UNSPECIFIED_SIMPLE_JVM_PLATFORM = JdkPlatform(JvmTarget.JVM_1_6)
     private val jvmTargetToJdkPlatform: Map<JvmTarget, TargetPlatform> =
         JvmTarget.values().map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
 
@@ -44,9 +32,17 @@ object JvmPlatforms {
         jvmTargetToJdkPlatform[targetVersion]!!
 
     val allJvmPlatforms: List<TargetPlatform> = jvmTargetToJdkPlatform.values.toList()
+
+    @Deprecated(
+        message = "Should be accessed only by compatibility layer, other clients should use 'defaultJvmPlatform'",
+        level = DeprecationLevel.ERROR
+    )
+    object CompatJvmPlatform : TargetPlatform(setOf(UNSPECIFIED_SIMPLE_JVM_PLATFORM)),
+        // Needed for backward compatibility, because old code uses INSTANCEOF checks instead of calling extensions
+        org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform {}
 }
 
-data class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform() {
+class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform() {
     override fun toString(): String = "$platformName ($targetVersion)"
 
     override val oldFashionedDescription: String
@@ -54,6 +50,16 @@ data class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform() {
 
     override val targetPlatformVersion: TargetPlatformVersion
         get() = targetVersion
+
+    // TODO(dsavvinov): temporarily conservative measure; make JdkPlatform data class later
+    // Explanation: previously we had only one JvmPlatform, and all 'TargetPlatform's had an
+    //   equality (actually, identity, because each platform had only one instance). This lead
+    //   to common pattern of putting them in map (e.g., see KotlinCacheServiceImpl.globalFacadesPerPlatformAndSdk).
+    //
+    //   If we start distinguishing JvmPlatforms with different JvmTarget right now, it may accidentally
+    //   break some clients (in particular, we'll create global facade for *each* JvmTarget, which is a bad idea)
+    override fun equals(other: Any?): Boolean = other is JdkPlatform
+    override fun hashCode(): Int = JdkPlatform::class.hashCode()
 }
 
 fun TargetPlatform?.isJvm(): Boolean = this?.singleOrNull() is JvmPlatform
