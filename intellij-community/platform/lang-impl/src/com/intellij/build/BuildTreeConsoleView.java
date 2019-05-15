@@ -964,12 +964,15 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
     @Override
     public void setUI(final TreeUI ui) {
-      super.setUI(ui instanceof DefaultTreeUI ? ui : new DefaultTreeUI());
+      super.setUI(ui instanceof DefaultTreeUI ? ui : DefaultTreeUI.createUI(this));
       setLargeModel(true);
     }
   }
 
   private static class MyNodeRenderer extends NodeRenderer {
+    {
+      putClientProperty(DefaultTreeUI.SHRINK_LONG_RENDERER, true);
+    }
     private String myDurationText;
     private Color myDurationColor;
     private int myDurationWidth;
