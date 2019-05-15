@@ -1035,19 +1035,19 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             iline {
                 keyword("try ")
                 generateBlockIfAny(tryExpression.tryBlock)
-            }
 
-            for (catch in tryExpression.catches) {
-                keyword(" catch ")
-                +"("
-                generate(catch.parameter)
-                +") "
-                generateBlockIfAny(catch.block)
-            }
-            val finallyBlock = tryExpression.finallyBlock
-            if (finallyBlock != null) {
-                keyword(" finally ")
-                generateBlockIfAny(finallyBlock)
+                for (catch in tryExpression.catches) {
+                    keyword(" catch ")
+                    +"("
+                    generate(catch.parameter)
+                    +") "
+                    generateBlockIfAny(catch.block)
+                }
+                val finallyBlock = tryExpression.finallyBlock
+                if (finallyBlock != null) {
+                    keyword(" finally ")
+                    generateBlockIfAny(finallyBlock)
+                }
             }
         }
     }
