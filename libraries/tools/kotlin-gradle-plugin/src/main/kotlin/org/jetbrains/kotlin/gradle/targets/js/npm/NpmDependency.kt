@@ -15,6 +15,7 @@ import org.gradle.api.internal.artifacts.ResolvableDependency
 import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInternal
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
+import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver.ResolutionCallResult.*
 import java.io.File
 
@@ -51,9 +52,12 @@ data class NpmDependency(
     }
 
     private fun resolveProject(): NpmResolver.ResolvedProject? {
-        val result = NpmResolver.resolve(project)
+        val result =
+            if (isInIdeaSync) NpmResolver.resolve(project)
+            else NpmResolver.getAlreadyResolvedOrNull(project)
 
         return when (result) {
+            null -> null
             is AlreadyInProgress -> null
             is AlreadyResolved -> {
                 check(this in result.resolution.npmPackage!!.npmDependencies) {
