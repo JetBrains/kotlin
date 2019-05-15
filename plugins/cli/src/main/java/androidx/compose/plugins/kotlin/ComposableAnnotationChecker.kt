@@ -99,7 +99,7 @@ open class ComposableAnnotationChecker(
 
     companion object {
         val DEFAULT_MODE =
-            Mode.KTX_STRICT
+            Mode.FCS
 
         fun get(project: Project): ComposableAnnotationChecker {
             return StorageComponentContainerContributor.getInstances(project).single {
