@@ -105,10 +105,10 @@ class PresentationFactory(private val editor: EditorImpl) {
   fun collapsible(
     prefix: InlayPresentation,
     collapsed: InlayPresentation,
-    expanded: InlayPresentation,
+    expanded: () -> InlayPresentation,
     suffix: InlayPresentation,
     startWithPlaceholder: Boolean = true
-  ) {
+  ) : InlayPresentation {
     val (matchingPrefix, matchingSuffix) = matchingBraces(prefix, suffix)
     val prefixExposed = EventExposingPresentation(matchingPrefix)
     val suffixExposed = EventExposingPresentation(matchingSuffix)
@@ -118,7 +118,7 @@ class PresentationFactory(private val editor: EditorImpl) {
               onClick = { m, p ->
         presentationToChange?.flipState()
       })
-    }, second = {expanded}, initialState = startWithPlaceholder)
+    }, second = { expanded() }, initialState = startWithPlaceholder)
     presentationToChange = content
     val listener = object: InputHandler {
       override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
@@ -127,6 +127,7 @@ class PresentationFactory(private val editor: EditorImpl) {
     }
     prefixExposed.addInputListener(listener)
     suffixExposed.addInputListener(listener)
+    return seq(prefixExposed, content, suffixExposed)
   }
 
   fun matchingBraces(left: InlayPresentation, right: InlayPresentation) : Pair<InlayPresentation, InlayPresentation> {
@@ -148,20 +149,18 @@ class PresentationFactory(private val editor: EditorImpl) {
    */
   fun synchronousOnHover(presentations: List<InlayPresentation>, decorator: (InlayPresentation) -> InlayPresentation) : List<InlayPresentation> {
     val forwardings = presentations.map { DynamicDelegatePresentation(it) }
-    forwardings.map {
-      onHover(it) {
-        for (forwarding in forwardings) {
-          forwarding.delegate = decorator(forwarding)
+    return forwardings.map {
+      onHover(it) { event ->
+        if (event != null) {
+          for ((index, forwarding) in forwardings.withIndex()) {
+            forwarding.delegate = decorator(presentations[index])
+          }
+        } else {
+          for ((index, forwarding) in forwardings.withIndex()) {
+            forwarding.delegate = presentations[index]
+          }
         }
       }
-    }
-    return forwardings
-  }
-
-  /// TODO not tested yet
-  fun <S : Any> synchronousStateful(presentations: List<StatefulPresentation<S>>): List<StatefulPresentation<S>> {
-    return presentations.map { current ->
-      SynchronousPresentation(current, presentations.filter { it !== current })
     }
   }
 
