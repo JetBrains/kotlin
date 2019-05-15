@@ -7,7 +7,6 @@ import com.intellij.codeInsight.hints.*
 import com.intellij.lang.Language
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypes
@@ -115,7 +114,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val endOffset = file.textRange.endOffset
     val existingHorizontalInlays = model.getInlineElementsInRange(startOffset, endOffset)
     val existingVerticalInlays = model.getBlockElementsInRange(startOffset, endOffset)
-    collector.applyToEditor(file, editor, existingHorizontalInlays, existingVerticalInlays)
+    collector.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays)
   }
 
   private fun traverse(root: PsiElement, action: (PsiElement) -> Unit) {
@@ -192,7 +191,6 @@ internal class SingleLanguageInlayHintsSettingsPanel(
         providerTypesList.getItemAt(index)?.setEnabled(enabled)
       }
       providerTypesList.repaint()
-      // TODO load settings for each provider
     }
   }
 }

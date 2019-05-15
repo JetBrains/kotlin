@@ -10,18 +10,13 @@ import com.intellij.openapi.project.Project
  * Factory for [InlayHintsProvider], can be used to support multiple languages with a single type of inlay hints.
  */
 interface InlayHintsProviderFactory {
-  fun getProvidersInfo(project: Project): List<HintsProviderInfo<*>>
+  fun getProvidersInfo(project: Project): List<ProviderWithSettings<*>>
 
   companion object {
     @JvmStatic
     val EP = ExtensionPointName<InlayHintsProviderFactory>("com.intellij.codeInsight.inlayProviderFactory")
   }
 }
-
-class HintsProviderInfo<T: Any>(
-  val provider: ProviderWithSettings<T>,
-  val language: Language
-)
 
 object HintUtils {
   private fun getAllMetaProviders() : List<InlayHintsProviderFactory> {
@@ -38,7 +33,6 @@ object HintUtils {
     return getAllMetaProviders()
       .flatMap { it.getProvidersInfo(project) }
       .filter { it.language == language }
-      .map { it.provider }
   }
 }
 

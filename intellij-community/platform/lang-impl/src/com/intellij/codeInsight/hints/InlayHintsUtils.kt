@@ -16,13 +16,14 @@ import java.awt.Rectangle
 
 class ProviderWithSettings<T : Any>(
   val provider: InlayHintsProvider<T>,
-  val settings: T
+  val settings: T,
+  val language: Language
 ) {
   val configurable by lazy { provider.createConfigurable(settings) }
 
   fun withSettingsCopy(): ProviderWithSettings<T> {
     val settingsCopy = copySettings(settings, provider)
-    return ProviderWithSettings(provider, settingsCopy)
+    return ProviderWithSettings(provider, settingsCopy, language)
   }
 
   internal fun toSettingsWrapper(config: InlayHintsSettings, language: Language) : SettingsWrapper<T> {
@@ -39,7 +40,7 @@ class ProviderWithSettings<T : Any>(
 
 internal fun <T : Any> InlayHintsProvider<T>.withSettings(language: Language, config: InlayHintsSettings): ProviderWithSettings<T> {
   val settings = getActualSettings(config, language)
-  return ProviderWithSettings(this, settings)
+  return ProviderWithSettings(this, settings, language)
 }
 
 internal fun <T : Any> InlayHintsProvider<T>.getActualSettings(config: InlayHintsSettings, language: Language): T {
@@ -67,7 +68,6 @@ class CollectorWithSettings<T : Any>(
   }
 
   fun applyToEditor(
-    element: PsiElement,
     editor: Editor,
     existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
     existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>

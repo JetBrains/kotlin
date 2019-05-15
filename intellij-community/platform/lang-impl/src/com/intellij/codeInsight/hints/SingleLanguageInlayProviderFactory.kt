@@ -11,12 +11,12 @@ import com.intellij.openapi.project.Project
 private val inlayProviderName = ExtensionPointName<LanguageExtensionPoint<InlayHintsProvider<*>>>("com.intellij.codeInsight.inlayProvider")
 
 class SingleLanguageInlayProviderFactory : InlayHintsProviderFactory {
-  override fun getProvidersInfo(project: Project): List<HintsProviderInfo<*>> {
+  override fun getProvidersInfo(project: Project): List<ProviderWithSettings<*>> {
     val languages = findLanguagesWithHintsSupport()
     val config = ServiceManager.getService(InlayHintsSettings::class.java)
     return languages.mapNotNull { Language.findLanguageByID(it) }
       .flatMap { language ->
-        InlayHintsProviderExtension.allForLanguage(language).map { HintsProviderInfo(it.withSettings(language, config), language) }
+        InlayHintsProviderExtension.allForLanguage(language).map { it.withSettings(language, config) }
       }
   }
 
