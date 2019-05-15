@@ -5,19 +5,13 @@
 
 package org.jetbrains.kotlin.fir.lightTree
 
-import com.intellij.lang.impl.PsiBuilderFactoryImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.DebugUtil
-import com.intellij.psi.impl.PsiManagerEx
-import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
-import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.parsing.KotlinParser
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners

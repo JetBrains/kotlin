@@ -69,7 +69,7 @@ class Converter(
         for (kid in kidsArray) {
             if (kid == null) continue
             val tokenType = kid.tokenType
-            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType == COLON) continue
+            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON) continue
             f(kid)
         }
     }
@@ -641,11 +641,12 @@ class Converter(
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType,
+                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
-        returnType = if (firBlock != null || modifiers.inheritanceModifier == InheritanceModifier.ABSTRACT) {
+        returnType = if (firBlock != null || (firBlock == null && firExpression == null)) {
             returnType ?: implicitUnitType
         } else {
             returnType ?: implicitType
@@ -714,7 +715,8 @@ class Converter(
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType,
+                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -818,7 +820,7 @@ class Converter(
                 COLON -> isReturnType = true
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
-                BY_KEYWORD -> isDelegate = true
+                PROPERTY_DELEGATE -> isDelegate = true
                 VAR_KEYWORD -> isVar = true
                 PROPERTY_ACCESSOR ->
                     if (it.toString().contains("get")) //TODO make it better
@@ -828,7 +830,8 @@ class Converter(
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType,
+                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -901,7 +904,8 @@ class Converter(
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType,
+                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -936,7 +940,8 @@ class Converter(
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType,
+                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -1360,12 +1365,15 @@ class Converter(
         annotationUseSiteTarget: AnnotationUseSiteTarget?
     ): FirAnnotationCall {
         //TODO not implemented
+        val pair = convertConstructorInvocation(unescapedAnnotation)
         return FirAnnotationCallImpl(
             session,
             null,
             annotationUseSiteTarget,
-            FirErrorTypeRefImpl(session, null, "not implemented") //TODO not implemented
-        )
+            pair.first
+        ).apply {
+            arguments += pair.second
+        }
     }
 
     private fun visitExpression(expression: LighterASTNode): FirExpression {
