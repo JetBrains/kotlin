@@ -14,16 +14,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolveTask
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.getAggregatedTestTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
     KotlinOnlyTarget<KotlinJsCompilation>(project, platformType), KotlinJsTargetDsl {
-    val npmResolveTaskHolder = project.locateOrRegisterTask<NpmResolveTask>("npmResolve") {}
 
     val testTaskName get() = lowerCamelCaseName(disambiguationClassifier, testTaskNameSuffix)
     val testTask
