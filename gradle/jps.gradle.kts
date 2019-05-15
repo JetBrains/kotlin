@@ -73,6 +73,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                         kotlinJpsPluginJar()
 
                         ideaPlugin()
+
+                        dist()
                     }
 
                     compiler {
@@ -209,6 +211,57 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinJpsPluginJar() {
     }
 }
 
+fun NamedDomainObjectContainer<TopLevelArtifact>.dist() {
+    val distLibrariesProject = project(":kotlin-stdlib:jps-build")
+    val stdlibMinimal by distLibrariesProject.configurations
+    val commonStdlib by distLibrariesProject.configurations
+    val commonStdlibSources by distLibrariesProject.configurations
+    val stdlibJS by distLibrariesProject.configurations
+    val stdlibSources by distLibrariesProject.configurations
+
+    create("dist") {
+        file("$rootDir/build/build.txt")
+
+        // Use output-file-name when fixed https://github.com/JetBrains/gradle-idea-ext-plugin/issues/63
+        archive("kotlin-stdlib-minimal-for-test.jar") {
+            extractedDirectory(stdlibMinimal.singleFile)
+        }
+
+        directory("artifacts") {
+            directory("ideaPlugin") {
+                artifact("ideaPlugin")
+            }
+        }
+
+        directory("common") {
+            // Use output-file-name when fixed https://github.com/JetBrains/gradle-idea-ext-plugin/issues/63
+            archive("kotlin-stdlib-common.jar") {
+                extractedDirectory(commonStdlib.singleFile)
+            }
+
+            // Use output-file-name when fixed https://github.com/JetBrains/gradle-idea-ext-plugin/issues/63
+            archive("kotlin-stdlib-common-sources.jar") {
+                extractedDirectory(commonStdlibSources.singleFile)
+            }
+        }
+
+        directory("js") {
+            extractedDirectory(stdlibJS.singleFile)
+        }
+
+        directory("kotlinc") {
+            artifact("kotlinc")
+        }
+
+        directory("maven") {
+            // Use output-file-name when fixed https://github.com/JetBrains/gradle-idea-ext-plugin/issues/63
+            archive("kotlin-stdlib-sources.jar") {
+                extractedDirectory(stdlibSources.singleFile)
+            }
+        }
+    }
+}
+
 fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
     val ideaPluginProject = project(":prepare:idea-plugin")
     val libraries by ideaPluginProject.configurations
@@ -223,10 +276,10 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
             directory("lib") {
                 artifact("kotlin-plugin.jar")
 
-                directoryFromConfiguration(libraries)
+                jarsFromConfiguration(libraries)
 
                 directory("jps") {
-                    directoryFromConfiguration(jpsPlugin)
+                    jarsFromConfiguration(jpsPlugin)
                 }
             }
         }
@@ -274,7 +327,7 @@ fun RecursiveArtifact.jarContentsFromEmbeddedConfiguration(project: Project) {
         }
 }
 
-fun RecursiveArtifact.directoryFromConfiguration(configuration: Configuration) {
+fun RecursiveArtifact.jarsFromConfiguration(configuration: Configuration) {
     val resolvedArtifacts = configuration
         .resolvedConfiguration
         .resolvedArtifacts
