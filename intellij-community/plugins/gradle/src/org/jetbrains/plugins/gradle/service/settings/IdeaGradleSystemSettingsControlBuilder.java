@@ -225,7 +225,6 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
     constraints.insets.top = 0;
     canvas.add(myServiceDirectoryHint, constraints);
-
   }
 
   private void addVMOptionsControl(@NotNull PaintAwarePanel canvas, int indentLevel) {
@@ -237,6 +236,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       myGradleVmOptionsField = new JBTextField();
       canvas.add(myGradleVmOptionsField, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
       myGradleVmOptionsComponents.add(myGradleVmOptionsField);
+
+      label.setLabelFor(myGradleVmOptionsField);
 
       Component glue = Box.createGlue();
       canvas.add(glue, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
@@ -256,7 +257,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
         protected void textChanged(@NotNull DocumentEvent e) {
           boolean showMigration = e.getDocument().getLength() > 0;
           fixLabel.setHyperlinkText(
-            "This setting is deprecated, please use 'gradle.properties' and 'org.gradle.jvmargs' property ",
+            "This setting is deprecated, please use 'org.gradle.jvmargs’ property in 'gradle.properties’ file instead ",
             showMigration ? "Migrate" : "  ", "");
         }
       });
