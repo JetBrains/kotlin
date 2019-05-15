@@ -202,7 +202,8 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
                     descriptor, null, index,
                     Annotations.EMPTY,
                     Name.identifier(
-                            if (attributeInfo.name == CHILDREN_KEY) "children"
+                            if (attributeInfo.name == CHILDREN_KEY)
+                                attributeInfo.descriptor.name.identifier
                             else attributeInfo.name
                     ),
                     attributeInfo.type, false,
