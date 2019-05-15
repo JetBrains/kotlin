@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 package test
 
 annotation class AString(val value: String)
