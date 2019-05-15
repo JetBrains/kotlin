@@ -30,13 +30,6 @@ import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-// This pass has to run after LocalDeclarationsLowering, since we don't handle nested functions.
-val innerClassesPhase = makeIrFilePhase(
-    ::InnerClassesLowering,
-    name = "InnerClasses",
-    description = "Add 'outer this' fields to inner classes"
-)
-
 class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
     private val IrValueSymbol.classForImplicitThis: IrClass?
         // TODO: is this the correct way to get the class?

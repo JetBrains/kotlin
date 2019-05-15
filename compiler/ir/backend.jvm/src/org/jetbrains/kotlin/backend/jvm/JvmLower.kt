@@ -21,10 +21,13 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.NameUtils
 
 private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     lower = object : SameTypeCompilerPhase<CommonBackendContext, IrFile> {
@@ -50,6 +53,12 @@ private val expectDeclarationsRemovingPhase = makeIrFilePhase(
     description = "Remove expect declaration from module fragment"
 )
 
+private val lateinitPhase = makeIrFilePhase(
+    ::LateinitLowering,
+    name = "Lateinit",
+    description = "Insert checks for lateinit field references"
+)
+
 private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
     { context ->
         PropertiesLowering(context, JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS) { propertyName ->
@@ -61,6 +70,31 @@ private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
+private val defaultArgumentStubPhase = makeIrFilePhase<CommonBackendContext>(
+    { context -> DefaultArgumentStubGenerator(context, false) },
+    name = "DefaultArgumentsStubGenerator",
+    description = "Generate synthetic stubs for functions with default parameter values"
+)
+
+private val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
+    { context ->
+        LocalDeclarationsLowering(context, object : LocalNameProvider {
+            override fun localName(declaration: IrDeclarationWithName): String =
+                NameUtils.sanitizeAsJavaIdentifier(super.localName(declaration))
+        }, Visibilities.PUBLIC)
+    },
+    name = "JvmLocalDeclarations",
+    description = "Move local declarations to classes",
+    prerequisite = setOf(sharedVariablesPhase)
+)
+
+private val innerClassesPhase = makeIrFilePhase(
+    ::InnerClassesLowering,
+    name = "InnerClasses",
+    description = "Add 'outer this' fields to inner classes",
+    prerequisite = setOf(localDeclarationsPhase)
+)
+
 val jvmPhases = namedIrFilePhase<JvmBackendContext>(
     name = "IrLowering",
     description = "IR lowering",
@@ -69,7 +103,7 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
             kCallableNamePropertyPhase then
             arrayConstructorPhase then
 
-            jvmLateinitPhase then
+            lateinitPhase then
 
             moveCompanionObjectFieldsPhase then
             propertyReferencePhase then
@@ -79,7 +113,7 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
             renameFieldsPhase then
             annotationPhase then
 
-            jvmDefaultArgumentStubPhase then
+            defaultArgumentStubPhase then
 
             interfacePhase then
             interfaceDelegationPhase then
@@ -90,7 +124,7 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
 
             enumWhenPhase then
             singletonReferencesPhase then
-            jvmLocalDeclarationsPhase then
+            localDeclarationsPhase then
             singleAbstractMethodPhase then
             callableReferencePhase then
             functionNVarargInvokePhase then
