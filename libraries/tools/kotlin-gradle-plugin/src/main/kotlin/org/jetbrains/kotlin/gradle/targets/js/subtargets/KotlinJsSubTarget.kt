@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
@@ -79,7 +80,7 @@ abstract class KotlinJsSubTarget(
         registerTestTaskInAggregate(testJs, target.testTask.doGetTask())
         registerTestTask(testJs)
 
-        project.afterEvaluate {
+        project.whenEvaluated {
             testJs.configure {
                 if (it.testFramework == null) {
                     configureDefaultTestFramework(it)
