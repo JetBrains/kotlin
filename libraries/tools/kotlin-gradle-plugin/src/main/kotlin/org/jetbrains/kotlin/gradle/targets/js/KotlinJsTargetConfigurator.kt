@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
@@ -22,7 +22,7 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         super.configureTarget(target)
 
         target.compilations.forEach {
-            it.compileKotlinTask.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider())
+            it.compileKotlinTask.dependsOn(target.project.nodeJs.root.npmResolveTask)
         }
 
         if (target.disambiguationClassifier != null) {

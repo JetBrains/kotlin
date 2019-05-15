@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
@@ -32,7 +33,7 @@ class KotlinNodeJs(target: KotlinJsTarget) :
 
         val runTaskHolder = project.createOrRegisterTask<NodeJsExec>(disambiguateCamelCased("run")) { runTask ->
             val compileKotlinTask = compilation.compileKotlinTask
-            runTask.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider(), compileKotlinTask)
+            runTask.dependsOn(target.project.nodeJs.root.npmResolveTask, compileKotlinTask)
 
             val npmProject = project.npmProject
             runTask.args(npmProject.compileOutput(compileKotlinTask))
@@ -52,7 +53,7 @@ class KotlinNodeJs(target: KotlinJsTarget) :
             runtimeOnly(kotlin("test-nodejs-runner"))
         }
 
-        target.npmResolveTaskHolder.doGetTask().doLast {
+        target.project.nodeJs.root.npmResolveTask.doLast {
             runTaskHolder.configure { runTask ->
                 runTask.args(
                     "--require",

@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Delete
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.NODE_JS
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolveTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 open class NodeJsPlugin : Plugin<Project> {
@@ -14,7 +15,12 @@ open class NodeJsPlugin : Plugin<Project> {
         }
 
         this.extensions.create(NODE_JS, NodeJsRootExtension::class.java, this)
-        tasks.create(NodeJsSetupTask.NAME, NodeJsSetupTask::class.java)
+
+        val setupTask = tasks.create(NodeJsSetupTask.NAME, NodeJsSetupTask::class.java)
+        val npmResolveTask = tasks.create(NpmResolveTask.NAME, NpmResolveTask::class.java)
+        npmResolveTask.outputs.upToDateWhen { false }
+
+        npmResolveTask.dependsOn(setupTask)
 
         setupCleanNodeModulesTask(project)
 

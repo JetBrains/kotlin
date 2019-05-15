@@ -13,4 +13,8 @@ open class NpmResolveTask : AbstractTask() {
     fun resolve() {
         NpmResolver.resolve(project)
     }
+
+    companion object {
+        const val NAME = "npmResolve"
+    }
 }

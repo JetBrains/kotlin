@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
@@ -65,7 +66,7 @@ abstract class KotlinJsSubTarget(
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
-            testJs.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider(), compileTask, nodeJs.nodeJsSetupTask)
+            testJs.dependsOn(target.project.nodeJs.root.npmResolveTask, compileTask, nodeJs.nodeJsSetupTask)
 
             testJs.onlyIf {
                 compileTask.outputFile.exists()
