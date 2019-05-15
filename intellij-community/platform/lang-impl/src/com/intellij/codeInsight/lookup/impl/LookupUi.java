@@ -4,7 +4,6 @@ package com.intellij.codeInsight.lookup.impl;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CodeCompletionFeatures;
 import com.intellij.codeInsight.completion.ShowHideIntentionIconLookupAction;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementAction;
@@ -15,14 +14,12 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
-import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.ScreenUtil;
@@ -34,7 +31,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.AbstractLayoutManager;
 import com.intellij.util.ui.AsyncProcessIcon;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +47,6 @@ import java.util.Collection;
  */
 class LookupUi {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.lookup.impl.LookupUi");
-  private static final String SORTING_MENU = "SortingMenu";
 
   @NotNull
   private final LookupImpl myLookup;
@@ -76,9 +71,16 @@ class LookupUi {
     myProcessIcon.setVisible(false);
     myLookup.resort(false);
 
-    AnAction menuAction = new MenuAction();
-    myMenuButton = new ActionButton(menuAction, menuAction.getTemplatePresentation(),
-                                    ActionPlaces.EDITOR_POPUP, ActionToolbar.NAVBAR_MINIMUM_BUTTON_SIZE);
+    MenuAction menuAction = new MenuAction();
+    menuAction.add(new ChangeSortingAction());
+    menuAction.add(new ChangeQuickDocAction());
+
+    Presentation presentation = new Presentation();
+    presentation.setIcon(AllIcons.Actions.More);
+    presentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, Boolean.TRUE);
+
+    myMenuButton = new ActionButton(menuAction, presentation, ActionPlaces.EDITOR_POPUP, ActionToolbar.NAVBAR_MINIMUM_BUTTON_SIZE);
+    //myMenuButton.setNoIconsInPopup(true);
 
     AnAction hintAction = new HintAction();
     myHintButton = new ActionButton(hintAction, hintAction.getTemplatePresentation(),
@@ -322,61 +324,52 @@ class LookupUi {
     }
   }
 
-  private class MenuAction extends DumbAwareAction {
+  private static class MenuAction extends DefaultActionGroup implements HintManagerImpl.ActionToIgnore {
     private MenuAction() {
-      super(null, null, AllIcons.Actions.More);
-    }
-
-    @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-      DefaultActionGroup group = new DefaultActionGroup();
-      group.add(new ChangeSortingAction());
-      group.add(new ChangeQuickDocAction());
-
-      ActionManagerImpl am = (ActionManagerImpl) ActionManager.getInstance();
-      ActionPopupMenu popupMenu = am.createActionPopupMenu(SORTING_MENU, group);
-
-      popupMenu.setTargetComponent(myLookup.getEditor().getContentComponent());
-      popupMenu.getComponent().show(e.getInputEvent().getComponent(), 0, e.getInputEvent().getComponent().getHeight() + JBUI.scale(2));
+      setPopup(true);
     }
   }
 
   private class ChangeSortingAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
-    private final boolean sortByName = UISettings.getInstance().getSortLookupElementsLexicographically();
+    private boolean sortByName = UISettings.getInstance().getSortLookupElementsLexicographically();
     private ChangeSortingAction() {
-      Presentation presentation = getTemplatePresentation();
-      presentation.setText("Sort by Name");
-      presentation.setIcon(sortByName ? PlatformIcons.CHECK_ICON : null);
+      super("Sort by Name");
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      if (e.getPlace() == SORTING_MENU) {
+      if (e.getPlace() == ActionPlaces.EDITOR_POPUP) {
+        sortByName = !sortByName;
+
         FeatureUsageTracker.getInstance().triggerFeatureUsed(CodeCompletionFeatures.EDITING_COMPLETION_CHANGE_SORTING);
-        UISettings.getInstance().setSortLookupElementsLexicographically(!sortByName);
+        UISettings.getInstance().setSortLookupElementsLexicographically(sortByName);
         myLookup.resort(false);
       }
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      e.getPresentation().setIcon(sortByName ? PlatformIcons.CHECK_ICON : null);
     }
   }
 
   private static class ChangeQuickDocAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
-    private final boolean showQuickDoc = CodeInsightSettings.getInstance().AUTO_POPUP_JAVADOC_INFO;
+    private final AnAction quickDocAction = ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC);
     private ChangeQuickDocAction() {
-      Presentation presentation = getTemplatePresentation();
-      presentation.setText("Show the Documentation Popup");
-      presentation.setIcon(showQuickDoc ? PlatformIcons.CHECK_ICON : null);
+      getTemplatePresentation().setText(quickDocAction.getTemplateText(), true);
+      copyShortcutFrom(quickDocAction);
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      if (e.getPlace() == SORTING_MENU) {
-        CodeInsightSettings.getInstance().AUTO_POPUP_JAVADOC_INFO = !showQuickDoc;
-
-        Project project = e.getProject();
-        if (project != null) {
-          DaemonCodeAnalyzer.getInstance(project).settingsChanged();
-        }
+      if (e.getPlace() == ActionPlaces.EDITOR_POPUP) {
+        quickDocAction.actionPerformed(e);
       }
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      e.getPresentation().setVisible(!CodeInsightSettings.getInstance().AUTO_POPUP_JAVADOC_INFO);
     }
   }
 

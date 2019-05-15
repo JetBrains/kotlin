@@ -421,6 +421,14 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       return standard;
     }
 
+    if (!Registry.is("ide.completion.show.visibility.icon") && icon instanceof RowIcon) {
+      RowIcon rowIcon = (RowIcon)icon;
+      if (rowIcon.getIconCount() >= 1 ) {
+        Icon firstIcon = rowIcon.getIcon(0);
+        if (firstIcon != null) icon = firstIcon;
+      }
+    }
+
     if (icon.getIconHeight() < standard.getIconHeight() || icon.getIconWidth() < standard.getIconWidth()) {
       final LayeredIcon layeredIcon = new LayeredIcon(2);
       layeredIcon.setIcon(icon, 0, 0, (standard.getIconHeight() - icon.getIconHeight()) / 2);
