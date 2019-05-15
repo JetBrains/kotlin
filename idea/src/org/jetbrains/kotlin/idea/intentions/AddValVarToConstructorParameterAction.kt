@@ -30,11 +30,12 @@ import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 interface AddValVarToConstructorParameterAction {
     companion object {
-        val actionFamily = "Add val/var to primary constructor parameter"
+        const val actionFamily = "Add val/var to primary constructor parameter"
     }
 
     fun getActionText(element: KtParameter) = "Add val/var to parameter '${element.name ?: ""}'"
@@ -65,11 +66,11 @@ interface AddValVarToConstructorParameterAction {
     }
 
     class Intention :
-            SelfTargetingRangeIntention<KtParameter>(KtParameter::class.java, actionFamily),
-            AddValVarToConstructorParameterAction {
+        SelfTargetingRangeIntention<KtParameter>(KtParameter::class.java, actionFamily),
+        AddValVarToConstructorParameterAction {
         override fun applicabilityRange(element: KtParameter): TextRange? {
             if (!canInvoke(element)) return null
-            if (element.getStrictParentOfType<KtClass>()?.isData() ?: false) return null
+            if (element.getStrictParentOfType<KtClass>()?.isData() == true) return null
             text = getActionText(element)
             return element.nameIdentifier?.textRange
         }
@@ -78,8 +79,8 @@ interface AddValVarToConstructorParameterAction {
     }
 
     class QuickFix(parameter: KtParameter) :
-            KotlinQuickFixAction<KtParameter>(parameter),
-            AddValVarToConstructorParameterAction {
+        KotlinQuickFixAction<KtParameter>(parameter),
+        AddValVarToConstructorParameterAction {
         override fun getText() = element?.let { getActionText(it) } ?: ""
 
         override fun getFamilyName() = actionFamily
