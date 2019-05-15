@@ -94,3 +94,6 @@ class JvmTarget6OnJvmLast : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(SuiteRunnerForCustomJdk::class)
 class JvmTarget8OnJvmLast : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(SuiteRunnerForCustomJdk::class)
+class JvmTargetLastOnJvmLast : CustomJvmTargetOnJvmBaseTest()

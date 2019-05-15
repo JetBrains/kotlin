@@ -32,18 +32,20 @@ fun Project.codegenTest(
 
 fun Project.codegenTest(
     target: Int, jvm: String, jdk: String,
+    targetInTestClass: String = "$target",
     body: Test.() -> Unit
-): Test = projectTest("codegenTarget${target}Jvm${jvm}Test") {
+): Test = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test") {
     dependsOn(":dist")
     workingDir = rootDir
 
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.JvmTarget${target}OnJvm${jvm}")
+    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.JvmTarget${targetInTestClass}OnJvm${jvm}")
 
+    systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
     body()
     doFirst {
         val jdkPath = project.findProperty(jdk) ?: error("$jdk is not optional to run this test")
         executable = "$jdkPath/bin/java"
-        println("Running test with $executable")
+        println("Running tests with $target target and $executable")
     }
     group = "verification"
 }
@@ -59,31 +61,29 @@ codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
     systemProperty("kotlin.test.box.in.separate.process.server.classpath", testJvm6ServerRuntime.asPath)
 }
 
-codegenTest(target = 6, jvm = 9) {
-    systemProperty("kotlin.test.default.jvm.target", "1.6")
-}
+codegenTest(target = 6, jvm = 9) {}
 
-codegenTest(target = 8, jvm = 8) {
-    systemProperty("kotlin.test.default.jvm.target", "1.8")
-}
+codegenTest(target = 8, jvm = 8) {}
 
-codegenTest(target = 8, jvm = 9) {
-    systemProperty("kotlin.test.default.jvm.target", "1.8")
-}
+codegenTest(target = 8, jvm = 9) {}
 
-codegenTest(target = 9, jvm = 9) {
-    systemProperty("kotlin.test.default.jvm.target", "1.8")
-    systemProperty("kotlin.test.substitute.bytecode.1.8.to.1.9", "true")
-}
+codegenTest(target = 9, jvm = 9) {}
 
-codegenTest(target = 6, jvm = "Last", jdk = JdkMajorVersion.values().last().name) {
-    systemProperty("kotlin.test.default.jvm.target", "1.6")
+val mostRecentJdk = JdkMajorVersion.values().last().name
+
+codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk) {
     jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
 }
 
-codegenTest(target = 8, jvm = "Last", jdk = JdkMajorVersion.values().last().name) {
-    systemProperty("kotlin.test.default.jvm.target", "1.8")
+codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk) {
     jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
 }
+
+codegenTest(
+    mostRecentJdk.substringAfter('_').toInt(),
+    targetInTestClass = "Last",
+    jvm = "Last",
+    jdk = mostRecentJdk
+) {}
 
 testsJar()
