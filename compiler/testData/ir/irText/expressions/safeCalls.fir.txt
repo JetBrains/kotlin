@@ -58,11 +58,11 @@ FILE fqName:<root> fileName:/safeCalls.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:kotlin.Int 
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:kotlin.Int?
     VALUE_PARAMETER name:x index:0 type:kotlin.String? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.String?): kotlin.Int declared in <root>'
-        ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
+      RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.String?): kotlin.Int? declared in <root>'
+        ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int?
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:IrErrorType 
     VALUE_PARAMETER name:x index:0 type:kotlin.String? 
     BLOCK_BODY

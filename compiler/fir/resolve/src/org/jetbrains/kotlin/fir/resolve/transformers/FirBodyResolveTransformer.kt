@@ -202,7 +202,15 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             is FirResolvedCallableReference -> {
                 val symbol = newCallee.coneSymbol
                 if (symbol is ConeCallableSymbol) {
-                    jump.tryCalculateReturnType(symbol.firUnsafe())
+                    val returnType = jump.tryCalculateReturnType(symbol.firUnsafe())
+                    if (access.safe && access.explicitReceiver!!.resultType.coneTypeUnsafe<ConeKotlinType>().isNullable) {
+                        returnType.withReplacedConeType(
+                            session,
+                            returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
+                        )
+                    } else {
+                        returnType
+                    }
                 } else if (symbol is ConeClassifierSymbol) {
                     val firUnsafe = symbol.firUnsafe<FirElement>()
                     // TODO: unhack
