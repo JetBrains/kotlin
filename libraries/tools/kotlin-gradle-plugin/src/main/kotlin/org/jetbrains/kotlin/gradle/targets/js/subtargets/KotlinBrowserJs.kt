@@ -43,7 +43,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
             val compileKotlinTask = compilation.compileKotlinTask
-            it.dependsOn(target.npmResolveTaskHolder.getTaskOrProvider(), compileKotlinTask)
+            it.dependsOn(target.project.nodeJs.root.npmResolveTask, compileKotlinTask)
 
             it.entry = npmProject.compileOutput(compileKotlinTask)
 
@@ -53,7 +53,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
         val run = project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("run")) {
             val compileKotlinTask = compilation.compileKotlinTask
             it.dependsOn(
-                target.npmResolveTaskHolder.getTaskOrProvider(),
+                target.project.nodeJs.root.npmResolveTask,
                 compileKotlinTask,
                 project.getTasksByName(compilation.processResourcesTaskName, false)
             )

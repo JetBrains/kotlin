@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.internal.hash.FileHasher
-import org.jetbrains.kotlin.daemon.common.toHexString
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.*

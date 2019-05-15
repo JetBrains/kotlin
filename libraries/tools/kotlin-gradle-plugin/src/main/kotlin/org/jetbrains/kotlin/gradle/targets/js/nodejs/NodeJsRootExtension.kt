@@ -2,9 +2,12 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.TaskHolder
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolveTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import java.io.File
 
 open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
@@ -25,6 +28,9 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
 
     val nodeJsSetupTask: NodeJsSetupTask
         get() = project.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
+
+    val npmResolveTask: NpmResolveTask
+        get() = project.tasks.getByName(NpmResolveTask.NAME) as NpmResolveTask
 
     internal val environment: NodeJsEnv
         get() {
