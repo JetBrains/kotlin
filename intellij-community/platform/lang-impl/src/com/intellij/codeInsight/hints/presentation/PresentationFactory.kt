@@ -52,7 +52,7 @@ class PresentationFactory(private val editor: EditorImpl) {
   /**
    * Text, that is not expected to be drawn with rounding, the same font size as in editor.
    */
-  fun text(text: String) : InlayPresentation {
+  fun text(text: String): InlayPresentation {
     val font = editor.colorsScheme.getFont(EditorFontType.PLAIN)
     val width = editor.contentComponent.getFontMetrics(font).stringWidth(text)
     return withInlayAttributes(TextInlayPresentation(
@@ -95,6 +95,74 @@ class PresentationFactory(private val editor: EditorImpl) {
         it.with(attributesOf(EditorColors.FOLDED_TEXT_ATTRIBUTES))
       }
     }), onClick = unwrapAction)
+  }
+
+  /**
+   * Creates node, that can be collapsed by clicking on prefix/suffix.
+   * Default presentation of content is first.
+//  TODO fix me  * @param content main content, first is expected to be collapsed presentation, second - expanded one
+   */
+  fun collapsible(
+    prefix: InlayPresentation,
+    collapsed: InlayPresentation,
+    expanded: InlayPresentation,
+    suffix: InlayPresentation,
+    startWithPlaceholder: Boolean = true
+  ) {
+    val (matchingPrefix, matchingSuffix) = matchingBraces(prefix, suffix)
+    val prefixExposed = EventExposingPresentation(matchingPrefix)
+    val suffixExposed = EventExposingPresentation(matchingSuffix)
+    var presentationToChange: BiStatePresentation? = null
+    val content = BiStatePresentation(first = {
+      onClick(collapsed, MouseButton.Left,
+              onClick = { m, p ->
+        presentationToChange?.flipState()
+      })
+    }, second = {expanded}, initialState = startWithPlaceholder)
+    presentationToChange = content
+    val listener = object: InputHandler {
+      override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
+        content.flipState()
+      }
+    }
+    prefixExposed.addInputListener(listener)
+    suffixExposed.addInputListener(listener)
+  }
+
+  fun matchingBraces(left: InlayPresentation, right: InlayPresentation) : Pair<InlayPresentation, InlayPresentation> {
+    val (leftMatching, rightMatching) = matching(listOf(left, right))
+    return leftMatching to rightMatching
+  }
+
+  fun matching(presentations: List<InlayPresentation>) : List<InlayPresentation> {
+    return synchronousOnHover(presentations) { presentation ->
+      attributes(presentation) { base ->
+        base.with(attributesOf(CodeInsightColors.MATCHED_BRACE_ATTRIBUTES))
+      }
+    }
+  }
+
+  /**
+   * On hover changes all the presentations with a given decorator
+   * Stateless presentation
+   */
+  fun synchronousOnHover(presentations: List<InlayPresentation>, decorator: (InlayPresentation) -> InlayPresentation) : List<InlayPresentation> {
+    val forwardings = presentations.map { DynamicDelegatePresentation(it) }
+    forwardings.map {
+      onHover(it) {
+        for (forwarding in forwardings) {
+          forwarding.delegate = decorator(forwarding)
+        }
+      }
+    }
+    return forwardings
+  }
+
+  /// TODO not tested yet
+  fun <S : Any> synchronousStateful(presentations: List<StatefulPresentation<S>>): List<StatefulPresentation<S>> {
+    return presentations.map { current ->
+      SynchronousPresentation(current, presentations.filter { it !== current })
+    }
   }
 
   fun asWrongReference(presentation: InlayPresentation): InlayPresentation {
@@ -163,7 +231,7 @@ class PresentationFactory(private val editor: EditorImpl) {
   fun rounding(arcWidth: Int, arcHeight: Int, presentation: InlayPresentation): InlayPresentation =
     RoundPresentation(presentation, arcWidth, arcHeight)
 
-  private fun attributes(base: InlayPresentation, transformer: (TextAttributes) -> TextAttributes) : AttributesTransformerPresentation {
+  private fun attributes(base: InlayPresentation, transformer: (TextAttributes) -> TextAttributes): AttributesTransformerPresentation {
     return AttributesTransformerPresentation(base, transformer)
   }
 

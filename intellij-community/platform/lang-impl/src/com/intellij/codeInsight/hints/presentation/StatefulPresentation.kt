@@ -19,7 +19,7 @@ abstract class StatefulPresentation<S: Any?>(
   val stateMark: StateMark<S>
 ) : BasePresentation() {
   private var _state = state
-  var state: S
+  open var state: S
   get() = _state
   set(value) {
     if (value != _state) {
