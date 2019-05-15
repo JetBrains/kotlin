@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
 import com.google.gson.GsonBuilder
+import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
 import org.gradle.api.Project
+import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.process.ProcessForkOptions
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KarmaConfig.CoverageReporter.Reporter
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfigWriter
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.slf4j.Logger
 import java.io.File
 
 class KotlinKarma(val project: Project) : KotlinJsTestFramework {
@@ -209,12 +213,42 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
                 } +
                 listOf("start", karmaConfJs.absolutePath)
 
-        return TCServiceMessagesTestExecutionSpec(
+        return object : TCServiceMessagesTestExecutionSpec(
             forkOptions,
             args,
             false,
             clientSettings
-        )
+        ) {
+            override fun createClient(testResultProcessor: TestResultProcessor, log: Logger) =
+                object : TCServiceMessagesClient(testResultProcessor, clientSettings, log) {
+                    val baseTestNameSuffix get() = settings.testNameSuffix
+                    override var testNameSuffix: String? = baseTestNameSuffix
+
+                    override fun getSuiteName(message: BaseTestSuiteMessage): String {
+                        val src = message.suiteName.trim()
+                        // example: "sample.a DeepPackageTest Inner.HeadlessChrome 74.0.3729 (Mac OS X 10.14.4)"
+                        // should be reported as "sample.a.DeepPackageTest.Inner[js,browser,HeadlessChrome74.0.3729,MacOSX10.14.4]"
+
+                        // lets parse it from the end:
+                        val os = src.substringAfterLast("(") // Mac OS X 10.14.4)
+                            .removeSuffix(")") // Mac OS X 10.14.4
+                            .replace(" ", "") // MacOSX10.14.4
+
+                        val withoutOs = src.substringBeforeLast(" (") // sample.a DeepPackageTest Inner.HeadlessChrome 74.0.3729
+
+                        val rawSuiteNameOnly = withoutOs
+                            .substringBeforeLast(" ") // sample.a DeepPackageTest Inner.HeadlessChrome
+                            .substringBeforeLast(".") // sample.a DeepPackageTest Inner
+
+                        val browser = withoutOs.substring(rawSuiteNameOnly.length + 1) // HeadlessChrome 74.0.3729
+                            .replace(" ", "") // HeadlessChrome74.0.3729
+
+                        testNameSuffix = "$baseTestNameSuffix,$browser,$os"
+
+                        return rawSuiteNameOnly.replace(" ", ".") // sample.a.DeepPackageTest.Inner
+                    }
+                }
+        }
     }
 
     private fun Appendable.appendFromConfigDir() {
