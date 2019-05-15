@@ -35,6 +35,7 @@ import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -364,16 +365,19 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     final MessageEvent.Kind eventKind = messageEvent.getKind();
     if (eventKind == MessageEvent.Kind.ERROR || eventKind == MessageEvent.Kind.WARNING || eventKind == MessageEvent.Kind.INFO) {
       SimpleNode p = parentNode;
+      Ref<ExecutionNode> child = new Ref<>();
       do {
         ExecutionNode executionNode = (ExecutionNode)p;
-        boolean warningOrInfoUpdate =
-          (eventKind == MessageEvent.Kind.WARNING && !executionNode.hasWarnings()) ||
-          (eventKind == MessageEvent.Kind.INFO && !executionNode.hasInfos());
         executionNode.reportChildMessageKind(eventKind);
-        if (warningOrInfoUpdate) {
-          executionNode.cleanUpCache();
+
+        boolean isUpdateNeeded =
+          (eventKind == MessageEvent.Kind.WARNING && !executionNode.hasWarnings()) ||
+          (eventKind == MessageEvent.Kind.INFO && !executionNode.hasInfos()) ||
+          (!child.isNull() && Arrays.stream(executionNode.getChildren()).noneMatch(node -> child.get() == node));
+        if (isUpdateNeeded) {
           scheduleUpdate(executionNode);
         }
+        child.set(executionNode);
       }
       while ((p = p.getParent()) instanceof ExecutionNode);
       scheduleUpdate(getRootElement());
