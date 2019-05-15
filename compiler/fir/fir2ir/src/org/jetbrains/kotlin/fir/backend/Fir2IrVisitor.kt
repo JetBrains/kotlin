@@ -654,6 +654,7 @@ internal class Fir2IrVisitor(
                         IrErrorCallExpressionImpl(startOffset, endOffset, type, "No getter found for ${calleeReference.render()}")
                     }
                 }
+                symbol is IrFieldSymbol -> IrGetFieldImpl(startOffset, endOffset, symbol, type, origin = IrStatementOrigin.GET_PROPERTY)
                 symbol is IrValueSymbol -> IrGetValueImpl(
                     startOffset, endOffset, type, symbol,
                     if (calleeReference is FirPropertyFromParameterCallableReference) {

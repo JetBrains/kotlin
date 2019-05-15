@@ -105,7 +105,7 @@ fun FirNamedReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): Ir
     if (this is FirResolvedCallableReference) {
         when (val callableSymbol = this.coneSymbol) {
             is FirFunctionSymbol -> return callableSymbol.toFunctionSymbol(declarationStorage)
-            is FirPropertySymbol -> return callableSymbol.toPropertySymbol(declarationStorage)
+            is FirPropertySymbol -> return callableSymbol.toPropertyOrFieldSymbol(declarationStorage)
             is FirVariableSymbol -> return callableSymbol.toValueSymbol(declarationStorage)
         }
     }
@@ -124,8 +124,8 @@ fun FirFunctionSymbol.toFunctionSymbol(declarationStorage: Fir2IrDeclarationStor
     return declarationStorage.getIrFunctionSymbol(this)
 }
 
-fun FirPropertySymbol.toPropertySymbol(declarationStorage: Fir2IrDeclarationStorage): IrPropertySymbol {
-    return declarationStorage.getIrPropertySymbol(this)
+fun FirPropertySymbol.toPropertyOrFieldSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
+    return declarationStorage.getIrPropertyOrFieldSymbol(this)
 }
 
 fun FirVariableSymbol.toValueSymbol(declarationStorage: Fir2IrDeclarationStorage): IrValueSymbol {

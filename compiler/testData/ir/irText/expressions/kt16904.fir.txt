@@ -102,7 +102,8 @@ FILE fqName:<root> fileName:/kt16904.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.J]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: R|/J.field|' type=IrErrorType
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+          value: CONST Int type=kotlin.Int value=42
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

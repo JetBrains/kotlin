@@ -238,7 +238,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_J_CONST visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test_J_CONST type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'No getter found for R|/J.CONST|' type=kotlin.Int
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:CONST type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Int 
       correspondingProperty: PROPERTY name:test_J_CONST visibility:public modality:FINAL [val] 
       BLOCK_BODY
@@ -247,7 +247,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
   PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test_J_nonConst type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'No getter found for R|/J.nonConst|' type=kotlin.Int
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nonConst type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_nonConst> visibility:public modality:FINAL <> () returnType:kotlin.Int 
       correspondingProperty: PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val] 
       BLOCK_BODY

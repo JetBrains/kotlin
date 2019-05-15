@@ -7,17 +7,19 @@ FILE fqName:<root> fileName:/Derived.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: R|/Base.value|' type=IrErrorType
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+          value: CONST Int type=kotlin.Int value=0
     FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Int 
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getValue (): kotlin.Int declared in <root>.Derived'
-          ERROR_CALL 'No getter found for R|/Base.value|' type=kotlin.Int
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public ' type=kotlin.Int origin=GET_PROPERTY
     FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Derived, value:kotlin.Int) returnType:kotlin.Unit 
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived 
       VALUE_PARAMETER name:value index:0 type:kotlin.Int 
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: R|/Base.value|' type=IrErrorType
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+          value: GET_VAR 'value: kotlin.Int declared in <root>.Derived.setValue' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

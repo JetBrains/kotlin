@@ -48,6 +48,8 @@ class Fir2IrDeclarationStorage(
 
     private val propertyCache = mutableMapOf<FirProperty, IrProperty>()
 
+    private val fieldCache = mutableMapOf<FirField, IrField>()
+
     private val localStorage = Fir2IrLocalStorage()
 
     fun enterScope(descriptor: DeclarationDescriptor) {
@@ -358,6 +360,30 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    private fun getIrField(field: FirField): IrField {
+        return fieldCache.getOrPut(field) {
+            val descriptor = WrappedFieldDescriptor()
+            val origin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+            val type = field.returnTypeRef.toIrType(session, this)
+            field.convertWithOffsets { startOffset, endOffset ->
+                irSymbolTable.declareField(
+                    startOffset, endOffset,
+                    origin, descriptor, type
+                ) { symbol ->
+                    IrFieldImpl(
+                        startOffset, endOffset, origin, symbol,
+                        field.name, type, field.visibility,
+                        isFinal = field.modality == Modality.FINAL,
+                        isExternal = false,
+                        isStatic = field.isStatic
+                    ).apply {
+                        descriptor.bind(this)
+                    }
+                }
+            }
+        }
+    }
+
     private fun createAndSaveIrParameter(valueParameter: FirValueParameter, index: Int = -1): IrValueParameter {
         val descriptor = WrappedValueParameterDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
@@ -453,12 +479,22 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun getIrPropertySymbol(firPropertySymbol: FirPropertySymbol): IrPropertySymbol {
-        val firProperty = firPropertySymbol.fir as FirProperty
-        val irProperty = getIrProperty(firProperty).apply {
-            setAndModifyParent(findIrParent(firProperty))
+    fun getIrPropertyOrFieldSymbol(firPropertySymbol: FirPropertySymbol): IrSymbol {
+        return when (val fir = firPropertySymbol.fir) {
+            is FirProperty -> {
+                val irProperty = getIrProperty(fir).apply {
+                    setAndModifyParent(findIrParent(fir))
+                }
+                irSymbolTable.referenceProperty(irProperty.descriptor)
+            }
+            is FirField -> {
+                val irField = getIrField(fir).apply {
+                    setAndModifyParent(findIrParent(fir))
+                }
+                irSymbolTable.referenceField(irField.descriptor)
+            }
+            else -> throw IllegalArgumentException("Unexpected fir in property symbol: ${fir.render()}")
         }
-        return irSymbolTable.referenceProperty(irProperty.descriptor)
     }
 
     private fun getIrVariableSymbol(firVariable: FirVariable): IrVariableSymbol {
