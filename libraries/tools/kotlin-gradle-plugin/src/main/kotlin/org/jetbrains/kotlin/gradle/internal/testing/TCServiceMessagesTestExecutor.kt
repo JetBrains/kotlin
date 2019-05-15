@@ -8,17 +8,21 @@ import org.gradle.internal.operations.BuildOperationExecutor
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import kotlin.concurrent.thread
 
-data class TCServiceMessagesTestExecutionSpec(
+open class TCServiceMessagesTestExecutionSpec(
     val forkOptions: ProcessForkOptions,
     val args: List<String>,
     val checkExitCode: Boolean,
     val clientSettings: TCServiceMessagesClientSettings
-) : TestExecutionSpec
+) : TestExecutionSpec {
+    internal open fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient =
+        TCServiceMessagesClient(testResultProcessor, clientSettings, log)
+}
 
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing")
 
@@ -37,7 +41,7 @@ class TCServiceMessagesTestExecutor(
 
         outputReaderThread = thread(name = "${spec.forkOptions} output reader") {
             try {
-                val client = TCServiceMessagesClient(testResultProcessor, spec.clientSettings, log)
+                val client = spec.createClient(testResultProcessor, log)
 
                 client.root(rootOperation) {
                     stdInPipe.reader().useLines { lines ->

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
 import org.slf4j.Logger
 import java.text.ParseException
-import java.lang.System.currentTimeMillis as currentTimeMillis1
 
 data class TCServiceMessagesClientSettings(
     val rootNodeName: String,
@@ -28,7 +27,7 @@ data class TCServiceMessagesClientSettings(
     val ignoreOutOfRootNodes: Boolean = false
 )
 
-internal class TCServiceMessagesClient(
+internal open class TCServiceMessagesClient(
     private val results: TestResultProcessor,
     val settings: TCServiceMessagesClientSettings,
     val log: Logger
@@ -51,7 +50,7 @@ internal class TCServiceMessagesClient(
         log.kotlinDebug { "TCSM: $message" }
 
         when (message) {
-            is TestSuiteStarted -> open(message.ts, SuiteNode(requireLeafGroup(), message.suiteName))
+            is TestSuiteStarted -> open(message.ts, SuiteNode(requireLeafGroup(), getSuiteName(message)))
             is TestStarted -> beginTest(message.ts, message.testName)
             is TestStdOut -> requireLeafTest().output(StdOut, message.stdOut)
             is TestStdErr -> requireLeafTest().output(StdErr, message.stdErr)
@@ -66,10 +65,12 @@ internal class TCServiceMessagesClient(
                     endTest(message.ts, message.testName)
                 }
             }
-            is TestSuiteFinished -> close(message.ts, message.suiteName)
+            is TestSuiteFinished -> close(message.ts, getSuiteName(message))
             else -> Unit
         }
     }
+
+    protected open fun getSuiteName(message: BaseTestSuiteMessage) = message.suiteName
 
     override fun regularText(text: String) {
         log.kotlinDebug { "TCSM stdout captured: $text" }
@@ -83,6 +84,9 @@ internal class TCServiceMessagesClient(
         }
     }
 
+    protected open val testNameSuffix: String?
+        get() = settings.testNameSuffix
+
     private fun beginTest(ts: Long, testName: String, isIgnored: Boolean = false) {
         val parent = requireLeafGroup()
         parent.requireReportingNode()
@@ -93,8 +97,8 @@ internal class TCServiceMessagesClient(
         }
 
         val parsedName = ParsedTestName(finalTestName, parent.localId)
-        val fullTestName = if (settings.testNameSuffix == null) parsedName.methodName
-        else "${parsedName.methodName}[${settings.testNameSuffix}]"
+        val fullTestName = if (testNameSuffix == null) parsedName.methodName
+        else "${parsedName.methodName}[$testNameSuffix]"
 
         open(
             ts, TestNode(
