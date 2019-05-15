@@ -643,6 +643,9 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
         if (namedFunction.returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return namedFunction.compose()
+        if (namedFunction.returnTypeRef is FirImplicitTypeRef) {
+            namedFunction.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
+        }
 
         val receiverTypeRef = namedFunction.receiverTypeRef
         fun transform(): CompositeTransformResult<FirDeclaration> {
@@ -887,12 +890,12 @@ private object StoreNameReference : FirTransformer<FirNamedReference>() {
     }
 }
 
-internal object StoreType : FirTransformer<FirResolvedTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirResolvedTypeRef): CompositeTransformResult<E> {
+internal object StoreType : FirTransformer<FirTypeRef>() {
+    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): CompositeTransformResult<E> {
         return element.compose()
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: FirResolvedTypeRef): CompositeTransformResult<FirTypeRef> {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: FirTypeRef): CompositeTransformResult<FirTypeRef> {
         return data.compose()
     }
 }
