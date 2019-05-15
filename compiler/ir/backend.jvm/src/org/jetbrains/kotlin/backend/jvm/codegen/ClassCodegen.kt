@@ -319,7 +319,7 @@ open class ClassCodegen protected constructor(
             if (containingDeclaration is IrFunction) {
                 val method = typeMapper.mapAsmMethod(containingDeclaration)
                 visitor.visitOuterClass(outerClassName, method.name, method.descriptor)
-            } else {
+            } else if (isAnonymous) {
                 visitor.visitOuterClass(outerClassName, null, null)
             }
         }
