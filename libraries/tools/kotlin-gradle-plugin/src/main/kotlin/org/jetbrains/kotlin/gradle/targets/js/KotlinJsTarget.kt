@@ -36,16 +36,12 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
     val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
     val runTask get() = project.tasks.maybeCreate(runTaskName)
 
-    private var hasSubtargets = false
-
     val browser by lazy {
-        hasSubtargets = true
         KotlinBrowserJs(this).also {
             it.configure()
         }
     }
     val nodejs by lazy {
-        hasSubtargets = true
         KotlinNodeJs(this).also {
             it.configure()
         }
@@ -57,11 +53,5 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
 
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         nodejs.body()
-    }
-
-    fun configureDefaults() {
-        if (!hasSubtargets) {
-            browser()
-        }
     }
 }
