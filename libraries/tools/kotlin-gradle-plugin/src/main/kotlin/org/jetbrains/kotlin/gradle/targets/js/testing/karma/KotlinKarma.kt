@@ -44,6 +44,8 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
         requiredDependencies.add(versions.karma)
 
         useTeamcityReporter()
+        useMocha()
+        useWebpack()
 
         config.singleRun = true
     }
@@ -78,13 +80,13 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
         requiredDependencies.add(dependency)
     }
 
-    fun useMocha() {
+    private fun useMocha() {
         requiredDependencies.add(versions.karmaMocha)
         requiredDependencies.add(versions.mocha)
         config.frameworks.add("mocha")
     }
 
-    fun useWebpack() {
+    private fun useWebpack() {
         requiredDependencies.add(versions.karmaWebpack)
 
         addPreprocessor("webpack")

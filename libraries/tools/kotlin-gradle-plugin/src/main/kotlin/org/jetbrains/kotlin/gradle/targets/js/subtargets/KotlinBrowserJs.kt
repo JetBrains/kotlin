@@ -25,8 +25,6 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
         it.useKarma {
-            useMocha()
-            useWebpack()
             useChromeHeadless()
         }
     }

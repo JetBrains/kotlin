@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
+import groovy.lang.Closure
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.SkipWhenEmpty
@@ -34,10 +35,28 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
         get() = testFramework!!.requiredNpmDependencies
 
     fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(project), body)
+    fun useNodeJs(fn: Closure<*>) {
+        useNodeJs {
+            fn.delegate = this
+            fn.call()
+        }
+    }
 
     fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(project), body)
+    fun useMocha(fn: Closure<*>) {
+        useMocha {
+            fn.delegate = this
+            fn.call()
+        }
+    }
 
     fun useKarma(body: KotlinKarma.() -> Unit) = use(KotlinKarma(project), body)
+    fun useKarma(fn: Closure<*>) {
+        useKarma {
+            fn.delegate = this
+            fn.call()
+        }
+    }
 
     private inline fun <T : KotlinJsTestFramework> use(runner: T, body: T.() -> Unit): T {
         check(testFramework == null) {
