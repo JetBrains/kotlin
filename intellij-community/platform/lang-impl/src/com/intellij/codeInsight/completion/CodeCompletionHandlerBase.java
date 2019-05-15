@@ -244,7 +244,7 @@ public class CodeCompletionHandlerBase {
     Future<?> future = indicator.getCompletionThreading().startThread(indicator, () -> AsyncCompletion.tryReadOrCancel(indicator, () -> {
       CompletionParameters parameters = CompletionInitializationUtil.prepareCompletionParameters(initContext, indicator);
       if (parameters != null) {
-        parameters.setIsTestingMode(isTestingCompletionQualityMode());
+        parameters.setIsTestingMode(isTestingMode());
         indicator.runContributors(initContext);
       }
     }));
@@ -677,12 +677,7 @@ public class CodeCompletionHandlerBase {
     ourAutoInsertItemTimeout = timeout;
   }
 
-  protected boolean isTestingCompletionQualityMode() {
-    return false;
-  }
-
-  private boolean isTestingMode() {
-    return isTestingCompletionQualityMode() || ApplicationManager.getApplication().isUnitTestMode();
+  protected boolean isTestingMode() {
+    return ApplicationManager.getApplication().isUnitTestMode();
   }
 }
-
