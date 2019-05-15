@@ -26,6 +26,7 @@ import com.intellij.ui.ScreenUtil;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.components.JBLayeredPane;
 import com.intellij.ui.components.JBList;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.Alarm;
 import com.intellij.util.PlatformIcons;
@@ -80,7 +81,6 @@ class LookupUi {
     presentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, Boolean.TRUE);
 
     myMenuButton = new ActionButton(menuAction, presentation, ActionPlaces.EDITOR_POPUP, ActionToolbar.NAVBAR_MINIMUM_BUTTON_SIZE);
-    //myMenuButton.setNoIconsInPopup(true);
 
     AnAction hintAction = new HintAction();
     myHintButton = new ActionButton(hintAction, hintAction.getTemplatePresentation(),
@@ -98,6 +98,8 @@ class LookupUi {
 
     myScrollPane = ScrollPaneFactory.createScrollPane(lookup.getList(), true);
     myScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    UIUtil.putClientProperty(myScrollPane.getVerticalScrollBar(), JBScrollPane.IGNORE_SCROLLBAR_IN_INSETS, true);
+
     lookup.getComponent().add(layeredPane, BorderLayout.CENTER);
 
     layeredPane.mainPanel.add(myScrollPane, BorderLayout.CENTER);
@@ -270,7 +272,7 @@ class LookupUi {
         @Override
         public Dimension preferredLayoutSize(@Nullable Container parent) {
           int maxCellWidth = myLookup.myLookupTextWidth + myLookup.myCellRenderer.getTextIndent();
-          int scrollBarWidth = myScrollPane.getPreferredSize().width - myScrollPane.getViewport().getPreferredSize().width;
+          int scrollBarWidth = myScrollPane.getVerticalScrollBar().getWidth();
           int listWidth = Math.min(scrollBarWidth + maxCellWidth, UISettings.getInstance().getMaxLookupWidth());
 
           Dimension bottomPanelSize = myBottomPanel.getPreferredSize();
@@ -301,7 +303,7 @@ class LookupUi {
             }
           }
 
-          myList.setFixedCellWidth(myScrollPane.getViewport().getWidth());
+          //myList.setFixedCellWidth(myScrollPane.getViewport().getWidth());
         }
       });
     }
