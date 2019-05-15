@@ -71,10 +71,7 @@ public class Emulator {
         commandLine.setExePath(pathManager.getEmulatorFolderInAndroidSdk() + "/" + "emulator");
         commandLine.addParameter("-avd");
         commandLine.addParameter(AVD_NAME);
-        if (platform != X86) {
-            //problem with qemu options
-            commandLine.addParameter("-no-audio");
-        }
+        commandLine.addParameter("-no-audio");
         commandLine.addParameter("-no-window");
         return commandLine;
     }
