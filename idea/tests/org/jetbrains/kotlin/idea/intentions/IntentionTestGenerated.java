@@ -1912,6 +1912,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
+        @TestMetadata("actualClass.kt")
+        public void testActualClass() throws Exception {
+            runTest("idea/testData/intentions/addValOrVar/actualClass.kt");
+        }
+
         @TestMetadata("addVal.kt")
         public void testAddVal() throws Exception {
             runTest("idea/testData/intentions/addValOrVar/addVal.kt");
@@ -1924,6 +1929,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("dataClass.kt")
         public void testDataClass() throws Exception {
             runTest("idea/testData/intentions/addValOrVar/dataClass.kt");
+        }
+
+        @TestMetadata("expectClass.kt")
+        public void testExpectClass() throws Exception {
+            runTest("idea/testData/intentions/addValOrVar/expectClass.kt");
+        }
+
+        @TestMetadata("expectClass2.kt")
+        public void testExpectClass2() throws Exception {
+            runTest("idea/testData/intentions/addValOrVar/expectClass2.kt");
         }
 
         @TestMetadata("funParameter.kt")

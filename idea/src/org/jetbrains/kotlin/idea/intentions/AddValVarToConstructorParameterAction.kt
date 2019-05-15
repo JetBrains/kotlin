@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 interface AddValVarToConstructorParameterAction {
@@ -41,7 +41,8 @@ interface AddValVarToConstructorParameterAction {
     fun getActionText(element: KtParameter) = "Add val/var to parameter '${element.name ?: ""}'"
 
     fun canInvoke(element: KtParameter): Boolean {
-        return element.valOrVarKeyword == null && (element.parent as? KtParameterList)?.parent is KtPrimaryConstructor
+        return element.valOrVarKeyword == null && ((element.parent as? KtParameterList)?.parent as? KtPrimaryConstructor)
+            ?.takeUnless(KtDeclaration::isExpectDeclaration) != null
     }
 
     fun invoke(element: KtParameter, editor: Editor?) {
