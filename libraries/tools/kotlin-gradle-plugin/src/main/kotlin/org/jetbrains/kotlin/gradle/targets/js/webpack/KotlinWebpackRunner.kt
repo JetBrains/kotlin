@@ -25,7 +25,7 @@ internal class KotlinWebpackRunner(
     val configFile: File,
     val execHandleFactory: ExecHandleFactory,
     val bin: String,
-    val config: KotlinWebpackConfig
+    val configWriter: KotlinWebpackConfigWriter
 ) {
     fun execute(): ExecResult {
         val exec = start()
@@ -37,20 +37,20 @@ internal class KotlinWebpackRunner(
     }
 
     fun start(): ExecHandle {
-        check(config.entry.isFile) {
-            "${this}: Entry file not existed \"${config.entry}\""
+        check(configWriter.entry?.isFile == true) {
+            "${this}: Entry file not existed \"${configWriter.entry}\""
         }
 
         NpmResolver.resolve(project)
 
         val npmProjectLayout = NpmProject[project]
 
-        config.save(configFile)
+        configWriter.save(configFile)
 
         val execFactory = execHandleFactory.newExec()
 
         val args = mutableListOf<String>("--config", configFile.absolutePath)
-        if (config.showProgress) {
+        if (configWriter.showProgress) {
             args.add("--progress")
         }
 
