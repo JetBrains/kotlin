@@ -9968,6 +9968,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/inferenceWithUpperBoundsInLambda.kt");
                 }
 
+                @TestMetadata("kt30300.kt")
+                public void testKt30300() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/commonSystem/kt30300.kt");
+                }
+
                 @TestMetadata("kt3372toCollection.kt")
                 public void testKt3372toCollection() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/kt3372toCollection.kt");
