@@ -546,6 +546,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     return popup[0];
   }
 
+  @NotNull
   private ActiveComponent createPinButton(@NotNull final FindUsagesHandler handler,
                                           @NotNull final UsageViewImpl usageView,
                                           @NotNull final FindUsagesOptions options,
@@ -694,7 +695,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     return data;
   }
 
-  private static int calcMaxWidth(JTable table) {
+  private static int calcMaxWidth(@NotNull JTable table) {
     int colsNum = table.getColumnModel().getColumnCount();
 
     int totalWidth = 0;
@@ -837,6 +838,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     window.repaint();
   }
 
+  @NotNull
   private static Rectangle getPreferredBounds(@NotNull JTable table, @NotNull Point point, int width, int minHeight, int modelRows) {
     boolean addExtraSpace = Registry.is("ide.preferred.scrollable.viewport.extra.space");
     int visibleRows = Math.min(30, modelRows);
@@ -948,7 +950,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   static class StringNode extends UsageNode {
     @NotNull private final Object myString;
 
-    StringNode(@NotNull Object string) {
+    private StringNode(@NotNull Object string) {
       super(null, NullUsage.INSTANCE);
       myString = string;
     }

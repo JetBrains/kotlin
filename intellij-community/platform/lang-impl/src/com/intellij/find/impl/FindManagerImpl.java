@@ -94,7 +94,7 @@ public class FindManagerImpl extends FindManager {
   private FindUIHelper myHelper;
   private static final NotificationGroup GROUP = new NotificationGroup("Find Problems", NotificationDisplayType.STICKY_BALLOON, false);
 
-  public FindManagerImpl(Project project, FindSettings findSettings, UsageViewManager anotherManager, MessageBus bus) {
+  public FindManagerImpl(@NotNull Project project, @NotNull FindSettings findSettings, @NotNull UsageViewManager anotherManager, MessageBus bus) {
     myProject = project;
     myBus = bus;
     findSettings.initModelBySetings(myFindInProjectModel);
@@ -1065,9 +1065,7 @@ public class FindManagerImpl extends FindManager {
       if (o1 == null) {
         return startOffset - o2.getEndOffset();
       }
-      else {
-        return o1.getEndOffset() - startOffset;
-      }
+      return o1.getEndOffset() - startOffset;
     });
     if (i < 0) {
       i = -i - 1;
