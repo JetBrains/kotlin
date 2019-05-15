@@ -469,15 +469,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         ws
         modality(status.modality)
         ws
-        if (status.isCompanion) {
-            keyword("companion ")
-        }
-        if (status.isInline) {
-            keyword("inline ")
-        }
-        if (status.isInner) {
-            keyword("inner ")
-        }
         if (status.isExpect) {
             keyword("expect ")
         }
@@ -487,32 +478,32 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         if (status.isOverride) {
             keyword("override ")
         }
-        if (status.isOperator) {
-            keyword("operator ")
+        if (status.isInner) {
+            keyword("inner ")
         }
-        if (status.isInfix) {
-            keyword("infix ")
+        if (status.isCompanion) {
+            keyword("companion ")
         }
         if (status.isInline) {
             keyword("inline ")
         }
-        if (status.isTailRec) {
-            keyword("tailrec ")
+        if (status.isInfix) {
+            keyword("infix ")
         }
         if (status.isExternal) {
             keyword("external ")
+        }
+        if (status.isTailRec) {
+            keyword("tailrec ")
+        }
+        if (status.isOperator) {
+            keyword("operator ")
         }
         if (status.isConst) {
             keyword("const ")
         }
         if (status.isLateInit) {
             keyword("lateinit ")
-        }
-        if (status.isInner) {
-            keyword("inner ")
-        }
-        if (status.isCompanion) {
-            keyword("companion ")
         }
         if (status.isData) {
             keyword("data ")
