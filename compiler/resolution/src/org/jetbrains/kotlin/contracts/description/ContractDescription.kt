@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.description
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.interpretation.ContractInterpretationDispatcher
 import org.jetbrains.kotlin.contracts.model.ESComponents
 import org.jetbrains.kotlin.contracts.model.Functor
@@ -40,12 +41,12 @@ open class ContractDescription(
     val ownerFunction: FunctionDescriptor,
     storageManager: StorageManager
 ) {
-    private val computeFunctor = storageManager.createMemoizedFunctionWithNullableValues<ModuleDescriptor, Functor> { module ->
-        val components = ESComponents(module.builtIns)
+    private val computeFunctor = storageManager.createMemoizedFunctionWithNullableValues<KotlinBuiltIns, Functor> { builtIns ->
+        val components = ESComponents(builtIns)
         ContractInterpretationDispatcher(components).convertContractDescriptorToFunctor(this)
     }
 
-    fun getFunctor(usageModule: ModuleDescriptor): Functor? = computeFunctor(usageModule)
+    fun getFunctor(usageModule: ModuleDescriptor): Functor? = computeFunctor(usageModule.builtIns)
 }
 
 interface ContractDescriptionElement {
