@@ -12,7 +12,7 @@ import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
 
-internal class GradleNodeModulesBuilder(val project: Project) : AutoCloseable {
+internal class GradleNodeModulesCache(val project: Project) : AutoCloseable {
     companion object {
         const val STATE_FILE_NAME = ".visited"
     }
@@ -21,34 +21,28 @@ internal class GradleNodeModulesBuilder(val project: Project) : AutoCloseable {
     private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "5")
     private val visited = mutableSetOf<ResolvedDependency>()
 
-    val modules
-        get() = cache.targets.map {
-            GradleNodeModule(it, dir.resolve(it))
-        }
-
-    val projects = mutableSetOf<Project>()
-
-    fun visitConfiguration(configuration: Configuration) {
+    fun collectDependenciesFromConfiguration(configuration: Configuration, result: NpmProjectGradleDeps) {
         if (configuration.isCanBeResolved) {
             configuration.resolvedConfiguration.firstLevelModuleDependencies.forEach {
-                visitDependency(it)
+                visitDependency(it, result)
             }
         }
     }
 
-    private fun visitDependency(dependency: ResolvedDependency) {
+    private fun visitDependency(dependency: ResolvedDependency, result: NpmProjectGradleDeps) {
         if (!visited.add(dependency)) return
 
-        visitArtifacts(dependency, dependency.moduleArtifacts)
+        visitArtifacts(dependency, dependency.moduleArtifacts, result)
 
         dependency.children.forEach {
-            visitDependency(it)
+            visitDependency(it, result)
         }
     }
 
     private fun visitArtifacts(
         dependency: ResolvedDependency,
-        artifacts: MutableSet<ResolvedArtifact>
+        artifacts: MutableSet<ResolvedArtifact>,
+        result: NpmProjectGradleDeps
     ) {
         val lazyDirName: String? by lazy {
             val module = GradleNodeModuleBuilder(project, dependency, artifacts, this)
@@ -62,10 +56,14 @@ internal class GradleNodeModulesBuilder(val project: Project) : AutoCloseable {
                 val dependentProject = project.findProject(componentIdentifier.projectPath)
                     ?: error("Cannot find project ${componentIdentifier.projectPath}")
 
-                projects.add(dependentProject)
+                result.internalModules.add(dependentProject)
             } else {
-                cache.getOrCompute(artifact.file) {
+                val key = cache.getOrCompute(artifact.file) {
                     lazyDirName
+                }
+
+                if (key != null) {
+                    result.externalModules.add(GradleNodeModule(key, dir.resolve(key)))
                 }
             }
         }

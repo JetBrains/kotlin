@@ -82,14 +82,16 @@ internal class ProcessedFilesCache(
     internal fun getOrCompute(
         file: File,
         compute: () -> String?
-    ) {
+    ): String? {
         val hash = hasher.hash(file).toByteArray()
         val old = old[hash]
         if (old != null) {
             new[hash] = old
+            return old.target
         } else {
             val key = compute()
             new[hash] = Element(file.canonicalPath, key)
+            return key
         }
     }
 
