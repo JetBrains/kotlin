@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODU
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import java.io.File
 
+/**
+ * Search modules in node_modules according to https://nodejs.org/api/modules.html.
+ */
 internal open class NpmProjectModules(
     val dir: File,
-    val nodeModulesDir: File = dir.resolve(NODE_MODULES)
+    private val nodeModulesDir: File = dir.resolve(NODE_MODULES)
 ) {
     /**
      * Require [request] nodejs module and return canonical path to it's main js file.

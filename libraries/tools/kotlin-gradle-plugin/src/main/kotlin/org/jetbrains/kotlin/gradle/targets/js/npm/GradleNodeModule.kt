@@ -7,4 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import java.io.File
 
+/**
+ * Fake NodeJS module directory created from Gradle external module
+ */
 class GradleNodeModule(val name: String, val path: File)

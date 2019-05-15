@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmPackages
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 
 open class NodeJsExtension(val project: Project) {
@@ -15,7 +15,7 @@ open class NodeJsExtension(val project: Project) {
 
     internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
 
-    val versions = NpmPackages()
+    val versions = NpmVersions()
 
     @Suppress("unused")
     fun packageJson(handler: PackageJson.() -> Unit) {

@@ -2,12 +2,9 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.plugin.TaskHolder
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolveTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import java.io.File
 
 open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
@@ -23,7 +20,6 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
 
     var nodeCommand = "node"
 
-    var layout: NpmProjectLayout = NpmProjectLayout.ROOT_PROJECT_BUILD_DIR
     var packageManager: NpmApi = Yarn
 
     val nodeJsSetupTask: NodeJsSetupTask
@@ -31,6 +27,15 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
 
     val npmResolveTask: NpmResolveTask
         get() = project.tasks.getByName(NpmResolveTask.NAME) as NpmResolveTask
+
+    val nodeModulesGradleCacheDir: File
+        get() = project.buildDir.resolve("node_modules_gradle")
+
+    val rootPackageDir: File
+        get() = project.buildDir.resolve("js")
+
+    val projectPackagesDir: File
+        get() = rootPackageDir.resolve("packages")
 
     internal val environment: NodeJsEnv
         get() {

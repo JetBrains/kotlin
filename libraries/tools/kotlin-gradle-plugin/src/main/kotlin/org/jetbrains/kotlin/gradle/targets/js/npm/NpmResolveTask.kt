@@ -11,7 +11,7 @@ import org.gradle.api.tasks.TaskAction
 open class NpmResolveTask : AbstractTask() {
     @TaskAction
     fun resolve() {
-        NpmResolver.resolve(project)
+        NpmResolver.resolveIfNeeded(project)
     }
 
     companion object {
