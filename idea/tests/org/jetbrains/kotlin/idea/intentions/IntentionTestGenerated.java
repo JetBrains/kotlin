@@ -6614,6 +6614,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPropertyToFunction/expressionBody.kt");
         }
 
+        @TestMetadata("expressionBodyWithGenericType.kt")
+        public void testExpressionBodyWithGenericType() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyToFunction/expressionBodyWithGenericType.kt");
+        }
+
         @TestMetadata("initializer.kt")
         public void testInitializer() throws Exception {
             runTest("idea/testData/intentions/convertPropertyToFunction/initializer.kt");
