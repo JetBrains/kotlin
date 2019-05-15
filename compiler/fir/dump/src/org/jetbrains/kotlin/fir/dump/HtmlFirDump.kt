@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
@@ -805,6 +806,24 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         +"."
     }
 
+    private fun FlowContent.generate(accessor: FirPropertyAccessor) {
+        if (accessor is FirDefaultPropertyAccessor) return
+        iline {
+            declarationStatus(accessor.status)
+            if (accessor.isGetter) {
+                keyword("get")
+            } else if (accessor.isSetter) {
+                keyword("set")
+            }
+            +"("
+            generateList(accessor.valueParameters) {
+                generate(it)
+            }
+            +")"
+            generateBlockIfAny(accessor.body)
+        }
+    }
+
     private fun FlowContent.generate(property: FirProperty) {
         //anchor
         iline {
@@ -830,6 +849,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             }
         }
 
+        withIdentLevel {
+            generate(property.getter)
+            generate(property.setter)
+        }
     }
 
 
