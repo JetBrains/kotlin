@@ -752,7 +752,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     }
 
-    private fun checkOutputFilesList(outputDir: File = productionOutputDir) {
+    protected fun checkOutputFilesList(outputDir: File = productionOutputDir) {
         if (!expectedOutputFile.exists()) {
             expectedOutputFile.writeText("")
             throw IllegalStateException("$expectedOutputFile did not exist. Created empty file.")
