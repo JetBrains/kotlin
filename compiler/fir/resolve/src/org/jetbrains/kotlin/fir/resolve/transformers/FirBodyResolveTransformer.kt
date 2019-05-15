@@ -668,6 +668,11 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return result
     }
 
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): CompositeTransformResult<FirStatement> {
+        annotationCall.resultType = annotationCall.annotationTypeRef
+        return (annotationCall.transformChildren(this, data) as FirStatement).compose()
+    }
+
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
         if (namedFunction.returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return namedFunction.compose()
         if (namedFunction.returnTypeRef is FirImplicitTypeRef) {
