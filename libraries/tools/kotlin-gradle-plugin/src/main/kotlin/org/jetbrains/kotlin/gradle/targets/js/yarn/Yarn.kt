@@ -123,18 +123,6 @@ object Yarn : NpmApi {
 
         if (rootProject.yarn.useWorkspaces) {
             resolveWorkspaces(rootProject, subprojects)
-        } else {
-            if (subprojects.any { it.project != rootProject }) {
-                // todo: proofread message
-                rootProject.logger.warn(
-                    "Build contains sub projects with NPM dependencies. " +
-                            "It is recommended to enable yarn workspaces to store common NPM dependencies in root project. " +
-                            "To enable it add this to your root project: \n" +
-                            "nodeJs { manageNodeModules = true } \n" +
-                            "Note: with `manageNodeModules` enabled, your `node_modules` and `package.json` files will be managed by " +
-                            "Gradle, will be overridden during build and should be ignored in VCS."
-                )
-            }
         }
     }
 
