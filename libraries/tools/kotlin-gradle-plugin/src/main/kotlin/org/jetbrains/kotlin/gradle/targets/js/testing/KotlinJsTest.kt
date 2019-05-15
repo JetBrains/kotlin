@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.process.internal.DefaultProcessForkOptions
+import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
@@ -40,24 +41,21 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(project), body)
     fun useNodeJs(fn: Closure<*>) {
         useNodeJs {
-            fn.delegate = this
-            fn.call()
+            ConfigureUtil.configure(fn, this)
         }
     }
 
     fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(project), body)
     fun useMocha(fn: Closure<*>) {
         useMocha {
-            fn.delegate = this
-            fn.call()
+            ConfigureUtil.configure(fn, this)
         }
     }
 
     fun useKarma(body: KotlinKarma.() -> Unit) = use(KotlinKarma(project), body)
     fun useKarma(fn: Closure<*>) {
         useKarma {
-            fn.delegate = this
-            fn.call()
+            ConfigureUtil.configure(fn, this)
         }
     }
 
