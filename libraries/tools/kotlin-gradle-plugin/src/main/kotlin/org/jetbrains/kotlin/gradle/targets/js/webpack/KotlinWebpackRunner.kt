@@ -12,7 +12,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
 import java.io.File
 
 internal class KotlinWebpackRunner(
-    val project: Project,
+    val npmProject: NpmProject,
     val configFile: File,
     val execHandleFactory: ExecHandleFactory,
     val bin: String,
@@ -41,10 +40,6 @@ internal class KotlinWebpackRunner(
             "${this}: Entry file not existed \"${configWriter.entry}\""
         }
 
-        NpmResolver.resolve(project)
-
-        val npmProjectLayout = NpmProject[project]
-
         configWriter.save(configFile)
 
         val execFactory = execHandleFactory.newExec()
@@ -54,7 +49,7 @@ internal class KotlinWebpackRunner(
             args.add("--progress")
         }
 
-        npmProjectLayout.useTool(execFactory, ".bin/$bin", *args.toTypedArray())
+        npmProject.useTool(execFactory, ".bin/$bin", *args.toTypedArray())
         val exec = execFactory.build()
         exec.start()
         return exec

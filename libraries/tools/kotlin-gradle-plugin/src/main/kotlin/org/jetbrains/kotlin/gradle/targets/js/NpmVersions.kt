@@ -3,13 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js.npm
+package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ExternalModuleDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 
-class NpmPackages {
+/**
+ * Package versions used by tasks
+ */
+class NpmVersions {
     val webpack = NpmPackageVersion("webpack", "4.29.6")
     val webpackCli = NpmPackageVersion("webpack-cli", "3.3.0")
     val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "3.3.2")
@@ -47,10 +50,11 @@ interface RequiredKotlinJsDependency {
 }
 
 data class NpmPackageVersion(val name: String, var version: String) : RequiredKotlinJsDependency {
-    override fun createDependency(project: Project) = NpmDependency(project, null, name, version)
+    override fun createDependency(project: Project): Dependency =
+        NpmDependency(project, null, name, version)
 }
 
-data class KotlinGradleNpmPackage(val simpleModuleName: String): RequiredKotlinJsDependency {
+data class KotlinGradleNpmPackage(val simpleModuleName: String) : RequiredKotlinJsDependency {
     override fun createDependency(project: Project): Dependency =
         project.dependencies.create("org.jetbrains.kotlin:kotlin-$simpleModuleName")
 }

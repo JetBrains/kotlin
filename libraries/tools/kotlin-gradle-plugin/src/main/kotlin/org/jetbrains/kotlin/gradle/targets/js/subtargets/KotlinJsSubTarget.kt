@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
@@ -32,6 +33,11 @@ abstract class KotlinJsSubTarget(
     fun configure() {
         configureTests()
         configureRun()
+
+        target.compilations.all {
+            val npmProject = it.npmProject
+            it.compileKotlinTask.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+        }
     }
 
     private fun disambiguate(name: String): MutableList<String> {
@@ -72,8 +78,8 @@ abstract class KotlinJsSubTarget(
                 compileTask.outputFile.exists()
             }
 
+            testJs.compilation = compilation
             testJs.targetName = target.disambiguationClassifier + "," + disambiguationClassifier
-            testJs.nodeModulesToLoad.add(compileTask.outputFile.nameWithoutExtension)
 
             testJs.configureConventions()
         }

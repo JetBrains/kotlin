@@ -11,13 +11,17 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 
+/**
+ * Cache for storing already created [GradleNodeModule]s
+ */
 internal class GradleNodeModulesCache(val project: Project) : AutoCloseable {
     companion object {
         const val STATE_FILE_NAME = ".visited"
     }
 
-    internal val dir = project.buildDir.resolve("node_modules_gradle")
+    internal val dir = project.nodeJs.root.nodeModulesGradleCacheDir
     private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "5")
     private val visited = mutableSetOf<ResolvedDependency>()
 

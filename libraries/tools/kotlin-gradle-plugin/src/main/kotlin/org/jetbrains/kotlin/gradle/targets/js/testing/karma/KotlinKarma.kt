@@ -15,11 +15,12 @@ import org.jetbrains.kotlin.gradle.internal.operation
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmPackageVersion
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
@@ -29,7 +30,10 @@ import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.slf4j.Logger
 import java.io.File
 
-class KotlinKarma(val project: Project) : KotlinJsTestFramework {
+class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
+    val project: Project
+        get() = compilation.target.project
+
     private val config: KarmaConfig = KarmaConfig()
     private val requiredDependencies = mutableSetOf<NpmPackageVersion>()
 
@@ -183,7 +187,7 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
             ignoreOutOfRootNodes = true
         )
 
-        val npmProject = task.project.npmProject
+        val npmProject = compilation.npmProject
 
         val files = task.nodeModulesToLoad.map { npmProject.require(it) }
         config.files.addAll(files)
@@ -194,7 +198,7 @@ class KotlinKarma(val project: Project) : KotlinJsTestFramework {
             it(task)
         }
 
-        val karmaConfJs = npmProject.nodeWorkDir.resolve("karma.conf.js")
+        val karmaConfJs = npmProject.dir.resolve("karma.conf.js")
         karmaConfJs.printWriter().use { confWriter ->
             confWriter.println("module.exports = function(config) {")
             confWriter.println()

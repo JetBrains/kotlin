@@ -26,7 +26,7 @@ open class YarnRootExtension(val project: Project) {
     var disableWorkspaces: Boolean = false
 
     val useWorkspaces: Boolean
-        get() = !disableWorkspaces && project.nodeJs.root.layout.allowYarnWorkspaces
+        get() = !disableWorkspaces
 
     internal fun executeSetup() {
         NodeJsPlugin.apply(project).root.executeSetup()

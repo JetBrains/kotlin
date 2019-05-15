@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 
 /**
- * Gradle dependencies for [NpmProject].
+ * [NpmProject] full package info
  */
-class NpmProjectGradleDeps {
-    val internalModules = mutableSetOf<Project>()
-    val externalModules = mutableSetOf<GradleNodeModule>()
-}
+class NpmProjectPackage(
+    val project: Project,
+    val npmProject: NpmProject,
+    val npmDependencies: Collection<NpmDependency>,
+    val packageJson: PackageJson
+)

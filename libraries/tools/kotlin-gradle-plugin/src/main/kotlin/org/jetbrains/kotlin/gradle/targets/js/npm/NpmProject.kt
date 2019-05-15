@@ -7,41 +7,52 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
 import org.gradle.process.ExecSpec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import java.io.File
 
-open class NpmProject(
-    val project: Project,
-    val nodeWorkDir: File,
-    val searchInParents: Boolean
-) {
+val KotlinJsCompilation.npmProject: NpmProject
+    get() = NpmProject(this)
+
+/**
+ * Basic info for [NpmProject] created from [compilation].
+ * This class contains only basic info.
+ *
+ * More info can be obtained from [NpmProjectPackage], which is available after project resolution (after [NpmResolveTask] execution).
+ */
+open class NpmProject(val compilation: KotlinJsCompilation) {
+    val name: String
+        get() = buildNpmProjectName()
+
+    val dir: File
+        get() = project.nodeJs.root.projectPackagesDir.resolve(name)
+
+    val target: KotlinTarget
+        get() = compilation.target
+
+    val project: Project
+        get() = target.project
+
     val nodeModulesDir
-        get() = nodeWorkDir.resolve(NODE_MODULES)
+        get() = dir.resolve(NODE_MODULES)
 
     val packageJsonFile: File
-        get() = nodeWorkDir.resolve(PACKAGE_JSON)
+        get() = dir.resolve(PACKAGE_JSON)
 
-    open val compileOutputCopyDest: File?
-        get() = nodeModulesDir
+    val main: String
+        get() = "kotlin/$name.js"
 
-    private val modules = object : NpmProjectModules(nodeWorkDir, nodeModulesDir) {
-        override val parent get() = if (searchInParents) parentModules else null
+    private val modules = object : NpmProjectModules(dir, nodeModulesDir) {
+        override val parent get() = rootNodeModules
     }
 
-    private val parentModules: NpmProjectModules?
-        get() = project.parent?.npmProject?.modules
-
-    val gradleNodeModulesDir: File
-        get() = project.rootProject.npmProject.nodeModulesDir
-
-    open fun compileOutput(compilationTask: Kotlin2JsCompile): File {
-        return compileOutputCopyDest?.resolve(compilationTask.outputFile.name) ?: compilationTask.outputFile
-    }
+    private val rootNodeModules: NpmProjectModules?
+        get() = NpmProjectModules(project.nodeJs.root.rootPackageDir)
 
     fun useTool(exec: ExecSpec, tool: String, vararg args: String) {
-        exec.workingDir = nodeWorkDir
+        exec.workingDir = dir
         exec.executable = project.nodeJs.root.environment.nodeExecutable
         exec.args = listOf(require(tool)) + args
     }
@@ -60,19 +71,32 @@ open class NpmProject(
      */
     internal fun resolve(name: String): File? = modules.resolve(name)
 
-    override fun toString() = "NpmProject($nodeWorkDir)"
+    private fun buildNpmProjectName(): String {
+        val project = target.project
+        val name = StringBuilder()
+
+        name.append(project.rootProject.name)
+
+        if (project != project.rootProject) {
+            name.append("-")
+            name.append(project.name)
+        }
+
+        if (target.name.isNotEmpty() && target.name.toLowerCase() != "js") {
+            name.append("-").append(target.name)
+        }
+
+        if (compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME) {
+            name.append("-").append(compilation.name)
+        }
+
+        return name.toString()
+    }
+
+    override fun toString() = "NpmProject($name)"
 
     companion object {
         const val PACKAGE_JSON = "package.json"
         const val NODE_MODULES = "node_modules"
-
-        operator fun get(project: Project): NpmProject {
-            val nodeJsRootExtension = NodeJsPlugin.apply(project)
-
-            return nodeJsRootExtension.root.layout.newNpmProject(project)
-        }
     }
 }
-
-val Project.npmProject
-    get() = NpmProject[this]

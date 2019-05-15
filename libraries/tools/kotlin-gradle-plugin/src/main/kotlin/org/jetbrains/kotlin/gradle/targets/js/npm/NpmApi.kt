@@ -7,35 +7,18 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
 
+/**
+ * NodeJS package manager API
+ */
 interface NpmApi {
     fun setup(project: Project)
 
-    @Suppress("EXPOSED_PARAMETER_TYPE")
-    fun resolveProject(npmPackage: NpmResolver.NpmPackage)
+    fun resolveProject(resolvedNpmProject: NpmProjectPackage)
 
-    @Suppress("EXPOSED_PARAMETER_TYPE")
     fun resolveRootProject(
         rootProject: Project,
-        subprojects: MutableList<NpmResolver.NpmPackage>
+        subProjects: MutableList<NpmProjectPackage>
     )
-
-    /**
-     * Change contents of root's project `package.json`.
-     * @return true if `package.json` is required even it is empty
-     */
-    @Suppress("EXPOSED_PARAMETER_TYPE")
-    fun hookRootPackage(
-        rootProject: Project,
-        rootPackageJson: PackageJson,
-        allWorkspaces: Collection<NpmResolver.NpmPackage>
-    ): Boolean = false
-
-    fun cleanProject(project: Project) {
-        val npmProject = project.npmProject
-
-        npmProject.nodeModulesDir.deleteRecursively()
-        npmProject.packageJsonFile.delete()
-    }
 
     companion object {
         fun resolveOperationDescription(packageManagerTitle: String): String =

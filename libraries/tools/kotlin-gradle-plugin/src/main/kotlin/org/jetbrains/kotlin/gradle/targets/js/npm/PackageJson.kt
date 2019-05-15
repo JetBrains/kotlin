@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import com.google.gson.GsonBuilder
+import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import java.io.File
+
 class PackageJson(
     var name: String,
     var version: String
@@ -16,10 +20,40 @@ class PackageJson(
                 dependencies.isEmpty() &&
                 devDependencies.isEmpty()
 
+    val scopedName: ScopedName
+        get() = scopedName(name)
+
     var private: Boolean? = null
+
+    var main: String? = null
 
     var workspaces: Collection<String>? = null
 
     val devDependencies = mutableMapOf<String, String>()
     val dependencies = mutableMapOf<String, String>()
+
+    companion object {
+        fun scopedName(name: String): ScopedName = if (name.contains("/")) ScopedName(
+            scope = name.substringBeforeLast("/").removePrefix("@"),
+            name = name.substringAfterLast("/")
+        ) else ScopedName(scope = null, name = name)
+
+        operator fun invoke(scope: String, name: String, version: String) =
+            PackageJson(ScopedName(scope, name).toString(), version)
+    }
+
+    data class ScopedName(val scope: String?, val name: String) {
+        override fun toString() = if (scope == null) name else "@$scope/$name"
+    }
+
+    fun saveTo(packageJsonFile: File) {
+        val gson = GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+
+        packageJsonFile.ensureParentDirsCreated()
+        packageJsonFile.writer().use {
+            gson.toJson(this, it)
+        }
+    }
 }
