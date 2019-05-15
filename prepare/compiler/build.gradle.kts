@@ -10,21 +10,18 @@ plugins {
 }
 
 // You can run Gradle with "-Pkotlin.build.proguard=true" to enable ProGuard run on kotlin-compiler.jar (on TeamCity, ProGuard always runs)
-val shrink =
-    findProperty("kotlin.build.proguard")?.toString()?.toBoolean()
-    ?: hasProperty("teamcity")
+val shrink = findProperty("kotlin.build.proguard")?.toString()?.toBoolean() ?: hasProperty("teamcity")
 
 val fatJarContents by configurations.creating
-
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
-val fatJar by configurations.creating
-val compilerJar by configurations.creating
+
 val runtimeJar by configurations.creating
 val compile by configurations  // maven plugin writes pom compile scope from compile configuration by default
 val libraries by configurations.creating {
     extendsFrom(compile)
 }
+
 val trove4jJar by configurations.creating
 val ktorNetworkJar by configurations.creating
 
@@ -88,6 +85,7 @@ dependencies {
     }
 
     fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
+    
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
 }
 
@@ -96,13 +94,11 @@ publish()
 noDefaultJar()
 
 val packCompiler by task<ShadowJar> {
-    configurations = listOf(fatJar)
-    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    configurations = listOf(fatJarContents)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDir = File(buildDir, "libs")
 
     setupPublicJar(compilerBaseName, "before-proguard")
-
-    from(fatJarContents)
 
     dependsOn(fatJarContentsStripServices)
     from {
@@ -131,15 +127,15 @@ val proguard by task<ProGuardTask> {
     inputs.files(packCompiler.outputs.files.singleFile)
     outputs.file(outputJar)
 
-    // TODO: remove after dropping compatibility with ant build
+    libraryjars(mapOf("filter" to "!META-INF/versions/**"), libraries)
+
+    printconfiguration("$buildDir/compiler.pro.dump")
+
+    // This properties are used by proguard config compiler.pro
     doFirst {
         System.setProperty("kotlin-compiler-jar-before-shrink", packCompiler.outputs.files.singleFile.canonicalPath)
         System.setProperty("kotlin-compiler-jar", outputJar.canonicalPath)
     }
-
-    libraryjars(mapOf("filter" to "!META-INF/versions/**"), libraries)
-
-    printconfiguration("$buildDir/compiler.pro.dump")
 }
 
 val pack = if (shrink) proguard else packCompiler
