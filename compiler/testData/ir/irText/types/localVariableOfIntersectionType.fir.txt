@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/localVariableOfIntersectionType.kt
       ERROR_CALL 'Unresolved reference: <Unresolved name: bar>#' type=IrErrorType
       VAR name:t type:T of <root>.Inv [val] 
         CALL 'public abstract fun <get-t> (): T of <root>.Inv declared in <root>.Inv' type=T of <root>.Inv origin=null
-          $this: CALL 'public abstract fun create <T> (x: <root>.In<T of <root>.Z.create>, y: <root>.In<T of <root>.Z.create>): <root>.Inv<T of <root>.Z.create> declared in <root>.Z' type=IrErrorType origin=null
+          $this: CALL 'public abstract fun create <T> (x: <root>.In<T of <root>.Z.create>, y: <root>.In<T of <root>.Z.create>): <root>.Inv<T of <root>.Z.create> declared in <root>.Z' type=<root>.Inv<<root>.IA> origin=null
             <T>: <none>
             $this: GET_VAR 'z: <root>.Z declared in <root>.test' type=<root>.Z origin=null
             x: GET_VAR 'a: <root>.In<<root>.IA> declared in <root>.test' type=<root>.In<<root>.IA> origin=null

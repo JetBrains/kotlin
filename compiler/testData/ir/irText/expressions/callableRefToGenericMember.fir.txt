@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun <get-bar> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=IrErrorType origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A<kotlin.String> origin=null
             <class: T>: <none>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 

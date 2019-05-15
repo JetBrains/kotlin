@@ -246,11 +246,11 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     private fun <T : FirQualifiedAccess> transformCallee(qualifiedAccess: T): T {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
-        val receiver = qualifiedAccess.explicitReceiver?.transformSingle(this, noExpectedType)
+        val qualifiedAccess = qualifiedAccess.transformExplicitReceiver(this, noExpectedType)
 
         val info = CallInfo(
             CallKind.VariableAccess,
-            receiver,
+            qualifiedAccess.explicitReceiver,
             emptyList(),
             qualifiedAccess.safe,
             emptyList(),
