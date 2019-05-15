@@ -114,8 +114,7 @@ open class IncrementalJsCache(
 
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =
         hashMapOf<File, TranslationResultValue>().apply {
-            for (path in translationResults.keys()) {
-                val file = File(path)
+            for (file in translationResults.keys()) {
                 if (file !in dirtySources) {
                     put(file, translationResults[file]!!)
                 }
@@ -167,8 +166,8 @@ private class TranslationResultMap(
     operator fun get(sourceFile: File): TranslationResultValue? =
         storage[pathConverter.toPath(sourceFile)]
 
-    fun keys(): Collection<String> =
-        storage.keys
+    fun keys(): Collection<File> =
+        storage.keys.map { pathConverter.toFile(it) }
 
     fun remove(sourceFile: File, changesCollector: ChangesCollector) {
         val path = pathConverter.toPath(sourceFile)
