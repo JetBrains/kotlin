@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.isStringClassType
-import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.fqNameSafe
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -68,6 +68,13 @@ val flattenStringConcatenationPhase = makeIrFilePhase(
 class FlattenStringConcatenationLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
 
     companion object {
+        // There are two versions of String.plus in the library. One for nullable and one for non-nullable strings.
+        // The version for nullable strings has FqName kotlin.plus, the version for non-nullable strings
+        // is a member function of kotlin.String (with FqName kotlin.String.plus)
+        private val PARENT_NAMES = setOf(
+            KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+            KotlinBuiltIns.FQ_NAMES.string.toSafe()
+        )
         private val PLUS_NAME = Name.identifier("plus")
 
         /** @return true if the given expression is a [IrStringConcatenation] or [String.plus] [IrCall]. */
@@ -79,10 +86,10 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                     val receiver = expression.dispatchReceiver ?: expression.extensionReceiver
                     receiver != null &&
                             receiver.type.isStringClassType() &&
-                            function.getPackageFragment()?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
-                            function.name == PLUS_NAME &&
                             expression.type.isStringClassType() &&
-                            expression.valueArgumentsCount == 1
+                            expression.valueArgumentsCount == 1 &&
+                            function.name == PLUS_NAME &&
+                            function.parent.fqNameSafe in PARENT_NAMES
                 }
                 else -> false
             }
