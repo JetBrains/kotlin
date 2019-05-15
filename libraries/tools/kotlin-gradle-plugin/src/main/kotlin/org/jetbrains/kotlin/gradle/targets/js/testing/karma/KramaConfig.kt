@@ -24,6 +24,18 @@ class KarmaConfig {
             val type: String,
             val subDir: String? = null,
             val file: String? = null
-        )
+        ) {
+            override fun toString(): String {
+                return "Reporter(type='$type', subDir=$subDir, file=$file)"
+            }
+        }
+
+        override fun toString(): String {
+            return "CoverageReporter(dir='$dir', reporters=$reporters)"
+        }
+    }
+
+    override fun toString(): String {
+        return "KarmaConfig(singleRun=$singleRun, autoWatch=$autoWatch, basePath=$basePath, files=$files, frameworks=$frameworks, browsers=$browsers, reporters=$reporters, preprocessors=$preprocessors, coverageReporter=$coverageReporter)"
     }
 }

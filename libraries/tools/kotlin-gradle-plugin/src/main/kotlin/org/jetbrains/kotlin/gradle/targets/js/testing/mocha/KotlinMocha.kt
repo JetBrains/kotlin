@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 class KotlinMocha(val project: Project) : KotlinJsTestFramework {
     private val versions = project.nodeJs.versions
 
+    override val settingsState: String
+        get() = "mocha"
+
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = listOf(
             KotlinGradleNpmPackage("test-nodejs-runner"),
