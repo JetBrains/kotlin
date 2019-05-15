@@ -35,7 +35,7 @@ data class PassConfigurationImpl (
     override val collectInheritedExtensionsFromLibraries: Boolean,
     override val analysisPlatform: Platform,
     override val targets: List<String>,
-    override val sinceKotlin: String
+    override val sinceKotlin: String?
 ) : DokkaConfiguration.PassConfiguration
 
 
