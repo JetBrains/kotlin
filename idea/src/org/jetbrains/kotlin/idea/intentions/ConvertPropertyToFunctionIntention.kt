@@ -75,6 +75,11 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                         .first { it !is PsiWhiteSpace }
                         .nextSibling
                     property.deleteChildRange(dropPropertyFrom, getter.prevSibling)
+
+                    val typeReference = property.typeReference
+                    if (typeReference != null) {
+                        property.addAfter(psiFactory.createWhiteSpace(), typeReference)
+                    }
                 }
             }
             property.setName(newName)
