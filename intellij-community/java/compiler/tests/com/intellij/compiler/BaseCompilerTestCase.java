@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.artifacts.ArtifactManager;
 import com.intellij.packaging.impl.compiler.ArtifactCompileScope;
+import com.intellij.pom.java.LanguageLevel;
 import com.intellij.testFramework.*;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.io.TestFileSystemBuilder;
@@ -67,6 +68,12 @@ public abstract class BaseCompilerTestCase extends ModuleTestCase {
 
   protected void forceFSRescan() {
     BuildManager.getInstance().clearState(myProject);
+  }
+
+  @NotNull
+  @Override
+  protected LanguageLevel getProjectLanguageLevel() {
+    return LanguageLevel.JDK_1_8;
   }
 
   @Override
