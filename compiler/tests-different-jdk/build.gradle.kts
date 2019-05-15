@@ -22,9 +22,18 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-fun Project.codegenTest(target: Int, jvm: Int,
-                        jdk: String = "JDK_${if (jvm <= 8) "1" else ""}$jvm",
-                        body: Test.() -> Unit): Test = projectTest("codegenTarget${target}Jvm${jvm}Test") {
+fun Project.codegenTest(
+    target: Int, jvm: Int,
+    jdk: String = "JDK_${if (jvm <= 8) "1" else ""}$jvm",
+    body: Test.() -> Unit
+) {
+    codegenTest(target, jvm.toString(), jdk, body = body)
+}
+
+fun Project.codegenTest(
+    target: Int, jvm: String, jdk: String,
+    body: Test.() -> Unit
+): Test = projectTest("codegenTarget${target}Jvm${jvm}Test") {
     dependsOn(":dist")
     workingDir = rootDir
 
@@ -67,15 +76,14 @@ codegenTest(target = 9, jvm = 9) {
     systemProperty("kotlin.test.substitute.bytecode.1.8.to.1.9", "true")
 }
 
-codegenTest(target = 10, jvm = 10) {
-    systemProperty("kotlin.test.default.jvm.target", "1.8")
-    systemProperty("kotlin.test.substitute.bytecode.1.8.to.10", "true")
-}
-
-codegenTest(target = 8, jvm = 11) {
-    systemProperty("kotlin.test.default.jvm.target", "1.8")
+codegenTest(target = 6, jvm = "Last", jdk = JdkMajorVersion.values().last().name) {
+    systemProperty("kotlin.test.default.jvm.target", "1.6")
     jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
 }
 
+codegenTest(target = 8, jvm = "Last", jdk = JdkMajorVersion.values().last().name) {
+    systemProperty("kotlin.test.default.jvm.target", "1.8")
+    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+}
 
 testsJar()
