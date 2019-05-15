@@ -23,7 +23,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
-import org.gradle.tooling.ProjectConnection
+import com.intellij.util.EnvironmentUtil
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -171,7 +171,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         templateClass: String, dependencySelector: Regex,
         additionalResolverClasspath: (gradleLibDir: File) -> List<File>
     ): List<KotlinScriptDefinition> {
-        fun createEnvironment(gradleExeSettings: GradleExecutionSettings): Environment {
+        fun createEnvironment(
+            gradleExeSettings: GradleExecutionSettings,
+            projectSettings: GradleProjectSettings
+        ): Environment {
             val gradleJvmOptions = gradleExeSettings.daemonVmOptions?.let { vmOptions ->
                 CommandLineTokenizer(vmOptions).toList()
                     .mapNotNull { it?.let { it as? String } }
@@ -179,18 +182,18 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                     .distinct()
             } ?: emptyList()
 
-
             return mapOf(
                 "gradleHome" to gradleExeSettings.gradleHome?.let(::File),
-                "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File),
-                "gradleWithConnection" to { action: (ProjectConnection) -> Unit ->
-                    GradleExecutionHelper().execute(project.basePath!!, null) { action(it) }
-                },
                 "gradleJavaHome" to gradleExeSettings.javaHome,
+
+                "projectRoot" to projectSettings.externalProjectPath.let(::File),
+
+                "gradleOptions" to emptyList<String>(), // There is no option in UI to set project wide gradleOptions
                 "gradleJvmOptions" to gradleJvmOptions,
+                "gradleEnvironmentVariables" to if (gradleExeSettings.isPassParentEnvs) EnvironmentUtil.getEnvironmentMap() else emptyMap(),
+
                 "getScriptSectionTokens" to ::topLevelSectionCodeTextTokens
             )
-
         }
 
         val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
@@ -218,7 +221,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         return loadDefinitionsFromTemplates(
             listOf(templateClass),
             templateClasspath,
-            createEnvironment(gradleExeSettings),
+            createEnvironment(gradleExeSettings, projectSettings),
             additionalResolverClasspath(gradleLibDir)
         ).map {
             // Expand scope for old gradle script definition
