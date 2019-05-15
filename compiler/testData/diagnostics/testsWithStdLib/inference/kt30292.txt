@@ -1,0 +1,3 @@
+package
+
+public fun test(/*0*/ ls: kotlin.collections.List<kotlin.String>): kotlin.Unit

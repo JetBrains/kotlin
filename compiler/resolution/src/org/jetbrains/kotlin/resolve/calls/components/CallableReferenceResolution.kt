@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -142,7 +143,8 @@ private fun ConstraintSystemOperation.addReceiverConstraint(
     }
 
     val expectedType = toFreshSubstitutor.safeSubstitute(receiverParameter.value.type.unwrap())
-    val receiverType = receiverArgument.receiver.stableType
+    val receiverType = receiverArgument.receiver.stableType.let { captureFromExpression(it) ?: it }
+
     addSubtypeConstraint(receiverType, expectedType, position)
 }
 
