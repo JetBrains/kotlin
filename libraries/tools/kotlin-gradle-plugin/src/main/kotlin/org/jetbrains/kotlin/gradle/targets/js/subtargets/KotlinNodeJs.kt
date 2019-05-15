@@ -36,11 +36,11 @@ class KotlinNodeJs(target: KotlinJsTarget) :
 
             val npmProject = project.npmProject
             runTask.args(npmProject.compileOutput(compileKotlinTask))
-
-            target.runTask.dependsOn(runTask)
         }
 
         addSourceMapSupport(compilation, runTaskHolder, project)
+
+        target.runTask.dependsOn(runTaskHolder.getTaskOrProvider())
     }
 
     private fun addSourceMapSupport(
