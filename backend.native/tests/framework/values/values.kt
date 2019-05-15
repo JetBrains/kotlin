@@ -421,3 +421,5 @@ object UnitBlockCoercionImpl : UnitBlockCoercion<() -> Unit> {
     override fun coerce(block: () -> Unit): () -> Unit = block
     override fun uncoerce(block: () -> Unit): () -> Unit = block
 }
+
+abstract class MyAbstractList : List<Any?>

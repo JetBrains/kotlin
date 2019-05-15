@@ -22,7 +22,7 @@ internal class ObjCExportHeaderGeneratorImpl(
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
         objcGenerics: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, context.builtIns, mapper, namer, objcGenerics) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics) {
 
     override fun reportWarning(text: String) {
         context.reportCompilationWarning(text)

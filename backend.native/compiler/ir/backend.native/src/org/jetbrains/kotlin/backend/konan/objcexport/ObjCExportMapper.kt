@@ -46,6 +46,10 @@ internal fun ObjCExportMapper.getClassIfCategory(descriptor: CallableMemberDescr
 
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return null
 
+    return getClassIfCategory(extensionReceiverType)
+}
+
+internal fun ObjCExportMapper.getClassIfCategory(extensionReceiverType: KotlinType): ClassDescriptor? {
     // FIXME: this code must rely on type mapping instead of copying its logic.
 
     if (extensionReceiverType.isObjCObjectType()) return null
@@ -63,13 +67,13 @@ internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescript
         descriptor.isEffectivelyPublicApi && !descriptor.isSuspend && !descriptor.isExpect
 
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
-        shouldBeVisible(descriptor) && !descriptor.defaultType.isObjCObjectType()
+        shouldBeVisible(descriptor) && !isSpecialMapped(descriptor) && !descriptor.defaultType.isObjCObjectType()
 
 internal fun ObjCExportMapper.shouldBeVisible(descriptor: ClassDescriptor): Boolean =
         descriptor.isEffectivelyPublicApi && when (descriptor.kind) {
         ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
         ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
-    } && !descriptor.isExpect && !isSpecialMapped(descriptor) && !descriptor.isInlined()
+    } && !descriptor.isExpect && !descriptor.isInlined()
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }
