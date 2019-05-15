@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
+import org.jetbrains.kotlin.gradle.testing.internal.registerTestTaskInAggregate
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 abstract class KotlinJsSubTarget(
@@ -73,10 +74,9 @@ abstract class KotlinJsSubTarget(
             testJs.nodeModulesToLoad.add(compileTask.outputFile.nameWithoutExtension)
 
             testJs.configureConventions()
-
-            target.testTask.dependsOn(testJs)
         }
 
+        registerTestTaskInAggregate(testJs, target.testTask.doGetTask())
         registerTestTask(testJs)
 
         project.afterEvaluate {

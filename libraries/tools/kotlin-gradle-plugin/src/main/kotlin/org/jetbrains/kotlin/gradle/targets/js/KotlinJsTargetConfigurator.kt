@@ -33,18 +33,6 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
         // tests configured in KotlinJsSubTarget.configure
-
-        target as KotlinJsTarget
-
-        if (target.disambiguationClassifier != null) {
-            val tasks = target.project.tasks
-            val check = tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)
-
-            @Suppress("IfThenToSafeAccess")
-            if (check != null) {
-                check.dependsOn(target.testTask)
-            }
-        }
     }
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
