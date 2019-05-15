@@ -74,9 +74,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         return KtUltraLightClass(element, object : KtUltraLightSupport {
             override fun isTooComplexForUltraLightGeneration(element: KtClassOrObject): Boolean {
                 val facet = KotlinFacet.get(module)
-                val pluginClasspath = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
-                if (!pluginClasspath.isNullOrEmpty()) {
-                    LOG.debug { "Using heavy light classes for ${element.fqName?.asString()} because of compiler plugins $pluginClasspath" }
+                val pluginClasspaths = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
+                if (!pluginClasspaths.isNullOrEmpty()) {
+                    val stringifiedClasspaths = pluginClasspaths.joinToString()
+                    LOG.debug { "Using heavy light classes for ${element.fqName?.asString()} because of compiler plugins $stringifiedClasspaths" }
                     return true
                 }
 
