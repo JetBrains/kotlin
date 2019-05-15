@@ -120,8 +120,12 @@ class PresentationTest : TestCase() {
 }
 
 class HeavyPresentationTest : LightPlatformCodeInsightFixtureTestCase() {
-  fun testFoldedStateIsNotUpdatedAndStatelessComponentIsUpdated() {
+  override fun setUp() {
+    super.setUp()
     myFixture.configureByText("__Dummy__.java", "class A {}")
+  }
+
+  fun testFoldedStateIsNotUpdatedAndStatelessComponentIsUpdated() {
     val factory = PresentationFactory(myFixture.editor as EditorImpl)
 
     val old = unwrapFolding(factory.folding(factory.smallText("outerPlaceholder")) {
@@ -135,6 +139,44 @@ class HeavyPresentationTest : LightPlatformCodeInsightFixtureTestCase() {
     }
     new.updateState(old)
     assertEquals("<clicked><clicked>newText", new.toString())
+  }
+
+  fun testFoldedBiState() {
+    val factory = PresentationFactory(myFixture.editor as EditorImpl)
+    with(factory) {
+      val inner = collapsible(
+        prefix = smallText("("),
+        collapsed = smallText("???"),
+        expanded = {smallText("123456")},
+        suffix = smallText(")"),
+        startWithPlaceholder = false
+      )
+      val outer = collapsible(
+        prefix = smallText("<"),
+        collapsed = smallText("..."),
+        expanded = {inner},
+        suffix = smallText(">"),
+        startWithPlaceholder = false
+      )
+      click((inner as SequencePresentation).presentations[0], 0, 0)
+      val innerAfter = collapsible(
+        prefix = smallText("("),
+        collapsed = smallText("???"),
+        expanded = {smallText("123456")},
+        suffix = smallText(")"),
+        startWithPlaceholder = false
+      )
+      val outerAfter = collapsible(
+        prefix = smallText("<"),
+        collapsed = smallText("..."),
+        expanded = {innerAfter},
+        suffix = smallText(">"),
+        startWithPlaceholder = false
+      )
+      outerAfter.updateState(outer)
+      val presentation = (innerAfter as SequencePresentation).presentations[1] as BiStatePresentation
+      assertTrue(presentation.state.currentFirst)
+    }
   }
 
   private fun unwrapFolding(presentation: InlayPresentation): InlayPresentation {

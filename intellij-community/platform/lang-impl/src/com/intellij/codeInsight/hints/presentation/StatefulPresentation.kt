@@ -73,11 +73,11 @@ abstract class StatefulPresentation<S: Any?>(
         val castedPrevious = stateMark.cast(previousState, previousMark)
         if (castedPrevious != null) {
           updateStateAndPresentation(castedPrevious)
-          currentPresentation.updateState(previousPresentation.currentPresentation)
           changed = true
         }
       }
     }
+    currentPresentation.updateState(previousPresentation.currentPresentation)
     return changed
   }
 

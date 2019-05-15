@@ -10,19 +10,19 @@ class BiStatePresentation(
   initialState: Boolean
 ) : StatefulPresentation<BiStatePresentation.State>(State(initialState), STATE_MARK) {
   override fun getPresentation(): InlayPresentation {
-    return when (state.first) {
+    return when (state.currentFirst) {
       true -> first()
       else -> second()
     }
   }
 
   fun flipState() {
-    state = State(!state.first)
+    state = State(!state.currentFirst)
   }
 
   override fun toString(): String = currentPresentation.toString()
 
-  data class State(val first: Boolean)
+  data class State(val currentFirst: Boolean)
 
   companion object {
     @JvmStatic
