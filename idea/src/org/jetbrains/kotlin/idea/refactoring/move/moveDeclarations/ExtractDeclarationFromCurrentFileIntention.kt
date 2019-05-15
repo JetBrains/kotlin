@@ -20,15 +20,11 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.kdoc.insert
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
-import org.jetbrains.kotlin.ir.util.startOffset
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -40,18 +36,24 @@ private const val TIMEOUT_FOR_IMPORT_OPTIMIZING_MS: Long = 700L
 class ExtractDeclarationFromCurrentFileIntention :
     SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Extract declaration from current file"),
     LowPriorityAction {
+
+    private fun KtClassOrObject.tryGetExtraClassesToMove(): List<KtNamedDeclaration>? {
+
+        val descriptor = resolveToDescriptorIfAny() ?: return null
+        if (descriptor.getSuperClassNotAny()?.modality == Modality.SEALED) return null
+
+        return descriptor.sealedSubclasses
+            .mapNotNull { it.source.getPsi() as? KtNamedDeclaration }
+            .filterNot { isAncestor(it) }
+    }
+
     override fun applicabilityRange(element: KtClassOrObject): TextRange? {
         if (element.name == null) return null
         if (element.parent !is KtFile) return null
         if (element.hasModifier(KtTokens.PRIVATE_KEYWORD)) return null
         if (element.containingKtFile.declarations.size == 1) return null
 
-        val descriptor = element.resolveToDescriptorIfAny() ?: return null
-        if (descriptor.sealedSubclasses
-                .mapNotNull { it.source.getPsi() }
-                .any { !element.isAncestor(it) }
-        ) return null
-        if (descriptor.getSuperClassNotAny()?.modality == Modality.SEALED) return null
+        val extraClassesToMove = element.tryGetExtraClassesToMove() ?: return null
 
         val keyword = when (element) {
             is KtClass -> element.getClassOrInterfaceKeyword()
@@ -61,7 +63,8 @@ class ExtractDeclarationFromCurrentFileIntention :
         val startOffset = keyword?.startOffset ?: return null
         val endOffset = element.nameIdentifier?.endOffset ?: return null
 
-        text = "Extract '${element.name}' from current file"
+        text = if (extraClassesToMove.isNotEmpty()) "Extract '${element.name}' and subclasses from current file"
+        else "Extract '${element.name}' from current file"
 
         return TextRange(startOffset, endOffset)
     }
@@ -110,9 +113,16 @@ class ExtractDeclarationFromCurrentFileIntention :
         val moveTarget = KotlinMoveTargetForDeferredFile(packageName, directory, null) {
             createKotlinFile(targetFileName, directory, packageName.asString())
         }
+
+        val moveSource = element.tryGetExtraClassesToMove()
+            ?.let { additionalElements ->
+                MoveSource(additionalElements.toMutableList().also { it.add(0, element) })
+            }
+            ?: MoveSource(element)
+
         val descriptor = MoveDeclarationsDescriptor(
             project = project,
-            moveSource = MoveSource(element),
+            moveSource = moveSource,
             moveTarget = moveTarget,
             delegate = MoveDeclarationsDelegate.TopLevel,
             searchInCommentsAndStrings = false,
