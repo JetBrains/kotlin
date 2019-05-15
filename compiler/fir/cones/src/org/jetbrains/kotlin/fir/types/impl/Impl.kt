@@ -57,4 +57,24 @@ class ConeTypeParameterTypeImpl(
         get() = EMPTY_ARRAY
 
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
+
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeTypeParameterTypeImpl
+
+        if (lookupTag != other.lookupTag) return false
+        if (nullability != other.nullability) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = lookupTag.hashCode()
+        result = 31 * result + nullability.hashCode()
+        return result
+    }
+
 }
