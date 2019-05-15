@@ -15,9 +15,7 @@
  */
 package com.intellij.build;
 
-import com.intellij.build.events.BuildEvent;
-import com.intellij.build.events.FinishBuildEvent;
-import com.intellij.build.events.StartBuildEvent;
+import com.intellij.build.events.*;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -54,6 +52,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 /**
  * @author Vladislav.Soroka
@@ -65,6 +64,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
   protected final Project myProject;
   protected final BuildContentManager myBuildContentManager;
   private final AtomicBoolean isInitializeStarted;
+  private final AtomicBoolean isFirstErrorShown = new AtomicBoolean();
   private final List<Runnable> myPostponedRunnables;
   private final ProgressWatcher myProgressWatcher;
   private final OnePixelSplitter myThreeComponentsSplitter;
@@ -226,6 +226,17 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
         ((BuildContentManagerImpl)myBuildContentManager).startBuildNotified(buildInfo, buildInfo.content, startBuildEvent.getProcessHandler());
       }
       else {
+        if (!isFirstErrorShown.get() &&
+            (event instanceof FinishEvent && ((FinishEvent)event).getResult() instanceof FailureResult) ||
+            (event instanceof MessageEvent && ((MessageEvent)event).getResult().getKind() == MessageEvent.Kind.ERROR)) {
+          if (isFirstErrorShown.compareAndSet(false, true)) {
+            ListModel<AbstractViewManager.BuildInfo> listModel = myBuildsList.getModel();
+            IntStream.range(0, listModel.getSize())
+              .filter(i -> buildInfo == listModel.getElementAt(i))
+              .findFirst()
+              .ifPresent(myBuildsList::setSelectedIndex);
+          }
+        }
         if (event instanceof FinishBuildEvent) {
           buildInfo.endTime = event.getEventTime();
           buildInfo.message = event.getMessage();
@@ -338,6 +349,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
         myThreeComponentsSplitter.setSecondComponent(null);
       });
       myToolbarActions.removeAll();
+      isFirstErrorShown.set(false);
     }
     else {
       sameBuildsToClear.forEach(info -> {
