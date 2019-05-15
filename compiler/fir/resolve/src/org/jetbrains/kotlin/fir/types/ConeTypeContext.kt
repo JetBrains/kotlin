@@ -419,6 +419,6 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
     }
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
-        get() = false
+        get() = this is ConeKotlinType && this is ConeTypeVariableType
 
 }
