@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfigWriter
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
 class KotlinBrowserJs(target: KotlinJsTarget) :
@@ -25,6 +25,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
         it.useKarma {
+            useMocha()
             useWebpack()
             useChromeHeadless()
         }
@@ -62,7 +63,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             it.bin = "webpack-dev-server"
             it.entry = npmProject.compileOutput(compileKotlinTask)
 
-            it.devServer = KotlinWebpackConfig.DevServer(
+            it.devServer = KotlinWebpackConfigWriter.DevServer(
                 open = true,
                 contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
             )
