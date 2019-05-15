@@ -225,6 +225,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
     constraints.insets.top = 0;
     canvas.add(myServiceDirectoryHint, constraints);
+
+    myServiceDirectoryLabel.setLabelFor(myServiceDirectoryPathField);
   }
 
   private void addVMOptionsControl(@NotNull PaintAwarePanel canvas, int indentLevel) {

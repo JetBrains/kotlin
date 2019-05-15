@@ -408,6 +408,8 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
                                                   GradleUtil.getGradleHomeFileChooserDescriptor(),
                                                   TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
+    myGradleDistributionHint.setLabelFor(myGradleHomePathField);
+
     myGradleHomePathField.getTextField().getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void insertUpdate(DocumentEvent e) {
