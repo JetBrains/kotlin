@@ -309,8 +309,11 @@ fun moduleName(projectPath: String) = rootProject.name + projectPath.replace(':'
 
 fun RecursiveArtifact.jarContentsFromEmbeddedConfiguration(project: Project) {
     val embedded = project.configurations.findByName("embedded") ?: return
+    jarContentsFromConfiguration(embedded)
+}
 
-    val resolvedArtifacts = embedded
+fun RecursiveArtifact.jarContentsFromConfiguration(configuration: Configuration) {
+    val resolvedArtifacts = configuration
         .resolvedConfiguration
         .resolvedArtifacts
 
