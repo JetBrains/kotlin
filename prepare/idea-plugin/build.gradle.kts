@@ -122,19 +122,18 @@ dependencies {
     libraries(commonDep("io.javaslang", "javaslang"))
 
     libraries(kotlinStdlib("jdk8"))
-    libraries(project(":kotlin-reflect"))
-    libraries(project(":kotlin-compiler-client-embeddable"))
-    libraries(project(":kotlin-daemon-client"))
+
+    libraries(project(":kotlin-reflect")) { isTransitive = false }
+    libraries(project(":kotlin-compiler-client-embeddable")) { isTransitive = false }
+    libraries(project(":kotlin-daemon-client")) { isTransitive = false }
     libraries(project(":kotlin-daemon-client-new"))
-    libraries(project(":kotlin-daemon")) {
-        isTransitive = false
-    }
-    libraries(project(":kotlin-script-runtime"))
-    libraries(project(":kotlin-script-util"))
-    libraries(project(":kotlin-scripting-common"))
-    libraries(project(":kotlin-scripting-compiler-impl"))
-    libraries(project(":kotlin-scripting-intellij"))
-    libraries(project(":kotlin-scripting-jvm"))
+    libraries(project(":kotlin-daemon")) { isTransitive = false }
+    libraries(project(":kotlin-script-runtime")) { isTransitive = false }
+    libraries(project(":kotlin-script-util")) { isTransitive = false }
+    libraries(project(":kotlin-scripting-common")) { isTransitive = false }
+    libraries(project(":kotlin-scripting-compiler-impl")) { isTransitive = false }
+    libraries(project(":kotlin-scripting-intellij")) { isTransitive = false }
+    libraries(project(":kotlin-scripting-jvm")) { isTransitive = false }
 
     gradleToolingModel(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
     gradleToolingModel(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
@@ -143,7 +142,7 @@ dependencies {
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
 
-    jpsPlugin(project(":kotlin-jps-plugin"))
+    jpsPlugin(project(":kotlin-jps-plugin")) { isTransitive = false }
 }
 
 val jar = runtimeJar {
