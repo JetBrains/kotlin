@@ -4,12 +4,9 @@
  */
 package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
-import llvm.LLVMAddInstrProfPass
-import llvm.LLVMPassManagerRef
-import llvm.LLVMValueRef
+import llvm.*
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.isNativeBinary
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -106,10 +103,11 @@ internal class CoverageManager(val context: Context) {
     }
 
     /**
-     * Add InstrProfilingLegacyPass to the list of llvm passes
+     * Add passes that should be executed after main LLVM optimization pipeline.
      */
-    fun addLlvmPasses(passManager: LLVMPassManagerRef) {
+    fun addLateLlvmPasses(passManager: LLVMPassManagerRef) {
         if (enabled) {
+            // It's a late pass since DCE can kill __llvm_profile_filename global.
             LLVMAddInstrProfPass(passManager, outputFileName)
         }
     }

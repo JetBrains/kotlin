@@ -153,9 +153,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xtemporary-files-dir", deprecatedName = "--temporary_files_dir", valueDescription = "<path>", description = "Save temporary files to the given directory")
     var temporaryFilesDir: String? = null
 
-    @Argument(value = "-Xtime", deprecatedName = "--time", description = "Report execution time for compiler phases")
-    var timePhases: Boolean = false
-
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify llvm bitcode after each method")
     var verifyBitCode: Boolean = false
 

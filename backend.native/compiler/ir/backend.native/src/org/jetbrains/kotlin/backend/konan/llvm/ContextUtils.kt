@@ -409,9 +409,11 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val runtimeFile = context.config.distribution.runtime(target)
     val runtime = Runtime(runtimeFile) // TODO: dispose
 
+    val targetTriple = runtime.target
+
     init {
         LLVMSetDataLayout(llvmModule, runtime.dataLayout)
-        LLVMSetTarget(llvmModule, runtime.target)
+        LLVMSetTarget(llvmModule, targetTriple)
     }
 
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)

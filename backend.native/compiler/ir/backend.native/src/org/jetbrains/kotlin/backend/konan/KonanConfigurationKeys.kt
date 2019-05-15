@@ -96,8 +96,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("target we compile for")
         val TEMPORARY_FILES_DIR: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("directory for temporary files")
-        val TIME_PHASES: CompilerConfigurationKey<Boolean> 
-                = CompilerConfigurationKey.create("time backend phases")
         val VERIFY_BITCODE: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("verify bitcode")
         val VERIFY_DESCRIPTORS: CompilerConfigurationKey<Boolean> 

@@ -3,11 +3,8 @@ package org.jetbrains.kotlin
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 
 import org.jetbrains.kotlin.konan.target.*
@@ -55,9 +52,11 @@ open class FrameworkTest : DefaultTask() {
 
     @TaskAction
     fun run() {
-        val frameworkPath = "$testOutput/$frameworkName/${project.testTarget().name}"
-
-        codesign(project, Paths.get(frameworkPath, "$frameworkName.framework").toString())
+        val frameworkParentDirPath = "$testOutput/$frameworkName/${project.testTarget().name}"
+        val frameworkPath = "$frameworkParentDirPath/$frameworkName.framework"
+        val frameworkBinaryPath = "$frameworkPath/$frameworkName"
+        validateBitcodeEmbedding(frameworkBinaryPath)
+        codesign(project, frameworkPath)
 
         // create a test provider and get main entry point
         val provider = Paths.get(testOutput, frameworkName, "provider.swift")
@@ -77,7 +76,7 @@ open class FrameworkTest : DefaultTask() {
         // Compile swift sources
         val sources = swiftSources.map { Paths.get(it).toString() } +
                 listOf(provider.toString(), swiftMain)
-        val options = listOf("-g", "-Xlinker", "-rpath", "-Xlinker", frameworkPath, "-F", frameworkPath)
+        val options = listOf("-g", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
         val testExecutable = Paths.get(testOutput, frameworkName, "swiftTestExecutable")
         swiftc(sources, options, testExecutable)
 
@@ -138,5 +137,33 @@ open class FrameworkTest : DefaultTask() {
             """.trimMargin())
         check(exitCode == 0, { "Compilation failed" })
         check(output.toFile().exists(), { "Compiler swiftc hasn't produced an output file: $output" })
+    }
+
+    private fun validateBitcodeEmbedding(frameworkBinary: String) {
+        // Check only the full bitcode embedding for now.
+        if (!fullBitcode) {
+            return
+        }
+        val testTarget = project.testTarget()
+        val configurables = project.platformManager().platform(testTarget).configurables as AppleConfigurables
+
+        val bitcodeBuildTool = "${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool"
+        val ldPath = "${configurables.absoluteTargetToolchain}/usr/bin/ld"
+        val sdk = when (testTarget) {
+            KonanTarget.IOS_X64 -> Xcode.current.iphonesimulatorSdk
+            KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32 -> Xcode.current.iphoneosSdk
+            KonanTarget.MACOS_X64 -> Xcode.current.macosxSdk
+            else -> error("Cannot validate bitcode for test target $testTarget")
+        }
+
+        val args = listOf("--sdk", sdk, "-v", "-t", ldPath, frameworkBinary)
+        val (stdOut, stdErr, exitCode) = runProcess(executor = localExecutor(project), executable = bitcodeBuildTool, args = args)
+        check(exitCode == 0) {
+            """
+            |bitcode-build-tool failed:
+            |stdout: $stdOut
+            |stderr: $stdErr
+            """.trimMargin()
+        }
     }
 }

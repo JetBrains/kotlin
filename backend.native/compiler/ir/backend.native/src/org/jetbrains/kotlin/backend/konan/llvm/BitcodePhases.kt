@@ -124,16 +124,6 @@ internal val cStubsPhase = makeKonanModuleOpPhase(
         op = { context, _ -> produceCStubs(context) }
 )
 
-/**
- * Runs specific passes over context.llvmModule. The main compilation pipeline
- * is performed by [linkPhase].
- */
-internal val bitcodePassesPhase = makeKonanModuleOpPhase(
-        name = "BitcodePasses",
-        description = "Run custom LLVM passes over bitcode",
-        op = { context, _ -> runBitcodePasses(context) }
-)
-
 internal val produceOutputPhase = makeKonanModuleOpPhase(
         name = "ProduceOutput",
         description = "Produce output",

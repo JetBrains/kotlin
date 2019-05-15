@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.backend.konan
 
+import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
@@ -15,10 +15,15 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
+import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.konan.CURRENT
+import org.jetbrains.kotlin.konan.KonanAbiVersion
+import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.library.KonanLibraryVersioning
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -185,20 +190,14 @@ internal val serializerPhase = konanUnitPhase(
         description = "Serialize descriptor tree and inline IR bodies"
 )
 
-internal val setUpLinkStagePhase = konanUnitPhase(
-        op =  { linkStage = LinkStage(this) },
-        name = "SetUpLinkStage",
-        description = "Set up link stage"
-)
-
 internal val objectFilesPhase = konanUnitPhase(
-        op = { linkStage.makeObjectFiles() },
+        op = { compilerOutput = BitcodeCompiler(this).makeObjectFiles(bitcodeFileName) },
         name = "ObjectFiles",
         description = "Bitcode to object file"
 )
 
 internal val linkerPhase = konanUnitPhase(
-        op = { linkStage.linkStage() },
+        op = { Linker(this).link(compilerOutput) },
         name = "Linker",
         description = "Linker"
 )
@@ -206,8 +205,7 @@ internal val linkerPhase = konanUnitPhase(
 internal val linkPhase = namedUnitPhase(
         name = "Link",
         description = "Link stage",
-        lower = setUpLinkStagePhase then
-                objectFilesPhase then
+        lower = objectFilesPhase then
                 linkerPhase
 )
 
@@ -304,7 +302,6 @@ internal val bitcodePhase = namedIrModulePhase(
                 escapeAnalysisPhase then
                 codegenPhase then
                 finalizeDebugInfoPhase then
-                bitcodePassesPhase then
                 cStubsPhase
 )
 
@@ -330,9 +327,9 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                                             // With that we guarantee that inline functions are unlowered while being inlined.
                                 bitcodePhase then
-                                produceOutputPhase then
                                 verifyBitcodePhase then
                                 printBitcodePhase then
+                                produceOutputPhase then
                                 unitSink()
                 ) then
                 linkPhase

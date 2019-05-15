@@ -171,7 +171,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(VERBOSE_PHASES,
                         arguments.verbosePhases.toNonNullList())
                 put(LIST_PHASES, arguments.listPhases)
-                put(TIME_PHASES, arguments.timePhases)
 
                 put(COMPATIBLE_COMPILER_VERSIONS,
                     arguments.compatibleCompilerVersions.toNonNullList())

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescr
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
-import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -54,6 +52,7 @@ import org.jetbrains.kotlin.backend.common.serialization.KotlinMangler
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.name.FqName
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -322,7 +321,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val llvmImports: LlvmImports = Llvm.ImportsImpl(this)
     lateinit var llvmDeclarations: LlvmDeclarations
     lateinit var bitcodeFileName: String
-    lateinit var library: KonanLibraryWriter
 
     val cStubsManager = CStubsManager(config.target)
 
@@ -441,7 +439,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun shouldPrintLocations() = config.configuration.getBoolean(KonanConfigKeys.PRINT_LOCATIONS)
 
-    fun shouldProfilePhases() = config.configuration.getBoolean(KonanConfigKeys.TIME_PHASES)
+    fun shouldProfilePhases() = config.phaseConfig.needProfiling
 
     fun shouldContainDebugInfo() = config.debug
 
@@ -469,7 +467,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     internal val stdlibModule
         get() = this.builtIns.any.module
 
-    lateinit var linkStage: LinkStage
+    lateinit var compilerOutput: List<ObjectFile>
 }
 
 private fun MemberScope.getContributedClassifier(name: String) =

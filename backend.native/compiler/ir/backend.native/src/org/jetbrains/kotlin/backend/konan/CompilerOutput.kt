@@ -4,16 +4,19 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.*
+import llvm.LLVMLinkModules2
+import llvm.LLVMModuleRef
+import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
-import org.jetbrains.kotlin.backend.konan.llvm.embedLlvmLinkOptions
-import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.KonanAbiVersion
 import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.KonanLibraryVersioning
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
 
 val CompilerOutputKind.isNativeBinary: Boolean get() = when (this) {
     CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
@@ -28,20 +31,30 @@ internal fun produceCStubs(context: Context) {
     }
 }
 
-private fun shouldRunBitcodePasses(context: Context): Boolean =
-        context.coverage.enabled
+private fun linkAllDependecies(context: Context, generatedBitcodeFiles: List<String>) {
 
-internal fun runBitcodePasses(context: Context) {
-    if (!shouldRunBitcodePasses(context)) {
-        return
-    }
+    val nativeLibraries = context.config.nativeLibraries + context.config.defaultNativeLibraries
+    val bitcodeLibraries = context.llvm.bitcodeToLink.map { it.bitcodePaths }.flatten().filter { it.isBitcode }
+    val additionalBitcodeFilesToLink = context.llvm.additionalProducedBitcodeFiles
+    val bitcodeFiles = (nativeLibraries + generatedBitcodeFiles + additionalBitcodeFilesToLink + bitcodeLibraries).toSet()
+
     val llvmModule = context.llvmModule!!
-    val passManager = LLVMCreatePassManager()!!
-    val targetLibraryInfo = LLVMGetTargetLibraryInfo(llvmModule)
-    LLVMAddTargetLibraryInfo(targetLibraryInfo, passManager)
-    context.coverage.addLlvmPasses(passManager)
-    LLVMRunPassManager(passManager, llvmModule)
-    LLVMDisposePassManager(passManager)
+    bitcodeFiles.forEach {
+        parseAndLinkBitcodeFile(llvmModule, it)
+    }
+}
+
+private fun shouldOptimizeWithLlvmApi(context: Context) =
+        (context.config.target.family == Family.IOS || context.config.target.family == Family.OSX)
+
+private fun shoudRunClosedWorldCleanUp(context: Context) =
+        // GlobalDCE will kill coverage-related globals.
+        !context.coverage.enabled
+
+private fun runLlvmPipeline(context: Context) = when {
+    shouldOptimizeWithLlvmApi(context) -> runLlvmOptimizationPipeline(context)
+    shoudRunClosedWorldCleanUp(context) -> runClosedWorldCleanup(context)
+    else -> {}
 }
 
 internal fun produceOutput(context: Context) {
@@ -57,7 +70,6 @@ internal fun produceOutput(context: Context) {
         CompilerOutputKind.PROGRAM -> {
             val output = tempFiles.nativeBinaryFileName
             context.bitcodeFileName = output
-
             val generatedBitcodeFiles =
                 if (produce == CompilerOutputKind.DYNAMIC || produce == CompilerOutputKind.STATIC) {
                     produceCAdapterBitcode(
@@ -66,20 +78,11 @@ internal fun produceOutput(context: Context) {
                         tempFiles.cAdapterBitcodeName)
                     listOf(tempFiles.cAdapterBitcodeName)
                 } else emptyList()
-
-            val nativeLibraries =
-                context.config.nativeLibraries +
-                context.config.defaultNativeLibraries +
-                generatedBitcodeFiles
-
-            for (library in nativeLibraries) {
-                parseAndLinkBitcodeFile(context.llvmModule!!, library)
-            }
-
             if (produce == CompilerOutputKind.FRAMEWORK && context.config.produceStaticFramework) {
                 embedAppleLinkerOptionsToBitcode(context.llvm, context.config)
             }
-
+            linkAllDependecies(context, generatedBitcodeFiles)
+            runLlvmPipeline(context)
             LLVMWriteBitcodeToFile(context.llvmModule!!, output)
         }
         CompilerOutputKind.LIBRARY -> {
@@ -93,7 +96,6 @@ internal fun produceOutput(context: Context) {
             val target = context.config.target
             val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
             val manifestProperties = context.config.manifestProperties
-
 
             val library = buildLibrary(
                 context.config.nativeLibraries,
@@ -109,7 +111,6 @@ internal fun produceOutput(context: Context) {
                 manifestProperties,
                 context.dataFlowGraph)
 
-            context.library = library
             context.bitcodeFileName = library.mainBitcodeFileName
         }
         CompilerOutputKind.BITCODE -> {

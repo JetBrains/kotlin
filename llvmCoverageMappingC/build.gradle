@@ -30,6 +30,15 @@ model {
           if (!project.parent.convention.plugins.platformInfo.isWindows())
              cppCompiler.args "-fPIC"
           cppCompiler.args "--std=c++11", "-I${llvmDir}/include", "-I${projectDir}/src/main/include"
+          if (isMac()) {
+            cppCompiler.args "-DKONAN_MACOS=1"
+          } else if (isWindows()) {
+            cppCompiler.args "-DKONAN_WINDOWS=1"
+          } else if (isLinux()) {
+            cppCompiler.args "-DKONAN_LINUX=1"
+          } else {
+            throw new Error("Unsupported host OS.")
+          }
           linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport"
         }
         binaries.withType(SharedLibraryBinarySpec) { binary ->
