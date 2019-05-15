@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 
@@ -26,6 +25,8 @@ interface Xcode {
     val iphoneosSdk: String
     val iphonesimulatorSdk: String
     val version: String
+    // Xcode.app/Contents/Developer/usr
+    val additionalTools: String
 
     companion object {
         val current: Xcode by lazy {
@@ -39,6 +40,11 @@ private object CurrentXcode : Xcode {
     override val toolchain by lazy {
         val ldPath = xcrun("-f", "ld") // = $toolchain/usr/bin/ld
         File(ldPath).parentFile.parentFile.parentFile.absolutePath
+    }
+
+    override val additionalTools: String by lazy {
+        val bitcodeBuildToolPath = xcrun("-f", "bitcode-build-tool")
+        File(bitcodeBuildToolPath).parentFile.absolutePath
     }
 
     override val macosxSdk by lazy { getSdkPath("macosx") }

@@ -44,6 +44,11 @@ class AppleConfigurablesImpl(
         XcodePartsProvider.InternalServer -> absolute(toolchainDependency)
     }
 
+    override val absoluteAdditionalToolsDir: String get() = when (xcodePartsProvider) {
+        is XcodePartsProvider.Local -> xcodePartsProvider.xcode.additionalTools
+        XcodePartsProvider.InternalServer -> absolute(additionalToolsDir)
+    }
+
     override val dependencies get() = super.dependencies + when (xcodePartsProvider) {
         is XcodePartsProvider.Local -> emptyList()
         XcodePartsProvider.InternalServer -> listOf(sdkDependency, toolchainDependency)

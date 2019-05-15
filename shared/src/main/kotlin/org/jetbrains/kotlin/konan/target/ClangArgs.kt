@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.konan.file.File
 
 class ClangArgs(private val configurables: Configurables) : Configurables by configurables {
 
-    val targetArg = if (configurables is NonAppleConfigurables)
+    val targetArg = if (configurables is TargetableConfigurables)
         configurables.targetArg
     else null
 
