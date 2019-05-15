@@ -33,10 +33,13 @@ class NpmPackages {
 
     val karmaMocha = NpmPackageVersion("karma-mocha", "1.3.0")
     val karmaWebpack = NpmPackageVersion("karma-webpack", "*")
+    val karmaCoverage = NpmPackageVersion("karma-coverage", "*")
 
     val karmaSourceMapSupport = NpmPackageVersion("karma-source-map-support", "1.4.0")
 
     val kotlinNodeJsTestRunner = KotlinGradleNpmPackage("test-nodejs-runner")
+
+    val istanbulInstrumenterLoader = NpmPackageVersion("istanbul-instrumenter-loader", "*")
 }
 
 interface RequiredKotlinJsDependency {

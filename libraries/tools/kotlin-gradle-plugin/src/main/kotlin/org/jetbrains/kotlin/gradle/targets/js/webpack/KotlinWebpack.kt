@@ -67,7 +67,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @Input
     @Optional
-    var devServer: KotlinWebpackConfig.DevServer? = null
+    var devServer: KotlinWebpackConfigWriter.DevServer? = null
 
     override val requiredNpmDependencies: Collection<NpmPackageVersion>
         get() = mutableListOf<NpmPackageVersion>().also {
@@ -93,14 +93,15 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         configFile,
         execHandleFactory,
         bin,
-        KotlinWebpackConfig(
-            entry,
-            if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
-            outputPath,
-            configDirectory,
-            if (report) reportDir else null,
-            devServer,
-            sourceMaps = sourceMaps
+        KotlinWebpackConfigWriter(
+            entry = entry,
+            reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
+            outputPath = outputPath,
+            configDirectory = configDirectory,
+            bundleAnalyzerReportDir = if (report) reportDir else null,
+            devServer = devServer,
+            sourceMaps = sourceMaps,
+            sourceMapsRuntime = sourceMaps
         )
     )
 

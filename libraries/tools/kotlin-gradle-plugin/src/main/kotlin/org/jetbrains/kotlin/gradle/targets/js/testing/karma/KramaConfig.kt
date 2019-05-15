@@ -14,5 +14,16 @@ class KarmaConfig {
     val frameworks: MutableList<String> = mutableListOf()
     val browsers: MutableList<String> = mutableListOf()
     val reporters: MutableList<String> = mutableListOf()
-    val preprocessors: MutableMap<String, List<String>> = mutableMapOf()
+    val preprocessors: MutableMap<String, MutableList<String>> = mutableMapOf()
+    var coverageReporter: CoverageReporter? = null
+
+    class CoverageReporter(var dir: String) {
+        val reporters = mutableListOf<Reporter>()
+
+        class Reporter(
+            val type: String,
+            val subDir: String? = null,
+            val file: String? = null
+        )
+    }
 }
