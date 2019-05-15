@@ -1608,33 +1608,34 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testSimpleClassConstructor(): Unit = codegen(
         """
-import androidx.compose.Emittable
+            import androidx.compose.Emittable
 
-import androidx.compose.composer
+            import androidx.compose.composer
 
-class Path2() : Emittable {
+            class Path2() : Emittable {
 
-    private val path99 = Path3()
+                private val path99 = Path3()
 
-    fun draw(canvas: Canvas2) {
-        canvas.drawPath(path99)
-    }
+                fun draw(canvas: Canvas2) {
+                    canvas.drawPath(path99)
+                }
 
-    override fun emitInsertAt(index: Int, instance: Emittable) { }
-    override fun emitMove(from: Int, to: Int, count: Int) { }
-    override fun emitRemoveAt(index: Int, count: Int) { }
-    override fun toString(): String = ""
-}
-
-
-class Canvas2() {
-    fun drawPath(path: Path3) {
-        System.out.println(""+path)
-    }
-}
+                override fun emitInsertAt(index: Int, instance: Emittable) { }
+                override fun emitMove(from: Int, to: Int, count: Int) { }
+                override fun emitRemoveAt(index: Int, count: Int) { }
+                override fun toString(): String = ""
+            }
 
 
-class Path3(private val internalPath: android.graphics.Path = android.graphics.Path()) {}
+            class Canvas2() {
+                fun drawPath(path: Path3) {
+                    System.out.println(""+path)
+                }
+            }
+
+
+            class Path3(private val internalPath: android.graphics.Path = android.graphics.Path()) {
+            }
         """
     )
 
@@ -1822,6 +1823,26 @@ class Path3(private val internalPath: android.graphics.Path = android.graphics.P
 
             """, { emptyMap<String, String>() },
             """
+            """
+        )
+    }
+
+    @Test
+    fun testNonComposeParameters(): Unit = ensureSetup {
+        compose(
+            """
+                class Action(
+                   val s: String = "",
+                   val param: Int,
+                   type: Set<Int> = setOf(),
+                   val action: () -> Unit
+                )
+
+                @Composable
+                fun DefineAction(
+                    onAction: Action = Action(param = 1) {},
+                    @Children children: ()->Unit
+                 ) { }
             """
         )
     }
