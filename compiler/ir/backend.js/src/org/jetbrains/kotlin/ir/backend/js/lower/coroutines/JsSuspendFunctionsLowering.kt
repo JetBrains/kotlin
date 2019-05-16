@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.IrElement
@@ -34,9 +35,12 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
     private val coroutineImplResultSymbolSetter = ctx.coroutineImplResultSymbolSetter
 
     private var exceptionTrapId = -1
+    private var coroutineId = 0
 
     override val stateMachineMethodName = Name.identifier("doResume")
     override fun getCoroutineBaseClass(function: IrFunction) = context.ir.symbols.coroutineImpl
+
+    override fun nameForCoroutineClass(function: IrFunction) = "${function.name}COROUTINE\$${coroutineId++}".synthesizedName
 
     override fun buildStateMachine(
         originalBody: IrBody,
