@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirNamedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirMemberPropertyImpl
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -49,6 +52,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -64,7 +68,11 @@ class KotlinDeserializedJvmSymbolsProvider(
     private val typeAliasCache = mutableMapOf<ClassId, FirTypeAliasSymbol?>()
     private val packagePartsCache = mutableMapOf<FqName, Collection<PackagePartsCacheData>>()
 
-    private class PackagePartsCacheData(val proto: ProtoBuf.Package, val context: FirDeserializationContext) {
+    private class PackagePartsCacheData(
+        val proto: ProtoBuf.Package,
+        val context: FirDeserializationContext,
+        val source: JvmPackagePartSource
+    ) {
         val topLevelFunctionNameIndex by lazy {
             proto.functionList.withIndex()
                 .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
@@ -95,19 +103,41 @@ class KotlinDeserializedJvmSymbolsProvider(
             if (!hasTopLevelClassOf(classId)) return@mapNotNull null
             val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return@mapNotNull null
 
-            val data = kotlinJvmBinaryClass.classHeader.data ?: return@mapNotNull null
-            val strings = kotlinJvmBinaryClass.classHeader.strings ?: return@mapNotNull null
+            val header = kotlinJvmBinaryClass.classHeader
+            val data = header.data ?: header.incompatibleData ?: return@mapNotNull null
+            val strings = header.strings ?: return@mapNotNull null
             val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+
+            val source = JvmPackagePartSource(
+                kotlinJvmBinaryClass, packageProto, nameResolver,
+                kotlinJvmBinaryClass.incompatibility, kotlinJvmBinaryClass.isPreReleaseInvisible
+            )
 
             PackagePartsCacheData(
                 packageProto,
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, session,
                     JvmBinaryAnnotationDeserializer(session)
-                )
+                ),
+                source
             )
         }
     }
+
+    private fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
+        val header = kotlinClass.classHeader
+        return (header.data ?: header.incompatibleData)?.takeIf { header.kind in expectedKinds }
+    }
+
+    private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
+        get() {
+            // TODO: skipMetadataVersionCheck
+            if (classHeader.metadataVersion.isCompatible()) return null
+            return IncompatibleVersionErrorData(classHeader.metadataVersion, JvmMetadataVersion.INSTANCE, location, classId)
+        }
+
+    private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
+        get() = classHeader.isPreRelease
 
     override fun getClassUseSiteMemberScope(
         classId: ClassId,
@@ -339,7 +369,9 @@ class KotlinDeserializedJvmSymbolsProvider(
         val functionIds = part.topLevelFunctionNameIndex[name] ?: return emptyList()
         return functionIds.map { part.proto.getFunction(it) }
             .map {
-                part.context.memberDeserializer.loadFunction(it).symbol
+                val firNamedFunction = part.context.memberDeserializer.loadFunction(it) as FirMemberFunctionImpl
+                firNamedFunction.containerSource = part.source
+                firNamedFunction.symbol
             }
     }
 
@@ -347,7 +379,9 @@ class KotlinDeserializedJvmSymbolsProvider(
         val propertyIds = part.topLevelPropertyNameIndex[name] ?: return emptyList()
         return propertyIds.map { part.proto.getProperty(it) }
             .map {
-                part.context.memberDeserializer.loadProperty(it).symbol
+                val firProperty = part.context.memberDeserializer.loadProperty(it) as FirMemberPropertyImpl
+                firProperty.containerSource = part.source
+                firProperty.symbol
             }
     }
 
@@ -396,4 +430,11 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
     override fun getPackage(fqName: FqName): FqName? = null
+
+    companion object {
+        private val KOTLIN_CLASS = setOf(KotlinClassHeader.Kind.CLASS)
+
+        private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
+            setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
+    }
 }

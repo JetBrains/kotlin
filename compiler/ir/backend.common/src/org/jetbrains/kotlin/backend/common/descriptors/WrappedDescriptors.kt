@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
@@ -432,6 +434,10 @@ open class WrappedSimpleFunctionDescriptor(
     }
 }
 
+class WrappedFunctionDescriptorWithContainerSource(
+    override val containerSource: DeserializedContainerSource
+) : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource
+
 open class WrappedClassConstructorDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -832,6 +838,10 @@ open class WrappedPropertyDescriptor(
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
+
+class WrappedPropertyDescriptorWithContainerSource(
+    override var containerSource: DeserializedContainerSource
+) : WrappedPropertyDescriptor(), DescriptorWithContainerSource
 
 open class WrappedFieldDescriptor(
     annotations: Annotations = Annotations.EMPTY,

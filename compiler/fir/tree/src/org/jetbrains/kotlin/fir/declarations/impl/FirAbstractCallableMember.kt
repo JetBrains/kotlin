@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCallableMemberDeclaration {
 
 //    final override val symbol: FirBasedSymbol<FirCallableDeclaration>
     final override var receiverTypeRef: FirTypeRef?
     final override var returnTypeRef: FirTypeRef
+
+    override var containerSource: DeserializedContainerSource? = null
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)

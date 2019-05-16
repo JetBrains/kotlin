@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*
@@ -1291,7 +1292,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
             val directMember = DescriptorUtils.getDirectMember(descriptor)
 
-            if (directMember is DeserializedCallableMemberDescriptor) {
+            if (directMember is DescriptorWithContainerSource) {
                 val facadeFqName = getPackageMemberOwnerInternalName(directMember, publicFacade)
                 if (facadeFqName != null) return facadeFqName
             }
@@ -1319,7 +1320,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             descriptor is PropertyDescriptor && !descriptor.isConst
 
         fun getContainingClassesForDeserializedCallable(
-            deserializedDescriptor: DeserializedCallableMemberDescriptor
+            deserializedDescriptor: DescriptorWithContainerSource
         ): ContainingClassesInfo {
             val parentDeclaration = deserializedDescriptor.containingDeclaration
 
@@ -1351,7 +1352,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return classId
         }
 
-        private fun getPackageMemberOwnerInternalName(descriptor: DeserializedCallableMemberDescriptor, publicFacade: Boolean): String? {
+        private fun getPackageMemberOwnerInternalName(descriptor: DescriptorWithContainerSource, publicFacade: Boolean): String? {
             val containingDeclaration = descriptor.containingDeclaration
             assert(containingDeclaration is PackageFragmentDescriptor) { "Not a top-level member: $descriptor" }
 
@@ -1366,7 +1367,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         private val FAKE_CLASS_ID_FOR_BUILTINS = ClassId.topLevel(FqName("kotlin.KotlinPackage"))
 
-        private fun getPackageMemberContainingClassesInfo(descriptor: DeserializedCallableMemberDescriptor): ContainingClassesInfo? {
+        private fun getPackageMemberContainingClassesInfo(descriptor: DescriptorWithContainerSource): ContainingClassesInfo? {
             val containingDeclaration = descriptor.containingDeclaration
             if (containingDeclaration is BuiltInsPackageFragment) {
                 return ContainingClassesInfo(FAKE_CLASS_ID_FOR_BUILTINS, FAKE_CLASS_ID_FOR_BUILTINS)
@@ -1377,6 +1378,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
             val facadeName = when (containingDeclaration) {
                 is LazyJavaPackageFragment -> containingDeclaration.getFacadeNameForPartName(implClassName) ?: return null
                 is IncrementalMultifileClassPackageFragment -> containingDeclaration.facadeName
+                // TODO: for multi-file class part, they can be different
+                is PackageFragmentDescriptor -> implClassName
                 else -> throw AssertionError(
                     "Unexpected package fragment for $descriptor: $containingDeclaration (${containingDeclaration.javaClass.simpleName})"
                 )

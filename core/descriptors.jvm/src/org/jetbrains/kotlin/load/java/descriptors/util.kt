@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -67,10 +67,10 @@ fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
     return superClassDescriptor.staticScope as? LazyJavaStaticClassScope ?: superClassDescriptor.getParentJavaStaticClassScope()
 }
 
-fun DeserializedMemberDescriptor.getImplClassNameForDeserialized(): JvmClassName? =
+fun DescriptorWithContainerSource.getImplClassNameForDeserialized(): JvmClassName? =
     (containerSource as? JvmPackagePartSource)?.className
 
-fun DeserializedMemberDescriptor.isFromJvmPackagePart(): Boolean =
+fun DescriptorWithContainerSource.isFromJvmPackagePart(): Boolean =
     containerSource is JvmPackagePartSource
 
 fun ValueParameterDescriptor.getParameterNameAnnotation(): AnnotationDescriptor? {

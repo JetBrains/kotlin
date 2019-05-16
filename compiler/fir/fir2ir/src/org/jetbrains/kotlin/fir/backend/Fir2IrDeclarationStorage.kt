@@ -260,7 +260,8 @@ class Fir2IrDeclarationStorage(
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrSimpleFunction {
         fun create(): IrSimpleFunction {
-            val descriptor = WrappedSimpleFunctionDescriptor()
+            val containerSource = function.containerSource
+            val descriptor = containerSource?.let { WrappedFunctionDescriptorWithContainerSource(it) } ?: WrappedSimpleFunctionDescriptor()
             return function.convertWithOffsets { startOffset, endOffset ->
                 irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
                     IrFunctionImpl(
@@ -338,7 +339,8 @@ class Fir2IrDeclarationStorage(
 
     fun getIrProperty(property: FirProperty): IrProperty {
         return propertyCache.getOrPut(property) {
-            val descriptor = WrappedPropertyDescriptor()
+            val containerSource = property.containerSource
+            val descriptor = containerSource?.let { WrappedPropertyDescriptorWithContainerSource(it) } ?: WrappedPropertyDescriptor()
             val origin = IrDeclarationOrigin.DEFINED
             property.convertWithOffsets { startOffset, endOffset ->
                 irSymbolTable.declareProperty(
