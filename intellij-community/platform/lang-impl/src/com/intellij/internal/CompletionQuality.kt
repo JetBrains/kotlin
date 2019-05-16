@@ -328,7 +328,7 @@ class CompletionQualityStatsAction : AnAction() {
                   lookupItems = indicator.lookup.items
                 }
 
-                override fun isTestingMode() = true
+                override fun isTestingCompletionQualityMode() = true
               }
               handler.invokeCompletion(project, editor, 1)
 

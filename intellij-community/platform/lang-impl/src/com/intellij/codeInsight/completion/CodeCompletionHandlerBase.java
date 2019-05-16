@@ -677,7 +677,11 @@ public class CodeCompletionHandlerBase {
     ourAutoInsertItemTimeout = timeout;
   }
 
+  protected boolean isTestingCompletionQualityMode() {
+    return false;
+  }
+
   protected boolean isTestingMode() {
-    return ApplicationManager.getApplication().isUnitTestMode();
+    return ApplicationManager.getApplication().isUnitTestMode() || isTestingCompletionQualityMode();
   }
 }
