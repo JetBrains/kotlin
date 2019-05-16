@@ -33,12 +33,6 @@ import java.util.Locale;
 import java.util.Set;
 
 public abstract class AbstractFontOptionsPanel extends JPanel implements OptionsPanel {
-  private static final FontInfoRenderer RENDERER = new FontInfoRenderer() {
-    @Override
-    protected boolean isEditorFont() {
-      return true;
-    }
-  };
 
   private final EventDispatcher<ColorAndFontSettingsListener> myDispatcher = EventDispatcher.create(ColorAndFontSettingsListener.class);
 
@@ -150,10 +144,16 @@ public abstract class AbstractFontOptionsPanel extends JPanel implements Options
       mySecondaryCombo.setMonospacedOnly(myOnlyMonospacedCheckBox.isSelected());
     });
     myPrimaryCombo.setMonospacedOnly(myOnlyMonospacedCheckBox.isSelected());
-    myPrimaryCombo.setRenderer(RENDERER);
+    FontInfoRenderer renderer = new FontInfoRenderer() {
+      @Override
+      protected boolean isEditorFont() {
+        return true;
+      }
+    };
+    myPrimaryCombo.setRenderer(renderer);
 
     mySecondaryCombo.setMonospacedOnly(myOnlyMonospacedCheckBox.isSelected());
-    mySecondaryCombo.setRenderer(RENDERER);
+    mySecondaryCombo.setRenderer(renderer);
 
     ItemListener itemListener = this::syncFontFamilies;
     myPrimaryCombo.addItemListener(itemListener);
