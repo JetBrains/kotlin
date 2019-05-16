@@ -94,7 +94,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             isLhsPrimitive && lhsJsType == rhsJsType && lhsJsType != PrimitiveType.FLOATING_POINT_NUMBER ->
                 chooseEqualityOperatorForPrimitiveTypes(call)
 
-            !isLhsPrimitive && !lhs.type.isNullable() && equalsMethod != null ->
+            !isLhsPrimitive && !lhs.type.isNullable && equalsMethod != null ->
                 irCall(call, equalsMethod.symbol, firstArgumentAsDispatchReceiver = true)
 
             else ->
@@ -110,7 +110,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun IrFunctionAccessExpression.allValueArgumentsAreNullable() =
-        (0 until valueArgumentsCount).all { getValueArgument(it)!!.type.isNullable() }
+        (0 until valueArgumentsCount).all { getValueArgument(it)!!.type.isNullable }
 
     private fun transformCompareToMethodCall(call: IrFunctionAccessExpression): IrExpression {
         val function = call.symbol.owner as IrSimpleFunction

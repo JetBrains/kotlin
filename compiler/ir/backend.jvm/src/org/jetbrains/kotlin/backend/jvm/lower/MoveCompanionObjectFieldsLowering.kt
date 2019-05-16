@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.lower.replaceThisByStaticReference
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
@@ -156,7 +156,10 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
 
                 override fun visitVariable(declaration: IrVariable): IrStatement {
                     if (declaration.parent == oldParent) {
-                        val newDescriptor = WrappedVariableDescriptor(declaration.descriptor.annotations, declaration.descriptor.source)
+                        val newDescriptor = WrappedVariableDescriptor(
+                            declaration.descriptor.annotations,
+                            declaration.descriptor.source
+                        )
                         val newVariable = IrVariableImpl(
                             declaration.startOffset, declaration.endOffset,
                             declaration.origin, IrVariableSymbolImpl(newDescriptor),
@@ -195,7 +198,8 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
     }
 
     private fun createStaticBackingField(oldField: IrField, propertyParent: IrClass, fieldParent: IrClass): IrField {
-        val descriptor = WrappedFieldDescriptor(oldField.descriptor.annotations, oldField.descriptor.source)
+        val descriptor =
+            WrappedFieldDescriptor(oldField.descriptor.annotations, oldField.descriptor.source)
         val field = IrFieldImpl(
             oldField.startOffset, oldField.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,

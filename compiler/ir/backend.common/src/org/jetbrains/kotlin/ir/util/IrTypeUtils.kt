@@ -61,14 +61,6 @@ fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
 
 fun IrType.isFunctionOrKFunction() = isFunction() || isKFunction()
 
-fun IrType.isNullable(): Boolean = DFS.ifAny(listOf(this), { it.typeParameterSuperTypes() }, {
-    when (it) {
-        is IrSimpleType -> it.hasQuestionMark
-        else -> it is IrDynamicType
-    }
-})
-
-
 fun IrType.isThrowable(): Boolean = isTypeFromKotlinPackage { name -> name.asString() == "Throwable" }
 
 fun IrType.isThrowableTypeOrSubtype() = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isThrowable)

@@ -16202,9 +16202,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/nullCheckOptimization/kt7774.kt");
         }
 
+        @TestMetadata("multipleUpperBounds.kt")
+        public void testMultipleUpperBounds() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/multipleUpperBounds.kt");
+        }
+
         @TestMetadata("primitiveCheckWithSideEffect.kt")
         public void testPrimitiveCheckWithSideEffect() throws Exception {
             runTest("compiler/testData/codegen/box/nullCheckOptimization/primitiveCheckWithSideEffect.kt");
+        }
+
+        @TestMetadata("recursiveUpperBound.kt")
+        public void testRecursiveUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/recursiveUpperBound.kt");
         }
 
         @TestMetadata("trivialInstanceOf.kt")

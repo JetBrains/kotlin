@@ -128,7 +128,7 @@ class AnnotationCodegen(
             return
         }
 
-        val annotationClass = if (type.isNullable()) Nullable::class.java else NotNull::class.java
+        val annotationClass = if (type.isNullable) Nullable::class.java else NotNull::class.java
 
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass)
     }
@@ -280,7 +280,7 @@ interface InnerClassConsumer {
 }
 
 private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {
-    return type.classifierOrNull?.owner is IrTypeParameter && !type.isMarkedNullable() && type.isNullable()
+    return type.classifierOrNull?.owner is IrTypeParameter && !type.isMarkedNullable() && type.isNullable
 }
 
 private val RETENTION_PARAMETER_NAME = Name.identifier("value")

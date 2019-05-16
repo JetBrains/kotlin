@@ -468,7 +468,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument = ktArgument.genExpr()
         val ktOperator = expression.operationReference
 
-        val resultType = irArgument.type.makeNotNull()
+        val resultType = irArgument.type.originalKotlinType!!.makeNotNullable().toIrType()
 
         return irBlock(ktOperator.startOffsetSkippingComments, ktOperator.endOffset, origin, resultType) {
             val temporary = irTemporary(irArgument, "notnull")

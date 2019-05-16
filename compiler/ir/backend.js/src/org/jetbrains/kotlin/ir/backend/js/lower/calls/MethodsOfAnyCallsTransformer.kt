@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
-import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.isSuperToAny
 import org.jetbrains.kotlin.name.Name
 
@@ -77,7 +77,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
         }?.type ?: return false
 
         return receiverParameterType.run {
-            isArray() || isAny() || isNullable() || this is IrDynamicType || isString()
+            isArray() || isAny() || isNullable || this is IrDynamicType || isString()
         }
     }
 }

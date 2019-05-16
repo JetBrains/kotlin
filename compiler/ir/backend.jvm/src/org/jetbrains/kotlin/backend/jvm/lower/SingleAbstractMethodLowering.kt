@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -155,7 +156,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
                 val implementation = cachedImplementations.getOrPut(superType to invokable.type) {
                     createObjectProxy(superType, invokable.type)
                 }
-                return if (superType.isNullable() && invokable.type.isNullable()) {
+                return if (superType.isNullable && invokable.type.isNullable) {
                     val invokableVariable = irTemporary(invokable)
                     val instance = irCall(implementation.constructors.single()).apply { putValueArgument(0, irGet(invokableVariable)) }
                     irIfNull(superType, irGet(invokableVariable), irNull(), instance)

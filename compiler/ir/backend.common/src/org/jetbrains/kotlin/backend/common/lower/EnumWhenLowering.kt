@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -54,7 +55,7 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
         // subject with compile-time known enum entry.
         val subjectOrdinalProvider = lazy {
             context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, subject.startOffset, subject.endOffset).run {
-                val integer = if (subject.type.isNullable())
+                val integer = if (subject.type.isNullable)
                     irIfNull(context.irBuiltIns.intType, irGet(subject), irInt(-1), mapRuntimeEnumEntry(this, irGet(subject)))
                 else
                     mapRuntimeEnumEntry(this, irGet(subject))

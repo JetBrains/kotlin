@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.*
@@ -127,7 +127,10 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             enumConstructor: IrConstructor,
             enumClass: IrClass
         ): IrConstructor {
-            val descriptor = WrappedClassConstructorDescriptor(enumConstructor.descriptor.annotations, enumConstructor.descriptor.source)
+            val descriptor = WrappedClassConstructorDescriptor(
+                enumConstructor.descriptor.annotations,
+                enumConstructor.descriptor.source
+            )
             return IrConstructorImpl(
                 enumConstructor.startOffset, enumConstructor.endOffset,
                 enumConstructor.origin,

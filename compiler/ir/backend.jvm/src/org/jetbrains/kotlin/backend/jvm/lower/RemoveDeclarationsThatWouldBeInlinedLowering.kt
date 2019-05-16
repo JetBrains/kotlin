@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -35,7 +35,7 @@ private class RemoveDeclarationsThatWouldBeInlinedLowering(val context: JvmBacke
                 val owner = expression.symbol.owner
                 if (expression.symbol.owner.isInlineFunctionCall(context)) {
                     owner.valueParameters.filter {
-                        !it.isNoinline && it.type.isFunction() && !it.type.isNullable()
+                        !it.isNoinline && it.type.isFunction() && !it.type.isNullable
                     }.forEach {
                         val valueArgument = expression.getValueArgument(it.index) as? IrContainerExpression ?: return@forEach
                         if (isInlineIrExpression(valueArgument)) {

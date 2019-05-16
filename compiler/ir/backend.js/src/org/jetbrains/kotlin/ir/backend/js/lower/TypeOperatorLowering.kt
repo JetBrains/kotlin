@@ -81,7 +81,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
             private fun lowerImplicitNotNull(expression: IrTypeOperatorCall, declaration: IrDeclarationParent): IrExpression {
                 assert(expression.operator == IrTypeOperator.IMPLICIT_NOTNULL)
-                assert(expression.typeOperand.isNullable() xor expression.argument.type.isNullable())
+                assert(expression.typeOperand.isNullable xor expression.argument.type.isNullable)
 
                 val newStatements = mutableListOf<IrStatement>()
 
@@ -188,8 +188,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 val toNotNullable = toType.makeNotNull()
                 val argumentInstance = argument()
                 val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable)
-                val isFromNullable = argumentInstance.type.isNullable()
-                val isToNullable = toType.isNullable()
+                val isFromNullable = argumentInstance.type.isNullable
+                val isToNullable = toType.isNullable
                 val isNativeCheck = !advancedCheckRequired(toNotNullable)
 
                 return when {
@@ -314,7 +314,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 assert(expression.operator === IrTypeOperator.IMPLICIT_INTEGER_COERCION)
                 assert(expression.argument.type.isInt())
 
-                val isNullable = expression.argument.type.isNullable()
+                val isNullable = expression.argument.type.isNullable
                 val toType = expression.typeOperand
 
                 fun maskOp(arg: IrExpression, mask: IrExpression, shift: IrExpressionWithCopy) = calculator.run {

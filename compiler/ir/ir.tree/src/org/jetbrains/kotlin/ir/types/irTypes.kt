@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -41,14 +45,40 @@ val IrType.classifierOrNull: IrClassifierSymbol?
 val IrType.classOrNull: IrClassSymbol?
     get() = classifierOrNull as? IrClassSymbol
 
-fun IrType.makeNotNull() =
-    if (this is IrSimpleType && this.hasQuestionMark) {
-        buildSimpleType {
-            kotlinType = originalKotlinType?.makeNotNullable()
-            hasQuestionMark = false
+val IrType.isNullable: Boolean
+    get() = isMarkedNullable() || this is IrDynamicType ||
+            classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.superTypes?.all { it.isNullable } == true
+
+fun IrType.makeNotNull(): IrType {
+    if (!this.isNullable || this !is IrSimpleType) {
+        // This is wrong for IrDynamicType, but there's nothing we can do about it.
+        return this
+    }
+
+    val newClassifier = if (classifier is IrTypeParameterSymbol) {
+        val descriptor = WrappedTypeParameterDescriptor()
+        val symbol = IrTypeParameterSymbolImpl(descriptor)
+        val newParameter = with(classifier.owner as IrTypeParameter) {
+            IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, index, isReified, variance).also {
+                descriptor.bind(it)
+                it.parent = parent
+                it.annotations.addAll(annotations)
+                superTypes.mapTo(it.superTypes) { type -> type.makeNotNull() }
+            }
         }
-    } else
-        this
+        newParameter.symbol
+    } else {
+        classifier
+    }
+
+    return IrSimpleTypeImpl(
+        originalKotlinType?.makeNotNullable(),
+        newClassifier,
+        false,
+        arguments,
+        annotations
+    )
+}
 
 fun IrType.makeNullable() =
     if (this is IrSimpleType && !this.hasQuestionMark)

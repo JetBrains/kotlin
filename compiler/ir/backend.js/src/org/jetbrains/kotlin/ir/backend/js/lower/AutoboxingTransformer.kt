@@ -124,7 +124,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         resultType: IrType,
         call: (IrExpression) -> IrExpression
     ): IrExpression {
-        if (!actualType.isNullable())
+        if (!actualType.isNullable)
             return call(arg)
         return JsIrBuilder.run {
             // TODO: Set parent of local variables

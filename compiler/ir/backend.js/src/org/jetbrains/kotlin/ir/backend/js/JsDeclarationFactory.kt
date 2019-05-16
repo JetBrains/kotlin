@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.js
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -85,7 +85,10 @@ class JsDeclarationFactory : DeclarationFactory {
         val irClass = oldConstructor.parent as IrClass
         val outerThisType = (irClass.parent as IrClass).defaultType
 
-        val descriptor = WrappedClassConstructorDescriptor(oldConstructor.descriptor.annotations, oldConstructor.descriptor.source)
+        val descriptor = WrappedClassConstructorDescriptor(
+            oldConstructor.descriptor.annotations,
+            oldConstructor.descriptor.source
+        )
         val symbol = IrConstructorSymbolImpl(descriptor)
 
         val newConstructor = IrConstructorImpl(

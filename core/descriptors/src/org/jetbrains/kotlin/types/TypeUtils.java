@@ -263,18 +263,35 @@ public class TypeUtils {
         if (type.isMarkedNullable()) {
             return true;
         }
+
+        if (type instanceof NotNullSimpleType) {
+            return false;
+        }
+
         if (FlexibleTypesKt.isFlexible(type) && isNullableType(FlexibleTypesKt.asFlexibleType(type).getUpperBound())) {
             return true;
         }
+
         if (isTypeParameter(type)) {
-            return hasNullableSuperType(type);
+            if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
+                // A class/trait cannot have a nullable supertype
+                return false;
+            }
+
+            for (KotlinType supertype : getImmediateSupertypes(type)) {
+                if (!isNullableType(supertype)) return false;
+            }
+
+            return true;
         }
 
         TypeConstructor constructor = type.getConstructor();
         if (constructor instanceof IntersectionTypeConstructor) {
             for (KotlinType supertype : constructor.getSupertypes()) {
-                if (isNullableType(supertype)) return true;
+                if (!isNullableType(supertype)) return false;
             }
+
+            return true;
         }
 
         return false;

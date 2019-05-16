@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -37,6 +36,8 @@ import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -558,7 +559,8 @@ internal class Fir2IrVisitor(
                             val backingField = correspondingProperty.backingField
                             if (isSetter) {
                                 valueParameters += symbolTable.declareValueParameter(
-                                    startOffset, endOffset, origin, WrappedValueParameterDescriptor(), propertyType
+                                    startOffset, endOffset, origin,
+                                    WrappedValueParameterDescriptor(), propertyType
                                 ) { symbol ->
                                     IrValueParameterImpl(
                                         startOffset, endOffset, IrDeclarationOrigin.DEFINED, symbol,

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -248,7 +249,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         //-------------------------------------------------------------------------//
 
         private fun IrValueParameter.isInlineParameter() =
-            !isNoinline && !type.isNullable() && type.isFunctionOrKFunction()
+            !isNoinline && !type.isNullable && type.isFunctionOrKFunction()
 
         private inner class ParameterToArgument(val parameter: IrValueParameter,
                                                 val argumentExpression: IrExpression) {
