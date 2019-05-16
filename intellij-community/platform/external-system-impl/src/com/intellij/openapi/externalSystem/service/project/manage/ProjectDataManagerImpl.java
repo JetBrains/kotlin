@@ -438,7 +438,7 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
         dataNode.deserializeData(classLoaders);
       }
       catch (Exception e) {
-        LOG.debug(e);
+        LOG.warn(e);
         dataNode.clear(true);
         return false;
       }
