@@ -9,12 +9,11 @@ import com.intellij.build.events.impl.MessageEventImpl
 import com.intellij.openapi.util.text.StringUtil
 import java.io.File
 import java.util.function.Consumer
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
 /**
- * TODO should be moved to the kotlin plugin
- *
  * Parses kotlinc's output.
  */
 class KotlincOutputParser : BuildOutputParser {
@@ -31,50 +30,71 @@ class KotlincOutputParser : BuildOutputParser {
 
     val lineWoSeverity = line.substringAfterAndTrim(colonIndex1)
     val colonIndex2 = lineWoSeverity.colon().skipDriveOnWin(lineWoSeverity)
-    if (colonIndex2 >= 0) {
-      val path = lineWoSeverity.substringBeforeAndTrim(colonIndex2)
-      val file = File(path)
+    if (colonIndex2 < 0) return false
 
-      val fileExtension = file.extension.toLowerCase()
-      if (!file.isFile || (fileExtension != "kt" && fileExtension != "java")) {
-        return addMessage(createMessage(reader.parentEventId, getMessageKind(severity), lineWoSeverity.amendNextLinesIfNeeded(reader), line),
-                          consumer)
-      }
+    val path = lineWoSeverity.substringBeforeAndTrim(colonIndex2)
+    val file = File(path)
 
-      val lineWoPath = lineWoSeverity.substringAfterAndTrim(colonIndex2)
-      val colonIndex3 = lineWoPath.colon()
-      if (colonIndex3 >= 0) {
-        val position = lineWoPath.substringBeforeAndTrim(colonIndex3)
-
-        val matcher = KOTLIN_POSITION_PATTERN.matcher(position).takeIf { it.matches() } ?: JAVAC_POSITION_PATTERN.matcher(position)
-        val relatedNextLines = "".amendNextLinesIfNeeded(reader)
-        val message = lineWoPath.substringAfterAndTrim(colonIndex3) + relatedNextLines
-        val details = line + relatedNextLines
-
-        if (matcher.matches()) {
-          val lineNumber = matcher.group(1)
-          val symbolNumber = if (matcher.groupCount() >= 2) matcher.group(2) else "1"
-          if (lineNumber != null) {
-            val symbolNumberText = symbolNumber.toInt()
-            return addMessage(createMessageWithLocation(
-              reader.parentEventId, getMessageKind(severity), message, path, lineNumber.toInt(), symbolNumberText, details), consumer)
-          }
-        }
-
-        return addMessage(createMessage(reader.parentEventId, getMessageKind(severity), message, details), consumer)
-      }
-      else {
-        val text = lineWoSeverity.amendNextLinesIfNeeded(reader)
-        return addMessage(createMessage(reader.parentEventId, getMessageKind(severity), text, text), consumer)
-      }
+    val fileExtension = file.extension.toLowerCase()
+    if (!file.isFile || (fileExtension != "kt" && fileExtension != "kts" && fileExtension != "java")) {
+      return addMessage(createMessage(reader.parentEventId, getMessageKind(severity), lineWoSeverity.amendNextLinesIfNeeded(reader), line),
+                        consumer)
     }
 
-    return false
+    val lineWoPath = lineWoSeverity.substringAfterAndTrim(colonIndex2)
+    var lineWoPositionIndex = -1
+    var matcher: Matcher? = null
+    if (lineWoPath.startsWith('(')) {
+      val colonIndex3 = lineWoPath.colon()
+      if (colonIndex3 >= 0) {
+        lineWoPositionIndex = colonIndex3
+      }
+      if (lineWoPositionIndex >= 0) {
+        val position = lineWoPath.substringBeforeAndTrim(lineWoPositionIndex)
+        matcher = KOTLIN_POSITION_PATTERN.matcher(position).takeIf { it.matches() } ?: JAVAC_POSITION_PATTERN.matcher(position)
+      }
+    }
+    else {
+      val colonIndex4 = lineWoPath.colon(1)
+      if (colonIndex4 >= 0) {
+        lineWoPositionIndex = colonIndex4
+      }
+      else {
+        lineWoPositionIndex = lineWoPath.colon()
+      }
+
+      if (lineWoPositionIndex >= 0) {
+        val position = lineWoPath.substringBeforeAndTrim(colonIndex4)
+        matcher = LINE_COLON_COLUMN_POSITION_PATTERN.matcher(position).takeIf { it.matches() } ?: JAVAC_POSITION_PATTERN.matcher(position)
+      }
+    }
+    if (lineWoPositionIndex >= 0) {
+      val relatedNextLines = "".amendNextLinesIfNeeded(reader)
+      val message = lineWoPath.substringAfterAndTrim(lineWoPositionIndex) + relatedNextLines
+      val details = line + relatedNextLines
+
+      if (matcher != null && matcher.matches()) {
+        val lineNumber = matcher.group(1)
+        val symbolNumber = if (matcher.groupCount() >= 2) matcher.group(2) else "1"
+        if (lineNumber != null) {
+          val symbolNumberText = symbolNumber.toInt()
+          return addMessage(createMessageWithLocation(
+            reader.parentEventId, getMessageKind(severity), message, path, lineNumber.toInt(), symbolNumberText, details), consumer)
+        }
+      }
+
+      return addMessage(createMessage(reader.parentEventId, getMessageKind(severity), message, details), consumer)
+    }
+    else {
+      val text = lineWoSeverity.amendNextLinesIfNeeded(reader)
+      return addMessage(createMessage(reader.parentEventId, getMessageKind(severity), text, text), consumer)
+    }
   }
 
   private val COLON = ":"
   private val KOTLIN_POSITION_PATTERN = Pattern.compile("\\(([0-9]*), ([0-9]*)\\)")
   private val JAVAC_POSITION_PATTERN = Pattern.compile("([0-9]+)")
+  private val LINE_COLON_COLUMN_POSITION_PATTERN = Pattern.compile("([0-9]*):([0-9]*)")
 
   private fun String.amendNextLinesIfNeeded(reader: BuildOutputInstantReader): String {
     var nextLine = reader.readLine()
@@ -116,6 +136,15 @@ class KotlincOutputParser : BuildOutputParser {
   private fun String.substringAfterAndTrim(index: Int) = substring(index + 1).trim()
   private fun String.substringBeforeAndTrim(index: Int) = substring(0, index).trim()
   private fun String.colon() = indexOf(COLON)
+  private fun String.colon(skip: Int): Int {
+    var index = -1
+    repeat(skip + 1) {
+      index = indexOf(COLON, index + 1)
+      if (index < 0) return index
+    }
+    return index
+  }
+
   private fun Int.skipDriveOnWin(line: String): Int {
     return if (this == 1) line.indexOf(COLON, this + 1) else this
   }
