@@ -1,8 +1,10 @@
 buildscript {
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+    val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
     repositories {
-        if (cacheRedirectorEnabled) { maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com") }
+        if (cacheRedirectorEnabled) {
+            maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
+        }
         jcenter()
     }
 
@@ -30,7 +32,9 @@ rootProject.apply {
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
 repositories {
-    if (cacheRedirectorEnabled) { maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com") }
+    if (cacheRedirectorEnabled) {
+        maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
+    }
     jcenter()
 }
 

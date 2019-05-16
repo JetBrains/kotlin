@@ -6,7 +6,9 @@ buildscript {
         val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
         repositories {
-            if (cacheRedirectorEnabled) { maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com") }
+            if (cacheRedirectorEnabled) {
+                maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
+            }
             jcenter()
         }
 
@@ -23,7 +25,9 @@ if (isStandaloneBuild) { // only for standalone build:
         configurations.maybeCreate("embedded")
 
         repositories {
-            if (cacheRedirectorEnabled) { maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com") }
+            if (cacheRedirectorEnabled) {
+                maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
+            }
             jcenter()
         }
 

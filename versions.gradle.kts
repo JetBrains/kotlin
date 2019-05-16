@@ -1,7 +1,5 @@
-
 import java.io.FileReader
 import java.net.URL
-import java.nio.file.Path
 import java.util.*
 
 fun locatePropertiesFile(): Pair<File, Boolean> {
@@ -10,13 +8,12 @@ fun locatePropertiesFile(): Pair<File, Boolean> {
         return kotlinUltimateProject.file("versions.properties") to false
     }
 
-    if (rootProject.findProject(":ide:cidr-native") != null) {
+    return if (rootProject.findProject(":ide:cidr-native") != null) {
         // if in standalone build, then take the file from the root project
-        return rootProject.file("versions.properties") to true
-    }
-    else {
+        rootProject.file("versions.properties") to true
+    } else {
         // otherwise (compiling buildSrc), take the file one directory below the root project
-        return rootProject.file("../versions.properties") to true
+        rootProject.file("../versions.properties") to true
     }
 }
 
@@ -32,10 +29,10 @@ FileReader(propertiesFile).use {
     }
 }
 
-val prepareDepsPath: Path = propertiesFile.parentFile.toPath().resolve("buildSrc/prepare-deps").toRealPath()
+val prepareDepsPath: File = propertiesFile.parentFile.resolve("buildSrc/prepare-deps")
 
 fun externalDepsDir(depsProjectName: String, suffix: String): File =
-        prepareDepsPath.resolve(depsProjectName).resolve("build/external-deps").resolve(suffix).toFile()
+        prepareDepsPath.resolve(depsProjectName).resolve("build/external-deps").resolve(suffix)
 
 val clionVersion: String = rootProject.extra["versions.clion"] as String
 rootProject.extra["clionVersion"] = clionVersion
