@@ -120,6 +120,9 @@
     <statistics.counterUsagesCollector groupId="build.gradle.actions" version="1"/>
     <externalSystem.runConfigurationImporter
         implementation="org.jetbrains.plugins.gradle.service.execution.GradleRunConfigurationImporter"/>
+
+    <registryKey key="gradle.settings.showModulePerSourceSetSetting" defaultValue="false"
+                 description="Enables 'Generate module per source set' setting for troubleshooting"/>
   </extensions>
 
   <actions>

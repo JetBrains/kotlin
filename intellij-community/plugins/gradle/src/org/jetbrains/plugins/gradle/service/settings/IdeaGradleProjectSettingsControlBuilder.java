@@ -115,6 +115,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
   @Nullable
   private JBCheckBox myResolveModulePerSourceSetCheckBox;
+  private JBLabel myResolveModulePerSourceSetHintLabel;
   private boolean dropResolveModulePerSourceSetCheckBox;
 
   @Nullable
@@ -301,18 +302,21 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     myImportPanel = addComponentsGroup(null, content, indentLevel, panel -> {
       if (!dropResolveModulePerSourceSetCheckBox) {
         panel.add(
-          myResolveModulePerSourceSetCheckBox = new JBCheckBox("Generate separate " + getIDEName() + " module per Gradle source set"),
+          myResolveModulePerSourceSetCheckBox = new JBCheckBox("Generate " + getIDEName() + " module per Gradle source set"),
           ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
 
-        JBLabel label = new JBLabel(
-          XmlStringUtil.wrapInHtml("Disable to ???"),
+        myResolveModulePerSourceSetHintLabel = new JBLabel(
+          XmlStringUtil.wrapInHtml("This setting is deprecated and remains only for troubleshooting since it's not fully compatible with the Gradle's model.<br>" +
+                                   "Please consider restoring it to the default (checked)"),
           UIUtil.ComponentStyle.SMALL);
-        label.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
+        myResolveModulePerSourceSetHintLabel.setIcon(AllIcons.General.BalloonWarning12);
+        myResolveModulePerSourceSetHintLabel.setVerticalTextPosition(SwingConstants.TOP);
+        myResolveModulePerSourceSetHintLabel.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
 
         GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
         constraints.insets.top = 0;
         constraints.insets.left += UIUtil.getCheckBoxTextHorizontalOffset(myResolveModulePerSourceSetCheckBox);
-        panel.add(label, constraints);
+        panel.add(myResolveModulePerSourceSetHintLabel, constraints);
       }
 
       if (!dropResolveExternalAnnotationsCheckBox) {
@@ -631,12 +635,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       myGradleHomePathField.setText(gradleHome == null ? "" : gradleHome);
       myGradleHomePathField.getTextField().setForeground(LocationSettingType.EXPLICIT_CORRECT.getColor());
     }
-    if (myResolveModulePerSourceSetCheckBox != null) {
-      myResolveModulePerSourceSetCheckBox.setSelected(settings.isResolveModulePerSourceSet());
-    }
-    if (myResolveExternalAnnotationsCheckBox != null) {
-      myResolveExternalAnnotationsCheckBox.setSelected(settings.isResolveExternalAnnotations());
-    }
+    resetImportControls(settings);
 
     resetGradleJdkComboBox(project, settings, wizardContext);
     resetWrapperControls(settings.getExternalProjectPath(), settings, isDefaultModuleCreation);
@@ -661,8 +660,16 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   @Override
   public void update(String linkedProjectPath, GradleProjectSettings settings, boolean isDefaultModuleCreation) {
     resetWrapperControls(linkedProjectPath, settings, isDefaultModuleCreation);
+    resetImportControls(settings);
+  }
+
+  private void resetImportControls(GradleProjectSettings settings) {
     if (myResolveModulePerSourceSetCheckBox != null) {
       myResolveModulePerSourceSetCheckBox.setSelected(settings.isResolveModulePerSourceSet());
+      boolean showSetting = !settings.isResolveModulePerSourceSet()
+                            || Registry.is("gradle.settings.showModulePerSourceSetSetting", false);
+      myResolveModulePerSourceSetCheckBox.setVisible(showSetting);
+      myResolveModulePerSourceSetHintLabel.setVisible(showSetting);
     }
     if (myResolveExternalAnnotationsCheckBox != null) {
       myResolveExternalAnnotationsCheckBox.setSelected(settings.isResolveExternalAnnotations());

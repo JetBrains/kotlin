@@ -248,6 +248,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
       fixLabel.setFontSize(UIUtil.FontSize.SMALL);
       fixLabel.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
       fixLabel.setIcon(AllIcons.General.BalloonWarning12);
+      label.setVerticalTextPosition(SwingConstants.TOP);
       GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
       constraints.insets.top = 0;
       canvas.add(fixLabel, constraints);
