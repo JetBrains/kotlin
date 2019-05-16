@@ -27,9 +27,9 @@ public class SurroundWithLogger {
   public static void logSurrounder(Surrounder surrounder, @NotNull Language language, @NotNull Project project) {
     PluginInfo pluginInfo = PluginInfoDetectorKt.getPluginInfo(surrounder.getClass());
     FeatureUsageData data = new FeatureUsageData().addPluginInfo(pluginInfo).addLanguage(language);
-    String description = pluginInfo.getType().isDevelopedByJetBrains() ? surrounder.getTemplateDescription() : "third.party.surrounder";
-    data.addData("description", description);
-    FUCounterUsageLogger.getInstance().logEvent(project, USAGE_GROUP, "surrounder", data);
+    data.addData("type", "surrounder");
+    String description = pluginInfo.getType().isDevelopedByJetBrains() ? surrounder.getTemplateDescription() : "third.party";
+    FUCounterUsageLogger.getInstance().logEvent(project, USAGE_GROUP, description, data);
   }
 
   static void logTemplate(@NotNull TemplateImpl template, @NotNull Language language, @NotNull Project project) {
@@ -37,89 +37,73 @@ public class SurroundWithLogger {
     if (keyGroupPluginToReport == null) return;
 
     FeatureUsageData data = new FeatureUsageData().addLanguage(language).
-      addData("key", keyGroupPluginToReport.getFirst()).
+      addData("type", "template").
       addData("group", keyGroupPluginToReport.getSecond());
     PluginInfo pluginInfo = keyGroupPluginToReport.getThird();
     if (pluginInfo != null) {
       data.addPluginInfo(pluginInfo);
     }
-    FUCounterUsageLogger.getInstance().logEvent(project, USAGE_GROUP, "template", data);
+    FUCounterUsageLogger.getInstance().logEvent(project, USAGE_GROUP, keyGroupPluginToReport.getFirst(), data);
   }
 
   static void logCustomTemplate(@NotNull CustomLiveTemplate template, @NotNull Language language, @NotNull Project project) {
     PluginInfo pluginInfo = PluginInfoDetectorKt.getPluginInfo(template.getClass());
     FeatureUsageData data = new FeatureUsageData().addPluginInfo(pluginInfo).addLanguage(language);
-    String title = pluginInfo.getType().isDevelopedByJetBrains() ? template.getTitle() : "third.party.custom.template";
-    data.addData("title", title);
-    FUCounterUsageLogger.getInstance().logEvent(project, USAGE_GROUP, "custom.template", data);
+    data.addData("type", "custom.template");
+    String title = pluginInfo.getType().isDevelopedByJetBrains() ? template.getTitle() : "third.party";
+    FUCounterUsageLogger.getInstance().logEvent(project, USAGE_GROUP, title, data);
   }
 
-  public static class SurroundWithSurrounderDescriptionValidator extends CustomUtilsWhiteListRule {
+  public static class SurroundWithIdValidator extends CustomUtilsWhiteListRule {
     @Override
     public boolean acceptRuleId(@Nullable String ruleId) {
-      return "surround_with_surrounder_description".equals(ruleId);
+      return "surround_with_id".equals(ruleId);
     }
 
     @NotNull
     @Override
     protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
-      if ("third.party.surrounder".equals(data)) return ValidationResultType.ACCEPTED;
-      for (Surrounder surrounder : CustomFoldingSurroundDescriptor.INSTANCE.getSurrounders()) {
-        if (data.equals(surrounder.getTemplateDescription())) {
-          PluginInfo info = PluginInfoDetectorKt.getPluginInfo(surrounder.getClass());
-          return info.isSafeToReport() ? ValidationResultType.ACCEPTED : ValidationResultType.REJECTED;
-        }
+      if ("third.party".equals(data)) return ValidationResultType.ACCEPTED;
+      Object typeObject = context.eventData.get("type");
+      if (!(typeObject instanceof String)) {
+        return ValidationResultType.REJECTED;
       }
 
-      Object languageId = context.eventData.get("lang");
-      if (!(languageId instanceof String)) return ValidationResultType.REJECTED;
-      Language language = Language.findLanguageByID((String)languageId);
-      if (language == null) return ValidationResultType.REJECTED;
-      List<SurroundDescriptor> descriptors = LanguageSurrounders.INSTANCE.allForLanguage(language);
-      for (SurroundDescriptor descriptor : descriptors) {
-        for (Surrounder surrounder : descriptor.getSurrounders()) {
+      if ("surrounder".equals(typeObject)) {
+        for (Surrounder surrounder : CustomFoldingSurroundDescriptor.INSTANCE.getSurrounders()) {
           if (data.equals(surrounder.getTemplateDescription())) {
             PluginInfo info = PluginInfoDetectorKt.getPluginInfo(surrounder.getClass());
             return info.isSafeToReport() ? ValidationResultType.ACCEPTED : ValidationResultType.REJECTED;
           }
         }
-      }
-      return ValidationResultType.REJECTED;
-    }
-  }
 
-  public static class SurroundWithTemplateValidator extends CustomUtilsWhiteListRule {
-    @Override
-    public boolean acceptRuleId(@Nullable String ruleId) {
-      return "surround_with_template".equals(ruleId);
-    }
-
-    @NotNull
-    @Override
-    protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
-      Object key = context.eventData.get("key");
-      Object group = context.eventData.get("group");
-      if (!(key instanceof String)) return ValidationResultType.REJECTED;
-      return LiveTemplateRunLogger.LiveTemplateValidator.validateKeyGroup((String)key, group);
-    }
-  }
-
-  public static class SurroundWithCustomTemplateValidator extends CustomUtilsWhiteListRule {
-    @Override
-    public boolean acceptRuleId(@Nullable String ruleId) {
-      return "surround_with_custom_template_title".equals(ruleId);
-    }
-
-    @NotNull
-    @Override
-    protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
-      if ("third.party.custom.template".equals(data)) return ValidationResultType.ACCEPTED;
-      for (CustomLiveTemplate template : CustomLiveTemplate.EP_NAME.getExtensions()) {
-        if (data.equals(template.getTitle())) {
-          PluginInfo info = PluginInfoDetectorKt.getPluginInfo(template.getClass());
-          return info.isSafeToReport() ? ValidationResultType.ACCEPTED : ValidationResultType.REJECTED;
+        Object languageId = context.eventData.get("lang");
+        if (!(languageId instanceof String)) return ValidationResultType.REJECTED;
+        Language language = Language.findLanguageByID((String)languageId);
+        if (language == null) return ValidationResultType.REJECTED;
+        List<SurroundDescriptor> descriptors = LanguageSurrounders.INSTANCE.allForLanguage(language);
+        for (SurroundDescriptor descriptor : descriptors) {
+          for (Surrounder surrounder : descriptor.getSurrounders()) {
+            if (data.equals(surrounder.getTemplateDescription())) {
+              PluginInfo info = PluginInfoDetectorKt.getPluginInfo(surrounder.getClass());
+              return info.isSafeToReport() ? ValidationResultType.ACCEPTED : ValidationResultType.REJECTED;
+            }
+          }
         }
       }
+      if ("template".equals(typeObject)) {
+        Object group = context.eventData.get("group");
+        return LiveTemplateRunLogger.LiveTemplateValidator.validateKeyGroup(data, group);
+      }
+      if ("custom.template".equals(typeObject)) {
+        for (CustomLiveTemplate template : CustomLiveTemplate.EP_NAME.getExtensions()) {
+          if (data.equals(template.getTitle())) {
+            PluginInfo info = PluginInfoDetectorKt.getPluginInfo(template.getClass());
+            return info.isSafeToReport() ? ValidationResultType.ACCEPTED : ValidationResultType.REJECTED;
+          }
+        }
+      }
+
       return ValidationResultType.REJECTED;
     }
   }
