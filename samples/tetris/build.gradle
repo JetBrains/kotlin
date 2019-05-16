@@ -68,7 +68,7 @@ if ((hostPreset == kotlin.presets.mingwX86) || (hostPreset == kotlin.presets.min
         if (hostPreset == kotlin.presets.mingwX86)
             windresDir = "${MPPTools.kotlinNativeDataPath()}/dependencies/msys2-mingw-w64-i686-gcc-7.4.0-clang-llvm-6.0.1/bin"
         else
-            windresDir = "${MPPTools.kotlinNativeDataPath()}/dependencies/msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1/bin"
+            windresDir = "${MPPTools.kotlinNativeDataPath()}/dependencies/msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1-2/bin"
         assert windresDir != null
 
         def winResourceFile = kotlin.sourceSets.tetrisMain.resources.files.find { it.name == 'Tetris.rc' }

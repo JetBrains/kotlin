@@ -40,6 +40,6 @@ dependencies.macos_x64-zephyr_stm32f4_disco = \
 targetToolchain.mingw_x64-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-win32/arm-none-eabi
 dependencies.mingw_x64-zephyr_stm32f4_disco = \
     libffi-3.2.1-mingw-w64-x86-64 \
-    msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1 \
+    msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1-2 \
     gcc-arm-none-eabi-7-2017-q4-major-win32 \
     target-sysroot-2-wasm
