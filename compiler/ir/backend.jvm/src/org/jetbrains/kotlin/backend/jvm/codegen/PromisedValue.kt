@@ -19,7 +19,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 // A value that may not have been fully constructed yet. The ability to "roll back" code generation
 // is useful for certain optimizations.
-abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val irType: IrType?) {
+abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val irType: IrType) {
     // If this value is immaterial, construct an object on the top of the stack. This
     // must always be done before generating other values or emitting raw bytecode.
     abstract fun materialize()
@@ -30,12 +30,17 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
     val typeMapper: IrTypeMapper
         get() = codegen.typeMapper
 
-    val kotlinType: KotlinType?
-        get() = irType?.toKotlinType()
+    val kotlinType: KotlinType
+        get() = irType.toKotlinType()
 }
 
 // A value that *has* been fully constructed.
-class MaterialValue(codegen: ExpressionCodegen, type: Type, irType: IrType?) : PromisedValue(codegen, type, irType) {
+class MaterialValue(codegen: ExpressionCodegen, type: Type, irType: IrType) : PromisedValue(codegen, type, irType) {
+    override fun materialize() {}
+}
+
+// A value that is only materialized through coercion.
+class ImmaterialValue(codegen: ExpressionCodegen, type: Type, irType: IrType) : PromisedValue(codegen, type, irType) {
     override fun materialize() {}
 }
 
@@ -66,11 +71,11 @@ val PromisedValue.materialized: MaterialValue
 
 // Materialize and disregard this value. Materialization is forced because, presumably,
 // we only wanted the side effects anyway.
-fun PromisedValue.discard(): MaterialValue {
+fun PromisedValue.discard(): PromisedValue {
     materialize()
     if (type !== Type.VOID_TYPE)
         AsmUtil.pop(mv, type)
-    return codegen.voidValue
+    return codegen.immaterialUnitValue
 }
 
 private val IrType.unboxed: IrType
@@ -103,9 +108,8 @@ fun PromisedValue.coerceInlineClasses(type: Type, irType: IrType, target: Type, 
 }
 
 // On materialization, cast the value to a different type.
-fun PromisedValue.coerce(target: Type, irTarget: IrType? = null): PromisedValue {
-    if (irType != null && irTarget != null)
-        coerceInlineClasses(type, irType, target, irTarget)?.let { return it }
+fun PromisedValue.coerce(target: Type, irTarget: IrType): PromisedValue {
+    coerceInlineClasses(type, irType, target, irTarget)?.let { return it }
     return when (type) {
         // All unsafe coercions between irTypes should use the UnsafeCoerce intrinsic
         target -> this
@@ -129,14 +133,26 @@ fun PromisedValue.boxInlineClasses(irTarget: IrType) =
         coerceToBoxed(irTarget) else this
 
 // Same as above, but with a return type that allows conditional jumping.
-fun PromisedValue.coerceToBoolean() = when (val coerced = coerce(Type.BOOLEAN_TYPE)) {
-    is BooleanValue -> coerced
-    else -> object : BooleanValue(codegen) {
-        override fun jumpIfFalse(target: Label) = coerced.materialize().also { mv.ifeq(target) }
-        override fun jumpIfTrue(target: Label) = coerced.materialize().also { mv.ifne(target) }
-        override fun materialize() = coerced.materialize()
+fun PromisedValue.coerceToBoolean() =
+    when (val coerced = coerce(Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType)) {
+        is BooleanValue -> coerced
+        else -> object : BooleanValue(codegen) {
+            override fun jumpIfFalse(target: Label) = coerced.materialize().also { mv.ifeq(target) }
+            override fun jumpIfTrue(target: Label) = coerced.materialize().also { mv.ifne(target) }
+            override fun materialize() = coerced.materialize()
+        }
     }
-}
 
-val ExpressionCodegen.voidValue: MaterialValue
-    get() = MaterialValue(this, Type.VOID_TYPE, null)
+// Non-materialized value of Unit type
+// This value is only materialized when calling coerce, which is why it is represented
+// as a MaterialValue even though there is nothing on the stack.
+val ExpressionCodegen.immaterialUnitValue: ImmaterialValue
+    get() = ImmaterialValue(this, Type.VOID_TYPE, context.irBuiltIns.unitType)
+
+// Non-materialized default value for the given type
+fun ExpressionCodegen.defaultValue(irType: IrType): PromisedValue =
+    object : PromisedValue(this, typeMapper.mapType(irType), irType) {
+        override fun materialize() {
+            StackValue.coerce(Type.VOID_TYPE, type, codegen.mv)
+        }
+    }
