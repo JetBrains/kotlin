@@ -23,7 +23,17 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.Test1 declared in <root>.Test1'
           CALL 'public final fun <get-x> (): T of <root>.Test1 declared in <root>.Test1' type=T of <root>.Test1 origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test1, x:T of <root>.Test1) returnType:<root>.Test1<T of <uninitialized parent>>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+      VALUE_PARAMETER name:x index:0 type:T of <root>.Test1
+        EXPRESSION_BODY
+          CALL 'public final fun <get-x> (): T of <root>.Test1 declared in <root>.Test1' type=T of <root>.Test1 origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: T of <root>.Test1): <root>.Test1<T of <uninitialized parent>> declared in <root>.Test1'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: T of <uninitialized parent>) [primary] declared in <root>.Test1' type=<root>.Test1<T of <uninitialized parent>> origin=null
+            <class: T>: <none>
+            x: GET_VAR 'x: T of <root>.Test1 declared in <root>.Test1.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
@@ -60,7 +70,17 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.Test2 declared in <root>.Test2'
           CALL 'public final fun <get-x> (): T of <root>.Test2 declared in <root>.Test2' type=T of <root>.Test2 origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test2, x:T of <root>.Test2) returnType:<root>.Test2<T of <uninitialized parent>>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      VALUE_PARAMETER name:x index:0 type:T of <root>.Test2
+        EXPRESSION_BODY
+          CALL 'public final fun <get-x> (): T of <root>.Test2 declared in <root>.Test2' type=T of <root>.Test2 origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: T of <root>.Test2): <root>.Test2<T of <uninitialized parent>> declared in <root>.Test2'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: T of <uninitialized parent>) [primary] declared in <root>.Test2' type=<root>.Test2<T of <uninitialized parent>> origin=null
+            <class: T>: <none>
+            x: GET_VAR 'x: T of <root>.Test2 declared in <root>.Test2.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
@@ -97,7 +117,17 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3'
           CALL 'public final fun <get-x> (): kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3' type=kotlin.collections.List<T of <root>.Test3> origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test3, x:kotlin.collections.List<T of <root>.Test3>) returnType:<root>.Test3<T of <uninitialized parent>>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test3
+      VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<T of <root>.Test3>
+        EXPRESSION_BODY
+          CALL 'public final fun <get-x> (): kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3' type=kotlin.collections.List<T of <root>.Test3> origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.collections.List<T of <root>.Test3>): <root>.Test3<T of <uninitialized parent>> declared in <root>.Test3'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.collections.List<T of <uninitialized parent>>) [primary] declared in <root>.Test3' type=<root>.Test3<T of <uninitialized parent>> origin=null
+            <class: T>: <none>
+            x: GET_VAR 'x: kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
@@ -133,7 +163,16 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.collections.List<kotlin.String> declared in <root>.Test4'
           CALL 'public final fun <get-x> (): kotlin.collections.List<kotlin.String> declared in <root>.Test4' type=kotlin.collections.List<kotlin.String> origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test4, x:kotlin.collections.List<kotlin.String>) returnType:<root>.Test4
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test4
+      VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<kotlin.String>
+        EXPRESSION_BODY
+          CALL 'public final fun <get-x> (): kotlin.collections.List<kotlin.String> declared in <root>.Test4' type=kotlin.collections.List<kotlin.String> origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.collections.List<kotlin.String>): <root>.Test4 declared in <root>.Test4'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.collections.List<kotlin.String>) [primary] declared in <root>.Test4' type=<root>.Test4 origin=null
+            x: GET_VAR 'x: kotlin.collections.List<kotlin.String> declared in <root>.Test4.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

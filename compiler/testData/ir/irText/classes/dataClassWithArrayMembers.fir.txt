@@ -158,7 +158,48 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component9 (): kotlin.DoubleArray declared in <root>.Test1'
           CALL 'public final fun <get-doubleArray> (): kotlin.DoubleArray declared in <root>.Test1' type=kotlin.DoubleArray origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test1, stringArray:kotlin.Array<kotlin.String>, charArray:kotlin.CharArray, booleanArray:kotlin.BooleanArray, byteArray:kotlin.ByteArray, shortArray:kotlin.ShortArray, intArray:kotlin.IntArray, longArray:kotlin.LongArray, floatArray:kotlin.FloatArray, doubleArray:kotlin.DoubleArray) returnType:<root>.Test1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+      VALUE_PARAMETER name:stringArray index:0 type:kotlin.Array<kotlin.String>
+        EXPRESSION_BODY
+          CALL 'public final fun <get-stringArray> (): kotlin.Array<kotlin.String> declared in <root>.Test1' type=kotlin.Array<kotlin.String> origin=null
+      VALUE_PARAMETER name:charArray index:1 type:kotlin.CharArray
+        EXPRESSION_BODY
+          CALL 'public final fun <get-charArray> (): kotlin.CharArray declared in <root>.Test1' type=kotlin.CharArray origin=null
+      VALUE_PARAMETER name:booleanArray index:2 type:kotlin.BooleanArray
+        EXPRESSION_BODY
+          CALL 'public final fun <get-booleanArray> (): kotlin.BooleanArray declared in <root>.Test1' type=kotlin.BooleanArray origin=null
+      VALUE_PARAMETER name:byteArray index:3 type:kotlin.ByteArray
+        EXPRESSION_BODY
+          CALL 'public final fun <get-byteArray> (): kotlin.ByteArray declared in <root>.Test1' type=kotlin.ByteArray origin=null
+      VALUE_PARAMETER name:shortArray index:4 type:kotlin.ShortArray
+        EXPRESSION_BODY
+          CALL 'public final fun <get-shortArray> (): kotlin.ShortArray declared in <root>.Test1' type=kotlin.ShortArray origin=null
+      VALUE_PARAMETER name:intArray index:5 type:kotlin.IntArray
+        EXPRESSION_BODY
+          CALL 'public final fun <get-intArray> (): kotlin.IntArray declared in <root>.Test1' type=kotlin.IntArray origin=null
+      VALUE_PARAMETER name:longArray index:6 type:kotlin.LongArray
+        EXPRESSION_BODY
+          CALL 'public final fun <get-longArray> (): kotlin.LongArray declared in <root>.Test1' type=kotlin.LongArray origin=null
+      VALUE_PARAMETER name:floatArray index:7 type:kotlin.FloatArray
+        EXPRESSION_BODY
+          CALL 'public final fun <get-floatArray> (): kotlin.FloatArray declared in <root>.Test1' type=kotlin.FloatArray origin=null
+      VALUE_PARAMETER name:doubleArray index:8 type:kotlin.DoubleArray
+        EXPRESSION_BODY
+          CALL 'public final fun <get-doubleArray> (): kotlin.DoubleArray declared in <root>.Test1' type=kotlin.DoubleArray origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (stringArray: kotlin.Array<kotlin.String>, charArray: kotlin.CharArray, booleanArray: kotlin.BooleanArray, byteArray: kotlin.ByteArray, shortArray: kotlin.ShortArray, intArray: kotlin.IntArray, longArray: kotlin.LongArray, floatArray: kotlin.FloatArray, doubleArray: kotlin.DoubleArray): <root>.Test1 declared in <root>.Test1'
+          CONSTRUCTOR_CALL 'public constructor <init> (stringArray: kotlin.Array<kotlin.String>, charArray: kotlin.CharArray, booleanArray: kotlin.BooleanArray, byteArray: kotlin.ByteArray, shortArray: kotlin.ShortArray, intArray: kotlin.IntArray, longArray: kotlin.LongArray, floatArray: kotlin.FloatArray, doubleArray: kotlin.DoubleArray) [primary] declared in <root>.Test1' type=<root>.Test1 origin=null
+            stringArray: GET_VAR 'stringArray: kotlin.Array<kotlin.String> declared in <root>.Test1.copy' type=IrErrorType origin=null
+            charArray: GET_VAR 'charArray: kotlin.CharArray declared in <root>.Test1.copy' type=IrErrorType origin=null
+            booleanArray: GET_VAR 'booleanArray: kotlin.BooleanArray declared in <root>.Test1.copy' type=IrErrorType origin=null
+            byteArray: GET_VAR 'byteArray: kotlin.ByteArray declared in <root>.Test1.copy' type=IrErrorType origin=null
+            shortArray: GET_VAR 'shortArray: kotlin.ShortArray declared in <root>.Test1.copy' type=IrErrorType origin=null
+            intArray: GET_VAR 'intArray: kotlin.IntArray declared in <root>.Test1.copy' type=IrErrorType origin=null
+            longArray: GET_VAR 'longArray: kotlin.LongArray declared in <root>.Test1.copy' type=IrErrorType origin=null
+            floatArray: GET_VAR 'floatArray: kotlin.FloatArray declared in <root>.Test1.copy' type=IrErrorType origin=null
+            doubleArray: GET_VAR 'doubleArray: kotlin.DoubleArray declared in <root>.Test1.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
@@ -195,7 +236,17 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2'
           CALL 'public final fun <get-genericArray> (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2' type=kotlin.Array<T of <root>.Test2> origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test2, genericArray:kotlin.Array<T of <root>.Test2>) returnType:<root>.Test2<T of <uninitialized parent>>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      VALUE_PARAMETER name:genericArray index:0 type:kotlin.Array<T of <root>.Test2>
+        EXPRESSION_BODY
+          CALL 'public final fun <get-genericArray> (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2' type=kotlin.Array<T of <root>.Test2> origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (genericArray: kotlin.Array<T of <root>.Test2>): <root>.Test2<T of <uninitialized parent>> declared in <root>.Test2'
+          CONSTRUCTOR_CALL 'public constructor <init> (genericArray: kotlin.Array<T of <uninitialized parent>>) [primary] declared in <root>.Test2' type=<root>.Test2<T of <uninitialized parent>> origin=null
+            <class: T>: <none>
+            genericArray: GET_VAR 'genericArray: kotlin.Array<T of <root>.Test2> declared in <root>.Test2.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
@@ -231,7 +282,16 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Array<kotlin.Any>? declared in <root>.Test3'
           CALL 'public final fun <get-anyArrayN> (): kotlin.Array<kotlin.Any>? declared in <root>.Test3' type=kotlin.Array<kotlin.Any>? origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test3, anyArrayN:kotlin.Array<kotlin.Any>?) returnType:<root>.Test3
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test3
+      VALUE_PARAMETER name:anyArrayN index:0 type:kotlin.Array<kotlin.Any>?
+        EXPRESSION_BODY
+          CALL 'public final fun <get-anyArrayN> (): kotlin.Array<kotlin.Any>? declared in <root>.Test3' type=kotlin.Array<kotlin.Any>? origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (anyArrayN: kotlin.Array<kotlin.Any>?): <root>.Test3 declared in <root>.Test3'
+          CONSTRUCTOR_CALL 'public constructor <init> (anyArrayN: kotlin.Array<kotlin.Any>?) [primary] declared in <root>.Test3' type=<root>.Test3 origin=null
+            anyArrayN: GET_VAR 'anyArrayN: kotlin.Array<kotlin.Any>? declared in <root>.Test3.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

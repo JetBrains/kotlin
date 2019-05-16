@@ -39,7 +39,20 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.A'
           CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.A, x:kotlin.Int, y:kotlin.Int) returnType:<root>.A
+      $this: VALUE_PARAMETER name:<this> type:<root>.A
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+        EXPRESSION_BODY
+          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
+      VALUE_PARAMETER name:y index:1 type:kotlin.Int
+        EXPRESSION_BODY
+          CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.Int): <root>.A declared in <root>.A'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
+            x: GET_VAR 'x: kotlin.Int declared in <root>.A.copy' type=IrErrorType origin=null
+            y: GET_VAR 'y: kotlin.Int declared in <root>.A.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

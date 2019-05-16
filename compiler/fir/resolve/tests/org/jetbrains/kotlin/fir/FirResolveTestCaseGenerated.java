@@ -34,6 +34,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/companion.kt");
     }
 
+    @TestMetadata("copy.kt")
+    public void testCopy() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/copy.kt");
+    }
+
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/derivedClass.kt");

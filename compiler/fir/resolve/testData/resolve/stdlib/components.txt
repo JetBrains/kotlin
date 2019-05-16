@@ -18,6 +18,10 @@ FILE: components.kt
             ^component2 R|/D.y|
         }
 
+        public final fun copy(x: R|kotlin/Int| = R|/D.x|, y: R|kotlin/String| = R|/D.y|): R|D| {
+            ^copy R|/D.D|(R|<local>/x|, R|<local>/y|)
+        }
+
     }
     public final fun foo(list: R|kotlin/collections/List<D>|): R|kotlin/Unit| {
         lval <range>: R|kotlin/collections/List<D>| = R|<local>/list|

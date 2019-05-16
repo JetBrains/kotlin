@@ -547,6 +547,10 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
 
                 if (classOrObject.hasModifier(DATA_KEYWORD) && firPrimaryConstructor != null) {
                     classOrObject.generateComponentFunctions(session, firClass, packageFqName, className)
+                    classOrObject.generateCopyFunction(session, firClass, packageFqName, className, firPrimaryConstructor) {
+                        toFirOrErrorType()
+                    }
+                    // TODO: equals, hashCode, toString
                 }
 
                 firClass

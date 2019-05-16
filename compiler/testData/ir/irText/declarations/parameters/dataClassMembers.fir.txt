@@ -42,7 +42,21 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>.Test'
           CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test' type=kotlin.String origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test, x:T of <root>.Test, y:kotlin.String) returnType:<root>.Test<T of <uninitialized parent>>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test
+      VALUE_PARAMETER name:x index:0 type:T of <root>.Test
+        EXPRESSION_BODY
+          CALL 'public final fun <get-x> (): T of <root>.Test declared in <root>.Test' type=T of <root>.Test origin=null
+      VALUE_PARAMETER name:y index:1 type:kotlin.String
+        EXPRESSION_BODY
+          CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test' type=kotlin.String origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: T of <root>.Test, y: kotlin.String): <root>.Test<T of <uninitialized parent>> declared in <root>.Test'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: T of <uninitialized parent>, y: kotlin.String) [primary] declared in <root>.Test' type=<root>.Test<T of <uninitialized parent>> origin=null
+            <class: T>: <none>
+            x: GET_VAR 'x: T of <root>.Test declared in <root>.Test.copy' type=IrErrorType origin=null
+            y: GET_VAR 'y: kotlin.String declared in <root>.Test.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

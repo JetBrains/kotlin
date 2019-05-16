@@ -18,6 +18,10 @@ FILE: lambda.kt
             ^component2 R|/Tuple.y|
         }
 
+        public final fun copy(x: Int = R|/Tuple.x|, y: Int = R|/Tuple.y|): <implicit> {
+            ^copy R|/Tuple.Tuple|(R|<local>/x|, R|<local>/y|)
+        }
+
     }
     public? final? inline fun use(f: ( (Tuple) -> Int )): <implicit> {
         ^use f#(Tuple#(Int(1), Int(2)))

@@ -56,7 +56,24 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Any declared in <root>.Test1'
           CALL 'public final fun <get-z> (): kotlin.Any declared in <root>.Test1' type=kotlin.Any origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test1, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.Test1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+        EXPRESSION_BODY
+          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test1' type=kotlin.Int origin=null
+      VALUE_PARAMETER name:y index:1 type:kotlin.String
+        EXPRESSION_BODY
+          CALL 'public final fun <get-y> (): kotlin.String declared in <root>.Test1' type=kotlin.String origin=null
+      VALUE_PARAMETER name:z index:2 type:kotlin.Any
+        EXPRESSION_BODY
+          CALL 'public final fun <get-z> (): kotlin.Any declared in <root>.Test1' type=kotlin.Any origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.String, z: kotlin.Any): <root>.Test1 declared in <root>.Test1'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.String, z: kotlin.Any) [primary] declared in <root>.Test1' type=<root>.Test1 origin=null
+            x: GET_VAR 'x: kotlin.Int declared in <root>.Test1.copy' type=IrErrorType origin=null
+            y: GET_VAR 'y: kotlin.String declared in <root>.Test1.copy' type=IrErrorType origin=null
+            z: GET_VAR 'z: kotlin.Any declared in <root>.Test1.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
@@ -92,7 +109,16 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Any? declared in <root>.Test2'
           CALL 'public final fun <get-x> (): kotlin.Any? declared in <root>.Test2' type=kotlin.Any? origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test2, x:kotlin.Any?) returnType:<root>.Test2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      VALUE_PARAMETER name:x index:0 type:kotlin.Any?
+        EXPRESSION_BODY
+          CALL 'public final fun <get-x> (): kotlin.Any? declared in <root>.Test2' type=kotlin.Any? origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Any?): <root>.Test2 declared in <root>.Test2'
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any?) [primary] declared in <root>.Test2' type=<root>.Test2 origin=null
+            x: GET_VAR 'x: kotlin.Any? declared in <root>.Test2.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
@@ -179,7 +205,28 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component4 (): kotlin.Float? declared in <root>.Test3'
           CALL 'public final fun <get-df> (): kotlin.Float? declared in <root>.Test3' type=kotlin.Float? origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test3, d:kotlin.Double, dn:kotlin.Double?, f:kotlin.Float, df:kotlin.Float?) returnType:<root>.Test3
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test3
+      VALUE_PARAMETER name:d index:0 type:kotlin.Double
+        EXPRESSION_BODY
+          CALL 'public final fun <get-d> (): kotlin.Double declared in <root>.Test3' type=kotlin.Double origin=null
+      VALUE_PARAMETER name:dn index:1 type:kotlin.Double?
+        EXPRESSION_BODY
+          CALL 'public final fun <get-dn> (): kotlin.Double? declared in <root>.Test3' type=kotlin.Double? origin=null
+      VALUE_PARAMETER name:f index:2 type:kotlin.Float
+        EXPRESSION_BODY
+          CALL 'public final fun <get-f> (): kotlin.Float declared in <root>.Test3' type=kotlin.Float origin=null
+      VALUE_PARAMETER name:df index:3 type:kotlin.Float?
+        EXPRESSION_BODY
+          CALL 'public final fun <get-df> (): kotlin.Float? declared in <root>.Test3' type=kotlin.Float? origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (d: kotlin.Double, dn: kotlin.Double?, f: kotlin.Float, df: kotlin.Float?): <root>.Test3 declared in <root>.Test3'
+          CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Double, dn: kotlin.Double?, f: kotlin.Float, df: kotlin.Float?) [primary] declared in <root>.Test3' type=<root>.Test3 origin=null
+            d: GET_VAR 'd: kotlin.Double declared in <root>.Test3.copy' type=IrErrorType origin=null
+            dn: GET_VAR 'dn: kotlin.Double? declared in <root>.Test3.copy' type=IrErrorType origin=null
+            f: GET_VAR 'f: kotlin.Float declared in <root>.Test3.copy' type=IrErrorType origin=null
+            df: GET_VAR 'df: kotlin.Float? declared in <root>.Test3.copy' type=IrErrorType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

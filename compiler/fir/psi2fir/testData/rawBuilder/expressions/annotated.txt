@@ -29,6 +29,10 @@ FILE: annotated.kt
             super<kotlin/Any>()
         }
 
+        public final fun copy(): <implicit> {
+            ^copy R|/Two.Two|()
+        }
+
     }
     public? final? fun bar(two: Two): kotlin/Unit {
         lval <destruct>: <implicit> = two#
