@@ -65,7 +65,7 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
     for (accessor in accessors) {
       val type = accessor.genericType
       if (type === Boolean::class.javaPrimitiveType) {
-        val value = accessor.read(state)
+        val value = accessor.readUnsafe(state)
         val isNotDefault = jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
         if (recordDefault || isNotDefault) {
           val content = HashMap<String, Any>()

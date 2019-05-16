@@ -464,7 +464,7 @@ internal class XmlSerializerTest {
 
   private class PropertyFilterTest : SerializationFilter {
     override fun accepts(accessor: Accessor, bean: Any): Boolean {
-      return accessor.read(bean) != "skip"
+      return accessor.readUnsafe(bean) != "skip"
     }
   }
 
