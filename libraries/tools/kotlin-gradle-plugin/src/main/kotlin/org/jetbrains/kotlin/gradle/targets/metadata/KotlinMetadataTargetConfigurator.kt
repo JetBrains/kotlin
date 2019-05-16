@@ -104,8 +104,12 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         lowerCamelCaseName("transform", sourceSet.name, "DependenciesMetadata")
 
     private fun setupDependencyTransformationForCommonSourceSets(target: KotlinMetadataTarget) {
-        target.project.kotlinExtension.sourceSets.all {
-            setupDependencyTransformationForSourceSet(target.project, it)
+        target.project.whenEvaluated {
+            val publishedCommonSourceSets: Set<KotlinSourceSet> = getPublishedCommonSourceSets(project)
+
+            kotlinExtension.sourceSets.all {
+                setupDependencyTransformationForSourceSet(target.project, it, it in publishedCommonSourceSets)
+            }
         }
     }
 
@@ -201,7 +205,8 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
     private fun setupDependencyTransformationForSourceSet(
         project: Project,
-        sourceSet: KotlinSourceSet
+        sourceSet: KotlinSourceSet,
+        isSourceSetPublished: Boolean
     ) {
         KotlinDependencyScope.values().forEach { scope ->
             val allMetadataConfigurations = mutableListOf<Configuration>().apply {
@@ -226,24 +231,28 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
             val sourceSetDependencyConfigurationByScope = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
 
-            // All source set dependencies except for compileOnly take part and agree in versions with all other runtime dependencies:
+            // All source set dependencies except for compileOnly agree in versions with all other published runtime dependencies:
             if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
-                project.addExtendsFromRelation(
-                    ALL_RUNTIME_METADATA_CONFIGURATION_NAME,
-                    sourceSetDependencyConfigurationByScope.name
-                )
+                if (isSourceSetPublished) {
+                    project.addExtendsFromRelation(
+                        ALL_RUNTIME_METADATA_CONFIGURATION_NAME,
+                        sourceSetDependencyConfigurationByScope.name
+                    )
+                }
                 project.addExtendsFromRelation(
                     sourceSetMetadataConfigurationByScope.name,
                     ALL_RUNTIME_METADATA_CONFIGURATION_NAME
                 )
             }
 
-            // All source set dependencies except for runtimeOnly take part and agree in versions with all other compile dependencies:
+            // All source set dependencies except for runtimeOnly agree in versions with all other published compile dependencies:
             if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
-                project.addExtendsFromRelation(
-                    ALL_COMPILE_METADATA_CONFIGURATION_NAME,
-                    sourceSetDependencyConfigurationByScope.name
-                )
+                if (isSourceSetPublished) {
+                    project.addExtendsFromRelation(
+                        ALL_COMPILE_METADATA_CONFIGURATION_NAME,
+                        sourceSetDependencyConfigurationByScope.name
+                    )
+                }
                 project.addExtendsFromRelation(
                     sourceSetMetadataConfigurationByScope.name,
                     ALL_COMPILE_METADATA_CONFIGURATION_NAME
