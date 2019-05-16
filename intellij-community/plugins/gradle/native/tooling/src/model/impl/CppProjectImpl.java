@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.nativeplatform.tooling.model.impl;
 
 import org.jetbrains.annotations.Nullable;
@@ -9,12 +9,11 @@ import org.jetbrains.plugins.gradle.nativeplatform.tooling.model.CppTestSuite;
 /**
  * @author Vladislav.Soroka
  */
-public class CppProjectImpl implements CppProject {
-
+public final class CppProjectImpl implements CppProject {
   @Nullable
-  private CppComponent myMainComponent;
+  private CppComponent mainComponent;
   @Nullable
-  private CppTestSuite myTestComponent;
+  private CppTestSuite testComponent;
 
   public CppProjectImpl() {
   }
@@ -22,31 +21,31 @@ public class CppProjectImpl implements CppProject {
   public CppProjectImpl(CppProject cppProject) {
     CppComponent mainComponent = cppProject.getMainComponent();
     if (mainComponent != null) {
-      myMainComponent = new CppComponentImpl(mainComponent);
+      this.mainComponent = new CppComponentImpl(mainComponent);
     }
     CppTestSuite testComponent = cppProject.getTestComponent();
     if (testComponent != null) {
-      myTestComponent = new CppTestSuiteImpl(testComponent);
+      this.testComponent = new CppTestSuiteImpl(testComponent);
     }
   }
 
   @Nullable
   @Override
   public CppComponent getMainComponent() {
-    return myMainComponent;
+    return mainComponent;
   }
 
   public void setMainComponent(@Nullable CppComponent mainComponent) {
-    myMainComponent = mainComponent;
+    this.mainComponent = mainComponent;
   }
 
   @Nullable
   @Override
   public CppTestSuite getTestComponent() {
-    return myTestComponent;
+    return testComponent;
   }
 
   public void setTestComponent(@Nullable CppTestSuite testComponent) {
-    myTestComponent = testComponent;
+    this.testComponent = testComponent;
   }
 }
