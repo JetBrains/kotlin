@@ -35,8 +35,8 @@ class Test {
     }
 
     fun test7() {
-        val list: MutableList<Int> = ArrayList()
-        list.remove(myIntProp!!)
+        val list: MutableList<Int?> = ArrayList()
+        list.remove(myIntProp)
     }
 
     fun foo1(s: String) {}

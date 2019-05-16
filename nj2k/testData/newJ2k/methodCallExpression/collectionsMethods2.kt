@@ -2,7 +2,7 @@ import java.util.*
 
 internal class A {
     fun foo() {
-        val list = listOf<String?>(null)
-        val set = setOf<String?>(null)
+        val list: List<String?> = listOf(null)
+        val set: Set<String?> = setOf(null)
     }
 }
