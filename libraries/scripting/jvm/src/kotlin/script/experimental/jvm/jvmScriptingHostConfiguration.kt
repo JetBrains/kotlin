@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvm
 
 import java.io.File
+import java.io.Serializable
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
@@ -30,10 +31,10 @@ val ScriptingHostConfigurationKeys.jvm
 
 val defaultJvmScriptingHostConfiguration
     get() = ScriptingHostConfiguration {
-        getScriptingClass(JvmGetScriptingClass())
+        getScriptingClass(JvmGetScriptingClass)
     }
 
-class JvmGetScriptingClass : GetScriptingClass {
+object JvmGetScriptingClass : GetScriptingClass, Serializable {
 
     private var dependencies: List<ScriptDependency>? = null
     private var classLoader: ClassLoader? = null
@@ -89,4 +90,7 @@ class JvmGetScriptingClass : GetScriptingClass {
             throw IllegalArgumentException("unable to load class $classType", e)
         }
     }
+
+    @JvmStatic
+    private val serialVersionUID = 1L
 }
