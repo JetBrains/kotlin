@@ -274,7 +274,7 @@ class JvmSymbols(
     val getOrCreateKotlinClasses: IrSimpleFunctionSymbol =
         reflection.functions.single { it.owner.name.asString() == "getOrCreateKotlinClasses" }
 
-    val unsafeCoerceIntrinsic =
+    private val unsafeCoerceIntrinsic =
         buildFun {
             name = Name.special("<unsafe-coerce>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
@@ -286,4 +286,25 @@ class JvmSymbols(
             returnType = dst.defaultType
         }
     val unsafeCoerceIntrinsicSymbol = unsafeCoerceIntrinsic.symbol
+
+    private val collectionToArrayClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.CollectionToArray")) { klass ->
+        klass.origin = JvmLoweredDeclarationOrigin.TO_ARRAY
+
+        val arrayType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
+        klass.addFunction("toArray", arrayType, isStatic = true).apply {
+            origin = JvmLoweredDeclarationOrigin.TO_ARRAY
+            addValueParameter("collection", irBuiltIns.collectionClass.owner.typeWith(), JvmLoweredDeclarationOrigin.TO_ARRAY)
+        }
+        klass.addFunction("toArray", arrayType, isStatic = true).apply {
+            origin = JvmLoweredDeclarationOrigin.TO_ARRAY
+            addValueParameter("collection", irBuiltIns.collectionClass.owner.typeWith(), JvmLoweredDeclarationOrigin.TO_ARRAY)
+            addValueParameter("array", arrayType, JvmLoweredDeclarationOrigin.TO_ARRAY)
+        }
+    }.symbol
+
+    val nonGenericToArray: IrSimpleFunctionSymbol =
+        collectionToArrayClass.functions.single { it.owner.name.asString() == "toArray" && it.owner.valueParameters.size == 1 }
+
+    val genericToArray: IrSimpleFunctionSymbol =
+        collectionToArrayClass.functions.single { it.owner.name.asString() == "toArray" && it.owner.valueParameters.size == 2 }
 }
