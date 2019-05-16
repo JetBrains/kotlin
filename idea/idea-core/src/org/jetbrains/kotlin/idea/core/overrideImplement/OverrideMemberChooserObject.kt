@@ -235,7 +235,7 @@ private val EXPECT_RENDERER = OVERRIDE_RENDERER.withOptions {
 }
 
 private val ACTUAL_RENDERER = EXPECT_RENDERER.withOptions {
-    modifiers += ACTUAL
+    modifiers = modifiers + ACTUAL
     actualPropertiesInPrimaryConstructor = true
     renderTypeExpansions = false
     renderConstructorDelegation = true
