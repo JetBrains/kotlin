@@ -514,7 +514,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       viewState.treeStateElement = new Element("root");
       viewState.treeState.writeExternal(viewState.treeStateElement);
     }
-    myState.selectedView = myServiceViews.indexOf(getSelectedView());
+    if (myContentManager != null) {
+      myState.selectedView = myServiceViews.indexOf(getSelectedView());
+    }
     return myState;
   }
 
