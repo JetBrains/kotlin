@@ -17,8 +17,10 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Combobox which allows to select a loaded modules from a project. If you need to show unloaded modules as well, use {@link ModuleDescriptionsComboBox}
- * instead.
+ * Combobox which allows to select a loaded modules from a project.
+ * If you need to show unloaded modules as well, use {@link ModuleDescriptionsComboBox} instead.
+ *
+ * @see ModuleDescriptionsComboBox
  *
  * @author nik
  */

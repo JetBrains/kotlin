@@ -20,8 +20,6 @@ import com.intellij.openapi.module.*;
 import com.intellij.openapi.module.impl.LoadedModuleDescriptionImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.ui.ComboboxSpeedSearch;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SortedComboBoxModel;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +31,10 @@ import java.util.Collection;
 import java.util.Comparator;
 
 /**
- * Combobox which may show not only regular loaded modules but also unloaded modules. Use it instead of {@link ModulesComboBox} for
- * configuration elements which may refer to unloaded modules.
+ * Combobox which may show not only regular loaded modules but also unloaded modules.
+ * Use it instead of {@link ModulesComboBox} for configuration elements which may refer to unloaded modules.
+ *
+ * @see ModulesComboBox
  *
  * @author nik
  */
@@ -46,17 +46,7 @@ public final class ModuleDescriptionsComboBox extends ComboBox<ModuleDescription
     myModel = new SortedComboBoxModel<>(Comparator.comparing(description -> description != null ? description.getName() : "",
                                                              String.CASE_INSENSITIVE_ORDER));
     setModel(myModel);
-    new ComboboxSpeedSearch(this){
-      @Override
-      protected String getElementText(Object element) {
-        if (element instanceof ModuleDescription) {
-          return ((ModuleDescription)element).getName();
-        }
-        else {
-          return "";
-        }
-      }
-    };
+    setSwingPopup(false);
     setRenderer(new ModuleDescriptionListCellRenderer());
   }
 
@@ -131,20 +121,11 @@ public final class ModuleDescriptionsComboBox extends ComboBox<ModuleDescription
 
     @Override
     public void customize(JList<? extends ModuleDescription> list, ModuleDescription value, int index, boolean selected, boolean hasFocus) {
-      if (value == null) {
-        setText(myEmptySelectionText);
-      }
-      else {
-        if (value instanceof LoadedModuleDescription) {
-          setIcon(ModuleType.get(((LoadedModuleDescription)value).getModule()).getIcon());
-          setForeground(null);
-        }
-        else {
-          setIcon(AllIcons.Modules.UnloadedModule);
-          setForeground(JBColor.RED);
-        }
-        setText(value.getName());
-      }
+      setText(value == null ? myEmptySelectionText : value.getName());
+      setIcon(value instanceof LoadedModuleDescription
+              ? ModuleType.get(((LoadedModuleDescription)value).getModule()).getIcon()
+              : value != null
+                ? AllIcons.Modules.UnloadedModule : null);
     }
   }
 }
