@@ -33,8 +33,8 @@ object JavaClassProperty : IntrinsicMethod() {
     fun invokeWith(value: PromisedValue) =
         when {
             value.type == Type.VOID_TYPE ->
-                invokeGetClass(value.coerce(AsmTypes.UNIT_TYPE))
-            value.irType?.isInlined() == true ->
+                invokeGetClass(value.coerce(AsmTypes.UNIT_TYPE, value.codegen.context.irBuiltIns.unitType))
+            value.irType.isInlined() ->
                 invokeGetClass(value.coerceToBoxed(value.irType))
             isPrimitive(value.type) -> {
                 value.discard()

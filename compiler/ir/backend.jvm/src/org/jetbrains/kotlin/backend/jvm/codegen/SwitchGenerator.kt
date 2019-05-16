@@ -217,7 +217,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             }
         }
 
-        protected fun genBranchTargets(): PromisedValue {
+        private fun genBranchTargets(): PromisedValue {
             with(codegen) {
                 val endLabel = Label()
                 for ((thenExpression, label) in expressionToLabels) {
@@ -226,8 +226,8 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                     mv.goTo(endLabel)
                 }
                 mv.visitLabel(defaultLabel)
-                val stackValue = elseExpression?.accept(codegen, data) ?: voidValue
-                val result = stackValue.coerce(expression.type).materialized
+                val stackValue = elseExpression?.accept(codegen, data)?.coerce(expression.type) ?: defaultValue(expression.type)
+                val result = stackValue.materialized
                 mv.mark(endLabel)
                 return result
             }
