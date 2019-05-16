@@ -4,10 +4,7 @@ package org.jetbrains.plugins.gradle.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Vladislav.Soroka
- */
-public class DefaultExternalTask implements ExternalTask {
+public final class DefaultExternalTask implements ExternalTask {
   @NotNull
   private String name;
   @NotNull
@@ -23,7 +20,7 @@ public class DefaultExternalTask implements ExternalTask {
   public DefaultExternalTask() {
   }
 
-  public DefaultExternalTask(ExternalTask externalTask) {
+  public DefaultExternalTask(@NotNull ExternalTask externalTask) {
     name = externalTask.getName();
     qName = externalTask.getQName();
     description = externalTask.getDescription();

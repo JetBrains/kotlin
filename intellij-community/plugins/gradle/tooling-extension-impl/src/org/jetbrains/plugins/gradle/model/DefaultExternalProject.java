@@ -24,7 +24,7 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   @NotNull
   private String version;
   @NotNull
-  private Map<String, ExternalProject> childProjects;
+  private Map<String, DefaultExternalProject> childProjects;
   @NotNull
   private File projectDir;
   @NotNull
@@ -32,11 +32,11 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   @Nullable
   private File buildFile;
   @NotNull
-  private Map<String, ExternalTask> tasks;
+  private Map<String, DefaultExternalTask> tasks;
   @NotNull
-  private Map<String, ?> properties;
+  private Map<String, ?> properties = new HashMap<String, Object>();
   @NotNull
-  private Map<String, ExternalSourceSet> sourceSets;
+  private Map<String, DefaultExternalSourceSet> sourceSets;
   @NotNull
   private String externalSystemId;
   @NotNull
@@ -44,21 +44,18 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   @NotNull
   private List<File> artifacts;
   @NotNull
-  private Map<String, Set<File>> myArtifactsByConfiguration;
+  private Map<String, Set<File>> artifactsByConfiguration;
 
   public DefaultExternalProject() {
-    childProjects = new HashMap<String, ExternalProject>();
-    tasks = new HashMap<String, ExternalTask>();
-    properties = new HashMap<String, Object>();
-    sourceSets = new HashMap<String, ExternalSourceSet>();
+    childProjects = new HashMap<String, DefaultExternalProject>();
+    tasks = new HashMap<String, DefaultExternalTask>();
+    sourceSets = new HashMap<String, DefaultExternalSourceSet>();
     plugins = new HashMap<String, ExternalPlugin>();
     artifacts = new ArrayList<File>();
-    myArtifactsByConfiguration = new HashMap<String, Set<File>>();
+    artifactsByConfiguration = new HashMap<String, Set<File>>();
   }
 
   public DefaultExternalProject(@NotNull ExternalProject externalProject) {
-    this();
-
     id = externalProject.getId();
     name = externalProject.getName();
     qName = externalProject.getQName();
@@ -70,22 +67,32 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
     buildFile = externalProject.getBuildFile();
     externalSystemId = externalProject.getExternalSystemId();
 
-    for (Map.Entry<String, ExternalProject> entry : externalProject.getChildProjects().entrySet()) {
+    Map<String, ? extends ExternalProject> externalProjectChildProjects = externalProject.getChildProjects();
+    childProjects = new HashMap<String, DefaultExternalProject>(externalProjectChildProjects.size());
+    for (Map.Entry<String, ? extends ExternalProject> entry : externalProjectChildProjects.entrySet()) {
       childProjects.put(entry.getKey(), new DefaultExternalProject(entry.getValue()));
     }
 
-    for (Map.Entry<String, ExternalTask> entry : externalProject.getTasks().entrySet()) {
-      tasks.put(entry.getKey(), new DefaultExternalTask(entry.getValue()));
-    }
-    for (Map.Entry<String, ExternalSourceSet> entry : externalProject.getSourceSets().entrySet()) {
-      sourceSets.put(entry.getKey(), new DefaultExternalSourceSet(entry.getValue()));
-    }
-    for (Map.Entry<String, ExternalPlugin> entry : externalProject.getPlugins().entrySet()) {
-      plugins.put(entry.getKey(), new DefaultExternalPlugin(entry.getValue()));
+    Map<String, ? extends ExternalTask> externalProjectTasks = externalProject.getTasks();
+    tasks = new HashMap<String, DefaultExternalTask>(externalProjectTasks.size());
+    for (Map.Entry<String, ? extends ExternalTask> entry : externalProjectTasks.entrySet()) {
+      this.tasks.put(entry.getKey(), new DefaultExternalTask(entry.getValue()));
     }
 
-    artifacts.addAll(externalProject.getArtifacts());
-    myArtifactsByConfiguration.putAll(externalProject.getArtifactsByConfiguration());
+    Map<String, ? extends ExternalSourceSet> externalProjectSourceSets = externalProject.getSourceSets();
+    sourceSets = new HashMap<String, DefaultExternalSourceSet>(externalProjectSourceSets.size());
+    for (Map.Entry<String, ? extends ExternalSourceSet> entry : externalProjectSourceSets.entrySet()) {
+      sourceSets.put(entry.getKey(), new DefaultExternalSourceSet(entry.getValue()));
+    }
+
+    Map<String, ExternalPlugin> externalProjectPlugins = externalProject.getPlugins();
+    plugins = new HashMap<String, ExternalPlugin>(externalProjectPlugins.size());
+    for (Map.Entry<String, ExternalPlugin> entry : externalProjectPlugins.entrySet()) {
+      this.plugins.put(entry.getKey(), new DefaultExternalPlugin(entry.getValue()));
+    }
+
+    artifacts = new ArrayList<File>(externalProject.getArtifacts());
+    artifactsByConfiguration = new HashMap<String, Set<File>>(externalProject.getArtifactsByConfiguration());
   }
 
   @NotNull
@@ -160,11 +167,11 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
 
   @NotNull
   @Override
-  public Map<String, ExternalProject> getChildProjects() {
+  public Map<String, DefaultExternalProject> getChildProjects() {
     return childProjects;
   }
 
-  public void setChildProjects(@NotNull Map<String, ExternalProject> childProjects) {
+  public void setChildProjects(@NotNull Map<String, DefaultExternalProject> childProjects) {
     this.childProjects = childProjects;
   }
 
@@ -200,11 +207,11 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
 
   @NotNull
   @Override
-  public Map<String, ExternalTask> getTasks() {
+  public Map<String, ? extends ExternalTask> getTasks() {
     return tasks;
   }
 
-  public void setTasks(@NotNull Map<String, ExternalTask> tasks) {
+  public void setTasks(@NotNull Map<String, DefaultExternalTask> tasks) {
     this.tasks = tasks;
   }
 
@@ -236,11 +243,11 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
 
   @NotNull
   @Override
-  public Map<String, ExternalSourceSet> getSourceSets() {
+  public Map<String, DefaultExternalSourceSet> getSourceSets() {
     return sourceSets;
   }
 
-  public void setSourceSets(@NotNull Map<String, ExternalSourceSet> sourceSets) {
+  public void setSourceSets(@NotNull Map<String, DefaultExternalSourceSet> sourceSets) {
     this.sourceSets = sourceSets;
   }
 
@@ -255,13 +262,13 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   }
 
   public void setArtifactsByConfiguration(@NotNull Map<String, Set<File>> artifactsByConfiguration) {
-    myArtifactsByConfiguration = artifactsByConfiguration;
+    this.artifactsByConfiguration = artifactsByConfiguration;
   }
 
   @NotNull
   @Override
   public Map<String, Set<File>> getArtifactsByConfiguration() {
-    return myArtifactsByConfiguration;
+    return artifactsByConfiguration;
   }
 
   @Override

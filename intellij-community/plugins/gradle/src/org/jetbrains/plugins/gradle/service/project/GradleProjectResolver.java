@@ -21,6 +21,7 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import gnu.trove.THashMap;
 import org.gradle.tooling.CancellationTokenSource;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.DomainObjectSet;
@@ -502,7 +503,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
     final DefaultExternalProject wrappedExternalRootProject = new DefaultExternalProject(externalRootProject);
     models.addExtraProject(wrappedExternalRootProject, ExternalProject.class);
-    final Map<String, ExternalProject> externalProjectsMap = createExternalProjectsMap(null, wrappedExternalRootProject);
+    final Map<String, DefaultExternalProject> externalProjectsMap = createExternalProjectsMap(null, wrappedExternalRootProject);
 
     DomainObjectSet<? extends IdeaModule> gradleModules = models.getIdeaProject().getModules();
     if (gradleModules != null && !gradleModules.isEmpty()) {
@@ -526,7 +527,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       final DefaultExternalProject wrappedExternalIncludedRootProject = new DefaultExternalProject(externalIncludedRootProject);
       wrappedExternalRootProject.getChildProjects().put(wrappedExternalIncludedRootProject.getName(), wrappedExternalIncludedRootProject);
       String compositePrefix = project.getName();
-      final Map<String, ExternalProject> externalIncludedProjectsMap =
+      final Map<String, DefaultExternalProject> externalIncludedProjectsMap =
         createExternalProjectsMap(compositePrefix, wrappedExternalIncludedRootProject);
       for (IdeaModule ideaModule : ideaModules) {
         final ExternalProject externalProject = externalIncludedProjectsMap.get(getModuleId(resolverCtx, ideaModule));
@@ -537,17 +538,18 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     }
   }
 
-  private static Map<String, ExternalProject> createExternalProjectsMap(@Nullable String compositePrefix,
-                                                                        @Nullable final ExternalProject rootExternalProject) {
-    final Map<String, ExternalProject> externalProjectMap = new HashMap<>();
+  @NotNull
+  private static Map<String, DefaultExternalProject> createExternalProjectsMap(@Nullable String compositePrefix,
+                                                                               @Nullable DefaultExternalProject rootExternalProject) {
+    final Map<String, DefaultExternalProject> externalProjectMap = new THashMap<>();
 
     if (rootExternalProject == null) return externalProjectMap;
 
-    Queue<ExternalProject> queue = new LinkedList<>();
+    ArrayDeque<DefaultExternalProject> queue = new ArrayDeque<>();
     queue.add(rootExternalProject);
 
-    while (!queue.isEmpty()) {
-      ExternalProject externalProject = queue.remove();
+    DefaultExternalProject externalProject;
+    while ((externalProject = queue.pollFirst()) != null) {
       queue.addAll(externalProject.getChildProjects().values());
       final String moduleName = externalProject.getName();
       final String qName = externalProject.getQName();
@@ -557,7 +559,6 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       }
       externalProjectMap.put(moduleId, externalProject);
     }
-
     return externalProjectMap;
   }
 
