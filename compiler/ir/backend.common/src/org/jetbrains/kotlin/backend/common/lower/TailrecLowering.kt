@@ -36,9 +36,6 @@ val tailrecPhase = makeIrFilePhase(
 
 /**
  * This pass lowers tail recursion calls in `tailrec` functions.
- *
- * Note: it currently can't handle local functions and classes declared in default arguments.
- * See [deepCopyWithVariables].
  */
 class TailrecLowering(val context: BackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
@@ -130,31 +127,24 @@ private class BodyTransformer(
             +irSetVar(parameterToVariable[parameter]!!.symbol, argument)
         }
 
+        // Because all default arguments are lowered after defaultArgumentStubPhase, unspecified arguments do not exist and there's no need
+        // to copy them at call site.
+        //
+        // For example,
+        //   fun foo(n: Int = 0) = ...
+        //   fun bar() = foo()
+        //
+        // is lowered in defaultArgumentStubPhase to:
+        //   fun foo(n: Int) = ...
+        //   fun foo$default(n: Int, ...) = if (...) foo(n) else foo(0)
+        //   fun bar() = foo$default(0, ...)
+        //
+        // Note that tail call optimization happens in foo rather than foo$default nor bar. Default parameter resolution only happens once.
+        //
+        // So nothing to be done here except for an assertion that makes sure all unspecified parameters have corresponding default values.
         val specifiedParameters = parameterToArgument.map { (parameter, _) -> parameter }.toSet()
-
-        // For each unspecified argument set the corresponding variable to default:
-        parameters.filter { it !in specifiedParameters }.forEach { parameter ->
-
-            val originalDefaultValue = parameter.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
-
-            // Copy default value, mapping parameters to variables containing freshly computed arguments:
-            val defaultValue = originalDefaultValue
-                .deepCopyWithVariables()
-                .transform(object : IrElementTransformerVoid() {
-
-                    override fun visitGetValue(expression: IrGetValue): IrExpression {
-                        expression.transformChildrenVoid(this)
-
-                        val variable = parameterToVariable[expression.symbol.owner] ?: return expression
-                        return IrGetValueImpl(
-                            expression.startOffset, expression.endOffset, variable.type,
-                            variable.symbol, expression.origin
-                        )
-                    }
-                }, data = null)
-
-            +irSetVar(parameterToVariable[parameter]!!.symbol, defaultValue)
-        }
+        val unspecifiedParameters = parameters.filter { it !in specifiedParameters }
+        unspecifiedParameters.forEach { assert(it.defaultValue != null) { "no argument specified for $it" } }
 
         // Jump to the entry:
         +irContinue(loop)
