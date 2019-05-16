@@ -17,3 +17,6 @@ fun testDestructuring(pp: List<Pair<Int, String>>) {
     }
 }
 
+fun testRange() {
+    for (i in 1..10);
+}
