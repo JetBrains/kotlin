@@ -1,3 +1,5 @@
+// NOTE: This settings file is completely ignored when running composite build `kotlin` + `kotlin-ultimate`.
+
 import java.lang.Boolean.parseBoolean
 
 val cacheRedirectorEnabled: String? by settings

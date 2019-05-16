@@ -1,3 +1,5 @@
+// NOTE: This buildfile file is completely ignored when running composite build `kotlin` + `kotlin-ultimate`.
+
 buildscript {
     val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
