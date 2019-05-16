@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
                   VALUE_PARAMETER name:it index:0 type:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> 
                   BLOCK_BODY
                     ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [java/util/HashMap.put]>#' type=IrErrorType
-                      ERROR_CALL 'No getter found for R|kotlin/Pair.first|' type=A of <uninitialized parent>
-                      ERROR_CALL 'No getter found for R|kotlin/Pair.second|' type=B of <uninitialized parent>
+                      ERROR_CALL 'No getter found for R|kotlin/Pair.first|' type=A of kotlin.Pair
+                      ERROR_CALL 'No getter found for R|kotlin/Pair.second|' type=B of kotlin.Pair
                 FUNCTION_REFERENCE 'local final fun <anonymous> (it: java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>): kotlin.Unit declared in <root>.plus' type=kotlin.Unit origin=LAMBDA
 

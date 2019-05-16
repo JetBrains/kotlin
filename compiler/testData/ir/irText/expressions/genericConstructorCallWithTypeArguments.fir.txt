@@ -12,14 +12,15 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
     VALUE_PARAMETER name:block index:1 type:kotlin.Function0<T of <root>.testArray> [crossinline]
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testArray <T> (n: kotlin.Int, block: kotlin.Function0<T of <root>.testArray>): kotlin.Array<T of <root>.testArray> [inline] declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, T of <uninitialized parent>>) declared in kotlin.Array' type=kotlin.Array<T of <root>.testArray> origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, T of kotlin.Array>) declared in kotlin.Array' type=kotlin.Array<T of <root>.testArray> origin=null
+          <class: T>: <none>
           size: GET_VAR 'n: kotlin.Int declared in <root>.testArray' type=kotlin.Int origin=null
-          init: BLOCK type=T of <uninitialized parent> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:T of <uninitialized parent>
+          init: BLOCK type=T of kotlin.Array origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:T of kotlin.Array
               VALUE_PARAMETER name:it index:0 type:kotlin.Int
               BLOCK_BODY
                 ERROR_CALL 'Unresolved reference: <Unresolved name: block>#' type=IrErrorType
-            FUNCTION_REFERENCE 'local final fun <anonymous> (it: kotlin.Int): T of <uninitialized parent> declared in <root>.testArray' type=T of <uninitialized parent> origin=LAMBDA
+            FUNCTION_REFERENCE 'local final fun <anonymous> (it: kotlin.Int): T of kotlin.Array declared in <root>.testArray' type=T of kotlin.Array origin=LAMBDA
   CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]

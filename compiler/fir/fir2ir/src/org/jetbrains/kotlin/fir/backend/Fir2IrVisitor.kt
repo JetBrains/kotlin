@@ -234,14 +234,6 @@ internal class Fir2IrVisitor(
     }
 
     private fun IrClass.setClassContent(klass: FirClass) {
-        for (superTypeRef in klass.superTypeRefs) {
-            superTypes += superTypeRef.toIrType(session, declarationStorage)
-        }
-        if (klass is FirRegularClass) {
-            for ((index, typeParameter) in klass.typeParameters.withIndex()) {
-                typeParameters += declarationStorage.getIrTypeParameter(typeParameter, index).setParentByParentStack()
-            }
-        }
         declarationStorage.enterScope(descriptor)
         val primaryConstructor = klass.getPrimaryConstructorIfAny()
         val irPrimaryConstructor = primaryConstructor?.accept(this@Fir2IrVisitor, null) as IrConstructor?

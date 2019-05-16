@@ -3,6 +3,7 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testKotlin (): <root>.K1.K2<kotlin.String> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K1.K2' type=<root>.K1.K2<kotlin.String> origin=null
+          <class: T2>: <none>
   FUN name:testJava visibility:public modality:FINAL <> () returnType:IrErrorType
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testJava (): IrErrorType declared in <root>'

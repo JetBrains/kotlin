@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -96,6 +97,20 @@ class Fir2IrDeclarationStorage(
         leaveScope(descriptor)
     }
 
+    private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass): IrClass {
+        for (superTypeRef in klass.superTypeRefs) {
+            superTypes += superTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
+        }
+        if (klass is FirRegularClass) {
+            for ((index, typeParameter) in klass.typeParameters.withIndex()) {
+                typeParameters += getIrTypeParameter(typeParameter, index).apply {
+                    parent = this@declareSupertypesAndTypeParameters
+                }
+            }
+        }
+        return this
+    }
+
     fun getIrClass(regularClass: FirRegularClass, setParent: Boolean = true): IrClass {
         fun create(): IrClass {
             val descriptor = WrappedClassDescriptor()
@@ -136,9 +151,12 @@ class Fir2IrDeclarationStorage(
             if (cached != null) return cached
             val created = create()
             localStorage.putLocalClass(regularClass, created)
+            created.declareSupertypesAndTypeParameters(regularClass)
             return created
         }
-        return classCache.getOrPut(regularClass, ::create)
+        return classCache.getOrPut(regularClass, { create() }) {
+            it.declareSupertypesAndTypeParameters(regularClass)
+        }
     }
 
     fun getIrAnonymousObject(anonymousObject: FirAnonymousObject): IrClass {
@@ -157,7 +175,7 @@ class Fir2IrDeclarationStorage(
                     declareThisReceiver()
                 }
             }
-        }
+        }.declareSupertypesAndTypeParameters(anonymousObject)
     }
 
     fun getIrTypeParameter(typeParameter: FirTypeParameter, index: Int = 0): IrTypeParameter {
