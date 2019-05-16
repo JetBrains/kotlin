@@ -911,7 +911,8 @@ public class DescriptorResolver {
                 container instanceof ClassDescriptor && ((ClassDescriptor) container).isExpect(),
                 modifierList != null && PsiUtilsKt.hasActualModifier(modifierList),
                 modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
-                propertyInfo.getHasDelegate()
+                propertyInfo.getHasDelegate(),
+                new SubstitutingScopeProviderImpl(languageVersionSettings)
         );
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors;

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
+import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 
 fun createTopDownAnalyzerForJs(
         moduleContext: ModuleContext,
@@ -59,6 +60,7 @@ fun createTopDownAnalyzerForJs(
         useInstance(languageVersionSettings)
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
+        useImpl<SubstitutingScopeProviderImpl>()
     }.apply {
         val packagePartProviders = mutableListOf(get<KotlinCodeAnalyzer>().packageFragmentProvider)
         val moduleDescriptor = get<ModuleDescriptorImpl>()

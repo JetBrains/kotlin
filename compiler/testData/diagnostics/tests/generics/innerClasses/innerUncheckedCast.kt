@@ -20,7 +20,7 @@ class Outer<E> {
         }
 
         if (y is Outer<*>.Inner<*>) {
-            <!DEBUG_INFO_SMARTCAST!>y<!>.prop.checkType { _<Any?>() }
+            <!OI;DEBUG_INFO_SMARTCAST!>y<!>.prop.checkType { _<Any?>() }
         }
     }
 

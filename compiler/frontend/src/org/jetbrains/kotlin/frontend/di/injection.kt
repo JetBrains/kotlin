@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
@@ -103,6 +104,7 @@ fun createContainerForBodyResolve(
     useImpl<AnnotationResolverImpl>()
 
     useImpl<BodyResolver>()
+    useImpl<SubstitutingScopeProviderImpl>()
 }
 
 fun createContainerForLazyBodyResolve(
@@ -123,6 +125,7 @@ fun createContainerForLazyBodyResolve(
     useImpl<AnnotationResolverImpl>()
     useImpl<LazyTopDownAnalyzer>()
     useImpl<BasicAbsentDescriptorHandler>()
+    useImpl<SubstitutingScopeProviderImpl>()
 }
 
 fun createContainerForLazyLocalClassifierAnalyzer(
@@ -154,6 +157,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
     useImpl<LocalLazyDeclarationResolver>()
 
     useInstance(languageVersionSettings)
+    useImpl<SubstitutingScopeProviderImpl>()
     useInstance(statementFilter)
 }
 
@@ -177,6 +181,7 @@ fun createContainerForLazyResolve(
 
     useImpl<ResolveSession>()
     useImpl<LazyTopDownAnalyzer>()
+    useImpl<SubstitutingScopeProviderImpl>()
 }
 
 fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtFile>): ResolveSession =

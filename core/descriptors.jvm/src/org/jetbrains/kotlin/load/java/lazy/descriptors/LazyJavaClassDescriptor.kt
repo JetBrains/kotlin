@@ -46,7 +46,8 @@ class LazyJavaClassDescriptor(
 ) : ClassDescriptorBase(
     outerContext.storageManager, containingDeclaration, jClass.name,
     outerContext.components.sourceElementFactory.source(jClass),
-    /* isExternal = */ false
+    /* isExternal = */ false,
+    outerContext.components.substitutingScopeProvider
 ), JavaClassDescriptor {
 
     companion object {

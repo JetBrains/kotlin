@@ -113,7 +113,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     ) {
         super(c.getStorageManager(), containingDeclaration, name,
               KotlinSourceElementKt.toSourceElement(classLikeInfo.getCorrespondingClassOrObject()),
-              isExternal
+              isExternal, c.getSubstitutingScopeProvider()
         );
         this.c = c;
 

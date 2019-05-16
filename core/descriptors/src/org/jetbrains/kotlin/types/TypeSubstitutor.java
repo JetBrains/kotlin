@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
-import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
@@ -45,6 +44,14 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
         public SubstitutionException(String message) {
             super(message);
         }
+    }
+
+    private @NotNull SubstitutingScopeProvider substitutingScopeProvider;
+
+    @NotNull
+    public TypeSubstitutor setSubstitutingScopeProvider(@NotNull SubstitutingScopeProvider substitutingScopeProvider) {
+        this.substitutingScopeProvider = substitutingScopeProvider;
+        return this;
     }
 
     @NotNull
@@ -73,6 +80,7 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
 
     protected TypeSubstitutor(@NotNull TypeSubstitution substitution) {
         this.substitution = substitution;
+        this.substitutingScopeProvider = SubstitutingScopeProvider.Companion.getDEFAULT();
     }
 
     public boolean isEmpty() {
@@ -110,8 +118,12 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
         if (!substitution.approximateCapturedTypes() && !substitution.approximateContravariantCapturedTypes()) {
             return substitutedTypeProjection;
         }
-        return CapturedTypeApproximationKt.approximateCapturedTypesIfNecessary(
-                substitutedTypeProjection, substitution.approximateContravariantCapturedTypes());
+
+        CapturedTypeApproximator approximator = substitutingScopeProvider.provideApproximator();
+        return approximator.approximateCapturedTypes(
+                substitutedTypeProjection,
+                substitution.approximateContravariantCapturedTypes()
+        );
     }
 
     @Nullable
