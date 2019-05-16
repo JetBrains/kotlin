@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
 
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
@@ -21,27 +20,25 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.util.zip.GZIPInputStream
-import java.util.zip.GZIPOutputStream
 
 object JsKlibMetadataSerializationUtil {
-    const val CLASS_METADATA_FILE_EXTENSION: String = "klm"
-
     fun serializeMetadata(
         bindingContext: BindingContext,
         jsDescriptor: JsKlibMetadataModuleDescriptor<ModuleDescriptor>,
         languageVersionSettings: LanguageVersionSettings,
         metadataVersion: JsKlibMetadataVersion,
-        declarationTableHandler: ((DeclarationDescriptor) -> JsKlibMetadataProtoBuf.DescriptorUniqId?)
+        declarationTableHandler: (DeclarationDescriptor) -> JsKlibMetadataProtoBuf.DescriptorUniqId?
     ): SerializedMetadata {
+        val libraryProto = JsKlibMetadataProtoBuf.Library.newBuilder()
+        jsDescriptor.imported.forEach { libraryProto.addImportedModule(it) }
+
         val serializedFragments = HashMap<FqName, ProtoBuf.PackageFragment>()
         val module = jsDescriptor.data
+        val fragments = mutableListOf<List<ByteArray>>()
+        val fragmentNames = mutableListOf<String>()
 
         for (fqName in getPackagesFqNames(module).sortedBy { it.asString() }) {
             val fragment = serializeDescriptors(
@@ -55,39 +52,14 @@ object JsKlibMetadataSerializationUtil {
             }
         }
 
-        return SerializedMetadata(serializedFragments, jsDescriptor, languageVersionSettings)
-    }
-
-    class SerializedMetadata(
-        private val serializedFragments: Map<FqName, ProtoBuf.PackageFragment>,
-        private val jsDescriptor: JsKlibMetadataModuleDescriptor<ModuleDescriptor>,
-        private val languageVersionSettings: LanguageVersionSettings
-    ) {
-
-        fun asByteArray(): ByteArray =
-            ByteArrayOutputStream().apply {
-                GZIPOutputStream(this).use { stream ->
-                    serializeHeader(
-                        jsDescriptor.data,
-                        packageFqName = null,
-                        languageVersionSettings = languageVersionSettings
-                    ).writeDelimitedTo(stream)
-                    asLibrary().writeTo(stream)
-                }
-            }.toByteArray()
-
-        private fun asLibrary(): JsKlibMetadataProtoBuf.Library {
-            jsDescriptor.imported
-            val builder = JsKlibMetadataProtoBuf.Library.newBuilder()
-
-            jsDescriptor.imported.forEach { builder.addImportedModule(it) }
-
-            for ((_, fragment) in serializedFragments.entries.sortedBy { (fqName, _) -> fqName.asString() }) {
-                builder.addPackageFragment(fragment)
-            }
-
-            return builder.build()
+        for ((fqName, fragment) in serializedFragments.entries.sortedBy { (fqName, _) -> fqName.asString() }) {
+            libraryProto.addPackageFragment(fragment)
+            fragments.add(listOf(fragment.toByteArray()))
+            fragmentNames.add(fqName.asString())
         }
+
+        val libraryAsByteArray = libraryProto.build().toByteArray()
+        return SerializedMetadata(libraryAsByteArray, fragments, fragmentNames)
     }
 
     fun serializeDescriptors(
@@ -174,38 +146,6 @@ object JsKlibMetadataSerializationUtil {
     private fun ProtoBuf.PackageFragment.isEmpty(): Boolean =
         class_Count == 0 && `package`.let { it.functionCount == 0 && it.propertyCount == 0 && it.typeAliasCount == 0 }
 
-    fun serializeHeader(
-        module: ModuleDescriptor, packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings
-    ): JsKlibMetadataProtoBuf.Header {
-        val header = JsKlibMetadataProtoBuf.Header.newBuilder()
-
-        if (packageFqName != null) {
-            header.packageFqName = packageFqName.asString()
-        }
-
-        if (languageVersionSettings.isPreRelease()) {
-            header.flags = 1
-        }
-
-        val experimentalAnnotationFqNames = languageVersionSettings.getFlag(AnalysisFlags.experimental)
-        if (experimentalAnnotationFqNames.isNotEmpty()) {
-            val stringTable = StringTableImpl()
-            for (fqName in experimentalAnnotationFqNames) {
-                val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_ALREADY_TRACKED) ?: continue
-                header.addAnnotation(ProtoBuf.Annotation.newBuilder().apply {
-                    id = stringTable.getFqNameIndex(descriptor)
-                })
-            }
-            val (strings, qualifiedNames) = stringTable.buildProto()
-            header.strings = strings
-            header.qualifiedNames = qualifiedNames
-        }
-
-        // TODO: write JS code binary version
-
-        return header.build()
-    }
-
     private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
         return mutableSetOf<FqName>().apply {
             getSubPackagesFqNames(module.getPackage(FqName.ROOT), this)
@@ -228,11 +168,8 @@ object JsKlibMetadataSerializationUtil {
 
     @JvmStatic
     fun readModuleAsProto(metadata: ByteArray): JsKlibMetadataParts {
-        val (header, content) = GZIPInputStream(ByteArrayInputStream(metadata)).use { stream ->
-            JsKlibMetadataProtoBuf.Header.parseDelimitedFrom(stream, JsKlibMetadataSerializerProtocol.extensionRegistry) to
-                    JsKlibMetadataProtoBuf.Library.parseFrom(stream, JsKlibMetadataSerializerProtocol.extensionRegistry)
-        }
-
+        val header = JsKlibMetadataProtoBuf.Header.parseFrom(metadata, JsKlibMetadataSerializerProtocol.extensionRegistry)
+        val content = JsKlibMetadataProtoBuf.Library.parseFrom(metadata, JsKlibMetadataSerializerProtocol.extensionRegistry)
         return JsKlibMetadataParts(header, content.packageFragmentList, content.importedModuleList)
     }
 }

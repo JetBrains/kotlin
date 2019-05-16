@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.utils
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.*
 import java.util.*
 import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.jar.Manifest
+import java.util.zip.ZipFile
 
 object LibraryUtils {
     private val LOG = Logger.getInstance(LibraryUtils::class.java)
@@ -63,6 +65,26 @@ object LibraryUtils {
 
     @JvmStatic fun isKotlinJavascriptStdLibrary(library: File): Boolean {
         return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_STDLIB, Attributes.Name.IMPLEMENTATION_TITLE)
+    }
+
+    private fun isZippedKlib(candidate: File): Boolean {
+        if (candidate.extension == "klib") return true
+        var manifestFound = false
+        var irFound = false
+        for (entry in ZipFile(candidate).entries()) {
+            if (entry.name == "manifest") manifestFound = true
+            if (entry.name == "ir/") irFound = true
+        }
+        return manifestFound && irFound
+    }
+
+    fun isKotlinJavascriptIrLibrary(candidate: File): Boolean {
+        return when {
+            FileUtil.isJarOrZip(candidate) -> isZippedKlib(candidate)
+            !File(candidate, "manifest").isFile -> false
+            !File(candidate, "ir").isDirectory -> false
+            else -> true
+        }
     }
 
     private fun getManifestFromJar(library: File): Manifest? {

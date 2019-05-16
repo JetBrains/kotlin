@@ -85,7 +85,7 @@ class KoltinLibraryWriterImpl(
 
 ) : BaseWriter by base, MetadataWriter by metadata, IrWriter by ir, KotlinLibraryWriter
 
-internal fun buildKoltinLibrary(
+fun buildKoltinLibrary(
     linkDependencies: List<KotlinLibrary>,
     metadata: SerializedMetadata,
     ir: SerializedIr,

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -58,10 +59,10 @@ fun buildKLib(
     moduleName: String,
     sources: List<String>,
     outputPath: String,
-    dependencies: List<KlibModuleRef>,
+    dependencies: List<KotlinLibrary>,
     commonSources: List<String>
-): KlibModuleRef {
-    return generateKLib(
+) {
+    generateKLib(
         project = environment.project,
         files = sources.map { source ->
             val file = createPsiFile(source)
@@ -71,10 +72,10 @@ fun buildKLib(
             file
         },
         configuration = buildConfiguration(environment, moduleName),
-        immediateDependencies = dependencies,
         allDependencies = dependencies,
         friendDependencies = emptyList(),
-        outputKlibPath = outputPath
+        outputKlibPath = outputPath,
+        nopack = true
     )
 }
 
@@ -114,12 +115,10 @@ fun main(args: Array<String>) {
 
     val name = outputPath.takeLastWhile { it != '/' }
 
-    if (!name.endsWith(".klm")) error("invalid output file name")
-
     val dependencyKLibs = dependencies.map {
         val file = File(it)
-        KlibModuleRef(file.name.dropLast(4), file.parent)
+        loadKlib(file.path)
     }
 
-    buildKLib(name.dropLast(4), listOfKtFilesFrom(inputFiles), File(outputPath).parent, dependencyKLibs, listOfKtFilesFrom(commonSources))
+    buildKLib(name.dropLast(4), listOfKtFilesFrom(inputFiles), outputPath, dependencyKLibs, listOfKtFilesFrom(commonSources))
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransf
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.psi.KtFile
 
 fun compile(
@@ -20,13 +21,12 @@ fun compile(
     files: List<KtFile>,
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
-    immediateDependencies: List<KlibModuleRef>,
-    allDependencies: List<KlibModuleRef>,
-    friendDependencies: List<KlibModuleRef>,
+    allDependencies: List<KotlinLibrary>,
+    friendDependencies: List<KotlinLibrary>,
     mainArguments: List<String>?
 ): String {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, files, configuration, immediateDependencies, allDependencies, friendDependencies)
+        loadIr(project, files, configuration, allDependencies, friendDependencies)
 
     val moduleDescriptor = moduleFragment.descriptor
 

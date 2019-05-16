@@ -159,7 +159,7 @@ val generateFullRuntimeKLib by task<NoDebugJavaExec> {
 
     buildKLib(sources = listOf(fullRuntimeSources.outputs.files.singleFile.path),
               dependencies = emptyList(),
-              outPath = "$buildDir/fullRuntime/klib/JS_IR_RUNTIME.klm",
+              outPath = "$buildDir/fullRuntime/klib",
               commonSources = listOf("common", "src", "unsigned").map { "$buildDir/fullRuntime/src/libraries/stdlib/$it" }
     )
 }
@@ -169,7 +169,7 @@ val generateReducedRuntimeKLib by task<NoDebugJavaExec> {
 
     buildKLib(sources = listOf(reducedRuntimeSources.outputs.files.singleFile.path),
               dependencies = emptyList(),
-              outPath = "$buildDir/reducedRuntime/klib/JS_IR_RUNTIME.klm",
+              outPath = "$buildDir/reducedRuntime/klib",
               commonSources = listOf("common", "src", "unsigned").map { "$buildDir/reducedRuntime/src/libraries/stdlib/$it" }
     )
 }
@@ -183,8 +183,8 @@ val generateKotlinTestKLib by task<NoDebugJavaExec> {
 
     buildKLib(
         sources = listOf("$rootDir/libraries/kotlin.test/js/src/main") + kotlinTestCommonSources,
-        dependencies = listOf("${generateFullRuntimeKLib.outputs.files.singleFile.path}/JS_IR_RUNTIME.klm"),
-        outPath = "$buildDir/kotlin.test/klib/kotlin.test.klm",
+        dependencies = listOf("${generateFullRuntimeKLib.outputs.files.singleFile.path}/klib"),
+        outPath = "$buildDir/kotlin.test/klib",
         commonSources = kotlinTestCommonSources
     )
 }

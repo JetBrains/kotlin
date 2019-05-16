@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.test
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
-import org.jetbrains.kotlin.ir.backend.js.KlibModuleRef
+import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.ir.backend.js.generateKLib
 import org.jetbrains.kotlin.ir.backend.js.jsPhases
@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-private val fullRuntimeKlib = KlibModuleRef("JS_IR_RUNTIME", "compiler/ir/serialization.js/build/fullRuntime/klib")
-private val defaultRuntimeKlib = KlibModuleRef("JS_IR_RUNTIME", "compiler/ir/serialization.js/build/reducedRuntime/klib")
-private val kotlinTestKLib = KlibModuleRef("kotlin.test", "compiler/ir/serialization.js/build/kotlin.test/klib")
+private val fullRuntimeKlib = loadKlib("compiler/ir/serialization.js/build/fullRuntime/klib")
+private val defaultRuntimeKlib = loadKlib("compiler/ir/serialization.js/build/reducedRuntime/klib")
+private val kotlinTestKLib = loadKlib("compiler/ir/serialization.js/build/kotlin.test/klib")
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -43,7 +43,7 @@ abstract class BasicIrBoxTest(
     // TODO Design incremental compilation for IR and add test support
     override val incrementalCompilationChecksEnabled = false
 
-    private val compilationCache = mutableMapOf<String, KlibModuleRef>()
+    private val compilationCache = mutableMapOf<String, String>()
 
     override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
         compilationCache.clear()
@@ -73,16 +73,10 @@ abstract class BasicIrBoxTest(
 
         val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
 
-        val libraries = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
         val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
 
-        // TODO: Add proper depencencies
-        val dependencies = runtimeKlibs + libraries.map {
-            compilationCache[it] ?: error("Can't find compiled module for dependency $it")
-        }
-
         val allDependencies = runtimeKlibs + transitiveLibraries.map {
-            compilationCache[it] ?: error("Can't find compiled module for dependency $it")
+            loadKlib(compilationCache[it] ?: error("Can't find compiled module for dependency $it"))
         }
 
         val actualOutputFile = outputFile.absolutePath.let {
@@ -112,7 +106,6 @@ abstract class BasicIrBoxTest(
                 files = filesToCompile,
                 configuration = config.configuration,
                 phaseConfig = phaseConfig,
-                immediateDependencies = dependencies,
                 allDependencies = allDependencies,
                 friendDependencies = emptyList(),
                 mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null }
@@ -122,17 +115,17 @@ abstract class BasicIrBoxTest(
             outputFile.write(wrappedCode)
 
         } else {
-            val module = generateKLib(
+            generateKLib(
                 project = config.project,
                 files = filesToCompile,
                 configuration = config.configuration,
-                immediateDependencies = dependencies,
                 allDependencies = allDependencies,
                 friendDependencies = emptyList(),
-                outputKlibPath = actualOutputFile
+                outputKlibPath = actualOutputFile,
+                nopack = true
             )
 
-            compilationCache[outputFile.name.replace(".js", ".meta.js")] = module
+            compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
         }
     }
 

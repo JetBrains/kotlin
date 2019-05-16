@@ -139,7 +139,7 @@ internal fun zippedKotlinLibraryChecks(klibFile: File) {
     check(klibFile.isFile) { "Expected $klibFile to be a regular file." }
 
     val extension = klibFile.extension
-    check(extension.isEmpty() || extension == KLIB_FILE_EXTENSION) {
+    check(extension.isEmpty() || extension == KLIB_FILE_EXTENSION || extension == "jar") {
         "KLIB path has unexpected extension: $klibFile"
     }
 }

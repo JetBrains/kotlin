@@ -563,8 +563,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
 
     private val libraryFilter: (File) -> Boolean
         get() = if ("-Xir" in kotlinOptions.freeCompilerArgs) {
-            // TODO: Detect IR libraries
-            { true }
+            LibraryUtils::isKotlinJavascriptIrLibrary
         } else {
             LibraryUtils::isKotlinJavascriptLibrary
         }
@@ -578,6 +577,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         if ("-Xir" in args.freeArgs) {
             logger.kotlinDebug("Using JS IR backend")
             incremental = false
+            args.freeArgs += "-Xir-legacy-gradle-plugin-compatibility"
         }
 
         val dependencies = compileClasspath

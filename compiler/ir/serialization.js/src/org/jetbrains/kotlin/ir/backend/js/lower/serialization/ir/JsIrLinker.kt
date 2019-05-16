@@ -6,28 +6,22 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.library.CombinedIrFileReader
-import org.jetbrains.kotlin.backend.common.library.DeclarationId
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.backend.js.JS_KLIBRARY_CAPABILITY
-import org.jetbrains.kotlin.ir.backend.js.moduleHeaderFileName
+import org.jetbrains.kotlin.ir.backend.js.kotlinLibrary
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import java.io.File
 
 class JsIrLinker(
     currentModule: ModuleDescriptor,
     logger: LoggingContext,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable
-) : KotlinIrLinker(logger, builtIns, symbolTable, emptyList<ModuleDescriptor>(), null, 0x1_0000_0000L),
+) : KotlinIrLinker(logger, builtIns, symbolTable, emptyList(), null, 0x1_0000_0000L),
     DescriptorUniqIdAware by JsDescriptorUniqIdAware {
 
     private val FUNCTION_INDEX_START: Long = indexAfterKnownBuiltins
-
-    val moduleToReaderMap = mutableMapOf<ModuleDescriptor, CombinedIrFileReader>()
 
     override fun getPrimitiveTypeOrNull(symbol: IrClassifierSymbol, hasQuestionMark: Boolean) =
         builtIns.getPrimitiveTypeOrNullByDescriptor(symbol.descriptor, hasQuestionMark)
@@ -36,15 +30,11 @@ class JsIrLinker(
         JsDescriptorReferenceDeserializer(currentModule, builtIns, FUNCTION_INDEX_START)
 
     override fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId): ByteArray {
-        val irFileReader = moduleToReaderMap.getOrPut(moduleDescriptor) {
-            val irFile = File(moduleDescriptor.getCapability(JS_KLIBRARY_CAPABILITY)!!, "ir/irCombined.knd")
-            CombinedIrFileReader(irFile)
-        }
-        return irFileReader.declarationBytes(DeclarationId(uniqId.index, uniqId.isLocal))
+        return moduleDescriptor.kotlinLibrary.irDeclaration(uniqId.index, uniqId.isLocal)
     }
 
-    override val ModuleDescriptor.irHeader: ByteArray? get() =
-        this.getCapability(JS_KLIBRARY_CAPABILITY)?.let { File(it, moduleHeaderFileName).readBytes() }
+    override val ModuleDescriptor.irHeader: ByteArray?
+        get() = this.kotlinLibrary.irHeader
 
     override fun declareForwardDeclarations() {
         // since for `knownBuiltIns` such as FunctionN it is possible to have unbound symbols after deserialization

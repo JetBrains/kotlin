@@ -7,25 +7,22 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
+import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.newJsDescriptorUniqId
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataModuleDescriptor
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataSerializationUtil
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataVersion
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.createJsKlibMetadataPackageFragmentProvider
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -34,6 +31,11 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.konan.KonanVersionImpl
+import org.jetbrains.kotlin.konan.MetaVersion
+import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -44,27 +46,29 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.utils.DFS
-import java.io.File
-import java.nio.file.Files.move
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
+import org.jetbrains.kotlin.konan.file.File as KFile
 
-data class KlibModuleRef(
-    val moduleName: String,
-    val klibPath: String
-)
 
-internal val JS_KLIBRARY_CAPABILITY = ModuleDescriptor.Capability<File>("JS KLIBRARY")
-internal val moduleHeaderFileName = "module.kji"
-internal val declarationsDirName = "ir/"
+val KotlinLibrary.moduleName: String
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)
+
+// Considering library built-ins if it has no dependencies.
+// All non-built-ins libraries must have built-ins as a dependency.
+val KotlinLibrary.isBuiltIns: Boolean
+    get() = manifestProperties
+        .propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
+        .isEmpty()
+
+fun loadKlib(klibPath: String) =
+    createKotlinLibrary(KFile(KFile(klibPath).absolutePath))
+
+internal val JS_KLIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("JS KLIBRARY")
+
 private val emptyLoggingContext = object : LoggingContext {
     override var inVerbosePhase = false
 
     override fun log(message: () -> String) {}
 }
-
-private fun metadataFileName(moduleName: String) = "$moduleName.${JsKlibMetadataSerializationUtil.CLASS_METADATA_FILE_EXTENSION}"
 
 private val CompilerConfiguration.metadataVersion
     get() = get(CommonConfigurationKeys.METADATA_VERSION) as? JsKlibMetadataVersion ?: JsKlibMetadataVersion.INSTANCE
@@ -73,12 +77,12 @@ fun generateKLib(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
-    immediateDependencies: List<KlibModuleRef>,
-    allDependencies: List<KlibModuleRef>,
-    friendDependencies: List<KlibModuleRef>,
-    outputKlibPath: String
-): KlibModuleRef {
-    val depsDescriptors = ModulesStructure(project, files, configuration, immediateDependencies, allDependencies, friendDependencies)
+    allDependencies: List<KotlinLibrary>,
+    friendDependencies: List<KotlinLibrary>,
+    outputKlibPath: String,
+    nopack: Boolean
+) {
+    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -94,11 +98,10 @@ fun generateKLib(
         configuration.languageVersionSettings,
         psi2IrContext.bindingContext,
         outputKlibPath,
-        immediateDependencies,
-        moduleFragment
+        allDependencies,
+        moduleFragment,
+        nopack
     )
-
-    return KlibModuleRef(moduleName, outputKlibPath)
 }
 
 data class IrModuleInfo(
@@ -113,11 +116,10 @@ fun loadIr(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
-    immediateDependencies: List<KlibModuleRef>,
-    allDependencies: List<KlibModuleRef>,
-    friendDependencies: List<KlibModuleRef>
+    allDependencies: List<KotlinLibrary>,
+    friendDependencies: List<KotlinLibrary>
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, files, configuration, immediateDependencies, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -127,7 +129,7 @@ fun loadIr(
 
     val deserializer = JsIrLinker(moduleDescriptor, emptyLoggingContext, irBuiltIns, symbolTable)
 
-    val deserializedModuleFragments = depsDescriptors.sortedImmediateDependencies.map {
+    val deserializedModuleFragments = allDependencies.map {
         deserializer.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it))!!
     }
 
@@ -154,16 +156,16 @@ private fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deseria
 
 
 private fun loadKlibMetadataParts(
-    moduleId: KlibModuleRef
+    moduleId: KotlinLibrary
 ): JsKlibMetadataParts {
-    val metadataFile = File(moduleId.klibPath, metadataFileName(moduleId.moduleName))
-    val serializer = JsKlibMetadataSerializationUtil
-    return serializer.readModuleAsProto(metadataFile.readBytes())
+    return JsKlibMetadataSerializationUtil.readModuleAsProto(moduleId.moduleHeaderData)
 }
+
+val ModuleDescriptor.kotlinLibrary get() = this.getCapability(JS_KLIBRARY_CAPABILITY)!!
 
 private fun loadKlibMetadata(
     parts: JsKlibMetadataParts,
-    moduleId: KlibModuleRef,
+    moduleId: KotlinLibrary,
     isBuiltIn: Boolean,
     lookupTracker: LookupTracker,
     storageManager: LockBasedStorageManager,
@@ -178,7 +180,7 @@ private fun loadKlibMetadata(
         Name.special("<${moduleId.moduleName}>"),
         storageManager,
         builtIns,
-        capabilities = mapOf(JS_KLIBRARY_CAPABILITY to File(moduleId.klibPath))
+        capabilities = mapOf(JS_KLIBRARY_CAPABILITY to moduleId)
     )
     if (isBuiltIn) builtIns.builtInsModule = md
     val currentModuleFragmentProvider = createJsKlibMetadataPackageFragmentProvider(
@@ -203,26 +205,21 @@ private class ModulesStructure(
     private val project: Project,
     private val files: List<KtFile>,
     val compilerConfiguration: CompilerConfiguration,
-    immediateDependencies: List<KlibModuleRef>,
-    private val allDependencies: List<KlibModuleRef>,
-    private val friendDependencies: List<KlibModuleRef>
+    private val allDependencies: List<KotlinLibrary>,
+    private val friendDependencies: List<KotlinLibrary>
 ) {
-    private val deserializedModuleParts: Map<KlibModuleRef, JsKlibMetadataParts> =
+    private val deserializedModuleParts: Map<KotlinLibrary, JsKlibMetadataParts> =
         allDependencies.associateWith { loadKlibMetadataParts(it) }
 
-    fun findModuleByName(name: String): KlibModuleRef =
+    fun findModuleByName(name: String): KotlinLibrary =
         allDependencies.find { it.moduleName == name } ?: error("Module is not found: $name")
 
-    val moduleDependencies: Map<KlibModuleRef, List<KlibModuleRef>> =
+    val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> =
         deserializedModuleParts.mapValues { (_, parts) ->
             parts.importedModules.map(::findModuleByName)
         }
 
-    val sortedImmediateDependencies: List<KlibModuleRef> =
-        DFS.topologicalOrder(immediateDependencies) { moduleDependencies.getValue(it) }
-            .reversed()
-
-    val builtInsDep = sortedImmediateDependencies.firstOrNull()
+    val builtInsDep = allDependencies.find { it.isBuiltIns }
 
     fun runAnalysis(): JsAnalysisResult {
         val analysisResult =
@@ -230,7 +227,7 @@ private class ModulesStructure(
                 files,
                 project,
                 compilerConfiguration,
-                sortedImmediateDependencies.map { getModuleDescriptor(it) },
+                allDependencies.map { getModuleDescriptor(it) },
                 friendModuleDescriptors = friendDependencies.map { getModuleDescriptor(it) },
                 thisIsBuiltInsModule = builtInModuleDescriptor == null,
                 customBuiltInsModule = builtInModuleDescriptor
@@ -249,9 +246,9 @@ private class ModulesStructure(
     private val storageManager: LockBasedStorageManager = LockBasedStorageManager("ModulesStructure")
     private var runtimeModule: ModuleDescriptorImpl? = null
 
-    private val descriptors = mutableMapOf<KlibModuleRef, ModuleDescriptorImpl>()
+    private val descriptors = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
 
-    fun getModuleDescriptor(current: KlibModuleRef): ModuleDescriptorImpl = descriptors.getOrPut(current) {
+    fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl = descriptors.getOrPut(current) {
         val parts = loadKlibMetadataParts(current)
         val isBuiltIns = parts.importedModules.isEmpty()
         loadKlibMetadata(
@@ -282,8 +279,9 @@ fun serializeModuleIntoKlib(
     languageVersionSettings: LanguageVersionSettings,
     bindingContext: BindingContext,
     klibPath: String,
-    dependencies: List<KlibModuleRef>,
-    moduleFragment: IrModuleFragment
+    dependencies: List<KotlinLibrary>,
+    moduleFragment: IrModuleFragment,
+    nopack: Boolean
 ) {
     val declarationTable = JsDeclarationTable(moduleFragment.irBuiltins, DescriptorTable())
 
@@ -292,7 +290,7 @@ fun serializeModuleIntoKlib(
 
     val moduleDescription =
         JsKlibMetadataModuleDescriptor(moduleName, dependencies.map { it.moduleName }, moduleFragment.descriptor)
-    val serializedData = serializer.serializeMetadata(
+    val serializedMetadata = serializer.serializeMetadata(
         bindingContext,
         moduleDescription,
         languageVersionSettings,
@@ -302,19 +300,21 @@ fun serializeModuleIntoKlib(
         index?.let { newJsDescriptorUniqId(it) }
     }
 
-    val klibDir = File(klibPath).also {
-        it.deleteRecursively()
-        it.mkdirs()
-    }
+    val abiVersion = KotlinAbiVersion.CURRENT
+    val compilerVersion = KonanVersionImpl(MetaVersion.DEV, 1, 3, 0, -1)
+    val libraryVersion = "JSIR"
 
-    val moduleFile = File(klibDir, moduleHeaderFileName)
-    moduleFile.writeBytes(serializedIr.module)
+    val versions = KonanLibraryVersioning(abiVersion = abiVersion, libraryVersion = libraryVersion, compilerVersion = compilerVersion)
 
-    val irDeclarationDir = File(klibDir, declarationsDirName).also { it.mkdir() }
-    val irCombinedFile = File(irDeclarationDir, "irCombined.knd")
-    move(Paths.get(serializedIr.combinedDeclarationFilePath), Paths.get(irCombinedFile.path), StandardCopyOption.REPLACE_EXISTING)
-
-    File(klibDir, "${moduleDescription.name}.${JsKlibMetadataSerializationUtil.CLASS_METADATA_FILE_EXTENSION}").also {
-        it.writeBytes(serializedData.asByteArray())
-    }
+    buildKoltinLibrary(
+        linkDependencies = dependencies,
+        ir = serializedIr,
+        metadata = serializedMetadata,
+        dataFlowGraph = null,
+        manifestProperties = null,
+        moduleName = moduleName,
+        nopack = nopack,
+        output = klibPath,
+        versions = versions
+    )
 }
