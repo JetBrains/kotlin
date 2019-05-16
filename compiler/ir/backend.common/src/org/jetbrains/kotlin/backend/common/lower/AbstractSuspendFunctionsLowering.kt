@@ -33,7 +33,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     protected abstract val stateMachineMethodName: Name
     protected abstract fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol
-
+    protected abstract fun nameForCoroutineClass(function: IrFunction): Name
 
     protected abstract fun buildStateMachine(
         originalBody: IrBody, stateMachineFunction: IrFunction,
@@ -258,8 +258,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         val stateMachineFunction: IrFunction
     )
 
-    private var coroutineId = 0
-
     private inner class CoroutineBuilder(val irFunction: IrFunction, val functionReference: IrFunctionReference?) {
 
         private val startOffset = irFunction.startOffset
@@ -273,7 +271,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
                 IrClassSymbolImpl(d),
-                "${irFunction.name}COROUTINE\$${coroutineId++}".synthesizedName,
+                nameForCoroutineClass(irFunction),
                 ClassKind.CLASS,
                 irFunction.visibility,
                 Modality.FINAL,
