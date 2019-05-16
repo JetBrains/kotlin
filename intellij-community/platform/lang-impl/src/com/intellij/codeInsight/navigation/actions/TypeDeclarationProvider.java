@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2014 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.intellij.codeInsight.navigation.actions;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ public interface TypeDeclarationProvider {
    * Provides an array of declarations of type of given {@code symbol}.
    *
    * @param symbol input PSI element
-   * @return all target declarations as an array of {@code PsiElement} or null if none were found
+   * @return all target declarations as an array of {@code PsiElement} or {@code null} if none were found
    */
   @Nullable
   PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol);
@@ -40,10 +41,11 @@ public interface TypeDeclarationProvider {
   /**
    * Provides the custom action text.
    *
-   * @param context the action data context
-   * @return the custom text or null to use the default text
+   * @param context the action data context.
+   * @return the custom text or {@code null} to use the default text.
    */
   @Nullable
+  @Nls(capitalization = Nls.Capitalization.Title)
   default String getActionText(@NotNull DataContext context) {
     return null;
   }

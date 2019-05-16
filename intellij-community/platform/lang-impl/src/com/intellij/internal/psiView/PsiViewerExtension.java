@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -31,8 +32,11 @@ import javax.swing.*;
 public interface PsiViewerExtension {
   ExtensionPointName<PsiViewerExtension> EP_NAME = ExtensionPointName.create("com.intellij.psiViewerExtension");
 
+  @Nls(capitalization = Nls.Capitalization.Title)
   String getName();
+
   Icon getIcon();
+
   PsiElement createElement(Project project, String text);
 
   @NotNull

@@ -240,7 +240,7 @@ internal class XmlSerializerTest {
     assertConcurrent(*Array(5) {
       {
         for (i in 0..9) {
-          val bean = e.deserialize<BeanWithFieldWithTagAnnotation>()
+          val bean = deserialize<BeanWithFieldWithTagAnnotation>(e)
           assertThat(bean).isNotNull()
           assertThat(bean.STRING_V).isEqualTo("x")
         }
@@ -284,13 +284,13 @@ internal class XmlSerializerTest {
     bean.INT_V = 987
     bean.STRING_V = "1234"
 
-    val element = bean.serialize()!!
+    val element = serialize(bean)!!
 
     val node = element.children.get(0)
     element.removeContent(node)
     element.addContent(node)
 
-    bean = element.deserialize()
+    bean = deserialize(element)
     assertThat(bean.INT_V).isEqualTo(987)
     assertThat(bean.STRING_V).isEqualTo("1234")
   }
@@ -425,13 +425,13 @@ internal class XmlSerializerTest {
   }
 
   @Test fun deserializeFromFormattedXML() {
-    val bean = JDOMUtil.load("""
+    val bean = deserialize<BeanWithArrayWithoutAllTag>(JDOMUtil.load("""
         <bean>
         <option name="intV" value="2"/>
         <vValue v="1"/>
         <vValue v="2"/>
         <vValue v="3"/>
-      </bean>""").deserialize<BeanWithArrayWithoutAllTag>()
+      </bean>"""))
     assertThat(bean.intV).isEqualTo(2)
     assertThat("[1, 2, 3]").isEqualTo(Arrays.asList(*bean.v).toString())
   }
@@ -464,7 +464,7 @@ internal class XmlSerializerTest {
 
   private class PropertyFilterTest : SerializationFilter {
     override fun accepts(accessor: Accessor, bean: Any): Boolean {
-      return accessor.read(bean) != "skip"
+      return accessor.readUnsafe(bean) != "skip"
     }
   }
 
@@ -506,8 +506,8 @@ internal class XmlSerializerTest {
   }
 
   @Test fun deserializeJDOMElementField() {
-    val bean = JDOMUtil.load(
-      "<BeanWithJDOMElement><option name=\"STRING_V\" value=\"bye\"/><actions><action/><action/></actions></BeanWithJDOMElement>").deserialize<BeanWithJDOMElement>()
+    val bean = deserialize<BeanWithJDOMElement>(JDOMUtil.load(
+      "<BeanWithJDOMElement><option name=\"STRING_V\" value=\"bye\"/><actions><action/><action/></actions></BeanWithJDOMElement>"))
 
     assertThat(bean.STRING_V).isEqualTo("bye")
     assertThat(bean.actions).isNotNull
@@ -521,7 +521,7 @@ internal class XmlSerializerTest {
 
   @Test fun jdomElementArrayField() {
     val text = "<BeanWithJDOMElementArray>\n" + "  <option name=\"STRING_V\" value=\"bye\" />\n" + "  <actions>\n" + "    <action />\n" + "    <action />\n" + "  </actions>\n" + "  <actions>\n" + "    <action />\n" + "  </actions>\n" + "</BeanWithJDOMElementArray>"
-    val bean = JDOMUtil.load(text).deserialize<BeanWithJDOMElementArray>()
+    val bean = deserialize<BeanWithJDOMElementArray>(JDOMUtil.load(text))
 
     TestCase.assertEquals("bye", bean.STRING_V)
     TestCase.assertNotNull(bean.actions)
@@ -660,16 +660,16 @@ internal class XmlSerializerTest {
     @Tag("bean")
     data class Bean(@Tag val description: String? = null)
 
-    var bean = JDOMUtil.load("""<bean>
+    var bean = deserialize<Bean>(JDOMUtil.load("""<bean>
       <description>
         <![CDATA[
         <h4>Node.js integration</h4>
         ]]>
       </description>
-    </bean>""").deserialize<Bean>()
+    </bean>"""))
     assertThat(bean.description).isEqualToIgnoringWhitespace("<h4>Node.js integration</h4>")
 
-    bean = JDOMUtil.load("""<bean><description><![CDATA[<h4>Node.js integration</h4>]]></description></bean>""").deserialize()
+    bean = deserialize(JDOMUtil.load("""<bean><description><![CDATA[<h4>Node.js integration</h4>]]></description></bean>"""))
     assertThat(bean.description).isEqualTo("<h4>Node.js integration</h4>")
   }
 
@@ -698,7 +698,7 @@ internal class XmlSerializerTest {
 }
 
 internal fun assertSerializer(bean: Any, expected: String, filter: SerializationFilter? = null, description: String = "Serialization failure"): Element {
-  val element = bean.serialize(filter, createElementIfEmpty = true)!!
+  val element = serialize(bean, filter, createElementIfEmpty = true)!!
   assertThat(element).`as`(description).isEqualTo(expected)
   return element
 }

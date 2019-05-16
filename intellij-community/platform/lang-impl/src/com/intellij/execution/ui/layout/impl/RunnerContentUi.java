@@ -37,6 +37,7 @@ import com.intellij.ui.docking.DragSession;
 import com.intellij.ui.docking.impl.DockManagerImpl;
 import com.intellij.ui.switcher.QuickActionProvider;
 import com.intellij.ui.tabs.JBTabs;
+import com.intellij.ui.tabs.JBTabsFactory;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.newImpl.JBTabsImpl;
@@ -182,14 +183,17 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     tb.setTargetComponent(myComponent);
     myToolbar.setContent(tb.getComponent());
     myLeftToolbarActions = group;
-    tb.getComponent().setBorder(JBUI.Borders.merge(tb.getComponent().getBorder(), JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 0, 0, 0, 1), true));
+
+    if(!JBTabsFactory.getUseNewTabs()) {
+      tb.getComponent().setBorder(
+        JBUI.Borders.merge(tb.getComponent().getBorder(), JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 0, 0, 0, 1), true));
+    }
     myComponent.revalidate();
     myComponent.repaint();
   }
 
   void setLeftToolbarVisible(boolean value) {
     myToolbar.setVisible(value);
-
     myComponent.revalidate();
     myComponent.repaint();
   }

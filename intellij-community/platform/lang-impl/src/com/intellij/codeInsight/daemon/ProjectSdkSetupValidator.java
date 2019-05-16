@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.intellij.codeInsight.daemon;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +32,7 @@ public interface ProjectSdkSetupValidator {
   boolean isApplicableFor(@NotNull Project project, @NotNull VirtualFile file);
 
   @Nullable
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   String getErrorMessage(@NotNull Project project, @NotNull VirtualFile file);
 
   void doFix(@NotNull Project project, @NotNull VirtualFile file);

@@ -68,8 +68,8 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class LookupImpl extends LightweightHint implements LookupEx, Disposable, LookupElementListPresenter {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.lookup.impl.LookupImpl");
@@ -678,7 +678,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
       sameCase = sameCase && i < lookupString.length() && isLower == Character.isLowerCase(lookupString.charAt(i));
     }
     if (sameCase) return lookupString;
-    if (isAllLower) return lookupString.toLowerCase();
+    if (isAllLower) return StringUtil.toLowerCase(lookupString);
     if (isAllUpper) return StringUtil.toUpperCase(lookupString);
     return lookupString;
   }

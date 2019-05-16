@@ -23,8 +23,11 @@ import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.artifacts.ArtifactManager;
 import com.intellij.packaging.impl.compiler.ArtifactCompileScope;
+import com.intellij.pom.java.LanguageLevel;
 import com.intellij.testFramework.*;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.io.DirectoryContentSpec;
+import com.intellij.util.io.DirectoryContentSpecKt;
 import com.intellij.util.io.TestFileSystemBuilder;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashSet;
@@ -67,6 +70,12 @@ public abstract class BaseCompilerTestCase extends ModuleTestCase {
 
   protected void forceFSRescan() {
     BuildManager.getInstance().clearState(myProject);
+  }
+
+  @NotNull
+  @Override
+  protected LanguageLevel getProjectLanguageLevel() {
+    return LanguageLevel.JDK_1_8;
   }
 
   @Override
@@ -262,7 +271,7 @@ public abstract class BaseCompilerTestCase extends ModuleTestCase {
     try {
       final long start = System.currentTimeMillis();
       while (!semaphore.waitFor(10)) {
-        if (System.currentTimeMillis() - start > 50 * 60 * 1000) {
+        if (!BuildManager.getInstance().isBuildProcessDebuggingEnabled() && System.currentTimeMillis() - start > 5 * 60 * 1000) {
           throw new RuntimeException("timeout");
         }
         if (SwingUtilities.isEventDispatchThread()) {
@@ -333,6 +342,10 @@ public abstract class BaseCompilerTestCase extends ModuleTestCase {
 
   protected static void assertOutput(Module module, TestFileSystemBuilder item) {
     assertOutput(module, item, false);
+  }
+
+  protected static void assertOutput(Module module, DirectoryContentSpec spec) {
+    DirectoryContentSpecKt.assertMatches(getOutputDir(module, false), spec);
   }
 
   protected static void assertOutput(Module module, TestFileSystemBuilder item, final boolean forTests) {

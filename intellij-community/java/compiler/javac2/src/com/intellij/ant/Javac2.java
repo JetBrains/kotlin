@@ -582,10 +582,10 @@ public class Javac2 extends Javac {
         return myFormCache.get(formFilePath);
       }
 
-      String lowerFormFilePath = formFilePath.toLowerCase();
+      String lowerFormFilePath = formFilePath.toLowerCase(Locale.ENGLISH);
       log("Searching for form " + lowerFormFilePath, Project.MSG_VERBOSE);
       for (File file : myFormFiles) {
-        String name = file.getAbsolutePath().replace(File.separatorChar, '/').toLowerCase();
+        String name = file.getAbsolutePath().replace(File.separatorChar, '/').toLowerCase(Locale.ENGLISH);
         log("Comparing with " + name, Project.MSG_VERBOSE);
         if (name.endsWith(lowerFormFilePath)) {
           return loadForm(formFilePath, new FileInputStream(file));

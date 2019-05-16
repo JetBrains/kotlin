@@ -2,6 +2,7 @@ package com.intellij.codeInspection;
 
 import com.intellij.codeInspection.ex.PlainTextFormatter;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,7 +60,7 @@ public abstract class AbstractInspectionCmdlineOptions implements InspectionTool
     } else {
       final String outputFormat = getOutputFormatProperty();
       if (outputFormat != null) {
-        app.myOutputFormat = outputFormat.toLowerCase();
+        app.myOutputFormat = StringUtil.toLowerCase(outputFormat);
       }
     }
   }

@@ -44,4 +44,21 @@ public class ResourceTextDescriptor implements TextDescriptor {
   public String getFileName() {
     return StringUtil.trimEnd(new File(myUrl.getFile()).getName(), IntentionActionMetaData.EXAMPLE_USAGE_URL_SUFFIX);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    ResourceTextDescriptor that = (ResourceTextDescriptor)o;
+
+    if (!myUrl.equals(that.myUrl)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return myUrl.hashCode();
+  }
 }

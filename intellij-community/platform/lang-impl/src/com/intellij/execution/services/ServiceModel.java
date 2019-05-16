@@ -7,6 +7,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.concurrency.Invoker;
 import com.intellij.util.concurrency.InvokerSupplier;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.CancellablePromise;
@@ -51,6 +52,26 @@ class ServiceModel implements Disposable, InvokerSupplier {
       result.addAll(getContributorChildren(myProject, null, contributor));
     }
     return result;
+  }
+
+  @Nullable
+  ServiceViewItem findItemById(List<String> ids, ServiceViewContributor contributor) {
+    if (ids.isEmpty()) return null;
+
+    List<? extends ServiceViewItem> roots = ContainerUtil.filter(getRoots(), item -> contributor.equals(item.getContributor()));
+    if (roots.isEmpty()) return null;
+
+    return findItemById(new LinkedList<>(ids), roots);
+  }
+
+  private static ServiceViewItem findItemById(Deque<String> path, List<? extends ServiceViewItem> roots) {
+    String id = path.removeFirst();
+    for (ServiceViewItem root : roots) {
+      if (id.equals(root.getViewDescriptor().getId())) {
+        return path.isEmpty() ? root : findItemById(path, root.getChildren());
+      }
+    }
+    return null;
   }
 
   @NotNull

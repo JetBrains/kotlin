@@ -22,6 +22,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
@@ -81,7 +82,7 @@ public class CompilerCacheManager implements Disposable {
 
   public static String getCompilerIdString(Compiler compiler) {
     @NonNls String description = compiler.getDescription();
-    return description.replaceAll("\\s+", "_").replaceAll("[\\.\\?]", "_").toLowerCase();
+    return StringUtil.toLowerCase(description.replaceAll("\\s+", "_").replaceAll("[\\.\\?]", "_"));
   }
   
   synchronized void flushCaches() {

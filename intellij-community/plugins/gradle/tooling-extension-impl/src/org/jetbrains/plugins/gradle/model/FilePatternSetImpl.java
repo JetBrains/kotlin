@@ -4,10 +4,7 @@ package org.jetbrains.plugins.gradle.model;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author Vladislav.Soroka
- */
-public class FilePatternSetImpl implements FilePatternSet {
+public final class FilePatternSetImpl implements FilePatternSet {
   private final Set<String> includes;
   private final Set<String> excludes;
 

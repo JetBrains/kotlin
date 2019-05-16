@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.intellij.refactoring.copy;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -32,6 +33,7 @@ public interface CopyHandlerDelegate {
   void doClone(PsiElement element);
 
   @Nullable
+  @Nls(capitalization = Nls.Capitalization.Title)
   default String getActionName(PsiElement[] elements) {
     return null;
   }

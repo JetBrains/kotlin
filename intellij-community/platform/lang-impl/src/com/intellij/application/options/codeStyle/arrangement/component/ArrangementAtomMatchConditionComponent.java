@@ -113,7 +113,7 @@ public class ArrangementAtomMatchConditionComponent implements ArrangementUiComp
       myText = type.getRepresentationValue();
     }
     else if (StdArrangementTokenType.REG_EXP.is(type)) {
-      myText = String.format("%s %s", type.getRepresentationValue().toLowerCase(), condition.getValue());
+      myText = String.format("%s %s", StringUtil.toLowerCase(type.getRepresentationValue()), condition.getValue());
     }
     else {
       myText = condition.getValue().toString();

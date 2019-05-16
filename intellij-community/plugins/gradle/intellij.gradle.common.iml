@@ -9,7 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
     </content>
     <content url="file://$MODULE_DIR$/src">
-          <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -25,5 +25,6 @@
     <orderEntry type="library" name="Objenesis" level="project" />
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
   </component>
 </module>

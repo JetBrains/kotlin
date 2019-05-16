@@ -34,5 +34,7 @@
     <orderEntry type="module" module-name="intellij.java.execution.impl" />
     <orderEntry type="module" module-name="intellij.java.compiler.tests" scope="TEST" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
   </component>
 </module>

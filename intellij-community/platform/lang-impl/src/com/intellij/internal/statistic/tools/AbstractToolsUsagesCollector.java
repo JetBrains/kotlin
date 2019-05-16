@@ -9,8 +9,9 @@ import com.intellij.ide.plugins.PluginManagerMain;
 import com.intellij.internal.statistic.beans.UsageDescriptor;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
+import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.internal.statistic.utils.StatisticsUtilKt;
-import com.intellij.openapi.extensions.PluginId;
+import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
@@ -59,7 +60,7 @@ public abstract class AbstractToolsUsagesCollector extends ProjectUsagesCollecto
     final FeatureUsageData data = new FeatureUsageData();
     final String language = tool.getLanguage();
     if (StringUtil.isNotEmpty(language)) {
-      data.addData("lang", language);
+      data.addLanguage(Language.findLanguageByID(language));
     }
     return data;
   }
@@ -77,9 +78,9 @@ public abstract class AbstractToolsUsagesCollector extends ProjectUsagesCollecto
     @Override
     protected FeatureUsageData getInspectionToolData(InspectionToolWrapper tool) {
       final FeatureUsageData data = super.getInspectionToolData(tool);
-      final PluginId pluginId = tool.getExtension().getPluginId();
-      if (pluginId != null) {
-        data.addData("plugin_id", pluginId.getIdString());
+      final InspectionEP extension = tool.getExtension();
+      if (extension != null) {
+        data.addPluginInfo(PluginInfoDetectorKt.getPluginInfoById(extension.getPluginId()));
       }
       return data;
     }

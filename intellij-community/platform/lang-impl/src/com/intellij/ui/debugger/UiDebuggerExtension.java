@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.intellij.ui.debugger;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
+import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
 
@@ -24,6 +25,8 @@ public interface UiDebuggerExtension {
   ExtensionPointName<UiDebuggerExtension> EP_NAME = ExtensionPointName.create("com.intellij.uiDebuggerExtension");
 
   JComponent getComponent();
+
+  @Nls(capitalization = Nls.Capitalization.Title)
   String getName();
 
   void disposeUiResources();

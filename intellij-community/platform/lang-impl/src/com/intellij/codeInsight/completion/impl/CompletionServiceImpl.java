@@ -264,7 +264,7 @@ public final class CompletionServiceImpl extends CompletionService {
     final CompletionLocation location = new CompletionLocation(parameters);
 
     CompletionSorterImpl sorter = emptySorter();
-    sorter = sorter.withClassifier(CompletionSorterImpl.weighingFactory(new DispreferLiveTemplates()));
+    sorter = sorter.withClassifier(CompletionSorterImpl.weighingFactory(new LiveTemplateWeigher()));
     sorter = sorter.withClassifier(CompletionSorterImpl.weighingFactory(new PreferStartMatching()));
 
     for (final Weigher weigher : WeighingService.getWeighers(CompletionService.RELEVANCE_KEY)) {

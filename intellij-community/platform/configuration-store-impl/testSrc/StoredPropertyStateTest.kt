@@ -24,8 +24,8 @@ class StoredPropertyStateTest {
     val f2 = Foo()
     f2.bar = AState()
 
-    assertThat(f1.serialize()).isNull()
-    assertThat(f2.serialize()).isNull()
+    assertThat(serialize(f1)).isNull()
+    assertThat(serialize(f2)).isNull()
   }
 
   @Test
@@ -34,8 +34,8 @@ class StoredPropertyStateTest {
     val f2 = Foo2()
     f2.bar = null
 
-    assertThat(f1.serialize()).isNull()
-    assertThat(f2.serialize()).isNull()
+    assertThat(serialize(f1)).isNull()
+    assertThat(serialize(f2)).isNull()
   }
 
   @Test
@@ -57,7 +57,7 @@ class StoredPropertyStateTest {
     newEqualState.languageLevel = String("foo".toCharArray())
     assertThat(state).isEqualTo(newEqualState)
 
-    assertThat(state.serialize()).isEqualTo("""<AState customName="foo" />""")
+    assertThat(serialize(state)).isEqualTo("""<AState customName="foo" />""")
     assertThat(JDOMUtil.load("""<AState customName="foo" />""").deserialize(AState::class.java).languageLevel).isEqualTo("foo")
   }
 
@@ -100,7 +100,7 @@ class StoredPropertyStateTest {
     assertThat(state.modificationCount).isNotEqualTo(oldModificationCount)
     assertThat(state.isEqualToDefault()).isFalse()
 
-    val element = state.serialize()
+    val element = serialize(state)
     assertThat(element).isEqualTo("""
     <TestOptions>
       <pluginHosts>
@@ -125,7 +125,7 @@ class StoredPropertyStateTest {
     assertThat(state.modificationCount).isNotEqualTo(oldModificationCount)
     assertThat(state.isEqualToDefault()).isFalse()
 
-    val element = state.serialize()
+    val element = serialize(state)
     assertThat(element).isEqualTo("""
     <TestOptions>
       <foo>

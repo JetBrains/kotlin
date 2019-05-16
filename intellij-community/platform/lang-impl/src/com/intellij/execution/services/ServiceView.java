@@ -36,7 +36,9 @@ abstract class ServiceView extends JPanel implements Disposable {
     return myModel;
   }
 
-  abstract void saveState(@NotNull ServiceViewState state);
+  void saveState(@NotNull ServiceViewState state) {
+    myModel.saveState(state);
+  }
 
   @NotNull
   abstract List<ServiceViewItem> getSelectedItems();
@@ -47,18 +49,20 @@ abstract class ServiceView extends JPanel implements Disposable {
 
   abstract void onViewUnselected();
 
-  static ServiceView createTreeView(@NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewState state) {
-    ServiceViewUi ui = new ServiceViewTreeUi(state);
-    ServiceView serviceView = new ServiceTreeView(project, model, ui, state);
+  static ServiceView createView(@NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewState state) {
+    ServiceView serviceView = model instanceof ServiceViewModel.SingeServiceModel ?
+                              createSingleView(project, model) :
+                              createTreeView(project, model, state);
     setDataProvider(serviceView);
     return serviceView;
   }
 
-  static ServiceView createSingleView(@NotNull Project project, @NotNull ServiceViewModel model) {
-    ServiceViewUi ui = new ServiceViewSingleUi();
-    ServiceView serviceView = new ServiceSingleView(project, model, ui);
-    setDataProvider(serviceView);
-    return serviceView;
+  private static ServiceView createTreeView(@NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewState state) {
+    return new ServiceTreeView(project, model, new ServiceViewTreeUi(state), state);
+  }
+
+  private static ServiceView createSingleView(@NotNull Project project, @NotNull ServiceViewModel model) {
+    return new ServiceSingleView(project, model, new ServiceViewSingleUi());
   }
 
   private static void setDataProvider(ServiceView serviceView) {

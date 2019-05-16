@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * @author Vladislav.Soroka
  */
-public class DefaultExternalSourceDirectorySet implements ExternalSourceDirectorySet {
+public final class DefaultExternalSourceDirectorySet implements ExternalSourceDirectorySet {
   private static final long serialVersionUID = 1L;
 
   @NotNull

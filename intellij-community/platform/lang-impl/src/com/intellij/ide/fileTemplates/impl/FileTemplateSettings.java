@@ -5,11 +5,10 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
 
 /**
  * Exportable part of file template settings. User-specific (local) settings are handled by FileTemplateManagerImpl.
@@ -92,6 +91,6 @@ class FileTemplateSettings extends FileTemplatesLoader implements PersistentStat
   }
 
   private static String getXmlElementGroupName(@NotNull FTManager manager) {
-    return manager.getName().toLowerCase(Locale.US) + "_templates";
+    return StringUtil.toLowerCase(manager.getName()) + "_templates";
   }
 }

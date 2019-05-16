@@ -361,7 +361,8 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
           return;
         }
         Comparator<NodeDescriptor> comparator = getComparator();
-        StructureTreeModel myModel = comparator == null ? new StructureTreeModel<>(structure) : new StructureTreeModel<>(structure, comparator);
+        StructureTreeModel myModel = comparator == null ? new StructureTreeModel<>(structure, sheet)
+                                                        : new StructureTreeModel<>(structure, comparator, sheet);
         AsyncTreeModel atm = new AsyncTreeModel(myModel, sheet);
         tree.setModel(atm);
 

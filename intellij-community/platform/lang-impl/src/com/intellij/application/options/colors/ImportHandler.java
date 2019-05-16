@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2014 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.intellij.application.options.colors;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.util.Consumer;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +28,7 @@ public interface ImportHandler {
   ExtensionPointName<ImportHandler> EP_NAME = ExtensionPointName.create("com.intellij.colorAndFontOptionsImportHandler");
 
   @NotNull
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   String getTitle();
 
   void performImport(@NotNull Component parent, @Nullable Consumer<? super EditorColorsScheme> consumer);

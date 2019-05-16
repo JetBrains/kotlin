@@ -202,8 +202,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
     GlobalSearchScope scope = dirMatcher.narrowDown(parameters.getSearchScope());
     FindSymbolParameters adjusted = parameters.withScope(scope);
 
-    //noinspection StringToUpperCaseOrToLowerCaseWithoutLocale
-    List<List<String>> sortedNames = sortAndGroup(fileNames, Comparator.comparing(n -> FileUtilRt.getNameWithoutExtension(n).toLowerCase()));
+    List<List<String>> sortedNames = sortAndGroup(fileNames, Comparator.comparing(n -> StringUtil.toLowerCase(FileUtilRt.getNameWithoutExtension(n))));
     return JBIterable.from(sortedNames).flatMap(nameGroup -> getItemsForNames(indicator, adjusted, nameGroup));
   }
 

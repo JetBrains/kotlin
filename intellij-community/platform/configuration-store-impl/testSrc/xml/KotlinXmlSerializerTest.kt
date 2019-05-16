@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.xml
 
 import com.intellij.configurationStore.AState
@@ -86,7 +86,7 @@ class KotlinXmlSerializerTest {
       </option>
     </bean>""", data)
 
-    assertThat(JDOMUtil.load("""<bean>
+    assertThat(deserialize<Foo>(JDOMUtil.load("""<bean>
           <option name="PLACES_MAP">
             <entry key="">
               <PlaceSettings>
@@ -94,9 +94,9 @@ class KotlinXmlSerializerTest {
               </PlaceSettings>
             </entry>
           </option>
-        </bean>""").deserialize<Foo>().PLACES_MAP.get("")!!.IGNORE_POLICY).isEqualTo(IgnorePolicy.DEFAULT)
+        </bean>""")).PLACES_MAP.get("")!!.IGNORE_POLICY).isEqualTo(IgnorePolicy.DEFAULT)
 
-    val value = JDOMUtil.load("""<bean>
+    val value = deserialize<Foo>(JDOMUtil.load("""<bean>
           <option name="PLACES_MAP">
             <entry key="">
               <PlaceSettings>
@@ -104,7 +104,7 @@ class KotlinXmlSerializerTest {
               </PlaceSettings>
             </entry>
           </option>
-        </bean>""").deserialize<Foo>()
+        </bean>"""))
     assertThat(value).isNotNull()
     val placeSettings = value.PLACES_MAP.get("")
     assertThat(placeSettings).isNotNull()

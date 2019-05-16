@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 @file:Suppress("DEPRECATION")
 
 package com.intellij.configurationStore.xml
@@ -82,7 +82,7 @@ internal class XmlSerializerCollectionTest {
 
     val value = Element("value")
     list.writeExternal(value)
-    val o = Element("state").addContent(Element("option").setAttribute("name", "myList").addContent(value)).deserialize<Bean4>()
+    val o = deserialize<Bean4>(Element("state").addContent(Element("option").setAttribute("name", "myList").addContent(value)))
     assertSerializer(o, "<b>\n" + "  <list>\n" + "    <item value=\"one\" />\n" + "    <item value=\"two\" />\n" + "    <item value=\"three\" />\n" + "  </list>\n" + "</b>", SkipDefaultsSerializationFilter())
   }
 

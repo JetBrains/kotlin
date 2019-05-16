@@ -54,6 +54,7 @@ class ServiceTreeView extends ServiceView {
 
   @Override
   void saveState(@NotNull ServiceViewState state) {
+    super.saveState(state);
     myUi.saveState(state);
     state.treeState = TreeState.createOn(myTree);
   }

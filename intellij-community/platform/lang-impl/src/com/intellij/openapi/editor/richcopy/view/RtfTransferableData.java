@@ -1,12 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.editor.richcopy.view;
 
-import com.intellij.ide.MacOSApplicationProvider;
 import com.intellij.openapi.editor.richcopy.model.ColorRegistry;
 import com.intellij.openapi.editor.richcopy.model.FontNameRegistry;
 import com.intellij.openapi.editor.richcopy.model.MarkupHandler;
 import com.intellij.openapi.editor.richcopy.model.SyntaxInfo;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.ui.mac.MacColorSpaceLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -64,19 +64,19 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
   }
   
   private static int[] getAdjustedColorComponents(Color color) {
-    if (SystemInfo.isMac) {
+    ColorSpace genericRgbSpace;
+    if (SystemInfo.isMac && (genericRgbSpace = MacColorSpaceLoader.getGenericRgbColorSpace()) != null) {
       // on macOS color components are expected in Apple's 'Generic RGB' color space
-      ColorSpace genericRgbSpace = MacOSApplicationProvider.getInstance().getGenericRgbColorSpace();
-      if (genericRgbSpace != null) {
-        float[] components = genericRgbSpace.fromRGB(color.getRGBColorComponents(null));
-        return new int[] {
-          colorComponentFloatToInt(components[0]), 
-          colorComponentFloatToInt(components[1]), 
-          colorComponentFloatToInt(components[2])
-        };
-      }
+      float[] components = genericRgbSpace.fromRGB(color.getRGBColorComponents(null));
+      return new int[]{
+        colorComponentFloatToInt(components[0]),
+        colorComponentFloatToInt(components[1]),
+        colorComponentFloatToInt(components[2])
+      };
     }
-    return new int[]{color.getRed(), color.getGreen(), color.getBlue()};
+    else {
+      return new int[]{color.getRed(), color.getGreen(), color.getBlue()};
+    }
   }
   
   private static int colorComponentFloatToInt(float component) {

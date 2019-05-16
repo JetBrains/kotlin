@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -46,6 +47,7 @@ public interface CreateFromTemplateHandler {
   boolean isNameRequired();
 
   @NotNull
+  @Nls(capitalization = Nls.Capitalization.Title)
   String getErrorMessage();
 
   void prepareProperties(@NotNull Map<String, Object> props);
@@ -53,6 +55,7 @@ public interface CreateFromTemplateHandler {
   default void prepareProperties(@NotNull Map<String, Object> props, String fileName, @NotNull FileTemplate template) {}
 
   @NotNull
+  @Nls(capitalization = Nls.Capitalization.Title)
   default String commandName(@NotNull FileTemplate template) {
     return IdeBundle.message("command.create.file.from.template");
   }

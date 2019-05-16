@@ -8,7 +8,6 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -51,7 +50,7 @@ public abstract class AbstractExternalFilter {
   private static final String DT = "<DT>";
 
   protected static abstract class RefConvertor {
-    private final @NotNull Pattern mySelector;
+    final Pattern mySelector;
 
     public RefConvertor(@NotNull Pattern selector) {
       mySelector = selector;
@@ -60,10 +59,9 @@ public abstract class AbstractExternalFilter {
     protected abstract String convertReference(String root, String href);
 
     public CharSequence refFilter(String root, @NotNull CharSequence read) {
-      CharSequence toMatch = StringUtilRt.toUpperCase(read);
       StringBuilder ready = new StringBuilder();
       int prev = 0;
-      Matcher matcher = mySelector.matcher(toMatch);
+      Matcher matcher = mySelector.matcher(read);
 
       while (matcher.find()) {
         CharSequence before = read.subSequence(prev, matcher.start(1) - 1);     // Before reference

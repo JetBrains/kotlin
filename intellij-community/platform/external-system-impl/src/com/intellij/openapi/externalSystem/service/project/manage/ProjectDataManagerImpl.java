@@ -343,10 +343,12 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
 
   @Override
   public void ensureTheDataIsReadyToUse(@Nullable DataNode startNode) {
-    if (startNode == null) return;
-    if (Boolean.TRUE.equals(startNode.getUserData(DATA_READY))) return;
-    final DeduplicateVisitorsSupplier supplier = new DeduplicateVisitorsSupplier();
-    ExternalSystemApiUtil.visit(startNode, dataNode -> {
+    if (startNode == null || Boolean.TRUE.equals(startNode.getUserData(DATA_READY))) {
+      return;
+    }
+
+    DeduplicateVisitorsSupplier supplier = new DeduplicateVisitorsSupplier();
+    ((DataNode<?>)startNode).visit(dataNode -> {
       if (prepareDataToUse(dataNode)) {
         dataNode.visitData(supplier.getVisitor(dataNode.getKey()));
         dataNode.putUserData(DATA_READY, Boolean.TRUE);

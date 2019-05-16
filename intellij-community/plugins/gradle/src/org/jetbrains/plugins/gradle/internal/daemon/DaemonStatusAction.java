@@ -45,8 +45,8 @@ public class DaemonStatusAction extends DaemonAction {
     private final ReportStatusDispatcher reportStatusDispatcher;
 
     ReportDaemonStatusClient(DaemonRegistry daemonRegistry,
-                                    DaemonConnector connector,
-                                    IdGenerator<?> idGenerator) {
+                             DaemonConnector connector,
+                             IdGenerator<?> idGenerator) {
       this.daemonRegistry = daemonRegistry;
       this.connector = connector;
       this.idGenerator = idGenerator;

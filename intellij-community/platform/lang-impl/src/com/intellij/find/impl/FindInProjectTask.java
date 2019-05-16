@@ -157,7 +157,7 @@ class FindInProjectTask {
 
   private static void logStats(@NotNull Collection<? extends VirtualFile> otherFiles, long time) {
     Map<String, Long> extensionToCount = otherFiles.stream()
-      .collect(Collectors.groupingBy(file -> StringUtil.notNullize(file.getExtension()).toLowerCase(Locale.ENGLISH), Collectors.counting()));
+      .collect(Collectors.groupingBy(file -> StringUtil.toLowerCase(StringUtil.notNullize(file.getExtension())), Collectors.counting()));
     String topExtensions = extensionToCount
       .entrySet().stream()
       .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))

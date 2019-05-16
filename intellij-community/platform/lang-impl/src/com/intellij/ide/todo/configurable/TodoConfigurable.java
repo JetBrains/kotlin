@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.todo.configurable;
 
@@ -14,13 +14,14 @@ import com.intellij.psi.search.TodoPattern;
 import com.intellij.ui.*;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.FormBuilder;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.table.IconTableCellRenderer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import java.awt.*;
@@ -32,6 +33,7 @@ import java.util.List;
  * @author Vladimir Kondratyev
  */
 public class TodoConfigurable implements SearchableConfigurable, Configurable.NoScroll {
+  private static final int HEADER_GAP = JBUI.scale(20);
   /*
    * UI resources
    */
@@ -122,12 +124,13 @@ public class TodoConfigurable implements SearchableConfigurable, Configurable.No
     myPatternsTable = new JBTable(myPatternsModel);
     myPatternsTable.getEmptyText().setText(IdeBundle.message("text.todo.no.patterns"));
     TableColumn typeColumn = myPatternsTable.getColumnModel().getColumn(0);
-    int width = myPatternsTable.getFontMetrics(myPatternsTable.getFont()).stringWidth(myPatternsTable.getColumnName(0)) + 10;
-    typeColumn.setPreferredWidth(width);
-    typeColumn.setMaxWidth(width);
-    typeColumn.setMinWidth(width);
+    JTableHeader tableHeader = myPatternsTable.getTableHeader();
+    FontMetrics headerFontMetrics = tableHeader.getFontMetrics(tableHeader.getFont());
+    int typeColumnWidth = headerFontMetrics.stringWidth(myPatternsTable.getColumnName(0) + HEADER_GAP);
+    typeColumn.setPreferredWidth(typeColumnWidth);
+    typeColumn.setMinWidth(typeColumnWidth);
     typeColumn.setCellRenderer(new IconTableCellRenderer<Icon>() {
-      @Nullable
+      @NotNull
       @Override
       protected Icon getIcon(@NotNull Icon value, JTable table, int row) {
         return value;
@@ -148,10 +151,9 @@ public class TodoConfigurable implements SearchableConfigurable, Configurable.No
 
     // Column "Case Sensitive"
     TableColumn todoCaseSensitiveColumn = myPatternsTable.getColumnModel().getColumn(1);
-    width = myPatternsTable.getFontMetrics(myPatternsTable.getFont()).stringWidth(myPatternsTable.getColumnName(1)) + 10;
-    todoCaseSensitiveColumn.setPreferredWidth(width);
-    todoCaseSensitiveColumn.setMaxWidth(width);
-    todoCaseSensitiveColumn.setMinWidth(width);
+    int caseSensitiveColumnWidth = headerFontMetrics.stringWidth(myPatternsTable.getColumnName(1)) + HEADER_GAP;
+    todoCaseSensitiveColumn.setPreferredWidth(caseSensitiveColumnWidth);
+    todoCaseSensitiveColumn.setMinWidth(caseSensitiveColumnWidth);
     todoCaseSensitiveColumn.setCellRenderer(new BooleanTableCellRenderer());
     todoCaseSensitiveColumn.setCellEditor(new BooleanTableCellEditor());
 
@@ -159,6 +161,7 @@ public class TodoConfigurable implements SearchableConfigurable, Configurable.No
     TodoPatternTableCellRenderer todoPatternRenderer = new TodoPatternTableCellRenderer(myPatterns);
     TableColumn patternColumn = myPatternsTable.getColumnModel().getColumn(2);
     patternColumn.setCellRenderer(todoPatternRenderer);
+    patternColumn.setPreferredWidth(patternColumn.getMaxWidth());
 
     JPanel patternsPanel = new JPanel(new BorderLayout());
     patternsPanel.setBorder(IdeBorderFactory.createTitledBorder(IdeBundle.message("label.todo.patterns"), false));
@@ -221,12 +224,13 @@ public class TodoConfigurable implements SearchableConfigurable, Configurable.No
 
     // Column "Name"
     TableColumn nameColumn = myFiltersTable.getColumnModel().getColumn(0);
-    width = myPatternsTable.getColumnModel().getColumn(0).getPreferredWidth()/*typeColumn*/ +
-            myPatternsTable.getColumnModel().getColumn(1).getPreferredWidth()/*todoCaseSensitiveColumn*/;
-    nameColumn.setPreferredWidth(width);
-    nameColumn.setMaxWidth(width);
-    nameColumn.setMinWidth(width);
+    int nameColumnWidth = caseSensitiveColumnWidth + typeColumnWidth;
+    nameColumn.setPreferredWidth(nameColumnWidth);
+    nameColumn.setMinWidth(nameColumnWidth);
     nameColumn.setCellRenderer(new MyFilterNameTableCellRenderer());
+
+    TableColumn patternsColumn = myFiltersTable.getColumnModel().getColumn(1);
+    patternsColumn.setPreferredWidth(patternsColumn.getMaxWidth());
 
     JPanel filtersPanel = new JPanel(new BorderLayout());
     filtersPanel.setBorder(IdeBorderFactory.createTitledBorder(IdeBundle.message("label.todo.filters"), false));
@@ -379,7 +383,7 @@ public class TodoConfigurable implements SearchableConfigurable, Configurable.No
       super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       TodoFilter filter = myFilters.get(row);
       if (isSelected) {
-        setForeground(UIUtil.getTableSelectionForeground());
+        setForeground(UIUtil.getTableSelectionForeground(true));
       }
       else {
         if (filter.isEmpty()) {

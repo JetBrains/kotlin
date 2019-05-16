@@ -14,7 +14,6 @@ import com.intellij.util.containers.ContainerUtil;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -71,7 +70,7 @@ public abstract class InspectionTreeTailRenderer {
     if (pluralize) {
       String name = myPluralizedSeverityNames.get(severity);
       if (name == null) {
-        final String lowerCaseName = level.getName().toLowerCase(Locale.ENGLISH);
+        final String lowerCaseName = StringUtil.toLowerCase(level.getName());
         name = SeverityRegistrar.isDefaultSeverity(severity) ? StringUtil.pluralize(lowerCaseName) : lowerCaseName;
         myPluralizedSeverityNames.put(severity, name);
       }
@@ -80,7 +79,7 @@ public abstract class InspectionTreeTailRenderer {
     else {
       String name = myUnpluralizedSeverityNames.get(severity);
       if (name == null) {
-        name = level.getName().toLowerCase(Locale.ENGLISH);
+        name = StringUtil.toLowerCase(level.getName());
         myUnpluralizedSeverityNames.put(severity, name);
       }
       return name;

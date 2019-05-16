@@ -30,6 +30,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
@@ -95,7 +96,7 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
     String toolWindowId =
       toolWindow instanceof ToolWindowImpl ? ((ToolWindowImpl)toolWindow).getId() : myExternalSystemId.getReadableName();
 
-    String notificationId = "notification.group.id." + externalSystemId.getId().toLowerCase(Locale.ENGLISH);
+    String notificationId = "notification.group.id." + StringUtil.toLowerCase(externalSystemId.getId());
     NotificationGroup registeredGroup = NotificationGroup.findRegisteredGroup(notificationId);
     myNotificationGroup = registeredGroup != null ? registeredGroup : NotificationGroup.toolWindowGroup(notificationId, toolWindowId);
     myViewContributors = Arrays.stream(ExternalSystemViewContributor.EP_NAME.getExtensions())

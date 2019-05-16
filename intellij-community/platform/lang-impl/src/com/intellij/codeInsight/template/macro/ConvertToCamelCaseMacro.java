@@ -46,18 +46,17 @@ public class ConvertToCamelCaseMacro extends MacroBase {
     return text != null ? convertString(text) : null;
   }
 
-  @SuppressWarnings("StringToUpperCaseOrToLowerCaseWithoutLocale")
   @NotNull
   @VisibleForTesting
   public Result convertString(@NotNull String text) {
     final String[] strings = splitWords(text);
     if (strings.length > 0) {
       final StringBuilder buf = new StringBuilder();
-      buf.append(strings[0].toLowerCase());
+      buf.append(StringUtil.toLowerCase(strings[0]));
       for (int i = 1; i < strings.length; i++) {
         String string = strings[i];
         if (Character.isLetterOrDigit(string.charAt(0))) {
-          buf.append(StringUtil.capitalize(string.toLowerCase()));
+          buf.append(StringUtil.capitalize(StringUtil.toLowerCase(string)));
         }
       }
       return new TextResult(buf.toString());
