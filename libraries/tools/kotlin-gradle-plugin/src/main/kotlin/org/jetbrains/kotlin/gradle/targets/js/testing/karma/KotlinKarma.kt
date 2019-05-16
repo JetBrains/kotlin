@@ -270,7 +270,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                         val browser = withoutOs.substring(rawSuiteNameOnly.length + 1) // HeadlessChrome 74.0.3729
                             .replace(" ", "") // HeadlessChrome74.0.3729
 
-                        testNameSuffix = "$baseTestNameSuffix,$browser,$os"
+                        testNameSuffix = listOfNotNull(baseTestNameSuffix, browser, os)
+                            .takeIf { it.isNotEmpty() }
+                            ?.joinToString()
 
                         return rawSuiteNameOnly.replace(" ", ".") // sample.a.DeepPackageTest.Inner
                     }
