@@ -5,11 +5,29 @@ plugins {
 // Determine host preset.
 def hostPreset = MPPTools.defaultHostPreset(project)
 
+// Add two additional presets for Raspberry Pi.
+def raspberryPiPresets = [kotlin.presets.linuxArm32Hfp, kotlin.presets.linuxArm64]
+
 kotlin {
     targets {
         fromPreset(hostPreset, 'echoServer') {
             compilations.main.outputKinds 'EXECUTABLE'
             compilations.main.entryPoint 'sample.echoserver.main'
+        }
+
+        raspberryPiPresets.each { preset ->
+            def targetName = 'echoServer' + preset.name.capitalize()
+            fromPreset(preset, targetName) {
+                compilations.main.outputKinds 'EXECUTABLE'
+                compilations.main.entryPoint 'sample.echoserver.main'
+            }
+        }
+    }
+
+    sourceSets {
+        raspberryPiPresets.each { preset ->
+            String mainSourceSetName = 'echoServer' + preset.name.capitalize() + 'Main'
+            getByName(mainSourceSetName) dependsOn echoServerMain
         }
     }
 }
