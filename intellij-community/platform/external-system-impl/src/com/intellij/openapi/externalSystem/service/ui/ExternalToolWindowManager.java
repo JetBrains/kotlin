@@ -14,6 +14,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.impl.ToolWindowHeadlessManagerImpl;
 import com.intellij.openapi.wm.impl.ToolWindowImpl;
+import com.intellij.util.Consumer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,9 +39,15 @@ public class ExternalToolWindowManager {
       settings.subscribe(new ExternalSystemSettingsListenerAdapter() {
         @Override
         public void onProjectsLinked(@NotNull Collection linked) {
-          ToolWindow toolWindow = getToolWindow(project, manager.getSystemId());
+          
+          Consumer<ToolWindow> activate = (toolWindow) -> toolWindow.setAvailable(true, () -> {
+            final boolean shouldShow = settings.getLinkedProjectsSettings().size() == 1;
+            if (shouldShow) toolWindow.show(null);
+          });
+
+          final ToolWindow toolWindow = getToolWindow(project, manager.getSystemId());
           if (toolWindow != null) {
-            toolWindow.setAvailable(true, null);
+            activate.consume(toolWindow);
           }
           else {
             StartupManager.getInstance(project).runWhenProjectIsInitialized((DumbAwareRunnable)() -> {
@@ -51,7 +58,7 @@ public class ExternalToolWindowManager {
                 if (project.isDisposed()) return;
                 ToolWindow toolWindow1 = getToolWindow(project, manager.getSystemId());
                 if (toolWindow1 != null) {
-                  toolWindow1.setAvailable(true, null);
+                  activate.consume(toolWindow1);
                 }
               });
             });
