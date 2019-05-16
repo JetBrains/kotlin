@@ -245,6 +245,7 @@ public class MasterDetailPopupBuilder implements MasterController {
         done.setMnemonic('o');
         done.addActionListener(actionListener);
         builder.setCommandButton(new ActiveComponent.Adapter() {
+          @NotNull
           @Override
           public JComponent getComponent() {
             return done;

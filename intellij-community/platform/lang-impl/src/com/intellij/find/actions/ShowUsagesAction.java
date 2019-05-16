@@ -232,8 +232,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     boolean isPreviewMode = Boolean.TRUE == PreviewManager.SERVICE.preview(handler.getProject(), UsagesPreviewPanelProvider.ID, Pair.create(usageView, table), false);
     Runnable itemChosenCallback = table.prepareTable(editor, popupPosition, handler, maxUsages, options, isPreviewMode, this);
 
-    @Nullable final JBPopup popup = isPreviewMode ? null : createUsagePopup(usages, visibleNodes, handler, editor, popupPosition,
-                                           maxUsages, usageView, options, table, itemChosenCallback, presentation, processIcon);
+    JBPopup popup = isPreviewMode ? null : createUsagePopup(usages, visibleNodes, handler, editor, popupPosition,
+                                                            maxUsages, usageView, options, table, itemChosenCallback, presentation, processIcon);
     if (popup != null) {
       Disposer.register(popup, usageView);
 
@@ -462,7 +462,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     }
 
     builder.setMovable(true).setResizable(true);
-    builder.setMovable(true).setResizable(true);
     builder.setItemChoosenCallback(itemChoseCallback);
     final JBPopup[] popup = new JBPopup[1];
 
@@ -500,6 +499,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     InplaceButton settingsButton = createSettingsButton(handler, popupPosition, editor, maxUsages, () -> cancel(popup[0]));
 
     ActiveComponent spinningProgress = new ActiveComponent.Adapter() {
+      @NotNull
       @Override
       public JComponent getComponent() {
         return processIcon;
@@ -581,6 +581,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
     pinToolBar.setOpaque(false);
 
     return new ActiveComponent.Adapter() {
+      @NotNull
       @Override
       public JComponent getComponent() {
         return pinToolBar;

@@ -44,6 +44,7 @@ public class CompositeActiveComponent implements ActiveComponent {
     }
   }
 
+  @NotNull
   @Override
   public JComponent getComponent() {
     return myComponent;
