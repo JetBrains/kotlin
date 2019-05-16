@@ -25,7 +25,8 @@ FILE fqName:<root> fileName:/memberTypeArguments.kt
         RETURN type=kotlin.Nothing from='public final fun withNewValue (newValue: T of <root>.GenericClass): <root>.GenericClass<T of <root>.GenericClass> declared in <root>.GenericClass'
           CONSTRUCTOR_CALL 'public constructor <init> (value: T of <uninitialized parent>) [primary] declared in <root>.GenericClass' type=<root>.GenericClass<T of <root>.GenericClass> origin=null
             <class: T>: <none>
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+            value: GET_VAR 'newValue: T of <root>.GenericClass declared in <root>.GenericClass.withNewValue' type=T of <root>.GenericClass origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

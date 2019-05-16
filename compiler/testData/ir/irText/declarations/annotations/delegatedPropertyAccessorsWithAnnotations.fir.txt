@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   PROPERTY name:test1 visibility:public modality:FINAL [delegated,val] 
     annotations:
-      A(x = <null>)
+      A(x = 'test1.get')
     FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] 
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType 
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [delegated,val] 
@@ -92,9 +92,9 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [delegated,var] 
     annotations:
-      A(x = <null>)
-      A(x = <null>)
-      A(x = <null>)
+      A(x = 'test2.get')
+      A(x = 'test2.set')
+      A(x = 'test2.set.param')
     FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [static] 
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:IrErrorType 
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [delegated,var] 

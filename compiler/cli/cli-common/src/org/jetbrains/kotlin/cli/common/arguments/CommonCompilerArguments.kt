@@ -286,6 +286,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var checkStickyPhaseConditions: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xuse-fir",
+        description = "Compile using Front-end IR. Warning: this feature is far from being production-ready"
+    )
+    var useFir: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)

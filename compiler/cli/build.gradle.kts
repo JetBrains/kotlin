@@ -20,6 +20,10 @@ dependencies {
     compile(project(":js:js.translator"))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
+    compile(project(":compiler:fir:psi2fir"))
+    compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:java"))
+    compile(project(":compiler:fir:fir2ir"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }

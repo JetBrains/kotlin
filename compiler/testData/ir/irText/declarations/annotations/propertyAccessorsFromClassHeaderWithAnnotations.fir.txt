@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/propertyAccessorsFromClassHeaderWithAnnotations.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val] 
       annotations:
-        A(x = <null>)
+        A(x = 'C.x.get')
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final] 
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.C.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -50,8 +50,8 @@ FILE fqName:<root> fileName:/propertyAccessorsFromClassHeaderWithAnnotations.kt
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-x>' type=<root>.C origin=null
     PROPERTY name:y visibility:public modality:FINAL [var] 
       annotations:
-        A(x = <null>)
-        A(x = <null>)
+        A(x = 'C.y.get')
+        A(x = 'C.y.set')
       FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public 
         EXPRESSION_BODY
           GET_VAR 'y: kotlin.Int declared in <root>.C.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER

@@ -20,9 +20,12 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory {
 
@@ -31,6 +34,16 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = JvmGeneratorExtensions)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
         JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext, phaseConfig)
+    }
+
+    fun generateModule(
+        state: GenerationState,
+        irModuleFragment: IrModuleFragment,
+        errorHandler: CompilationErrorHandler,
+        symbolTable: SymbolTable,
+        sourceManager: PsiSourceManager
+    ) {
+        JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, symbolTable, sourceManager, phaseConfig)
     }
 
     override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): PackageCodegen {

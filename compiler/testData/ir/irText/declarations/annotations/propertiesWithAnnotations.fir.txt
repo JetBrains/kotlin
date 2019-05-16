@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/propertiesWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   PROPERTY name:testVal visibility:public modality:FINAL [val] 
     annotations:
-      TestAnn(x = <null>)
+      TestAnn(x = 'testVal.property')
     FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public [final,static] 
       EXPRESSION_BODY
         CONST String type=kotlin.String value=""

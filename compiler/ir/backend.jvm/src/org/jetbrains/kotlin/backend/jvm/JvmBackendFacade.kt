@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 object JvmBackendFacade {
@@ -35,14 +37,27 @@ object JvmBackendFacade {
         psi2irContext: GeneratorContext,
         phaseConfig: PhaseConfig
     ) {
+        doGenerateFilesInternal(
+            state, errorHandler, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig
+        )
+    }
+
+    internal fun doGenerateFilesInternal(
+        state: GenerationState,
+        errorHandler: CompilationErrorHandler,
+        irModuleFragment: IrModuleFragment,
+        symbolTable: SymbolTable,
+        sourceManager: PsiSourceManager,
+        phaseConfig: PhaseConfig
+    ) {
         val jvmBackendContext = JvmBackendContext(
-            state, psi2irContext.sourceManager, psi2irContext.irBuiltIns, irModuleFragment, psi2irContext.symbolTable, phaseConfig
+            state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig
         )
         //TODO
         ExternalDependenciesGenerator(
             irModuleFragment.descriptor,
-            psi2irContext.symbolTable,
-            psi2irContext.irBuiltIns,
+            symbolTable,
+            irModuleFragment.irBuiltins,
             JvmGeneratorExtensions.externalDeclarationOrigin
         ).generateUnboundSymbolsAsDependencies()
 

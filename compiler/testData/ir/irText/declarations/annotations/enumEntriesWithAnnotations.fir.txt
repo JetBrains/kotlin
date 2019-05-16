@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum modality:FINAL visibility:public superTypes:[kotlin.Enum]'
     CLASS ENUM_ENTRY name:ENTRY1 modality:FINAL visibility:public superTypes:[kotlin.Any]
       annotations:
-        TestAnn(x = <null>)
+        TestAnn(x = 'ENTRY1')
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum.ENTRY1 
       CONSTRUCTOR visibility:public <> () returnType:<root>.TestEnum.ENTRY1 [primary] 
         BLOCK_BODY
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:public superTypes:[kotlin.Any]
       annotations:
-        TestAnn(x = <null>)
+        TestAnn(x = 'ENTRY2')
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum.ENTRY2 
       CONSTRUCTOR visibility:public <> () returnType:<root>.TestEnum.ENTRY2 [primary] 
         BLOCK_BODY

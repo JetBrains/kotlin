@@ -69,6 +69,6 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     }
 
     override val annotations: Annotations
-        get() = TODO("not implemented")
+        get() = Annotations.EMPTY
 
 }

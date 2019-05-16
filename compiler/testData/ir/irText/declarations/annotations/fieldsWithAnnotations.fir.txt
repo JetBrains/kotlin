@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   PROPERTY name:testVal visibility:public modality:FINAL [val] 
     annotations:
-      TestAnn(x = <null>)
+      TestAnn(x = 'testVal.field')
     FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public [final,static] 
       EXPRESSION_BODY
         CONST String type=kotlin.String value="a val"
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null
   PROPERTY name:testVar visibility:public modality:FINAL [var] 
     annotations:
-      TestAnn(x = <null>)
+      TestAnn(x = 'testVar.field')
     FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public [static] 
       EXPRESSION_BODY
         CONST String type=kotlin.String value="a var"

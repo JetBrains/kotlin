@@ -51,7 +51,8 @@ FILE fqName:<root> fileName:/memberExtension.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): <root>.Host.StringDelegate declared in <root>.Host'
           CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.Host.StringDelegate' type=<root>.Host.StringDelegate origin=null
-    PROPERTY name:plusK visibility:public modality:FINAL [delegated,val] 
+            s: ERROR_CALL 'Unresolved reference: this#' type=kotlin.String
+    PROPERTY name:plusK visibility:public modality:FINAL [delegated,val]
       FIELD PROPERTY_BACKING_FIELD name:plusK type:IrErrorType visibility:public [final] 
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType 
         correspondingProperty: PROPERTY name:plusK visibility:public modality:FINAL [delegated,val] 

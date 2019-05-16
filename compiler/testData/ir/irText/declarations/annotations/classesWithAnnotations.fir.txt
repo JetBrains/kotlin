@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   CLASS CLASS name:TestClass modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      TestAnn(x = <null>)
+      TestAnn(x = 'class')
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass 
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestClass [primary] 
       BLOCK_BODY
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   CLASS INTERFACE name:TestInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     annotations:
-      TestAnn(x = <null>)
+      TestAnn(x = 'interface')
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestInterface 
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   CLASS OBJECT name:TestObject modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      TestAnn(x = <null>)
+      TestAnn(x = 'object')
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestObject 
     CONSTRUCTOR visibility:private <> () returnType:<root>.TestObject [primary] 
       BLOCK_BODY
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS OBJECT name:TestCompanion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       annotations:
-        TestAnn(x = <null>)
+        TestAnn(x = 'companion')
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host.TestCompanion 
       CONSTRUCTOR visibility:private <> () returnType:<root>.Host.TestCompanion [primary] 
         BLOCK_BODY
@@ -128,7 +128,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   CLASS ENUM_CLASS name:TestEnum modality:FINAL visibility:public superTypes:[kotlin.Enum]
     annotations:
-      TestAnn(x = <null>)
+      TestAnn(x = 'enum')
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum 
     CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum [primary] 
       BLOCK_BODY
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum 
   CLASS ANNOTATION_CLASS name:TestAnnotation modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      TestAnn(x = <null>)
+      TestAnn(x = 'annotation')
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAnnotation 
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestAnnotation [primary] 
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 

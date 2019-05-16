@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
         BLOCK type=<root>.test2.<no name provided> origin=OBJECT_LITERAL
           CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
             annotations:
-              A(klass = <null>)
+              A(klass = GET_CLASS type=kotlin.reflect.KClass<IrErrorType>)
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test2.<no name provided> 
             CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary] 
               BLOCK_BODY
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
           BLOCK type=<root>.<get-test3>.<no name provided> origin=OBJECT_LITERAL
             CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               annotations:
-                A(klass = <null>)
+                A(klass = GET_CLASS type=kotlin.reflect.KClass<IrErrorType>)
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<get-test3>.<no name provided> 
               CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary] 
                 BLOCK_BODY
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
         BLOCK type=<root>.<set-test3>.<no name provided> origin=OBJECT_LITERAL
           CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
             annotations:
-              A(klass = <null>)
+              A(klass = GET_CLASS type=kotlin.reflect.KClass<IrErrorType>)
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<set-test3>.<no name provided> 
             CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary] 
               BLOCK_BODY

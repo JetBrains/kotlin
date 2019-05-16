@@ -1,6 +1,6 @@
 FILE fqName:test fileName:/fileAnnotations.kt
   annotations:
-    A(x = <null>)
+    A(x = 'File annotation')
   CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A 
     CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:test.A [primary] 

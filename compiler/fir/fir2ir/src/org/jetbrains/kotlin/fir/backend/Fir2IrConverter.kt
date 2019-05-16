@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 object Fir2IrConverter {
 
@@ -25,7 +27,7 @@ object Fir2IrConverter {
         firFiles: List<FirFile>,
         languageVersionSettings: LanguageVersionSettings,
         fakeOverrideMode: FakeOverrideMode = FakeOverrideMode.NORMAL
-    ): IrModuleFragment {
+    ): Fir2IrResult {
         val moduleDescriptor = FirModuleDescriptor(session)
         val symbolTable = SymbolTable()
         val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
@@ -33,15 +35,19 @@ object Fir2IrConverter {
         constantValueGenerator.typeTranslator = typeTranslator
         typeTranslator.constantValueGenerator = constantValueGenerator
         val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        val fir2irTransformer = Fir2IrVisitor(session, moduleDescriptor, symbolTable, builtIns, fakeOverrideMode)
+        val sourceManager = PsiSourceManager()
+        val fir2irTransformer = Fir2IrVisitor(session, moduleDescriptor, symbolTable, sourceManager, builtIns, fakeOverrideMode)
         val irFiles = mutableListOf<IrFile>()
         for (firFile in firFiles) {
-            irFiles += firFile.accept(fir2irTransformer, null) as IrFile
+            val irFile = firFile.accept(fir2irTransformer, null) as IrFile
+            val fileEntry = sourceManager.getOrCreateFileEntry(firFile.psi as KtFile)
+            sourceManager.putFileEntry(irFile, fileEntry)
+            irFiles += irFile
         }
 
         val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, irFiles)
         generateUnboundSymbolsAsDependencies(irModuleFragment, symbolTable, builtIns)
-        return irModuleFragment
+        return Fir2IrResult(irModuleFragment, symbolTable, sourceManager)
     }
 
     private fun generateUnboundSymbolsAsDependencies(

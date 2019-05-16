@@ -36,6 +36,8 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
       VAR name:b type:<root>.A<kotlin.Int> [val]
         CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <uninitialized parent>) [primary] declared in <root>.A' type=<root>.A<kotlin.Int> origin=null
           <class: Q>: <none>
+          q: CONST Int type=kotlin.Int value=2
       VAR name:b2 type:<root>.A<<root>.A<kotlin.Int>> [val]
         CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <uninitialized parent>) [primary] declared in <root>.A' type=<root>.A<<root>.A<kotlin.Int>> origin=null
           <class: Q>: <none>
+          q: GET_VAR 'val b: <root>.A<kotlin.Int> [val] declared in <root>.bar' type=<root>.A<kotlin.Int> origin=null

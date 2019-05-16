@@ -62,7 +62,8 @@ FILE fqName:<root> fileName:/topLevel.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate declared in <root>.DelegateProvider'
           CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.Delegate' type=<root>.Delegate origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+            value: CALL 'public final fun <get-value> (): kotlin.String declared in <root>.DelegateProvider' type=kotlin.String origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

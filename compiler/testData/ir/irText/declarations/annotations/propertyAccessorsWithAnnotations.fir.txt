@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
       BLOCK_BODY
   PROPERTY name:test3 visibility:public modality:FINAL [val] 
     annotations:
-      TestAnn(x = <null>)
+      TestAnn(x = 'test3.get')
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.String visibility:public [final,static] 
       EXPRESSION_BODY
         CONST String type=kotlin.String value=""
@@ -56,8 +56,8 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null
   PROPERTY name:test4 visibility:public modality:FINAL [var] 
     annotations:
-      TestAnn(x = <null>)
-      TestAnn(x = <null>)
+      TestAnn(x = 'test4.get')
+      TestAnn(x = 'test4.set')
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public [static] 
       EXPRESSION_BODY
         CONST String type=kotlin.String value=""

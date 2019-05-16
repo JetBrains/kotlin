@@ -91,6 +91,8 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
             }
         }
 
-        return Fir2IrConverter.createModuleFragment(session, firFiles, myEnvironment.configuration.languageVersionSettings)
+        return Fir2IrConverter.createModuleFragment(
+            session, firFiles, myEnvironment.configuration.languageVersionSettings
+        ).irModuleFragment
     }
 }

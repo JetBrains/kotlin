@@ -256,6 +256,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/fileClassClashMultipleFiles.args");
         }
 
+        @TestMetadata("firHello.args")
+        public void testFirHello() throws Exception {
+            runTest("compiler/testData/cli/jvm/firHello.args");
+        }
+
         @TestMetadata("flagAllowingResultAsReturnType.args")
         public void testFlagAllowingResultAsReturnType() throws Exception {
             runTest("compiler/testData/cli/jvm/flagAllowingResultAsReturnType.args");
