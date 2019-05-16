@@ -28,17 +28,20 @@ FILE fqName:<root> fileName:/kt30020.kt
       VAR name:<complex-set> type:kotlin.collections.MutableList<kotlin.Any> [val] 
         CALL 'public abstract fun f (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
           $this: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
-      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      SET_VAR 'val <complex-set>: kotlin.collections.MutableList<kotlin.Any> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+        CONST Int type=kotlin.Int value=2
       VAR name:<complex-set> type:kotlin.collections.MutableList<kotlin.Int> [val] 
         TYPE_OP type=kotlin.collections.MutableList<kotlin.Int> origin=CAST typeOperand=kotlin.collections.MutableList<kotlin.Int>
           CALL 'public abstract fun <get-xs> (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
             $this: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
-      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      SET_VAR 'val <complex-set>: kotlin.collections.MutableList<kotlin.Int> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Int> origin=null
+        CONST Int type=kotlin.Int value=3
       VAR name:<complex-set> type:kotlin.collections.MutableList<kotlin.Int> [val] 
         TYPE_OP type=kotlin.collections.MutableList<kotlin.Int> origin=CAST typeOperand=kotlin.collections.MutableList<kotlin.Int>
           CALL 'public abstract fun f (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
             $this: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
-      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      SET_VAR 'val <complex-set>: kotlin.collections.MutableList<kotlin.Int> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Int> origin=null
+        CONST Int type=kotlin.Int value=4
       VAR name:<complex-set> type:kotlin.collections.MutableList<kotlin.Any> [val] 
         BLOCK type=kotlin.collections.MutableList<kotlin.Any> origin=EXCLEXCL
           VAR name:<bangbang> type:kotlin.collections.MutableList<kotlin.Any>? [val]
@@ -54,7 +57,8 @@ FILE fqName:<root> fileName:/kt30020.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <bangbang>: kotlin.collections.MutableList<kotlin.Any>? [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Any>? origin=null
-      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      SET_VAR 'val <complex-set>: kotlin.collections.MutableList<kotlin.Any> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+        CONST Int type=kotlin.Int value=5
       VAR name:<complex-set> type:kotlin.collections.MutableList<kotlin.Any> [val]
         BLOCK type=kotlin.collections.MutableList<kotlin.Any> origin=EXCLEXCL
           VAR name:<bangbang> type:kotlin.collections.MutableList<kotlin.Any> [val]
@@ -70,7 +74,8 @@ FILE fqName:<root> fileName:/kt30020.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <bangbang>: kotlin.collections.MutableList<kotlin.Any> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Any> origin=null
-      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      SET_VAR 'val <complex-set>: kotlin.collections.MutableList<kotlin.Any> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+        CONST Int type=kotlin.Int value=6
   FUN name:testExtensionReceiver visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: this#' type=IrErrorType

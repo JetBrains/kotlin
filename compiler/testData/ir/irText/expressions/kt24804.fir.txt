@@ -11,7 +11,8 @@ FILE fqName:<root> fileName:/kt24804.kt
         CONST Int type=kotlin.Int value=10
       DO_WHILE label=l2 origin=DO_WHILE_LOOP
         body: BLOCK type=kotlin.String origin=null
-          ERROR_CALL 'Unresolved reference: R|<local>/z|' type=IrErrorType
+          SET_VAR 'var z: kotlin.Int [var] declared in <root>.run' type=kotlin.Int origin=null
+            CONST Int type=kotlin.Int value=1
           WHEN type=kotlin.String origin=IF
             BRANCH
               if: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/String' type=kotlin.Boolean

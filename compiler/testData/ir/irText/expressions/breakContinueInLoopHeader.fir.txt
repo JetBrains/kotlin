@@ -106,7 +106,9 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
         body: BLOCK type=kotlin.Unit origin=null
           VAR name:<unary> type:kotlin.Int [val] 
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
-          ERROR_CALL 'Unresolved reference: R|<local>/i|' type=IrErrorType
+          SET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
+            CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test5' type=kotlin.Int origin=null
           GET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
           VAR name:j type:kotlin.Int [var] 
             CONST Int type=kotlin.Int value=0
@@ -114,7 +116,9 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
             body: BLOCK type=kotlin.Int origin=null
               VAR name:<unary> type:kotlin.Int [val] 
                 GET_VAR 'var j: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
-              ERROR_CALL 'Unresolved reference: R|<local>/j|' type=IrErrorType
+              SET_VAR 'var j: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
+                CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test5' type=kotlin.Int origin=null
               GET_VAR 'var j: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
             condition: WHEN type=kotlin.Unit origin=IF
               BRANCH

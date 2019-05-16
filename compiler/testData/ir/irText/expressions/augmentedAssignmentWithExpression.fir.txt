@@ -37,11 +37,12 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
     BLOCK_BODY
       VAR name:<complex-set> type:<root>.Host [val] 
         CALL 'public final fun foo (): <root>.Host declared in <root>' type=<root>.Host origin=null
-      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      SET_VAR 'val <complex-set>: <root>.Host [val] declared in <root>.test3' type=<root>.Host origin=null
+        CONST Int type=kotlin.Int value=1
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<<root>.Host>) returnType:kotlin.Unit 
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<<root>.Host> 
     BLOCK_BODY
       VAR name:<complex-set> type:IrErrorType [val] 
         ERROR_CALL 'Unresolved reference: <Unresolved name: a>#' type=IrErrorType
-      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
-
+      SET_VAR 'val <complex-set>: IrErrorType [val] declared in <root>.test4' type=IrErrorType origin=null
+        CONST Int type=kotlin.Int value=1

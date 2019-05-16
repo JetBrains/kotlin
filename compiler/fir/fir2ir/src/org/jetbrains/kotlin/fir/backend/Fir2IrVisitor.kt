@@ -786,6 +786,11 @@ internal class Fir2IrVisitor(
                             generateErrorCallExpression(startOffset, endOffset, calleeReference)
                         }
                     }
+                    is IrVariableSymbol -> {
+                        IrSetVariableImpl(
+                            startOffset, endOffset, symbol.owner.type, symbol, variableAssignment.rValue.toIrExpression(), null
+                        )
+                    }
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
                 }
             } else {

@@ -124,14 +124,18 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
           index: BLOCK type=kotlin.Int origin=null
             VAR name:<unary> type:kotlin.Int [val] 
               GET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
-            ERROR_CALL 'Unresolved reference: R|<local>/i|' type=IrErrorType
+            SET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
+              CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
             GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
       CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
         index: BLOCK type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val] 
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
-          ERROR_CALL 'Unresolved reference: R|<local>/i|' type=IrErrorType
+          SET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
+            CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
