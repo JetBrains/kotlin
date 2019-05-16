@@ -42,6 +42,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private val isInterfaceSymbol get() = context.intrinsics.isInterfaceSymbol
     private val isArraySymbol get() = context.intrinsics.isArraySymbol
+    private val isSuspenfFunctionSymbol = context.intrinsics.isSuspendFunctionSymbol
     //    private val isCharSymbol get() = context.intrinsics.isCharSymbol
     private val isObjectSymbol get() = context.intrinsics.isObjectSymbol
 
@@ -209,6 +210,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 return when {
                     toType.isAny() -> generateIsObjectCheck(argument)
                     toType.isNothing() -> JsIrBuilder.buildComposite(context.irBuiltIns.booleanType, listOf(argument, litFalse))
+                    toType.isSuspendFunctionTypeOrSubtype() -> generateSuspendFunctionCheck(argument, toType)
                     isTypeOfCheckingType(toType) -> generateTypeOfCheck(argument, toType)
 //                    toType.isChar() -> generateCheckForChar(argument)
                     toType.isNumber() -> generateNumberCheck(argument)
@@ -253,6 +255,16 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
 //            private fun generateCheckForChar(argument: IrExpression) =
 //                JsIrBuilder.buildCall(isCharSymbol).apply { dispatchReceiver = argument }
+
+            private fun generateSuspendFunctionCheck(argument: IrExpression, toType: IrType): IrExpression {
+                val arity = (toType.classifierOrFail.owner as IrClass).typeParameters.size - 1 // drop return type
+
+                val irBuiltIns = context.irBuiltIns
+                return JsIrBuilder.buildCall(isSuspenfFunctionSymbol, irBuiltIns.booleanType).apply {
+                    putValueArgument(0, argument)
+                    putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, arity))
+                }
+            }
 
             private fun generateTypeOfCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val marker = when {

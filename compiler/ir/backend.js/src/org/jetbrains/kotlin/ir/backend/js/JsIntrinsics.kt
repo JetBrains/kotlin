@@ -118,6 +118,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val isArraySymbol = getInternalFunction("isArray")
     //    val isCharSymbol = getInternalFunction("isChar")
     val isObjectSymbol = getInternalFunction("isObject")
+    val isSuspendFunctionSymbol = getInternalFunction("isSuspendFunction")
 
     val isNumberSymbol = getInternalFunction("isNumber")
     val isComparableSymbol = getInternalFunction("isComparable")

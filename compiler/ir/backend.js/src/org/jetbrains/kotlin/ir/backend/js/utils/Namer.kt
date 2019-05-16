@@ -35,6 +35,7 @@ object Namer {
     val METADATA_INTERFACES = "interfaces"
     val METADATA_SIMPLE_NAME = "simpleName"
     val METADATA_CLASS_KIND = "kind"
+    val METADATA_SUSPEND_ARITY = "suspendArity"
 
     val KCALLABLE_GET_NAME = "<get-name>"
     val KCALLABLE_NAME = "callableName"

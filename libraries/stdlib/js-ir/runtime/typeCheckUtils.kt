@@ -7,6 +7,7 @@ package kotlin.js
 
 private external interface Metadata {
     val interfaces: Array<Ctor>
+    val suspendArity: Int?
 }
 
 private external interface Ctor {
@@ -33,9 +34,7 @@ private fun isInterfaceImpl(ctor: Ctor, iface: dynamic): Boolean {
 }
 
 public fun isInterface(obj: dynamic, iface: dynamic): Boolean {
-    val ctor = obj.constructor
-
-    if (ctor == null) return false
+    val ctor = obj.constructor ?: return false
 
     return isInterfaceImpl(ctor, iface)
 }
@@ -75,6 +74,13 @@ public fun isInterface(ctor: dynamic, IType: dynamic): Boolean {
 }
 */
 
+internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
+    val ctor = obj.constructor?.unsafeCast<Ctor>() ?: return false
+
+    val metadata = ctor.`$metadata$`?.unsafeCast<Metadata>() ?: return false
+
+    return metadata.suspendArity === arity
+}
 
 fun isObject(obj: dynamic): Boolean {
     val objTypeOf = jsTypeOf(obj)

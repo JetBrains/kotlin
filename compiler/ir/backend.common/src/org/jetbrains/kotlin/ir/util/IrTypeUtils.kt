@@ -54,6 +54,7 @@ fun IrType.typeParameterSuperTypes(): List<IrType> {
 }
 
 fun IrType.isFunctionTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), { it.superTypes() }, { it.isFunction() })
+fun IrType.isSuspendFunctionTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), { it.superTypes() }, { it.isSuspendFunction() })
 
 fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
 

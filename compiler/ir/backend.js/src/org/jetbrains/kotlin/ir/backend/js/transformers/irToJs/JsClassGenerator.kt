@@ -240,7 +240,19 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef(Namer.METADATA_CLASS_KIND), classKind)
 
         metadataLiteral.propertyInitializers += generateSuperClasses()
+
+        if (isCoroutineClass()) {
+            metadataLiteral.propertyInitializers += generateSuspendArity()
+        }
+
         return jsAssignment(JsNameRef(Namer.METADATA, classNameRef), metadataLiteral).makeStmt()
+    }
+
+    private fun isCoroutineClass(): Boolean = irClass.superTypes.any { it.isSuspendFunctionTypeOrSubtype() }
+
+    private fun generateSuspendArity(): JsPropertyInitializer {
+        val arity = irClass.declarations.filterIsInstance<IrSimpleFunction>().first { it.isSuspend }.valueParameters.size
+        return JsPropertyInitializer(JsNameRef(Namer.METADATA_SUSPEND_ARITY), JsIntLiteral(arity))
     }
 
     private fun generateSuperClasses(): JsPropertyInitializer {
