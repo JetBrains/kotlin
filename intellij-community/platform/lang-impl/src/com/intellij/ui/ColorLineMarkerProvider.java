@@ -11,6 +11,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ElementColorProvider;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.Function;
@@ -71,9 +72,14 @@ public final class ColorLineMarkerProvider extends LineMarkerProviderDescriptor 
 
               final Editor editor = PsiUtilBase.findEditor(elt);
               assert editor != null;
-              final Color c = ColorChooser.chooseColor(editor.getProject(), editor.getComponent(), "Choose Color", color, true);
-              if (c != null) {
-                WriteAction.run(() -> colorProvider.setColorTo(elt, c));
+
+              if (Registry.is("ide.new.color.picker")) {
+                ColorPicker.showColorPickerPopup(color, (c, l) -> WriteAction.run(() -> colorProvider.setColorTo(elt, c)));
+              } else {
+                final Color c = ColorChooser.chooseColor(editor.getProject(), editor.getComponent(), "Choose Color", color, true);
+                if (c != null) {
+                  WriteAction.run(() -> colorProvider.setColorTo(elt, c));
+                }
               }
             },
             GutterIconRenderer.Alignment.LEFT);
