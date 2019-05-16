@@ -56,8 +56,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
             project {
                 settings {
                     ideArtifacts {
-                        generateIdeArtifacts(rootProject, this@ideArtifacts)
-
                         kotlinCompilerJar()
                         
                         kotlinPluginJar()
