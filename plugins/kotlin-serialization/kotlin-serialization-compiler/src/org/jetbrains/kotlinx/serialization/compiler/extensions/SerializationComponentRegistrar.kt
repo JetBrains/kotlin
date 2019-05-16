@@ -21,14 +21,33 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPluginDeclarationChecker
 
 class SerializationComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        ExpressionCodegenExtension.registerExtension(project, SerializationCodegenExtension())
         SyntheticResolveExtension.registerExtension(project, SerializationResolveExtension())
+
+        ExpressionCodegenExtension.registerExtension(project, SerializationCodegenExtension())
         JsSyntheticTranslateExtension.registerExtension(project, SerializationJsExtension())
         IrGenerationExtension.registerExtension(project, SerializationLoweringExtension())
+
+        StorageComponentContainerContributor.registerExtension(project, SerializationPluginComponentContainerContributor())
+    }
+}
+
+class SerializationPluginComponentContainerContributor : StorageComponentContainerContributor {
+    override fun registerModuleComponents(
+        container: StorageComponentContainer,
+        platform: TargetPlatform,
+        moduleDescriptor: ModuleDescriptor
+    ) {
+        container.useInstance(SerializationPluginDeclarationChecker())
     }
 }

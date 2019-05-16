@@ -21,13 +21,15 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SERIALIZABLE_PROPERTIES
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 abstract class SerializableCodegen(
     protected val serializableDescriptor: ClassDescriptor,
     bindingContext: BindingContext
 ) : AbstractSerialGenerator(bindingContext, serializableDescriptor) {
-    protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
+    protected val properties = bindingContext.get(SERIALIZABLE_PROPERTIES, serializableDescriptor)
+        ?: SerializableProperties(serializableDescriptor, bindingContext)
 
     fun generate() {
         generateSyntheticInternalConstructor()

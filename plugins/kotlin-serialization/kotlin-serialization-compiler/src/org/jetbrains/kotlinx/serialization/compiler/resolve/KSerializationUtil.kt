@@ -18,9 +18,11 @@ package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
@@ -113,11 +115,14 @@ internal val ClassDescriptor.hasSerializableAnnotationWithoutArgs: Boolean
         if (!annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return false
         // If provided descriptor is lazy, carefully look at psi in order not to trigger full resolve which may be recursive.
         // Otherwise, this descriptor is deserialized from another module and it is OK to check value right away.
-        val lazyDesc = annotations.findAnnotation(SerializationAnnotations.serializableAnnotationFqName)
-                as? LazyAnnotationDescriptor ?: return (serializableWith == null)
-        val psi = lazyDesc.annotationEntry
+        val psi = findSerializableAnnotationDeclaration() ?: return (serializableWith == null)
         return psi.valueArguments.isEmpty()
     }
+
+internal fun Annotated.findSerializableAnnotationDeclaration(): KtAnnotationEntry? {
+    val lazyDesc = annotations.findAnnotation(SerializationAnnotations.serializableAnnotationFqName) as? LazyAnnotationDescriptor
+    return lazyDesc?.annotationEntry
+}
 
 // For abstract classes marked with @Serializable,
 // methods are generated anyway although they shouldn't have

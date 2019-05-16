@@ -51,15 +51,6 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
                 else
                     SerializableProperties(supers, bindingContext).serializableProperties + first + second
             }
-            .also(::validateUniqueSerialNames)
-
-    private fun validateUniqueSerialNames(props: List<SerializableProperty>) {
-        val namesSet = mutableSetOf<String>()
-        props.forEach {
-            if (!namesSet.add(it.name)) throw IllegalStateException("$serializableClass has duplicate serial name of property ${it.name}, either in it or its parents.")
-        }
-    }
-
 
     private fun isPropSerializable(it: PropertyDescriptor) =
         if (serializableClass.isInternalSerializable) !it.annotations.serialTransient
