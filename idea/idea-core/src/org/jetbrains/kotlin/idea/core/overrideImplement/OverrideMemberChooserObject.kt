@@ -40,9 +40,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRenderer.Companion.withOptions
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier.*
+import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
@@ -189,8 +192,7 @@ fun OverrideMemberChooserObject.generateMember(
     }
 
     if (copyDoc) {
-        val superDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)?.navigationElement
-        val kDoc = when (superDeclaration) {
+        val kDoc = when (val superDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)?.navigationElement) {
             is KtDeclaration ->
                 findDocComment(superDeclaration)
             is PsiDocCommentOwner -> {
@@ -348,8 +350,7 @@ fun generateUnsupportedOrSuperCall(
     bodyType: OverrideMemberChooserObject.BodyType,
     canBeEmpty: Boolean = true
 ): String {
-    val effectiveBodyType = if (!canBeEmpty && bodyType == EMPTY_OR_TEMPLATE) FROM_TEMPLATE else bodyType
-    when (effectiveBodyType) {
+    when (if (!canBeEmpty && bodyType == EMPTY_OR_TEMPLATE) FROM_TEMPLATE else bodyType) {
         EMPTY_OR_TEMPLATE -> return ""
         FROM_TEMPLATE -> {
             val templateKind = if (descriptor is FunctionDescriptor) TemplateKind.FUNCTION else TemplateKind.PROPERTY_INITIALIZER
@@ -362,7 +363,7 @@ fun generateUnsupportedOrSuperCall(
             )
         }
         else -> return buildString {
-            if (bodyType is OverrideMemberChooserObject.BodyType.Delegate) {
+            if (bodyType is Delegate) {
                 append(bodyType.receiverName)
             } else {
                 append("super")
