@@ -79,7 +79,9 @@ abstract class KotlinJsSubTarget(
             }
 
             testJs.compilation = compilation
-            testJs.targetName = target.disambiguationClassifier + "," + disambiguationClassifier
+            testJs.targetName = listOfNotNull(target.disambiguationClassifier, disambiguationClassifier)
+                .takeIf { it.isNotEmpty() }
+                ?.joinToString()
 
             testJs.configureConventions()
         }
