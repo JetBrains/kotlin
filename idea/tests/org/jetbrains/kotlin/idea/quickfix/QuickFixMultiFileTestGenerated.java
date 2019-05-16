@@ -1395,7 +1395,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
 
         @TestMetadata("kotlinInheritor.before.Main.java")
-        @Ignore("UltraLight classes does not support modification yet")
         public void testKotlinInheritor() throws Exception {
             runTest("idea/testData/quickfix/convertJavaInterfaceToClass/kotlinInheritor.before.Main.java");
         }

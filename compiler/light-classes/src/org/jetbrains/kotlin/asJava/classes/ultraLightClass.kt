@@ -83,7 +83,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     override fun createExtendsList(): PsiReferenceList? =
         if (tooComplex) super.createExtendsList()
-        else KotlinLightReferenceListBuilder(
+        else KotlinSuperTypeListBuilder(
+            kotlinOrigin.getSuperTypeList(),
             manager,
             language,
             PsiReferenceList.Role.EXTENDS_LIST
@@ -109,7 +110,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     override fun createImplementsList(): PsiReferenceList? =
         if (tooComplex) super.createImplementsList()
-        else KotlinLightReferenceListBuilder(
+        else KotlinSuperTypeListBuilder(
+            kotlinOrigin.getSuperTypeList(),
             manager,
             language,
             PsiReferenceList.Role.IMPLEMENTS_LIST

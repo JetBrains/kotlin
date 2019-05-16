@@ -23,31 +23,24 @@ import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.PsiReferenceList.Role
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.addSuperTypeEntry
+import org.jetbrains.kotlin.asJava.classes.findEntry
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtSuperTypeList
-import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-class KtLightPsiReferenceList (
-        override val clsDelegate: PsiReferenceList,
-        private val owner: KtLightClass
+class KtLightPsiReferenceList(
+    override val clsDelegate: PsiReferenceList,
+    private val owner: KtLightClass
 ) : KtLightElement<KtSuperTypeList, PsiReferenceList>, PsiReferenceList by clsDelegate {
     inner class KtLightSuperTypeReference(
-            override val clsDelegate: PsiJavaCodeReferenceElement
+        override val clsDelegate: PsiJavaCodeReferenceElement
     ) : KtLightElement<KtSuperTypeListEntry, PsiJavaCodeReferenceElement>, PsiJavaCodeReferenceElement by clsDelegate {
 
         override val kotlinOrigin by lazyPub {
-            val superTypeList = this@KtLightPsiReferenceList.kotlinOrigin ?: return@lazyPub null
-            val fqNameToFind = clsDelegate.qualifiedName ?: return@lazyPub null
-            val context = LightClassGenerationSupport.getInstance(project).analyzeWithContent(superTypeList.parent as KtClassOrObject)
-            superTypeList.entries.firstOrNull {
-                val referencedType = context[BindingContext.TYPE, it.typeReference]
-                referencedType?.constructor?.declarationDescriptor?.fqNameUnsafe?.asString() == fqNameToFind
-            }
+            clsDelegate.qualifiedName?.let { this@KtLightPsiReferenceList.kotlinOrigin?.findEntry(it) }
         }
 
         override fun getParent() = this@KtLightPsiReferenceList
@@ -77,19 +70,9 @@ class KtLightPsiReferenceList (
 
         val superTypeList = kotlinOrigin ?: return element
         val entry = element.kotlinOrigin ?: return element
-        // Only classes may be mentioned in 'extends' list, thus create super call instead simple type reference
-        val entryToAdd = if ((element.parent as? PsiReferenceList)?.role == Role.IMPLEMENTS_LIST && role == Role.EXTENDS_LIST) {
-            KtPsiFactory(this).createSuperTypeCallEntry("${entry.text}()")
-        }
-        else entry
-        // TODO: implement KtSuperListEntry qualification/shortening when inserting reference from another context
-        if (entry.parent != superTypeList) {
-            superTypeList.addEntry(entryToAdd)
-        }
-        else {
-            // Preserve original entry order
-            entry.replace(entryToAdd)
-        }
+
+        this.addSuperTypeEntry(superTypeList, entry, element)
+
         return element
     }
 }
