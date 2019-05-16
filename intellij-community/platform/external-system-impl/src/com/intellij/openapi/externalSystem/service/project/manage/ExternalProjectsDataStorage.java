@@ -56,7 +56,8 @@ import static com.intellij.openapi.externalSystem.model.ProjectKeys.PROJECT;
 public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaAdapter, PersistentStateComponent<ExternalProjectsDataStorage.State> {
   private static final Logger LOG = Logger.getInstance(ExternalProjectsDataStorage.class);
 
-  private static final int STORAGE_VERSION = 4;
+  // exposed for tests
+  public static final int STORAGE_VERSION = 5;
 
   @NotNull
   private final Project myProject;
@@ -340,9 +341,10 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
         continue;
       }
 
+      WriteAndCompressSession buffer = new WriteAndCompressSession();
       ExternalSystemApiUtil.visit(externalProject.getExternalProjectStructure(), dataNode -> {
         try {
-          dataNode.serializeData();
+          dataNode.serializeData(buffer);
         }
         catch (Exception e) {
           LOG.warn(e);

@@ -1,8 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.model
 
+import com.intellij.openapi.externalSystem.model.internal.InternalExternalProjectInfo
+import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsDataStorage
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
 import com.intellij.serialization.ObjectSerializer
+import com.intellij.serialization.VersionedFile
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.Before
@@ -12,6 +15,7 @@ import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.net.URLClassLoader
+import java.nio.file.Paths
 
 class DataNodeTest {
   lateinit var classLoader: ClassLoader
@@ -20,6 +24,25 @@ class DataNodeTest {
   @Before
   fun setUp() {
     classLoader = URLClassLoader(arrayOf(libUrl), javaClass.classLoader)
+  }
+
+  // open https://github.com/apereo/cas project in IDEA and then copy project.dat from system cache to somewhere
+  //@Test
+  fun testLoad() {
+    var versionedFile = VersionedFile(Paths.get("/Volumes/data/big-ion.ion"), ExternalProjectsDataStorage.STORAGE_VERSION)
+    var start = System.currentTimeMillis()
+    val data = versionedFile.readList(InternalExternalProjectInfo::class.java, externalSystemBeanConstructed)!!
+    println("Read in ${System.currentTimeMillis() - start}")
+
+    versionedFile = VersionedFile(Paths.get("/Volumes/data/big-ion2.ion"), ExternalProjectsDataStorage.STORAGE_VERSION, isCompressed = true)
+
+    start = System.currentTimeMillis()
+    versionedFile.writeList(data, InternalExternalProjectInfo::class.java)
+    println("Write in ${System.currentTimeMillis() - start}")
+
+    start = System.currentTimeMillis()
+    versionedFile.writeList(data, InternalExternalProjectInfo::class.java)
+    println("Second write in ${System.currentTimeMillis() - start}")
   }
 
   @Test
@@ -61,7 +84,8 @@ class DataNodeTest {
     val dataNodes = listOf(DataNode(Key.create(ProjectSystemId::class.java, 0), id, null),
                            DataNode(Key.create(ProjectSystemId::class.java, 0), id, null))
 
-    dataNodes.forEach { it.serializeData() }
+    val buffer = WriteAndCompressSession()
+    dataNodes.forEach { it.serializeData(buffer) }
     val out = BufferExposingByteArrayOutputStream()
     ObjectSerializer.instance.writeList(dataNodes, DataNode::class.java, out)
     val bytes = out.toByteArray()
@@ -97,7 +121,7 @@ class DataNodeTest {
 
   private fun wrapAndDeserialize(barObject: Any): DataNode<*> {
     val original = DataNode(Key.create(barObject.javaClass, 0), barObject, null)
-    original.serializeData()
+    original.serializeData(WriteAndCompressSession())
     val bytes = ObjectSerializer.instance.writeAsBytes(original)
     return ObjectSerializer.instance.read(DataNode::class.java, bytes)
   }
