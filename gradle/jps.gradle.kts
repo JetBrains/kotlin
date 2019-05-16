@@ -72,6 +72,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
                         kotlinJpsPluginJar()
 
+                        kotlinc()
+
                         ideaPlugin()
 
                         dist()
@@ -262,6 +264,26 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.dist() {
                 extractedDirectory(stdlibSources.singleFile)
             }
         }
+    }
+}
+
+fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinc() {
+    val kotlinCompilerProject = project(":kotlin-compiler")
+    val libraries by kotlinCompilerProject.configurations
+    create("kotlinc") {
+        directory("bin") {
+            directoryContent("$rootDir/compiler/cli/bin")
+        }
+
+        directory("lib") {
+            jarsFromConfiguration(libraries)
+        }
+
+        directory("license") {
+            directoryContent("$rootDir/license")
+        }
+        
+        file("$rootDir/bootstrap/build.txt")
     }
 }
 
