@@ -1,7 +1,6 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.internal.daemon;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.gradle.internal.id.IdGenerator;
 import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.launcher.daemon.client.DaemonClientConnection;
@@ -21,6 +20,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Vladislav.Soroka
@@ -45,8 +45,8 @@ public class DaemonStatusAction extends DaemonAction {
     private final ReportStatusDispatcher reportStatusDispatcher;
 
     ReportDaemonStatusClient(DaemonRegistry daemonRegistry,
-                                    DaemonConnector connector,
-                                    IdGenerator<?> idGenerator) {
+                             DaemonConnector connector,
+                             IdGenerator<?> idGenerator) {
       this.daemonRegistry = daemonRegistry;
       this.connector = connector;
       this.idGenerator = idGenerator;
@@ -106,7 +106,7 @@ public class DaemonStatusAction extends DaemonAction {
       for (DaemonStopEvent stopEvent : stopEvents) {
         DaemonExpirationStatus expirationStatus = stopEvent.getStatus();
         String daemonExpirationStatus =
-          expirationStatus != null ? StringUtil.toLowerCase(expirationStatus.name().replace("_", " ")) : "";
+          expirationStatus != null ? expirationStatus.name().replace("_", " ").toLowerCase(Locale.ENGLISH) : "";
         Long stopEventPid;
         if (GradleVersion.current().compareTo(GradleVersion.version("3.0")) <= 0) {
           try {
