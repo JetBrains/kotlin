@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class ClassSetProjectImportExtraModelProvider implements ProjectImportExtraModelProvider {
+public final class ClassSetProjectImportExtraModelProvider implements ProjectImportExtraModelProvider {
   @NotNull private final Set<Class> classSet = new LinkedHashSet<Class>();
 
   public ClassSetProjectImportExtraModelProvider(@NotNull Collection<Class> classes) {

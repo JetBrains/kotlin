@@ -13,5 +13,6 @@
     <orderEntry type="library" name="Gradle" level="project" />
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
   </component>
 </module>

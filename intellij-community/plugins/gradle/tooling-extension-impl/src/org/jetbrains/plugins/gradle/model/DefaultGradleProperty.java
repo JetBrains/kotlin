@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.model;
 
+import com.intellij.serialization.PropertyMapping;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,17 +18,11 @@ public class DefaultGradleProperty implements GradleProperty {
   @Nullable
   private final Serializable value;
 
+  @PropertyMapping({"name", "typeFqn", "value"})
   public DefaultGradleProperty(@NotNull String name, @Nullable String typeFqn, @Nullable Serializable value) {
     this.name = name;
     rootTypeFqn = typeFqn == null ? "Object" : typeFqn;
     this.value = value;
-  }
-
-  @SuppressWarnings("unused")
-  protected DefaultGradleProperty() {
-    this.name = "";
-    rootTypeFqn = "Object";
-    this.value = null;
   }
 
   public DefaultGradleProperty(GradleProperty property) {

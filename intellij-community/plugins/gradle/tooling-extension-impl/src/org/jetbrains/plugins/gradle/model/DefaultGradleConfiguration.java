@@ -1,13 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.model;
 
+import com.intellij.serialization.PropertyMapping;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Vladislav.Soroka
- */
-public class DefaultGradleConfiguration implements GradleConfiguration {
+public final class DefaultGradleConfiguration implements GradleConfiguration {
   private static final long serialVersionUID = 1L;
 
   private final String name;
@@ -15,16 +13,9 @@ public class DefaultGradleConfiguration implements GradleConfiguration {
   private final boolean visible;
   private final boolean scriptClasspathConfiguration;
 
+  @PropertyMapping({"name", "description", "visible"})
   public DefaultGradleConfiguration(String name, String description, boolean visible) {
     this(name, description, visible, false);
-  }
-
-  @SuppressWarnings("unused")
-  private DefaultGradleConfiguration() {
-    name = "";
-    description = "";
-    visible = false;
-    scriptClasspathConfiguration = false;
   }
 
   public DefaultGradleConfiguration(@NotNull String name, @Nullable String description, boolean visible, boolean scriptClasspathConfiguration) {

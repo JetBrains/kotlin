@@ -1,61 +1,44 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.model;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Vladislav.Soroka
- */
-public class DefaultExternalFilter implements ExternalFilter {
+public final class DefaultExternalFilter implements ExternalFilter {
   private static final long serialVersionUID = 1L;
 
   @NotNull
-  private String myFilterType;
+  private String filterType;
   @NotNull
-  private String myPropertiesAsJsonMap;
+  private String propertiesAsJsonMap;
 
   public DefaultExternalFilter() {
-    myPropertiesAsJsonMap = "";
-    myFilterType = "";
+    propertiesAsJsonMap = "";
+    filterType = "";
   }
 
 
   public DefaultExternalFilter(ExternalFilter filter) {
-    myPropertiesAsJsonMap = filter.getPropertiesAsJsonMap();
-    myFilterType = filter.getFilterType();
+    propertiesAsJsonMap = filter.getPropertiesAsJsonMap();
+    filterType = filter.getFilterType();
   }
 
   @NotNull
   @Override
   public String getFilterType() {
-    return myFilterType;
+    return filterType;
   }
 
   public void setFilterType(@NotNull String filterType) {
-    myFilterType = filterType;
+    this.filterType = filterType;
   }
 
   @Override
   @NotNull
   public String getPropertiesAsJsonMap() {
-    return myPropertiesAsJsonMap;
+    return propertiesAsJsonMap;
   }
 
   public void setPropertiesAsJsonMap(@NotNull String propertiesAsJsonMap) {
-    myPropertiesAsJsonMap = propertiesAsJsonMap;
+    this.propertiesAsJsonMap = propertiesAsJsonMap;
   }
 }
