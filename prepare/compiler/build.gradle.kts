@@ -66,6 +66,41 @@ dependencies {
 
     libraries(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
     libraries(commonDep("io.ktor", "ktor-network"))
+    libraries(kotlinStdlib("jdk8"))
+
+    libraries(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }
+    libraries(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
+    libraries(project(":kotlin-scripting-jvm")) { isTransitive = false }
+    libraries(project(":kotlin-annotations-android")) { isTransitive = false }
+    libraries(project(":kotlin-annotation-processing")) { isTransitive = false }
+    libraries(project(":kotlin-reflect")) { isTransitive = false }
+    libraries(project(":plugins:android-extensions-compiler")) { isTransitive = false }
+    libraries(project(":kotlin-compiler")) { isTransitive = false }
+    libraries(project(":kotlin-scripting-compiler")) { isTransitive = false }
+    libraries(project(":plugins:jvm-abi-gen")) { isTransitive = false }
+    libraries(project(":kotlin-scripting-common")) { isTransitive = false }
+    libraries(project(":kotlin-test:kotlin-test-testng")) { isTransitive = false }
+    libraries(project(":kotlin-annotation-processing-cli")) { isTransitive = false }
+    libraries(project(":kotlin-runner")) { isTransitive = false }
+    libraries(project(":kotlin-test:kotlin-test-junit5")) { isTransitive = false }
+    libraries(project(":kotlin-imports-dumper-compiler-plugin")) { isTransitive = false }
+    libraries(project(":kotlin-test:kotlin-test-js")) { isTransitive = false }
+    libraries(project(":kotlin-annotations-jvm")) { isTransitive = false }
+    libraries(project(":kotlinx-serialization-compiler-plugin")) { isTransitive = false }
+    libraries(project(":kotlin-daemon-client")) { isTransitive = false }
+    libraries(project(":kotlin-test:kotlin-test-jvm")) { isTransitive = false }
+    libraries(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
+    libraries(project(":kotlin-test:kotlin-test-junit")) { isTransitive = false }
+    libraries(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
+    libraries(project(":kotlin-preloader")) { isTransitive = false }
+    libraries(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
+    libraries(project(":kotlin-noarg-compiler-plugin")) { isTransitive = false }
+    libraries(project(":kotlin-main-kts")) { isTransitive = false }
+    libraries(project(":kotlin-source-sections-compiler-plugin")) { isTransitive = false }
+    libraries(project(":kotlin-script-runtime")) { isTransitive = false }
+    libraries(project(":kotlin-ant")) { isTransitive = false }
+    libraries(project(":kotlin-test:kotlin-test-annotations-common")) { isTransitive = false }
+    libraries(project(":libraries:tools:mutability-annotations-compat")) { isTransitive = false }
 
     fatJarContents(kotlinBuiltins())
     fatJarContents(commonDep("javax.inject"))
@@ -163,3 +198,11 @@ sourcesJar {
 }
 
 javadocJar()
+
+tasks.register("listDistProjects") {
+    doLast {
+        rootProject.getTasksByName("dist", true).forEach {
+            println(it.project.path)
+        }
+    }
+}
