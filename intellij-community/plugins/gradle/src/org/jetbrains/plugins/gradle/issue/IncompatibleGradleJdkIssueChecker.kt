@@ -78,7 +78,7 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
         GradleBundle.message("gradle.settings.text.jvm.path")
       )
       quickFixes.add(gradleSettingsFix)
-      issueDescription.append(" - Use Java 8 as Gradle JVM: <a href=\"${gradleSettingsFix.id}\">Fix Gradle settings</a> \n")
+      issueDescription.append(" - Use Java 8 as Gradle JVM: <a href=\"${gradleSettingsFix.id}\">Open Gradle settings</a> \n")
     }
 
     return object : BuildIssue {
