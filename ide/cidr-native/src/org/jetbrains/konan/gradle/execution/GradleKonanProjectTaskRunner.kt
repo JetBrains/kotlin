@@ -29,6 +29,7 @@ import org.jetbrains.konan.gradle.execution.GradleBuildTasksOrigin.*
 import org.jetbrains.kotlin.idea.configuration.externalProjectPath
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.platform.impl.isKotlinNative
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
@@ -98,7 +99,7 @@ class GradleKonanProjectTaskRunner : ProjectTaskRunner() {
             }
 
     private fun isNativeModule(module: Module): Boolean =
-            KotlinFacet.get(module)?.configuration?.settings?.platform?.isKotlinNative == true
+            KotlinFacet.get(module)?.configuration?.settings?.platform?.isNative() == true
 
     private fun ModuleBuildTask.collectGradleTasks(buildTasksMap: GradleBuildTasksMap) {
         val linkedExternalProjectPath = module.externalProjectPath ?: return

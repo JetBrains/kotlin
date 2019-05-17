@@ -6,10 +6,10 @@
 package org.jetbrains.konan.support
 
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.platform.IdePlatform
-import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 
 class NativeOnlyDefaultTargetPlatformKindProvider : DefaultIdeTargetPlatformKindProvider {
-    override val defaultPlatform: IdePlatform<*, *>
-        get() = CommonIdePlatformKind.defaultPlatform
+    override val defaultPlatform: TargetPlatform
+        get() = KonanPlatforms.defaultKonanPlatform
 }
