@@ -48,7 +48,7 @@ open class KotlinNativeTest : KotlinTest() {
         val clientSettings = TCServiceMessagesClientSettings(
             name,
             testNameSuffix = targetName,
-            prepandSuiteName = targetName != null,
+            prependSuiteName = targetName != null,
             treatFailedTestOutputAsStacktrace = true,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm
         )

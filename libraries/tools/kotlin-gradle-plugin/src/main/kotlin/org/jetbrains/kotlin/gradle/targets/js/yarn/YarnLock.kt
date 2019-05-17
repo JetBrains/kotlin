@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import com.google.gson.stream.JsonReader
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import java.io.File
 import java.io.StringReader
 
@@ -16,23 +17,11 @@ data class YarnLock(val entries: List<Entry>) {
         val resolved: String?,
         val integrity: String?,
         val dependencies: List<Dependency>
-    ) {
-        val packageKey = key.substringBeforeLast("@")
-    }
+    )
 
     data class Dependency(val key: String, val version: String?) {
-        val group: String?
-        val packageName: String
-
-        init {
-            if (key.contains("/")) {
-                group = key.substringBeforeLast("/").removePrefix("@")
-                packageName = key.substringAfterLast("/")
-            } else {
-                group = null
-                packageName = key
-            }
-        }
+        val scopedName: PackageJson.ScopedName
+            get() = PackageJson.scopedName(key)
     }
 
     companion object {
