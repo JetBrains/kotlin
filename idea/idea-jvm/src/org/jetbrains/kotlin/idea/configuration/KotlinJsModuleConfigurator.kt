@@ -42,6 +42,9 @@ open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {
     override val targetPlatform: TargetPlatform
         get() = JsPlatforms.defaultJsPlatform
 
+    @Suppress("DEPRECATION_ERROR")
+    override fun getTargetPlatform() = JsPlatforms.CompatJsPlatform
+
     override val presentableText: String
         get() = JavaScript.FULL_NAME
 

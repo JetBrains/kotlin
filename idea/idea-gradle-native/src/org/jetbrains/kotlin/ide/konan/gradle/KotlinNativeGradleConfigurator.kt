@@ -30,6 +30,9 @@ open class KotlinNativeGradleConfigurator : KotlinWithGradleConfigurator() {
 
     override val targetPlatform get() = KonanPlatforms.defaultKonanPlatform
 
+    @Suppress("DEPRECATION_ERROR")
+    override fun getTargetPlatform() = KonanPlatforms.CompatKonanPlatform
+
     override val presentableText get() = PRESENTABLE_TEXT
 
     companion object {

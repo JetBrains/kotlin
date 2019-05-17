@@ -26,6 +26,9 @@ class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithG
 
     override val targetPlatform: TargetPlatform = JvmPlatforms.defaultJvmPlatform
 
+    @Suppress("DEPRECATION_ERROR")
+    override fun getTargetPlatform(): org.jetbrains.kotlin.resolve.TargetPlatform = JvmPlatforms.CompatJvmPlatform
+
     override val presentableText: String = "Android with Gradle"
 
     public override fun isApplicable(module: Module): Boolean = module.getBuildSystemType() == AndroidGradle
@@ -44,11 +47,11 @@ class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithG
         }
         else {
             manipulator.configureModuleBuildScript(
-                    kotlinPluginName,
-                    getKotlinPluginExpression(file.isKtDsl()),
-                    getStdlibArtifactName(sdk, version),
-                    version,
-                    jvmTarget
+                kotlinPluginName,
+                getKotlinPluginExpression(file.isKtDsl()),
+                getStdlibArtifactName(sdk, version),
+                version,
+                jvmTarget
             )
         }
     }
