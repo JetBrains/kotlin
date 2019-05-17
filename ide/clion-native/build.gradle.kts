@@ -6,9 +6,10 @@ plugins {
 
 val clionUnscrambledJarDir: File by rootProject.extra
 
+val includeKotlinUltimate: Boolean = findProperty("includeKotlinUltimate")?.toString()?.toBoolean() == true
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-if (!isStandaloneBuild) {
+if (includeKotlinUltimate) {
     repositories {
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/markdown")
@@ -21,7 +22,7 @@ dependencies {
     compile(ultimateProjectDep(":ide:cidr-native"))
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
 
-    if (!isStandaloneBuild) {
+    if (includeKotlinUltimate) {
         compileOnly("org.jetbrains:markdown:${rootProject.extra["versions.markdown"]}")
     }
 }

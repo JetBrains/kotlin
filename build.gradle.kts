@@ -1,10 +1,10 @@
-import org.jetbrains.kotlin.ultimate.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    if (rootProject.findProject(":ide:cidr-native") != null) { // only for standalone build:
-        val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+    val includeKotlinUltimate: Boolean = findProperty("includeKotlinUltimate")?.toString()?.toBoolean() == true
+    val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
+    if (!includeKotlinUltimate) { // only for standalone build:
         repositories {
             if (cacheRedirectorEnabled) {
                 maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
@@ -18,9 +18,10 @@ buildscript {
     }
 }
 
-if (isStandaloneBuild) { // only for standalone build:
-    val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+val includeKotlinUltimate: Boolean = findProperty("includeKotlinUltimate")?.toString()?.toBoolean() == true
+val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
+if (!includeKotlinUltimate) { // only for standalone build:
     allprojects {
         configurations.maybeCreate("embedded")
 
@@ -40,7 +41,8 @@ plugins {
 }
 
 rootProject.apply {
-    from(ultimateProject(":").file("versions.gradle.kts"))
+    // include 'versions.gradle.kts' relative to 'kotlin-ultimate' project root
+    from(project.file("versions.gradle.kts"))
 }
 
 tasks["clean"].doLast { delete("dist") }

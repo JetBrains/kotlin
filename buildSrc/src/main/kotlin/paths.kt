@@ -21,11 +21,11 @@ fun Project.ultimatePath(path: String): String {
         "Kotlin Ultimate Gradle path should not start with $KOTLIN_ULTIMATE_SUBPROJECT_PATH_IN_KOTLIN"
     }
 
-    val ultimateProject = if (isStandaloneBuild)
-        rootProject
-    else
+    val ultimateProject = if (includeKotlinUltimate)
         rootProject.findProject(KOTLIN_ULTIMATE_SUBPROJECT_PATH_IN_KOTLIN)
                 ?: error("Can't locate \"$KOTLIN_ULTIMATE_SUBPROJECT_PATH_IN_KOTLIN\" project")
+    else
+        rootProject
 
     val ultimateProjectPath = ultimateProject.path
     return if (ultimateProjectPath == ":" && path.isNotEmpty())
@@ -33,8 +33,6 @@ fun Project.ultimatePath(path: String): String {
     else
         ultimateProjectPath + path
 }
-
-fun Project.ultimateProject(path: String): Project = project(ultimatePath(path))
 
 fun Project.ultimateProjectDep(path: String, configuration: String? = null): ProjectDependency =
     dependencies.project(ultimatePath(path), configuration)

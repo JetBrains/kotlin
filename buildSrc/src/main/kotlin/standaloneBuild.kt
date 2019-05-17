@@ -12,29 +12,51 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.kotlin.dsl.*
 
-// absolute path to "cidr-native" sub-project in standalone Kotlin Ultimate build
-private const val CIDR_NATIVE_SUBPROJECT_PATH_IN_KOTLIN_ULTIMATE = ":ide:cidr-native"
-
-val Project.isStandaloneBuild
-    get() = rootProject.findProject(CIDR_NATIVE_SUBPROJECT_PATH_IN_KOTLIN_ULTIMATE) != null
+internal val Project.includeKotlinUltimate
+    get() = rootProject.findProperty("includeKotlinUltimate")?.toString()?.toBoolean() == true
 
 fun Project.ideaPluginJarDep(): Any {
-    return if (isStandaloneBuild) {
+    return if (includeKotlinUltimate) {
+        // depend on the artifact to be build
+        dependencies.project(":prepare:idea-plugin", configuration = "runtimeJar")
+    } else {
         // reuse JAR artifact from downloaded plugin
         val ideaPluginForCidrDir: String by rootProject.extra
         fileTree(ideaPluginForCidrDir) {
             include("lib/kotlin-plugin.jar")
         }
     }
-    else
-        // depend on the artifact to be build
-        dependencies.project(":prepare:idea-plugin", configuration = "runtimeJar")
 }
 
 fun Project.addIdeaNativeModuleDeps() {
     dependencies {
 
-        if (isStandaloneBuild) {
+        if (includeKotlinUltimate) {
+            // Gradle projects with Kotlin/Native-specific logic
+            // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
+            add("compile", project(":idea:idea-native"))
+            add("compile", project(":idea:idea-gradle-native"))
+
+            // Detect IDE name and version
+            val ideName = if (rootProject.findProperty("intellijUltimateEnabled")?.toString()?.toBoolean() == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
+            val ideVersion = rootProject.extra["versions.intellijSdk"] as String
+
+            // Java APIs (from Big Kotlin project)
+            val javaApis = add("compile", "kotlin.build:$ideName:$ideVersion") as ExternalModuleDependency
+            with (javaApis) {
+                artifact {
+                    name = "java-api"
+                    type = "jar"
+                    extension = "jar"
+                }
+                artifact {
+                    name = "java-impl"
+                    type = "jar"
+                    extension = "jar"
+                }
+                isTransitive = false
+            }
+        } else {
             // contents of Kotlin plugin
             val ideaPluginForCidrDir: String by rootProject.extra
             val ideaPluginJars = fileTree(ideaPluginForCidrDir) {
@@ -63,31 +85,6 @@ fun Project.addIdeaNativeModuleDeps() {
             val cidrPlatformDepsDir: String by rootProject.extra
             val cidrPlatformDeps = fileTree(cidrPlatformDepsDir) { include(PLATFORM_DEPS_JAR_NAME) }
             add("compile", cidrPlatformDeps)
-        } else {
-            // Gradle projects with Kotlin/Native-specific logic
-            // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
-            add("compile", project(":idea:idea-native"))
-            add("compile", project(":idea:idea-gradle-native"))
-
-            // Detect IDE name and version
-            val ideName = if (rootProject.findProperty("intellijUltimateEnabled")?.toString()?.toBoolean() == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
-            val ideVersion = rootProject.extra["versions.intellijSdk"] as String
-
-            // Java APIs (from Big Kotlin project)
-            val javaApis = add("compile", "kotlin.build:$ideName:$ideVersion") as ExternalModuleDependency
-            with (javaApis) {
-                artifact {
-                    name = "java-api"
-                    type = "jar"
-                    extension = "jar"
-                }
-                artifact {
-                    name = "java-impl"
-                    type = "jar"
-                    extension = "jar"
-                }
-                isTransitive = false
-            }
         }
     }
 }

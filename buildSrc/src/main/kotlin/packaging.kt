@@ -45,15 +45,15 @@ fun Project.packageCidrPlugin(
 
     includeProjectTemplates(project(predecessorProjectName))
 
-    val ideaPluginDir = if (isStandaloneBuild) {
-        // use dir where IDEA plugin has been already downloaded
-        val ideaPluginForCidrDir: File by rootProject.extra
-        ideaPluginForCidrDir
-    } else {
+    val ideaPluginDir = if (includeKotlinUltimate) {
         dependsOn(":ideaPlugin")
         // use IDEA plugin dir from Big Kotlin
         val ideaPluginDir: File by rootProject.extra
         ideaPluginDir
+    } else {
+        // use dir where IDEA plugin has been already downloaded
+        val ideaPluginForCidrDir: File by rootProject.extra
+        ideaPluginForCidrDir
     }
 
     from(ideaPluginDir) {

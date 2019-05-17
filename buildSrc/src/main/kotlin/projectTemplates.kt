@@ -125,13 +125,13 @@ private fun Project.getTemplateParameters(): Map<String, String> {
 }
 
 private val Project.kotlinBuildNumberByIdeaPlugin
-    get() = if (isStandaloneBuild) {
-        val ideaPluginForCidrBuildNumber: String by rootProject.extra
-        ideaPluginForCidrBuildNumber
-    } else {
+    get() = if (includeKotlinUltimate) {
         // take it from Big Kotlin
         val buildNumber: String by rootProject.extra
         buildNumber
+    } else {
+        val ideaPluginForCidrBuildNumber: String by rootProject.extra
+        ideaPluginForCidrBuildNumber
     }
 
 // inspired by com.intellij.openapi.util.SystemInfoRt
