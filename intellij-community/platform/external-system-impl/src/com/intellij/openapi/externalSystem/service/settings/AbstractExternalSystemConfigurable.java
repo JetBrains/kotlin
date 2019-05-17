@@ -106,7 +106,8 @@ public abstract class AbstractExternalSystemConfigurable<
       return;
     }
 
-    myComponent.add(new TitledSeparator(myExternalSystemId.getReadableName() + " projects"),
+    myComponent.add(new TitledSeparator(ExternalSystemBundle.message("settings.title.system.settings",
+                                                                     myExternalSystemId.getReadableName())),
                     ExternalSystemUiUtil.getFillLineConstraints(0));
 
     OnePixelSplitter splitter = new OnePixelSplitter(false, .16f);

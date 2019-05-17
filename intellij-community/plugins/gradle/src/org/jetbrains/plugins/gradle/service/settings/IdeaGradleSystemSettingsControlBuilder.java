@@ -25,6 +25,7 @@ import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.HyperlinkAdapter;
@@ -53,6 +54,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.intellij.openapi.ui.Messages.getQuestionIcon;
+import static org.jetbrains.plugins.gradle.service.settings.IdeaGradleProjectSettingsControlBuilder.getIDEName;
 
 /**
  * @author Vladislav.Soroka
@@ -91,12 +93,11 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     addVMOptionsControl(canvas, indentLevel);
 
     if (!dropStoreExternallyCheckBox) {
-      myGenerateImlFilesCheckBox = new JBCheckBox(
-        "Generate IDE-specific project files");
+      myGenerateImlFilesCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.generate.iml.files"));
       canvas.add(myGenerateImlFilesCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
 
       myGenerateImlFilesHint = new JBLabel(
-        XmlStringUtil.wrapInHtml("Enable, if you need to manually configure the imported project in the IDE (e.g. add Facets) and to share these settings via VCS\n"),
+        XmlStringUtil.wrapInHtml(GradleBundle.message("gradle.settings.text.generate.iml.files.hint" , getIDEName())),
         UIUtil.ComponentStyle.SMALL);
       myGenerateImlFilesHint.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
 
@@ -124,7 +125,10 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     if (myGradleVmOptionsField != null) {
       String vmOptions = trimIfPossible(myInitialSettings.getGradleVmOptions());
       myGradleVmOptionsField.setText(vmOptions);
-      myGradleVmOptionsComponents.forEach(it -> it.setVisible(vmOptions != null));
+      myGradleVmOptionsComponents.forEach(it -> {
+        boolean showSetting = vmOptions != null || Registry.is("gradle.settings.showDeprecatedSettings", false);
+        it.setVisible(showSetting);
+      });
     }
 
     if (myGenerateImlFilesCheckBox != null) {
@@ -205,15 +209,13 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
   private void addServiceDirectoryControl(PaintAwarePanel canvas, int indentLevel) {
     if (dropServiceDirectory) return;
 
-    myServiceDirectoryLabel = new JBLabel("Gradle user home:");
-    myServiceDirectoryHint = new JBLabel(
-      XmlStringUtil.wrapInHtml("Override the default location where Gradle stores downloaded files, " +
-                               "e.g. to tune anti-virus software on Windows"),
-      UIUtil.ComponentStyle.SMALL);
+    myServiceDirectoryLabel = new JBLabel(GradleBundle.message("gradle.settings.text.user.home"));
+    myServiceDirectoryHint = new JBLabel(XmlStringUtil.wrapInHtml(GradleBundle.message("gradle.settings.text.user.home.hint")),
+                                         UIUtil.ComponentStyle.SMALL);
     myServiceDirectoryHint.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
 
     myServiceDirectoryPathField = new TextFieldWithBrowseButton(new JBTextField());
-    myServiceDirectoryPathField.addBrowseFolderListener("", "Select Gradle user home directory", null,
+    myServiceDirectoryPathField.addBrowseFolderListener("", GradleBundle.message("gradle.settings.text.user.home.dialog.title"), null,
                                                         new FileChooserDescriptor(false, true, false, false, false, false),
                                                         TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
@@ -230,7 +232,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
 
   private void addVMOptionsControl(@NotNull PaintAwarePanel canvas, int indentLevel) {
     if (!dropVmOptions) {
-      JBLabel label = new JBLabel(GradleBundle.message("gradle.settings.text.vm.options"));
+      JBLabel label = new JBLabel("Gradle VM options:");
       canvas.add(label, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
       myGradleVmOptionsComponents.add(label);
 

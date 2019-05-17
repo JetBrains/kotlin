@@ -302,12 +302,12 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     myImportPanel = addComponentsGroup(null, content, indentLevel, panel -> {
       if (!dropResolveModulePerSourceSetCheckBox) {
         panel.add(
-          myResolveModulePerSourceSetCheckBox = new JBCheckBox("Generate " + getIDEName() + " module per Gradle source set"),
+          myResolveModulePerSourceSetCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.module.per.source.set",
+                                                                                    getIDEName())),
           ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
 
         myResolveModulePerSourceSetHintLabel = new JBLabel(
-          XmlStringUtil.wrapInHtml("This setting is deprecated and remains only for troubleshooting since it's not fully compatible with the Gradle's model.<br>" +
-                                   "Please consider restoring it to the default (checked)"),
+          XmlStringUtil.wrapInHtml(GradleBundle.message("gradle.settings.text.module.per.source.set.hint")),
           UIUtil.ComponentStyle.SMALL);
         myResolveModulePerSourceSetHintLabel.setIcon(AllIcons.General.BalloonWarning12);
         myResolveModulePerSourceSetHintLabel.setVerticalTextPosition(SwingConstants.TOP);
@@ -321,7 +321,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
       if (!dropResolveExternalAnnotationsCheckBox) {
         panel.add(
-          myResolveExternalAnnotationsCheckBox = new JBCheckBox("Download external annotations for dependencies"),
+          myResolveExternalAnnotationsCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.download.annotations")),
           ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
       }
     });
@@ -438,7 +438,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
     myGradleDistributionComboBox.setModel(new CollectionComboBoxModel<>(availableDistributions));
     if (!availableDistributions.isEmpty()) {
-      content.add(new JBLabel("Use Gradle from:"), ExternalSystemUiUtil.getLabelConstraints(indentLevel));
+      content.add(new JBLabel(GradleBundle.message("gradle.settings.text.distribution")), ExternalSystemUiUtil.getLabelConstraints(indentLevel));
       content.add(myGradleDistributionComboBox, ExternalSystemUiUtil.getLabelConstraints(0));
 
       JPanel additionalControlsPanel = new JPanel(new GridBagLayout());
@@ -667,7 +667,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     if (myResolveModulePerSourceSetCheckBox != null) {
       myResolveModulePerSourceSetCheckBox.setSelected(settings.isResolveModulePerSourceSet());
       boolean showSetting = !settings.isResolveModulePerSourceSet()
-                            || Registry.is("gradle.settings.showModulePerSourceSetSetting", false);
+                            || Registry.is("gradle.settings.showDeprecatedSettings", false);
       myResolveModulePerSourceSetCheckBox.setVisible(showSetting);
       myResolveModulePerSourceSetHintLabel.setVisible(showSetting);
     }
@@ -727,14 +727,11 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   }
 
   private void addDelegationComponents(PaintAwarePanel content, int indentLevel) {
-    myDelegatePanel = addComponentsGroup("Build and run", content, indentLevel, panel -> {
+    myDelegatePanel = addComponentsGroup(GradleBundle.message("gradle.settings.text.build.run.title"), content, indentLevel, panel -> {
       if (dropDelegateBuildCombobox && dropTestRunnerCombobox) return;
 
       JBLabel label = new JBLabel(
-        XmlStringUtil.wrapInHtml(
-                "By default " +  getIDEName() + " uses Gradle to build the project and run the tasks.<br><br>" +
-                "In a pure Java/Kotlin project, building and running by means of the IDE might be faster, thanks to the optimizations. " +
-                "Note, that the IDE doesn’t support all Gradle features and the behavior might differ"),
+        XmlStringUtil.wrapInHtml(GradleBundle.message("gradle.settings.text.build.run.hint", getIDEName())),
         UIUtil.ComponentStyle.SMALL);
       label.setForeground(UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER));
 
@@ -748,7 +745,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
         myDelegateBuildCombobox.setRenderer(new MyItemCellRenderer<>());
         myDelegateBuildCombobox.setSelectedItem(new BuildRunItem(myInitialSettings.getDelegatedBuild()));
 
-        myDelegateBuildLabel = new JBLabel("Build and run using:");
+        myDelegateBuildLabel = new JBLabel(GradleBundle.message("gradle.settings.text.build.run"));
         panel.add(myDelegateBuildLabel, getLabelConstraints(indentLevel + 1));
         panel.add(myDelegateBuildCombobox);
         panel.add(Box.createGlue(), ExternalSystemUiUtil.getFillLineConstraints(indentLevel + 1));
@@ -761,7 +758,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
         myTestRunnerCombobox.setRenderer(new MyItemCellRenderer<>());
         myTestRunnerCombobox.setSelectedItem(new TestRunnerItem(myInitialSettings.getTestRunner()));
 
-        myTestRunnerLabel = new JBLabel("Run tests using:");
+        myTestRunnerLabel = new JBLabel(GradleBundle.message("gradle.settings.text.run.tests"));
         panel.add(myTestRunnerLabel, getLabelConstraints(indentLevel + 1));
         panel.add(myTestRunnerCombobox);
         panel.add(Box.createGlue(), ExternalSystemUiUtil.getFillLineConstraints(indentLevel + 1));
@@ -947,7 +944,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     }
   }
 
-  private String getIDEName() {
+  static String getIDEName() {
     return ApplicationNamesInfo.getInstance().getFullProductName();
   }
 
@@ -976,7 +973,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
         return getIDEName();
       }
       if (runner == TestRunner.CHOOSE_PER_TEST) {
-        return GradleBundle.message("gradle.preferred_test_runner.CHOOSE_PER_TEST");
+        return GradleBundle.message("gradle.settings.text.build.run.per.test");
       }
       LOG.error("Unexpected: " + runner);
       return "Unexpected: " + runner;
@@ -1004,13 +1001,13 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       if (value != null) {
         switch (value) {
           case BUNDLED:
-            return "Bundled with IDE (version " + GradleVersion.current().getVersion() + ")";
+            return GradleBundle.message("gradle.settings.text.distribution.bundled", GradleVersion.current().getVersion());
           case DEFAULT_WRAPPED:
-            return "'gradle-wrapper.properties' file";
+            return GradleBundle.message("gradle.settings.text.distribution.wrapper");
           case WRAPPED:
-            return "'wrapper' task in Gradle build script";
+            return GradleBundle.message("gradle.settings.text.distribution.wrapper.task");
           case LOCAL:
-            return "Specified location";
+            return GradleBundle.message("gradle.settings.text.distribution.location");
         }
       }
       LOG.error("Unexpected: " + value);

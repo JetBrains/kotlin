@@ -122,8 +122,8 @@
     <externalSystem.runConfigurationImporter
         implementation="org.jetbrains.plugins.gradle.service.execution.GradleRunConfigurationImporter"/>
 
-    <registryKey key="gradle.settings.showModulePerSourceSetSetting" defaultValue="false"
-                 description="Enables 'Generate module per source set' setting for troubleshooting"/>
+    <registryKey key="gradle.settings.showDeprecatedSettings" defaultValue="false"
+                 description="Enables some deprecated setting in the Gradle settings dialog for troubleshooting"/>
   </extensions>
 
   <actions>
