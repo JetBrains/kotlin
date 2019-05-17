@@ -635,7 +635,18 @@ val zipCompiler by task<Zip> {
     }
 }
 
+val zipStdlibTests by task<Zip> {
+    destinationDirectory.set(file(distDir))
+    archiveFileName.set("kotlin-stdlib-tests.zip")
+    from("libraries/stdlib/common/test") { into("common") }
+    from("libraries/stdlib/test") { into("test") }
+    doLast {
+        logger.lifecycle("Stdlib tests are packed to ${archiveFile.get()}")
+    }
+}
+
 val zipTestData by task<Zip> {
+    dependsOn(zipStdlibTests)
     destinationDir = file(distDir)
     archiveName = "kotlin-test-data.zip"
     from("compiler/testData") { into("compiler") }
