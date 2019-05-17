@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 open class KotlinJsTargetPreset(
     project: Project,
     kotlinPluginVersion: String
-) : KotlinOnlyTargetPreset<KotlinJsCompilation>(
+) : KotlinOnlyTargetPreset<KotlinJsTarget, KotlinJsCompilation>(
     project,
     kotlinPluginVersion
 ) {
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
-    override fun createKotlinOnlyTarget() = KotlinJsTarget(project, platformType)
+    override fun instantiateTarget() = KotlinJsTarget(project, platformType)
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
 
