@@ -102,7 +102,7 @@ internal fun StaticData.createConstArrayList(array: ConstPointer, length: Int): 
     // Now sort these values according to the order of fields returned by getFields()
     // to match the sorting order of the real ArrayList().
     val sorted = linkedMapOf<String, ConstValue>()
-    getFields(arrayListClass).forEach {
+    context.getLayoutBuilder(arrayListClass).fields.forEach {
         val fqName = it.fqNameForIrSerialization.asString()
         sorted.put(fqName, arrayListFields[fqName]!!)
     }

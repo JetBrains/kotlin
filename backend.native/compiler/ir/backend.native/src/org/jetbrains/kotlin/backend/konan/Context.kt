@@ -257,10 +257,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         KonanReflectionTypes(moduleDescriptor, KonanFqNames.internalPackageName)
     }
 
-    private val vtableBuilders = mutableMapOf<IrClass, ClassVtablesBuilder>()
+    val layoutBuilders = mutableMapOf<IrClass, ClassLayoutBuilder>()
 
-    fun getVtableBuilder(classDescriptor: IrClass) = vtableBuilders.getOrPut(classDescriptor) {
-        ClassVtablesBuilder(classDescriptor, this)
+    fun getLayoutBuilder(irClass: IrClass) = layoutBuilders.getOrPut(irClass) {
+        ClassLayoutBuilder(irClass, this)
     }
 
     // We serialize untouched descriptor tree and inline IR bodies

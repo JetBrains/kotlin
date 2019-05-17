@@ -651,8 +651,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                         value
                                                 )
                                             } else {
-                                                val vTableBuilder = context.getVtableBuilder(owner)
-                                                val vtableIndex = vTableBuilder.vtableIndex(callee)
+                                                val vtableIndex = context.getLayoutBuilder(owner).vtableIndex(callee)
                                                 DataFlowIR.Node.VtableCall(
                                                         symbolTable.mapFunction(callee.target),
                                                         receiverType,

@@ -530,9 +530,9 @@ internal object DataFlowIR {
 
             type.superTypes += irClass.superTypes.map { mapClassReferenceType(it.getClass()!!) }
             if (!isAbstract) {
-                val vtableBuilder = context.getVtableBuilder(irClass)
-                type.vtable += vtableBuilder.vtableEntries.map { mapFunction(it.getImplementation(context)!!) }
-                vtableBuilder.methodTableEntries.forEach {
+                val layoutBuilder = context.getLayoutBuilder(irClass)
+                type.vtable += layoutBuilder.vtableEntries.map { mapFunction(it.getImplementation(context)!!) }
+                layoutBuilder.methodTableEntries.forEach {
                     type.itable[it.overriddenFunction.functionName.localHash.value] = mapFunction(it.getImplementation(context)!!)
                 }
             }
