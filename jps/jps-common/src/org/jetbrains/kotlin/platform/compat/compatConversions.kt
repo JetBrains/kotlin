@@ -32,6 +32,21 @@ fun NewPlatform.toOldPlatform(): OldPlatform = when (val single = singleOrNull()
     else -> error("Unknown platform $single")
 }
 
+fun OldPlatform.toNewPlatform(): NewPlatform = when (this) {
+    is CommonPlatforms.CompatCommonPlatform -> this
+    is JvmPlatforms.CompatJvmPlatform -> this
+    is JsPlatforms.CompatJsPlatform -> this
+    is KonanPlatforms.CompatKonanPlatform -> this
+    else -> error(
+        "Can't convert org.jetbrains.kotlin.resolve.TargetPlatform to org.jetbrains.kotlin.platform.TargetPlatform: " +
+                "non-Compat instance passed\n" +
+                "toString: $this\n" +
+                "class: ${this::class}\n" +
+                "hashCode: ${this.hashCode().toString(16)}"
+    )
+}
+
+
 fun IdePlatform<*, *>.toNewPlatform(): NewPlatform = when (this) {
     is CommonIdePlatformKind.Platform -> CommonPlatforms.defaultCommonPlatform
     is JvmIdePlatformKind.Platform -> JvmPlatforms.jvmPlatformByTargetVersion(this.version)
