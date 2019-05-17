@@ -96,6 +96,8 @@ open class TypeApproximatorConfiguration {
         override val allFlexible: Boolean get() = true
         override val intersection get() = ALLOWED
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
+        override val errorType: Boolean get() = true
+
         override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean = true
     }
 }
