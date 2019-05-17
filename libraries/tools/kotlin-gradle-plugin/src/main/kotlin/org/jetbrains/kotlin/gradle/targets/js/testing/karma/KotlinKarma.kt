@@ -55,13 +55,20 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         useTeamcityReporter()
         useMocha()
         useWebpack()
+        useSourceMapSupport()
 
         config.singleRun = true
+        config.autoWatch = false
     }
 
     private fun useTeamcityReporter() {
         requiredDependencies.add(versions.karmaTeamcityReporter)
         config.reporters.add("teamcity")
+    }
+
+    internal fun watch() {
+        config.singleRun = false
+        config.autoWatch = true
     }
 
     fun useConfigDirectory(dir: File) {
@@ -157,11 +164,13 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     }
 
     fun useSourceMapSupport() {
-        config.frameworks.add("source-map-support")
-        requiredDependencies.add(versions.karmaSourceMapSupport)
-
+        requiredDependencies.add(versions.karmaSourceMapLoader)
         sourceMaps = true
         addPreprocessor("sourcemap")
+
+        // stacktraces with sourcemaps
+        requiredDependencies.add(versions.karmaSourceMapSupport)
+        config.frameworks.add("source-map-support")
     }
 
     private fun addPreprocessor(name: String, predicate: (String) -> Boolean = { true }) {
@@ -219,7 +228,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         val args = nodeJsArgs +
                 nodeModules.map { npmProject.require(it) } +
-                listOf("start", karmaConfJs.absolutePath)
+                listOf("start", karmaConfJs.absolutePath, "--debug")
 
         return object : TCServiceMessagesTestExecutionSpec(
             forkOptions,
@@ -244,8 +253,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             override fun createClient(testResultProcessor: TestResultProcessor, log: Logger) =
                 object : TCServiceMessagesClient(testResultProcessor, clientSettings, log) {
                     override fun printNonTestOutput(actualText: String) {
-                        suppressedOutput.appendln(actualText)
-                        progressLogger.progress(actualText)
+                        val value = actualText.trimEnd()
+                        suppressedOutput.appendln(value)
+                        progressLogger.progress(value)
                     }
 
                     val baseTestNameSuffix get() = settings.testNameSuffix
