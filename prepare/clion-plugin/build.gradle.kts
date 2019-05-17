@@ -17,8 +17,8 @@ val clionCustomPluginRepoUrl: URL by rootProject.extra
 val cidrPlugin: Configuration by configurations.creating
 
 dependencies {
-    cidrPlugin(ultimateProjectDep(":prepare:cidr-plugin"))
-    embedded(ultimateProjectDep(":ide:clion-native")) { isTransitive = false }
+    cidrPlugin(project(ultimatePath(":prepare:cidr-plugin")))
+    embedded(project(ultimatePath(":ide:clion-native"))) { isTransitive = false }
 }
 
 val preparePluginXml: Task by preparePluginXml(

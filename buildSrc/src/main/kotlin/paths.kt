@@ -9,8 +9,6 @@
 package org.jetbrains.kotlin.ultimate
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.kotlin.dsl.*
 
 // absolute path to the "kotlin-ultimate" sub-project in multi-project Gradle build
 private const val KOTLIN_ULTIMATE_SUBPROJECT_PATH_IN_KOTLIN = ":kotlin-ultimate"
@@ -33,6 +31,3 @@ fun Project.ultimatePath(path: String): String {
     else
         ultimateProjectPath + path
 }
-
-fun Project.ultimateProjectDep(path: String, configuration: String? = null): ProjectDependency =
-    dependencies.project(ultimatePath(path), configuration)
