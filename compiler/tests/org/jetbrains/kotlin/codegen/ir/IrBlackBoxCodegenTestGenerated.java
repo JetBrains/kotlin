@@ -310,6 +310,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("arrayConstructorWithNonInlineLambda.kt")
+        public void testArrayConstructorWithNonInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/arrayConstructorWithNonInlineLambda.kt");
+        }
+
         @TestMetadata("arrayConstructorsSimple.kt")
         public void testArrayConstructorsSimple() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/arrayConstructorsSimple.kt");

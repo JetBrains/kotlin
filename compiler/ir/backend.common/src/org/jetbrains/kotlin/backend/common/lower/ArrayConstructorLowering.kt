@@ -80,11 +80,16 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
                     putValueArgument(1, irGet(sizeVar))
                 }
                 body = irBlock {
-                    val value =
-                        lambda?.inline(listOf(index)) ?: irCallOp(invoke.symbol, invoke.returnType, irGet(invokableVar!!), irGet(index))
+                    val tempIndex = irTemporary(irGet(index))
+                    val value = lambda?.inline(listOf(tempIndex)) ?: irCallOp(
+                        invoke.symbol,
+                        invoke.returnType,
+                        irGet(invokableVar!!),
+                        irGet(tempIndex)
+                    )
                     +irCall(result.type.getClass()!!.functions.single { it.name == OperatorNameConventions.SET }).apply {
                         dispatchReceiver = irGet(result)
-                        putValueArgument(0, irGet(index))
+                        putValueArgument(0, irGet(tempIndex))
                         putValueArgument(1, value)
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
