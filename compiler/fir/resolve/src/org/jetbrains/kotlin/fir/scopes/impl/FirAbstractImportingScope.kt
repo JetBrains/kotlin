@@ -7,8 +7,13 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processConstructors
 import org.jetbrains.kotlin.fir.symbols.*
@@ -21,7 +26,23 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
 
     protected val scopeCache = ScopeSession()
 
-    fun <T : ConeCallableSymbol> processCallables(
+
+    private fun getStaticsScope(classId: ClassId): FirScope? {
+        provider.getClassUseSiteMemberScope(classId, session, scopeCache)?.let { return it }
+
+
+        val symbol = provider.getClassLikeSymbolByFqName(classId) ?: error("No scope/symbol for $classId")
+        if (symbol is ConeTypeAliasSymbol) {
+            val expansionSymbol = symbol.firUnsafe<FirTypeAlias>().expandedConeType?.lookupTag?.toSymbol(session)
+            if (expansionSymbol as? ConeClassLikeSymbol != null) {
+                return getStaticsScope(expansionSymbol.classId)
+            }
+        }
+
+        return null
+    }
+
+    protected fun <T : ConeCallableSymbol> processCallables(
         import: FirResolvedImport,
         name: Name,
         token: TowerScopeLevel.Token<T>,
@@ -31,9 +52,8 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
 
         val classId = import.resolvedClassId
         if (classId != null) {
+            val scope = getStaticsScope(classId) ?: return ProcessorAction.NEXT
 
-            val scope =
-                provider.getClassUseSiteMemberScope(classId, session, scopeCache) ?: error("No scope for $classId")
 
             val action = when (token) {
                 TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(
@@ -75,7 +95,7 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
         return ProcessorAction.NEXT
     }
 
-    protected abstract fun <T : ConeCallableSymbol> processCallables(
+    abstract fun <T : ConeCallableSymbol> processCallables(
         name: Name,
         token: TowerScopeLevel.Token<T>,
         processor: (ConeCallableSymbol) -> ProcessorAction

@@ -10,8 +10,8 @@ FILE: objects.kt
 
     }
     public final fun use(): R|A| {
-        ^use R|/A|
+        ^use Q|A|
     }
     public final fun bar(): R|A| {
-        ^bar R|/A|.R|/A.foo|()
+        ^bar Q|A|.R|/A.foo|()
     }

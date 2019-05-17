@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.transformers.firSafeNullable
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
@@ -146,7 +147,7 @@ class KotlinDeserializedJvmSymbolsProvider(
     ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
 
-        return symbol.firUnsafe<FirRegularClass>().buildDefaultUseSiteScope(session, scopeSession)
+        return symbol.firSafeNullable<FirRegularClass>()?.buildDefaultUseSiteScope(session, scopeSession)
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {

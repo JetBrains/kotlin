@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.firSafeNullable
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
@@ -39,7 +40,8 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
         // TODO: add invoke cases
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
-                if (explicitReceiver != null) return sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER)
+                if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier)
+                    return sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER)
             }
             EXTENSION_RECEIVER, DISPATCH_RECEIVER -> {
                 if (explicitReceiver == null) return sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER)

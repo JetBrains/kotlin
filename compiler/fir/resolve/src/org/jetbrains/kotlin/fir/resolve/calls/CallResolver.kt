@@ -8,16 +8,21 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByNameWithAction
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
@@ -25,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
@@ -253,6 +259,84 @@ class ScopeTowerLevel(
 
 }
 
+/**
+ *  Handles only statics and top-levels, DOES NOT handle objects/companions members
+ */
+class QualifiedReceiverTowerLevel(session: FirSession) : SessionBasedTowerLevel(session) {
+    override fun <T : ConeSymbol> processElementsByName(
+        token: TowerScopeLevel.Token<T>,
+        name: Name,
+        explicitReceiver: ExpressionReceiverValue?,
+        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
+    ): ProcessorAction {
+        val qualifiedReceiver = explicitReceiver?.explicitReceiverExpression as FirResolvedQualifier
+        val scope = FirExplicitSimpleImportingScope(
+            listOf(
+                FirResolvedImportImpl(
+                    session,
+                    FirImportImpl(session, null, FqName.topLevel(name), false, null),
+                    qualifiedReceiver.packageFqName,
+                    qualifiedReceiver.relativeClassFqName
+                )
+            ), session
+        )
+
+        return if (token == TowerScopeLevel.Token.Objects) {
+            scope.processClassifiersByNameWithAction(name, FirPosition.OTHER) {
+                processor.consumeCandidate(it as T, null)
+            }
+        } else {
+            scope.processCallables(name, token.cast()) {
+                val fir = it.firUnsafe<FirCallableMemberDeclaration>()
+                if (fir.isStatic || it.callableId.classId == null) {
+                    processor.consumeCandidate(it as T, null)
+                } else {
+                    ProcessorAction.NEXT
+                }
+            }
+        }
+    }
+
+}
+
+class QualifiedReceiverTowerDataConsumer<T : ConeSymbol>(
+    val session: FirSession,
+    val name: Name,
+    val token: TowerScopeLevel.Token<T>,
+    val explicitReceiver: ExpressionReceiverValue,
+    val candidateFactory: CandidateFactory
+) : TowerDataConsumer() {
+    override fun consume(
+        kind: TowerDataKind,
+        towerScopeLevel: TowerScopeLevel,
+        resultCollector: CandidateCollector,
+        group: Int
+    ): ProcessorAction {
+        if (checkSkip(group, resultCollector)) return ProcessorAction.NEXT
+        if (kind != TowerDataKind.EMPTY) return ProcessorAction.NEXT
+
+        return QualifiedReceiverTowerLevel(session).processElementsByName(
+            token,
+            name,
+            explicitReceiver,
+            processor = object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
+                override fun consumeCandidate(symbol: T, dispatchReceiverValue: ClassDispatchReceiverValue?): ProcessorAction {
+                    assert(dispatchReceiverValue == null)
+                    resultCollector.consumeCandidate(
+                        group,
+                        candidateFactory.createCandidate(
+                            symbol,
+                            null,
+                            ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+                        )
+                    )
+                    return ProcessorAction.NEXT
+                }
+            }
+        )
+    }
+}
+
 
 abstract class TowerDataConsumer {
     abstract fun consume(
@@ -321,14 +405,25 @@ fun createSimpleConsumer(
     inferenceComponents: InferenceComponents
 ): TowerDataConsumer {
     val factory = CandidateFactory(inferenceComponents, callInfo)
-    return if (callInfo.explicitReceiver != null) {
-        ExplicitReceiverTowerDataConsumer(
-            session,
-            name,
-            token,
-            ExpressionReceiverValue(callInfo.explicitReceiver, callInfo.typeProvider),
-            factory
-        )
+    val explicitReceiver = callInfo.explicitReceiver
+    return if (explicitReceiver != null) {
+        val receiverValue = ExpressionReceiverValue(explicitReceiver, callInfo.typeProvider)
+        if (explicitReceiver is FirResolvedQualifier) {
+            val qualified =
+                QualifiedReceiverTowerDataConsumer(session, name, token, receiverValue, factory)
+
+            if (explicitReceiver.classId != null) {
+                PrioritizedTowerDataConsumer(
+                    qualified,
+                    ExplicitReceiverTowerDataConsumer(session, name, token, receiverValue, factory)
+                )
+            } else {
+                qualified
+            }
+
+        } else {
+            ExplicitReceiverTowerDataConsumer(session, name, token, receiverValue, factory)
+        }
     } else {
         NoExplicitReceiverTowerDataConsumer(session, name, token, factory)
     }

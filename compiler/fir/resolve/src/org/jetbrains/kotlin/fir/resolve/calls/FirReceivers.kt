@@ -24,7 +24,7 @@ class ClassDispatchReceiverValue(val klassSymbol: FirClassSymbol) : ReceiverValu
 }
 
 class ExpressionReceiverValue(
-    private val explicitReceiverExpression: FirExpression,
+    val explicitReceiverExpression: FirExpression,
     val typeProvider: (FirExpression) -> FirTypeRef?
 ) : ReceiverValue {
     override val type: ConeKotlinType
