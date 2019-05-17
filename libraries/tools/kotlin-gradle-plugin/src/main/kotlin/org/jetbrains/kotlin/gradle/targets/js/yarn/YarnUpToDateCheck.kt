@@ -10,15 +10,15 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.daemon.common.toHexString
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn.packageJsonHashFile
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import java.io.File
 
-class YarnAvoidance(val npmProject: NpmProject) {
+class YarnUpToDateCheck(val npmProject: NpmProject) {
     val project: Project
         get() = npmProject.project
+
+    private val NpmProject.packageJsonHashFile: File
+        get() = dir.resolve("package.json.hash")
 
     private val prevHash by lazy {
         val packageJsonHashFile = npmProject.packageJsonHashFile
