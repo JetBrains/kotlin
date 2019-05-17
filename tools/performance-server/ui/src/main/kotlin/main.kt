@@ -223,7 +223,8 @@ fun main(args: Array<String>) {
     if (data !is JsonArray) {
         error("Response is expected to be an array.")
     }
-    val builds = data.jsonArray.map { Build.create(it as JsonObject) }.sortedBy { it.buildNumber.substringAfterLast("-") }
+    val builds = data.jsonArray.map { Build.create(it as JsonObject) }
+            .sortedWith(compareBy ( { it.buildNumber.substringBefore("-").toDouble() }, { it.buildNumber.substringAfterLast("-").toInt() }))
 
     val branchesUrl = "$serverUrl/branches/${parameters["target"]}"
 
