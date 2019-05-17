@@ -124,6 +124,7 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
 
         val visited = NpmProjectVisitor(this, project).visitProject()
         data.visit = visited
+
         allNpmPackages.addAll(visited.npmProjects)
 
         return visited
